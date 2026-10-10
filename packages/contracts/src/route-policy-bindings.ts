@@ -1,5 +1,6 @@
 // Checked-in REST bindings consumed by the serializable route policy manifest.
 export const routeOperationBindings = [
+  { method: 'GET', path: '/api/v1/provider-actions/{id}', operationId: 'getProviderAction' },
   { method: 'GET', path: '/api/v1/agent-sessions/{id}/children', operationId: 'listAgentSessionChildren' },
   { method: 'GET', path: '/api/v1/agent-sessions/{id}/execution-result', operationId: 'getAgentSessionExecutionResult' },
   { method: 'GET', path: '/api/v1/workbench/model-presets', operationId: 'listModelPresets' },

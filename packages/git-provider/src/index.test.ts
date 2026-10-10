@@ -15,6 +15,30 @@ beforeAll(() => {
 }, 15_000);
 
 describe("provider-neutral git boundary", () => {
+  it('M3 guards every GitHub commit HTTP and does not swallow a later authorization refusal',async()=>{
+    const writes:string[]=[],order:string[]=[];let permits=0
+    const provider=new GitHubAppProvider({appId:'1',installationId:'2',privateKey:githubTestPrivateKey,apiBaseUrl:'https://github.test',
+      beforeMutation:async()=>{order.push('guard');if(++permits===2)throw new Error('STOP_COMMITTED');return {deadlineMonotonicMs:performance.now()+1000}},
+      fetch:async(input,init)=>{
+        const url=String(input)
+        if(url.endsWith('/access_tokens'))return Response.json({token:'fixture',expires_at:new Date(Date.now()+3600000).toISOString()})
+        if(init?.method==='GET')return Response.json({object:{sha:'base'},tree:{sha:'base-tree'}})
+        writes.push(url);order.push('http');return Response.json({sha:'new-tree'})
+      }})
+    await expect(provider.createCommit({provider:'github',connectionId:'c',repositoryId:'r',repositoryFullName:'acme/workmesh',idempotencyKey:'exact-action',branch:'workmesh/test',expectedHeadSha:'base',message:'change',files:[{path:'a.ts',content:'safe'}]})).rejects.toThrow('STOP_COMMITTED')
+    expect(writes).toEqual(['https://github.test/repos/acme/workmesh/git/trees'])
+    expect(order).toEqual(['guard','http','guard'])
+  })
+  it('M3 expires a returned permit before fetch and leaves CI rerequest unsent',async()=>{
+    let writes=0,permits=0
+    const provider=new GitHubAppProvider({appId:'1',installationId:'2',privateKey:githubTestPrivateKey,apiBaseUrl:'https://github.test',
+      beforeMutation:async()=>{permits++;return {deadlineMonotonicMs:performance.now()-1}},fetch:async(input)=>{
+        if(String(input).endsWith('/access_tokens'))return Response.json({token:'fixture',expires_at:new Date(Date.now()+3600000).toISOString()})
+        writes++;return new Response(null,{status:204})
+      }})
+    await expect(provider.retryCheck({provider:'github',connectionId:'c',repositoryId:'r',repositoryFullName:'acme/workmesh',checkRunId:'42'})).rejects.toThrow('PROVIDER_ACTION_CLAIM_EXPIRED')
+    expect(permits).toBe(1);expect(writes).toBe(0)
+  })
   it("runs branch, commit, PR and exact-head merge through the fake provider", async () => {
     const provider = new FakeGitProvider();
     provider.seedRepository("c", "repo", "main", "base");

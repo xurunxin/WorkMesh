@@ -7,6 +7,7 @@ import { resolve } from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
+import type {Capability} from '@workmesh/contracts'
 import { createMcpCoverageFixture, type Execution } from './mcp-coverage.fixture.js'
 import { createAgentWebhookWorker, signWebhook, signaturesMatch } from '../../../apps/worker/src/agent-webhook.js'
 
@@ -19,8 +20,8 @@ export const savePlanningEvidence = (name: string, value: unknown) => {
 }
 export type ModelCall = { name: string; arguments: Record<string, unknown> }
 
-export async function createPlanningCollaborationFixture() {
-  const fixture = await createMcpCoverageFixture()
+export async function createPlanningCollaborationFixture(options:{capabilities?:Capability[]}={}) {
+  const fixture = await createMcpCoverageFixture(options)
   const models: ReturnType<typeof createServer>[] = []
   const receivers: ReturnType<typeof createReceiver>[] = []
   const delivered = new Map<string, { exchangeToken: string }>()
@@ -77,7 +78,7 @@ export async function createPlanningCollaborationFixture() {
     }
     return target
   }
-  const registerTarget = async () => attachReceiver(await fixture.pairTarget(['work:read','work:write','artifact:write']))
+  const registerTarget = async (capabilities:Capability[]=['work:read','work:write','artifact:write']) => attachReceiver(await fixture.pairTarget(capabilities))
   const registerCurrentReceiver = async () => attachReceiver({agentId:fixture.agentId,token:fixture.connectionToken})
   const runnerProxy = async (options:{loseFailResponse?:boolean;afterSettlement?:()=>Promise<void>}) => {
     const proxy=createReceiver(async(request,response)=>{

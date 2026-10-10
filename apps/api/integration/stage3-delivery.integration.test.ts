@@ -222,7 +222,60 @@ describe('Stage 3 delivery API', () => {
   beforeEach(async () => { await db.query('TRUNCATE workspaces CASCADE') })
   afterAll(async () => { await app.close(); await db.end() })
 
+  it('M3 exact action只读投影精确E/principal授权、隐藏payload/raw错误与撤权；不追加事实',async()=>{
+    const f=await fixture()
+    const request={kind:'create_branch',repositoryId:f.repositoryId,workItemId:f.workItemId,sessionId:f.agent.sessionId,projectId:f.projectId,name:'workmesh/GEN-1-exact',baseSha:'base-sha'}
+    const queued=await agentCall(f.agent.token,'POST','/api/v1/provider-actions',request)
+    expect(queued.statusCode,JSON.stringify(queued.json())).toBe(200)
+    const actionId=queued.json<{id:string}>().id
+    const counts=async()=>(await db.query(`SELECT (SELECT count(*)::int FROM domain_events) AS events,
+      (SELECT count(*)::int FROM outbox_events) AS outbox,(SELECT count(*)::int FROM api_idempotency_keys) AS receipts,
+      (SELECT count(*)::int FROM agent_session_tokens) AS tokens,(SELECT count(*)::int FROM agent_activities) AS activities`)).rows[0]
+    const before=await counts()
+    const pending=await agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${actionId}`)
+    expect(pending.statusCode,JSON.stringify(pending.json())).toBe(200)
+    expect(pending.json()).toMatchObject({id:actionId,sessionId:f.agent.sessionId,status:'pending',effect:'unknown',target:{branchName:request.name,baseSha:'base-sha'},result:null,recovery:{kind:'poll_same_action'}})
+    expect(await counts()).toEqual(before)
+    expect((await humanCall(f.human,'GET',`/api/v1/provider-actions/${actionId}`)).statusCode).toBe(200)
+    const other=await createAgent(f.human,f.workspaceId,f.teamId,f.workItemId,randomUUID().slice(0,8),'reviewer',[f.repositoryId])
+    const hidden=await agentCall(other.token,'GET',`/api/v1/provider-actions/${actionId}`)
+    expect(hidden.statusCode).toBe(404);expect(hidden.json()).toMatchObject({error:{code:'NOT_FOUND'}})
+    await db.query("UPDATE provider_actions SET status='dead',last_error=$2,attempt_count=1 WHERE id=$1",[actionId,'GITHUB_API_ERROR:secret-provider-body'])
+    const safe=await agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${actionId}`)
+    expect(safe.json()).toMatchObject({error:{code:'PROVIDER_ACTION_FAILED'},recovery:{kind:'human_reconcile',scheduled:false}})
+    for(const forbidden of ['secret-provider-body','payload','claimed_by','intent_key','privateKey'])expect(JSON.stringify(safe.json())).not.toContain(forbidden)
+    const snapshot=await counts()
+    await db.query("UPDATE delegations SET capability_scope=capability_scope || '{\"repositoryIds\":[]}'::jsonb WHERE id=(SELECT delegation_id FROM agent_sessions WHERE id=$1)",[f.agent.sessionId])
+    expect((await agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${actionId}`)).statusCode).toBe(404)
+    expect(await counts()).toEqual(snapshot)
+  })
+
   const revocations = ['actor', 'workspace-role', 'membership-role', 'membership-delete', 'target-delete', 'target-team', 'team-delete', 'repository', 'repository-connection', 'connection'] as const
+  it.each(['read','branch','path'] as const)('M3 exact action最终快照拒绝当前context的%s收窄且零副作用',async kind=>{
+    const f=await fixture()
+    const payload=kind==='path'?{branch:'workmesh/GEN-1-exact',expectedHeadSha:'base-sha',message:'private content',files:[{path:'apps/api/a.ts',content:'private file'}]}:{name:'workmesh/GEN-1-exact',baseSha:'base-sha'}
+    const action=(await db.query<{id:string}>(`INSERT INTO provider_actions(workspace_id,connection_id,repository_id,requested_by_actor_id,session_id,work_item_id,kind,intent_key,payload)
+      VALUES($1,$2,$3,(SELECT agent_actor_id FROM agent_sessions WHERE id=$4),$4,$5,$6,$7,$8) RETURNING id`,[f.workspaceId,f.connectionId,f.repositoryId,f.agent.sessionId,f.workItemId,kind==='path'?'create_commit':'create_branch',randomUUID(),payload])).rows[0]!.id
+    expect((await agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${action}`)).statusCode).toBe(200)
+    await db.query(`INSERT INTO repository_contexts(workspace_id,repository_id,work_item_id,base_branch,base_sha,branch_pattern,allowed_paths,permissions,guidance_manifest_hash,created_by_actor_id)
+      SELECT workspace_id,repository_id,work_item_id,base_branch,base_sha,$2,$3,$4,guidance_manifest_hash,created_by_actor_id
+      FROM repository_contexts WHERE repository_id=$1 ORDER BY created_at DESC LIMIT 1`,[f.repositoryId,kind==='branch'?'private/{slug}':'workmesh/{workItemKey}-{slug}',kind==='path'?['other/**']:['apps/**'],kind==='read'?['review']:['read','review']])
+    const count=async()=>(await db.query('SELECT (SELECT count(*) FROM domain_events) AS events,(SELECT count(*) FROM api_idempotency_keys) AS receipts,(SELECT count(*) FROM agent_activities) AS activities')).rows[0]
+    const before=await count()
+    const denied=await agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${action}`)
+    expect(denied.statusCode).toBe(404);expect(denied.json()).toMatchObject({error:{code:'NOT_FOUND'}})
+    expect(await count()).toEqual(before)
+  })
+  it('M3原principal Human可诊断终态Session action，普通terminal E仍拒绝',async()=>{
+    const f=await fixture()
+    const queued=await agentCall(f.agent.token,'POST','/api/v1/provider-actions',{kind:'create_branch',repositoryId:f.repositoryId,workItemId:f.workItemId,sessionId:f.agent.sessionId,name:'workmesh/GEN-1-terminal',baseSha:'base-sha'})
+    expect(queued.statusCode).toBe(200)
+    const action=queued.json<{id:string}>().id
+    await db.query("UPDATE agent_sessions SET state='completed' WHERE id=$1",[f.agent.sessionId])
+    expect((await humanCall(f.human,'GET',`/api/v1/provider-actions/${action}`)).statusCode).toBe(200)
+    expect((await agentCall(f.agent.token,'GET',`/api/v1/provider-actions/${action}`)).statusCode).toBeGreaterThanOrEqual(400)
+    expect((await humanCall(f.human,'GET',`/api/v1/repositories/${f.repositoryId}/context`)).json()).not.toHaveLength(0)
+  })
   const queueContext = async (f: Fixture, movable = false) => {
     if (movable) {
       // An active delegation intentionally prevents moving its original work item.
@@ -1266,14 +1319,24 @@ describe('Stage 3 delivery API', () => {
     await worker.tick()
     expect(mergeProvider).not.toHaveBeenCalled()
     expect((await db.query('SELECT status,last_error FROM provider_actions WHERE id=$1', [mergeActionId])).rows[0])
-      .toEqual({ status: 'failed', last_error: 'MERGE_REQUIRED_CHECKS_NOT_PASSED' })
+      .toEqual({ status: 'dead', last_error: 'PROVIDER_ACTION_OUTCOME_UNKNOWN' })
 
     await deliverCheck(81, 'success', '2026-07-25T01:04:00Z', 'golden-check-rerun-recovered')
-    await db.query('UPDATE provider_actions SET available_at=now() WHERE id=$1', [mergeActionId])
+    await worker.tick()
+    expect(mergeProvider).not.toHaveBeenCalled()
+    // This fixture proves zero original HTTP. A Human issues a new exact approval;
+    // no client retry or state reset is used to revive the unknown action.
+    const approvedAgain=await agentCall(f.agent.token,'POST','/api/v1/approvals',{
+      sessionId:f.agent.sessionId,approvalType:'merge',actionName:'provider.pull_request.merge',actionPayloadSanitized:approvalPayload,
+      actionPayloadHash:approvalHash,riskLevel:'high',rationaleSummary:'Human reviewed the zero-send original intent',requiredApprovals:1,expiresAt:new Date(Date.now()+600000).toISOString()})
+    expect(approvedAgain.statusCode).toBe(200)
+    const nextApproval=approvedAgain.json<{id:string;revision:number}>()
+    expect((await humanCall(f.human,'POST',`/api/v1/approvals/${nextApproval.id}/decide`,{decision:'approved',reason:'New exact intent after original stopped'},{'if-match':`"revision-${nextApproval.revision}"`})).statusCode).toBe(200)
+    expect((await agentCall(f.agent.token,'POST',`/api/v1/pull-requests/${pr.id}/merge`,{sessionId:f.agent.sessionId,approvalId:nextApproval.id,actionPayloadHash:approvalHash,headSha:pr.head_sha,method:'squash'})).statusCode).toBe(200)
     await worker.tick()
     expect(mergeProvider).toHaveBeenCalledTimes(1)
     expect((await db.query("SELECT 1 FROM pull_request_projections WHERE id=$1 AND state='merged'", [pr.id])).rowCount).toBe(1)
-    expect((await db.query("SELECT 1 FROM approvals WHERE id=$1 AND status='consumed'", [approvalBody.id])).rowCount).toBe(1)
+    expect((await db.query("SELECT 1 FROM approvals WHERE id=$1 AND status='consumed'", [nextApproval.id])).rowCount).toBe(1)
     expect((await db.query("SELECT 1 FROM completion_suggestions WHERE work_item_id=$1 AND status='open'", [f.workItemId])).rowCount).toBe(1)
     expect((await db.query("SELECT 1 FROM work_items w JOIN workflow_states s ON s.id=w.status_id WHERE w.id=$1 AND s.category<>'completed'", [f.workItemId])).rowCount).toBe(1)
     await db.query(

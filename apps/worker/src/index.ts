@@ -11,7 +11,7 @@ import { createSessionLifecycleWorker } from './session-lifecycle.js'
 import { createProviderActionWorker, validateUploadedChecksum } from './provider-actions.js'
 import { createArtifactUploadWorker } from './artifact-uploads.js'
 import { artifactStorageFromEnvironment } from '@workmesh/artifact-storage'
-import { FakeGitProvider, GiteaProvider, GitHubAppProvider, type GitProvider } from '@workmesh/git-provider'
+import { FakeGitProvider, GiteaProvider, GitHubAppProvider, guardedGitProvider, type GitProvider } from '@workmesh/git-provider'
 import { createAutomationWorker } from './automation.js'
 import { createWecomAdmission, createWecomNotificationAdapter } from './wecom-notifications.js'
 import { createRetentionWorker } from './retention.js'
@@ -381,12 +381,12 @@ const startWorkerProcess = async (): Promise<void> => {
     allowedProviders: features.WORKMESH_BETA_GITEA
       ? ['fake', 'github', 'gitea']
       : ['fake', 'github'],
-    resolveProvider: async (provider, connectionId) => {
-      if (provider === 'fake') return fakeProvider
+    resolveProvider: async (provider, connectionId, executionGuard) => {
+      if (provider === 'fake') return executionGuard ? guardedGitProvider(fakeProvider, executionGuard) : fakeProvider
       if (provider === 'gitea') {
         if (!features.WORKMESH_BETA_GITEA) throw new Error('FEATURE_DISABLED:WORKMESH_BETA_GITEA')
         const cached = giteaProviders.get(connectionId)
-        if (cached) return cached
+        if (cached && !executionGuard) return cached
         const masterKey = process.env.WORKMESH_MASTER_KEY
         if (!masterKey) throw new Error('WORKMESH_MASTER_KEY is required for Gitea credentials')
         const row = (await db.query<{ installation_id: string; credentials: string }>(
@@ -401,12 +401,13 @@ const startWorkerProcess = async (): Promise<void> => {
         const gitea = new GiteaProvider({
           baseUrl: row.installation_id,
           accessToken: credentials.accessToken,
+          beforeMutation: executionGuard,
         })
-        giteaProviders.set(connectionId, gitea)
+        if (!executionGuard) giteaProviders.set(connectionId, gitea)
         return gitea
       }
       const cached = githubProviders.get(connectionId)
-      if (cached) return cached
+      if (cached && !executionGuard) return cached
       const masterKey = process.env.WORKMESH_MASTER_KEY
       if (!masterKey) throw new Error('WORKMESH_MASTER_KEY is required for GitHub App credentials')
       const row = (await db.query<{ installation_id: string; credentials: string }>(
@@ -424,8 +425,9 @@ const startWorkerProcess = async (): Promise<void> => {
         privateKey: credentials.privateKey,
         installationId: row.installation_id,
         apiBaseUrl: process.env.GITHUB_API_URL,
+        beforeMutation: executionGuard,
       })
-      githubProviders.set(connectionId, github)
+      if (!executionGuard) githubProviders.set(connectionId, github)
       return github
     },
   })

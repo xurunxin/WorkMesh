@@ -93,6 +93,15 @@ binding_by_id = {binding['bindingId']: binding for binding in bindings}
 for binding in m2['bindings']:
     binding_by_id[binding['bindingId']] = binding
 bindings = list(binding_by_id.values())
+m3 = json.loads((root / 'docs/plan/agent-mcp-m3/product-discovery-decisions.json').read_text(encoding='utf-8'))
+rule_by_id = {rule['operationId']: rule for rule in rules}
+for rule in m3['rules']:
+    rule_by_id[rule['operationId']] = rule
+rules = list(rule_by_id.values())
+binding_by_id = {binding['bindingId']: binding for binding in bindings}
+for binding in m3['bindings']:
+    binding_by_id[binding['bindingId']] = binding
+bindings = list(binding_by_id.values())
 output = '// 由 scripts/generate-agent-discovery.py 从已独审清单生成；修改规则须先核授权源码。\n'
 output += "import type { DiscoveryRule, DiscoveryBindingRule } from './agent-discovery.js'\n\n"
 for name, data, type_name in [('agentDiscoveryRules', rules, 'DiscoveryRule'), ('agentDiscoveryBindings', bindings, 'DiscoveryBindingRule')]:
@@ -107,7 +116,7 @@ policy_text = policy_path.read_text(encoding='utf-8')
 start = policy_text.index('const mcpOperationIds = {')
 end = policy_text.index('} as const', start) + len('} as const')
 current = dict(re.findall(r"'([^']+)': '([^']+)'", policy_text[start:end]))
-registered = set(m2['registeredBindingIds'])
+registered = set(m2['registeredBindingIds']) | set(m3['registeredBindingIds'])
 current = {key:value for key,value in current.items() if key in registered}
 for binding in bindings:
     if binding['bindingId'] in registered and binding['execution']=='api' and len(binding['operationIds'])==1:

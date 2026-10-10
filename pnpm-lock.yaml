@@ -356,6 +356,12 @@ importers:
       '@workmesh/db':
         specifier: workspace:*
         version: link:../db
+      '@workmesh/domain':
+        specifier: workspace:*
+        version: link:../domain
+      '@workmesh/git-provider':
+        specifier: workspace:*
+        version: link:../git-provider
       '@workmesh/mcp':
         specifier: workspace:*
         version: link:../../apps/mcp

@@ -10,13 +10,18 @@ import {
   childSessionInputSchema, reviewDelegationInputSchema, childSessionStatusQuerySchema,
   decisionInputSchema, roomMessageInputSchema, restoreDocumentRevisionInputSchema,
   contextDeltaInputSchema, assignmentProposalInputSchema,
+  providerActionInputSchema, deliveryArtifactInputSchema, artifactUploadIntentInputSchema,
+  structuredReviewInputSchema, mergeIntentInputSchema, ciRetryInputSchema, projectUpdateInputSchema,
+  completionSuggestionInputSchema, projectHealthInputSchema,
 } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { z } from 'zod'
 import { sessionWaitIntentSchema, type SessionWaitIntent } from './execution-lifecycle.js'
+import { artifactChecksum, decodeUploadBytes, readArtifactBytes, sendArtifactBytes } from './delivery-transfer.js'
 
 export interface RunnerToolApi {
   readonly sessionId: string
+  readonly artifactStoreOrigins?: readonly string[]
   request<T>(method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE', path: string,
     body?: unknown, ifMatch?: number, idempotencyKey?: string): Promise<T>
 }
@@ -87,6 +92,7 @@ type ToolRequest = Readonly<{
   path: string
   body?: unknown
   ifMatch?: number
+  transfer?: { uploadBase64?: string; downloadUploadId?: string }
 }>
 
 function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) => void,
@@ -117,8 +123,14 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
       }
       let result: unknown
       try {
+        if(request.transfer && !api.artifactStoreOrigins?.length) throw new Error('ARTIFACT_STORE_NOT_CONFIGURED')
         result = await api.request<unknown>(request.method, request.path,
           request.body, request.ifMatch, key)
+        if(request.transfer?.uploadBase64) result=await sendArtifactBytes(result,request.transfer.uploadBase64,api.artifactStoreOrigins??[],signal)
+        if(request.transfer?.downloadUploadId) {
+          const status=await api.request<unknown>('GET',`/api/v1/artifact-upload-intents/${request.transfer.downloadUploadId}`)
+          result=await readArtifactBytes(result,status,api.artifactStoreOrigins??[],signal)
+        }
         if (request.method === 'GET') {
           const path = new URL(request.path, 'http://workmesh.invalid')
           for (let retry=0;retry<8;retry++) {
@@ -155,7 +167,10 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
       // Preserve the complete authorized body, including JSON escaping expansion;
       // the ordinary display summary cannot be resumed by these read tools.
       const completeDocumentRead = request.method === 'GET'
-        && ['getDocument', 'getDocumentRevision', 'exportDocumentMarkdown'].includes(operationId)
+        && ['getDocument', 'getDocumentRevision', 'exportDocumentMarkdown','getProviderAction','getRepositoryContext',
+          'getProjectDelivery','listWorkItemArtifacts','downloadVerifiedArtifact'].includes(operationId)
+      if(completeDocumentRead&&JSON.stringify(reported).length>12_000_000)
+        throw new Error('TOOL_EVIDENCE_TOO_LARGE: no evidence was consumed; select the exact pullRequestId')
       return { content: [{ type: 'text' as const,
         text: completeDocumentRead ? JSON.stringify(reported) : boundedResult(reported) }],
         details: { source: 'workmesh_rest', operationId, operationKey: key, completionActivityRecorded } }
@@ -388,8 +403,76 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     Type.Object({ ...creationFields, agentId: idParameter, required: Type.Optional(Type.Boolean()), role: Type.Optional(Type.Union([Type.Literal('executor'), Type.Literal('reviewer'), Type.Literal('researcher')])) }),
     input => ({ method: 'POST', path: `/api/v1/agent-sessions/${api.sessionId}/children`, body: childSessionInputSchema.parse(input) }))
   add('workmesh_create_review_delegation', 'createReviewDelegation', 'Create an independent reviewer with no plan publication capability. Explicitly reduce all constrained budget dimensions to fit remaining reservations.',
-    Type.Object({ ...creationFields, reviewerAgentId: idParameter, ttlSeconds: Type.Optional(Type.Integer({ minimum: 10, maximum: 3600 })) }),
+    Type.Object({ ...creationFields, reviewerAgentId: idParameter, repositoryIds:Type.Optional(Type.Array(idParameter,{minItems:1,maxItems:100,uniqueItems:true})), ttlSeconds: Type.Optional(Type.Integer({ minimum: 10, maximum: 3600 })) }),
     input => ({ method: 'POST', path: `/api/v1/agent-sessions/${api.sessionId}/review-delegations`, body: reviewDelegationInputSchema.parse(input) }))
+  add('workmesh_list_repositories','listRepositories','分页读取当前Session授权仓库。',pageParameters,
+    input=>({method:'GET',path:`/api/v1/repositories?${pageQuery(input)}`}))
+  const exactRead=(name:string,operation:string,path:string,field:string)=>add(name,operation,'读取准确授权资源；不续期或创建动作。',
+    Type.Object({[field]:idParameter}),input=>({method:'GET',path:path.replace('{id}',id.parse((input as Record<string,unknown>)[field]))}))
+  exactRead('workmesh_get_repository_context','getRepositoryContext','/api/v1/repositories/{id}/context','repositoryId')
+  exactRead('workmesh_get_provider_action','getProviderAction','/api/v1/provider-actions/{id}','id')
+  exactRead('workmesh_get_artifact_upload_status','getArtifactUploadStatus','/api/v1/artifact-upload-intents/{id}','uploadId')
+  exactRead('workmesh_list_work_item_artifacts','listWorkItemArtifacts','/api/v1/work-items/{id}/artifacts','workItemId')
+  const deliveryFields={workItemId:idParameter,projectId:Type.Optional(idParameter),repositoryId:idParameter,planStepId:Type.Optional(idParameter)}
+  const gitVariants=new Map(manifest.discovery.operations.filter(o=>o.operationId==='requestProviderAction').map(o=>[o.variant,o.eligibility.status]))
+  for(const kind of ['create_branch','create_commit','open_pull_request'] as const) {
+    if(gitVariants.get(kind)==='blocked'||!gitVariants.has(kind)) continue
+    const fields: Record<string, Type.TSchema>=kind==='create_branch'?{name:Type.String({minLength:1,maxLength:500}),baseSha:Type.String({minLength:1,maxLength:200})}
+      :kind==='create_commit'?{branch:Type.String({minLength:1,maxLength:500}),expectedHeadSha:Type.String({minLength:1,maxLength:200}),message:Type.String({minLength:1,maxLength:10000}),files:Type.Array(Type.Object({path:Type.String({minLength:1,maxLength:2000}),content:Type.String({maxLength:2000000})}),{minItems:1,maxItems:500})}
+      :{baseBranch:Type.String({minLength:1,maxLength:500}),headBranch:Type.String({minLength:1,maxLength:500}),title:Type.String({minLength:1,maxLength:500}),body:Type.String({maxLength:50000}),draft:Type.Optional(Type.Boolean())}
+    const name=kind==='create_branch'?'workmesh_create_repository_branch':kind==='create_commit'?'workmesh_create_repository_commit':'workmesh_open_pull_request'
+    add(name,'requestProviderAction','持久化准确Git意图；随后查询原action，不盲重发。',Type.Object({...deliveryFields,...fields}),input=>({method:'POST',path:'/api/v1/provider-actions',body:providerActionInputSchema.parse({...input as object,kind,sessionId:api.sessionId})}))
+  }
+  const prFields={pullRequestId:Type.Optional(idParameter),headSha:Type.Optional(Type.String({minLength:1,maxLength:200}))}
+  add('workmesh_publish_delivery_artifact','publishDeliveryArtifact','发布本人当前head的证据；reviewer仅code_review。',
+    Type.Object({...deliveryFields,repositoryId:Type.Optional(idParameter),...prFields,type:Type.String(),title:Type.String({minLength:1,maxLength:500}),checksum:Type.String({pattern:'^sha256:[a-f0-9]{64}$'}),sourceTool:Type.String({minLength:1,maxLength:160}),uri:Type.Optional(Type.String({format:'uri'})),command:Type.Optional(Type.String({maxLength:10000})),result:Type.Optional(Type.Union([Type.Literal('passed'),Type.Literal('failed'),Type.Literal('skipped')])),metadata:Type.Optional(Type.Record(Type.String(),Type.Unknown()))}),
+    input=>({method:'POST',path:'/api/v1/delivery-artifacts',body:deliveryArtifactInputSchema.parse({...input as object,sessionId:api.sessionId})}))
+  add('workmesh_request_artifact_upload','requestArtifactUpload','受控上传有界base64字节；签名URL与headers不会交模型。上传file不代审查授权。',
+    Type.Object({...deliveryFields,...prFields,sourceTool:Type.String({minLength:1,maxLength:160}),filename:Type.String({minLength:1,maxLength:500}),mimeType:Type.String({minLength:1,maxLength:200}),contentBase64:Type.String({minLength:4,maxLength:2000000})}),input=>{
+      const {contentBase64,...body}=z.object({contentBase64:z.string().max(2000000)}).passthrough().parse(input)
+      const bytes=decodeUploadBytes(contentBase64)
+      return {method:'POST',path:'/api/v1/artifact-upload-intents',body:artifactUploadIntentInputSchema.parse({...body,sessionId:api.sessionId,sizeBytes:bytes.length,checksum:artifactChecksum(bytes)}),transfer:{uploadBase64:contentBase64}}
+    })
+  for(const action of ['finalize','cancel'] as const) add(`workmesh_${action}_artifact_upload`,action==='finalize'?'finalizeArtifactUpload':'cancelArtifactUpload','操作本人准确上传意图；不重开终态。',Type.Object({uploadId:idParameter}),input=>({method:'POST',path:`/api/v1/artifact-upload-intents/${id.parse((input as {uploadId:unknown}).uploadId)}/${action}`,body:{}}))
+  add('workmesh_download_verified_artifact','downloadVerifiedArtifact','受控读取本人verified文件，有界字节及checksum；不接受任意URL或本机路径。',Type.Object({uploadId:idParameter}),input=>{
+    const uploadId=id.parse((input as {uploadId:unknown}).uploadId)
+    return {method:'GET',path:`/api/v1/artifact-upload-intents/${uploadId}/download`,transfer:{downloadUploadId:uploadId}}
+  })
+  add('workmesh_get_project_delivery','getProjectDelivery','指定准确PR读取完整current-head checks/reviews/findings/approval；不能把列表当批准。',Type.Object({projectId:idParameter,pullRequestId:Type.Optional(idParameter)}),input=>{
+    const query=z.object({projectId:id,pullRequestId:id.optional()}).strict().parse(input)
+    return {method:'GET',path:`/api/v1/projects/${query.projectId}/delivery${query.pullRequestId?`?pullRequestId=${query.pullRequestId}`:''}`}
+  })
+  const finding=Type.Object({severity:Type.Union(['blocking','high','medium','low'].map(v=>Type.Literal(v))),file:Type.String({minLength:1,maxLength:2000}),line:Type.Integer({minimum:1}),summary:Type.String({minLength:1,maxLength:2000}),evidence:Type.String({minLength:1,maxLength:20000}),recommendation:Type.String({minLength:1,maxLength:20000})})
+  add('workmesh_publish_structured_review','publishStructuredReview','独立reviewer先本人Room review_result、再code_review Artifact，最后发布current-head结构审查。',
+    Type.Object({pullRequestId:idParameter,artifactId:idParameter,headSha:Type.String({minLength:1,maxLength:200}),verdict:Type.Union(['approved','changes_requested','commented'].map(v=>Type.Literal(v))),summary:Type.String({minLength:1,maxLength:20000}),findings:Type.Array(finding,{maxItems:500}),evidence:Type.Optional(Type.Array(Type.String({minLength:1,maxLength:20000}),{maxItems:100})),metadata:Type.Optional(Type.Record(Type.String(),Type.Unknown()))}),input=>{
+      const {pullRequestId,...body}=z.object({pullRequestId:id}).passthrough().parse(input)
+      return {method:'POST',path:`/api/v1/pull-requests/${pullRequestId}/reviews`,body:structuredReviewInputSchema.parse({...body,sessionId:api.sessionId})}
+    })
+  const approvalFields={approvalId:idParameter,actionPayloadHash:Type.String({pattern:'^sha256:[a-f0-9]{64}$'}),headSha:Type.String({minLength:1,maxLength:200})}
+  add('workmesh_merge_pull_request','requestPullRequestMerge','使用Human对准确head/checks的批准；Worker逐次重验，merge不deploy或done。',Type.Object({pullRequestId:idParameter,...approvalFields,method:Type.Union(['merge','squash','rebase'].map(v=>Type.Literal(v)))}),input=>{
+    const {pullRequestId,...body}=z.object({pullRequestId:id}).passthrough().parse(input)
+    return {method:'POST',path:`/api/v1/pull-requests/${pullRequestId}/merge`,body:mergeIntentInputSchema.parse({...body,sessionId:api.sessionId})}
+  })
+  add('workmesh_retry_ci_check','retryPullRequestCheck','使用Human准确check/head批准重试；requested不等于passed。',Type.Object({pullRequestId:idParameter,checkId:Type.String({minLength:1,maxLength:500}),...approvalFields}),input=>{
+    const {pullRequestId,checkId,...body}=z.object({pullRequestId:id,checkId:z.string().min(1).max(500)}).passthrough().parse(input)
+    return {method:'POST',path:`/api/v1/pull-requests/${pullRequestId}/checks/${encodeURIComponent(checkId)}/retry`,body:ciRetryInputSchema.parse({...body,sessionId:api.sessionId})}
+  })
+  add('workmesh_draft_project_update','createProjectUpdateDraft','草拟Project进展，发布仍由Human。',Type.Object({projectId:idParameter,health:Type.Union(['on_track','at_risk','off_track'].map(v=>Type.Literal(v))),body:Type.String({minLength:1,maxLength:20000}),evidenceArtifactIds:Type.Optional(Type.Array(idParameter,{maxItems:100}))}),input=>{
+    const {projectId,...body}=z.object({projectId:id}).passthrough().parse(input)
+    return {method:'POST',path:`/api/v1/projects/${projectId}/updates`,body:projectUpdateInputSchema.parse(body)}
+  })
+  add('workmesh_suggest_work_item_completion','suggestWorkItemCompletion','仅建议Human完成WorkItem，不自行修改工作流。',Type.Object({projectId:idParameter,workItemId:idParameter,pullRequestId:Type.Optional(idParameter),rationale:Type.String({minLength:1,maxLength:10000}),evidenceArtifactIds:Type.Optional(Type.Array(idParameter,{maxItems:100}))}),input=>{
+    const {projectId,...body}=z.object({projectId:id}).passthrough().parse(input)
+    return {method:'POST',path:`/api/v1/projects/${projectId}/completion-suggestions`,body:completionSuggestionInputSchema.parse(body)}
+  })
+  add('workmesh_get_project_health_history','getProjectHealthHistory','分页读取授权Project健康历史。',Type.Object({projectId:idParameter,...pageParameters.properties}),input=>{
+    const {projectId,...page}=z.object({projectId:id}).passthrough().parse(input)
+    return {method:'GET',path:`/api/v1/projects/${projectId}/health?${pageQuery(page)}`}
+  })
+  add('workmesh_create_project_health_update','createProjectHealthUpdate','Agent健康草拟；publish=true需Human精确批准。',Type.Object({projectId:idParameter,ifMatch:Type.Integer({minimum:1}),health:Type.Union(['on_track','at_risk','off_track'].map(v=>Type.Literal(v))),summary:Type.String({minLength:1,maxLength:20000}),forecastAt:Type.Optional(Type.String({format:'date-time'})),confidence:Type.Number({minimum:0,maximum:1}),uncertainty:Type.String({minLength:1,maxLength:5000}),sources:Type.Array(Type.Object({kind:Type.Union(['work_item','session','milestone','dependency','project_update','usage'].map(v=>Type.Literal(v))),id:idParameter,observedAt:Type.String({format:'date-time'}),value:Type.Optional(Type.Record(Type.String(),Type.Unknown()))}),{minItems:1,maxItems:200}),publish:Type.Optional(Type.Boolean()),approvalId:Type.Optional(idParameter)}),input=>{
+    const {projectId,ifMatch,...body}=z.object({projectId:id,ifMatch:z.number().int().positive()}).passthrough().parse(input)
+    return {method:'POST',path:`/api/v1/projects/${projectId}/health`,ifMatch,body:projectHealthInputSchema.parse({...body,source:'agent'})}
+  })
   const pagedRead = (name: string, operation: string, prefix: string, field?: string) => {
     add(name, operation, 'Read authorized facts with complete pagination; reads never add activity.',
       Type.Object({ ...pageParameters.properties, ...(field ? { [field]: idParameter } : {}) }), input => {

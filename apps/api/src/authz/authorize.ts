@@ -441,6 +441,20 @@ export async function authorizeRequest(
     // together in one read-only snapshot. Ordinary terminal E gates are unchanged.
     return
   }
+  if (policy.operationId === 'getProviderAction') {
+    // Target visibility is decided atomically by the white-list projection;
+    // locator-derived Team or provider failures must not reveal a hidden ID.
+    if (actor.kind === 'agent') {
+      const facts=await loadAgentFacts(db,actor)
+      if (!facts || !sessionActiveForOperation(facts.state,policy.operationId))
+        throw new DomainError('SESSION_NOT_ACTIVE','Active Agent Session required')
+      if (facts.delegation_status!=='active'||!facts.agent_active||!facts.team_capabilities)
+        throw new DomainError('DELEGATION_NOT_ACTIVE','Live delegation required')
+      if (![facts.permissions_snapshot,facts.definition_capabilities,facts.team_capabilities].every(caps=>caps.includes('repo:read')&&caps.includes('work:read')))
+        throw new DomainError('CAPABILITY_DENIED','Repository read capability required')
+    }
+    return
+  }
   const teamResolution = await resolveTeam(
     db,
     request,

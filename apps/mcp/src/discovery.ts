@@ -168,6 +168,6 @@ export function registerResourceReadTools(server: McpServer, client: WorkMeshCli
   server.registerTool('get_session_plan', { description: '读取准确Session的版本化Plan。', inputSchema: { id } }, async input => result(await client.getPlan(input.id)))
   for (const scope of ['workspace', 'team', 'project'] as const)
     server.registerTool(`get_${scope}_guidance`, { description: '读取授权范围的guidance。返回：OPENAPI guidance response。', inputSchema: { id } }, async input => result(await client.getGuidance(scope, input.id)))
-  server.registerTool('get_repository_context', { description: '读取授权Repository的固定context和AGENTS来源。', inputSchema: { repositoryId: id } }, async input => result(await client.getRepositoryContext(input.repositoryId)))
+  server.registerTool('get_repository_context', { description: '读取授权Repository的完整固定context和AGENTS来源；C须显式目标Session。', inputSchema: { repositoryId: id, sessionId:id.optional() } }, async input => result(await client.getRepositoryContext(input.repositoryId,{sessionId:input.sessionId})))
 }
 function result(data: unknown) { return { content: [{ type: 'text' as const, text: JSON.stringify(data) }], structuredContent: { data } } }

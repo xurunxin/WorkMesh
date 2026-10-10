@@ -11,6 +11,8 @@ export const reviewDelegationInputSchema = z.object({
   reviewerAgentId: z.string().uuid(), planStepId: z.string().uuid(), planVersionId: z.string().uuid(),
   initialPrompt: z.string().min(1).max(50_000),
   ttlSeconds: z.number().int().min(10).max(3_600).default(300), budget: childBudgetInputSchema.optional(),
+  repositoryIds: z.array(z.string().uuid()).min(1).max(100)
+    .refine(ids => new Set(ids).size === ids.length, 'Duplicate repository ID').optional(),
 })
 export const childSessionStatusQuerySchema = z.object({
   childSessionId: z.string().uuid().optional(), cursor: z.string().min(1).max(8192).optional(),

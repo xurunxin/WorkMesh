@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomUUID } from 'node:crypto'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
-import type { Pool, PoolClient } from 'pg'
+import type { Pool, PoolClient, QueryResultRow } from 'pg'
 import { z } from 'zod'
 import type { FeatureConfig } from '@workmesh/config'
 import {
@@ -17,6 +17,7 @@ import {
   projectUpdatePublishInputSchema,
   projectUpdateInputSchema,
   providerActionInputSchema,
+  providerActionQuerySchema,
   providerConnectionInputSchema,
   repositoryContextInputSchema,
   repositoryInputSchema,
@@ -27,7 +28,7 @@ import {
 import { appendEvent, withTx } from '@workmesh/db'
 import {
   assertAcyclicProjectDependencies,
-  assertMergeReady,
+  assertMergeReady, allowedPath, matchesBranchPattern,
   assertRevision,
   canonicalWorkItemRelation,
   canonicalActionApprovalPayload,
@@ -41,9 +42,11 @@ import { authorizeTeamMutation, mutate, type CommandContext } from '../commands.
 import { assertSanitized } from '../agent/commands.js'
 import { assertAgentWrite, loadAgentSessionForMutation } from '../agent/guard.js'
 import type { ApiActor, RequestMeta } from '../agent/types.js'
-import { liveSessionReadPredicate } from '../live-read-authorization.js'
-import type { Paginator, PreparedPage } from '../pagination.js'
+import { liveSessionReadPredicate, liveHumanTeamReadPredicate } from '../live-read-authorization.js'
+import type { Paginator } from '../pagination.js'
+import { applicableAgentRepositoryContexts, liveRepositoryReadPredicate, type RepositoryRow } from './repository-access.js'
 import { loadRepositoryConfiguration } from './repository-configuration.js'
+import { getProviderAction } from './provider-action-query.js'
 
 type Helpers = {
   db: Pool
@@ -53,34 +56,28 @@ type Helpers = {
   features: FeatureConfig
   paginator: Paginator
 }
-type RepositoryRow = {
-  id: string
-  workspace_id: string
-  connection_id: string
-  team_id: string
-  external_id: string
-  full_name: string
-  default_branch: string
-  required_checks: string[]
-  provider: 'fake' | 'github' | 'gitea'
-}
-type RepositoryContextRow = RepositoryRow & {
-  context_id: string
-  project_id: string | null
-  work_item_id: string | null
-  session_id: string | null
-  base_branch: string
-  base_sha: string
-  branch_pattern: string
-  allowed_paths: string[]
-  permissions: Array<'read' | 'write_branch' | 'open_pr' | 'review' | 'merge' | 'ci'>
-  guidance_manifest_hash: string
-  context_created_at: Date
-}
 const uuid = z.string().uuid()
 const actor = (request: FastifyRequest) => request.actor as unknown as ApiActor
 const command = <T>(db: Pool, meta: RequestMeta, fn: (tx: PoolClient) => Promise<T>) =>
-  mutate(db, meta as unknown as CommandContext, fn)
+  mutate(db, meta as unknown as CommandContext, fn, {
+    beforeReserve: async tx => {
+      if (meta.actor.kind !== 'agent' || !meta.actor.agentSessionId) return
+      // A review child depends on the current parent scope. Lock both graphs
+      // before receipt FK locks, including when mutate returns an old receipt.
+      await tx.query('SELECT id FROM workspaces WHERE id=$1 FOR KEY SHARE', [meta.actor.workspaceId])
+      await loadAgentSessionForMutation(tx, meta.actor, meta.actor.agentSessionId)
+    },
+    authorizeReplay: async tx => {
+      if (meta.actor.kind !== 'agent' || !meta.actor.agentSessionId) return
+      const delegation = (await tx.query<{role:string;permissions_snapshot:string[];capability_scope:{repositoryIds?:string[]}}>(
+        `SELECT d.role,d.permissions_snapshot,d.capability_scope FROM agent_sessions s
+          JOIN delegations d ON d.id=s.delegation_id WHERE s.id=$1`,[meta.actor.agentSessionId])).rows[0]
+      if (delegation?.role !== 'reviewer' || !delegation.permissions_snapshot.includes('repo:read')) return
+      const repositories=new Set((await applicableAgentRepositoryContexts(tx,meta.actor)).rows.map(r=>r.id))
+      if (!delegation.capability_scope.repositoryIds?.length || delegation.capability_scope.repositoryIds.some(id=>!repositories.has(id)))
+        throw new DomainError('REPOSITORY_ACCESS_DENIED','Original review repository authorization is no longer valid')
+    },
+  })
 const one = <T>(rows: T[]): T => {
   const row = rows[0]
   if (!row) throw new DomainError('NOT_FOUND', 'Resource not found')
@@ -209,66 +206,6 @@ async function assertRepositoryRead(tx: PoolClient, current: ApiActor, repositor
   return context
 }
 
-function applicableAgentRepositoryContexts(
-  tx: PoolClient,
-  current: ApiActor,
-  repositoryId?: string,
-  page?: PreparedPage,
-) {
-  if (current.kind !== 'agent' || !current.agentSessionId)
-    throw new DomainError('AGENT_IDENTITY_REQUIRED', 'An agent session token is required')
-  const values = page?.values
-    ?? [current.agentSessionId, current.workspaceId, repositoryId ?? null]
-  const liveAuthorization = liveSessionReadPredicate(
-    current,
-    's.id',
-    's.workspace_id',
-    values,
-    'repo:read',
-  )
-  if (page) values.push(page.limit + 1)
-  return tx.query<RepositoryContextRow>(
-    `WITH applicable AS (
-       SELECT r.id,r.workspace_id,r.connection_id,r.team_id,r.external_id,r.full_name,r.default_branch,
-              r.required_checks,c.provider,rc.id AS context_id,rc.project_id,rc.work_item_id,rc.session_id,
-              rc.base_branch,rc.base_sha,rc.branch_pattern,rc.allowed_paths,rc.permissions,
-              rc.guidance_manifest_hash,rc.created_at AS context_created_at,
-              row_number() OVER (
-                PARTITION BY r.id
-                ORDER BY CASE WHEN rc.session_id IS NOT NULL THEN 0 WHEN rc.work_item_id IS NOT NULL THEN 1 ELSE 2 END,
-                         rc.created_at DESC,rc.id DESC
-              ) AS context_rank
-         FROM agent_sessions s
-         JOIN delegations d ON d.id=s.delegation_id AND d.status='active'
-         JOIN agent_definitions a ON a.id=s.agent_id AND a.is_active
-         JOIN agent_team_access ata ON ata.workspace_id=s.workspace_id AND ata.agent_id=s.agent_id
-           AND ata.team_id=s.team_id AND ata.revoked_at IS NULL
-         JOIN repository_contexts rc ON rc.workspace_id=s.workspace_id
-           AND ((rc.session_id IS NOT NULL AND rc.session_id=s.id)
-             OR (rc.work_item_id IS NOT NULL AND rc.work_item_id=s.work_item_id)
-             OR (rc.project_id IS NOT NULL AND rc.project_id=s.project_id))
-         JOIN repositories r ON r.id=rc.repository_id AND r.workspace_id=s.workspace_id
-           AND r.team_id=s.team_id AND r.active
-         JOIN provider_connections c ON c.id=r.connection_id AND c.workspace_id=s.workspace_id AND c.active
-        WHERE s.id=$1 AND s.workspace_id=$2
-          AND s.state NOT IN ('completed','failed','canceled')
-          AND ($3::uuid IS NULL OR r.id=$3)
-          AND 'repo:read'=ANY(d.permissions_snapshot)
-          AND 'repo:read'=ANY(a.approved_capabilities)
-          AND 'repo:read'=ANY(ata.approved_capabilities)
-          AND coalesce(d.capability_scope->'repositoryIds','[]'::jsonb) ? r.id::text
-          AND ${liveAuthorization}
-     )
-     SELECT id,workspace_id,connection_id,team_id,external_id,full_name,default_branch,
-            required_checks,provider,context_id,project_id,work_item_id,session_id,
-            base_branch,base_sha,branch_pattern,allowed_paths,permissions,
-            guidance_manifest_hash,context_created_at
-       FROM applicable WHERE context_rank=1${page?.predicate ? ` AND ${page.predicate}` : ''}
-       ORDER BY ${page?.orderBy ?? 'full_name,id'}${page ? ` LIMIT $${page.values.length}` : ''}`,
-    values,
-  )
-}
-
 async function assertAgentRepositoryWrite(
   tx: PoolClient,
   current: ApiActor,
@@ -346,24 +283,6 @@ async function assertDeliveryTarget(
   }
 }
 
-function allowedPath(path: string, scopes: string[]): boolean {
-  const normalized = path.replaceAll('\\', '/')
-  if (normalized.startsWith('/') || normalized.split('/').includes('..')) return false
-  return scopes.some((scope) => {
-    const prefix = scope.replaceAll('\\', '/').replace(/\/\*\*$/, '').replace(/\*$/, '')
-    const directory = prefix.replace(/\/$/, '')
-    return directory === '' || normalized === directory || normalized.startsWith(`${directory}/`)
-  })
-}
-
-function matchesBranchPattern(pattern: string, workItemKey: string, branch: string): boolean {
-  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const expression = escaped
-    .replaceAll('\\{workItemKey\\}', workItemKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-    .replaceAll('\\{slug\\}', '[a-z0-9]+(?:-[a-z0-9]+)*')
-  return new RegExp(`^${expression}$`).test(branch)
-}
-
 async function assertCreatedDeliveryBranch(
   tx: PoolClient,
   input: { repositoryId: string; sessionId: string; workItemId: string; branch: string },
@@ -406,6 +325,11 @@ async function assertEvidenceArtifacts(
 }
 
 export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
+  app.get('/api/v1/provider-actions/:id', async (request, reply) => {
+    providerActionQuerySchema.parse(request.query)
+    const result=await withTx(h.db, tx=>getProviderAction(tx,actor(request),id(request),h.features))
+    return reply.header('Cache-Control','no-store').send(result)
+  })
   app.post('/api/v1/provider-connections', async (request) => {
     const body = providerConnectionInputSchema.parse(request.body)
     requireHuman(actor(request), true)
@@ -535,6 +459,10 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       const repo = await assertRepositoryRead(tx, current, id(request))
       requireProviderFeature(h.features, repo.provider)
     }
+    const contextValues:unknown[]=[id(request),contextIds??null]
+    const finalRead=current.kind==='agent'
+      ? liveRepositoryReadPredicate(current,'rc.repository_id',contextValues,'rc.id')
+      : liveHumanTeamReadPredicate(current,'r.workspace_id','r.team_id',contextValues)
     return (await tx.query(
       `SELECT rc.*,(SELECT a.id FROM provider_actions a WHERE a.workspace_id=rc.workspace_id
          AND a.repository_id=rc.repository_id AND a.kind='resolve_repository_context'
@@ -542,10 +470,13 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
          coalesce(jsonb_agg(jsonb_build_object(
          'path',g.path,'blobSha',g.blob_sha,'contentHash',g.content_hash,'content',g.content) ORDER BY g.ordinal)
         FILTER(WHERE g.context_id IS NOT NULL),'[]'::jsonb) AS guidance
-       FROM repository_contexts rc LEFT JOIN repository_guidance_entries g ON g.context_id=rc.id
+       FROM repository_contexts rc JOIN repositories r ON r.id=rc.repository_id AND r.active
+       JOIN provider_connections c ON c.id=r.connection_id AND c.active
+       LEFT JOIN repository_guidance_entries g ON g.context_id=rc.id
        WHERE rc.repository_id=$1 AND ($2::uuid[] IS NULL OR rc.id=ANY($2))
+         AND ${finalRead} ${h.features.WORKMESH_BETA_GITEA ? '' : "AND c.provider<>'gitea'"}
        GROUP BY rc.id ORDER BY rc.created_at DESC`,
-      [id(request), contextIds ?? null],
+      contextValues,
     )).rows
   }))
 
@@ -631,6 +562,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     const body = deliveryArtifactInputSchema.parse(request.body)
     return command(h.db, h.meta(request, body), async tx => {
       assertSanitized(body, 'artifact')
+      const producer=(await tx.query<{role:string}>(`SELECT d.role FROM agent_sessions s JOIN delegations d ON d.id=s.delegation_id
+        WHERE s.id=$1 AND s.workspace_id=$2 AND s.agent_actor_id=$3`,[body.sessionId,actor(request).workspaceId,actor(request).id])).rows[0]
+      if(producer?.role==='reviewer'&&body.type!=='code_review') throw new DomainError('REVIEW_ARTIFACT_REQUIRED','Reviewer sessions may publish only a code_review artifact')
       const repositoryId = body.repositoryId
       if (repositoryId) await assertAgentRepositoryWrite(tx, actor(request), { ...body, repositoryId }, 'artifact:write')
       else {
@@ -792,11 +726,25 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
     actualChecksum: row.actual_checksum, expiresAt: row.expires_at.toISOString(), verifiedAt: row.verified_at?.toISOString() ?? null,
     artifactId: row.artifact_id, lastErrorCode: row.last_error?.split(':', 1)[0] ?? null,
   })
+  const uploadReadPredicate=(request:FastifyRequest,values:unknown[],ownHuman=false):string=>{
+    const current=actor(request)
+    if(current.kind==='human') {
+      const live=liveHumanTeamReadPredicate(current,'u.workspace_id','w.team_id',values)
+      values.push(current.id)
+      return `${live}${ownHuman?` AND u.requested_by_actor_id=$${values.length}`:` AND $${values.length}::uuid IS NOT NULL`}`
+    }
+    const live=liveSessionReadPredicate(current,'u.session_id','u.workspace_id',values)
+    const repo=liveRepositoryReadPredicate(current,'u.repository_id',values)
+    return `${live} AND EXISTS(SELECT 1 FROM agent_sessions own WHERE own.id=u.session_id AND own.work_item_id=u.work_item_id)
+      AND (u.repository_id IS NULL OR ${repo})`
+  }
 
   app.get('/api/v1/artifact-upload-intents/:id', async request => {
+    const values:unknown[]=[id(request),actor(request).workspaceId]
+    const liveRead=uploadReadPredicate(request,values,true)
     const row = one((await h.db.query<{id:string;status:string;filename:string;mime_type:string;size_bytes:number;expected_checksum:string;actual_checksum:string|null;expires_at:Date;verified_at:Date|null;artifact_id:string|null;last_error:string|null;session_id:string|null;requested_by_actor_id:string;team_id:string}>(
-      `SELECT u.id,u.status,u.filename,u.mime_type,u.size_bytes,u.expected_checksum,u.actual_checksum,u.expires_at,u.verified_at,u.artifact_id,u.last_error,u.session_id,u.requested_by_actor_id,w.team_id FROM artifact_upload_intents u JOIN work_items w ON w.id=u.work_item_id WHERE u.id=$1 AND u.workspace_id=$2`,
-      [id(request), actor(request).workspaceId],
+      `SELECT u.id,u.status,u.filename,u.mime_type,u.size_bytes,u.expected_checksum,u.actual_checksum,u.expires_at,u.verified_at,u.artifact_id,u.last_error,u.session_id,u.requested_by_actor_id,w.team_id FROM artifact_upload_intents u JOIN work_items w ON w.id=u.work_item_id WHERE u.id=$1 AND u.workspace_id=$2 AND w.deleted_at IS NULL AND ${liveRead}`,
+      values,
     )).rows)
     if (actor(request).kind === 'agent') {
       if (!row.session_id || row.session_id !== actor(request).agentSessionId) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Upload status is outside the session scope')
@@ -849,17 +797,25 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
       const liveRead = liveSessionReadPredicate(actor(request), '$1', '$2', values)
       if (!(await h.db.query(`SELECT 1 FROM agent_sessions s WHERE s.id=$1 AND s.workspace_id=$2 AND s.work_item_id=$3 AND ${liveRead}`, values)).rowCount) throw new DomainError('RESOURCE_SCOPE_DENIED', 'Artifact list is outside the live session scope')
     }
-    return (await h.db.query(`SELECT a.id,a.type,a.title,a.mime_type,COALESCE(a.size_bytes,u.size_bytes) AS size_bytes,a.checksum,a.source_tool,a.created_at,a.producer_actor_id,p.display_name AS producer_display_name,p.kind AS producer_kind,l.project_id,l.work_item_id,l.session_id,l.plan_step_id,l.repository_id,l.pull_request_id,u.id AS upload_intent_id FROM artifacts a JOIN artifact_links l ON l.artifact_id=a.id JOIN actors p ON p.id=a.producer_actor_id LEFT JOIN artifact_upload_intents u ON u.artifact_id=a.id AND u.workspace_id=a.workspace_id WHERE a.workspace_id=$1 AND l.work_item_id=$2 ORDER BY a.created_at DESC,a.id DESC`, [actor(request).workspaceId, workItemId])).rows
+    const values:unknown[]=[actor(request).workspaceId,workItemId]
+    const current=actor(request)
+    values.push(current.agentSessionId??null)
+    let live=current.kind==='human'?liveHumanTeamReadPredicate(current,'a.workspace_id','(SELECT team_id FROM work_items WHERE id=$2)',values):liveSessionReadPredicate(current,'(SELECT id FROM agent_sessions WHERE id=$3 AND work_item_id=$2)','a.workspace_id',values)
+    live+=` AND ($3::uuid IS NULL OR $3::uuid IS NOT NULL)`
+    if(current.kind==='agent') live+=` AND (l.repository_id IS NULL OR ${liveRepositoryReadPredicate(current,'l.repository_id',values)})`
+    return (await h.db.query(`SELECT a.id,a.type,a.title,a.mime_type,COALESCE(a.size_bytes,u.size_bytes) AS size_bytes,a.checksum,a.source_tool,a.created_at,a.producer_actor_id,p.display_name AS producer_display_name,p.kind AS producer_kind,l.project_id,l.work_item_id,l.session_id,l.plan_step_id,l.repository_id,l.pull_request_id,u.id AS upload_intent_id FROM artifacts a JOIN artifact_links l ON l.artifact_id=a.id JOIN actors p ON p.id=a.producer_actor_id LEFT JOIN artifact_upload_intents u ON u.artifact_id=a.id AND u.workspace_id=a.workspace_id WHERE a.workspace_id=$1 AND l.work_item_id=$2 AND ${live} ORDER BY a.created_at DESC,a.id DESC`, values)).rows
   })
 
   app.get('/api/v1/artifact-upload-intents/:id/download', async request => {
+    const values:unknown[]=[id(request),actor(request).workspaceId]
+    const liveRead=uploadReadPredicate(request,values)
     const upload = one((await h.db.query<{
       storage_key: string; session_id: string | null; team_id: string; status: string
     }>(
       `SELECT u.storage_key,u.session_id,w.team_id,u.status
          FROM artifact_upload_intents u JOIN work_items w ON w.id=u.work_item_id
-        WHERE u.id=$1 AND u.workspace_id=$2`,
-      [id(request), actor(request).workspaceId],
+        WHERE u.id=$1 AND u.workspace_id=$2 AND w.deleted_at IS NULL AND ${liveRead}`,
+      values,
     )).rows)
     if (actor(request).kind === 'agent') {
       if (actor(request).agentSessionId !== upload.session_id)
@@ -911,7 +867,7 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            pull_request_id,reviewer_session_id,reviewer_actor_id,artifact_id,head_sha,verdict,summary,evidence,metadata)
          VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
         [id(request), body.sessionId, actor(request).id, body.artifactId, body.headSha,
-          body.verdict, body.summary, body.evidence, body.metadata],
+          body.verdict, body.summary, JSON.stringify(body.evidence), body.metadata],
       )).rows)
       for (const finding of body.findings)
         await tx.query(
@@ -1078,38 +1034,63 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
   })
 
   app.get('/api/v1/projects/:id/delivery', async request => withTx(h.db, async tx => {
-    const project = one((await tx.query<{ team_id: string }>('SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL', [id(request), actor(request).workspaceId])).rows)
-    await h.readableTeam(request, project.team_id)
-    const providers = (await tx.query<{ provider: string }>(
-      `SELECT DISTINCT connection.provider
-         FROM pull_request_projections pull_request
-         JOIN repositories repository ON repository.id=pull_request.repository_id
-         JOIN provider_connections connection ON connection.id=repository.connection_id
-         JOIN work_items work_item ON work_item.id=pull_request.work_item_id
-        WHERE work_item.project_id=$1 AND pull_request.workspace_id=$2`,
-      [id(request), actor(request).workspaceId],
-    )).rows
-    for (const provider of providers) requireProviderFeature(h.features, provider.provider)
+    const query=z.object({pullRequestId:uuid.optional()}).strict().parse(request.query)
+    const current=actor(request)
+    const scopePredicate=(values:unknown[],workItemSql?:string,repositorySql?:string):string=>{
+      if(current.kind==='human') return liveHumanTeamReadPredicate(current,'$2','(SELECT team_id FROM projects WHERE id=$1)',values)
+      const live=liveSessionReadPredicate(current,'reader.id','reader.workspace_id',values)
+      values.push(current.agentSessionId??null)
+      const sid=`$${values.length}`
+      const project=`EXISTS(SELECT 1 FROM agent_sessions reader LEFT JOIN work_items item ON item.id=reader.work_item_id AND item.deleted_at IS NULL
+        WHERE reader.id=${sid} AND reader.workspace_id=$2 AND ${live}
+          AND (reader.project_id=$1 OR item.project_id=$1)
+          ${workItemSql?`AND (reader.work_item_id IS NULL OR reader.work_item_id=${workItemSql})`:''})`
+      return repositorySql?`${project} AND (${repositorySql} IS NULL OR ${liveRepositoryReadPredicate(current,repositorySql,values)})`:project
+    }
+    const values:unknown[]=[id(request),current.workspaceId]
+    const project=one((await tx.query<{team_id:string}>(`SELECT team_id FROM projects WHERE id=$1 AND workspace_id=$2 AND deleted_at IS NULL
+      AND ${scopePredicate(values)}`,values)).rows)
+    const deliveryQuery=<T extends QueryResultRow=QueryResultRow>(sql:string,args:unknown[],wi?:string,repo?:string)=>{
+      const params:unknown[]=[args[0],current.workspaceId]
+      let predicate=scopePredicate(params,wi,repo)
+      if(query.pullRequestId&&repo){ params.push(query.pullRequestId);predicate+=` AND ${repo==='l.repository_id'?'l.pull_request_id':'pr.id'}=$${params.length}` }
+      if(current.kind==='agent'&&sql.includes('FROM project_updates')) {
+        params.push(current.id,current.agentSessionId)
+        predicate+=` AND (author_actor_id=$${params.length-1} OR EXISTS(SELECT 1 FROM agent_sessions r WHERE r.id=$${params.length} AND r.work_item_id IS NULL))`
+      }
+      if(current.kind==='agent'&&sql.includes('FROM project_dependencies')) {
+        params.push(current.agentSessionId)
+        predicate+=` AND EXISTS(SELECT 1 FROM agent_sessions r JOIN delegations authority ON authority.id=r.delegation_id
+          WHERE r.id=$${params.length} AND coalesce(authority.capability_scope->'projectIds','[]'::jsonb) ? d.depends_on_project_id::text)`
+      }
+      if(query.pullRequestId&&sql.includes('structured_reviews sr')) predicate+=' AND sr.head_sha=pr.head_sha'
+      if(query.pullRequestId&&sql.includes('provider_review_projections rv')) predicate+=' AND rv.head_sha=pr.head_sha'
+      if(query.pullRequestId&&sql.includes('merge_approval_bindings b')) predicate+=' AND b.head_sha=pr.head_sha'
+      const split=sql.search(/\b(?:GROUP BY|ORDER BY)\b/)
+      sql=sql.slice(0,split)+` AND ${predicate} `+sql.slice(split)
+      if(query.pullRequestId) sql=sql.replace(/LIMIT 200/g,'LIMIT 10001')
+      return tx.query<T>(sql,params)
+    }
     const [
       milestones, updates, artifacts, dependencies, suggestions, pullRequests,
       providerReviews, structuredReviews, structuredFindings, checks, mergeApprovals,
     ] = await Promise.all([
-      tx.query(`SELECT m.*,count(w.id)::int AS total,count(w.id) FILTER(WHERE s.category='completed')::int AS completed
+      deliveryQuery(`SELECT m.*,count(w.id)::int AS total,count(w.id) FILTER(WHERE s.category='completed')::int AS completed
         FROM project_milestones m LEFT JOIN work_items w ON w.milestone_id=m.id AND w.deleted_at IS NULL
-        LEFT JOIN workflow_states s ON s.id=w.status_id WHERE m.project_id=$1 GROUP BY m.id ORDER BY m.created_at LIMIT 200`, [id(request)]),
-      tx.query('SELECT * FROM project_updates WHERE project_id=$1 ORDER BY created_at DESC LIMIT 200', [id(request)]),
-      tx.query('SELECT a.*,l.plan_step_id,l.repository_id,l.pull_request_id FROM artifacts a JOIN artifact_links l ON l.artifact_id=a.id WHERE l.project_id=$1 ORDER BY a.created_at DESC LIMIT 200', [id(request)]),
-      tx.query(
+        LEFT JOIN workflow_states s ON s.id=w.status_id WHERE m.project_id=$1 GROUP BY m.id ORDER BY m.created_at LIMIT 200`, [id(request)],'w.id'),
+      deliveryQuery('SELECT * FROM project_updates WHERE project_id=$1 ORDER BY created_at DESC LIMIT 200', [id(request)]),
+      deliveryQuery('SELECT a.*,l.plan_step_id,l.repository_id,l.pull_request_id FROM artifacts a JOIN artifact_links l ON l.artifact_id=a.id WHERE l.project_id=$1 ORDER BY a.created_at DESC LIMIT 200', [id(request)],'l.work_item_id','l.repository_id'),
+      deliveryQuery(
         `SELECT d.depends_on_project_id,p.name AS depends_on_project_name,
                 p.status AS depends_on_project_status
            FROM project_dependencies d
            JOIN projects p ON p.id=d.depends_on_project_id AND p.workspace_id=$2
           WHERE d.project_id=$1
           ORDER BY p.name,p.id LIMIT 200`,
-        [id(request), actor(request).workspaceId],
+        [id(request), current.workspaceId],
       ),
-      tx.query('SELECT * FROM completion_suggestions WHERE project_id=$1 ORDER BY created_at DESC LIMIT 200', [id(request)]),
-      tx.query<{
+      deliveryQuery('SELECT * FROM completion_suggestions WHERE project_id=$1 ORDER BY created_at DESC LIMIT 200', [id(request)],'work_item_id'),
+      deliveryQuery<{
         id: string
         provider: string
         number: number
@@ -1129,9 +1110,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            LEFT JOIN artifact_links l ON l.artifact_id=pr.artifact_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
           ORDER BY pr.updated_at DESC LIMIT 200`,
-        [id(request), actor(request).workspaceId],
+        [id(request), current.workspaceId],'w.id','pr.repository_id',
       ),
-      tx.query<{
+      deliveryQuery<{
         pull_request_id: string; state: string; head_sha: string; author_external_id: string;
         author_login: string | null; uri: string | null; source_delivery_id: string
       }>(
@@ -1141,9 +1122,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND rv.workspace_id=$2
           ORDER BY rv.updated_at DESC LIMIT 200`,
-        [id(request), actor(request).workspaceId],
+        [id(request), current.workspaceId],'w.id','pr.repository_id',
       ),
-      tx.query<{
+      deliveryQuery<{
         id: string; pull_request_id: string; verdict: string; head_sha: string;
         reviewer_actor_id: string; artifact_id: string; summary: string
       }>(
@@ -1153,9 +1134,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
           ORDER BY sr.created_at DESC LIMIT 200`,
-        [id(request), actor(request).workspaceId],
+        [id(request), current.workspaceId],'w.id','pr.repository_id',
       ),
-      tx.query<{
+      deliveryQuery<{
         review_id: string; severity: string; file: string; line: number;
         summary: string; evidence: string; recommendation: string
       }>(
@@ -1166,9 +1147,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
           ORDER BY f.created_at,f.id LIMIT 200`,
-        [id(request), actor(request).workspaceId],
+        [id(request), current.workspaceId],'w.id','pr.repository_id',
       ),
-      tx.query<{
+      deliveryQuery<{
         pull_request_id: string
         name: string
         status: string
@@ -1186,9 +1167,9 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
           ORDER BY ci.pull_request_id,ci.name,
                    ci.provider_observed_at DESC NULLS LAST,
                    ci.provider_observation_rank DESC,ci.updated_at DESC,ci.external_id DESC LIMIT 200`,
-        [id(request), actor(request).workspaceId],
+        [id(request), current.workspaceId],'w.id','pr.repository_id',
       ),
-      tx.query<{
+      deliveryQuery<{
         approval_id: string; provider: string; repository: string; pull_request_id: string;
         pull_request_number: number; head_sha: string; method: string; status: string;
         invalidated_at: Date | null; invalidation_reason: string | null
@@ -1205,9 +1186,13 @@ export function registerDeliveryRoutes(app: FastifyInstance, h: Helpers): void {
            JOIN work_items w ON w.id=pr.work_item_id
           WHERE w.project_id=$1 AND pr.workspace_id=$2
           ORDER BY b.created_at DESC LIMIT 200`,
-        [id(request), actor(request).workspaceId],
+        [id(request), current.workspaceId],'w.id','pr.repository_id',
       ),
     ])
+    if(query.pullRequestId && !pullRequests.rows.length) throw new DomainError('NOT_FOUND','Resource not found')
+    if(query.pullRequestId && [milestones,updates,artifacts,dependencies,suggestions,pullRequests,providerReviews,structuredReviews,structuredFindings,checks,mergeApprovals].some(result=>result.rows.length>10000))
+      throw new DomainError('RESULT_TOO_LARGE','Exact delivery evidence exceeds the transfer bound; no approval is inferred')
+    for(const pr of pullRequests.rows) requireProviderFeature(h.features,pr.provider)
     return {
       milestones: milestones.rows,
       updates: updates.rows,

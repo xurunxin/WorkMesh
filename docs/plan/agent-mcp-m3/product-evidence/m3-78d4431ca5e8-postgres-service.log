@@ -1,0 +1,69 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 10:30:48.335 UTC [42] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 10:30:48.352 UTC [42] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 10:30:48.354 UTC [45] LOG:  database system was shut down at 2026-10-10 10:30:48 UTC
+2026-10-10 10:30:48.357 UTC [42] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 10:30:48.465 UTC [42] LOG:  received fast shutdown request
+2026-10-10 10:30:48.465 UTC [42] LOG:  aborting any active transactions
+2026-10-10 10:30:48.471 UTC [42] LOG:  background worker "logical replication launcher" (PID 48) exited with exit code 1
+2026-10-10 10:30:48.471 UTC [43] LOG:  shutting down
+2026-10-10 10:30:48.471 UTC [43] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 10:30:48.476 UTC [43] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.005 s, sync=0.001 s, total=0.005 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 10:30:48.481 UTC [42] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 10:30:47.975 UTC [36] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 10:30:48.581 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 10:30:48.581 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 10:30:48.581 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 10:30:48.585 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 10:30:48.586 UTC [58] LOG:  database system was shut down at 2026-10-10 10:30:48 UTC
+2026-10-10 10:30:48.589 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 10:30:58.384 UTC [69] ERROR:  IMMUTABLE_STAGE3_FACT
+2026-10-10 10:30:58.384 UTC [69] CONTEXT:  PL/pgSQL function prevent_stage3_fact_mutation() line 2 at RAISE
+2026-10-10 10:30:58.384 UTC [69] STATEMENT:  UPDATE repository_contexts SET permissions=array_append(permissions,'ci') WHERE repository_id=$1
+2026-10-10 10:30:58.715 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 10:30:58.951 UTC [70] ERROR:  new row for relation "delegations" violates check constraint "delegations_check1"
+2026-10-10 10:30:58.951 UTC [70] DETAIL:  Failing row contains (041cd07b-c9b9-4cd9-ad31-4603e5f02be4, 65a63db2-7aa8-4077-8009-2d0579c56e65, 1668b294-9452-4b43-bf6b-603c6e1af885, 9e19bf3f-ffa2-46d2-b4db-763f7eccbe5b, af58921f-917b-48e5-b1e4-faf47d9f0cb7, 9067e346-4357-4346-80d3-9d843c6af88a, 26acd2c4-ee7c-401a-a38f-a554e3b27f02, executor, work_item, 26acd2c4-ee7c-401a-a38f-a554e3b27f02, {artifact:write,repo:read,repo:write_branch,repo:open_pr,repo:me..., {"teamIds": ["1668b294-9452-4b43-bf6b-603c6e1af885"], "projectId..., revoked, 1, null, null, null, 2026-10-10 10:30:58.894408+00, 2026-10-10 10:30:58.894408+00).
+2026-10-10 10:30:58.951 UTC [70] STATEMENT:  UPDATE delegations SET status='revoked' WHERE id=$1
+2026-10-10 10:30:59.945 UTC [70] WARNING:  there is no transaction in progress
+2026-10-10 10:31:00.681 UTC [71] ERROR:  new row for relation "delegations" violates check constraint "delegations_check1"
+2026-10-10 10:31:00.681 UTC [71] DETAIL:  Failing row contains (42fea016-f4ff-45e0-a358-f5326081f57d, 120ee449-aa2d-425e-a043-01fe44db560c, f0500545-86ca-44c7-88c6-4d7bed671959, 6a499aeb-3307-4114-9bde-7e7c81e25f87, 92b0b7a0-39e4-4e31-9a4b-6e1e65e792b2, ed3a0910-4aee-48bd-8648-8cc08c9d0916, 334bf3af-088d-4c85-b527-42688afe01fe, executor, work_item, 334bf3af-088d-4c85-b527-42688afe01fe, {artifact:write,repo:read,repo:write_branch,repo:open_pr,repo:me..., {"teamIds": ["f0500545-86ca-44c7-88c6-4d7bed671959"], "projectId..., revoked, 1, null, null, null, 2026-10-10 10:31:00.16545+00, 2026-10-10 10:31:00.16545+00).
+2026-10-10 10:31:00.681 UTC [71] STATEMENT:  UPDATE delegations SET status='revoked' WHERE id=$1

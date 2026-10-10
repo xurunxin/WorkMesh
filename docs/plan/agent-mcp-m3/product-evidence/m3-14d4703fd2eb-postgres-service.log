@@ -1,0 +1,92 @@
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... UTC
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2026-10-10 10:27:16.769 UTC [43] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 10:27:16.770 UTC [43] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 10:27:16.771 UTC [46] LOG:  database system was shut down at 2026-10-10 10:27:16 UTC
+2026-10-10 10:27:16.773 UTC [43] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2026-10-10 10:27:16.895 UTC [43] LOG:  received fast shutdown request
+2026-10-10 10:27:16.895 UTC [43] LOG:  aborting any active transactions
+2026-10-10 10:27:16.897 UTC [43] LOG:  background worker "logical replication launcher" (PID 49) exited with exit code 1
+2026-10-10 10:27:16.898 UTC [44] LOG:  shutting down
+2026-10-10 10:27:16.898 UTC [44] LOG:  checkpoint starting: shutdown immediate
+2026-10-10 10:27:16.902 UTC [44] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.004 s, sync=0.001 s, total=0.005 s; sync files=301, longest=0.001 s, average=0.000 s; distance=4283 kB, estimate=4283 kB; lsn=0/1925D70, redo lsn=0/1925D70
+2026-10-10 10:27:16.908 UTC [43] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+sh: locale: not found
+2026-10-10 10:27:16.475 UTC [37] WARNING:  no usable system locales were found
+initdb: warning: enabling "trust" authentication for local connections
+initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+2026-10-10 10:27:17.007 UTC [1] LOG:  starting PostgreSQL 16.15 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+2026-10-10 10:27:17.007 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2026-10-10 10:27:17.007 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2026-10-10 10:27:17.027 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2026-10-10 10:27:17.028 UTC [65] LOG:  database system was shut down at 2026-10-10 10:27:16 UTC
+2026-10-10 10:27:17.030 UTC [1] LOG:  database system is ready to accept connections
+2026-10-10 10:27:25.470 UTC [76] ERROR:  new row for relation "agent_definitions" violates check constraint "agent_definitions_check"
+2026-10-10 10:27:25.470 UTC [76] DETAIL:  Failing row contains (0d181895-69d2-4e5a-b3f8-3ee527773a16, 39ab834e-16c9-4a9a-bbe6-3497e47307ef, 4d93d9c1-5e76-44b7-bc4f-b9939c24524a, recover-8da31404-5177-4af5-9ddd-6f13088a5090, Agent, null, null, {}, {}, {}, {artifact:write,repo:read,repo:write_branch,repo:open_pr,repo:me..., {artifact:write,repo:read,repo:write_branch,repo:open_pr,repo:me..., {}, 1, t, 1, 2026-10-10 10:27:25.456716+00, 2026-10-10 10:27:25.456716+00, null, null, null).
+2026-10-10 10:27:25.470 UTC [76] STATEMENT:  UPDATE agent_definitions SET approved_capabilities=array_append(approved_capabilities,'ci:run') WHERE id=$1
+2026-10-10 10:27:29.517 UTC [77] ERROR:  new row for relation "artifacts" violates check constraint "artifacts_check"
+2026-10-10 10:27:29.517 UTC [77] DETAIL:  Failing row contains (5816b73b-aa25-42cb-9d55-97e59ee3d874, 23dc7b2b-c297-41d5-9dd7-a92b1a00d2f6, 801f6c2d-9b7d-4283-a663-fd8e62a38784, f26005ac-74aa-4b6f-ba77-21a2c0166fc2, b8dd66c9-ab29-4f28-8729-397274a53bb5, code_review, Independent exact-head review, null, null, null, null, sha256:ddddddddddddddddddddddddddddddddddddddddddddddddddddddddd..., worker-test, null, {}, 2026-10-10 10:27:29.516758+00).
+2026-10-10 10:27:29.517 UTC [77] STATEMENT:  INSERT INTO artifacts(
+	      workspace_id,session_id,work_item_id,producer_actor_id,type,title,checksum,source_tool,metadata)
+	      VALUES($1,$2,$3,$4,'code_review','Independent exact-head review',$5,'worker-test','{}'::jsonb) RETURNING id
+2026-10-10 10:27:40.954 UTC [79] ERROR:  duplicate key value violates unique constraint "agent_webhook_deliveries_agent_id_delivery_id_key"
+2026-10-10 10:27:40.954 UTC [79] DETAIL:  Key (agent_id, delivery_id)=(7b0d4e7d-4210-4e81-ae42-1faff535e6fa, del_9e599309-a95f-43d6-93cc-9f76303319c7) already exists.
+2026-10-10 10:27:40.954 UTC [79] STATEMENT:  INSERT INTO agent_webhook_deliveries(agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload) SELECT agent_id,endpoint_id,secret_version,event_id,delivery_id,event_type,session_id,payload FROM agent_webhook_deliveries WHERE agent_id=$1 AND delivery_id=$2 RETURNING id
+2026-10-10 10:28:47.089 UTC [84] LOG:  skipping analyze of "agent_definitions" --- lock not available
+2026-10-10 10:28:47.089 UTC [84] LOG:  skipping vacuum of "agent_sessions" --- lock not available
+2026-10-10 10:28:47.089 UTC [84] LOG:  skipping vacuum of "agent_webhook_deliveries" --- lock not available
+2026-10-10 10:28:47.753 UTC [85] ERROR:  DELEGATION_REQUIRES_HUMAN_PRINCIPAL_AND_AGENT_ACTOR
+2026-10-10 10:28:47.753 UTC [85] CONTEXT:  PL/pgSQL function enforce_delegation_actor_kinds() line 6 at RAISE
+2026-10-10 10:28:47.753 UTC [85] STATEMENT:  INSERT INTO delegations(
+	       workspace_id,team_id,agent_id,agent_actor_id,principal_human_actor_id,role,scope_type,scope_id,
+	       permissions_snapshot,capability_scope
+	     ) VALUES($1,$2,$3,$4,$5,'executor','automation',$6,$7,$8) RETURNING id
+2026-10-10 10:28:49.616 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:49.714 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:49.827 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:49.944 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:50.056 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:50.164 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:50.279 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:50.359 UTC [85] WARNING:  there is no transaction in progress
+2026-10-10 10:28:50.359 UTC [83] WARNING:  there is no transaction in progress
+2026-10-10 10:28:53.344 UTC [83] ERROR:  new row for relation "notification_deliveries" violates check constraint "notification_delivery_kind_required"
+2026-10-10 10:28:53.344 UTC [83] DETAIL:  Failing row contains (b56b539c-8e3e-463e-8a2a-b9044a159a5b, null, webhook, pending, 0, 2026-10-10 10:28:53.343538+00, null, null, 0, notification:da70a9af-613c-4396-8085-b6dc3dcafb20:target:0cbd8dc..., null, null, null, 2026-10-10 10:28:53.343538+00, null, 30d23f37-32ed-449a-a9d8-1598a97b90de, da70a9af-613c-4396-8085-b6dc3dcafb20, 0cbd8dc7-724a-463d-aed1-44768b3a16be, a99363c2-4a99-42fc-9f25-bdf2fa9b0265, 1, null, null, not_sent, null, 0, 1, null).
+2026-10-10 10:28:53.344 UTC [83] STATEMENT:  INSERT INTO notification_deliveries(workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key)
+	        SELECT workspace_id,intent_id,channel_target_id,recipient_actor_id,target_revision,channel,effect_key FROM notification_deliveries WHERE id=$1
+2026-10-10 10:28:53.524 UTC [85] WARNING:  there is no transaction in progress
