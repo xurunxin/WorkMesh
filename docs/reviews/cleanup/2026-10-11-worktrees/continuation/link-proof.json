@@ -1,0 +1,121 @@
+{
+  "fixtureRoot": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3",
+  "version": "git version 2.55.0.windows.3",
+  "powershell": "7.6.6",
+  "gitExe": "C:\\Program Files\\Git\\cmd\\git.exe",
+  "gitExeSha256": "7B7971DD13F0C3A284E538601F2F9770B3A87DFACCB5FB52D68141C67ED22364",
+  "nativeGitSha256": "1A0043555D254618F2D56C936C3D9A1FBFB878BC878416A133C346BC7835EDA9",
+  "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\worktree",
+  "sentinel": "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\sentinel-store\\sentinel.bin",
+  "sentinelSha256Before": "DAA9C52A5907B04C424984647B5E9551DB8C2E8767CED27DF2B21C8A9176B971",
+  "calls": [
+    {
+      "input": [
+        "git",
+        "init",
+        "--bare",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\repo.git"
+      ],
+      "start": "2026-10-10T17:21:54.2195344Z",
+      "end": "2026-10-10T17:21:54.2932804Z",
+      "output": "Initialized empty Git repository in C:/Users/xurx/.tds/workspaces/01a126be-7aba-7b1d-a57a-f58317f89a67/.tmp/cleanup-link-proof-20261011-3/repo.git/\r\n",
+      "exit": 0
+    },
+    {
+      "input": [
+        "git",
+        "--git-dir=C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\repo.git",
+        "hash-object",
+        "-w",
+        "--stdin"
+      ],
+      "stdin": "fixture-tracked\n",
+      "start": "2026-10-10T17:21:54.3117823Z",
+      "end": "2026-10-10T17:21:54.3535576Z",
+      "stdout": "0b18d805666e649ae5912971a64bb5cd85867ea5\n",
+      "stderr": "",
+      "exit": 0
+    },
+    {
+      "input": [
+        "git",
+        "--git-dir=C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\repo.git",
+        "mktree"
+      ],
+      "stdin": "100644 blob 0b18d805666e649ae5912971a64bb5cd85867ea5\ttracked.txt\n",
+      "start": "2026-10-10T17:21:54.3577034Z",
+      "end": "2026-10-10T17:21:54.3976706Z",
+      "stdout": "d7f30f1797ca47221c68c11c6733c6fe883934fb\n",
+      "stderr": "",
+      "exit": 0
+    },
+    {
+      "input": [
+        "git",
+        "--git-dir=C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\repo.git",
+        "-c",
+        "user.name=cleanup-fixture",
+        "-c",
+        "user.email=cleanup-fixture@example.invalid",
+        "commit-tree",
+        "d7f30f1797ca47221c68c11c6733c6fe883934fb"
+      ],
+      "stdin": "junction boundary fixture\n",
+      "start": "2026-10-10T17:21:54.4010323Z",
+      "end": "2026-10-10T17:21:54.4446457Z",
+      "stdout": "f72bf2fefbc793f441be46032296ce6203a1e2bb\n",
+      "stderr": "",
+      "exit": 0
+    },
+    {
+      "input": [
+        "git",
+        "--git-dir=C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\repo.git",
+        "worktree",
+        "add",
+        "--detach",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\worktree",
+        "f72bf2fefbc793f441be46032296ce6203a1e2bb"
+      ],
+      "start": "2026-10-10T17:21:54.4448491Z",
+      "end": "2026-10-10T17:21:54.5357729Z",
+      "output": "Preparing worktree (detached HEAD f72bf2f)\r\nHEAD is now at f72bf2f junction boundary fixture\r\n",
+      "exit": 0
+    },
+    {
+      "input": [
+        "git",
+        "--git-dir=C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\repo.git",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\worktree"
+      ],
+      "start": "2026-10-10T17:21:54.5965546Z",
+      "end": "2026-10-10T17:21:54.6737072Z",
+      "output": "",
+      "exit": 0
+    }
+  ],
+  "gitRemoveExit": 0,
+  "junctionRetainedByGit": true,
+  "hardlinkRemovedByGit": true,
+  "sentinelSha256AfterGit": "DAA9C52A5907B04C424984647B5E9551DB8C2E8767CED27DF2B21C8A9176B971",
+  "nativeLinkRemoval": {
+    "input": [
+      "Remove-Item",
+      "-LiteralPath",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\.tmp\\cleanup-link-proof-20261011-3\\worktree\\node_modules\\sentinel-junction",
+      "-ErrorAction",
+      "Stop"
+    ],
+    "start": "2026-10-10T17:21:54.6894362Z",
+    "end": "2026-10-10T17:21:54.6952623Z",
+    "exit": 0,
+    "output": "",
+    "recursive": false,
+    "force": false,
+    "linkExistsAfter": false
+  },
+  "sentinelSha256AfterLinkRemoval": "DAA9C52A5907B04C424984647B5E9551DB8C2E8767CED27DF2B21C8A9176B971",
+  "fixtureWorktreeExistsAfter": false
+}

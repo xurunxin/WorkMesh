@@ -1,0 +1,229 @@
+{
+  "recordedAt": "2026-10-10T17:45:17.040545+00:00",
+  "main": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+  "scope": "用户本卡持续授权；#53 不重做；新 #54–57 逐 path 核完后先提交再执行",
+  "candidates": [
+    {
+      "todo": 54,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61",
+      "branch": "tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61",
+      "head": "883d279d3b5978680672a6c1d7364d421d0afd10",
+      "pr": 212,
+      "main": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "logicalBytes": 2466235470,
+      "files": 63471,
+      "sourceKinds": {
+        "tracked": 10084,
+        "git-administration": 1,
+        "tracked-runtime-variant": 10,
+        "new-preserved-evidence": 161,
+        "rebuildable-output": 50189,
+        "archived-evidence": 709,
+        "runtime-original": 2317
+      },
+      "windowsTrackedVariants": 10,
+      "redactionRecords": 1,
+      "links": 1925,
+      "junctionsExpectedResidual": 1925,
+      "symlinksGitRemoves": 0,
+      "hardlinkedFileCount": 0,
+      "readOnlyFiles": [],
+      "historicalProtectionConflicts": [],
+      "exactSourceMapping": "mapping-54.json.gz",
+      "metadataProof": "metadata-54.json.gz",
+      "packagesPinnedInHistory": 609,
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a11ed4-1e73-7802-8bf8-4899c5405f61"
+      ],
+      "declaredJunctionFinish": "只有正式 Git 成功后，原始 junction 本体逐项非递归 Remove-Item -LiteralPath，之后逐项移除经证实的普通空目录；不追随目标",
+      "onFailureOrRejection": "立即停止原目标，不重试/Force/改属性 ACL/换工具/父删绕过；其它独立候选另行核验"
+    },
+    {
+      "todo": 55,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6",
+      "branch": "tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6",
+      "head": "3ff46eb20616dc5488ba46b77b27e1fb2d783a93",
+      "pr": 213,
+      "main": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "logicalBytes": 2742944421,
+      "files": 64001,
+      "sourceKinds": {
+        "tracked": 10606,
+        "git-administration": 1,
+        "tracked-runtime-variant": 35,
+        "new-preserved-evidence": 198,
+        "rebuildable-output": 52242,
+        "archived-evidence": 911,
+        "runtime-original": 8
+      },
+      "windowsTrackedVariants": 35,
+      "redactionRecords": 1,
+      "links": 1945,
+      "junctionsExpectedResidual": 1925,
+      "symlinksGitRemoves": 20,
+      "hardlinkedFileCount": 0,
+      "readOnlyFiles": [],
+      "historicalProtectionConflicts": [],
+      "exactSourceMapping": "mapping-55.json.gz",
+      "metadataProof": "metadata-55.json.gz",
+      "packagesPinnedInHistory": 609,
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a12031-e9de-75c4-ab40-b44affcd71f6"
+      ],
+      "declaredJunctionFinish": "只有正式 Git 成功后，原始 junction 本体逐项非递归 Remove-Item -LiteralPath，之后逐项移除经证实的普通空目录；不追随目标",
+      "onFailureOrRejection": "立即停止原目标，不重试/Force/改属性 ACL/换工具/父删绕过；其它独立候选另行核验"
+    },
+    {
+      "todo": 56,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "branch": "tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe",
+      "head": "fb770b62a926e7c27049c2795eafa6da4e0cb085",
+      "pr": 214,
+      "main": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "logicalBytes": 3374923543,
+      "files": 65070,
+      "sourceKinds": {
+        "tracked": 11275,
+        "git-administration": 1,
+        "new-preserved-evidence": 164,
+        "rebuildable-output": 52238,
+        "archived-evidence": 1384,
+        "tracked-runtime-variant": 1,
+        "runtime-original": 7
+      },
+      "windowsTrackedVariants": 1,
+      "redactionRecords": 14,
+      "links": 1945,
+      "junctionsExpectedResidual": 1925,
+      "symlinksGitRemoves": 20,
+      "hardlinkedFileCount": 0,
+      "readOnlyFiles": [],
+      "historicalProtectionConflicts": [],
+      "exactSourceMapping": "mapping-56.json.gz",
+      "metadataProof": "metadata-56.json.gz",
+      "packagesPinnedInHistory": 609,
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a121fb-781b-7b58-9bca-a596b92a8cbe"
+      ],
+      "declaredJunctionFinish": "只有正式 Git 成功后，原始 junction 本体逐项非递归 Remove-Item -LiteralPath，之后逐项移除经证实的普通空目录；不追随目标",
+      "onFailureOrRejection": "立即停止原目标，不重试/Force/改属性 ACL/换工具/父删绕过；其它独立候选另行核验"
+    },
+    {
+      "todo": 57,
+      "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b",
+      "branch": "tds/conv-01a1246e-406c-7593-ada6-66996634434b",
+      "head": "d27cb9be3a19befeae431df08276c9ca94d7dbed",
+      "pr": 215,
+      "main": "87f88b89297c5c1e346f7ef99118c410f4b4a905",
+      "logicalBytes": 4534246620,
+      "files": 68648,
+      "sourceKinds": {
+        "tracked": 12284,
+        "git-administration": 1,
+        "tracked-runtime-variant": 3,
+        "new-preserved-evidence": 178,
+        "rebuildable-output": 52267,
+        "archived-evidence": 1598,
+        "runtime-original": 2317
+      },
+      "windowsTrackedVariants": 3,
+      "redactionRecords": 0,
+      "links": 1947,
+      "junctionsExpectedResidual": 1927,
+      "symlinksGitRemoves": 20,
+      "hardlinkedFileCount": 0,
+      "readOnlyFiles": [],
+      "historicalProtectionConflicts": [],
+      "exactSourceMapping": "mapping-57.json.gz",
+      "metadataProof": "metadata-57.json.gz",
+      "packagesPinnedInHistory": 609,
+      "operation": [
+        "git",
+        "-C",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+        "worktree",
+        "remove",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a1246e-406c-7593-ada6-66996634434b"
+      ],
+      "declaredJunctionFinish": "只有正式 Git 成功后，原始 junction 本体逐项非递归 Remove-Item -LiteralPath，之后逐项移除经证实的普通空目录；不追随目标",
+      "onFailureOrRejection": "立即停止原目标，不重试/Force/改属性 ACL/换工具/父删绕过；其它独立候选另行核验"
+    }
+  ],
+  "newArchives": [
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-54.zip",
+      "bytes": 2579733,
+      "sha256": "5cc6b38f5e48d78df05e1e44814a856341daa963795e13edf01202ee7dddc55b",
+      "crcPassed": true,
+      "members": 125
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-55.zip",
+      "bytes": 5329182,
+      "sha256": "2d988c1eef5d078ab802c12d04b8f262a0b609f2ede17ca24a6a27141fd11d0b",
+      "crcPassed": true,
+      "members": 151
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-56.zip",
+      "bytes": 21920484,
+      "sha256": "8b3263f4e34b1681713fe33cb774f8ee95c60ef9953f66c149abb32b459c02b9",
+      "crcPassed": true,
+      "members": 128
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/additional-evidence-57.zip",
+      "bytes": 31788074,
+      "sha256": "fbc330f62cfb4aa4abe6899761e43a7655ccfce16c918dde60e46268473e8c03",
+      "crcPassed": true,
+      "members": 141
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/node-v22.19.0-win-x64.zip",
+      "bytes": 35424607,
+      "sha256": "ea3fad0e67a991d8477d8c01344b56e69c676ccb733f065b22436994b1253f86",
+      "crcPassed": true,
+      "members": 2869
+    }
+  ],
+  "merges": {
+    "input": [
+      "git",
+      "-C",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67",
+      "log",
+      "-4",
+      "--first-parent",
+      "--format=%H %P %s",
+      "87f88b89297c5c1e346f7ef99118c410f4b4a905"
+    ],
+    "start": "2026-10-10T17:45:16.764533+00:00",
+    "end": "2026-10-10T17:45:17.040520+00:00",
+    "exit": 0,
+    "stdout": "87f88b89297c5c1e346f7ef99118c410f4b4a905 ef4cb5e1458d911d98433c443dba46e6c224caa0 d27cb9be3a19befeae431df08276c9ca94d7dbed Merge pull request #215 from xurunxin/tds/conv-01a1246e-406c-7593-ada6-66996634434b\nef4cb5e1458d911d98433c443dba46e6c224caa0 cfce77546b64c2a8d7d12949261c38e2f666d5ae fb770b62a926e7c27049c2795eafa6da4e0cb085 Merge pull request #214 from xurunxin/tds/conv-01a121fb-781b-7b58-9bca-a596b92a8cbe\ncfce77546b64c2a8d7d12949261c38e2f666d5ae e49eda142d61bdd248ddc42ec16f5563abd4bbc6 3ff46eb20616dc5488ba46b77b27e1fb2d783a93 Merge pull request #213 from xurunxin/tds/conv-01a12031-e9de-75c4-ab40-b44affcd71f6\ne49eda142d61bdd248ddc42ec16f5563abd4bbc6 69085317c88d84b702af727dc0ac7152589626d8 883d279d3b5978680672a6c1d7364d421d0afd10 Merge pull request #212 from xurunxin/tds/conv-01a11ed4-1e73-7802-8bf8-4899c5405f61\n",
+    "stderr": ""
+  },
+  "sourceBinding": "pending-preflight-commit 来源由成功提交返回及后续 preflight-commit-binding.json 精确解析；不能先执行",
+  "activeReferenceSources": [
+    "references-board-preflight.json",
+    "references-m5-preflight.json",
+    "references-review5-correct-preflight.json",
+    "process-preflight.json"
+  ],
+  "coverageLimit": "可见 todo/当前对话、进程命令行与可执行路径、逐文件独占读取；无全局恢复登记/全部 OS handles；因此历史未确认用途目录不放行"
+}

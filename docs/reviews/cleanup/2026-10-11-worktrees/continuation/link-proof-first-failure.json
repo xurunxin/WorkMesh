@@ -1,0 +1,20 @@
+{
+  "input": {
+    "cmd": "./docs/reviews/cleanup/2026-10-11-worktrees/continuation/link-proof.ps1",
+    "login": false,
+    "max_output_tokens": 1500
+  },
+  "start": {
+    "current_time": "2026-10-10 17:20:55 UTC"
+  },
+  "end": {
+    "current_time": "2026-10-10 17:20:56 UTC"
+  },
+  "output": {
+    "chunk_id": "1b5dee",
+    "wall_time_seconds": 0.6962842,
+    "exit_code": 1,
+    "original_token_count": 692,
+    "output": "Exception: C:\\Users\\xurx\\.tds\\workspaces\\01a126be-7aba-7b1d-a57a-f58317f89a67\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\continuation\\link-proof.ps1:21\r\nLine |\r\n  21 |      if ($code -ne 0) { throw \"Git 夹具操作失败: $output\" }\r\n     |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n     | Git 夹具操作失败: usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]           \r\n     | [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]            [-p | --paginate | -P | --no-pager]\r\n     | [--no-replace-objects] [--no-lazy-fetch]            [--no-optional-locks] [--no-advice] [--bare]\r\n     | [--git-dir=<path>]            [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]          \r\n     | <command> [<args>]  These are common Git commands used in various situations:  start a working area (see also:\r\n     | git help tutorial)    clone      Clone a repository into a new directory    init       Create an empty Git\r\n     | repository or reinitialize an existing one  work on the current change (see also: git help everyday)    add     \r\n     | Add file contents to the index    mv         Move or rename a file, a directory, or a symlink    restore   \r\n     | Restore working tree files    rm         Remove files from the working tree and from the index  examine the\r\n     | history and state (see also: git help revisions)    bisect     Use binary search to find the commit that\r\n     | introduced a bug    diff       Show changes between commits, commit and working tree, etc    grep       Print\r\n     | lines matching a pattern    log        Show commit logs    show       Show various types of objects    status   \r\n     | Show the working tree status  grow, mark and tweak your common history    backfill   Download missing objects in\r\n     | a partial clone    branch     List, create, or delete branches    commit     Record changes to the repository   \r\n     | history    EXPERIMENTAL: Rewrite history    merge      Join two or more development histories together    rebase\r\n     | Reapply commits on top of another base tip    reset      Set `HEAD` or the index to a known state    switch    \r\n     | Switch branches    tag        Create, list, delete or verify tags  collaborate (see also: git help workflows)   \r\n     | fetch      Download objects and refs from another repository    pull       Fetch from and integrate with another\r\n     | repository or a local branch    push       Update remote refs along with associated objects  'git help -a' and\r\n     | 'git help -g' list available subcommands and some concept guides. See 'git help <command>' or 'git help\r\n     | <concept>' to read about a specific subcommand or concept. See 'git help git' for an overview of the system.\r\n"
+  }
+}

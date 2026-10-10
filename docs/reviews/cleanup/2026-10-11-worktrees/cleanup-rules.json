@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "project": "https://github.com/xurunxin/WorkMesh.git",
+  "workspaceRoot": "C:\\Users\\xurx\\.tds\\workspaces",
+  "purpose": "合入后纳入回收、开工前只读占用盘点；非 daemon 自动删除配置",
+  "automaticDeletionEnabled": false,
+  "scheduledTaskCreated": false,
+  "readOnlyInventory": "docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.py",
+  "triggers": ["开工前只读盘点", "实际合入后登记候选并及时收尾"],
+  "idempotencyIdentity": ["machine", "absolutePath", "completedHead"],
+  "requiredEvidence": ["实时远端 refs/heads/main 原返回/调用/时间", "immutable 主线可达", "准确 todo/branch/head/PR", "活动/恢复引用刷新", "dirty/untracked/ignored 与嵌套仓库检查", "链接本体/目标/共享资源边界", "逐 path Git/ZIP/可重建来源及 Windows 原字节哈希", "预检/保全先行提交", "实际原输入输出/exit/逐目标结果", "事后登记/保护核验"],
+  "permanentProtectionSources": ["protected-paths.json 中历史来源的精确路径", "historical-sources.json 绑定的 main 历史报告/原拒绝证据"],
+  "neverTargets": ["workspace 根/当前构建/主仓库/平台缓存", "其它项目/用户目录/共享 store/镜像/业务数据", "G1/D0/C3 已拒目标及其保护父目录", "旧 38 node_modules/36 .turbo/2 typecache 的原精确路径", "RAW/原 trace/未映射验收物与恢复输入保护路径", "活动及待审/检查点工作区", "远端分支/标签/审计记录"],
+  "onRejectionOrFailure": "停止原目标；保存原理由；不 Force、不改属性/ACL、不拆批、不换工具/rename/move/父删绕过",
+  "onExistingReceipt": "成功且目标不存在只读核对；停止/拒绝不自动重试；缺失历史回执不补造",
+  "physicalNetReleasedBytes": "无法归因时 null；卷级可用空间变化和逻辑长度分别报告"
+}
