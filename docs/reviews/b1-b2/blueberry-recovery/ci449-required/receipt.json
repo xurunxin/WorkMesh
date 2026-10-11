@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-10-11T14:37:47.504934+00:00",
+  "runId": 38146512773,
+  "head": "bd1fa052606ddabb7f9fcb3b39b6ec528acf104a",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38146512773",
+  "status": "completed",
+  "conclusion": "failure",
+  "logs": [
+    {
+      "jobId": 114494403612,
+      "name": "Required CI",
+      "conclusion": "failure",
+      "path": "job-114494403612-original.log",
+      "bytes": 26535,
+      "sha256": "3d5468413756654aed5b82a1f9e879e29db787c7eb65a8f3b5308454e14f5ddd",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

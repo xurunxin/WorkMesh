@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-10-11T14:22:02.640417+00:00",
+  "runId": 38146512773,
+  "head": "bd1fa052606ddabb7f9fcb3b39b6ec528acf104a",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38146512773",
+  "status": "in_progress",
+  "conclusion": null,
+  "logs": [
+    {
+      "jobId": 114491022581,
+      "name": "Browser acceptance (2/2)",
+      "conclusion": "failure",
+      "path": "job-114491022581-original.log",
+      "bytes": 308097,
+      "sha256": "34303eb69b2e33fdfde691dc7507b148cbb224296905be678c5deb3143b76dd4",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

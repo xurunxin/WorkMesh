@@ -109,3 +109,11 @@ Windows实际清理回执：账户wmct52e0c97c2732（准确SID在原件）、C:/
 原件索引复核另发现：ci447的Windows cleanup JSON首次普通add已转LF，新增-text属性后再次普通add因index/stat缓存仍沿用旧blob。第一次7文件index复核明确失败，但生产者仍继续推送c29，属于顺序错误；该head的产品/CI成功不能证明该原件提交字节正确。工作树原件SHA与下载receipt完全相等；只对该路径git add --renormalize，后续7文件index原SHA全一致。新属性仅限定原生source JSON/cleanup原件，cleanup仅允许CR行尾并保持其余空白规则。最终证据提交修正原件字节，不修改原件/receipt或放宽全仓格式门禁。
 
 本轮后续提交只收齐证据、独审入口及这一原件blob修正，不改变通过的产品或平台断言；仍须其自身最终Required CI成功。CI448完整日志/metadata收齐后保存ci448-complete/；正式独审、Chief确认和实际main落地尚未完成，不提前Done或推进#7/#20。
+
+## CI449：最终证据提交的E2E首败与前置条件修正
+
+[CI449](https://github.com/xurunxin/WorkMesh/actions/runs/38146512773) head `bd1fa052606ddabb7f9fcb3b39b6ec528acf104a` 的三OS原生均成功，Browser acceptance (2/2) job114491022581真实失败；不以CI448替代此提交通过。stage0.spec.ts:467在删除前期待Team name为Stage 0 delivery edited，10秒内一直为General。完整首败日志保存于ci449-e2e-first并无损归档。
+
+选定Playwright trace证据见ci449-e2e-first/selected-trace.json（准确artifact11705456513与完整下载/trace ZIP摘要；不持久化完整trace、network或cookie）。call349已导航/settings，call351从禁用Loading Settings选择器开始，返回目标Team UUID；其后快照URL及选择器却为General。并非旧Issues页面命中，React内部交错原因不能仅凭此trace确定。仅在原删除场景增加目标Settings的Team details表单可见前置，再执行原选择。原目标Team值、删除确认、后续子写拒绝、超时与零导航等断言全部保持；不改UI或用重复运行冒修复。该场景不承担初始化加载期间用户操作的交错覆盖，后续如需专项产品修复须另核真实机制及范围。
+
+这次E2E测试文件变化会进入下一提交源码绑定；此前bd1相对c29的1103源码零变化结论只属于bd1，不延伸到修正提交。新提交须重新取得完整Required CI、三OS绑定及正式成果独审。诊断下载只在内存解包，临时两份解析JSON已逐文件移除；没有创建本机容器、服务或用户。
