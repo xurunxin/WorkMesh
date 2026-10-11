@@ -142,9 +142,10 @@ describe('连接器完整验证与原子提交', () => {
 function worker(dir: string, e: Expectation, store: MemoryStore, stopAt?: string) {
   const child = fork(fileURLToPath(new URL('../test-support/process-worker.ts', import.meta.url)), [], { execArgv: ['--import', 'tsx'],
     env: { ...process.env, WM_TEST_DIRECTORY: dir, WM_TEST_EXPECTATION: serialize(e), WM_TEST_STOP_AT: stopAt ?? '' }, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] })
-  const requests: unknown[] = []; let output = ''; const stages = new Map<string, () => void>()
+  const requests: unknown[] = []; const errors: string[] = []; let output = ''; const stages = new Map<string, () => void>()
   child.stdout?.on('data', (b: Buffer) => { output += b.toString() }); child.stderr?.on('data', (b: Buffer) => { output += b.toString() })
-  child.on('message', async (m: { id: number; operation?: string; ref: string; token: string; request?: unknown; stage?: string }) => {
+  child.on('message', async (m: { id: number; operation?: string; ref: string; token: string; request?: unknown; stage?: string; error?: string }) => {
+    if (m.error) errors.push(m.error)
     if (m.request) requests.push(m.request)
     if (m.stage) stages.get(m.stage)?.()
     if (m.operation) {
@@ -153,7 +154,7 @@ function worker(dir: string, e: Expectation, store: MemoryStore, stopAt?: string
       child.send({ id: m.id, value: m.operation === 'get' ? await store.get(m.ref) : null })
     }
   })
-  return { child, requests, exit: once(child, 'exit'), output: () => output,
+  return { child, requests, errors, exit: once(child, 'exit'), output: () => output,
     stage: (name: string) => new Promise<void>(resolve => stages.set(name, resolve)) }
 }
 describe('真实客户端进程竞争与强制终止', () => {
@@ -161,7 +162,8 @@ describe('真实客户端进程竞争与强制终止', () => {
     const f = await fixture(); const dir = await directory(); const store = new MemoryStore()
     const a = worker(dir, f.e, store); const b = worker(dir, f.e, store)
     try {
-      const codes = await Promise.all([a.exit, b.exit]); expect(codes.every(c => c[0] === 0)).toBe(true)
+      const codes = await Promise.all([a.exit, b.exit])
+      expect({ codes, errors: [...a.errors, ...b.errors] }).toEqual({ codes: [[0, null], [0, null]], errors: [] })
       expect(a.requests.length + b.requests.length).toBe(1)
       expect(store.values.size).toBe(1)
       expect((a.output() + b.output()).includes(f.token)).toBe(false)

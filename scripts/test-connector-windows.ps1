@@ -22,8 +22,7 @@ try {
   if ($LASTEXITCODE -ne 0) { throw 'public read control setup failed' }
   $env:WM_CONNECTOR_OTHER_USER = $env:COMPUTERNAME + '\' + $name
   $env:WM_CONNECTOR_OTHER_PASSWORD = $password
-  $env:TEMP = $parent
-  $env:TMP = $parent
+  # 公共夹具只授其他用户读取权限；Vitest 缓存继续使用原 TEMP/TMP。
   & pnpm.cmd --filter @workmesh/connector test:platform 2>&1 | Tee-Object ci-logs/connector-platform.log
   if ($LASTEXITCODE -ne 0) { throw 'connector platform failed' }
   & pnpm.cmd --filter @workmesh/connector test 2>&1 | Tee-Object ci-logs/connector-unit.log

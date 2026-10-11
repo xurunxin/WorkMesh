@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "archive": {
     "path": "docs/reviews/b1-b2/blueberry-recovery/raw-evidence.zip",
-    "bytes": 211628,
-    "sha256": "f6a7db68519b5af5f4cd7b54af72685264488cc0c87950d707d14af7744f5753"
+    "bytes": 243563,
+    "sha256": "3864c27c1b45959fb37681de91f0b3a9e47487a88d89ca6d7c7516ac639fe941"
   },
   "entries": [
     {
@@ -167,6 +167,26 @@
       "sourceBlobId": "dc7f8c6fea776d5e6044511ab790713fa81144c4"
     },
     {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci438-macos-job-original.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 79043,
+      "sha256": "c296d657c3f1457366db2be9f1249bfac01de368707c5fc4a62fa57d2fc55557",
+      "member": "bytes/c296d657c3f1457366db2be9f1249bfac01de368707c5fc4a62fa57d2fc55557",
+      "sourceCommit": null,
+      "sourceBlobId": "0b25bea200ae1c450e27c1ccd6ba58e0cb565953"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci438-windows-job-original.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 36700,
+      "sha256": "59753ac30ed2fd2ae934315e21a55734102878223b01c37dd9247634af4c61c6",
+      "member": "bytes/59753ac30ed2fd2ae934315e21a55734102878223b01c37dd9247634af4c61c6",
+      "sourceCommit": null,
+      "sourceBlobId": "65f3edb2ac1425e64e642c8e5b3cad20a759552e"
+    },
+    {
       "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/connector-install-offline.log",
       "version": "blueberry-2026-10-11",
       "byteKind": "worktree",
@@ -238,6 +258,126 @@
     },
     {
       "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-02/logs/typecheck.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 366,
+      "sha256": "8f2230afe39cd3ff99da10480ff9ece3f5bfdd48c385b07d5c330a67ebb682d1",
+      "member": "bytes/8f2230afe39cd3ff99da10480ff9ece3f5bfdd48c385b07d5c330a67ebb682d1",
+      "sourceCommit": null,
+      "sourceBlobId": "f45ef783c479155ce6331e24fb1e53766db47cc3"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-03/logs/build.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 376,
+      "sha256": "9c988a538a3bd32d4c6aeb0ee02c5a57fbc7de0a483d128402ca7960c108677d",
+      "member": "bytes/9c988a538a3bd32d4c6aeb0ee02c5a57fbc7de0a483d128402ca7960c108677d",
+      "sourceCommit": null,
+      "sourceBlobId": "33d7702d682f2fdeb58cecf9c8e33beb2aa2269f"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-03/logs/lint.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 361,
+      "sha256": "9b620a0c8263247fa29d93d7df3f953d1a1e65d676fba2138383f5622d3df438",
+      "member": "bytes/9b620a0c8263247fa29d93d7df3f953d1a1e65d676fba2138383f5622d3df438",
+      "sourceCommit": null,
+      "sourceBlobId": "5664911f82576c11b0195579e5cb465a73a7f9d9"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-03/logs/test-platform.stderr.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 1838,
+      "sha256": "ea5369a155870dce2d1179c4fdfdcffbc37c8e0875c705ffa40e49b61951e57a",
+      "member": "bytes/ea5369a155870dce2d1179c4fdfdcffbc37c8e0875c705ffa40e49b61951e57a",
+      "sourceCommit": null,
+      "sourceBlobId": "fb7e8f6a8f7af8b01fd29e9bf22af4d60492f659"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-03/logs/test-platform.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 5144,
+      "sha256": "d14096bc854ddfc31eefe25a161a7dda3b99108ae2aee171057e9ec3d66d3ee0",
+      "member": "bytes/d14096bc854ddfc31eefe25a161a7dda3b99108ae2aee171057e9ec3d66d3ee0",
+      "sourceCommit": null,
+      "sourceBlobId": "348fc188b17c8ae89f2dd5a24f049ca3f8f4f605"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-03/logs/test.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 22823,
+      "sha256": "3577c52e3337f526484de68b9c2f6292136567f17dc008b4eb5b31392d02094b",
+      "member": "bytes/3577c52e3337f526484de68b9c2f6292136567f17dc008b4eb5b31392d02094b",
+      "sourceCommit": null,
+      "sourceBlobId": "24debcfcbd5f528b9fb525a26c365ec8a2691275"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-03/logs/typecheck.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 366,
+      "sha256": "8f2230afe39cd3ff99da10480ff9ece3f5bfdd48c385b07d5c330a67ebb682d1",
+      "member": "bytes/8f2230afe39cd3ff99da10480ff9ece3f5bfdd48c385b07d5c330a67ebb682d1",
+      "sourceCommit": null,
+      "sourceBlobId": "f45ef783c479155ce6331e24fb1e53766db47cc3"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-04/logs/build.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 376,
+      "sha256": "9c988a538a3bd32d4c6aeb0ee02c5a57fbc7de0a483d128402ca7960c108677d",
+      "member": "bytes/9c988a538a3bd32d4c6aeb0ee02c5a57fbc7de0a483d128402ca7960c108677d",
+      "sourceCommit": null,
+      "sourceBlobId": "33d7702d682f2fdeb58cecf9c8e33beb2aa2269f"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-04/logs/lint.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 361,
+      "sha256": "9b620a0c8263247fa29d93d7df3f953d1a1e65d676fba2138383f5622d3df438",
+      "member": "bytes/9b620a0c8263247fa29d93d7df3f953d1a1e65d676fba2138383f5622d3df438",
+      "sourceCommit": null,
+      "sourceBlobId": "5664911f82576c11b0195579e5cb465a73a7f9d9"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-04/logs/test-platform.stderr.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 1838,
+      "sha256": "ea5369a155870dce2d1179c4fdfdcffbc37c8e0875c705ffa40e49b61951e57a",
+      "member": "bytes/ea5369a155870dce2d1179c4fdfdcffbc37c8e0875c705ffa40e49b61951e57a",
+      "sourceCommit": null,
+      "sourceBlobId": "fb7e8f6a8f7af8b01fd29e9bf22af4d60492f659"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-04/logs/test-platform.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 5142,
+      "sha256": "49e4fe724889c15746800733b8a6f1713df7f83709814aeba72f0aed2d2aa442",
+      "member": "bytes/49e4fe724889c15746800733b8a6f1713df7f83709814aeba72f0aed2d2aa442",
+      "sourceCommit": null,
+      "sourceBlobId": "5d510a39b53f26be06cb5732164c02449a164f5b"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-04/logs/test.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 22422,
+      "sha256": "41cb6c49e308659df0a6e6c58518fc219bf8bc25202d4e2cab514aced1b319e4",
+      "member": "bytes/41cb6c49e308659df0a6e6c58518fc219bf8bc25202d4e2cab514aced1b319e4",
+      "sourceCommit": null,
+      "sourceBlobId": "68535967fdb917897f263a114bf4540c0f972878"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-04/logs/typecheck.stdout.log",
       "version": "blueberry-2026-10-11",
       "byteKind": "worktree",
       "bytes": 366,
