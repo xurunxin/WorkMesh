@@ -1,0 +1,23 @@
+{
+  "input": {
+    "cmd": "$env:PYTHONUTF8='1'; python -B docs/reviews/cleanup/2026-10-11-worktrees/post-m4/prepare.py",
+    "yield_time_ms": 1000,
+    "max_output_tokens": 2000,
+    "login": false
+  },
+  "started": {
+    "current_time": "2026-10-11 06:42:32 UTC"
+  },
+  "result": {
+    "chunk_id": "c1d95a",
+    "wall_time_seconds": 10.0076917,
+    "session_id": 13682,
+    "original_token_count": 0,
+    "output": ""
+  },
+  "completion": {
+    "result": "正常结束",
+    "rawOutput": "{\"stage\": \"Git blob \\\\u539f\\\\u5b57\\\\u8282\", \"blobs\": 8881}\\r\\n{\"stage\": \"完成保全\", \"key\": \"cleanup-pr217\", \"logicalBytes\": 3030837288, \"files\": 12617, \"links\": 0, \"hardlinks\": 0, \"packages\": 0, \"archiveBytes\": 22, \"kinds\": {\"tracked\": 12616, \"git-administration\": 1}, \"redactions\": 0}\\r\\n",
+    "exit_code": 0
+  }
+}
