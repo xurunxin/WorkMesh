@@ -1,0 +1,31 @@
+{
+  "capturedAt": "2026-10-11T12:12:48.612568+00:00",
+  "runId": 38138126996,
+  "head": "0bf50bebb1e38e02168df9de3a13c877c9b91b88",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38138126996",
+  "status": "in_progress",
+  "conclusion": null,
+  "logs": [
+    {
+      "jobId": 114466453911,
+      "name": "Connector native storage (windows-latest)",
+      "conclusion": "failure",
+      "path": "job-114466453911-original.log",
+      "bytes": 41169,
+      "sha256": "9dde9ceb0ad4f2e5e44d3613d5e93f0b00d03c42a451a7fbe3a73e7d6a6edf2b",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114466453931,
+      "name": "Connector native storage (ubuntu-latest)",
+      "conclusion": "success",
+      "path": "job-114466453931-original.log",
+      "bytes": 90275,
+      "sha256": "8461e6f9f9e6703175114998e79dd21ba066b7ad4daf41598664209ae9ee41de",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

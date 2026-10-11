@@ -18,6 +18,10 @@ try {
   & node --import tsx --input-type=module -e "import {prepareDirectory} from './apps/connector/src/platform-security.ts'; await prepareDirectory(process.env.WM_CONNECTOR_PUBLIC_ROOT)"
   if ($LASTEXITCODE -ne 0) { throw 'protected temporary directory creation failed' }
   $directoryCreated = $true
+  # 普通夹具子目录需要当前用户继承 FullControl；其他用户仍只有读取正对照。
+  $fixtureSid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+  & icacls.exe $parent /grant "*$($fixtureSid):(OI)(CI)(F)" | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw 'fixture owner inheritance setup failed' }
   & icacls.exe $parent /grant '*S-1-1-0:(OI)(CI)(RX)' | Out-Null
   if ($LASTEXITCODE -ne 0) { throw 'public read control setup failed' }
   $env:WM_CONNECTOR_OTHER_USER = $env:COMPUTERNAME + '\' + $name

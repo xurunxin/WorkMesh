@@ -17,3 +17,11 @@ ADR0079 和连接器 README 同步这两处实现解释；已批准计划和历�
 macOS 这轮在单元检查的双进程竞争用例失败：57 项通过，1 项退出码断言失败；平台套件因前序命令失败未执行。旧夹具只收集 stdout/stderr，遗漏通过 IPC 返回的安全错误码，因此本次只能证明一个子进程失败，尚不能证明具体产品原因。增加 IPC 错误码收集，将两进程的精确退出值和无秘密错误码放入断言，保留原成功要求；不增加重试或放宽断言。完整日志和来源保存为 ci438-macos-job-original.log 与 ci438-macos-log-source.json。
 
 本机 local-03：lint/typecheck/build 成功、58 项单元通过；平台三项通过，缺第二用户两项仍失败。运行前后 1100 个文件原字节稳定，delivery-binding.json 再按当前工作树字节、捕获的 index blob、准确提交491d的 tree逐项绑定，零不一致。39 个测试目录均有创建/移除回执，空测试根已非递归移除。没有把本机部分平台结果冒三 OS 验收。
+
+## CI439 原生结果与夹具补验
+
+[CI439](https://github.com/xurunxin/WorkMesh/actions/runs/38138126996) 的 head 为 `0bf50bebb1e38e02168df9de3a13c877c9b91b88`。Linux 原生通过；macOS 实际 6 项平台、58 项单元全通过，包含 Keychain 跨进程、其他用户读取/替换、无 ACL 正例及修改型 ACL 拒例、真实 CLI/PTY。安装日志明确 helper 原模式0644、私有副本0755、内容哈希不变。CI438 的竞争失败仍保留，不能只因一轮通过就倒填原因。新增 macOS 同用户32路并发准备目录的原生检查，观察共享祖先的合法目录变化是否造成误拒，完整安全要求不变。
+
+Windows 的 TEMP/TMP 问题已消失，平台三项通过、两项跨用户夹具在收尾 `rmdir` 报 EPERM；finally 的错误掩盖了业务探针可能更早的错误，所以不冒两项探针本身已成功。公共夹具根由产品以当前用户非继承 FullControl 创建，再单独给 Everyone 继承 RX；普通 mkdtemp 子目录只有继承 RX，缺少当前用户的创建/删除权限。仅在一次性夹具根增加当前 SID 的继承 FullControl；Everyone 保持 RX，真实连接器子目录/文件仍由产品创建私有保护 ACL。已有失败目标不重试、不改其权限；下一 CI 使用新 UUID 夹具。ci439-native-first/windows-cleanup.json 实际证明本次最终准确根与临时用户已移除，来源 artifact id/hash 另存。
+
+本机 local-04 再次 lint/typecheck/build 及58单元通过，平台三过两缺第二用户；1100文件在运行前后与提交0bf50be三方绑定零不一致，39目录及空根收尾。新增 macOS 专属检查的 typecheck 已通过，实际运行由下一轮 macOS runner 证明。本机进程未提权，不冒真实第二用户补验。

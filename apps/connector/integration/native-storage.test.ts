@@ -124,6 +124,14 @@ if ($probe.ExitCode -ne 0) {exit $probe.ExitCode}
     const source = "import {SystemSecretStore} from './src/secret-store.ts'; try { await new SystemSecretStore().put(process.env.WM_TEST_REF,'wmi_'+'x'.repeat(43)); process.exit(1); } catch { process.exit(0); }"
     await execute(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', source], { env: { ...process.env, WM_TEST_REF: randomUUID(), DBUS_SESSION_BUS_ADDRESS: 'unix:path=/nonexistent/workmesh-connector-test' } })
   })
+  if (process.platform === 'darwin') it('同用户并发准备目录时仍完整核验无扩展 ACL', async () => {
+    const parent = await temporaryDirectory('mac-concurrent-acl', '/tmp')
+    try {
+      await execute('chmod', ['-N', parent])
+      const results = await Promise.allSettled(Array.from({ length: 32 }, (_, i) => prepareDirectory(join(parent, `connector-${i}`))))
+      expect(results.filter(result => result.status === 'rejected').map(result => String(result.reason))).toEqual([])
+    } finally { await cleanupDirectory(parent) }
+  })
   if (process.platform === 'darwin') it('没有扩展 ACL 的目录可用，修改型 allow ACL 仍拒绝', async () => {
     const parent = await temporaryDirectory('mac-acl', '/tmp'); const dir = join(parent, 'connector')
     try {
