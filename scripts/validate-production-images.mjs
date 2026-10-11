@@ -384,10 +384,20 @@ const mcpEnvironment = {
   WORKMESH_SERVICE: 'mcp',
   WORKMESH_BUILD_SHA: 'a'.repeat(40),
   WORKMESH_API_URL: 'http://api:3001',
+  WORKMESH_BETA_COORDINATION_MCP: 'false',
   WORKMESH_SESSION_TOKEN: 'session-' + 'b'.repeat(40),
   WORKMESH_MCP_ACCESS_TOKEN: 'access-' + 'c'.repeat(40),
 }
 assert(runGuard(mcpEnvironment).status === 0, 'strong MCP environment must pass preflight')
+const coordinationEnvironment = {
+  ...mcpEnvironment, WORKMESH_BETA_COORDINATION_MCP: 'true',
+  WORKMESH_SESSION_TOKEN: '', WORKMESH_MCP_ACCESS_TOKEN: '',
+}
+assert(runGuard(coordinationEnvironment).status === 0, 'Coordination MCP must start without static credentials')
+assert(runGuard({ ...coordinationEnvironment, WORKMESH_SESSION_TOKEN: mcpEnvironment.WORKMESH_SESSION_TOKEN }).status !== 0,
+  'Coordination MCP must reject mixed static credentials')
+assert(runGuard({ ...coordinationEnvironment, WORKMESH_API_URL: '' }).status !== 0,
+  'Coordination MCP must retain its required upstream API')
 assert(
   runGuard({
     ...mcpEnvironment,

@@ -173,7 +173,18 @@ export const assertRuntimeSecretSeparation = (environment, comparisonEnvironment
   inspect(environment)
 }
 
-const presenceRequired = () => true
+/** @param {NodeJS.ProcessEnv} environment */
+const coordinationMcp = environment => environment.WORKMESH_SERVICE === 'mcp'
+  && environment.WORKMESH_BETA_COORDINATION_MCP === 'true'
+
+/**
+ * @param {NodeJS.ProcessEnv} environment
+ * @param {string} service
+ * @param {string} name
+ */
+const presenceRequired = (environment, service, name) => !(service === 'mcp'
+  && coordinationMcp(environment)
+  && ['WORKMESH_SESSION_TOKEN', 'WORKMESH_MCP_ACCESS_TOKEN'].includes(name))
 
 /**
  * @param {NodeJS.ProcessEnv} environment
@@ -187,6 +198,12 @@ export const validateRuntimeEnvironment = (environment, comparisonEnvironment = 
   if (environment.NODE_ENV !== 'production') throw new Error('NODE_ENV must be production')
   if (!/^[0-9a-f]{40}$/.test(environment.WORKMESH_BUILD_SHA ?? ''))
     throw new Error('WORKMESH_BUILD_SHA must be the exact lowercase 40-character Git SHA')
+
+  // Match the existing HTTP server: request-scoped Installation credentials
+  // and configured static credentials are mutually exclusive.
+  if (coordinationMcp(environment)
+    && [environment.WORKMESH_SESSION_TOKEN, environment.WORKMESH_MCP_ACCESS_TOKEN].some(value => value?.trim()))
+    throw new Error('Coordination and static credential modes must not be mixed')
 
   for (const name of requiredNames) {
     const value = environment[name]?.trim()

@@ -1610,6 +1610,24 @@
       "rawBytes": 1067,
       "viewSha256": "1996c65da41081ac9ab8cb811701e5e2716adc86f9e2cc3c3da9dd238f17bc50",
       "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/mcp-preflight-unit.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-0f9e97680907.zip",
+      "entry": "mcp-preflight-unit.log",
+      "rawSha256": "07a27d6dec4d6cdf92406d3188f376e07d7665f718ed8e2fd766f83a3df8c03d",
+      "rawBytes": 741,
+      "viewSha256": "0184fd45bcc4f6933f129e6e797df2da13b6484c983cab9458ecb23ad820c69b",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/mcp-preflight-typecheck.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-0f9e97680907.zip",
+      "entry": "mcp-preflight-typecheck.log",
+      "rawSha256": "bf4570cdec700c3f45c45896826a638d2e4737e62b01c8327f397b4c2151da6a",
+      "rawBytes": 369,
+      "viewSha256": "f56bbf51f2bc7004778bf4572747e0ea70cbe52729edfe96306c485090d7ff75",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
     }
   ],
   "archives": [
@@ -1648,6 +1666,10 @@
     {
       "path": "docs/reviews/backend-retirement/raw-logs/run-994c174498b9.zip",
       "sha256": "48525fa5e95f9bf338b9989d8f26e2ae0aea9b5109272e0b1bb5c2ed1068740a"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/raw-logs/run-0f9e97680907.zip",
+      "sha256": "30aa15a6abe35b10db8db6229c0bcbc45e4e6e84fddb9a6515a44a8c3c76be74"
     }
   ]
 }

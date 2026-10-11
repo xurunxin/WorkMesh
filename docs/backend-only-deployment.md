@@ -33,7 +33,7 @@ Invoke-RestMethod -Uri "$origin/api/v1/auth/me" -WebSession $human
 
 启用既有 `WORKMESH_BETA_COORDINATION_MCP` 后，管理员调用 `POST /api/v1/agent-connections` 指定 Team、principal Human、client type 和最小 capability。`connect_url` 是兑换接口的 fragment 定位符，没有页面。旧加密幂等回执保留原 `/connect#` 定位符字节；客户端同样只提取 fragment，不打开页面。客户端从 fragment 提取一次性配对码，按现有合同兑换；安装凭据存入自己的秘密存储。
 
-API origin 提供 `/.well-known/workmesh-agent` 和固定 `/skills/workmesh-1.1.0.md`。先校验发现元数据，再从兑换响应读取 `redeemed.skill.download_url` 并校验原字节、SHA-256 与 Ed25519 签名。发现不包含下载 URL。MCP origin 由 `PUBLIC_MCP_ORIGIN` 配置，请求使用兑换响应说明的安装凭据 header，按 `initialize → verify_connection → get_workmesh_context` 核实实时身份。
+API origin 提供 `/.well-known/workmesh-agent` 和固定 `/skills/workmesh-1.1.0.md`。先校验发现元数据，再从兑换响应读取 `redeemed.skill.download_url` 并校验原字节、SHA-256 与 Ed25519 签名。发现不包含下载 URL。MCP origin 由 `PUBLIC_MCP_ORIGIN` 配置，请求使用兑换响应说明的安装凭据 header，按 `initialize → verify_connection → get_workmesh_context` 核实实时身份。Coordination 模式的启动预检与服务均不要求静态 Session/MCP token，并拒绝同时配置这两种模式的凭据；静态模式继续要求完整、独立的凭据。
 
 生产部署见 [生产说明](production-deployment.md)，Lite 见 [Lite 说明](../deploy/lite/README.md)。Lite 的 MCP 和 Runner 仍在独立机器运行；API 直接可达，不再借助 Next 代理。
 

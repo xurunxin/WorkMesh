@@ -33,6 +33,7 @@ const bootstrap = randomBytes(32).toString('base64url'); secretValues.push(boots
 const redact = value => secretValues.reduce((text, secret) => text.replaceAll(secret, '[REDACTED]'), String(value))
 const env = { ...process.env, WORKMESH_LITE_IMAGE: `workmesh-a2-lite:${runId}`, WORKMESH_BUILD_SHA: sha,
   POSTGRES_PASSWORD: secretValues[0], SESSION_SECRET: secretValues[1], WORKMESH_MASTER_KEY: secretValues[2], WORKMESH_BOOTSTRAP_TOKEN: bootstrap,
+  WORKMESH_SESSION_TOKEN: '', WORKMESH_MCP_ACCESS_TOKEN: '',
   PAGINATION_CURSOR_KEYS: `a2:${secretValues[3]}`, PAGINATION_CURSOR_ACTIVE_KID: 'a2', AUTH_RATE_LIMIT_HMAC_KEY: secretValues[4],
   MINIO_ROOT_USER: 'a2-lite', MINIO_ROOT_PASSWORD: secretValues[5], S3_ACCESS_KEY_ID: 'a2-lite', S3_SECRET_ACCESS_KEY: secretValues[5],
   S3_BUCKET: runId, S3_REGION: 'us-east-1', WORKMESH_BETA_GITEA: 'true', WORKMESH_BIND_ADDRESS: '127.0.0.1', POSTGRES_DB: 'workmesh_a2_lite_test' }
@@ -71,7 +72,9 @@ const pause = ms => new Promise(resolveWait => setTimeout(resolveWait, ms))
 const port = () => new Promise(resolvePort => { const server = net.createServer(); server.listen(0, '127.0.0.1', () => { const value = server.address().port; server.close(() => resolvePort(value)) }) })
 const register = (type, target) => { const value = { type, target, owner: runId, createdAt: new Date().toISOString(), cleanup: null }; receipts.resources.push(value); save(); return value }
 let provider
-const composeArgs = ['compose', '--project-name', runId, '-f', resolve(installDir, composeFile), '-f', resolve(installDir, 'provider.override.yml')]
+const composeArgs = ['compose', '--project-name', runId,
+  ...(deploymentClass === 'production' ? ['--profile', 'agent'] : []),
+  '-f', resolve(installDir, composeFile), '-f', resolve(installDir, 'provider.override.yml')]
 let composeStarted = false
 try {
   const directory = register('directory', installDir); mkdirSync(installDir); directory.realPath = realpathSync(installDir); directory.created = true; save()

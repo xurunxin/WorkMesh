@@ -45,3 +45,7 @@ CI `38178554946` 的 Lite 实际部署（`backend-lite-e07a9c8f`）完整通过�
 CI `38179856023` 的 API/协议、worker、DB、灾备和三平台原生全部成功；Lite 再次完整通过。生产迁移、API 入口探针及三个镜像构建/save-load 通过，worker 实际进入 readiness 后按不可达数据库预期报 `WORKER_STARTUP_FAILED`，验收脚本只识别 identity 阶段，因而失败。artifact `11717457465` 的 `backend-production-f85136c6/30.log` 保留原输出；按 worker 现有源码补齐两种实际启动阶段日志，并继续要求后续真实 Compose ready/worker/Skill/MCP 全部通过。该首败没有标成生产通过。
 
 投递链接复核发现直接使用配置 URL 会保留 userinfo；Web Push 改为 URL origin 标准化，既有真实 PostgreSQL 成功投递用例使用带测试用户名/密码/查询/fragment 的配置并仍要求无凭据的准确 API 链接，原幂等、订阅撤销与状态断言保持。仅修正链接构造，不改权限、数据或发送门禁。
+
+CI `38182180394` 的 API、真实 MCP/Pi 协议、worker、DB、灾备、三平台原生检查全部成功，Lite 安装再次完整通过；生产启动的 MCP 却被启动预检要求静态 token 而拒绝。现有 HTTP 服务在 Coordination 模式使用逐请求 Installation Token，明确拒绝混合静态凭据，因此修正预检以遵循既有模式，并保留静态模式缺值、复用、占位及 URL 拒绝。配置单元用例新增两种模式与混合凭据的正反例，生产仍须完整复验。原 ZIP 为 `ci-artifacts/11718617414.zip`，MCP 原状态在 `backend-production-cfcb5ba9/57.log`。
+
+该首败还暴露验证脚本未带 production 的 `agent` profile，导致 MCP 日志未收集且 down 未覆盖该 profile；复验脚本显式启用现有 profile，up 仍仅选 API/worker/MCP，不启动 Runner。原失败回执中的 MCP、测试 CA、三个镜像与安装目录未获完整不存在证明，不冒已清除；它们位于该次 GitHub 临时 runner，原件保留。

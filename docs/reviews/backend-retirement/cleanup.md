@@ -9,3 +9,5 @@
 - 私有环境文件和 pnpm shim 已在本机检查结束后按准确路径/哈希收尾，逐文件不存在回执在 `private-runtime-cleanup.json`。copy 安装的本工作树依赖保留供成果独审和复验，共享 store 保留；见 `dependency-owner.json`。
 
 测试宿主不是低功耗设备，没有真实外发通知或厂商调用，没有新授权凭据。平台分支上的证据与测试回执保持；未执行的路径不声称已清除。
+
+CI `38182180394` 的生产首败原件没有证明 MCP profile、测试 CA、三个镜像和安装目录完全清除；回执明确保留，不能以其他运行的清理成功代填。这些路径归属该轮 GitHub 临时 runner。后续验证使用明确的 `agent` profile 收集 MCP 日志并执行同 profile 的定向 down，再检查实际资源不存在。

@@ -1,0 +1,47 @@
+{
+  "runId": 38182180394,
+  "runHead": "0041fc38b854c7d12b32873f70db80f63d743b19",
+  "actualCheckout": "424442c54b72c0f9c266a8e1c7133e82bf5e353e",
+  "actualTree": "5b2cd9e0f3a208b622695e25f98d1965dc851e45",
+  "parents": [
+    "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+    "0041fc38b854c7d12b32873f70db80f63d743b19"
+  ],
+  "sourceTreeEqualsProductHead": true,
+  "nativeBindings": [
+    {
+      "artifactId": 11718630821,
+      "platform": "win32",
+      "node": "v22.19.0",
+      "head": "424442c54b72c0f9c266a8e1c7133e82bf5e353e",
+      "tree": "5b2cd9e0f3a208b622695e25f98d1965dc851e45",
+      "files": 648,
+      "beforeSha256": "adbc5e777f6a9cedb343ec418a790a7423d9e088d602c3149f71c90c76e462de",
+      "afterSha256": "3769505e0a198823e1f443f3e023bead5e27de0f152cc89b9d41110eb7552926",
+      "sameSourceBeforeAfter": true
+    },
+    {
+      "artifactId": 11717642696,
+      "platform": "darwin",
+      "node": "v22.19.0",
+      "head": "424442c54b72c0f9c266a8e1c7133e82bf5e353e",
+      "tree": "5b2cd9e0f3a208b622695e25f98d1965dc851e45",
+      "files": 648,
+      "beforeSha256": "e90b93e0a3382eea6d785f3b3a5af5df10bb2a870ea5439e11d08ce571a1101c",
+      "afterSha256": "4da5f0492e6851003417b4a6dcc90327ce5a9fa9efeca96f1bbd857cf3b3dd6b",
+      "sameSourceBeforeAfter": true
+    },
+    {
+      "artifactId": 11717599405,
+      "platform": "linux",
+      "node": "v22.19.0",
+      "head": "424442c54b72c0f9c266a8e1c7133e82bf5e353e",
+      "tree": "5b2cd9e0f3a208b622695e25f98d1965dc851e45",
+      "files": 648,
+      "beforeSha256": "c7b065f108f970ce5af47af762f3ed5ab330771a4358713da484d5ddd9e1a0ac",
+      "afterSha256": "2962ef8dc6d1a71953a8b14de095580bad926ece13950bcd5105e2c6f4fd7215",
+      "sameSourceBeforeAfter": true
+    }
+  ],
+  "command": "gh api repos/xurunxin/WorkMesh/git/commits/<actualCheckout>; compare .tree.sha and .parents to product head and separately read main"
+}
