@@ -46,7 +46,7 @@ try:
     created = True
     for name in targets:
         args = ["docker", "buildx", "build", "--builder", owner, "--platform", "linux/amd64",
-                "--progress=plain", "--load", "--label", "com.workmesh.validation.owner=" + owner,
+                "--progress=plain", "--no-cache", "--load", "--label", "com.workmesh.validation.owner=" + owner,
                 "--label", "com.workmesh.validation.index-tree=" + source_tree,
                 "--tag", tags[name], "--file", "infra/docker/" + name + ".Dockerfile", "-"]
         log_path = directory / (name + ".log")

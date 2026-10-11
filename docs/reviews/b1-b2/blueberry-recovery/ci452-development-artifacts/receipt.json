@@ -1,0 +1,70 @@
+{
+  "runId": 38152839623,
+  "sourceHead": "d553fcf22a2118758d3eb17cfbd409daa4b76487",
+  "checkout": "8ff05878b8bf72f5d3391097eedba33ea3ab69c0",
+  "tree": "c3086751cbe40dd7065276492c072c38e75232c6",
+  "artifactId": 11707104833,
+  "artifactName": "source-gates-raw-38152839623-1",
+  "archiveBytes": 2373461,
+  "archiveSha256": "081a976843fc52422f0228ed79ab854dc57000eb25c1d172e2a5d83cc87392d6",
+  "owner": "wm-connector-dev-4fffcfed8d6c",
+  "files": [
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/registration.json",
+      "path": "registration.json",
+      "bytes": 3893,
+      "sha256": "53df003a20250cc8d552775c3aaa6ebec3fbd7edb1da507ed2468bd6072ec2ee"
+    },
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/builds.json",
+      "path": "builds.json",
+      "bytes": 3665,
+      "sha256": "655eeb28a7c1776da6c254f4e80aefde18dd6f2c5f90ea8cb3e7d27d001b0a5e"
+    },
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/builder-before-cleanup.json",
+      "path": "builder-before-cleanup.json",
+      "bytes": 7290,
+      "sha256": "98a828f9e530879d432564d7cd626708754d330e2ce96f4afa13df091c162384"
+    },
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/cleanup.json",
+      "path": "cleanup.json",
+      "bytes": 6075,
+      "sha256": "1ebbb170b5d583a9ee7360ed8814cd4420740b447db9097e8b9bb8f8c1ac8ba4"
+    },
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/result.json",
+      "path": "result.json",
+      "bytes": 198,
+      "sha256": "0653c890fd385c078942402b76f1b5d3b2c89e26d2a45868a89732e4137c35e7"
+    },
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/api.log",
+      "path": "api.log",
+      "bytes": 20075,
+      "sha256": "4c659585f43d550a0a6da7a5fab9fbac2387e7fb43a7e704dbc350f30d2e9a92"
+    },
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/web.log",
+      "path": "web.log",
+      "bytes": 17202,
+      "sha256": "4aae625e3b94b72160a75f4e064b4952835c61934146fd5ef51cf11dc90b3563"
+    },
+    {
+      "member": "development-images/wm-connector-dev-4fffcfed8d6c/worker.log",
+      "path": "worker.log",
+      "bytes": 3889,
+      "sha256": "63bc96f4875ab2d4aded7afe070a2a7a76b8acc5590b6418d7b5b00bd3c6ac0e"
+    }
+  ],
+  "verified": false,
+  "buildResult": {
+    "owner": "wm-connector-dev-4fffcfed8d6c",
+    "passed": false,
+    "head": "8ff05878b8bf72f5d3391097eedba33ea3ab69c0",
+    "indexTree": "c3086751cbe40dd7065276492c072c38e75232c6",
+    "buildCount": 3
+  },
+  "source": "真实失败原件按原字节保全；缺失镜像日志是未运行，不表示通过；完整ZIP仅在内存读取并保摘要"
+}

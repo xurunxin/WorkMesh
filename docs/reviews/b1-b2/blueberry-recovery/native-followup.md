@@ -133,3 +133,7 @@ Windows临时账户wmcta863b93e7729（准确SID见回执）、C:/Users/Public/wo
 独审独立读回最终 eb67b765bf30639000b2c002cbfeaf78b6ca8bec/CI451（38149424199）的13项检查成功及三系统1103文件原件与最终HEAD绑定一致，但指出四个开发镜像在安装前仅复制 connector manifest，没有复制 postinstall 脚本，生产镜像CI不能覆盖此路径。正式审查结论不代表此 blocking 已关闭。
 
 本次最小修正为四文件提前复制 prepare-native.mjs，并补齐现行 workspace 依赖输入；正常钩子、版本、原协议/产品断言保持。Blueberry 首轮 API 实际构建在 Docker 基础镜像下载 TLS 错误退出，尚未运行 pnpm，后三镜像未运行；专用 builder/容器/卷实核清理。新增 Source gates 真实四镜像构建及不可省略/跳过/吞失败的反例门禁。本轮19项CI策略测试、validator与静态闭包检查成功；实际新提交镜像和完整门禁仍待CI，详见 development-images/review-fix.md 及准确首败/清理JSON。没有修改旧原件、已审源码或历史保护目录，也没有以静态检查冒四镜像通过。
+
+## CI452：三镜像构建与钩子缓存证据首败
+
+CI452/d553 的其余11项检查成功，Source gates 的 lint/typecheck/build/unit/Compose 成功；API/Web 实际构建和本次正常钩子原行成功。Worker 构建成功但安装层 CACHED，没有新钩子原行，验证器正常拒绝，MCP 未运行。Required CI 失败，不冒整体通过。只给下一轮真实构建命令加 --no-cache，保持四镜像独立钩子成功条件。失败完整原件、准确 source tree、三个镜像和 builder/容器/卷定向清理回执见 ci452-development-artifacts/，receipt verified=false；全job首败见 ci452-development-first-failure/。三OS各1104文件及Windows账户/目录清理成功原件仍单独保留，不能覆盖汇总失败。
