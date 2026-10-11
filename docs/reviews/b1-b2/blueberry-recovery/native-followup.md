@@ -49,3 +49,11 @@ retained-environment.json 记录当前准确依赖归属、成功安装日志与
 该正对照只需要证明第二用户能重命名不安全父下的受保护子目录并创建同名替换；第二用户删除替换物及恢复不是授权/协议断言，且其新建目录继承的 ACL 不必授该账户删除权限。保留必需 Move 与 CreateDirectory，分别明确失败码26/27；攻击产物交由原有 owner finally 统一清理，不增加其他用户权限、不修改原失败目标、不绕过安全路径拒绝。安全父及连接器两处 Move 拒绝、读取控制、产品拒绝不安全祖先均保持。
 
 三系统原始日志与准确状态保存于 ci442-native/，没有将部分总 CI 当全绿；最终 Required CI 和独审尚未放行。local-05 的54个测试目录全部移除，资源汇总与准确空根回执已更新。
+
+## CI443 首败进一步定位与私有 ACL 补全
+
+[CI443](https://github.com/xurunxin/WorkMesh/actions/runs/38140023468) head `6192de6833b9e92b86391d6bbb397ca9253200d1` 的 Linux/macOS 原生成功；Windows 为4通过1失败，独立26现在明确是**第一步 Directory.Move**，不能继续归因为攻击收尾。ci443-windows/ 保留完整新错误。[微软 FILE_RENAME_INFORMATION 文档](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_file_rename_information) 说明目标目录相对打开请求 FILE_WRITE_DATA|SYNCHRONIZE。一次性不安全父夹具原来只有DC/AD以及继承RX，增加目标条目所需WD，仍不授受保护子项 DELETE；产品继续因DC拒绝该不安全祖先。记录实际 icacls 输出，Move/Create 两步失败分别给1000/2000加原 HRESULT 低16位，仅错误码、不打印敏感材料。新UUID夹具另验，不重试历史失败目录或改变产品权限。
+
+macOS 源码补查同时发现私有叶目录/文件仅核BSD mode，不能识别继承的读取ACL。[Apple文件系统权限说明](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemDetails/FileSystemDetails.html) 明确ACL allow可以直接满足读取权限，BSD mode只处理剩余权限。把原ACL读取提为共用核验：普通祖先保持拒绝修改型allow；私有目录/文件额外拒绝任何allow，包括继承专用allow，不主动删除真实用户ACL。无ACL的私有对象重核类型/dev/inode/uid/mode，只有已验证当前owner和精确私有mode的对象允许同用户操作改变ctime；祖先原完整ctime检查保留。ADR0079同步此既有敏感pending隔离要求。
+
+新增macOS真实读取ACL夹具：确认0700/0600仍能被nobody读取的正对照，产品目录与文件拒绝，移除仅测试夹具ACL后恢复可用。实际结果由下一轮macOS证明，不能用Windows本机推断通过。local-06的73单元及lint/typecheck/build通过，平台三通过两缺第二用户，运行前后原字节无变化；54目录全部移除、空根已非递归收尾。WD/错误码夹具增量另经typecheck成功。

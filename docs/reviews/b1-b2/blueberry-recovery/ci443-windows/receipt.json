@@ -1,0 +1,21 @@
+{
+  "capturedAt": "2026-10-11T12:44:13.869695+00:00",
+  "runId": 38140023468,
+  "head": "6192de6833b9e92b86391d6bbb397ca9253200d1",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38140023468",
+  "status": "in_progress",
+  "conclusion": null,
+  "logs": [
+    {
+      "jobId": 114472157828,
+      "name": "Connector native storage (windows-latest)",
+      "conclusion": "failure",
+      "path": "job-114472157828-original.log",
+      "bytes": 50513,
+      "sha256": "8fe19c9ec4b21598528c4d4651a7eea74bb2cdf681176d68af9dc9f23c8a1b31",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

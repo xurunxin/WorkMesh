@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "archive": {
     "path": "docs/reviews/b1-b2/blueberry-recovery/raw-evidence.zip",
-    "bytes": 379985,
-    "sha256": "73af3fa8ac5d265505f03fd8f59fa6717f077f90847647376ebb693e5d759491"
+    "bytes": 397688,
+    "sha256": "e6ca41a0f8df385e65c29f426eccc2bfd7db27a2ec2c058fc052705b8f281ec9"
   },
   "entries": [
     {
@@ -277,6 +277,16 @@
       "sourceBlobId": "4813fe7ca2345ae3cfddf6dad1e4ef47a8a012bb"
     },
     {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci443-windows/job-114472157828-original.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 50513,
+      "sha256": "8fe19c9ec4b21598528c4d4651a7eea74bb2cdf681176d68af9dc9f23c8a1b31",
+      "member": "bytes/8fe19c9ec4b21598528c4d4651a7eea74bb2cdf681176d68af9dc9f23c8a1b31",
+      "sourceCommit": null,
+      "sourceBlobId": "b0bf437aae4da775b043cb046b918f6b9c4afd69"
+    },
+    {
       "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/connector-install-offline.log",
       "version": "blueberry-2026-10-11",
       "byteKind": "worktree",
@@ -528,6 +538,66 @@
     },
     {
       "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-05/logs/typecheck.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 366,
+      "sha256": "8f2230afe39cd3ff99da10480ff9ece3f5bfdd48c385b07d5c330a67ebb682d1",
+      "member": "bytes/8f2230afe39cd3ff99da10480ff9ece3f5bfdd48c385b07d5c330a67ebb682d1",
+      "sourceCommit": null,
+      "sourceBlobId": "f45ef783c479155ce6331e24fb1e53766db47cc3"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-06/logs/build.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 376,
+      "sha256": "9c988a538a3bd32d4c6aeb0ee02c5a57fbc7de0a483d128402ca7960c108677d",
+      "member": "bytes/9c988a538a3bd32d4c6aeb0ee02c5a57fbc7de0a483d128402ca7960c108677d",
+      "sourceCommit": null,
+      "sourceBlobId": "33d7702d682f2fdeb58cecf9c8e33beb2aa2269f"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-06/logs/lint.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 361,
+      "sha256": "9b620a0c8263247fa29d93d7df3f953d1a1e65d676fba2138383f5622d3df438",
+      "member": "bytes/9b620a0c8263247fa29d93d7df3f953d1a1e65d676fba2138383f5622d3df438",
+      "sourceCommit": null,
+      "sourceBlobId": "5664911f82576c11b0195579e5cb465a73a7f9d9"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-06/logs/test-platform.stderr.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 1883,
+      "sha256": "250fb96146f1b8dc33f9df30b37e8d438f3897b7d268e6fdc56ec2135929dc7f",
+      "member": "bytes/250fb96146f1b8dc33f9df30b37e8d438f3897b7d268e6fdc56ec2135929dc7f",
+      "sourceCommit": null,
+      "sourceBlobId": "c2cee859123d1c9dcf69d25630cf4b903e0aca2e"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-06/logs/test-platform.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 5144,
+      "sha256": "587fe71d01e158c478552790250ee054c72b13101f1855fd40c2954e0a2fc8b3",
+      "member": "bytes/587fe71d01e158c478552790250ee054c72b13101f1855fd40c2954e0a2fc8b3",
+      "sourceCommit": null,
+      "sourceBlobId": "45f58d7e124e524e5f00114aeb5cb728fba93598"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-06/logs/test.stdout.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 32449,
+      "sha256": "3e22d3ae188ed17b4b98a016d96316b6488fce300f355d578121dcc11a10667b",
+      "member": "bytes/3e22d3ae188ed17b4b98a016d96316b6488fce300f355d578121dcc11a10667b",
+      "sourceCommit": null,
+      "sourceBlobId": "a7f17f82646970eb81c3eaf89bda10db606f5ae8"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/local-06/logs/typecheck.stdout.log",
       "version": "blueberry-2026-10-11",
       "byteKind": "worktree",
       "bytes": 366,

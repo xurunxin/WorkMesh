@@ -1,6 +1,6 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { constants } from 'node:fs'
+import { constants, type Stats } from 'node:fs'
 import { chmod, lstat, mkdir, open, readdir, rename, unlink } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
@@ -50,6 +50,31 @@ const macAclGet = process.platform === 'darwin' ? libc?.func('void * acl_get_fil
 const macAclText = process.platform === 'darwin' ? libc?.func('void * acl_to_text(void * acl, void * length)') : null
 const macAclFree = process.platform === 'darwin' ? libc?.func('int acl_free(void * acl)') : null
 
+async function verifyMacAcl(path: string, info: Stats, privatePath: boolean): Promise<void> {
+  const entry = macAclGet!(path, 0x100)
+  if (!entry) {
+    const error = koffi.decode(errnoAddress!(), 'int') as number
+    const current = await lstat(path)
+    requireThat(error === 2 && !current.isSymbolicLink()
+      && current.isDirectory() === info.isDirectory() && current.isFile() === info.isFile()
+      && current.dev === info.dev && current.ino === info.ino && current.uid === info.uid && current.mode === info.mode
+      // 私有对象的 owner/mode 已核；其 ctime 可因同用户首次创建锁文件而改变。
+      && (privatePath || current.ctimeMs === info.ctimeMs), 'CONNECTOR_UNSAFE_ACL')
+    return
+  }
+  try {
+    const text = macAclText!(entry, null)
+    requireThat(text, 'CONNECTOR_UNSAFE_ACL')
+    try {
+      const aclText = koffi.decode.string(text)
+      // 私有对象不能靠 BSD mode 遮蔽扩展 ACL 的读取授权；继承专用 allow 也拒绝。
+      requireThat(!aclText.split('\n').some(line => /\ballow\b/.test(line)
+        && (privatePath || /\b(?:write|append|delete|delete_child|add_file|add_subdirectory|writeattr|writeextattr|writesecurity|chown)\b/.test(line))),
+      privatePath ? 'CONNECTOR_UNSAFE_ACL' : 'CONNECTOR_UNSAFE_ANCESTOR')
+    } finally { macAclFree!(text) }
+  } finally { macAclFree!(entry) }
+}
+
 async function verifyAncestor(path: string): Promise<void> {
   const info = await lstat(path)
   requireThat(info.isDirectory() && !info.isSymbolicLink(), 'CONNECTOR_UNSAFE_PATH')
@@ -60,30 +85,7 @@ async function verifyAncestor(path: string): Promise<void> {
     trustedWindowsDescriptor(descriptor.subarray(0, needed[0]), await userSid())
   } else {
     trustedPosixDirectory(info.uid, info.mode, process.getuid!())
-    if (macAclGet) {
-      const entry = macAclGet(path, 0x100)
-      if (!entry) {
-        // Darwin 对没有扩展 ACL 的现存对象返回 NULL/ENOENT；读取失败仍须关闭。
-        // 重核同一对象，不能把路径消失、替换或属性变化当作无 ACL。
-        const error = koffi.decode(errnoAddress!(), 'int') as number
-        const current = await lstat(path)
-        requireThat(error === 2 && current.isDirectory() && !current.isSymbolicLink()
-          && current.dev === info.dev && current.ino === info.ino && current.uid === info.uid
-          && current.mode === info.mode && current.ctimeMs === info.ctimeMs, 'CONNECTOR_UNSAFE_ACL')
-        return
-      }
-      requireThat(entry, 'CONNECTOR_UNSAFE_ACL')
-      try {
-        const text = macAclText!(entry, null)
-        requireThat(text, 'CONNECTOR_UNSAFE_ACL')
-        try {
-          // macOS 扩展 ACL 不受 chmod 的 mode 位完整约束；保守拒绝所有修改型 allow。
-          const aclText = koffi.decode.string(text)
-          requireThat(!aclText.split('\n').some(line => /\ballow\b/.test(line)
-            && /\b(?:write|append|delete|delete_child|add_file|add_subdirectory|writeattr|writeextattr|writesecurity|chown)\b/.test(line)), 'CONNECTOR_UNSAFE_ANCESTOR')
-        } finally { macAclFree!(text) }
-      } finally { macAclFree!(entry) }
-    }
+    if (macAclGet) await verifyMacAcl(path, info, false)
   }
 }
 
@@ -108,8 +110,11 @@ export async function verifyPrivate(path: string, directory = false): Promise<vo
   const info = await lstat(path)
   requireThat(!info.isSymbolicLink() && (directory ? info.isDirectory() : info.isFile() && info.nlink === 1), 'CONNECTOR_UNSAFE_PATH')
   if (windows) await acl(path, false)
-  else requireThat(info.uid === process.getuid?.() && (info.mode & 0o777) === (directory ? 0o700 : 0o600)
-    && (directory || info.nlink === 1), 'CONNECTOR_UNSAFE_PERMISSIONS')
+  else {
+    requireThat(info.uid === process.getuid?.() && (info.mode & 0o777) === (directory ? 0o700 : 0o600)
+      && (directory || info.nlink === 1), 'CONNECTOR_UNSAFE_PERMISSIONS')
+    if (macAclGet) await verifyMacAcl(path, info, true)
+  }
 }
 async function withPreparedDirectory<T>(directory: string, action: () => Promise<T>): Promise<T> {
   const path = resolve(directory)

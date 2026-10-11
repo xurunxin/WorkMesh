@@ -1,7 +1,7 @@
 import { randomBytes, randomUUID } from 'node:crypto'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { stat, writeFile } from 'node:fs/promises'
+import { mkdir, stat, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { SystemSecretStore } from '../src/secret-store.js'
@@ -101,16 +101,19 @@ try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase
       await prepareDirectory(victim)
       if (process.platform === 'win32') {
         expect(Boolean(process.env.WM_CONNECTOR_OTHER_USER && process.env.WM_CONNECTOR_OTHER_PASSWORD && process.env.WM_CONNECTOR_PUBLIC_ROOT)).toBe(true)
-        // DC 单独足以绕过子目录 DELETE 拒绝；AD 允许攻击者创建同名替换。
-        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DC,AD)'], { windowsHide: true })
+        // DC 授删除子项，WD 授 rename 的目标条目，AD 授同名替换目录创建。
+        // 均仅用于一次性不安全父夹具；受保护子项没有授该用户 DELETE。
+        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DC,AD,WD)'], { windowsHide: true })
+        const fixtureAcl = await execute('icacls.exe', [unsafe], { windowsHide: true })
+        console.log(JSON.stringify({ resource: 'aclFixture', path: unsafe, acl: fixtureAcl.stdout }))
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
         const script = `
 $p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(parent, 'utf8').toString('base64')}'))
 try { [IO.File]::ReadAllText([IO.Path]::Combine($p,'control.txt'))|Out-Null } catch {exit 24}
 foreach($target in @($p,[IO.Path]::Combine($p,'connector'))) { try { [IO.Directory]::Move($target,$target+'-moved'); exit 25 } catch {} }
 $v=[IO.Path]::Combine($p,'unsafe','connector')
-try { [IO.Directory]::Move($v,$v+'-moved') } catch {exit 26}
-try { [IO.Directory]::CreateDirectory($v)|Out-Null } catch {exit 27}
+try { [IO.Directory]::Move($v,$v+'-moved') } catch {exit (1000+($_.Exception.GetBaseException().HResult -band 65535))}
+try { [IO.Directory]::CreateDirectory($v)|Out-Null } catch {exit (2000+($_.Exception.GetBaseException().HResult -band 65535))}
 # 必需攻击已完成；其他用户不需要拥有新目录的删除权限，由夹具 owner 收尾。
 exit 0
 `
@@ -131,6 +134,20 @@ exit 0
   if (process.platform === 'linux') it('Secret Service 不可用必须失败，不退回 keyutils', async () => {
     const source = "import {SystemSecretStore} from './src/secret-store.ts'; try { await new SystemSecretStore().put(process.env.WM_TEST_REF,'wmi_'+'x'.repeat(43)); process.exit(1); } catch { process.exit(0); }"
     await execute(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', source], { env: { ...process.env, WM_TEST_REF: randomUUID(), DBUS_SESSION_BUS_ADDRESS: 'unix:path=/nonexistent/workmesh-connector-test' } })
+  })
+  if (process.platform === 'darwin') it('继承读取 ACL 可越过 BSD mode，私有对象必须拒绝', async () => {
+    const parent = await temporaryDirectory('mac-read-acl', '/tmp'), dir = join(parent, 'connector'), path = join(dir, 'probe.txt')
+    try {
+      await execute('chmod', ['0755', parent])
+      await execute('chmod', ['+a', 'user:nobody allow read,execute,file_inherit,directory_inherit', parent])
+      await mkdir(dir, { mode: 0o700 }); await writeFile(path, '非秘密 ACL 正对照', { mode: 0o600 })
+      expect((await stat(dir)).mode & 0o777).toBe(0o700); expect((await stat(path)).mode & 0o777).toBe(0o600)
+      await execute('sudo', ['-n', '-u', 'nobody', 'sh', '-c', 'cat "$1" >/dev/null', 'probe', path])
+      await expect(prepareDirectory(dir)).rejects.toThrow('CONNECTOR_UNSAFE_ACL')
+      await expect(verifyPrivate(path)).rejects.toThrow('CONNECTOR_UNSAFE_ACL')
+      for (const ownedPath of [parent, dir, path]) await execute('chmod', ['-N', ownedPath])
+      await prepareDirectory(dir); await verifyPrivate(path)
+    } finally { await cleanupDirectory(parent) }
   })
   if (process.platform === 'darwin') it('同用户并发准备目录时仍完整核验无扩展 ACL', async () => {
     const parent = await temporaryDirectory('mac-concurrent-acl', '/tmp')
