@@ -50,3 +50,5 @@ Lite 已有一次真实构建、save/load 身份一致及三个角色加载通�
 真实 Lite 首轮完成部署后发现验收调用对配对创建状态码写成 200，而 API 合同为 201，见 runs/backend-lite-47db4f07/34.log；改为精确 201 并保留首败。该轮真实 worker 精确上下文和 TLS 已完成调用，完整 Skill/MCP 验收尚未通过，资源回执记录本人镜像、builder、安装目录、Compose 容器/卷/网络和测试 CA 卷均已收尾。
 
 本机完整集成命令结束失败：数据库 14 文件通过、3 文件失败，68 项通过、7 项失败、6 项跳过；超时及其后续 schema 缺失见 integration-final.log，没有执行后续包，也没有放宽时限。CI 38176577167 的 API 集成最终成功，Required 因 worker 首败失败。
+
+后续本机独有 builder 在 Corepack 下载 pnpm 时遇到网络 fetch 失败，未运行产品构建或部署，见 runs/backend-lite-558fdf2d。本人 builder、容器、卷和安装目录清理已复核。新增 CI 将在锁定 Node 上实际重验 Lite 与生产安装，不改下载校验或秘密门禁。

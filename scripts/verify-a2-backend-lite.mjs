@@ -127,6 +127,7 @@ try {
     if (!log.includes(`role=${role} `) || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载入口`)
     save()
   }
+  if (deploymentClass === 'lite') await must('sh', [resolve(root, 'infra/lite/verify-image-roles.sh'), image.target])
   copyFileSync(resolve(root, composeFile), resolve(installDir, composeFile))
   const tls = resolve(installDir, 'tls'); mkdirSync(tls)
   await must('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', resolve(tls, 'key.pem'), '-out', resolve(tls, 'ca.pem'), '-days', '1', '-subj', '/CN=host.docker.internal', '-addext', 'subjectAltName=DNS:host.docker.internal,DNS:localhost,IP:127.0.0.1'])

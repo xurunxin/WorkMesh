@@ -1,0 +1,14 @@
+阅读视图；原始字节：raw-logs/run-7b7ae9229768.zip 内 lite-network-first-failure.log；SHA-256：8c8c3e48f4957f70b80347275afcb24ce8b8d5eb4f5e4b2f6419f2051e84bd3b
+{"name":"docker","args":["buildx","inspect","backend-lite-558fdf2d"],"code":1,"log":"0.log"}
+{"name":"docker","args":["buildx","create","--name","backend-lite-558fdf2d","--driver","docker-container","--driver-opt","memory=4g","--driver-opt","memory-swap=4g"],"code":0,"log":"1.log"}
+{"name":"docker","args":["buildx","inspect","--bootstrap","backend-lite-558fdf2d"],"code":0,"log":"2.log"}
+{"name":"docker","args":["inspect","--format","{{.Id}}","buildx_buildkit_backend-lite-558fdf2d0"],"code":0,"log":"3.log"}
+{"name":"docker","args":["image","inspect","workmesh-retirement-lite:backend-lite-558fdf2d"],"code":1,"log":"4.log"}
+{"name":"docker","args":["buildx","build","--builder","backend-lite-558fdf2d","--load","--progress=plain","--label","workmesh.task=backend-lite-558fdf2d","--build-arg","WORKMESH_BUILD_SHA=323dbe76182eabad91c7cd905aeb6ea2e9053a50","-t","workmesh-retirement-lite:backend-lite-558fdf2d","-f","infra/docker/lite.Dockerfile","-"],"code":1,"log":"5.log"}
+失败或未验收：Error: docker 退出 1
+{"name":"docker","args":["inspect","--format","{{.Id}}","buildx_buildkit_backend-lite-558fdf2d0"],"code":0,"log":"6.log"}
+{"name":"docker","args":["buildx","rm","backend-lite-558fdf2d"],"code":0,"log":"7.log"}
+{"name":"docker","args":["container","inspect","76226ce2180845fc7ae9b7c57db2ec7433ee1efcc45bbafb0ce4454a5db37b37"],"code":1,"log":"8.log"}
+{"name":"docker","args":["volume","inspect","buildx_buildkit_backend-lite-558fdf2d0_state"],"code":1,"log":"9.log"}
+{"name":"powershell.exe","args":["-NoProfile","-Command","$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message}; break } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"],"code":0,"log":"10.log"}
+证据：I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\docs\reviews\backend-retirement\runtime-tools\deployments\backend-lite-558fdf2d
