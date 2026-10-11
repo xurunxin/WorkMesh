@@ -49,3 +49,13 @@ CI435 的 Linux 原生平台及单元已成功，macOS 已实际执行，Windows
 - 灾难恢复镜像构建在 node-pty 安装时失败：`Could not find any Python installation to use`。六个全 workspace 安装的 production/Lite **build stage** 补 python3/make/g++，工具不进入原独立 runtime stage。四个开发镜像同样安装了含 API 的 workspace，API 的测试依赖新增连接器后须补其 manifest 与 native 编译工具。没有新增生产服务或发布动作。
 
 本机 Node 22.19.0 ZIP 已按同版本官方下载清单验证 SHA-256；pnpm9 实测共享 store 为 `X:/packages/pnpm/v3`，新机冷缓存首次离线安装失败 `ERR_PNPM_NO_OFFLINE_TARBALL`，原日志保留。随后冻结锁、copy 导入、独立 `.tmp/workmesh-virtual-store` 的连接器依赖安装成功。后续检查与资源账本另列，未用未提权机器冒第二用户通过。
+
+## 第二轮问题、日志归档与本机定向结果
+
+CI435 Source gates 在连接器 ANSI 大矩阵单个同步测试上触发原有 5000ms 超时；完整失败日志保留。将同一矩阵拆成 2 种凭据 × 7 种控制串的独立测试，并单列控制载荷验证；所有插入位置、chunk 边界和原断言完整保留，不改产品、不扩大超时。连接器单元总数由 43 增至 57，独立客户端输出套件 19 项通过。
+
+[CI436](https://github.com/xurunxin/WorkMesh/actions/runs/38135777835) 针对 `27b87b1d97707c41f136d86b588d756321267b53` 在 Select required jobs 的 `git diff --check` 失败：新取得的原始日志含尾随空白。测试/安全断言没有被执行或跳过冒通过。改用本目录独立 ZIP＋内容寻址索引，逐字节读回验证后才移除已保全日志文件，源码格式门禁保持原规则；CI 首败、后续本机日志与早期包含文本换行转换的保存版本全保留。`ci-job-log-sources.json` 另绑定通过 GitHub job logs API 重新取得的**原始 stdout 字节**，不将早期文本转换副本冒原字节。复核入口：`node docs/reviews/b1-b2/blueberry-recovery/archive-logs.mjs`；索引 logicalPath 保留旧日志路径。
+
+本机首轮 `local-checks.json`：lint/typecheck/build 成功，单元 8 通过/35 失败，平台 1 通过/4 失败。首轮期间同时修订 CI/macOS 文件，结果报告中的 changedAfter 如实记录；不能当最终源码稳定运行。默认 APPDATA 的新目录被 Codex MSIX 重定向到 `C:/Users/xurx/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/LocalCache/Roaming`，而 realpath(APPDATA) 仍为原父目录。实际 AppData ACL 包含非本人 App 容器 SID 的修改权限，产品拒绝符合要求；测试 cleanup 的预先边界也拒绝该创建后的新物理路径。原 ACL 保存在 `blueberry-appdata-acl.json`，没有更改用户配置、ACL、属性或信任白名单。准确 39 项目录及两个诊断探针另存 `first-run-cleanup.json`，校验绝对路径、原账本和无 reparse 后定向移除，未删父目录。
+
+第二轮 `local-02/` 对全部运行文件重新捕获原字节摘要，源码前后差异为空。由连接器实际 prepareDirectory 新建当前用户专用 `C:/Users/xurx/workmesh-b1-b2-blueberry-01a12a8e`，只向检查子进程注入 APPDATA，不改全局环境。本轮 lint/typecheck/build 成功、57 单元全通过；平台实际 Credential Manager、ACL 与 CLI 三项通过，缺第二用户两项仍失败。未提权、未获取账户密码、未模拟其他用户。`run-source.json` 顶部 head/mergeHead 是初始采样的历史字段，运行文件 rawSha256 是第二轮重新采样，local-checks 的零变化按这些 rawSha256 比较；不将顶部历史字段冒新提交身份，最终提交与 CI 绑定另补。

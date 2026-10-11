@@ -18,22 +18,27 @@ it('安全提示立即输出，每个秘密切分位置均脱敏', () => {
   }
 })
 
-it('ANSI 不打断凭据：每个插入位置、每个 chunk 边界、C1 与控制载荷均脱敏', () => {
-  for (const prefix of ['wmi_', 'wmp_']) {
+const ansiCases = ['\x1b[31m', '\x9b31m', '\x1b]0;safe title\x07', '\x1bPpayload\x1b\\', '\x1b\\', '\x9c', '\x07']
+// 每个凭据种类/控制串独立执行同一完整矩阵，避免全仓竞争时单项超过既有超时。
+it.each(['wmi_', 'wmp_'].flatMap(prefix => ansiCases.map((ansi, index) => ({ prefix, ansi, index }))))(
+  'ANSI $prefix 控制 $index：每个插入位置和 chunk 边界均脱敏', ({ prefix, ansi }) => {
     const token = prefix + 'q'.repeat(43)
-    for (const ansi of ['\x1b[31m', '\x9b31m', '\x1b]0;safe title\x07', '\x1bPpayload\x1b\\', '\x1b\\', '\x9c', '\x07']) {
-      for (let at = 0; at <= token.length; at++) {
-        const decorated = token.slice(0, at) + ansi + token.slice(at)
-        for (let split = 1; split < decorated.length; split++) {
-          let output = ''; const sink = redactChildOutput(text => { output += text })
-          sink.push('\x1b[32mConfirm? [y/N] '); expect(output).toBe('\x1b[32mConfirm? [y/N] ')
-          sink.push(decorated.slice(0, split)); sink.push(decorated.slice(split)); sink.push(' done\x1b[0m'); sink.finish()
-          expect(output).toContain(ansi)
-          expect(stripVTControlCharacters(output.replaceAll(ansi, ''))).toBe('Confirm? [y/N] [已隐藏] done')
-          expect(output.includes(token)).toBe(false)
-        }
+    for (let at = 0; at <= token.length; at++) {
+      const decorated = token.slice(0, at) + ansi + token.slice(at)
+      for (let split = 1; split < decorated.length; split++) {
+        let output = ''; const sink = redactChildOutput(text => { output += text })
+        sink.push('\x1b[32mConfirm? [y/N] '); expect(output).toBe('\x1b[32mConfirm? [y/N] ')
+        sink.push(decorated.slice(0, split)); sink.push(decorated.slice(split)); sink.push(' done\x1b[0m'); sink.finish()
+        expect(output).toContain(ansi)
+        expect(stripVTControlCharacters(output.replaceAll(ansi, ''))).toBe('Confirm? [y/N] [已隐藏] done')
+        expect(output.includes(token)).toBe(false)
       }
     }
+  })
+
+it('ANSI 控制载荷内的两种凭据均脱敏', () => {
+  for (const prefix of ['wmi_', 'wmp_']) {
+    const token = prefix + 'q'.repeat(43)
     let output = ''; const sink = redactChildOutput(text => { output += text })
     sink.push('\x1b]0;' + token.slice(0, 20) + '\x1b[31m' + token.slice(20) + '\x07'); sink.finish()
     expect(output.includes(token)).toBe(false); expect(output).toContain('[已隐藏]')

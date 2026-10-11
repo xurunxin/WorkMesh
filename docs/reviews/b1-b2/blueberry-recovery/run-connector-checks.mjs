@@ -4,12 +4,17 @@ import { dirname, resolve, join } from 'node:path'
 import { createHash } from 'node:crypto'
 
 const root = process.cwd()
-const output = resolve(root, 'docs/reviews/b1-b2/blueberry-recovery')
+const base = resolve(root, 'docs/reviews/b1-b2/blueberry-recovery')
+const attempt = process.argv[2]
+if (!attempt || !/^[a-z0-9-]+$/.test(attempt)) throw new Error('需要独有运行标识，不能覆盖历史结果')
+const output = join(base, attempt)
 const owner = JSON.parse(readFileSync(resolve(root, '.tmp/workmesh-environment-owner.json'), 'utf8').replace(/^\uFEFF/, ''))
-const source = JSON.parse(readFileSync(join(output, 'source.json'), 'utf8'))
-const env = { ...process.env, PATH: `${dirname(owner.node)};${process.env.PATH}` }
+const source = JSON.parse(readFileSync(join(base, 'source.json'), 'utf8'))
+source.files = source.files.map(file => ({ ...file, rawSha256: createHash('sha256').update(readFileSync(resolve(root, file.path))).digest('hex') }))
+const env = { ...process.env, PATH: `${dirname(owner.node)};${process.env.PATH}`, APPDATA: process.env.WM_B1B2_TEST_ROOT ?? process.env.APPDATA }
 const results = []
 mkdirSync(join(output, 'logs'), { recursive: true })
+writeFileSync(join(output, 'run-source.json'), JSON.stringify(source, null, 2) + '\n')
 function changed() {
   return source.files.filter(file => createHash('sha256').update(readFileSync(resolve(root, file.path))).digest('hex') !== file.rawSha256).map(file => file.path)
 }

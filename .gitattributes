@@ -18,3 +18,6 @@ scripts/test-connector-linux.sh text eol=lf
 # Exact connector plan/spec snapshots keep their approved UTF-8/LF bytes.
 docs/plan/connector-recovery.md text eol=lf
 docs/reviews/b1-b2/current-spec.md text eol=lf
+
+# 新机验收原件无损归档；源码格式门禁不因日志空白而放宽。
+docs/reviews/b1-b2/blueberry-recovery/*.zip -text
