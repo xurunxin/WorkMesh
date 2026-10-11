@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-10-11T08:48:40.709006+00:00",
+  "key": "01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+  "target": "C:\\Users\\xurx\\.tds\\workspaces\\01a1187a-f0f0-76d8-8f5b-b954ee399cdc",
+  "priorReceipt": "execution-01a1187a-f0f0-76d8-8f5b-b954ee399cdc.json",
+  "priorReceiptSha256": "b867489da44ed1c5e4cf5f793950113827aeafccccd3fe600c55090d5e62daa5",
+  "priorResult": "该目标停止；不得重试/换法绕失败或拒绝",
+  "priorError": "发现其他活动消费者，不删除",
+  "priorNativeDeleteDispatched": false,
+  "consumerExitObservation": {
+    "input": [
+      "pwsh",
+      "-NoProfile",
+      "-Command",
+      "Get-CimInstance Win32_Process -Filter \"ProcessId=34632\" | Select-Object ProcessId,ParentProcessId,Name | ConvertTo-Json -Compress"
+    ],
+    "startedAt": "2026-10-11T08:48:39.881475+00:00",
+    "endedAt": "2026-10-11T08:48:40.709348+00:00",
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "evidenceLimit": "原WMI仅记PID/parent/name；与并发只读回执查看时间重叠，原命令行缺失不补造归属。当前PID已消失，真正派发前仍须重新刷新所有活动/挂载/文件/远端引用。",
+  "rule": "原目标仅预检门暂停，Git删除尚未调用；保原回执，追加新预检/代码绑定先推送后首次删除。任何原生删除失败或系统拒绝仍禁止恢复/换法。",
+  "executionEvidenceSuffix": "gate-resume",
+  "guardRelaxed": false
+}

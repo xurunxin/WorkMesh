@@ -22,12 +22,19 @@ def main():
     registered = {line[9:].replace('\\', '/') for line in registration['stdout'].splitlines() if line.startswith('worktree ')}
     results = []
     for target in a.load(OUT / 'execution-plan.json')['targets']:
-        receipt = a.load(OUT / ('execution-' + target['key'] + '.json'))
+        receipt_name = 'execution-' + target['key'] + '.json'
+        paused = None
+        resume_name = 'execution-' + target['key'] + '-gate-resume.json'
+        if (OUT / resume_name).exists():
+            paused = a.load(OUT / receipt_name)
+            assert not any('worktree' in c.get('input',[]) and 'remove' in c.get('input',[]) for c in paused['calls'])
+            receipt_name = resume_name
+        receipt = a.load(OUT / receipt_name)
         present = os.path.lexists(target['path'])
         listed = target['path'].replace('\\', '/') in registered
         success = receipt['error'] is None and receipt['existsAfter'] is False and not present and not listed
         results.append(dict(key=target['key'],path=target['path'],logicalBytes=target['logicalBytes'],
-            receipt='execution-' + target['key'] + '.json',result=receipt['result'],error=receipt['error'],
+            receipt=receipt_name,previousPreflightPause=paused,result=receipt['result'],error=receipt['error'],
             existsNow=present,registeredNow=listed,success=success))
     rows, global_ids, protected = [], {}, []
     for row in usage['rows']:

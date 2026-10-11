@@ -1,18 +1,20 @@
 # 每次只处理一个先行推送/精确映射的旧工作树；首败/拒绝停原目标。
-param([ValidatePattern('^[0-9a-f-]{36}$')][string]$Key,[ValidatePattern('^[0-9a-f]{40}$')][string]$MainSha)
+param([ValidatePattern('^[0-9a-f-]{36}$')][string]$Key,[ValidatePattern('^[0-9a-f]{40}$')][string]$MainSha,[ValidateSet('','gate-resume')][string]$EvidencePhase='')
 $ErrorActionPreference='Stop'
 $out=$PSScriptRoot
 $current=(Get-Location).Path
 $workspaceRoot='C:\Users\xurx\.tds\workspaces'
 $denied=@('01a115d0-87b0-78cd-921d-750713cdde51','01a116f7-1027-7c75-90df-32ebc5488752','01a11890-f4de-7106-b64d-e1b2c0d4608e','01a11acb-1a68-7fba-a359-7119603cde7d')
 $target=[IO.Path]::GetFullPath((Join-Path $workspaceRoot $Key))
-$receipt=Join-Path $out "execution-$Key.json"
+$suffix=if ($EvidencePhase) { '-'+$EvidencePhase } else { '' }
+$receipt=Join-Path $out "execution-$Key$suffix.json"
 if (Test-Path -LiteralPath $receipt) { throw '已有原执行回执，禁止重复删除' }
 $calls=[Collections.Generic.List[object]]::new()
-$record=[ordered]@{target=$target;main=$MainSha;startedAt=[DateTime]::UtcNow.ToString('o');calls=$calls;result='未执行';error=$null;existsAfter=$null;diskBefore=$null;diskAfter=$null}
+$record=[ordered]@{target=$target;main=$MainSha;evidencePhase=$EvidencePhase;startedAt=[DateTime]::UtcNow.ToString('o');calls=$calls;result='未执行';error=$null;existsAfter=$null;diskBefore=$null;diskAfter=$null}
 function Save { $record | ConvertTo-Json -Depth 14 | Set-Content -LiteralPath $receipt -Encoding utf8NoBOM }
 function Native([string]$Exe,[string[]]$Arguments) {
     $info=[Diagnostics.ProcessStartInfo]::new($Exe);$info.UseShellExecute=$false;$info.RedirectStandardOutput=$true;$info.RedirectStandardError=$true
+    $info.Environment['PYTHONUTF8']='1'
     foreach ($arg in $Arguments) { $info.ArgumentList.Add($arg) }
     $start=[DateTime]::UtcNow.ToString('o');$p=[Diagnostics.Process]::new();$p.StartInfo=$info
     if (-not $p.Start()) { throw '子进程未启动' }
@@ -48,12 +50,27 @@ function Remove-Literal([string]$Path,[string]$Kind) {
     finally { $call.endedAt=[DateTime]::UtcNow.ToString('o');$calls.Add($call) }
 }
 try {
+    if ($EvidencePhase) {
+        $decision=Get-Content -LiteralPath (Join-Path $out 'gate-resume-decision.json') -Raw | ConvertFrom-Json
+        if ($Key -ne $decision.key -or $target -ne $decision.target -or $decision.priorNativeDeleteDispatched -or $decision.guardRelaxed) { throw '不是准确的未派发删除预检暂停' }
+        $originalPath=Join-Path $out $decision.priorReceipt
+        if ((Get-FileHash -LiteralPath $originalPath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $decision.priorReceiptSha256) { throw '原暂停回执改变' }
+        $original=Get-Content -LiteralPath $originalPath -Raw | ConvertFrom-Json
+        if ($original.error -ne '发现其他活动消费者，不删除' -or @($original.calls|Where-Object { $_.kind -eq 'powershell-cmdlet' -or (($_.input -contains 'worktree') -and ($_.input -contains 'remove')) }).Count) { throw '存在实际删除/属性操作/不同失败，禁止恢复' }
+        $binding=Get-Content -LiteralPath (Join-Path $out 'gate-resume-source-binding.json') -Raw | ConvertFrom-Json
+        if (-not $binding.success) { throw '缺新的先行推送源码绑定' }
+        foreach ($source in $binding.files) {
+            if ((Get-FileHash -LiteralPath (Join-Path $current $source.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $source.windowsSha256) { throw '追加门禁源码改变' }
+        }
+    }
     if ($denied -contains $Key -or $target -eq $current -or (Split-Path -Parent $target) -ne $workspaceRoot -or (Resolve-Path -LiteralPath $target).Path -ne $target) { throw '候选或绝对根禁止' }
     $node=$target
     while ($node) { if ((Get-Item -LiteralPath $node -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw '祖先是链接' };$parent=Split-Path -Parent $node;if ($parent -eq $node) { break };$node=$parent }
     Guard
     $python=(Get-Command python.exe -CommandType Application | Select-Object -First 1).Source
-    Native $python @('-B',(Join-Path $out 'verify-target.py'),$Key,$MainSha)
+    $verificationArgs=@('-B',(Join-Path $out 'verify-target.py'),$Key,$MainSha)
+    if ($EvidencePhase) { $verificationArgs+=$EvidencePhase }
+    Native $python $verificationArgs
     Guard
     $record.diskBefore=Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'" | Select-Object DeviceID,FreeSpace,Size
     # 15:05 明确解除自设 readonly 门，仅这九个夹具文件；不改 ACL。

@@ -66,6 +66,9 @@ def main():
         text.append(f'| `{r["key"]}` | {r["logicalBytes"]:,} | {r["result"]}' + (f'；{r["error"]}' if r['error'] else '') + ' |')
     text += ['', '旧第一#60的九个 Git fixture readonly 对象合计696 B，见 [readonly-exception.json](readonly-exception.json)。原属性/身份与精确保全 member 已先核；实际清除 ReadOnly 位的方法和每路径前后属性均保在其 execution 回执。该自设门与 G1/D0/C3 的系统拒绝完全分列，没有改 ACL 或对拒绝目标调用删除。', '', '## 清理前后占用', '', '| 范围/指标 | 开工 B | 收尾 B |', '|---|---:|---:|']
     main_before, main_after = before['mainRepositorySeparate']['logicalBytes'], after['mainRepositorySeparate']['logicalBytes']
+    registered_before=sum(line.startswith('worktree ') for line in before['registration']['stdout'].splitlines())
+    registered_after=sum(line.startswith('worktree ') for line in after['registration']['stdout'].splitlines())
+    text.append(f'| Git全登记数（含主仓库与既有外部Temp） | {registered_before} | {registered_after} |')
     for label, left, right in (
         ('本项目工作树逻辑',before['worktreeLogicalBytes'],after['worktreeLogicalBytes']),
         ('主仓库独立逻辑',main_before,main_after),
@@ -115,6 +118,14 @@ def main():
         vols = [m.get('Name',m.get('Source','')) for m in c['mounts']]
         text.append(f'| `{c["id"]}` / `{c["name"]}` | {c["state"]["Status"]} | ' + '<br>'.join('`'+v+'`' for v in vols) + ' | ' + ('默认 compose 业务数据未授权' if c['name'].startswith('/workmesh-') else '缺精确原ID/owner及数据重建来源') + ' |')
     text += ['', f'其他项目容器未调用删除；独立前后对照有 {len(final["containers"]["otherContainerChanges"])} 个名称/挂载/镜像或缺失变化、新增 {len(final["containers"]["newOtherContainers"])} 个，详见 audit-after。活动消费者动态变化不归因本次清理。公共 native 安装字节/身份与 CAS 样本字节未变；native nlink {final["sharedNative"]["nlinkBefore"]}→{final["sharedNative"]["nlinkAfter"]} 仅另列，不冒物理释放。', '', '## 已落实的前景重建和防膨胀入口', '', '[rebuild-rules.md](rebuild-rules.md) 给出开工、共享/隔离、准确重建及结束规则；[rebuild-environment.py](rebuild-environment.py) 提供 plan/install/thin/hydrate/finish-plan。plan 实核当前会话/remote、pnpm9.15.4已有可执行文件、X卷现有v3 CAS、锁hash和专属virtual store；install 使用 offline/frozen/ignore-scripts/copy，不下载或改公共配置。结束先保全，登记准确 workspace＋owner/锁绑定的私有virtual store，再前景收尾。没有 timer/daemon，也没有自动启动待办业务。', '', '单包离线 copy 真实 exit=0、downloaded=0、锁不变、任务文件nlink=1/身份不同，实际改写任务副本未影响 CAS，见 [rebuild-verification-copy-isolation.json](rebuild-verification-copy-isolation.json)。此前 clone-or-copy 实测与 CAS 同身份 hardlink，原件保留并据此选择 copy。共享下载/CAS与公共工具/镜像已能复用；必要私有安装副本仍存在，未承诺所有包字节零复制。', '', '大型历史证据薄检出入口要求已启用 extensions.worktreeConfig；本机目前未启用，安全门先停，未改平台主仓库配置。不能把文档建议冒成平台自动稀疏检出已生效；当前可用的是定位现有工具/store、前景离线安装、可变状态隔离及收尾登记。未重建完整后续业务环境或跑业务验收。', '', '## 实际验证、失败与合入关口', '', '本轮跑适当的保全解析、源码绑定、ZIP/Windows字节核验、逐目标盘点与操作后验、共享重建单包入口、Python/PowerShell语法和 git diff --check；没有把无关产品全套冒作本轮验证。最终检测原结果另在 final-verification.json 和 tool-receipts-ending.json.gz。', '', '准备过程首败（Docker函数名遮蔽/可执行列表、历史无效ZIP断言、stale PYC编译不相等、初次保全解析漏放index分类）均在实际原调用中保留；只读耗时进程的终止和一次shell尾部命令掩盖前子进程状态明确区别，不倒填原exit。它们不是系统自动删除审批拒绝，也未作为成功门禁。修订后独立解析实际通过才进行预检推送与现场删除。', '', '本轮新增成果仍须重新独审、blocking/high闭合及准确最终head自己的最新 RequiredCI。旧1266审查与CI不能证明本次新增删除/共享入口；本报告不宣称已合入。最终head与实时CI查询保在本轮回复/平台记录；合入后本轮工作树仅登记为未来独立候选，本轮不删除自身。', '']
+    hardlink=a.load(OUT/'hardlink-source-binding.json')
+    text.insert(text.index('## 必要独有成果与重建映射'),
+        f'追加身份门禁先提交推送 `{hardlink["commit"]}`，原返回/远端回读见 [hardlink-push-receipt.json](hardlink-push-receipt.json)，源码/政策绑定见 [hardlink-source-binding.json](hardlink-source-binding.json)。M5的24份与M4的17份派生EXE共用公共native同一身份、开工nlink=44。后目标只扣已证明完整回收的本轮精确路径数；其它nlink漂移仍停，字节/属性/mtime/独占打开不放宽。此链接数变化不能记作native公共本体的物理释放。\n')
+    if (OUT/'gate-resume-decision.json').exists():
+        text.insert(text.index('## 每个旧工作树的实际结果'),
+            '一次活动安全门暂停原件完整保留，未派发Git删除：原命中pwsh PID34632与本轮并发只读查看时间重叠，原命令行未记录不倒填。消费者已退出后，另存新的完整预检/推送/源码绑定，才首次派发该目标的正式删除；见 [gate-resume-decision.json](gate-resume-decision.json)、[gate-resume-source-binding.json](gate-resume-source-binding.json)及两个execution原件。这不是重试原生删除失败或系统拒绝，原暂停回执没有被覆盖。\n')
+    text += ['规则实际触发分列：本轮开工只读盘点已执行，旧环境回收按逐目标原件实际执行；本轮自身尚未合入，合入后触发未发生，只登记为受保护的后续候选，见 current-lifecycle-registration.json。',
+        '本轮不改产品源码、数据库迁移、API或事件；后续业务环境按用户选定任务再启动。\n']
     destination = OUT / 'report.md'
     with destination.open('x',encoding='utf-8',newline='\n') as stream:
         stream.write('\n'.join(text))

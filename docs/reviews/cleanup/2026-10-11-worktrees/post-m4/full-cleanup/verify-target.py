@@ -10,14 +10,23 @@ import audit
 import preserve
 
 def main():
-    key,main_sha=sys.argv[1:]
+    key,main_sha,*phase=sys.argv[1:]
+    assert phase in ([],['gate-resume'])
+    suffix='-gate-resume' if phase else ''
     a=audit.a;out=audit.OUT;root=audit.ROOT/key
     assert key not in audit.DENIED and root!=audit.CURRENT and root.parent==audit.ROOT and not a.usage.directory_gate(root)
     mapping=a.load(out/f'final-mapping-{key}.json.gz')
     assert mapping['preservationCompleted'] and not mapping['errors']
     binding=a.load(out/'preflight-binding.json')
     assert binding['success'] and len(binding['commit'])==40
-    remote=a.load(out/f'remote-before-{key}.json')
+    if phase:
+        decision=a.load(out/'gate-resume-decision.json')
+        assert decision['key']==key and not decision['priorNativeDeleteDispatched'] and not decision['guardRelaxed']
+        assert a.sha((out/decision['priorReceipt']).read_bytes())==decision['priorReceiptSha256']
+        source_binding=a.load(out/'gate-resume-source-binding.json')
+        assert source_binding['success']
+        for bound in source_binding['files']:assert a.sha((audit.CURRENT/bound['path']).read_bytes())==bound['windowsSha256']
+    remote=a.load(out/f'remote-before-{key}{suffix}.json')
     text='\n'.join(x['text'] for x in remote['result']['content'] if x['type']=='text')
     assert re.search(r'(?m)^'+main_sha+r'\s+refs/heads/main$',text)
     remote_branch=re.search(r'(?m)^([0-9a-f]{40})\s+'+re.escape(mapping['ref'])+r'$',text)
@@ -65,7 +74,7 @@ def main():
     for link in mapping['links']:
         actual=preserve.h.native.raw_link(root/link['path'])
         assert actual['rawSha256']==link['rawSha256']
-    a.write(f'verification-{key}.json',dict(recordedAt=a.utc(),path=str(root),main=main_sha,ancestry=ancestry,
+    a.write(f'verification-{key}{suffix}.json',dict(recordedAt=a.utc(),path=str(root),main=main_sha,ancestry=ancestry,
         files=len(expected),links=len(mapping['links']),readonly=len(scanned['readonly']),nlinkChanges=nlink_changes,safe=True,preflightCommit=binding['commit']))
     print(json.dumps(dict(target=key,safe=True,files=len(expected),links=len(mapping['links']))))
 

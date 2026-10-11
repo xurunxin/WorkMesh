@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -26,6 +27,22 @@ def cached_manager():
     if not found:raise RuntimeError('缺少已安装 pnpm9.15.4；停止，不自动下载或新安装')
     return sorted(found)[0]
 
+def shared_runtimes(root):
+    result={}
+    node=shutil.which('node.exe')
+    if node:
+        result['node']=dict(path=node,version=run([node,'--version'],root),action='复用现有可执行文件，不复制安装目录')
+    native=Path(os.environ['USERPROFILE'])/'.bun/install/global/node_modules/@opencode/cli/bin/opencode.exe'
+    metadata=native.parent.parent/'package.json'
+    if native.is_file() and metadata.is_file():
+        stat=os.stat(native,follow_symlinks=False)
+        result['opencode']=dict(path=str(native),packageVersion=json.loads(metadata.read_text(encoding='utf-8'))['version'],
+            bytes=stat.st_size,sha256=hashlib.sha256(native.read_bytes()).hexdigest(),
+            action='直接复用原生本体；任务私有TMP/XDG/APPDATA/配置/DB/端口另建，不启动daemon或访问用户配置')
+    else:result['opencode']=dict(available=False,action='未找到已安装本体；不自动安装或登录')
+    return result
+
+
 def plan(root):
     root=root.absolute()
     if root!=Path.cwd().absolute() or root.parent!=WORKSPACES:raise RuntimeError('只允许本次会话自己的 workspace')
@@ -47,7 +64,7 @@ def plan(root):
         '--virtual-store-dir',str(virtual),'--package-import-method=copy','--side-effects-cache=false']
     return dict(workspace=str(root),branch=branch,pnpm=str(manager),pnpmVersion=VERSION,store=str(store),
         lockSha256=lock_hash,privateVirtualStore=str(virtual),sameVolume=store.anchor.lower()==virtual.anchor.lower(),
-        importMethod='copy',installCommand=command,
+        importMethod='copy',installCommand=command,sharedRuntimeSources=shared_runtimes(root),
         shared=['既有 pnpm CAS/download store（不 prune）','既有公共 Node/pnpm/OpenCode 安装','已有 Docker 镜像'],
         isolated=['任务专属 virtual store、node_modules 入口','构建缓存/.next/dist/.turbo','测试容器/卷/端口、私有配置/DB/秘密'],
         limitation='本机 clone-or-copy 实测产生 CAS hardlink，不能保证任意写隔离；copy 须再核身份。共享 store 减少下载，任务安装字节仍可能复制；离线缺包即停止，不默认联网或执行安装脚本。')
@@ -71,9 +88,10 @@ def main():
     args=parser.parse_args();root=Path.cwd();data=plan(root)
     if args.mode=='install':
         if run(['git','status','--porcelain=v1'],root):raise RuntimeError('新任务首次安装要求干净工作树，避免覆盖既有成果')
-        if (root/'node_modules').exists() or Path(data['privateVirtualStore']).exists():raise RuntimeError('已有环境，不盲目重建')
+        if os.path.lexists(root/'node_modules') or os.path.lexists(data['privateVirtualStore']):raise RuntimeError('已有环境或链接本体，不盲目重建')
         for parent in [Path(data['privateVirtualStore']),*Path(data['privateVirtualStore']).parents]:
-            if parent.exists() and getattr(os.lstat(parent),'st_file_attributes',0)&1024:raise RuntimeError('任务 virtual store 祖先是 reparse point，停止')
+            if os.path.lexists(parent) and getattr(os.lstat(parent),'st_file_attributes',0)&1024:raise RuntimeError('任务 virtual store 祖先是 reparse point，停止')
+        if os.path.lexists(root/'.tmp/workmesh-environment-owner.json'):raise RuntimeError('已有 owner 账本，不覆盖或新建替代环境')
         Path(data['privateVirtualStore']).mkdir(parents=True)
         ledger=root/'.tmp/workmesh-environment-owner.json'
         ledger.parent.mkdir(exist_ok=True)
