@@ -44,16 +44,30 @@ source_paths = {
 }
 for key, relative in source_paths.items():
     assert (OUT / relative).read_bytes() == expected[key].encode("utf-8") + b"\n", relative
-assert (ROOT / "docs/plan/backend-only.md").read_bytes() == (OUT / source_paths["latestPlan"]).read_bytes()
+corrections = json.loads((OUT / "review-corrections.json").read_text(encoding="utf-8"))
+assert corrections["sourcePath"] == source_paths["latestPlan"]
+assert corrections["sourceDocId"] == manifest["currentPlan"]["docId"]
+revised_plan = expected["latestPlan"]
+for edit in corrections["edits"]:
+    assert revised_plan.count(edit["old"]) == 1, "方案修订锚点不唯一"
+    revised_plan = revised_plan.replace(edit["old"], edit["new"], 1)
+assert (ROOT / corrections["activePath"]).read_bytes() == revised_plan.encode("utf-8") + b"\n"
 returned = (OUT / "sources/todos-response.txt").read_text(encoding="utf-8")
 assert returned.split("\nSpec:\n", 1)[1].split("\n\nSaved plan:\n", 1)[0] == expected["spec"]
 transcript = json.loads((OUT / "sources/conversation-response.json").read_text(encoding="utf-8"))["text"]
 assert expected["decisions"] in transcript
 
 inv = json.loads((OUT / "test-inventory.json").read_text(encoding="utf-8"))
+outside_scripts = {"scripts/verify-a2-backend-lite-api.mjs", "scripts/verify-a2-backend-lite.mjs"}
+assert outside_scripts <= {entry["path"] for entry in inv["files"]}, "遗漏目录外 Lite 验证入口"
 for entry in inv["files"]:
     data = git("show", inv["sourceHead"] + ":" + entry["path"])
     assert digest(data) == entry["gitBlobSha256"], entry["path"]
+    if entry["path"] in outside_scripts:
+        assert entry["assertions"], entry["path"]
+        assert entry["disposition"]["plannedTests"], entry["path"]
+        assert entry["disposition"]["executionCommand"].startswith("node scripts/"), entry["path"]
+        assert entry["disposition"]["owner"].startswith("#61"), entry["path"]
     for target in entry["disposition"]["existingBackendTests"]:
         assert (ROOT / target).is_file(), target
 changed = git("diff", "--name-only", manifest["sourceHead"]).decode().splitlines()

@@ -20,6 +20,8 @@ Human 的安装、登录、管理、审批和设置已有 REST 入口。
 |---|---|---|
 | `apps/web/`、`packages/ui/` | Next.js、React、页面、Service Worker 和 `@workmesh/ui` | 移除可运行客户端及仅供 UI 的包；保留浏览器基线和历史证据原件 |
 | `playwright.config.ts`、`apps/web/playwright.*.config.ts`、WebUI 专用脚本 | 启动 API／Web、预览服务、浏览器与报告 | 后端断言迁移后移除浏览器运行入口，保留历史报告 |
+| `scripts/verify-a2-backend-lite-api.mjs` | 从 Web workspace 加载 Playwright；同时检查安装认证、provider 幂等及部署 worker 精确上下文 | #61 就地改用 Node 原生 HTTP、显式 Cookie／CSRF 直连 API；保留后端断言，退役 install 页面及 workbench 浏览器检查 |
+| `scripts/verify-a2-backend-lite.mjs` | Web role、Next 代理与无源码安装、镜像 save/load、真实部署验收混合 | #61 保留部署入口、TLS、镜像身份和归属收尾；移除 Web／Next 断言，调用后端化后的内层脚本；执行命令见测试影响表 |
 | `package.json`、`pnpm-lock.yaml`、`turbo.json`、`vitest.config.ts` | 根 `test:e2e`、Playwright、Next 缓存与 workspace 闭包 | 更新剩余依赖闭包，不升级无关依赖，不移除后端检查 |
 | `apps/web/public/skills/workmesh-1.1.0.md` | 当前签名下载资产只由 Web 提供 | 原字节迁入 `apps/api/assets/skills/`，禁止重新签名 |
 | `apps/api/src/skill-download.ts`（待创建）、`server.ts`、`agent-connections.ts` | `resolveAgentConnectionEndpointUrls` 的 Web 下载与 connect 页面 URL | 在 `buildApp` 注册固定下载合同；发现与下载使用 API origin；配对 fragment 保留 |

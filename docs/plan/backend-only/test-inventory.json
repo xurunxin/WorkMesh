@@ -1,6 +1,6 @@
 {
-  "sourceHead": "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
-  "method": "按源码逐行提取 test 与 expect 起始位置；不是 JS AST 或用例执行结果",
+  "sourceHead": "69fa7f4f196c6cef74a792054400530420c705dc",
+  "method": "按源码逐行提取 test、expect、目录外脚本 assert 与 throw Error 检查位置；不是 JS AST 或执行结果",
   "coverageLimit": "多行表达式、动态循环和 helper 由准确 Git blob 回查；不声称提取了运行时实例",
   "files": [
     {
@@ -12382,6 +12382,243 @@
         ],
         "action": "保留管理 REST 与秘密负例；表单退役",
         "newBackendTest": "apps/api/integration/backend-retirement.integration.test.ts（待创建）",
+        "execution": "待产品实施后执行"
+      }
+    },
+    {
+      "path": "scripts/verify-a2-backend-lite-api.mjs",
+      "gitBlob": "0baa7471f5bc75414c5c82873e34fcf3197bf11c",
+      "gitBlobSha256": "f09a31ba0e74fec1dfbfdc3b937d2b22ef0ba0727a714d03cd04043b4a40c8b8",
+      "worktreeSha256": "f09a31ba0e74fec1dfbfdc3b937d2b22ef0ba0727a714d03cd04043b4a40c8b8",
+      "tests": [],
+      "assertions": [
+        {
+          "line": 15,
+          "source": "assert.equal(installPage.status(), 200)",
+          "context": "  assert.equal(installPage.status(), 200)\n  assert.match(await installPage.text(), /WorkMesh/)\n  const password = `a2-${randomUUID()}`\n  const installed = await client.post('/api/v1/auth/install', { headers: { 'Idempotency-Key': randomUUID(), 'X-WorkMesh-Bootstrap-Token': process.env.WORKMESH_BOOTSTRAP_TOKEN },\n    data: { name: 'A2 Backend Lite', slug: `a2-${randomUUID().slice(0, 8)}`, adminName: 'A2', email: 'a2@example.test', password } })\n  assert.equal(installed.status(), 200, `安装失败：HTTP ${installed.status()}`)"
+        },
+        {
+          "line": 16,
+          "source": "assert.match(await installPage.text(), /WorkMesh/)",
+          "context": "  assert.match(await installPage.text(), /WorkMesh/)\n  const password = `a2-${randomUUID()}`\n  const installed = await client.post('/api/v1/auth/install', { headers: { 'Idempotency-Key': randomUUID(), 'X-WorkMesh-Bootstrap-Token': process.env.WORKMESH_BOOTSTRAP_TOKEN },\n    data: { name: 'A2 Backend Lite', slug: `a2-${randomUUID().slice(0, 8)}`, adminName: 'A2', email: 'a2@example.test', password } })\n  assert.equal(installed.status(), 200, `安装失败：HTTP ${installed.status()}`)\n  csrf = (await installed.json()).csrfToken"
+        },
+        {
+          "line": 20,
+          "source": "assert.equal(installed.status(), 200, `安装失败：HTTP ${installed.status()}`)",
+          "context": "  assert.equal(installed.status(), 200, `安装失败：HTTP ${installed.status()}`)\n  csrf = (await installed.json()).csrfToken\n  assert.equal(typeof csrf, 'string')\n  const api = async (path, data, key = randomUUID()) => {\n    const response = data === undefined ? await client.get(path) : await client.post(path, { data, headers: { 'X-CSRF-Token': csrf, 'Idempotency-Key': key } })\n    assert.equal(response.status(), 200, `${path} HTTP ${response.status()}`)"
+        },
+        {
+          "line": 22,
+          "source": "assert.equal(typeof csrf, 'string')",
+          "context": "  assert.equal(typeof csrf, 'string')\n  const api = async (path, data, key = randomUUID()) => {\n    const response = data === undefined ? await client.get(path) : await client.post(path, { data, headers: { 'X-CSRF-Token': csrf, 'Idempotency-Key': key } })\n    assert.equal(response.status(), 200, `${path} HTTP ${response.status()}`)\n    return response.json()\n  }"
+        },
+        {
+          "line": 25,
+          "source": "assert.equal(response.status(), 200, `${path} HTTP ${response.status()}`)",
+          "context": "    assert.equal(response.status(), 200, `${path} HTTP ${response.status()}`)\n    return response.json()\n  }\n  const actor = (await api('/api/v1/auth/me')).actor\n  const team = (await api('/api/v1/teams')).items[0]\n  assert.ok(actor.id && team.id)"
+        },
+        {
+          "line": 30,
+          "source": "assert.ok(actor.id && team.id)",
+          "context": "  assert.ok(actor.id && team.id)\n  const project = await api('/api/v1/projects', { teamId: team.id, name: 'A2 Backend Lite Project' })\n  const connectionBody = { provider: 'gitea', externalAccountId: 'a2-fixture', displayName: 'A2 HTTPS fixture', baseUrl: process.env.WORKMESH_A2_GITEA_URL,\n    accessToken: 'a2-provider-placeholder', webhookSecret: 'a2-webhook-placeholder' }\n  const connectionKey = randomUUID()\n  const connection = await api('/api/v1/provider-connections', connectionBody, connectionKey)"
+        },
+        {
+          "line": 36,
+          "source": "assert.equal((await api('/api/v1/provider-connections', connectionBody, connectionKey)).id, connection.id)",
+          "context": "  assert.equal((await api('/api/v1/provider-connections', connectionBody, connectionKey)).id, connection.id)\n  const repository = await api('/api/v1/repositories', { connectionId: connection.id, teamId: team.id, externalId: 'a2/fixture', fullName: 'a2/fixture', defaultBranch: 'main', requiredChecks: [] })\n  const repositories = await api(`/api/v1/repositories?teamId=${team.id}&availableOnly=true&limit=1`)\n  assert.equal(repositories.items[0].id, repository.id)\n  assert.equal(repositories.items[0].can_configure_context, true)\n  const body = { projectId: project.id, baseBranch: 'main', baseSha: 'a2-base-sha', branchPattern: 'workmesh/{workItemKey}-{slug}', allowedPaths: ['**'], permissions: ['read'] }"
+        },
+        {
+          "line": 39,
+          "source": "assert.equal(repositories.items[0].id, repository.id)",
+          "context": "  assert.equal(repositories.items[0].id, repository.id)\n  assert.equal(repositories.items[0].can_configure_context, true)\n  const body = { projectId: project.id, baseBranch: 'main', baseSha: 'a2-base-sha', branchPattern: 'workmesh/{workItemKey}-{slug}', allowedPaths: ['**'], permissions: ['read'] }\n  const key = randomUUID()\n  const action = await api(`/api/v1/repositories/${repository.id}/context`, body, key)\n  assert.equal(action.kind, 'resolve_repository_context')"
+        },
+        {
+          "line": 40,
+          "source": "assert.equal(repositories.items[0].can_configure_context, true)",
+          "context": "  assert.equal(repositories.items[0].can_configure_context, true)\n  const body = { projectId: project.id, baseBranch: 'main', baseSha: 'a2-base-sha', branchPattern: 'workmesh/{workItemKey}-{slug}', allowedPaths: ['**'], permissions: ['read'] }\n  const key = randomUUID()\n  const action = await api(`/api/v1/repositories/${repository.id}/context`, body, key)\n  assert.equal(action.kind, 'resolve_repository_context')\n  assert.ok(action.id)"
+        },
+        {
+          "line": 44,
+          "source": "assert.equal(action.kind, 'resolve_repository_context')",
+          "context": "  assert.equal(action.kind, 'resolve_repository_context')\n  assert.ok(action.id)\n  assert.equal((await api(`/api/v1/repositories/${repository.id}/context`, body, key)).id, action.id)\n  let context\n  for (let attempt = 0; attempt < 45; attempt++) {\n    const contexts = await api(`/api/v1/repositories/${repository.id}/context`)"
+        },
+        {
+          "line": 45,
+          "source": "assert.ok(action.id)",
+          "context": "  assert.ok(action.id)\n  assert.equal((await api(`/api/v1/repositories/${repository.id}/context`, body, key)).id, action.id)\n  let context\n  for (let attempt = 0; attempt < 45; attempt++) {\n    const contexts = await api(`/api/v1/repositories/${repository.id}/context`)\n    context = contexts.find(value => value.provider_action_id === action.id)"
+        },
+        {
+          "line": 46,
+          "source": "assert.equal((await api(`/api/v1/repositories/${repository.id}/context`, body, key)).id, action.id)",
+          "context": "  assert.equal((await api(`/api/v1/repositories/${repository.id}/context`, body, key)).id, action.id)\n  let context\n  for (let attempt = 0; attempt < 45; attempt++) {\n    const contexts = await api(`/api/v1/repositories/${repository.id}/context`)\n    context = contexts.find(value => value.provider_action_id === action.id)\n    if (context) break"
+        },
+        {
+          "line": 54,
+          "source": "assert.ok(context, '部署 Worker 未发布精确动作上下文')",
+          "context": "  assert.ok(context, '部署 Worker 未发布精确动作上下文')\n  assert.equal(context.repository_id, repository.id)\n  assert.equal(context.project_id, project.id)\n  assert.equal(context.work_item_id, null)\n  assert.equal(context.session_id, null)\n  assert.equal(context.base_sha, body.baseSha)"
+        },
+        {
+          "line": 55,
+          "source": "assert.equal(context.repository_id, repository.id)",
+          "context": "  assert.equal(context.repository_id, repository.id)\n  assert.equal(context.project_id, project.id)\n  assert.equal(context.work_item_id, null)\n  assert.equal(context.session_id, null)\n  assert.equal(context.base_sha, body.baseSha)\n  assert.deepEqual(context.permissions, ['read'])"
+        },
+        {
+          "line": 56,
+          "source": "assert.equal(context.project_id, project.id)",
+          "context": "  assert.equal(context.project_id, project.id)\n  assert.equal(context.work_item_id, null)\n  assert.equal(context.session_id, null)\n  assert.equal(context.base_sha, body.baseSha)\n  assert.deepEqual(context.permissions, ['read'])\n  assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\\n')"
+        },
+        {
+          "line": 57,
+          "source": "assert.equal(context.work_item_id, null)",
+          "context": "  assert.equal(context.work_item_id, null)\n  assert.equal(context.session_id, null)\n  assert.equal(context.base_sha, body.baseSha)\n  assert.deepEqual(context.permissions, ['read'])\n  assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\\n')\n  browser = await chromium.launch()"
+        },
+        {
+          "line": 58,
+          "source": "assert.equal(context.session_id, null)",
+          "context": "  assert.equal(context.session_id, null)\n  assert.equal(context.base_sha, body.baseSha)\n  assert.deepEqual(context.permissions, ['read'])\n  assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\\n')\n  browser = await chromium.launch()\n  const browserContext = await browser.newContext({ storageState: await client.storageState() })"
+        },
+        {
+          "line": 59,
+          "source": "assert.equal(context.base_sha, body.baseSha)",
+          "context": "  assert.equal(context.base_sha, body.baseSha)\n  assert.deepEqual(context.permissions, ['read'])\n  assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\\n')\n  browser = await chromium.launch()\n  const browserContext = await browser.newContext({ storageState: await client.storageState() })\n  const page = await browserContext.newPage()"
+        },
+        {
+          "line": 60,
+          "source": "assert.deepEqual(context.permissions, ['read'])",
+          "context": "  assert.deepEqual(context.permissions, ['read'])\n  assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\\n')\n  browser = await chromium.launch()\n  const browserContext = await browser.newContext({ storageState: await client.storageState() })\n  const page = await browserContext.newPage()\n  const errors = []"
+        },
+        {
+          "line": 61,
+          "source": "assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\\n')",
+          "context": "  assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\\n')\n  browser = await chromium.launch()\n  const browserContext = await browser.newContext({ storageState: await client.storageState() })\n  const page = await browserContext.newPage()\n  const errors = []\n  page.on('pageerror', error => errors.push(error.message))"
+        },
+        {
+          "line": 69,
+          "source": "assert.match(await page.locator('body').innerText(), /WorkMesh/)",
+          "context": "  assert.match(await page.locator('body').innerText(), /WorkMesh/)\n  assert.equal(await page.locator('[data-testid=\"configuration-readiness\"]').count(), 0)\n  assert.deepEqual(errors, [])\n  console.log(JSON.stringify({ installViaWebProxy: true, authenticatedRead: true, existingMainWeb: true, connectionReplay: true,\n    contextAction: action.id, contextId: context.id, exactContextConfirmed: true, providerTls: true, newUiAcceptance: '延期，未验收' }))\n} finally {"
+        },
+        {
+          "line": 70,
+          "source": "assert.equal(await page.locator('[data-testid=\"configuration-readiness\"]').count(), 0)",
+          "context": "  assert.equal(await page.locator('[data-testid=\"configuration-readiness\"]').count(), 0)\n  assert.deepEqual(errors, [])\n  console.log(JSON.stringify({ installViaWebProxy: true, authenticatedRead: true, existingMainWeb: true, connectionReplay: true,\n    contextAction: action.id, contextId: context.id, exactContextConfirmed: true, providerTls: true, newUiAcceptance: '延期，未验收' }))\n} finally {\n  if (browser) await browser.close()"
+        },
+        {
+          "line": 71,
+          "source": "assert.deepEqual(errors, [])",
+          "context": "  assert.deepEqual(errors, [])\n  console.log(JSON.stringify({ installViaWebProxy: true, authenticatedRead: true, existingMainWeb: true, connectionReplay: true,\n    contextAction: action.id, contextId: context.id, exactContextConfirmed: true, providerTls: true, newUiAcceptance: '延期，未验收' }))\n} finally {\n  if (browser) await browser.close()\n  await client.dispose()"
+        }
+      ],
+      "disposition": {
+        "fixture": "真实部署 API／PG／worker；固定 HTTPS Git 提供方",
+        "retained": "安装认证、Cookie／CSRF、provider connection 与 context 动作幂等、精确 action/context 关联及 guidance 原件",
+        "existingBackendTests": [
+          "apps/api/integration/bootstrap-install.integration.test.ts",
+          "apps/api/integration/stage3-delivery.integration.test.ts",
+          "apps/worker/integration/stage3-provider.integration.test.ts"
+        ],
+        "action": "保留并改为 Node 原生 HTTP 直连 API；移除 Web workspace 的 Playwright、install 页面和 workbench 浏览器断言",
+        "newBackendTest": "apps/api/integration/backend-retirement.integration.test.ts（待创建）",
+        "plannedTests": [
+          "liteInstallCookieCsrf",
+          "liteProviderConnectionReplay",
+          "liteExactProjectContext"
+        ],
+        "executionCommand": "node scripts/verify-a2-backend-lite-api.mjs（由隔离 Lite 外层脚本提供环境并调用）",
+        "owner": "#61 产品实施者；独审复核；不交给 #62 或 #20 补缺",
+        "execution": "待产品实施后执行"
+      }
+    },
+    {
+      "path": "scripts/verify-a2-backend-lite.mjs",
+      "gitBlob": "af3c1ac42742f63dbaddc02f3f5943989505b6d1",
+      "gitBlobSha256": "9c62dd44ba1908c1ed1a94f1e72c75a3f57af95baf5bf2d15cd6863ab41b7dcc",
+      "worktreeSha256": "9c62dd44ba1908c1ed1a94f1e72c75a3f57af95baf5bf2d15cd6863ab41b7dcc",
+      "tests": [],
+      "assertions": [
+        {
+          "line": 14,
+          "source": "if (!/^[a-f0-9]{40}$/.test(sha)) throw Error('缺少精确 Git 提交')",
+          "context": "if (!/^[a-f0-9]{40}$/.test(sha)) throw Error('缺少精确 Git 提交')\nconst evidence = resolve(root, 'docs/reviews/a2-backend/runs', runId)\nconst installDir = resolve(tmpdir(), runId)\nmkdirSync(evidence, { recursive: true })\nconst receipts = { runId, sha, environment: '工作站 Linux Docker；非真实低功耗设备', installDir, resources: [], results: [], outcome: '未运行' }\nconst writeEvidence = (path, bytes) => {"
+        },
+        {
+          "line": 64,
+          "source": "const must = async (name, args, options) => { const result = await command(name, args, options); if (result.code !== 0) throw Error(`${name} 退出 ${result.code}`); return result.output.trim() }",
+          "context": "const must = async (name, args, options) => { const result = await command(name, args, options); if (result.code !== 0) throw Error(`${name} 退出 ${result.code}`); return result.output.trim() }\nconst pause = ms => new Promise(resolveWait => setTimeout(resolveWait, ms))\nconst port = () => new Promise(resolvePort => { const server = net.createServer(); server.listen(0, '127.0.0.1', () => { const value = server.address().port; server.close(() => resolvePort(value)) }) })\nconst register = (type, target) => { const value = { type, target, owner: runId, createdAt: new Date().toISOString(), cleanup: null }; receipts.resources.push(value); save(); return value }\nlet provider\nconst composeArgs = ['compose', '--project-name', runId, '-f', resolve(installDir, 'docker-compose.lite.yml'), '-f', resolve(installDir, 'provider.override.yml')]"
+        },
+        {
+          "line": 75,
+          "source": "if (previousImage.code === 0 || !/no such (image|object)/i.test(previousImage.output)) throw Error('专用镜像 tag 的不存在状态未确认；保留既有镜像')",
+          "context": "  if (previousImage.code === 0 || !/no such (image|object)/i.test(previousImage.output)) throw Error('专用镜像 tag 的不存在状态未确认；保留既有镜像')\n  // Windows archive otherwise expands core.autocrlf and changes signed inputs.\n  const archiveArgs = ['-c', 'core.autocrlf=false', 'archive', '--format=tar', sha]\n  const archive = spawn('git', archiveArgs, { cwd: root, windowsHide: true })\n  receipts.archive = { name: 'git', args: archiveArgs, pid: archive.pid, startedAt: new Date().toISOString(), code: null }; save()\n  let archiveError = ''; archive.stderr.on('data', value => { archiveError += value })"
+        },
+        {
+          "line": 88,
+          "source": "if (await archived !== 0) throw Error(`Git archive 失败：${archiveError}`)",
+          "context": "  if (await archived !== 0) throw Error(`Git archive 失败：${archiveError}`)\n  image.id = await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target]); save()\n  const roleEnv = { ...env, DATABASE_URL: `postgres://workmesh:${secretValues[0]}@127.0.0.1:1/workmesh_a2_lite_test`,\n    REDIS_URL: 'redis://127.0.0.1:1', S3_ENDPOINT: 'http://127.0.0.1:1', WEB_ORIGIN: 'http://127.0.0.1:3000', NEXT_API_UPSTREAM: 'http://127.0.0.1:1', HOSTNAME: '0.0.0.0', PORT: '3000' }\n  // Inherited team secrets do not belong in entrypoint probes.\n  const roleKeys = ['WORKMESH_BUILD_SHA', 'SESSION_SECRET', 'WORKMESH_MASTER_KEY', 'WORKMESH_BOOTSTRAP_TOKEN', 'PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID', 'AUTH_RATE_LIMIT_HMAC_KEY', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_BUCKET', 'S3_REGION', 'WORKMESH_BETA_GITEA', 'DATABASE_URL', 'REDIS_URL', 'S3_ENDPOINT', 'WEB_ORIGIN', 'NEXT_API_UPSTREAM', 'HOSTNAME', 'PORT']"
+        },
+        {
+          "line": 99,
+          "source": "if (!log.includes(`role=${role} `) || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载入口`)",
+          "context": "    if (!log.includes(`role=${role} `) || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载入口`)\n    if (role === 'web') {\n      await must('docker', ['exec', container.id, 'node', '-e', \"fetch('http://127.0.0.1:3000/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\"])\n      // Inspect the compiled artifact, not the runtime environment or source.\n      const manifest = await must('docker', ['exec', container.id, 'node', '-e', \"const fs=require('node:fs');const m=JSON.parse(fs.readFileSync('/opt/workmesh/web/apps/web/.next/routes-manifest.json','utf8'));const rules=Array.isArray(m.rewrites)?m.rewrites:Object.values(m.rewrites).flat();const prefixes=['/api','/.well-known','/auth','/mcp','/sse'];const expected=prefixes.map(p=>({source:p+'/:path*',destination:'http://api:3001'+p+'/:path*'}));if(!expected.every(e=>rules.some(r=>r.source===e.source&&r.destination===e.destination)))throw Error('Lite compiled proxy does not match its private Compose address');process.stdout.write(JSON.stringify(expected))\"])\n      receipts.compiledProxy = { imageId: image.id, rules: JSON.parse(manifest), at: new Date().toISOString() }; save()"
+        },
+        {
+          "line": 103,
+          "source": "const manifest = await must('docker', ['exec', container.id, 'node', '-e', \"const fs=require('node:fs');const m=JSON.parse(fs.readFileSync('/opt/workmesh/web/apps/web/.next/routes-manifest.json','utf8'));const rules=Array.isArray(m.rewrites)?m.rewrites:Object.values(m.rewrites).flat();const prefixes=['/api','/.well-known','/auth','/mcp','/sse'];const expected=prefixes.map(p=>({source:p+'/:path*',destination:'http://api:3001'+p+'/:path*'}));if(!expected.every(e=>rules.some(r=>r.source===e.source&&r.destination===e.destination)))throw Error('Lite compiled proxy does not match its private Compose address');process.stdout.write(JSON.stringify(expected))\"])",
+          "context": "      const manifest = await must('docker', ['exec', container.id, 'node', '-e', \"const fs=require('node:fs');const m=JSON.parse(fs.readFileSync('/opt/workmesh/web/apps/web/.next/routes-manifest.json','utf8'));const rules=Array.isArray(m.rewrites)?m.rewrites:Object.values(m.rewrites).flat();const prefixes=['/api','/.well-known','/auth','/mcp','/sse'];const expected=prefixes.map(p=>({source:p+'/:path*',destination:'http://api:3001'+p+'/:path*'}));if(!expected.every(e=>rules.some(r=>r.source===e.source&&r.destination===e.destination)))throw Error('Lite compiled proxy does not match its private Compose address');process.stdout.write(JSON.stringify(expected))\"])\n      receipts.compiledProxy = { imageId: image.id, rules: JSON.parse(manifest), at: new Date().toISOString() }; save()\n    }\n    save()\n  }\n  const tar = resolve(installDir, 'workmesh-lite.tar'); register('file', tar)"
+        },
+        {
+          "line": 110,
+          "source": "if (await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target]) !== image.id) throw Error('save/load 镜像身份变化')",
+          "context": "  if (await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target]) !== image.id) throw Error('save/load 镜像身份变化')\n  copyFileSync(resolve(root, 'docker-compose.lite.yml'), resolve(installDir, 'docker-compose.lite.yml'))\n  const tls = resolve(installDir, 'tls'); mkdirSync(tls)\n  await must('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', resolve(tls, 'key.pem'), '-out', resolve(tls, 'ca.pem'), '-days', '1', '-subj', '/CN=host.docker.internal', '-addext', 'subjectAltName=DNS:host.docker.internal,DNS:localhost,IP:127.0.0.1'])\n  // Copy only the public CA through Docker's API; do not change host file sharing.\n  const caVolume = register('volume', `${runId}-ca`)"
+        },
+        {
+          "line": 117,
+          "source": "if (previousVolume.code === 0 || !/no such (volume|object)/i.test(previousVolume.output)) throw Error('测试 CA 卷的不存在状态未确认；保留既有卷')",
+          "context": "  if (previousVolume.code === 0 || !/no such (volume|object)/i.test(previousVolume.output)) throw Error('测试 CA 卷的不存在状态未确认；保留既有卷')\n  await must('docker', ['volume', 'create', '--label', `workmesh.task=${runId}`, caVolume.target]); caVolume.created = true; save()\n  if (await must('docker', ['volume', 'inspect', '--format', '{{ index .Labels \"workmesh.task\" }}', caVolume.target]) !== runId) throw Error('测试 CA 卷归属不符')\n  const caLoader = register('container', `${runId}-ca-loader`)\n  caLoader.id = await must('docker', ['create', '--name', caLoader.target, '--label', `workmesh.task=${runId}`, '--mount', `type=volume,source=${caVolume.target},target=/a2-ca`, '--entrypoint', 'node', image.target, '-e', \"require('node:fs').readFileSync('/a2-ca/ca.pem'); console.log('test CA readable')\"]); save()\n  await must('docker', ['cp', resolve(tls, 'ca.pem'), `${caLoader.id}:/a2-ca/ca.pem`])"
+        },
+        {
+          "line": 119,
+          "source": "if (await must('docker', ['volume', 'inspect', '--format', '{{ index .Labels \"workmesh.task\" }}', caVolume.target]) !== runId) throw Error('测试 CA 卷归属不符')",
+          "context": "  if (await must('docker', ['volume', 'inspect', '--format', '{{ index .Labels \"workmesh.task\" }}', caVolume.target]) !== runId) throw Error('测试 CA 卷归属不符')\n  const caLoader = register('container', `${runId}-ca-loader`)\n  caLoader.id = await must('docker', ['create', '--name', caLoader.target, '--label', `workmesh.task=${runId}`, '--mount', `type=volume,source=${caVolume.target},target=/a2-ca`, '--entrypoint', 'node', image.target, '-e', \"require('node:fs').readFileSync('/a2-ca/ca.pem'); console.log('test CA readable')\"]); save()\n  await must('docker', ['cp', resolve(tls, 'ca.pem'), `${caLoader.id}:/a2-ca/ca.pem`])\n  await must('docker', ['start', '-a', caLoader.id])\n  const providerPort = await port()"
+        },
+        {
+          "line": 144,
+          "source": "if (mounts.some(mount => mount.Type === 'bind')) throw Error('无源码安装不得包含主机绑定挂载')",
+          "context": "    if (mounts.some(mount => mount.Type === 'bind')) throw Error('无源码安装不得包含主机绑定挂载')\n    if (mounts.some(mount => mount.Destination === '/a2-ca' && (mount.Name !== caVolume.target || mount.RW))) throw Error('测试 CA 卷的归属或只读属性不符')\n  }\n  // Exercise Web -> API before installation; /readyz only proves the Web role.\n  const installStatus = await must(process.execPath, ['-e', \"fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})\"])\n  receipts.preInstallProxy = { ...JSON.parse(installStatus), at: new Date().toISOString() }; save()"
+        },
+        {
+          "line": 145,
+          "source": "if (mounts.some(mount => mount.Destination === '/a2-ca' && (mount.Name !== caVolume.target || mount.RW))) throw Error('测试 CA 卷的归属或只读属性不符')",
+          "context": "    if (mounts.some(mount => mount.Destination === '/a2-ca' && (mount.Name !== caVolume.target || mount.RW))) throw Error('测试 CA 卷的归属或只读属性不符')\n  }\n  // Exercise Web -> API before installation; /readyz only proves the Web role.\n  const installStatus = await must(process.execPath, ['-e', \"fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})\"])\n  receipts.preInstallProxy = { ...JSON.parse(installStatus), at: new Date().toISOString() }; save()\n  await must(process.execPath, [resolve(root, 'scripts/verify-a2-backend-lite-api.mjs')])"
+        },
+        {
+          "line": 148,
+          "source": "const installStatus = await must(process.execPath, ['-e', \"fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})\"])",
+          "context": "  const installStatus = await must(process.execPath, ['-e', \"fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})\"])\n  receipts.preInstallProxy = { ...JSON.parse(installStatus), at: new Date().toISOString() }; save()\n  await must(process.execPath, [resolve(root, 'scripts/verify-a2-backend-lite-api.mjs')])\n  receipts.outcome = '本机无源码 Lite 现有 Web/后端兼容通过；原新横幅 UI、真实设备与真实厂商未验收'\n} catch (error) { receipts.outcome = `失败或未验收：${redact(error)}`; console.error(receipts.outcome); process.exitCode = 1; save() }\nfinally {"
+        },
+        {
+          "line": 210,
+          "source": "const paths = []; const walk = path => { const stat = lstatSync(path); if (stat.isSymbolicLink()) throw Error(`链接边界：${path}`); paths.push({ path, type: stat.isDirectory() ? 'directory' : 'file', reason: '本任务独有安装/归档/测试 TLS 原件，服务已停止' }); if (stat.isDirectory()) for (const entry of readdirSync(path)) walk(resolve(path, entry)) }",
+          "context": "    const paths = []; const walk = path => { const stat = lstatSync(path); if (stat.isSymbolicLink()) throw Error(`链接边界：${path}`); paths.push({ path, type: stat.isDirectory() ? 'directory' : 'file', reason: '本任务独有安装/归档/测试 TLS 原件，服务已停止' }); if (stat.isDirectory()) for (const entry of readdirSync(path)) walk(resolve(path, entry)) }\n    try {\n      if (!isAbsolute(installDir) || relative(realpathSync(tmpdir()), realpathSync(installDir)).startsWith('..') || dirname(installDir) !== resolve(tmpdir())) throw Error('临时目录边界未确认')\n      walk(installDir); directory.preDelete = { paths, activity: 'compose/provider/probe 收尾完成', at: new Date().toISOString() }; save()\n      const pathInventory = resolve(evidence, 'cleanup-paths.json')\n      writeFileSync(pathInventory, JSON.stringify(paths.toReversed()))"
+        },
+        {
+          "line": 212,
+          "source": "if (!isAbsolute(installDir) || relative(realpathSync(tmpdir()), realpathSync(installDir)).startsWith('..') || dirname(installDir) !== resolve(tmpdir())) throw Error('临时目录边界未确认')",
+          "context": "      if (!isAbsolute(installDir) || relative(realpathSync(tmpdir()), realpathSync(installDir)).startsWith('..') || dirname(installDir) !== resolve(tmpdir())) throw Error('临时目录边界未确认')\n      walk(installDir); directory.preDelete = { paths, activity: 'compose/provider/probe 收尾完成', at: new Date().toISOString() }; save()\n      const pathInventory = resolve(evidence, 'cleanup-paths.json')\n      writeFileSync(pathInventory, JSON.stringify(paths.toReversed()))\n      directory.cleanup = process.platform === 'win32' ? await command('powershell.exe', ['-NoProfile', '-Command', \"$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message} } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}\"], { env: { ...env, WORKMESH_A2_PATH_INVENTORY: pathInventory, WORKMESH_A2_PATH_RECEIPTS: resolve(evidence, 'cleanup-path-receipts.json') } })\n        : await command(process.execPath, ['-e', \"require('node:fs').rmSync(process.env.WORKMESH_A2_CLEANUP_PATH,{recursive:true})\"], { env: { ...env, WORKMESH_A2_CLEANUP_PATH: installDir } })"
+        }
+      ],
+      "disposition": {
+        "fixture": "准确 Git archive 构建；独立无源码 Compose 安装；固定 HTTPS 提供方",
+        "retained": "api／worker／migrate 入口、save/load 镜像身份、无源码与无 bind mount、安装状态、部署 worker、TLS CA、归属日志及定向收尾",
+        "existingBackendTests": [],
+        "action": "保留部署验证入口；移除 web role、Next compiled proxy 和页面结论；启动后直接验证 API 并调用保留的内层脚本",
+        "newBackendTest": "原脚本就地后端化（待实施），不能用仅注入式集成测试代替真实部署",
+        "plannedTests": [
+          "liteImageSaveLoadIdentity",
+          "liteNoSourceInstallation",
+          "liteDeployedWorkerContext"
+        ],
+        "executionCommand": "node scripts/verify-a2-backend-lite.mjs",
+        "owner": "#61 产品实施者；保留真实低功耗设备未测状态及历史回执",
         "execution": "待产品实施后执行"
       }
     }

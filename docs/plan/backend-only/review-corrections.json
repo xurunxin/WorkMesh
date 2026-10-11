@@ -1,0 +1,17 @@
+{
+  "reviewedHead": "69fa7f4f196c6cef74a792054400530420c705dc",
+  "sourceDocId": "4L0f8ekmDAa144DUqvFlx",
+  "sourcePath": "sources/plan-4L0f8ekmDAa144DUqvFlx.md",
+  "activePath": "docs/plan/backend-only.md",
+  "sourcePolicy": "Saved plan 原件逐字保留；仅活动方案按以下精确替换修订，未生成平台版本字段",
+  "edits": [
+    {
+      "old": "分别启动生产 API 和 Lite API 角色，从发现返回的 Skill URL 经真实 HTTP 下载；",
+      "new": "分别启动生产 API 和 Lite API 角色，先校验 discovery，再完成配对兑换，使用 `redeemed.skill.download_url` 经真实 HTTP 下载；"
+    },
+    {
+      "old": "连接器纵向测试改从真实 API 下载 Skill，取消夹具代替产品提供静态文件的做法；纯页面、布局和视觉断言登记为退役。",
+      "new": "连接器纵向测试改从真实 API 下载 Skill，取消夹具代替产品提供静态文件的做法；纯页面、布局和视觉断言登记为退役。`scripts/verify-a2-backend-lite-api.mjs` 与 `scripts/verify-a2-backend-lite.mjs` 由 #61 就地后端化，保留安装认证、provider 幂等、部署 worker 精确上下文、无源码安装及镜像 save/load 验收；退役 Playwright 页面、Web 角色和 Next 代理断言，具体用例、命令和责任见测试影响表。"
+    }
+  ]
+}

@@ -30,7 +30,7 @@ WorkMesh 改为长期纯后端服务，对外提供 API/MCP。当前 WebUI 还�
 
 - **镜像、发布和恢复验证文件**：同步 `scripts/validate-development-images.py`、`validate-production-images.mjs`、`validate-lite-compose.mjs`、`validate-release-workflows.mjs`、`create-release-manifest.mts`及相关合同测试。生产发布清单只要求 API、worker、MCP；恢复 CI 和 `packages/recovery/scripts/post-restore-smoke.ts`删除 Web 检查，继续验证恢复后的 API、worker、Agent 工作流，并增加 MCP 接口验证。保持扫描、来源证明、摘要固定和恢复门禁。
 
-- **`apps/api/integration/backend-retirement.integration.test.ts`（新增）及现有连接器集成夹具**：逐条核对原浏览器套件，将未被现有后端测试覆盖的领域、鉴权、隔离、撤销、审批、幂等、恢复及真实 worker→fake Agent 断言迁入新套件。连接器纵向测试改从真实 API 下载 Skill，取消夹具代替产品提供静态文件的做法；纯页面、布局和视觉断言登记为退役。
+- **`apps/api/integration/backend-retirement.integration.test.ts`（新增）及现有连接器集成夹具**：逐条核对原浏览器套件，将未被现有后端测试覆盖的领域、鉴权、隔离、撤销、审批、幂等、恢复及真实 worker→fake Agent 断言迁入新套件。连接器纵向测试改从真实 API 下载 Skill，取消夹具代替产品提供静态文件的做法；纯页面、布局和视觉断言登记为退役。`scripts/verify-a2-backend-lite-api.mjs` 与 `scripts/verify-a2-backend-lite.mjs` 由 #61 就地后端化，保留安装认证、provider 幂等、部署 worker 精确上下文、无源码安装及镜像 save/load 验收；退役 Playwright 页面、Web 角色和 Next 代理断言，具体用例、命令和责任见测试影响表。
 
 - **`README.md`、`AGENTS.md`、`CONTEXT.md`、`docs/CI.md`、`docs/production-deployment.md`、`docs/agent-integration.md`、`deploy/lite/README.md`及现行发布、操作说明**：同步启动、安装、管理、部署和检查命令。新增当前路线图索引，关联平台最新 #4、#20、#23–29、#32–51 全文和逐卡去向；补充 #7 等待本卡合入及 #62 初版交付的顺序。历史规格保持原件，截断来源记录缺口。中文改动按指定 [SKILL.md](https://github.com/leter/zh-tech-writing/blob/ffda9353768dece8aabd26ccb3a4978025e9437c/skills/zh-tech-writing/SKILL.md)及两份参考执行，记录来源提交和文件哈希；`autocorrect` 缺失时手检。
 
@@ -42,7 +42,7 @@ WorkMesh 改为长期纯后端服务，对外提供 API/MCP。当前 WebUI 还�
 
 2. 使用专用测试数据库和现有环境预检，执行 `pnpm test:integration`、`pnpm test:conformance`及 `pnpm smoke:agents:ci`。断言去向表必须逐条对应真实用例与结果；取消的 UI 检查不标为通过。
 
-3. 执行 `python scripts/validate-development-images.py`，实际无缓存构建 API、worker、MCP 开发镜像。逐个构建对应生产镜像及 Lite 镜像，执行 `pnpm validate:production-images --env-file=<私有环境文件>`、`pnpm validate:lite:self-test`和 `sh infra/lite/verify-image-roles.sh <Lite镜像>`。分别启动生产 API 和 Lite API 角色，从发现返回的 Skill URL 经真实 HTTP 下载；逐字节比较原签名资产、迁移后的 Git blob、镜像内文件和响应体，验证规范 LF、相同 SHA-256 及现有公钥的 Ed25519 签名。用 `pnpm check:workmesh-skill` 校验生成源与 manifest，验证未声明路径及路径穿越拒绝；连接器须消费真实 API 下载结果，夹具静态文件不能代验。保留源码绑定、原日志和定向清理回执。
+3. 执行 `python scripts/validate-development-images.py`，实际无缓存构建 API、worker、MCP 开发镜像。逐个构建对应生产镜像及 Lite 镜像，执行 `pnpm validate:production-images --env-file=<私有环境文件>`、`pnpm validate:lite:self-test`和 `sh infra/lite/verify-image-roles.sh <Lite镜像>`。分别启动生产 API 和 Lite API 角色，先校验 discovery，再完成配对兑换，使用 `redeemed.skill.download_url` 经真实 HTTP 下载；逐字节比较原签名资产、迁移后的 Git blob、镜像内文件和响应体，验证规范 LF、相同 SHA-256 及现有公钥的 Ed25519 签名。用 `pnpm check:workmesh-skill` 校验生成源与 manifest，验证未声明路径及路径穿越拒绝；连接器须消费真实 API 下载结果，夹具静态文件不能代验。保留源码绑定、原日志和定向清理回执。
 
 4. 在本任务隔离 Compose 环境实际完成安装／登录、Cookie＋CSRF 管理请求、发现、Skill 字节与签名验证、连接器兑换及 MCP `initialize → verify_connection → get_workmesh_context`。验证 Stop／撤权后拒绝，通知 API 链接无凭据且返回 JSON，本人可读，匿名、他人及已失权者拒绝。用真实 PostgreSQL 和 fake 通知适配器分别覆盖新投递、保留旧 `request_hash` 的合法待发送／显式重试，以及旧内容被篡改：按旧序列化合同重建全部字段，合法记录改用新链接但数据库旧哈希不变，不匹配返回 `IDEMPOTENCY_KEY_REUSED` 且零外发。对 `sending`、`uncertain`、发送后 Worker 重启和并发旧 claim/fence 验证零自动重发；仅显式 `reconcileChannelSend` 按既有权限、revision 和状态机允许 retry，撤权先提交则零外发。保留 Web Push config、订阅注册／撤销及 worker 投递的后端正反例，不真实外发。执行恢复矩阵及恢复后的接口 smoke。
 

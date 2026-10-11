@@ -22,7 +22,8 @@
 实施者删除浏览器入口前，须把下表每项保留行为绑定到准确后端用例和实际结果。
 索引中的断言起始行可回查完整 Git blob；多行断言和循环实例仍须通读原函数。
 
-| 原套件（apps/web/e2e/） | 原行为与夹具 | 现有后端源码覆盖入口 | 去向（待实施） |
+<!-- SUITE_TABLE_START -->
+| 原测试或脚本（短路径位于 apps/web/e2e/） | 原行为与夹具 | 现有后端源码覆盖入口 | 去向（待实施） |
 |---|---|---|---|
 | `actionable-collaboration-queues.spec.ts` | 页面投影夹具；H／C／E 分离、脱敏、队列计数与权限 | `collaboration-queue-counts.integration.test.ts`、`human-attention.integration.test.ts`、`stage2-collaboration.integration.test.ts` | 保留队列与隔离合同；响应式和页面 URL 退役 |
 | `agent-governed-controls.spec.ts` | page.route 模拟响应；Stop、Plan revision、retry 新 Session、If-Match 与精确输入 | `stage1.integration.test.ts`、`autonomous-control-plane.integration.test.ts`、`execution-waits.integration.test.ts` | 模拟安全语义用真实后端补缺；草稿、焦点和导航退役 |
@@ -74,6 +75,40 @@
 | `workbench-accessibility.spec.ts` | 页面结构／键盘；API 返回 scope 由后端套件承担 | `workbench-conversations.integration.test.ts` | 无障碍和几何断言退役，不冒后端已验收 |
 | `workbench-conversation.spec.ts` | 真实 API 与页面；对话读取权限与服务配置入口 | `workbench-conversations.integration.test.ts`、`configuration-readiness.integration.test.ts` | 保持对话和设置 REST；桌面／手机入口退役 |
 | `workbench-llm-settings.spec.ts` | 真实 API 与页面；预置可编辑后显式保存、模型连接注册撤销、凭据脱敏 | `workbench-llm-connections.integration.test.ts`、`configuration-readiness.integration.test.ts` | 保留管理 REST 与秘密负例；表单退役 |
+| `scripts/verify-a2-backend-lite-api.mjs` | 真实部署 API／PG／worker；固定 HTTPS Git 提供方；安装认证、Cookie／CSRF、provider connection 与 context 动作幂等、精确 action/context 关联及 guidance 原件 | `bootstrap-install.integration.test.ts`、`stage3-delivery.integration.test.ts`、`stage3-provider.integration.test.ts` | 保留并改为 Node 原生 HTTP 直连 API；移除 Web workspace 的 Playwright、install 页面和 workbench 浏览器断言 |
+| `scripts/verify-a2-backend-lite.mjs` | 准确 Git archive 构建；独立无源码 Compose 安装；固定 HTTPS 提供方；api／worker／migrate 入口、save/load 镜像身份、无源码与无 bind mount、安装状态、部署 worker、TLS CA、归属日志及定向收尾 | 由原部署脚本承担 | 保留部署验证入口；移除 web role、Next compiled proxy 和页面结论；启动后直接验证 API 并调用保留的内层脚本 |
+<!-- SUITE_TABLE_END -->
+
+## 目录外 Lite 脚本
+
+两份脚本属于后端部署验证入口，不能随 WebUI 专用脚本整体删除。
+原始检查位置和 Git blob 见 `test-inventory.json`；以下用例名是 #61 实施时须落地的名称，本轮尚未创建或执行。
+内层脚本的 HTTP 检查改用 Node 原生请求，显式保存安装响应 Cookie，并在 mutation 发送 CSRF 和幂等键；不再从 Web workspace 加载 Playwright。
+
+| 原检查及机制 | 保留的验收与目标 | 退役项 |
+|---|---|---|
+| 外层：安装状态；内层：`/api/v1/auth/install`、`me`、`teams`，安装后携带 Cookie 和 CSRF | 保留真实安装认证、身份及团队读取；复用 `bootstrap-install.integration.test.ts`，退役集成套件新增 `liteInstallCookieCsrf` 正例及缺 Cookie／CSRF 拒绝；部署脚本验证实际 HTTP 会话 | `/install` 返回 HTML、页面含 WorkMesh |
+| 内层：同 key／body 两次创建 provider connection、两次请求 repository context | 保留连接 ID、action ID 相同及单次业务事实；复用 API `stage3-delivery.integration.test.ts`，退役集成套件新增 `liteProviderConnectionReplay`，覆盖不同 body 复用 key 拒绝 | 无；不可随浏览器删除 |
+| 内层：仓库列表 `availableOnly`、`can_configure_context`；等待部署 worker 生成准确 `provider_action_id` 的 context | 保留 repository／project ID、null work item／session、base SHA、read 权限及 guidance 原文精确匹配；复用 worker `stage3-provider.integration.test.ts`，退役集成套件新增 `liteExactProjectContext`；原部署入口继续消费真实 worker 输出 | Chromium、workbench 页面、页面错误和配置就绪提示 |
+| 外层：准确 `git archive` 构建、角色加载检查、`docker save`／`load` 后镜像 ID 比对 | 就地保留 `liteImageSaveLoadIdentity`，检查 api／worker／migrate 角色；保留构建 SHA、镜像身份和原日志，不由集成测试代替 | web 角色、Next compiled proxy／rewrites |
+| 外层：私有安装目录只复制部署文件、Compose 无 bind mount、启动后安装状态及内层验证 | 就地保留 `liteNoSourceInstallation`、`liteDeployedWorkerContext`；安装目录不含源码或 node_modules，容器无源码挂载；直接暴露 API，`WEB_ORIGIN` 兼容值指 API | Web 代理与“仍使用主 Web”的验收结论 |
+| 外层：固定 HTTPS Git 提供方、专属 CA、owner 标签、日志脱敏、定向收尾 | 保留 TLS 校验、确定性仓库原件、资源身份及活动引用检查；收尾仅本人已登记资源，历史证据和真实低功耗设备未测状态不改写 | 无；不关闭 TLS 或扩大清理 |
+
+实施责任统一为 #61 产品实施者，方案独审复核断言去向，最终产品独审核实际结果。
+不得将缺失验证推给 #62 文档初版或 #20 后续功能。
+
+产品实施后，在独立测试数据库及现行环境预检下执行：
+
+```bash
+pnpm test:integration:api
+pnpm test:integration:worker
+node scripts/verify-a2-backend-lite.mjs
+```
+
+前两项须实际执行上述新增用例及既有 API／worker 回归。
+外层脚本准备隔离 Lite 环境与固定 HTTPS 夹具，调用 `node scripts/verify-a2-backend-lite-api.mjs`，保存无源码安装、save/load 和真实 worker 输出证据。
+单独运行内层命令须使用外层已准备的同一环境，不能连共享业务实例。
+全部命令及用例当前状态为“待产品实施后执行”；历史 A2 通过不能代替后端化组合验收。
 
 ## 镜像与签名 Skill
 
@@ -84,11 +119,17 @@
 | 验收 | 步骤 | 预期 |
 |---|---|---|
 | 资产原件 | 对比旧 Web 资产、新 API 资产及实际提交 blob | 字节、LF、摘要和签名不变 |
-| 生产 API 镜像 | 构建并启动生产 API；读取发现返回的 Skill URL，下载原始响应体 | 镜像文件、HTTP 字节和签名原件一致 |
-| Lite API 角色 | 独立启动 Lite 的 API 角色，按发现 URL 下载 | 不依赖 Web 服务或夹具静态服务器 |
+| 生产 API 镜像 | 构建并启动生产 API；校验 discovery，完成配对兑换，使用 `redeemed.skill.download_url` 下载原始响应体 | 镜像文件、HTTP 字节和签名原件一致 |
+| Lite API 角色 | 独立启动 Lite 的 API 角色；校验 discovery，完成配对兑换，使用 `redeemed.skill.download_url` 下载 | 不依赖 Web 服务或夹具静态服务器；镜像文件、响应体与原件逐字节一致 |
 | 路径限制 | 请求未声明文件、编码后的路径穿越及非法文件名 | 不读取任意文件，不返回秘密 |
 | 真实消费 | 修改 `stage5-connector.integration.test.ts`，从真实 API 下载 | SDK／连接器完成校验和兑换，不由 gateway 代供资产 |
 | 发现地址 | API 与 MCP 使用不同 origin；核对发现、Skill 和 MCP URL | 前两者由 API 服务，MCP 指向配置的 MCP origin |
+
+下载地址只从兑换响应取得，不增加 discovery 字段。
+discovery 的 `AgentConnectionWellKnownSkill` 校验名称、版本、摘要和签名；现行严格 schema 拒绝 `download_url`。
+复用 `packages/contracts/src/stage5-contracts.test.ts` 的兑换必含字段、发现不含字段两项合同检查。
+分别从现有授权的配对创建和兑换流程取得生产／Lite 响应，再消费其 `skill.download_url`。
+纠正来源见 `review-corrections.md`；Saved plan 原件保留原句。
 
 ## 通知链接与旧投递
 

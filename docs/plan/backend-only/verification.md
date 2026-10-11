@@ -6,7 +6,10 @@
 原产品源码、WebUI、CI、依赖、部署与通知行为均未改动。
 没有数据库迁移，没有 API／event 合同改动。产品实施等待方案独审和后续单独放行。
 
-## 本轮检查
+## 前置交付检查（独审修订前）
+
+下表保留审查提交 `69fa7f4f196c6cef74a792054400530420c705dc` 的交付记录。
+其中方案摘要和 50 个测试源文件计数属于该提交；本轮修订后的结果另列，不覆盖历史检查。
 
 | 检查 | 实际执行或读取 | 结果 |
 |---|---|---|
@@ -29,6 +32,23 @@
 
 空白检查首败保存于 `sources/document-check-first-failure.json`。
 原会话文本改用 JSON 的 `text` 字段保全，解码后逐字相同；新写文档清除多余末尾空行。
+
+## 独审反馈修订检查
+
+本轮仅修订文档，补入两份目录外 Lite 脚本的检查索引、后端去向、执行命令及 #61 责任。
+活动方案改用兑换响应中的 `redeemed.skill.download_url`；两份 Saved plan 原件、规格和问答未改动。
+修订来源与精确替换见 `review-corrections.md` 和 `review-corrections.json`。
+
+| 检查 | 实际执行 | 结果 |
+|---|---|---|
+| 索引再生成 | `python docs/plan/backend-only/prepare-inventory.py` | 52 个源文件、155 个 test／describe 声明、2,178 个 expect／assert／throw Error 起始位置；仅提取源码，没有执行产品检查 |
+| 活动方案与原件 | `python docs/plan/backend-only/verify-documents.py` | 52 个清单文件及实际暂存 blob 一致；原件仍逐字匹配保全正文，活动方案等于原件应用两处精确修订；产品变化为零 |
+| 审查原句位置 | 重读 `prepare-inventory.py` 的枚举段和活动方案镜像验收段 | 索引包含两份目录外脚本；下载流程为 discovery 校验、配对兑换、兑换 URL 下载；Saved plan 原句作为来源保留 |
+| 范围及空白 | `git diff --cached --check`，比较审查提交的文件路径 | 仅方案材料变化；空白检查通过；产品源码、CI 和部署脚本未变 |
+| 中文手检 | 沿用固定写作规范，复核修订段落、标点、链接及状态表述 | 不改原件，不安装全局工具；产品验收均明确待执行 |
+
+提交后执行 `python docs/plan/backend-only/verify-documents.py --ref HEAD`，复核实际提交 blob；准确 head 由推送结果交接。
+本轮未创建或清理运行资源，生成器和校验器仅作为方案材料保留。
 
 ## 未执行的产品验收
 

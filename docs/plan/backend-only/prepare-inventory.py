@@ -54,6 +54,26 @@ rows = {
 
 
 def disposition(path):
+    if path.name == "verify-a2-backend-lite-api.mjs":
+        return {"fixture": "真实部署 API／PG／worker；固定 HTTPS Git 提供方",
+                "retained": "安装认证、Cookie／CSRF、provider connection 与 context 动作幂等、精确 action/context 关联及 guidance 原件",
+                "existingBackendTests": [API + "bootstrap-install.integration.test.ts", API + "stage3-delivery.integration.test.ts", "apps/worker/integration/stage3-provider.integration.test.ts"],
+                "action": "保留并改为 Node 原生 HTTP 直连 API；移除 Web workspace 的 Playwright、install 页面和 workbench 浏览器断言",
+                "newBackendTest": NEW,
+                "plannedTests": ["liteInstallCookieCsrf", "liteProviderConnectionReplay", "liteExactProjectContext"],
+                "executionCommand": "node scripts/verify-a2-backend-lite-api.mjs（由隔离 Lite 外层脚本提供环境并调用）",
+                "owner": "#61 产品实施者；独审复核；不交给 #62 或 #20 补缺",
+                "execution": "待产品实施后执行"}
+    if path.name == "verify-a2-backend-lite.mjs":
+        return {"fixture": "准确 Git archive 构建；独立无源码 Compose 安装；固定 HTTPS 提供方",
+                "retained": "api／worker／migrate 入口、save/load 镜像身份、无源码与无 bind mount、安装状态、部署 worker、TLS CA、归属日志及定向收尾",
+                "existingBackendTests": [],
+                "action": "保留部署验证入口；移除 web role、Next compiled proxy 和页面结论；启动后直接验证 API 并调用保留的内层脚本",
+                "newBackendTest": "原脚本就地后端化（待实施），不能用仅注入式集成测试代替真实部署",
+                "plannedTests": ["liteImageSaveLoadIdentity", "liteNoSourceInstallation", "liteDeployedWorkerContext"],
+                "executionCommand": "node scripts/verify-a2-backend-lite.mjs",
+                "owner": "#61 产品实施者；保留真实低功耗设备未测状态及历史回执",
+                "execution": "待产品实施后执行"}
     if path.name in rows:
         kind, retained, targets, action = rows[path.name]
         return {"fixture": kind, "retained": retained,
@@ -67,8 +87,9 @@ def disposition(path):
             "newBackendTest": NEW, "execution": "待产品实施后执行"}
 
 
-paths = sorted(set(Path("apps/web/e2e").rglob("*.spec.ts")) |
-               set(Path("apps/web/e2e").rglob("*.test.ts")))
+browser_suite_paths = set(Path("apps/web/e2e").rglob("*.spec.ts")) | set(Path("apps/web/e2e").rglob("*.test.ts"))
+backend_lite_paths = {Path("scripts/verify-a2-backend-lite-api.mjs"), Path("scripts/verify-a2-backend-lite.mjs")}
+paths = sorted(browser_suite_paths | backend_lite_paths)
 inventory = []
 for path in paths:
     data = path.read_bytes()
@@ -78,9 +99,12 @@ for path in paths:
     tests = []
     assertions = []
     for number, line in enumerate(lines, 1):
-        if re.search(r"\btest(?:\.(?:skip|fixme|describe))?\(", line):
+        if path in browser_suite_paths and re.search(r"\btest(?:\.(?:skip|fixme|describe))?\(", line):
             tests.append({"line": number, "source": line.strip()})
         if re.search(r"\bexpect(?:\.[A-Za-z]+)*\(", line):
+            assertions.append({"line": number, "source": line.strip(),
+                               "context": "\n".join(lines[number-1:number+5])})
+        if path in backend_lite_paths and re.search(r"\bassert\.[A-Za-z]+\(|\bthrow (?:new )?Error\(", line):
             assertions.append({"line": number, "source": line.strip(),
                                "context": "\n".join(lines[number-1:number+5])})
     entry = {"path": relative, "gitBlob": git("rev-parse", "HEAD:" + relative).decode().strip(),
@@ -92,18 +116,24 @@ for path in paths:
     inventory.append(entry)
 
 record = {"sourceHead": git("rev-parse", "HEAD").decode().strip(),
-          "method": "按源码逐行提取 test 与 expect 起始位置；不是 JS AST 或用例执行结果",
+          "method": "按源码逐行提取 test、expect、目录外脚本 assert 与 throw Error 检查位置；不是 JS AST 或执行结果",
           "coverageLimit": "多行表达式、动态循环和 helper 由准确 Git blob 回查；不声称提取了运行时实例",
           "files": inventory}
 (OUT / "test-inventory.json").write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
-table = ["| 原套件（apps/web/e2e/） | 原行为与夹具 | 现有后端源码覆盖入口 | 去向（待实施） |",
+table = ["| 原测试或脚本（短路径位于 apps/web/e2e/） | 原行为与夹具 | 现有后端源码覆盖入口 | 去向（待实施） |",
          "|---|---|---|---|"]
 for entry in inventory:
     d = entry["disposition"]
-    targets = "、".join("`" + Path(t).name + "`" for t in d["existingBackendTests"]) or "无后端迁移项"
+    targets = "、".join("`" + Path(t).name + "`" for t in d["existingBackendTests"])
+    if not targets:
+        targets = "由原部署脚本承担" if Path(entry["path"]) in backend_lite_paths else "无后端迁移项"
     table.append("| `" + entry["path"].removeprefix("apps/web/e2e/") + "` | " + d["fixture"] + "；" + d["retained"] + " | " + targets + " | " + d["action"] + " |")
 impact = (OUT / "test-impact.md").read_text(encoding="utf-8")
-if "<!-- SUITE_TABLE -->" not in impact:
-    raise RuntimeError("套件表占位不存在；拒绝重复生成覆盖审查文本")
-(OUT / "test-impact.md").write_text(impact.replace("<!-- SUITE_TABLE -->", "\n".join(table)), encoding="utf-8", newline="\n")
+table_start = "<!-- SUITE_TABLE_START -->"
+table_end = "<!-- SUITE_TABLE_END -->"
+if table_start not in impact or table_end not in impact:
+    raise RuntimeError("缺少套件表边界；拒绝覆盖审查说明")
+before, remaining = impact.split(table_start, 1)
+_, after = remaining.split(table_end, 1)
+(OUT / "test-impact.md").write_text(before + table_start + "\n" + "\n".join(table) + "\n" + table_end + after, encoding="utf-8", newline="\n")
 print(json.dumps({"files": len(inventory), "declarations": sum(len(x["tests"]) for x in inventory), "assertionStarts": sum(len(x["assertions"]) for x in inventory)}))
