@@ -6,6 +6,7 @@
     ".": "./src/connect.ts"
   },
   "scripts": {
+    "postinstall": "node scripts/prepare-native.mjs",
     "build": "tsc -p tsconfig.build.json",
     "lint": "tsc --noEmit",
     "typecheck": "tsc --noEmit",

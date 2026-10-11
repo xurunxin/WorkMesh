@@ -34,3 +34,5 @@ MCP 和 Skill 可以位于清单明确批准的不同 HTTPS origin。兑换与 d
 `pnpm --filter @workmesh/connector test` 验证并发、强制终止、协议拒绝与补偿；`test:platform` 实测原生后端、权限、跨用户拒绝及实际 CLI。平台夹具缺失会失败，不将跳过冒充通过。Linux CI 使用独有 Secret Service 并验证 daemon 重启持久性；Windows CI 创建临时第二用户，收尾删除用户和临时目录。测试资源创建与清理写入无秘密日志。
 
 源码中的测试内存 store 只用于确定性故障注入，不是产品后备存储。平台矩阵、成果独审、最新 Required CI 和实际 main 落地仍是验收门禁；本地通过不代表已发布或已合入。
+
+安装须允许原生依赖及连接器的准备脚本；`--ignore-scripts` 只适用于离线缓存准备，不能视为可运行安装。macOS 安装钩子修正锁定 node-pty 的 helper 执行位，使用安装目录内的独立副本，公共包缓存保持原样。

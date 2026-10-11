@@ -13,6 +13,8 @@ try {
   $createdUser = New-LocalUser -Name $name -Password (ConvertTo-SecureString $password -AsPlainText -Force)
   if (Test-Path -LiteralPath $parent) { throw 'temporary directory collision' }
   $env:WM_CONNECTOR_PUBLIC_ROOT = $parent
+  # 创建后校验失败也须清理本次已声明的唯一目标。
+  $directoryCreated = $true
   & node --import tsx --input-type=module -e "import {prepareDirectory} from './apps/connector/src/platform-security.ts'; await prepareDirectory(process.env.WM_CONNECTOR_PUBLIC_ROOT)"
   if ($LASTEXITCODE -ne 0) { throw 'protected temporary directory creation failed' }
   $directoryCreated = $true

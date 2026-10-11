@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { trustedPosixDirectory, trustedWindowsDescriptor } from './path-policy.js'
+import { privateWindowsDescriptor, trustedPosixDirectory, trustedWindowsDescriptor } from './path-policy.js'
 
 function descriptor(owner = 'S-1-5-21-1', trustee = 'S-1-1-0', mask = 0x1200a9, flags = 0): Buffer {
   const sid = (text: string) => {
@@ -33,4 +33,20 @@ it('POSIX 逐级验证 owner、非 sticky 写权限和 sticky 子项绑定', () 
   expect(() => trustedPosixDirectory(502, 0o41777, 501)).toThrow('CONNECTOR_UNSAFE_OWNER')
   expect(() => trustedPosixDirectory(501, 0o40777, 501)).toThrow('CONNECTOR_UNSAFE_ANCESTOR')
   expect(() => trustedPosixDirectory(0, 0o40775, 501)).toThrow('CONNECTOR_UNSAFE_ANCESTOR')
+})
+
+it('Windows 私有 ACL 精确校验语义，拒绝继承/其他 owner/多余或非完整 ACE', () => {
+  const current = 'S-1-5-21-1'
+  const privateAcl = () => { const bytes = descriptor(current, current, 0x1f01ff); bytes.writeUInt16LE(0x9004, 2); return bytes }
+  privateWindowsDescriptor(privateAcl(), current)
+  const autoInherited = privateAcl(); autoInherited.writeUInt16LE(0x9404, 2)
+  privateWindowsDescriptor(autoInherited, current)
+  for (const mutate of [
+    (bytes: Buffer) => bytes.writeUInt16LE(0x8004, 2),
+    (bytes: Buffer) => bytes.writeUInt16LE(2, bytes.readUInt32LE(16) + 4),
+    (bytes: Buffer) => { bytes[bytes.readUInt32LE(16) + 9] = 0x10 },
+    (bytes: Buffer) => bytes.writeUInt32LE(0x1200a9, bytes.readUInt32LE(16) + 12),
+    (bytes: Buffer) => bytes.writeUInt32LE(2, bytes.readUInt32LE(4) + 12),
+    (bytes: Buffer) => bytes.writeUInt32LE(2, bytes.readUInt32LE(16) + 28),
+  ]) { const bytes = privateAcl(); mutate(bytes); expect(() => privateWindowsDescriptor(bytes, current)).toThrow('CONNECTOR_UNSAFE_ACL') }
 })

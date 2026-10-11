@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve, join } from 'node:path'
 import { createHash } from 'node:crypto'
@@ -9,8 +9,13 @@ const attempt = process.argv[2]
 if (!attempt || !/^[a-z0-9-]+$/.test(attempt)) throw new Error('需要独有运行标识，不能覆盖历史结果')
 const output = join(base, attempt)
 const owner = JSON.parse(readFileSync(resolve(root, '.tmp/workmesh-environment-owner.json'), 'utf8').replace(/^\uFEFF/, ''))
-const source = JSON.parse(readFileSync(join(base, 'source.json'), 'utf8'))
-source.files = source.files.map(file => ({ ...file, rawSha256: createHash('sha256').update(readFileSync(resolve(root, file.path))).digest('hex') }))
+const entries = execFileSync('git', ['ls-files', '--stage', '-z', 'apps', 'packages', 'scripts', 'infra', '.github', 'skills', 'AGENT_PROTOCOL.md', 'CONTEXT.md', 'OPENAPI.yaml', 'SCHEMA.sql', 'pnpm-lock.yaml', 'package.json', 'turbo.json', 'vitest.config.ts'], { encoding: 'utf8' }).split('\0').filter(Boolean)
+const source = { runtimeHead: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+  dirty: Boolean(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim()),
+  files: entries.map(entry => {
+    const [metadata, path] = entry.split('\t'), bytes = readFileSync(resolve(root, path))
+    return { path, bytes: bytes.length, indexBlob: metadata.split(' ')[1], rawSha256: createHash('sha256').update(bytes).digest('hex') }
+  }) }
 const env = { ...process.env, PATH: `${dirname(owner.node)};${process.env.PATH}`, APPDATA: process.env.WM_B1B2_TEST_ROOT ?? process.env.APPDATA }
 const results = []
 mkdirSync(join(output, 'logs'), { recursive: true })

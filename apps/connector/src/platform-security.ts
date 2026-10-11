@@ -6,7 +6,7 @@ import { dirname, join, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import koffi from 'koffi'
 import { ConnectorError, requireThat } from './errors.js'
-import { trustedPosixDirectory, trustedWindowsDescriptor } from './path-policy.js'
+import { privateWindowsDescriptor, trustedPosixDirectory, trustedWindowsDescriptor } from './path-policy.js'
 
 const execute = promisify(execFile)
 const windows = process.platform === 'win32'
@@ -21,7 +21,6 @@ const attributes = kernel?.func('uint32 __stdcall GetFileAttributesW(str16 path)
 const localFree = kernel?.func('void * __stdcall LocalFree(void * pointer)')
 const security = windows ? koffi.load('advapi32.dll') : null
 const fromSddl = security?.func('int __stdcall ConvertStringSecurityDescriptorToSecurityDescriptorW(str16 text, uint32 revision, _Out_ void ** descriptor, void * size)')
-const toSddl = security?.func('int __stdcall ConvertSecurityDescriptorToStringSecurityDescriptorW(void * descriptor, uint32 revision, uint32 info, _Out_ void ** text, void * size)')
 const setSecurity = security?.func('int __stdcall SetFileSecurityW(str16 path, uint32 info, void * descriptor)')
 const getSecurity = security?.func('int __stdcall GetFileSecurityW(str16 path, uint32 info, _Out_ void * descriptor, uint32 length, _Out_ uint32 * needed)')
 let currentSid: Promise<string> | undefined
@@ -102,10 +101,7 @@ async function acl(path: string, establish: boolean): Promise<void> {
     }
     const descriptor = Buffer.alloc(32_768); const needed = [0]
     requireThat(getSecurity!(path, 5, descriptor, descriptor.length, needed), 'CONNECTOR_UNSAFE_ACL')
-    const output: unknown[] = [null]
-    requireThat(toSddl!(descriptor, 1, 5, output, null), 'CONNECTOR_UNSAFE_ACL')
-    try { requireThat(typeof output[0] === 'bigint' && koffi.decode.string16(output[0]) === expected, 'CONNECTOR_UNSAFE_ACL') }
-    finally { localFree!(output[0]) }
+    privateWindowsDescriptor(descriptor.subarray(0, needed[0]), sid)
   } catch { throw new ConnectorError('CONNECTOR_UNSAFE_ACL') }
 }
 export async function verifyPrivate(path: string, directory = false): Promise<void> {

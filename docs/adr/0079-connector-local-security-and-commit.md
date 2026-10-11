@@ -30,6 +30,8 @@ Windows 在 owner/ACL 核验前从根到叶打开 `READ_CONTROL|READ_ATTRIBUTES`
 
 第三轮独审修订：ANSI 可见字符匹配前后都增加独立的原始字节凭据检查，原始 `wmi_`/`wmp_` 前缀不能被控制结束字节分类吞掉。控制结束字节 `w` 也参与后续候选匹配，覆盖异常前导串再叠加色彩序列的情况。安全提示继续即时输出，管道/PTY/实际系统存储入口同时断言原始输出及显示规范化结果，stderr 重定向文件也检查原始日志。祖先权限与三流 TTY 模式选择不变。
 
+换机原生验收补充（2026-10-11）：Windows 私有路径按二进制安全描述符核当前 SID owner、受保护 DACL、唯一无继承 FullControl allow ACE；不把等价的 SDDL 别名或 AUTO_INHERITED 表示差异当作权限差异。macOS 无扩展 ACL 的 NULL/ENOENT 只有在重核同一目录的 dev/inode/owner/mode/ctime 后可接受，其他 ACL 读取失败仍拒绝；修改型 allow 规则保持。node-pty 1.1.0 的 Darwin helper 执行位由安装钩子准备，先复制为独立 inode 再替换，保原字节哈希，不 chmod 公共 CAS。完整原生验收仍须三系统真实运行。
+
 Alternatives
 
 新建服务端重放表、允许新 key 重领、缩短配对码、落普通文件、Linux 自动 keyutils 回退、校验前写配置均拒绝。PID 文件锁在崩溃与 PID 重用下不可靠，采用 OS 句柄锁。先写文件再修 ACL 存在并发观察窗口，采用创建时安全描述符。

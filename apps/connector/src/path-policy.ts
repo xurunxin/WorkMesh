@@ -1,16 +1,33 @@
 import { requireThat } from './errors.js'
 
+function descriptorSid(descriptor: Buffer, offset: number, limit = descriptor.length): string {
+  requireThat(offset >= 20 && offset + 8 <= limit && descriptor[offset] === 1, 'CONNECTOR_UNSAFE_ACL')
+  const count = descriptor[offset + 1]!
+  requireThat(offset + 8 + count * 4 <= limit, 'CONNECTOR_UNSAFE_ACL')
+  const authority = descriptor.readUIntBE(offset + 2, 6)
+  return `S-1-${authority}` + Array.from({ length: count }, (_, i) => `-${descriptor.readUInt32LE(offset + 8 + i * 4)}`).join('')
+}
+
+export function privateWindowsDescriptor(descriptor: Buffer, currentSid: string): void {
+  requireThat(descriptor.length >= 20 && (descriptor.readUInt16LE(2) & 0x9004) === 0x9004, 'CONNECTOR_UNSAFE_ACL')
+  requireThat(descriptorSid(descriptor, descriptor.readUInt32LE(4)) === currentSid, 'CONNECTOR_UNSAFE_ACL')
+  const dacl = descriptor.readUInt32LE(16)
+  requireThat(dacl >= 20 && dacl + 8 <= descriptor.length && descriptor.readUInt16LE(dacl + 4) === 1, 'CONNECTOR_UNSAFE_ACL')
+  const end = dacl + descriptor.readUInt16LE(dacl + 2), ace = dacl + 8
+  requireThat(end <= descriptor.length && ace + 8 <= end, 'CONNECTOR_UNSAFE_ACL')
+  const size = descriptor.readUInt16LE(ace + 2)
+  // 比较实际 owner/唯一 ACE/保护位；SDDL 账户别名和 AUTO_INHERITED 不改变权限。
+  requireThat(ace + size === end && size >= 16 && descriptor[ace] === 0 && descriptor[ace + 1] === 0
+    && descriptor.readUInt32LE(ace + 4) === 0x1f01ff
+    && descriptorSid(descriptor, ace + 8, end) === currentSid
+    && size === 16 + descriptor[ace + 9]! * 4, 'CONNECTOR_UNSAFE_ACL')
+}
+
 // 管理员/root 能控制进程和秘密后端，属于 OS 信任边界；普通其他用户不在其中。
 export function trustedWindowsDescriptor(descriptor: Buffer, currentSid: string): void {
   const trusted = new Set([currentSid, 'S-1-5-18', 'S-1-5-32-544',
     'S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464'])
-  const sid = (offset: number, limit = descriptor.length): string => {
-    requireThat(offset >= 20 && offset + 8 <= limit && descriptor[offset] === 1, 'CONNECTOR_UNSAFE_ACL')
-    const count = descriptor[offset + 1]!
-    requireThat(offset + 8 + count * 4 <= limit, 'CONNECTOR_UNSAFE_ACL')
-    const authority = descriptor.readUIntBE(offset + 2, 6)
-    return `S-1-${authority}` + Array.from({ length: count }, (_, i) => `-${descriptor.readUInt32LE(offset + 8 + i * 4)}`).join('')
-  }
+  const sid = (offset: number, limit = descriptor.length) => descriptorSid(descriptor, offset, limit)
   requireThat(descriptor.length >= 20 && (descriptor.readUInt16LE(2) & 0x8004) === 0x8004, 'CONNECTOR_UNSAFE_ACL')
   requireThat(trusted.has(sid(descriptor.readUInt32LE(4))), 'CONNECTOR_UNSAFE_OWNER')
   const dacl = descriptor.readUInt32LE(16)
