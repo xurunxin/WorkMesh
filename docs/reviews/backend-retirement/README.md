@@ -14,7 +14,7 @@ CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Sk
 
 - [启动与接口安装](../../backend-only-deployment.md)、[服务边界决策](../../adr/0087-backend-only-service.md)。
 - [已审活动方案](../../plan/backend-only.md)、[原浏览器与目录外脚本去向](../../plan/backend-only/test-impact.md)、[逐卡衔接](../../plan/backend-only/followup-impact.md)。后续顺序为 #61 → #62 → #7 → #20，未开发能力不标完成。
-- `webui-path-receipt.json` 记录逐路径 Git blob 与迁移/退役归属；`webui-history/` 保全原截图与基线，历史规格、审核和首败不改写。
+- `webui-path-receipt.json` 记录逐路径 Git blob 与迁移/退役归属，`history-preservation-check.json` 复核 79 份历史原字节与实际提交 blob；`webui-history/` 保全原截图与基线，历史规格、审核和首败不改写。
 - `backend-assertion-map.json` 将已审的 52 个测试源绑定到现有 23 个后端测试文件、准确 Git blob 和用例声明；新迁入用例与真实部署入口分别列出。源码索引不代替运行结果。
 - `platform-source.json` 保全本轮工具实际返回全文及完整 Spec 段，Saved plan 截断单列缺口。已审原件沿用批准提交，`source-preservation.json` 逐文件复核。
 - [实际验证记录](test-results.md) 区分首败、复验、未测与正在运行；日志不等于产品全部验收通过。`runs/` 将实际镜像提交、身份、部署、TLS 和定向清理绑定。`ci-artifacts/` 保全 GitHub 原 ZIP、实际 PR 合成检出及源码 tree、三平台前后绑定、镜像和恢复回执；终端日志原始字节存入 `raw-logs/`，同名 `.log` 为去除行尾空白的阅读视图，二者的 SHA-256 由 `log-source-manifest.json` 分开记录；没有放宽空白门禁。
@@ -23,6 +23,8 @@ CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Sk
 
 - `integration-resources.json` 记录本轮 PG/Redis/S3 容器、私有卷的归属与清理后不存在证明；`private-appdata-owner.json` 记录专用 APPDATA 收尾，`development-builder-cleanup.json` 核对首败专用 builder 不存在。共享 store、工作树复验依赖、业务数据及共享 Docker 设置保持。
 - `required-status-source.json` 为 GitHub main 严格 `Required CI` 设置的实际读取原件，没有浏览器 context。
+
+- [资源收尾与保留](cleanup.md) 关联私有环境/shim、容器/卷、APPDATA、builder 的实际回执及测试清理边界拒绝目录；未删目标不写成已清除。
 
 ## 当前关口
 

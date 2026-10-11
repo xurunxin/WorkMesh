@@ -37,6 +37,8 @@ API origin 提供 `/.well-known/workmesh-agent` 和固定 `/skills/workmesh-1.1.
 
 生产部署见 [生产说明](production-deployment.md)，Lite 见 [Lite 说明](../deploy/lite/README.md)。Lite 的 MCP 和 Runner 仍在独立机器运行；API 直接可达，不再借助 Next 代理。
 
+已有部署升级时保持客户端使用的公共 origin，将该 origin 的代理目标改为 API；直接发布端口的环境用 `API_HOST_PORT` 承接原端口，并令 `WEB_ORIGIN` 与外部 API origin 一致。这样保留既有客户端地址及旧幂等回执的定位符，不修改回执字节、配对码或授权。新配对返回兑换接口定位符；已过期配对仍按原合同拒绝。
+
 ## 通知与后续维护
 
 Web Push 的 config、订阅注册/撤销及 worker 投递接口保持。外部客户端自行消费服务合同，本项目不提供替代页面或 Service Worker。企业微信和 Web Push 的新链接使用现有鉴权 API：attention 来源定位到编码后的复合 ID，其他通知定位到 notifications 查询。链接不携带秘密，返回 JSON；匿名、其他 Human 或失权用户按实时权限拒绝，不提供登录页面。
