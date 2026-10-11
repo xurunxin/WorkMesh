@@ -1,0 +1,1 @@
+{"command":"git diff --cached --check","result":"failed","output":"docs/plan/backend-only/followup-impact.md:63: new blank line at EOF.\ndocs/plan/backend-only/sources/conversation-response.txt:27: trailing whitespace.\n+    \n","correction":"新写文档移除多余末尾空行；平台原始返回以 JSON text 字段逐字保全，不修改原文本，不放宽空白规则。"}
