@@ -14,7 +14,7 @@ const composeFile = `docker-compose.${deploymentClass}.yml`
 const runId = `backend-${deploymentClass}-${randomUUID().slice(0, 8)}`
 const sha = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim()
 if (!/^[a-f0-9]{40}$/.test(sha)) throw Error('缺少精确 Git 提交')
-const evidence = resolve(root, 'docs/reviews/backend-retirement/runs', runId)
+const evidence = resolve(root, process.env.WORKMESH_VALIDATION_OUTPUT ?? 'docs/reviews/backend-retirement/runs', runId)
 const installDir = resolve(tmpdir(), runId)
 mkdirSync(evidence, { recursive: true })
 const receipts = { runId, sha, deploymentClass, environment: '工作站 Linux Docker；非真实低功耗设备', installDir, resources: [], results: [], outcome: '未运行' }
@@ -155,7 +155,8 @@ try {
   env.PUBLIC_MCP_ORIGIN = `http://127.0.0.1:${env.MCP_HOST_PORT}`
   env.WEB_ORIGIN = `http://127.0.0.1:${env.API_HOST_PORT}`; env.S3_PUBLIC_ENDPOINT = `http://host.docker.internal:${env.S3_HOST_PORT}`
   // 仅追加本测试 CA 和 feature；不修正原 Lite RustFS 凭证映射或其他安装合同。
-  writeFileSync(resolve(installDir, 'provider.override.yml'), `services:\n  worker:\n    environment:\n      NODE_EXTRA_CA_CERTS: /a2-ca/ca.pem\n    volumes:\n      - a2-test-ca:/a2-ca:ro\nvolumes:\n  a2-test-ca:\n    external: true\n    name: ${caVolume.target}\n`)
+  const providerHost = process.platform === 'linux' ? '    extra_hosts:\n      - "host.docker.internal:host-gateway"\n' : ''
+  writeFileSync(resolve(installDir, 'provider.override.yml'), `services:\n  worker:\n${providerHost}    environment:\n      NODE_EXTRA_CA_CERTS: /a2-ca/ca.pem\n    volumes:\n      - a2-test-ca:/a2-ca:ro\nvolumes:\n  a2-test-ca:\n    external: true\n    name: ${caVolume.target}\n`)
   register('compose-project', runId); composeStarted = true
   await must('docker', [...composeArgs, 'up', '-d', '--wait', '--wait-timeout', '180', 'api', 'worker', ...(deploymentClass === 'production' ? ['mcp'] : [])], { cwd: installDir })
   const containers = await must('docker', [...composeArgs, 'ps', '-q']); receipts.installationContainerIds = containers.split(/\r?\n/); save()

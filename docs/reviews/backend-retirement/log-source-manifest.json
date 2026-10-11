@@ -683,6 +683,42 @@
       "rawBytes": 73913,
       "viewSha256": "532e6065140fa284617ab779106f57299491beecab5db4bfbdd1045475d074fc",
       "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/ci-policy-deployment.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-230c07ac7cb1.zip",
+      "entry": "ci-policy-deployment.log",
+      "rawSha256": "55b5dfd4776c6619edfff8f013addccc39e7665dc920063f1b9244e140aa4d00",
+      "rawBytes": 2122,
+      "viewSha256": "122763ca83b0b1595800689f5b303c9256917b0e1e2000169c61a4aca167e7d4",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/ci-validate-deployment.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-230c07ac7cb1.zip",
+      "entry": "ci-validate-deployment.log",
+      "rawSha256": "ad40355a4a10185495af276d18385c7eeb16213bfa770e7b10e2ea23c2f6843d",
+      "rawBytes": 1511,
+      "viewSha256": "60863aabcbeb1086b4b4163fc1de6e95f1328b2461b690c9741586d12e898f7a",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/unit-native-ancestor-first-failure.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-230c07ac7cb1.zip",
+      "entry": "unit-native-ancestor-first-failure.log",
+      "rawSha256": "99e9678824868875b720e70c965ef187b08159347dabcfbd51938565c206732b",
+      "rawBytes": 119555,
+      "viewSha256": "badc31f423e6a813c8948bd66b2b9ca7ef4d2b5e7ce9889cba48ce2309cc0464",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/unit-private-appdata.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-79423eed938c.zip",
+      "entry": "unit-private-appdata.log",
+      "rawSha256": "6bb879dfb9c097b57d36b1ca2664a2c1ffbc9363d3bf0114b22ad6bd19f49c3a",
+      "rawBytes": 94374,
+      "viewSha256": "31b2fb0c5e419191329b1b0a3d1cfffa733467f17a841233f028198935e6c755",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
     }
   ],
   "archives": [
@@ -697,6 +733,14 @@
     {
       "path": "docs/reviews/backend-retirement/raw-logs/run-349a62eebe34.zip",
       "sha256": "15f107b3ce48f3d339772b94a737cf1cab30a58ee3b61423885cbec63499ea8c"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/raw-logs/run-230c07ac7cb1.zip",
+      "sha256": "42732fe3748e86647f8c10b7d8d4f6aa16dd80e48ac42afba6369b0d908bb197"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/raw-logs/run-79423eed938c.zip",
+      "sha256": "65ac8d05569c44df328d50cde387cad8ea04c35090464d8a8513cb522ee9fc4c"
     }
   ]
 }

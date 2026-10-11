@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint } from './ci-policy.mjs'
+import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint, validateBackendLiteEntrypoint } from './ci-policy.mjs'
 import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
@@ -10,6 +10,24 @@ import { parse } from './ci-bootstrap/yaml.mjs'
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败', () => {
+  const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['source-gates']
+  assert.deepEqual(validateBackendLiteEntrypoint(job), [])
+  const name = 'Verify backend Lite installation and signed Skill'
+  for (const mutate of [
+    value => { value.steps = value.steps.filter(step => step.name !== name) },
+    value => { value.steps.find(step => step.name === name).if = 'false' },
+    value => { value.steps.find(step => step.name === name)['continue-on-error'] = true },
+    value => { value.steps.find(step => step.name === name).run += ' || true' },
+    value => { delete value.steps.find(step => step.name === name).env.WORKMESH_VALIDATION_OUTPUT },
+  ]) {
+    const candidate = structuredClone(job); mutate(candidate)
+    assert.ok(validateBackendLiteEntrypoint(candidate).length > 0)
+  }
+  for (const path of ['scripts/verify-a2-backend-lite-api.mjs', 'scripts/verify-a2-backend-lite.mjs', 'scripts/verify-backend-skill.mjs', 'apps/api/assets/skills/workmesh-1.1.0.md'])
+    assert.equal(classify([path]).checks['source-gates'], true)
+})
 
 test('开发镜像构建接线不能被删除、跳过或吞掉失败', () => {
   const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['source-gates']

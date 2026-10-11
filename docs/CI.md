@@ -47,6 +47,8 @@ their workspace. An API/worker source PR therefore adds DB unit audits without
 inventing a reverse runtime dependency or selecting DB integration. The same
 inventory is validated against Turbo test inputs. Shared TypeScript/Vitest
 configuration participates in global inputs.
+
+源码检查实际构建三个后端开发镜像，并执行无源码 Lite 安装、镜像 save/load、测试 TLS、真实部署 worker 的精确上下文和 API 签名 Skill 下载。部署使用专用 builder、Compose 项目和测试凭据；验收及归属收尾原件进入 `ci-logs/backend-deployment`。移除或条件跳过该步骤、吞掉失败均使 CI 自检拒绝。
 Root scripts are also global inputs because tests import
 them during typechecking. API typecheck inputs cover their direct imports of
 worker, MCP, fake-agent and package source from integration fixtures.

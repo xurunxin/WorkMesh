@@ -15,6 +15,7 @@ CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Sk
 - [启动与接口安装](../../backend-only-deployment.md)、[服务边界决策](../../adr/0087-backend-only-service.md)。
 - [已审活动方案](../../plan/backend-only.md)、[原浏览器与目录外脚本去向](../../plan/backend-only/test-impact.md)、[逐卡衔接](../../plan/backend-only/followup-impact.md)。后续顺序为 #61 → #62 → #7 → #20，未开发能力不标完成。
 - `webui-path-receipt.json` 记录逐路径 Git blob 与迁移/退役归属；`webui-history/` 保全原截图与基线，历史规格、审核和首败不改写。
+- `backend-assertion-map.json` 将已审的 52 个测试源绑定到现有 23 个后端测试文件、准确 Git blob 和用例声明；新迁入用例与真实部署入口分别列出。源码索引不代替运行结果。
 - `platform-source.json` 保全本轮工具实际返回全文及完整 Spec 段，Saved plan 截断单列缺口。已审原件沿用批准提交，`source-preservation.json` 逐文件复核。
 - [实际验证记录](test-results.md) 区分首败、复验、未测与正在运行；日志不等于产品全部验收通过。`runs/` 将实际镜像提交、身份、部署、TLS 和定向清理绑定。终端日志原始字节存入 `raw-logs/`，同名 `.log` 为去除行尾空白的阅读视图，二者的 SHA-256 由 `log-source-manifest.json` 分开记录；没有放宽空白门禁。
 

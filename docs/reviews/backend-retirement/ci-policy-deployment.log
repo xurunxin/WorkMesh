@@ -1,0 +1,33 @@
+阅读视图；原始字节：raw-logs/run-230c07ac7cb1.zip 内 ci-policy-deployment.log；SHA-256：55b5dfd4776c6619edfff8f013addccc39e7665dc920063f1b9244e140aa4d00
+
+> workmesh@ ci:test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> node --test scripts/ci-policy.test.mjs
+
+✔ 纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败 (58.8936ms)
+✔ 开发镜像构建接线不能被删除、跳过或吞掉失败 (32.5105ms)
+✔ classification bootstrap locks only YAML and cannot bypass policy or evidence (420.2726ms)
+✔ YAML semantics preserve flow maps, aliases and literal command bodies (5.6891ms)
+✔ 连接器改动必须实际运行平台矩阵，失败/跳过不能放行 (0.9288ms)
+✔ known prose on PR and main avoids every install/service/test job (0.4198ms)
+✔ retired workspace paths fail closed to full without a browser check (0.3575ms)
+✔ backend assets and fake-agent changes require API checks (0.2792ms)
+✔ API and worker changes retain destructive recovery and real backend integration (0.4269ms)
+✔ cross-workspace lock audits are selected without inventing runtime dependency cycles (1.2402ms)
+✔ upstream contracts/domain/db/config changes include transitive consumers (0.4783ms)
+✔ protocol changes retain SDK consumers, conformance and direct backend imports (0.1766ms)
+✔ root config, unknown/deleted workspaces and executable-looking docs fail closed to full (0.6994ms)
+✔ main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full (0.8941ms)
+✔ PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full (1.0127ms)
+✔ aggregate rejects failure, cancellation and accidental skips for every required job (0.4732ms)
+✔ aggregate only accepts planned skips and rejects incomplete/malformed decisions (0.4563ms)
+✔ MCP discovery consumers require real conformance and propagate failed or skipped job (0.5567ms)
+✔ real workflow semantic mutations cannot silently omit MCP conformance (146.9763ms)
+✔ controlled CRLF evidence preserves bytes and all other whitespace gates (1865.9727ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5664.4656

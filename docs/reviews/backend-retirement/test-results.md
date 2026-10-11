@@ -34,3 +34,15 @@ unit-direct.log 是错误的根目录诊断调用，混入 RUN_INTEGRATION 并�
 镜像首轮中止分别见 `build-context-first-interruption.json`、`archive-first-interruption.json`、`build-plugin-first-interruption.json` 和 `production-context-interruption.json`，仅涉及本轮准确 PID/源 SHA/tag/专用 builder。Lite/生产安装临时目录已按逐路径清单收尾，开发 builder 清理仍等待实际回执，不能写为已清除。
 
 `smoke:agents:ci` 通过；`test:conformance` 的六组 adapter/fixture 均通过。它们是构造/协议夹具结果，不能代替真实集成协议、签名镜像或恢复验收。
+
+## 实施检查点复验
+
+`retirement-six.log` 的六项真实 PostgreSQL/API 用例全部通过；`wecom-notifications` 的十九项通过，包括旧哈希合法发送、显式重试、篡改拒绝、撤权先提交与不确定投递零自动重发。此前夹具的 CSRF 状态和 Human 必填字段错误已修正；`retirement-pool-first-failure.log` 的 Vitest RPC 启动超时另留原件，没有放宽超时。
+
+CI 运行 `38176577167` 绑定分支提交 `7209be0641cc224b19b88bc36b0d3a03996b0b63`。实际 PR 合成检出为 `47faa50156178fccebf3d6ea2db33c11550688f5`，源码 tree 与分支提交相同；父提交和三平台前后源码绑定见 `ci-artifacts/verified-bindings.json`。源码门禁、数据库、协议构造、三平台原生连接器和完整灾备通过。三个开发镜像实际无缓存构建且正常 postinstall；恢复后 API、worker、MCP ready、MCP 初始化和持久 Agent heartbeat 均通过。原 ZIP、摘要和报告分开保全，不把运行页面的 head 字段当实际检出 SHA。
+
+该 CI 的 worker 检查因 Web Push 测试遗漏 API origin 而失败，已补为固定配置 origin 的准确完整链接；API 检查仍在执行，Required CI 未通过。新增必需 Lite 部署入口及二十项 CI 策略负例在本机通过，自检也通过，尚待新提交的实际 CI 复验。
+
+宿主 Node 25 的完整单元复验仍有失败。私有 APPDATA 修复本机虚拟化祖先导致的安全拒绝后，连接器七十一项通过，管道交互及嵌套终端两项失败；没有修改 ACL 信任边界或延长测试时限。锁定 Node 运行时的三平台 CI 结果独立保全。完整本机集成复验已有部分迁移准备达到原 hook 限制，命令仍在执行，不能把准备超时后的跳过算作通过。
+
+Lite 已有一次真实构建、save/load 身份一致及三个角色加载通过，随后因 PATH 缺 OpenSSL 停下；已找到现有 Git 工具。另一次构建在本机内存压力下定向中止，其插件 PID 另核归属后停止，未重启共享 Docker。限制内存的专用 builder 部署继续执行，本地进行中的目录暂不作为远端交付或成功证据。

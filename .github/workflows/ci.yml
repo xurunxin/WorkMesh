@@ -146,6 +146,12 @@ jobs:
       # 开发镜像的安装前输入不同于生产镜像，须实际执行正常 postinstall。
       - name: Build all development images with normal lifecycle hooks
         run: python3 scripts/validate-development-images.py
+      - name: Verify backend Lite installation and signed Skill
+        env:
+          WORKMESH_VALIDATION_OUTPUT: ci-logs/backend-deployment
+        run: |
+          set -o pipefail
+          node scripts/verify-a2-backend-lite.mjs 2>&1 | tee ci-logs/backend-lite-deployment.log
       - name: Verify clean tracked tree
         run: |
           set -o pipefail

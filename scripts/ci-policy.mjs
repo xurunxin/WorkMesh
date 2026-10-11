@@ -154,6 +154,15 @@ export function validateDevelopmentImageEntrypoint(job) {
   return []
 }
 
+export function validateBackendLiteEntrypoint(job) {
+  const expected = 'set -o pipefail\nnode scripts/verify-a2-backend-lite.mjs 2>&1 | tee ci-logs/backend-lite-deployment.log'
+  const steps = job?.steps?.filter(step => step.run?.trim() === expected) ?? []
+  if (steps.length !== 1 || steps[0].if !== undefined || steps[0]['continue-on-error']
+    || steps[0].env?.WORKMESH_VALIDATION_OUTPUT !== 'ci-logs/backend-deployment')
+    return ['source-gates必须执行无源码 Lite、TLS、真实 worker 和签名 Skill 验收，不得跳过或吞掉失败']
+  return []
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   if (process.argv[2] === 'aggregate') {
     const needs = JSON.parse(process.env.NEEDS_JSON)

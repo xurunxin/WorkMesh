@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from './ci-bootstrap/yaml.mjs'
 import { externalTestInputs, externalTypecheckInputs } from './ci-test-inputs.mjs'
-import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint } from './ci-policy.mjs'
+import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint, validateBackendLiteEntrypoint } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -21,6 +21,7 @@ const workflowDocument = parseDocument(workflow, { prettyErrors: true })
 requireCondition(workflowDocument.errors.length === 0, 'workflow must be valid YAML')
 const parsedWorkflow = workflowDocument.toJS()
 failures.push(...validateDevelopmentImageEntrypoint(parsedWorkflow.jobs?.['source-gates']))
+failures.push(...validateBackendLiteEntrypoint(parsedWorkflow.jobs?.['source-gates']))
 failures.push(...validateCiBootstrap({
   job: parsedWorkflow.jobs?.changes,
   manifest: JSON.parse(readFileSync(resolve(root, 'scripts/ci-bootstrap/package.json'), 'utf8')),
