@@ -1,0 +1,2220 @@
+{
+  "recordedAt": "2026-10-11T07:39:18.421883+00:00",
+  "targets": [
+    {
+      "id": "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+      "name": "/m4-01a127d4-4adc5e39-postgres",
+      "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "volumes": [
+        "m4-01a127d4-4adc5e39-postgres-data"
+      ],
+      "source": "docs/plan/agent-mcp-m4/execution/resources.json",
+      "observed": {
+        "id": "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+        "name": "/m4-01a127d4-4adc5e39-postgres",
+        "state": {
+          "Dead": false,
+          "Error": "",
+          "ExitCode": 0,
+          "FinishedAt": "2026-10-11T05:55:54.5427936Z",
+          "OOMKilled": false,
+          "Paused": false,
+          "Pid": 0,
+          "Restarting": false,
+          "Running": false,
+          "StartedAt": "2026-10-11T05:35:35.4868216Z",
+          "Status": "exited"
+        },
+        "mounts": [
+          {
+            "Destination": "/var/lib/postgresql/data",
+            "Driver": "local",
+            "Mode": "z",
+            "Name": "m4-01a127d4-4adc5e39-postgres-data",
+            "Propagation": "",
+            "RW": true,
+            "Source": "m4-01a127d4-4adc5e39-postgres-data",
+            "Type": "volume"
+          }
+        ],
+        "image": "postgres:16.9-alpine",
+        "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+        "labels": {
+          "workmesh.m4.owner": "m4-01a127d4-4adc5e39"
+        }
+      },
+      "volumeEvidence": [
+        {
+          "volume": "m4-01a127d4-4adc5e39-postgres-data",
+          "consumers": [
+            "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003"
+          ],
+          "metadata": {
+            "CreatedAt": "2026-10-11T03:24:55Z",
+            "Driver": "local",
+            "Labels": {
+              "workmesh.m4.owner": "m4-01a127d4-4adc5e39"
+            },
+            "Mountpoint": "/var/lib/docker/volumes/m4-01a127d4-4adc5e39-postgres-data/_data",
+            "Name": "m4-01a127d4-4adc5e39-postgres-data",
+            "Options": null,
+            "Scope": "local"
+          }
+        }
+      ]
+    },
+    {
+      "id": "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+      "name": "/m4-01a127d4-4adc5e39-redis",
+      "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "volumes": [
+        "m4-01a127d4-4adc5e39-redis-data"
+      ],
+      "source": "docs/plan/agent-mcp-m4/execution/resources.json",
+      "observed": {
+        "id": "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+        "name": "/m4-01a127d4-4adc5e39-redis",
+        "state": {
+          "Dead": false,
+          "Error": "",
+          "ExitCode": 0,
+          "FinishedAt": "2026-10-11T05:55:55.1339261Z",
+          "OOMKilled": false,
+          "Paused": false,
+          "Pid": 0,
+          "Restarting": false,
+          "Running": false,
+          "StartedAt": "2026-10-11T05:35:35.7795245Z",
+          "Status": "exited"
+        },
+        "mounts": [
+          {
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "z",
+            "Name": "m4-01a127d4-4adc5e39-redis-data",
+            "Propagation": "",
+            "RW": true,
+            "Source": "m4-01a127d4-4adc5e39-redis-data",
+            "Type": "volume"
+          }
+        ],
+        "image": "redis:7.4.5-alpine",
+        "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+        "labels": {
+          "workmesh.m4.owner": "m4-01a127d4-4adc5e39"
+        }
+      },
+      "volumeEvidence": [
+        {
+          "volume": "m4-01a127d4-4adc5e39-redis-data",
+          "consumers": [
+            "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde"
+          ],
+          "metadata": {
+            "CreatedAt": "2026-10-11T03:24:55Z",
+            "Driver": "local",
+            "Labels": {
+              "workmesh.m4.owner": "m4-01a127d4-4adc5e39"
+            },
+            "Mountpoint": "/var/lib/docker/volumes/m4-01a127d4-4adc5e39-redis-data/_data",
+            "Name": "m4-01a127d4-4adc5e39-redis-data",
+            "Options": null,
+            "Scope": "local"
+          }
+        }
+      ]
+    },
+    {
+      "id": "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+      "name": "/m4-01a127d4-4adc5e39-objectstore",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "volumes": [
+        "m4-01a127d4-4adc5e39-objectstore-data"
+      ],
+      "source": "docs/plan/agent-mcp-m4/execution/resources.json",
+      "observed": {
+        "id": "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+        "name": "/m4-01a127d4-4adc5e39-objectstore",
+        "state": {
+          "Dead": false,
+          "Error": "",
+          "ExitCode": 0,
+          "FinishedAt": "2026-10-11T05:55:55.4429908Z",
+          "OOMKilled": false,
+          "Paused": false,
+          "Pid": 0,
+          "Restarting": false,
+          "Running": false,
+          "StartedAt": "2026-10-11T05:35:36.0687108Z",
+          "Status": "exited"
+        },
+        "mounts": [
+          {
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "z",
+            "Name": "m4-01a127d4-4adc5e39-objectstore-data",
+            "Propagation": "",
+            "RW": true,
+            "Source": "m4-01a127d4-4adc5e39-objectstore-data",
+            "Type": "volume"
+          }
+        ],
+        "image": "rustfs/rustfs:1.0.0",
+        "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+        "labels": {
+          "build-date": "",
+          "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+          "license": "Apache-2.0",
+          "maintainer": "RustFS Team <dev@rustfs.com>",
+          "name": "RustFS",
+          "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+          "release": "1.0.0",
+          "summary": "High-performance distributed object storage system compatible with S3 API",
+          "url": "https://rustfs.com",
+          "vcs-ref": "",
+          "vendor": "RustFS Team",
+          "version": "v1.0.0",
+          "workmesh.m4.owner": "m4-01a127d4-4adc5e39"
+        }
+      },
+      "volumeEvidence": [
+        {
+          "volume": "m4-01a127d4-4adc5e39-objectstore-data",
+          "consumers": [
+            "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df"
+          ],
+          "metadata": {
+            "CreatedAt": "2026-10-11T03:24:56Z",
+            "Driver": "local",
+            "Labels": {
+              "workmesh.m4.owner": "m4-01a127d4-4adc5e39"
+            },
+            "Mountpoint": "/var/lib/docker/volumes/m4-01a127d4-4adc5e39-objectstore-data/_data",
+            "Name": "m4-01a127d4-4adc5e39-objectstore-data",
+            "Options": null,
+            "Scope": "local"
+          }
+        }
+      ]
+    },
+    {
+      "id": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "name": "/m5-5dbe32e19a-postgres",
+      "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "volumes": [
+        "bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1"
+      ],
+      "source": "docs/plan/agent-mcp-m5/product-cleanup.json",
+      "observed": {
+        "id": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+        "name": "/m5-5dbe32e19a-postgres",
+        "state": {
+          "Dead": false,
+          "Error": "",
+          "ExitCode": 0,
+          "FinishedAt": "2026-10-10T21:23:16.524554Z",
+          "OOMKilled": false,
+          "Paused": false,
+          "Pid": 0,
+          "Restarting": false,
+          "Running": false,
+          "StartedAt": "2026-10-10T18:51:34.0835502Z",
+          "Status": "exited"
+        },
+        "mounts": [
+          {
+            "Destination": "/var/lib/postgresql/data",
+            "Driver": "local",
+            "Mode": "",
+            "Name": "bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1",
+            "Propagation": "",
+            "RW": true,
+            "Source": "/var/lib/docker/volumes/bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1/_data",
+            "Type": "volume"
+          }
+        ],
+        "image": "postgres:16.9-alpine",
+        "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+        "labels": {
+          "workmesh.m5.owner": "m5-5dbe32e19a"
+        }
+      },
+      "volumeEvidence": [
+        {
+          "volume": "bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1",
+          "consumers": [
+            "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737"
+          ],
+          "metadata": {
+            "CreatedAt": "2026-10-10T16:33:30Z",
+            "Driver": "local",
+            "Labels": {
+              "com.docker.volume.anonymous": ""
+            },
+            "Mountpoint": "/var/lib/docker/volumes/bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1/_data",
+            "Name": "bcbf4cd3d2b8da53ed73d06c383921506f79e6657cba26a3c401c3b48d9b36d1",
+            "Options": null,
+            "Scope": "local"
+          }
+        }
+      ]
+    },
+    {
+      "id": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "name": "/m5-5dbe32e19a-redis",
+      "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "volumes": [
+        "ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3"
+      ],
+      "source": "docs/plan/agent-mcp-m5/product-cleanup.json",
+      "observed": {
+        "id": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+        "name": "/m5-5dbe32e19a-redis",
+        "state": {
+          "Dead": false,
+          "Error": "",
+          "ExitCode": 0,
+          "FinishedAt": "2026-10-10T21:23:16.9376001Z",
+          "OOMKilled": false,
+          "Paused": false,
+          "Pid": 0,
+          "Restarting": false,
+          "Running": false,
+          "StartedAt": "2026-10-10T18:51:34.2412965Z",
+          "Status": "exited"
+        },
+        "mounts": [
+          {
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "",
+            "Name": "ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3",
+            "Propagation": "",
+            "RW": true,
+            "Source": "/var/lib/docker/volumes/ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3/_data",
+            "Type": "volume"
+          }
+        ],
+        "image": "redis:7.4.5-alpine",
+        "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+        "labels": {
+          "workmesh.m5.owner": "m5-5dbe32e19a"
+        }
+      },
+      "volumeEvidence": [
+        {
+          "volume": "ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3",
+          "consumers": [
+            "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9"
+          ],
+          "metadata": {
+            "CreatedAt": "2026-10-10T16:33:31Z",
+            "Driver": "local",
+            "Labels": {
+              "com.docker.volume.anonymous": ""
+            },
+            "Mountpoint": "/var/lib/docker/volumes/ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3/_data",
+            "Name": "ba0c66ad4be59e54c277fce38b0493d11c8fbbf0d22102a17b7523681ea565b3",
+            "Options": null,
+            "Scope": "local"
+          }
+        }
+      ]
+    },
+    {
+      "id": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "name": "/m5-5dbe32e19a-store",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "volumes": [
+        "937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920"
+      ],
+      "source": "docs/plan/agent-mcp-m5/product-cleanup.json",
+      "observed": {
+        "id": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+        "name": "/m5-5dbe32e19a-store",
+        "state": {
+          "Dead": false,
+          "Error": "",
+          "ExitCode": 0,
+          "FinishedAt": "2026-10-10T21:23:17.3339319Z",
+          "OOMKilled": false,
+          "Paused": false,
+          "Pid": 0,
+          "Restarting": false,
+          "Running": false,
+          "StartedAt": "2026-10-10T18:51:34.4515382Z",
+          "Status": "exited"
+        },
+        "mounts": [
+          {
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "",
+            "Name": "937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920",
+            "Propagation": "",
+            "RW": true,
+            "Source": "/var/lib/docker/volumes/937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920/_data",
+            "Type": "volume"
+          }
+        ],
+        "image": "rustfs/rustfs:1.0.0",
+        "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+        "labels": {
+          "build-date": "",
+          "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+          "license": "Apache-2.0",
+          "maintainer": "RustFS Team <dev@rustfs.com>",
+          "name": "RustFS",
+          "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+          "release": "1.0.0",
+          "summary": "High-performance distributed object storage system compatible with S3 API",
+          "url": "https://rustfs.com",
+          "vcs-ref": "",
+          "vendor": "RustFS Team",
+          "version": "v1.0.0",
+          "workmesh.m5.owner": "m5-5dbe32e19a"
+        }
+      },
+      "volumeEvidence": [
+        {
+          "volume": "937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920",
+          "consumers": [
+            "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67"
+          ],
+          "metadata": {
+            "CreatedAt": "2026-10-10T16:33:33Z",
+            "Driver": "local",
+            "Labels": {
+              "com.docker.volume.anonymous": ""
+            },
+            "Mountpoint": "/var/lib/docker/volumes/937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920/_data",
+            "Name": "937fc1480306d8675483cca16c4f601f0f5fb985ff5c652e786ebbe29502e920",
+            "Options": null,
+            "Scope": "local"
+          }
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/plan/agent-mcp-m4/execution/resources.json",
+      "sha256": "3a6220648254954505dc995178a75e3b1af187f9c2a845b849d15faf3960ca6b",
+      "gitBlob": "e622d95923b18714c209b00689dc8d71e90cecb9"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m5/product-cleanup.json",
+      "sha256": "754346722c6127cac8be9a36d26b038131fc93dd4e3b5ce020a6de6690cbd002",
+      "gitBlob": "123a3890b19bf592c7153dbdc0abf02934357977"
+    }
+  ],
+  "rebuild": "Git 账本与 prepare-resources/product-runtime 入口重新生成测试 DB/卷/秘密，不归档业务数据",
+  "protectedImages": [
+    "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+    "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+    "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7"
+  ],
+  "remainingProjectNamed": [
+    {
+      "id": "8955a6225785bee60cd769ac3737635df6a8c6a53435ad6294d92435417fd52b",
+      "name": "/r1ci381d-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:42:05.8498915Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:39:27.7357131Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "f770867c392a5c9f547d9781f6468167fc77efc1adc13170bafb503095a1095a",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/f770867c392a5c9f547d9781f6468167fc77efc1adc13170bafb503095a1095a/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "fdbfaf96fc4b7ae621bd07f221fbedd437526ba50f22683ef322d905baa0c376",
+      "name": "/r1ci381d-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:42:05.6630999Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:39:27.5191357Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "68c0f38c05696ee92ceb212cefe48ca78c45c8932517688b6f537f32bcfac351",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/68c0f38c05696ee92ceb212cefe48ca78c45c8932517688b6f537f32bcfac351/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "afb321d3ab8803113c81dd79dd99c4be7fcb9a94a05b88ba53b4ee9604b3a507",
+      "name": "/r1ci381d-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:42:05.4185809Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:39:27.1703162Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "a8bf316c3c4fca1c2e12400e69c3996c9415fc08994dc77cc6c76c4661573150",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/a8bf316c3c4fca1c2e12400e69c3996c9415fc08994dc77cc6c76c4661573150/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "42c1f96772b6b91e9175cbd40fe394efcb9756bca2ff483a4620ea4d1d5afb39",
+      "name": "/r1ci381c-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:39:13.6297017Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:38:05.0655623Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "342d89cbb3564124ca352833d650b52f31619f51b6d9d294b65263b229aa1716",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/342d89cbb3564124ca352833d650b52f31619f51b6d9d294b65263b229aa1716/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "16d965766d2c75a3b4e53b5cf0df183ccfb70388cf752d4d813a5bf03a8f21ca",
+      "name": "/r1ci381c-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:39:13.4327137Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:38:04.8904757Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "4a942b1dfb1cb4bcae79dd58e78256921eeba10013abeece4165d57fb19c0d72",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/4a942b1dfb1cb4bcae79dd58e78256921eeba10013abeece4165d57fb19c0d72/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "567c5c781c262f1cb2dc31b33a77cbc48b64b595cbbf822d3d0e45082ca844a0",
+      "name": "/r1ci381c-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:39:13.1645769Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:38:04.6340349Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "afed6e213676d965720231e4726fb47e2d972d5a7452e6d56f0cbae01acdd520",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/afed6e213676d965720231e4726fb47e2d972d5a7452e6d56f0cbae01acdd520/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "bb6b39f0959dc975ebba12692e3de8aadea191fdf0596d184ce7bc08fab9f027",
+      "name": "/r1ci381b-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:37:33.4058764Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:35:01.237418Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "4f77687d7f54232dcaf1d151b5749cc58801e66aad5114c9292641b699f09b8b",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/4f77687d7f54232dcaf1d151b5749cc58801e66aad5114c9292641b699f09b8b/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "1244d5e4667d93ef394142c0bb18cb7a44eccdc7abc04a9278a7775c2df1f0dd",
+      "name": "/r1ci381b-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:37:33.2090847Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:35:01.0378483Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "fbdbdba7f282c3297cf4fc460624918f9950f445523c9dc9532dbb1f48cb6acf",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/fbdbdba7f282c3297cf4fc460624918f9950f445523c9dc9532dbb1f48cb6acf/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "4d8e4c20dc847b9edeae08745328d208a6a6f7dac72e186c36f63ea2f3bbc434",
+      "name": "/r1ci381b-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:37:32.9555947Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:35:00.8066437Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "75374043fb5d0beaed4796b0383e790ddbd85b2a1dcb13ba18941664465aa062",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/75374043fb5d0beaed4796b0383e790ddbd85b2a1dcb13ba18941664465aa062/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "959f0cabf5d696e3ce51871df90f1b568687eb9e0cc50c0a1e0f40896c37476b",
+      "name": "/r1ci381-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:34:23.1209698Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:33:55.2163321Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "8a9a3216f152f74fd9397f5b5a8aa241e758ababa702d444da29756ef81d93f0",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/8a9a3216f152f74fd9397f5b5a8aa241e758ababa702d444da29756ef81d93f0/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "f3359d7c72a758eace150cb87c35e215a0b6f291061556f782caeeab39258a39",
+      "name": "/r1ci381-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:34:22.9426267Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:33:55.0451793Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "1d9022d88403abeede36fa62e4fc748952545abd469507c2a102cb284fc7c502",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/1d9022d88403abeede36fa62e4fc748952545abd469507c2a102cb284fc7c502/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "4b9d5cc52acd838f691b711dadab09bc6aebb42ed567c67129308927044f3d01",
+      "name": "/r1ci381-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T21:34:22.6616252Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T21:33:54.7411991Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "b03bdf9537da969106adcbb11ef042d716952e328590d74fc6ded64efa45f07a",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/b03bdf9537da969106adcbb11ef042d716952e328590d74fc6ded64efa45f07a/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "54f147c18124aa0e4664cb5d15e36244d7e2f32c020225b80ed48e86e8ff3d6e",
+      "name": "/r1i-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T20:04:18.3029068Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T20:00:41.8630095Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "7be4b853490c99ab5711a5aaa46686a1c1d6d82d0eb10420a59470fdc1d8e463",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/7be4b853490c99ab5711a5aaa46686a1c1d6d82d0eb10420a59470fdc1d8e463/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "ebf6f15a199ee0b9d88c92242124cf6e39cc411457525fb95f434340d81b20a9",
+      "name": "/r1i-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T20:04:18.1155471Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T20:00:41.6485026Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "e6ffaf78e7ee3eb433441e388bf84b6ba5ddc2ec9f93f4b11aac3419638ced44",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/e6ffaf78e7ee3eb433441e388bf84b6ba5ddc2ec9f93f4b11aac3419638ced44/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "2709a753abebe3bc0fd4961a81a05f0051468cb03bb831abdb41d4f5cfae3f0d",
+      "name": "/r1i-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T20:04:17.8442605Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T20:00:41.1068274Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "a59e05003c711dfd50ffeb15af68d93bad99609ea0f2cac80b0217b749caa3d8",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/a59e05003c711dfd50ffeb15af68d93bad99609ea0f2cac80b0217b749caa3d8/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "39acded25c5fc47bbc59704fa6a63e504cb5a9adb4329d1712e7d2009210fd5d",
+      "name": "/r1h-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:59:40.3103353Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:58:28.5288218Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "673bfa5123bb2afc960d41f85ce00f167e37eac01a0f7eac33fae1a66e53280e",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/673bfa5123bb2afc960d41f85ce00f167e37eac01a0f7eac33fae1a66e53280e/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "446d990bae3d184b8dc04c3faf0150834abb8f6c80a323c4fd2f5d3e8c86a76c",
+      "name": "/r1h-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:59:40.0882463Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:58:28.2824097Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "9d701e8a11e0ebe98fdead08f5ce1f089498e6711a5092312f91fa996155edde",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/9d701e8a11e0ebe98fdead08f5ce1f089498e6711a5092312f91fa996155edde/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "1aa94d42b532791bc4946c34e8c83d7c613c9fa8c4b8f071f2f05a94f82cf3d7",
+      "name": "/r1h-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:59:39.8379106Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:58:27.9816246Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "f20df4001f62f725ced45c2e9e419b358587d901315021045af324017cd3263a",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/f20df4001f62f725ced45c2e9e419b358587d901315021045af324017cd3263a/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "885491d285b034daaa3f48e4f3f91c8a96f422f7f591b62a5f6a7ad93a824ba0",
+      "name": "/r1g-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:57:55.0536734Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:57:32.0391363Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "09993bb32cf1075dffd534fa7063e3af4ecb3afeacc8dd4fe52baba6f1f8e72d",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/09993bb32cf1075dffd534fa7063e3af4ecb3afeacc8dd4fe52baba6f1f8e72d/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "88d7597271c372a248f89d4bfe02e1cd796a5d65d34752d72661f2620efef724",
+      "name": "/r1g-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:57:54.8743257Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:57:31.4388648Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "c52ef889217855fd7f8761cd0309bfd4ab38b42775609d473f2c9c7a60b23609",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/c52ef889217855fd7f8761cd0309bfd4ab38b42775609d473f2c9c7a60b23609/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "68ddd591771d178bc3052cadb356ffab1daf3cfeeff714cba60246251645d8b1",
+      "name": "/r1g-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:57:54.612539Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:57:30.9752956Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "4fe6fea9c2ec4ccfd82ad6ee5898d69a551c11b89813a94f1644b48923e0b03e",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/4fe6fea9c2ec4ccfd82ad6ee5898d69a551c11b89813a94f1644b48923e0b03e/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "accb377d0f75666bd9236f5e9f0fd773a6414c425c99dc17fe578ea63f4ec0a8",
+      "name": "/r1f-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:56:30.157353Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:50:01.618627Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "d3b4404131765cf803310d94950cc9100b847626d46525d1cbe81a70dff9d0ec",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/d3b4404131765cf803310d94950cc9100b847626d46525d1cbe81a70dff9d0ec/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "95612d167478ff04dba11d79b7563eb6f7a7458440d9d56780898d3db34d309f",
+      "name": "/r1f-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:56:29.9693473Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:50:01.3641227Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "21b8c4878fd214c829b3f61542f96a3a584d4a91b8440499ca0e7683b6405a04",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/21b8c4878fd214c829b3f61542f96a3a584d4a91b8440499ca0e7683b6405a04/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "666b8a945f4e3f073701b69d8409e87aa7d5fc4defd7e33a4d24a434f357f492",
+      "name": "/r1f-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:56:29.7088398Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:50:01.0495841Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "cd70f76e4f1f7f13e1eef288c3d0807e51c5b0c7cacb166a8e83a4e1ac46402e",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/cd70f76e4f1f7f13e1eef288c3d0807e51c5b0c7cacb166a8e83a4e1ac46402e/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "6572b97faee7dbe4b1df1eee31623605ed21b589e66cae09421f796a76a73075",
+      "name": "/r1e-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:48:07.0168526Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:43:26.3217465Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "ea82cd386491daa27ebb4058790490c0e039a004bf5dbd9ba289c0bebdbd1c13",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/ea82cd386491daa27ebb4058790490c0e039a004bf5dbd9ba289c0bebdbd1c13/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "d74db6d52c2161ed926ba031189ea8ef79ed212cf79752a172b28bbbd744d606",
+      "name": "/r1e-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:48:06.8241624Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:43:26.1204925Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "77c58ced2109323d5f41ff5ad2fbea7d3c5b312d957ddd4a17fd6215142f070a",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/77c58ced2109323d5f41ff5ad2fbea7d3c5b312d957ddd4a17fd6215142f070a/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "25a2355963559e11c9ec2a717e6b4d0148f5eb7fdc0d8e3a0a6c61b474f9b0f3",
+      "name": "/r1e-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:48:06.484611Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:43:25.6576885Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "bc5c677e6113b07466b52d09492575a94d63e715fb08afa34f0d391d326a4efd",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/bc5c677e6113b07466b52d09492575a94d63e715fb08afa34f0d391d326a4efd/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "a31c79775de3b1ac268262fbd4e984bcdb38c3340cb73c66a7c0c1326c828bf1",
+      "name": "/r1d-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:47:17.0219579Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:37:55.0894691Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "cfc46fe5c3236a749a6f0843eb139e6ec4cf3dba80fc0214aea1674f065df1d4",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/cfc46fe5c3236a749a6f0843eb139e6ec4cf3dba80fc0214aea1674f065df1d4/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "cef8749bbce413c24a9b13b712ec62de9f92f79df09601bf6191adcb29584289",
+      "name": "/r1d-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:47:16.839289Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:37:54.6427523Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "6716f0683a2576868f17a82381cc40e8cd39b82987aae98bc5e467283968a3fc",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/6716f0683a2576868f17a82381cc40e8cd39b82987aae98bc5e467283968a3fc/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "16bd2b3e98244acda74dfd797991b920a16dafece83caa4031dd91e232e35946",
+      "name": "/r1d-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:47:16.4915051Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:37:54.2228098Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "11c8798048b7ce265ef2b202399bd4ca419dab95ca6cba123e5e12231d18cce8",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/11c8798048b7ce265ef2b202399bd4ca419dab95ca6cba123e5e12231d18cce8/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "d89c37d3a22e8beca1b294dc16db0a69c01664c7f8b3693a422ca6c3b421105e",
+      "name": "/r1c-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:37:26.2797371Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:37:25.479587Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "be5dec1c35df7d217d82eb47800e68723079a8e56a0dcf51599ad76088ede9b2",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/be5dec1c35df7d217d82eb47800e68723079a8e56a0dcf51599ad76088ede9b2/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "1da14d685015528a2c539646ba1ff6a29839656d7e186cea8028c4e37b84b13e",
+      "name": "/r1c-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:37:26.1104715Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:37:24.8255899Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "f30f2482c28c89f272040a5a885be06db5ce90c04b75ac321adff9d9eaa66457",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/f30f2482c28c89f272040a5a885be06db5ce90c04b75ac321adff9d9eaa66457/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "a4173ad93c5a950bb76c9b0522bbc4d8487371ba651dbd52ce4cd0ab82dc64fa",
+      "name": "/r1c-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:37:25.8061342Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:37:24.1812527Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "caa502416c9618de3a27065bc1cbc941bc56e703851bd8aaf8a6d1c7ca493685",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/caa502416c9618de3a27065bc1cbc941bc56e703851bd8aaf8a6d1c7ca493685/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "fb305d53eee075b81f091d76dd1ef6abb8678077459e6c22c0fff822908eca78",
+      "name": "/r1b-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T20:31:56.4000717Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:32:28.9087691Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "a4c002be1b65451667e8eafd58444a8956c5a762100f96257b4c45949020d339",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/a4c002be1b65451667e8eafd58444a8956c5a762100f96257b4c45949020d339/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "8be4c0b2f3b233e1c560c9f368564e420d0cb94df6e7008ed9408fb2464c75c1",
+      "name": "/r1b-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T20:31:56.4486567Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:32:28.727583Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "4bdfecdfa8e0df634374ad16a53dc4d490c5bde11a66cd0e411f70191db1ea25",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/4bdfecdfa8e0df634374ad16a53dc4d490c5bde11a66cd0e411f70191db1ea25/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "3ac7b4978d975b63928f70b6c9365972ab309f1363b89e690f9af02b82198d3b",
+      "name": "/r1b-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T20:31:56.4175957Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:32:28.5529528Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "2ac6acc9a0ec6f1b206fc2b4e8f88e5c2873cd75fb5496ba1cfc07422aa9d9d4",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/2ac6acc9a0ec6f1b206fc2b4e8f88e5c2873cd75fb5496ba1cfc07422aa9d9d4/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "a016713d06d3f11dfe2ee9533efd521946fb6077acceaf32d876a16206a17ac1",
+      "name": "/r1-rustfs-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:29:04.5021915Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:26:42.7418248Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "6c8ed813f725b6c2e0734b37180fae4c860f436ecea7cd4c7a477b5d547d966d",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/6c8ed813f725b6c2e0734b37180fae4c860f436ecea7cd4c7a477b5d547d966d/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "7a1f3fad0cc930f18dd57ce7c684a2265f0a06076fbb39782c1df8fcc3465366",
+      "name": "/r1-redis-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:29:04.3098557Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:26:42.4831658Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "dcd05ef161c656dcba47749e86e3ce617b25956bd666f89c5308b9e76382fbf3",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/dcd05ef161c656dcba47749e86e3ce617b25956bd666f89c5308b9e76382fbf3/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {}
+    },
+    {
+      "id": "557e9b8f1cabae46fbc219d4cabf1fed34955c23e1804fd5e021754226365fc2",
+      "name": "/r1-postgres-test",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-07T19:29:04.0814301Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T19:26:32.8505576Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "807a7975c0b8e97af56237b1d476de4d1adde7869ceb56dd78bd61edac79ecec",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/807a7975c0b8e97af56237b1d476de4d1adde7869ceb56dd78bd61edac79ecec/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {}
+    },
+    {
+      "id": "00f4596dc354a7096d54930f4786ca4e501f6d31371c317a95b36e289e9b5153",
+      "name": "/workmesh-postgres-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 255,
+        "FinishedAt": "2026-10-09T16:54:34.1040935Z",
+        "Health": {
+          "FailingStreak": 0,
+          "Log": [],
+          "Status": "starting"
+        },
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T13:39:59.2656496Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "rw",
+          "Name": "workmesh_postgres-data",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/workmesh_postgres-data/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "postgres:16-alpine",
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "labels": {
+        "com.docker.compose.config-hash": "5ba4d27a5c1469e02a1873a42bb38c6c6203cbe3465b57d1ffdcff362333ac6d",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "G:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "G:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.replace": "postgres-1",
+        "com.docker.compose.service": "postgres",
+        "com.docker.compose.version": "5.5.1"
+      }
+    },
+    {
+      "id": "16feb81cf9d2a48d111dcfbda161e7a472616a9c0ac58a83d0a201cfb0e05fc0",
+      "name": "/workmesh-redis-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 255,
+        "FinishedAt": "2026-10-09T16:54:34.1040973Z",
+        "Health": {
+          "FailingStreak": 0,
+          "Log": [],
+          "Status": "starting"
+        },
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T13:39:58.7195048Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "rw",
+          "Name": "workmesh_redis-data",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/workmesh_redis-data/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "redis:7-alpine",
+      "imageId": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+      "labels": {
+        "com.docker.compose.config-hash": "d72f7f49452de8d1e4f1b47c649b59ec568dba16ceff3ea27bb3c3cc27629ab3",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "G:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "G:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.replace": "redis-1",
+        "com.docker.compose.service": "redis",
+        "com.docker.compose.version": "5.5.1"
+      }
+    },
+    {
+      "id": "34820cf2e25e8dff19d42892bd67609cc316df2a1173d5403a9d52817fe72eee",
+      "name": "/workmesh-web-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 255,
+        "FinishedAt": "2026-09-30T17:08:46.6385278Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-09-30T08:44:26.3396838Z",
+        "Status": "exited"
+      },
+      "mounts": [],
+      "image": "workmesh-web",
+      "imageId": "sha256:71163693aed235e14c62b67f8a67cd998cb098c5185d8b7fe81e6d137b0000a6",
+      "labels": {
+        "com.docker.compose.config-hash": "a37a46a3f6dfd6a0f4b1d6a2c8264063ed8d61e83723566ece88c8a14746b593",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "api:service_healthy:false",
+        "com.docker.compose.image": "sha256:86c61018791513959a91674a25d8693812c3d7e75fcf0149ed7ea8c891595749",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "G:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "G:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.replace": "web-1",
+        "com.docker.compose.service": "web",
+        "com.docker.compose.version": "5.5.1"
+      }
+    },
+    {
+      "id": "a3b6f726f524d99b34f5b2b97b1d2356ef3692ffdcac5392b7eab44791e45b6c",
+      "name": "/workmesh-api-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 255,
+        "FinishedAt": "2026-09-30T17:08:46.638972Z",
+        "Health": {
+          "FailingStreak": 0,
+          "Log": [],
+          "Status": "starting"
+        },
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-09-30T08:44:15.7658312Z",
+        "Status": "exited"
+      },
+      "mounts": [],
+      "image": "workmesh-api",
+      "imageId": "sha256:f1f0f45c1c05aeff05f71d9a3f58f6f80361163efe3e3a6e228259306c0bb1ee",
+      "labels": {
+        "com.docker.compose.config-hash": "747b11796fff2c689ca7f908470ae4869405808e6191f807515f63292f33b3fb",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "redis:service_healthy:false,minio-init:service_completed_successfully:false,migrate:service_completed_successfully:false,postgres:service_healthy:false",
+        "com.docker.compose.image": "sha256:a204e31d281273483509a5a319312578f27d76756ad43db17586bac34d53638c",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "G:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "G:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.replace": "api-1",
+        "com.docker.compose.service": "api",
+        "com.docker.compose.version": "5.5.1"
+      }
+    },
+    {
+      "id": "951afd926067ecb9835f623429abf4d0411874ffbce132da76e8046f0b0227c2",
+      "name": "/workmesh-worker-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 255,
+        "FinishedAt": "2026-09-30T01:14:51.5805122Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-09-29T14:39:44.5560907Z",
+        "Status": "exited"
+      },
+      "mounts": [],
+      "image": "workmesh-worker",
+      "imageId": "sha256:878953cb9908b5ff40924be7b57cfcb8152ca75662f75d9971e8ac5a745305c4",
+      "labels": {
+        "com.docker.compose.config-hash": "a1f10d8e183941b5bd6ed7de6394cbde06f15e86924a25e367a2505a905fe658",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "postgres:service_healthy:false,minio-init:service_completed_successfully:false,migrate:service_completed_successfully:false",
+        "com.docker.compose.image": "sha256:1ae1b7eabb7832f64d98552579b52810755031fc5da2c64405b2a1b3337d7f8e",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "S:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "S:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.replace": "worker-1",
+        "com.docker.compose.service": "worker",
+        "com.docker.compose.version": "5.5.1"
+      }
+    },
+    {
+      "id": "70078a3028a6e09537f0890446759fb739244e33c4f1b6b7adf885a5811ff296",
+      "name": "/workmesh-migrate-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-09-30T08:44:15.369204Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-09-30T08:44:14.1902248Z",
+        "Status": "exited"
+      },
+      "mounts": [],
+      "image": "workmesh-migrate",
+      "imageId": "sha256:807d5195ee199983cd087692536f4f55278ab49c9fadaf97a4fda1c67968abfc",
+      "labels": {
+        "com.docker.compose.config-hash": "11c191e3d0434ec3bedc1a1333aa634fd4e69e04f55f48d90441083aca3b2b67",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "postgres:service_healthy:false",
+        "com.docker.compose.image": "sha256:7514477cdba1eef74183837227110c8ac214cd5474de474ab6fb3f48a5a047cb",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "S:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "S:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.replace": "migrate-1",
+        "com.docker.compose.service": "migrate",
+        "com.docker.compose.version": "5.5.1"
+      }
+    },
+    {
+      "id": "f8b614913c4efea2e944686c9b4c855cb5e61167d9bad0e7e6f35c150b9d473c",
+      "name": "/workmesh-minio-init-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "2026-10-06T18:15:27.3415826Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-06T18:15:27.2407439Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "",
+          "Name": "3e2ed69dee01abe2a6731a86c3f75528b513e86ab65440202518646c51194314",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/3e2ed69dee01abe2a6731a86c3f75528b513e86ab65440202518646c51194314/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "com.docker.compose.config-hash": "bdf288ab1f239fcbc79dfa0793d4494483cae2eabfdb89390124e4819cd249b2",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "minio:service_healthy:false",
+        "com.docker.compose.image": "sha256:ba0a1b53e36f321c0d46f3867104abef169f7bc59c467c664ddac87e7ddc9a8b",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "S:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "S:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.service": "minio-init",
+        "com.docker.compose.version": "5.5.1",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    },
+    {
+      "id": "ed7ebe27231e729a3176572704a99846a8b180d1742f62002add5a11b12179cd",
+      "name": "/workmesh-minio-1",
+      "state": {
+        "Dead": false,
+        "Error": "",
+        "ExitCode": 255,
+        "FinishedAt": "2026-10-09T16:54:34.1041076Z",
+        "Health": {
+          "FailingStreak": 0,
+          "Log": [
+            {
+              "End": "2026-09-29T12:24:13.1365382Z",
+              "ExitCode": 0,
+              "Output": "",
+              "Start": "2026-09-29T12:24:13.1106808Z"
+            },
+            {
+              "End": "2026-09-29T12:24:23.1613696Z",
+              "ExitCode": 0,
+              "Output": "",
+              "Start": "2026-09-29T12:24:23.1369896Z"
+            },
+            {
+              "End": "2026-09-29T12:24:33.1844178Z",
+              "ExitCode": 0,
+              "Output": "",
+              "Start": "2026-09-29T12:24:33.1621704Z"
+            },
+            {
+              "End": "2026-09-29T12:24:43.2070231Z",
+              "ExitCode": 0,
+              "Output": "",
+              "Start": "2026-09-29T12:24:43.1847981Z"
+            },
+            {
+              "End": "2026-09-29T12:24:53.2297094Z",
+              "ExitCode": 0,
+              "Output": "",
+              "Start": "2026-09-29T12:24:53.2073728Z"
+            }
+          ],
+          "Status": "starting"
+        },
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 0,
+        "Restarting": false,
+        "Running": false,
+        "StartedAt": "2026-10-07T13:39:59.0642403Z",
+        "Status": "exited"
+      },
+      "mounts": [
+        {
+          "Destination": "/data",
+          "Driver": "local",
+          "Mode": "rw",
+          "Name": "workmesh_minio-data",
+          "Propagation": "",
+          "RW": true,
+          "Source": "/var/lib/docker/volumes/workmesh_minio-data/_data",
+          "Type": "volume"
+        }
+      ],
+      "image": "rustfs/rustfs:1.0.0",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "labels": {
+        "build-date": "",
+        "com.docker.compose.config-hash": "7ba60d066160295258a96cb112c103630e647f3406393a24708863c7b4b886dd",
+        "com.docker.compose.container-number": "1",
+        "com.docker.compose.depends_on": "",
+        "com.docker.compose.image": "sha256:ba0a1b53e36f321c0d46f3867104abef169f7bc59c467c664ddac87e7ddc9a8b",
+        "com.docker.compose.oneoff": "False",
+        "com.docker.compose.project": "workmesh",
+        "com.docker.compose.project.config_files": "S:\\Projects\\MetronX\\WorkMesh\\docker-compose.yml",
+        "com.docker.compose.project.working_dir": "S:\\Projects\\MetronX\\WorkMesh",
+        "com.docker.compose.service": "minio",
+        "com.docker.compose.version": "5.5.1",
+        "description": "RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.",
+        "license": "Apache-2.0",
+        "maintainer": "RustFS Team <dev@rustfs.com>",
+        "name": "RustFS",
+        "org.opencontainers.image.title": "RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release",
+        "release": "1.0.0",
+        "summary": "High-performance distributed object storage system compatible with S3 API",
+        "url": "https://rustfs.com",
+        "vcs-ref": "",
+        "vendor": "RustFS Team",
+        "version": "v1.0.0"
+      }
+    }
+  ],
+  "remainingReason": "默认 compose 业务数据不在授权范围；r1 无准确原 container ID→本任务 owner 账本，不能凭名称/停止状态删；其他项目不候选"
+}

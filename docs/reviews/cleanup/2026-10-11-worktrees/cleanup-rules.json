@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "project": "https://github.com/xurunxin/WorkMesh.git",
   "workspaceRoot": "C:\\Users\\xurx\\.tds\\workspaces",
   "purpose": "合入后纳入回收、开工前只读占用盘点；非 daemon 自动删除配置",
@@ -8,9 +8,13 @@
   "readOnlyInventory": "docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.py",
   "triggers": ["开工前只读盘点", "实际合入后登记候选并及时收尾"],
   "idempotencyIdentity": ["machine", "absolutePath", "completedHead"],
-  "requiredEvidence": ["实时远端 refs/heads/main 原返回/调用/时间", "immutable 主线可达", "准确 todo/branch/head/PR", "活动/恢复引用刷新", "dirty/untracked/ignored 与嵌套仓库检查", "链接本体/目标/共享资源边界", "逐 path Git/ZIP/可重建来源及 Windows 原字节哈希", "预检/保全先行提交", "实际原输入输出/exit/逐目标结果", "事后登记/保护核验"],
-  "permanentProtectionSources": ["protected-paths.json 中历史来源的精确路径", "historical-sources.json 绑定的 main 历史报告/原拒绝证据"],
-  "neverTargets": ["workspace 根/当前构建/主仓库/平台缓存", "其它项目/用户目录/共享 store/镜像/业务数据", "G1/D0/C3 已拒目标及其保护父目录", "旧 38 node_modules/36 .turbo/2 typecache 的原精确路径", "RAW/原 trace/未映射验收物与恢复输入保护路径", "活动及待审/检查点工作区", "远端分支/标签/审计记录"],
+  "latestAuthorization": {"source": "用户 2026-10-11 15:05 明确全清裁定；同卡 #60 本构建接续", "text": "可以完全清理，后续待开始项目，重新拉取代码重新建立环境开始，这次建立环境注意尽可能复用共享部分内容，减少空间的重复占用", "supersedes": "仅因待开始/未来 UI/恢复而保整旧环境；历史依赖/缓存、RAW/trace、M4/M5恢复、#5/#21未提交成果须按新授权逐项最小保全及重建分类，不能泛保旧树", "doesNotSupersede": "真实系统拒绝、当前构建、主仓库/平台缓存、共享原始资源、其他项目/用户配置/他人服务或业务数据保护"},
+  "requiredEvidence": ["每目标实时远端 refs/heads/main 原返回/调用/时间", "immutable main 或远端原 branch 可重建来源（未验收业务不强制合入）", "准确 todo/branch/head/PR", "活动/挂载/真实其他消费者刷新", "dirty/untracked/ignored/index/reflog 与嵌套仓库检查", "链接本体/目标/共享资源边界", "逐 path Git/ZIP/已核可重建输入及 Windows 原字节哈希、CRLF/BOM/二进制区别", "必要独有脱敏成果及预检先行提交推送并核远端 ref", "实际原输入输出/exit/逐目标结果", "事后登记/保护核验"],
+  "permanentProtectionSources": ["historical-sources.json 绑定的真实 G1/D0/C3 原拒绝及父目录", "remaining-materials-review-2026-10-08.json#/g1Clone/priorEditRejectionReceipt/target 的审计 JSON 和 #52 父目录；不猜原原因", "protected-paths.json 保历史，现行非拒绝保护逐项按 15:05 裁定重新分类"],
+  "neverTargets": ["workspace 根/当前构建/主仓库/平台缓存", "其它项目/用户目录/共享 store 原始资源/共享镜像/他人业务数据", "G1/D0/C3 已拒目标及其保护父目录、原拒审计 JSON 父目录", "真实其他活动消费者或未解归属目录（留下准确例外）", "尚未完成必要独有代码/脱敏证据/重建输入保全的目录", "远端分支/标签/审计记录"],
+  "readonlyFixtureException": {"source": "15:05 全清解除旧 #60 自设准备门；不是解除系统拒绝", "workspace": "01a126be-7aba-7b1d-a57a-f58317f89a67", "exactManifest": "post-m4/full-cleanup/readonly-exception.json", "files": 9, "bytes": 696, "method": "全部原件先推送、hash/身份/属性重核后，仅清九文件 ReadOnly 位，再正式 Git worktree remove；不改 ACL；真实拒绝即停"},
+  "rebuildEntry": "post-m4/full-cleanup/rebuild-environment.py",
+  "sharedEnvironmentRule": "核已安装 pnpm9.15.4、锁 hash 与真实 store；任务专属 virtual store/node_modules/cache/秘密，公共 store/工具/镜像复用；离线 frozen install，copy 身份隔离已验证。clone-or-copy 本机产生 hardlink，不能冒写隔离或物理节省；thin 未具备每工作树配置则停，不改平台 cache/config",
   "onRejectionOrFailure": "停止原目标；保存原理由；不 Force、不改属性/ACL、不拆批、不换工具/rename/move/父删绕过",
   "onExistingReceipt": "成功且目标不存在只读核对；停止/拒绝不自动重试；缺失历史回执不补造",
   "physicalNetReleasedBytes": "无法归因时 null；卷级可用空间变化和逻辑长度分别报告"
