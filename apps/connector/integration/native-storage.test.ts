@@ -103,7 +103,7 @@ try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase
         expect(Boolean(process.env.WM_CONNECTOR_OTHER_USER && process.env.WM_CONNECTOR_OTHER_PASSWORD && process.env.WM_CONNECTOR_PUBLIC_ROOT)).toBe(true)
         // DC 授删除子项，WD 授 rename 的目标条目，AD 授同名替换目录创建。
         // 均仅用于一次性不安全父夹具；受保护子项没有授该用户 DELETE。
-        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DC,AD,WD)'], { windowsHide: true })
+        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(RX,DC,AD,WD)'], { windowsHide: true })
         const fixtureAcl = await execute('icacls.exe', [unsafe], { windowsHide: true })
         console.log(JSON.stringify({ resource: 'aclFixture', path: unsafe, acl: fixtureAcl.stdout }))
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')

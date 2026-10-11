@@ -57,3 +57,11 @@ retained-environment.json 记录当前准确依赖归属、成功安装日志与
 macOS 源码补查同时发现私有叶目录/文件仅核BSD mode，不能识别继承的读取ACL。[Apple文件系统权限说明](https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemDetails/FileSystemDetails.html) 明确ACL allow可以直接满足读取权限，BSD mode只处理剩余权限。把原ACL读取提为共用核验：普通祖先保持拒绝修改型allow；私有目录/文件额外拒绝任何allow，包括继承专用allow，不主动删除真实用户ACL。无ACL的私有对象重核类型/dev/inode/uid/mode，只有已验证当前owner和精确私有mode的对象允许同用户操作改变ctime；祖先原完整ctime检查保留。ADR0079同步此既有敏感pending隔离要求。
 
 新增macOS真实读取ACL夹具：确认0700/0600仍能被nobody读取的正对照，产品目录与文件拒绝，移除仅测试夹具ACL后恢复可用。实际结果由下一轮macOS证明，不能用Windows本机推断通过。local-06的73单元及lint/typecheck/build通过，平台三通过两缺第二用户，运行前后原字节无变化；54目录全部移除、空根已非递归收尾。WD/错误码夹具增量另经typecheck成功。
+
+## CI444：真实私有读取 ACL 与父夹具属性
+
+[CI444](https://github.com/xurunxin/WorkMesh/actions/runs/38141033179) head `3307dd19cef874545401c30aa8bef587eee3d395`：Linux6平台＋73单元成功；macOS8平台＋73单元成功，实际nobody读取ACL正对照、产品拒绝与移除仅测试ACL后恢复均通过。历史macOS竞争首败没有被删除或猜测原因；本轮16轮双进程强断言通过。ci444-native/保存三系统完整原字节日志和来源。
+
+Windows本轮另保真实30秒读取用例超时；重命名精确1005（Move阶段＋HRESULT低位Access denied）。实际icacls输出显示不安全父只有Everyone(WD,AD,DC)及当前用户F，原产品prepareDirectory创建的该父没有继承公共夹具RX/SYNCHRONIZE。补全一次性不安全父的RX，保留DC/AD/WD和受保护子项原ACL；不是给私有对象增加其他用户权限。增加套件前的一次真实临时账户启动与SID核对，用短命令并隐藏窗口，使冷账户初始化在夹具准备阶段明确完成；测试仍为原30秒，不增加超时、不skip、不自动重试断言。任何失败仍进入原用户名/SID与准确根的清理回执。仅本机typecheck与PowerShell parser通过，后续原生结果另验。
+
+CI443完整结果已保存ci443-complete/：源码门禁、API/DB/Worker、两E2E、灾难恢复及agent smoke全部成功，Windows失败令Required CI正确失败。该结果不是当前head全绿。CI444查询时API仍运行；其他全仓作业已成功，最终状态以后续准确run为准。

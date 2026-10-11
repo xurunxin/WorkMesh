@@ -26,6 +26,15 @@ try {
   if ($LASTEXITCODE -ne 0) { throw 'public read control setup failed' }
   $env:WM_CONNECTOR_OTHER_USER = $env:COMPUTERNAME + '\' + $name
   $env:WM_CONNECTOR_OTHER_PASSWORD = $password
+  # 首次登录是环境准备；在套件前实核该一次性账户的 SID，不改变用例超时。
+  $probeExe = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
+  $identityProbe = "if ([Security.Principal.WindowsIdentity]::GetCurrent().User.Value -ne '$($createdUser.SID.Value)') {exit 1}; exit 0"
+  $probeArguments = @('-NoProfile','-NonInteractive','-EncodedCommand',[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($identityProbe)))
+  if (('"' + $probeExe + '" ' + ($probeArguments -join ' ')).Length -ge 1024) { throw 'identity probe exceeds logon limit' }
+  $probeCredential = New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,(ConvertTo-SecureString $password -AsPlainText -Force))
+  $identityProcess = Start-Process $probeExe -Credential $probeCredential -WorkingDirectory $env:PUBLIC -ArgumentList $probeArguments -WindowStyle Hidden -Wait -PassThru
+  if ($identityProcess.ExitCode -ne 0) { throw 'temporary user identity validation failed' }
+  Write-Output ("validated temporary user SID: " + $createdUser.SID.Value)
   # 公共夹具只授其他用户读取权限；Vitest 缓存继续使用原 TEMP/TMP。
   & pnpm.cmd --filter @workmesh/connector test:platform 2>&1 | Tee-Object ci-logs/connector-platform.log
   if ($LASTEXITCODE -ne 0) { throw 'connector platform failed' }
