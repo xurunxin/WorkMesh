@@ -1,0 +1,85 @@
+{
+  "sampleUtc": "2026-10-11T03:11:27.319854+00:00",
+  "before": [
+    {
+      "path": "docs/plan/agent-mcp-m4/operation-decisions.json",
+      "bytes": 149832,
+      "sha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/operation-matrix.md",
+      "bytes": 9569,
+      "sha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/product-discovery-decisions.json",
+      "bytes": 41865,
+      "sha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c"
+    }
+  ],
+  "receipts": [
+    {
+      "command": "python -B docs/plan/agent-mcp-m4/build-operation-matrix.py",
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "exitCode": 0,
+      "runtimeSeconds": 0.12694570000167005,
+      "stdout": "{\"选定操作数\": 19, \"Human保留规则数\": 20, \"新资格规则\": 4, \"新增绑定提案\": 16, \"实际注册证据\": 0, \"保留既有selected绑定\": 3}\r\n",
+      "stderr": "",
+      "stdoutBase64": "eyLpgInlrprmk43kvZzmlbAiOiAxOSwgIkh1bWFu5L+d55WZ6KeE5YiZ5pWwIjogMjAsICLmlrDotYTmoLzop4TliJkiOiA0LCAi5paw5aKe57uR5a6a5o+Q5qGIIjogMTYsICLlrp7pmYXms6jlhozor4Hmja4iOiAwLCAi5L+d55WZ5pei5pyJc2VsZWN0ZWTnu5HlrpoiOiAzfQ0K",
+      "stderrBase64": "",
+      "fingerprints": [
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-decisions.json",
+          "bytes": 149832,
+          "sha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-matrix.md",
+          "bytes": 9569,
+          "sha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/product-discovery-decisions.json",
+          "bytes": 41865,
+          "sha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c"
+        }
+      ]
+    },
+    {
+      "command": "python -B docs/plan/agent-mcp-m4/build-operation-matrix.py",
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "exitCode": 0,
+      "runtimeSeconds": 0.14667870000994299,
+      "stdout": "{\"选定操作数\": 19, \"Human保留规则数\": 20, \"新资格规则\": 4, \"新增绑定提案\": 16, \"实际注册证据\": 0, \"保留既有selected绑定\": 3}\r\n",
+      "stderr": "",
+      "stdoutBase64": "eyLpgInlrprmk43kvZzmlbAiOiAxOSwgIkh1bWFu5L+d55WZ6KeE5YiZ5pWwIjogMjAsICLmlrDotYTmoLzop4TliJkiOiA0LCAi5paw5aKe57uR5a6a5o+Q5qGIIjogMTYsICLlrp7pmYXms6jlhozor4Hmja4iOiAwLCAi5L+d55WZ5pei5pyJc2VsZWN0ZWTnu5HlrpoiOiAzfQ0K",
+      "stderrBase64": "",
+      "fingerprints": [
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-decisions.json",
+          "bytes": 149832,
+          "sha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-matrix.md",
+          "bytes": 9569,
+          "sha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/product-discovery-decisions.json",
+          "bytes": 41865,
+          "sha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c"
+        }
+      ]
+    }
+  ],
+  "planningBytesStable": true,
+  "productGeneratorsRun": false,
+  "productTestsRun": false,
+  "priorReceipt": "planning-generation-checks-first.json",
+  "priorReceiptLimitation": "原采集stdout未指定Python管道编码，用UTF-8 replacement解码，显示文本不能作为原输出字节；保留旧记录不伪造原raw，新两轮以明确UTF-8及base64保全"
+}

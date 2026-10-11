@@ -1,0 +1,84 @@
+{
+  "evidence": [
+    {
+      "operation": "view",
+      "before": {
+        "facts": 0,
+        "events": 33,
+        "outbox": 33,
+        "receipts": 23,
+        "project_revision": 1
+      },
+      "after": {
+        "facts": 1,
+        "events": 34,
+        "outbox": 34,
+        "receipts": 24,
+        "project_revision": 1
+      },
+      "result": {
+        "id": "552ce299-ca58-465f-ac71-1aceec691f9d",
+        "revision": 1
+      },
+      "triggerRemoved": true
+    },
+    {
+      "operation": "health",
+      "before": {
+        "facts": 0,
+        "events": 34,
+        "outbox": 34,
+        "receipts": 24,
+        "project_revision": 1
+      },
+      "after": {
+        "facts": 1,
+        "events": 35,
+        "outbox": 35,
+        "receipts": 25,
+        "project_revision": 2
+      },
+      "result": {
+        "id": "ac427d66-c607-41d8-8964-3c876cfc0bfe",
+        "revision": 1,
+        "projectRevision": 2
+      },
+      "triggerRemoved": true
+    },
+    {
+      "operation": "completion",
+      "before": {
+        "facts": 0,
+        "events": 35,
+        "outbox": 35,
+        "receipts": 25,
+        "project_revision": 2
+      },
+      "after": {
+        "facts": 1,
+        "events": 36,
+        "outbox": 36,
+        "receipts": 26,
+        "project_revision": 2
+      },
+      "result": {
+        "id": "ee1b3c4b-5c5e-4092-bd00-a13186d95427",
+        "revision": 1,
+        "workspace_id": "e80f1af9-a312-4f45-85b0-f209c713006b",
+        "project_id": "bee21481-5ded-47ab-b5b6-9412dbfd08bc",
+        "work_item_id": "033610be-cc87-438d-ae20-f56b92a13a5e",
+        "pull_request_id": null,
+        "suggested_by_actor_id": "d55283d2-885e-46e7-8a33-f5279845f1e7",
+        "rationale": "M4 outbox suggestion",
+        "evidence_artifact_ids": [],
+        "status": "open",
+        "decided_by_actor_id": null,
+        "decided_at": null,
+        "created_at": "2026-10-11T04:36:17.790Z"
+      },
+      "triggerRemoved": true
+    }
+  ],
+  "realSqlFault": true,
+  "exactKeyRetry": true
+}

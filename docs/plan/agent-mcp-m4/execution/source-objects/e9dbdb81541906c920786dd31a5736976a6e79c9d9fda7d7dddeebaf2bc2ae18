@@ -1,0 +1,218 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-workmesh}
+      POSTGRES_USER: ${POSTGRES_USER:-workmesh}
+      # Development-only fallback. Set this explicitly to a unique secret before deployment.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}
+    ports: ["127.0.0.1:${POSTGRES_PORT:-5432}:5432"]
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d postgres"], interval: 5s, timeout: 3s, retries: 20 }
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    volumes: [redis-data:/data]
+    healthcheck: { test: ["CMD","redis-cli","ping"], interval: 5s, timeout: 3s, retries: 20 }
+  minio:
+    # MinIO withdrew its Docker Hub repositories and then began rejecting
+    # unauthenticated pulls from its quay.io namespace, so artifact storage runs
+    # on RustFS. It is S3-compatible for everything WorkMesh uses, including the
+    # versioning and Object Lock semantics the retention/recovery path depends on.
+    # The service name and MINIO_ROOT_* credential variables are kept as the
+    # contract shared with the release flow; RustFS reads those names natively.
+    image: rustfs/rustfs:1.0.0
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-workmesh}
+      # Development-only fallback. Set this explicitly to a unique secret before deployment.
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-workmesh-local-minio-change-me}
+    ports: ["127.0.0.1:${MINIO_HOST_PORT:-9000}:9000"]
+    volumes: [minio-data:/data]
+    healthcheck: { test: ["CMD-SHELL", "curl -fsS http://localhost:9000/health/ready >/dev/null"], interval: 10s, timeout: 5s, retries: 10 }
+  minio-init:
+    # The server image already ships curl with --aws-sigv4, so bucket creation no
+    # longer needs a separate client image. Object Lock must be enabled at create
+    # time, hence the x-amz-bucket-object-lock-enabled header.
+    image: rustfs/rustfs:1.0.0
+    depends_on: { minio: { condition: service_healthy } }
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}'
+        --aws-sigv4 'aws:amz:${S3_REGION:-us-east-1}:s3'
+        --user "$${MINIO_ROOT_USER}:$${MINIO_ROOT_PASSWORD}"
+        --header 'x-amz-bucket-object-lock-enabled: true'
+        --request PUT "http://minio:9000/$${S3_BUCKET}") &&
+        case "$$status" in 200|409) exit 0 ;; *) echo "bucket init failed (HTTP $$status)"; exit 1 ;; esac
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-workmesh}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-workmesh-local-minio-change-me}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_REGION: ${S3_REGION:-us-east-1}
+    restart: "no"
+  migrate:
+    build: { context: ., dockerfile: infra/docker/api.Dockerfile }
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
+      SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      AUTH_RATE_LIMIT_HMAC_KEY: ${AUTH_RATE_LIMIT_HMAC_KEY:-}
+      AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: ${AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS:-}
+      AUTH_RATE_LIMIT_ENDPOINT_BURST: ${AUTH_RATE_LIMIT_ENDPOINT_BURST:-30}
+      AUTH_RATE_LIMIT_SOCKET_BURST: ${AUTH_RATE_LIMIT_SOCKET_BURST:-60}
+      AUTH_RATE_LIMIT_CLIENT_IP_BURST: ${AUTH_RATE_LIMIT_CLIENT_IP_BURST:-40}
+      AUTH_RATE_LIMIT_SUBJECT_BURST: ${AUTH_RATE_LIMIT_SUBJECT_BURST:-8}
+      AUTH_RATE_LIMIT_INSTALL_BURST: ${AUTH_RATE_LIMIT_INSTALL_BURST:-5}
+      AUTH_RATE_LIMIT_REFILL_MS: ${AUTH_RATE_LIMIT_REFILL_MS:-2000}
+      AUTH_RATE_LIMIT_BACKOFF_BASE_MS: ${AUTH_RATE_LIMIT_BACKOFF_BASE_MS:-500}
+      AUTH_RATE_LIMIT_BACKOFF_MAX_MS: ${AUTH_RATE_LIMIT_BACKOFF_MAX_MS:-60000}
+      AUTH_RATE_LIMIT_REDIS_CONNECT_TIMEOUT_MS: ${AUTH_RATE_LIMIT_REDIS_CONNECT_TIMEOUT_MS:-500}
+      AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS: ${AUTH_RATE_LIMIT_REDIS_COMMAND_TIMEOUT_MS:-750}
+      AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS: ${AUTH_RATE_LIMIT_SUMMARY_INTERVAL_MS:-60000}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
+    depends_on: { postgres: { condition: service_healthy } }
+    command: ["pnpm", "db:migrate"]
+    restart: "no"
+  api:
+    build: { context: ., dockerfile: infra/docker/api.Dockerfile }
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REALTIME_HEALTHY_RECONCILE_MS: ${REALTIME_HEALTHY_RECONCILE_MS:-15000}
+      REALTIME_FALLBACK_RECONCILE_MS: ${REALTIME_FALLBACK_RECONCILE_MS:-1000}
+      REALTIME_BATCH_LIMIT: ${REALTIME_BATCH_LIMIT:-100}
+      REALTIME_HEARTBEAT_MS: ${REALTIME_HEARTBEAT_MS:-15000}
+      REALTIME_BACKPRESSURE_TIMEOUT_MS: ${REALTIME_BACKPRESSURE_TIMEOUT_MS:-5000}
+      REALTIME_MAX_CLIENTS: ${REALTIME_MAX_CLIENTS:-1000}
+      WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-100000}
+      WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
+      WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
+      WORKMESH_EVENT_ONLINE_DAYS: ${WORKMESH_EVENT_ONLINE_DAYS:-90}
+      WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS: ${WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS:-365}
+      WORKMESH_RETENTION_ARCHIVE_ENABLED: ${WORKMESH_RETENTION_ARCHIVE_ENABLED:-true}
+      WORKMESH_RETENTION_CLEANUP_ENABLED: ${WORKMESH_RETENTION_CLEANUP_ENABLED:-false}
+      WORKMESH_EVENT_PRUNE_ENABLED: ${WORKMESH_EVENT_PRUNE_ENABLED:-false}
+      SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      PAGINATION_CURSOR_KEYS: ${PAGINATION_CURSOR_KEYS:?Set PAGINATION_CURSOR_KEYS to kid:base64url random key material}
+      PAGINATION_CURSOR_ACTIVE_KID: ${PAGINATION_CURSOR_ACTIVE_KID:?Set PAGINATION_CURSOR_ACTIVE_KID}
+      PAGINATION_CURSOR_TTL_SECONDS: ${PAGINATION_CURSOR_TTL_SECONDS:-900}
+      WORKMESH_BOOTSTRAP_TOKEN: ${WORKMESH_BOOTSTRAP_TOKEN:?Set WORKMESH_BOOTSTRAP_TOKEN to the output of pnpm bootstrap:token}
+      WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK: "false"
+      AUTH_RATE_LIMIT_REDIS_PREFIX: ${AUTH_RATE_LIMIT_REDIS_PREFIX:-authrl}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+      WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      PUBLIC_MCP_ORIGIN: ${PUBLIC_MCP_ORIGIN:-}
+      WORKMESH_WEB_PUSH_PUBLIC_KEY: ${WORKMESH_WEB_PUSH_PUBLIC_KEY:-}
+      WORKMESH_WEB_PUSH_PRIVATE_KEY: ${WORKMESH_WEB_PUSH_PRIVATE_KEY:-}
+      WORKMESH_WEB_PUSH_SUBJECT: ${WORKMESH_WEB_PUSH_SUBJECT:-}
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      S3_ENDPOINT: ${S3_PUBLIC_ENDPOINT:-http://localhost:9000}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-workmesh}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-workmesh-local-minio-change-me}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:-unknown}
+      WORKMESH_BETA_PLANNING: ${WORKMESH_BETA_PLANNING:-false}
+      WORKMESH_BETA_TEMPLATES: ${WORKMESH_BETA_TEMPLATES:-false}
+      WORKMESH_BETA_COSTS: ${WORKMESH_BETA_COSTS:-false}
+      WORKMESH_BETA_GITEA: ${WORKMESH_BETA_GITEA:-false}
+      WORKMESH_BETA_MODEL_PRESETS: ${WORKMESH_BETA_MODEL_PRESETS:-false}
+      WORKMESH_MODEL_PRESETS_FILE: ${WORKMESH_MODEL_PRESETS_FILE:-}
+      WORKMESH_BETA_OPERATIONS_UI: ${WORKMESH_BETA_OPERATIONS_UI:-false}
+      WORKMESH_EXPERIMENTAL_AUTOMATION: ${WORKMESH_EXPERIMENTAL_AUTOMATION:-false}
+      WORKMESH_EXPERIMENTAL_AGENT_LOOPS: ${WORKMESH_EXPERIMENTAL_AGENT_LOOPS:-false}
+      WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
+      WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: ${WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS:-false}
+      WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: ${WORKMESH_EXPERIMENTAL_MULTI_RUNTIME:-false}
+      WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: ${WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS:-false}
+    ports: ["127.0.0.1:${API_HOST_PORT:-3001}:3001"]
+    depends_on: { postgres: { condition: service_healthy }, redis: { condition: service_healthy }, minio-init: { condition: service_completed_successfully }, migrate: { condition: service_completed_successfully } }
+    healthcheck: { test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health"], interval: 10s, timeout: 3s, retries: 15 }
+  worker:
+    build: { context: ., dockerfile: infra/docker/worker.Dockerfile }
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-100000}
+      WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
+      WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
+      WORKMESH_EVENT_ONLINE_DAYS: ${WORKMESH_EVENT_ONLINE_DAYS:-90}
+      WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS: ${WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS:-365}
+      WORKMESH_RETENTION_CLEANUP_DAYS: ${WORKMESH_RETENTION_CLEANUP_DAYS:-30}
+      WORKMESH_RETENTION_BATCH_SIZE: ${WORKMESH_RETENTION_BATCH_SIZE:-100}
+      WORKMESH_RETENTION_LEASE_SECONDS: ${WORKMESH_RETENTION_LEASE_SECONDS:-120}
+      WORKMESH_RETENTION_INTERVAL_SECONDS: ${WORKMESH_RETENTION_INTERVAL_SECONDS:-3600}
+      WORKMESH_RETENTION_IO_TIMEOUT_SECONDS: ${WORKMESH_RETENTION_IO_TIMEOUT_SECONDS:-300}
+      WORKMESH_RETENTION_PROGRESS_STALE_SECONDS: ${WORKMESH_RETENTION_PROGRESS_STALE_SECONDS:-7200}
+      WORKMESH_RETENTION_ARCHIVE_PREFIX: ${WORKMESH_RETENTION_ARCHIVE_PREFIX:-retention/events}
+      WORKMESH_RETENTION_ARCHIVE_ENABLED: ${WORKMESH_RETENTION_ARCHIVE_ENABLED:-true}
+      WORKMESH_RETENTION_CLEANUP_ENABLED: ${WORKMESH_RETENTION_CLEANUP_ENABLED:-false}
+      WORKMESH_EVENT_PRUNE_ENABLED: ${WORKMESH_EVENT_PRUNE_ENABLED:-false}
+      SESSION_SECRET: ${SESSION_SECRET:-workmesh-local-session-secret-change-before-production-0123456789}
+      WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+      WORKMESH_WEB_PUSH_PUBLIC_KEY: ${WORKMESH_WEB_PUSH_PUBLIC_KEY:-}
+      WORKMESH_WEB_PUSH_PRIVATE_KEY: ${WORKMESH_WEB_PUSH_PRIVATE_KEY:-}
+      WORKMESH_WEB_PUSH_SUBJECT: ${WORKMESH_WEB_PUSH_SUBJECT:-}
+      S3_ENDPOINT: ${S3_INTERNAL_ENDPOINT:-http://minio:9000}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-workmesh}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-workmesh-local-minio-change-me}
+      S3_FORCE_PATH_STYLE: ${S3_FORCE_PATH_STYLE:-true}
+      GITHUB_API_URL: ${GITHUB_API_URL:-https://api.github.com}
+      WORKMESH_BETA_PLANNING: ${WORKMESH_BETA_PLANNING:-false}
+      WORKMESH_BETA_TEMPLATES: ${WORKMESH_BETA_TEMPLATES:-false}
+      WORKMESH_BETA_COSTS: ${WORKMESH_BETA_COSTS:-false}
+      WORKMESH_BETA_GITEA: ${WORKMESH_BETA_GITEA:-false}
+      WORKMESH_BETA_MODEL_PRESETS: ${WORKMESH_BETA_MODEL_PRESETS:-false}
+      WORKMESH_MODEL_PRESETS_FILE: ${WORKMESH_MODEL_PRESETS_FILE:-}
+      WORKMESH_BETA_OPERATIONS_UI: ${WORKMESH_BETA_OPERATIONS_UI:-false}
+      WORKMESH_EXPERIMENTAL_AUTOMATION: ${WORKMESH_EXPERIMENTAL_AUTOMATION:-false}
+      WORKMESH_EXPERIMENTAL_AGENT_LOOPS: ${WORKMESH_EXPERIMENTAL_AGENT_LOOPS:-false}
+      WORKMESH_EXPERIMENTAL_A2A: ${WORKMESH_EXPERIMENTAL_A2A:-false}
+      WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: ${WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS:-false}
+      WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: ${WORKMESH_EXPERIMENTAL_MULTI_RUNTIME:-false}
+      WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS: ${WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS:-false}
+    depends_on: { postgres: { condition: service_healthy }, minio-init: { condition: service_completed_successfully }, migrate: { condition: service_completed_successfully } }
+  mcp:
+    profiles: ["agent"]
+    build: { context: ., dockerfile: infra/docker/mcp.Dockerfile }
+    environment:
+      WORKMESH_API_URL: ${WORKMESH_API_URL:-http://api:3001}
+      WORKMESH_BROWSER_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      WORKMESH_SESSION_TOKEN: ${WORKMESH_SESSION_TOKEN:-}
+      WORKMESH_MCP_ACCESS_TOKEN: ${WORKMESH_MCP_ACCESS_TOKEN:-}
+      WORKMESH_MCP_MODE: ${WORKMESH_MCP_MODE:-read-write}
+      HOST: 0.0.0.0
+      PORT: 3002
+    ports: ["127.0.0.1:${MCP_HOST_PORT:-3002}:3002"]
+    depends_on: { api: { condition: service_healthy } }
+  agent-runner:
+    profiles: ["agent"]
+    build: { context: ., dockerfile: infra/docker/agent-runner.Dockerfile }
+    environment:
+      WORKMESH_API_URL: http://api:3001
+      WORKMESH_RUNNER_ALLOW_INTERNAL_HTTP: "1"
+      WORKMESH_AGENT_INSTALLATION_TOKEN: ${WORKMESH_AGENT_INSTALLATION_TOKEN:-}
+      WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
+    depends_on: { api: { condition: service_healthy } }
+    restart: unless-stopped
+  web:
+    build: { context: ., dockerfile: infra/docker/web.Dockerfile }
+    environment:
+      # The Browser must stay same-origin with the API so the session cookie is
+      # first-party. NEXT_PUBLIC_API_URL is intentionally left empty: a relative
+      # base makes the Browser call this server, and the Next.js proxy forwards
+      # to the API. Naming the API host here made the cookie third-party and
+      # bounced the Human straight back to /login.
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+      NEXT_API_UPSTREAM: http://api:3001
+    ports: ["127.0.0.1:${WEB_HOST_PORT:-3000}:3000"]
+    depends_on: { api: { condition: service_healthy } }
+volumes: { postgres-data: {}, redis-data: {}, minio-data: {} }

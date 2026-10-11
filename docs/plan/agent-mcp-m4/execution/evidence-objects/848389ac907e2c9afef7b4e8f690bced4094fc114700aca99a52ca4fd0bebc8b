@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "debug",
+    "config"
+  ],
+  "startedAt": "2026-10-11T05:52:33.683Z",
+  "endedAt": "2026-10-11T05:52:37.519Z",
+  "runtimeMs": 3836.6855000000005,
+  "pid": 53612,
+  "nativeExit": 0,
+  "signal": null,
+  "stdout": "[{\"type\":\"document\",\"path\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a127d4-e047-7e57-81c2-3d054851fc88\\\\.tmp\\\\m4-4adc5e39\\\\native-evidence\\\\opencode-c9caee01-3345-4d35-92e2-a704e9e1cc3c\\\\config\\\\opencode\\\\opencode.json\",\"info\":{\"model\":{\"providerID\":\"m5-local\",\"model\":\"controlled\"},\"update\":\"disable\",\"permissions\":[{\"action\":\"*\",\"resource\":\"*\",\"effect\":\"deny\"},{\"action\":\"workmesh_get_initiative_rollup\",\"resource\":\"*\",\"effect\":\"allow\"},{\"action\":\"workmesh_get_usage_summary\",\"resource\":\"*\",\"effect\":\"allow\"}],\"snapshots\":false,\"tool_output\":{\"max_lines\":2000,\"max_bytes\":2000000},\"mcp\":{\"servers\":{\"workmesh\":{\"type\":\"remote\",\"url\":\"http://127.0.0.1:55156/mcp\",\"headers\":{\"Authorization\":\"[redacted]\"},\"oauth\":false,\"codemode\":false}}},\"plugins\":[\"-opencode.config.compatibility\"],\"providers\":{\"m5-local\":{\"package\":\"@opencode/ai/providers/openai-compatible\",\"settings\":{\"baseURL\":\"https://127.0.0.1:55157/v1\",\"apiKey\":\"[redacted]\"},\"models\":{\"controlled\":{\"name\":\"M5 controlled local model\",\"capabilities\":{\"tools\":true,\"input\":[\"text\"],\"output\":[\"text\"]},\"limit\":{\"context\":131072,\"output\":8192}}}}}}},{\"type\":\"directory\",\"path\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a127d4-e047-7e57-81c2-3d054851fc88\\\\.tmp\\\\m4-4adc5e39\\\\native-evidence\\\\opencode-c9caee01-3345-4d35-92e2-a704e9e1cc3c\\\\config\\\\opencode\"}]",
+  "stderr": "",
+  "rawOutput": {
+    "stdout": {
+      "bytes": 2173,
+      "sha256": "dc0a7c3f5bfbdf1c9c8799302033f2428ca5cd227e9cb3f6d1a0dca0eaed3067"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rawBytesPreserved": false
+}

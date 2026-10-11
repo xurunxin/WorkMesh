@@ -1,0 +1,76 @@
+{
+  "requests": [
+    {
+      "at": "2026-10-11T04:02:44.412Z",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "bytes": 2447,
+      "rawSha256": "b8252671f8f05be971e5a81384f65717688de2488d0761f062e54b08cbc6357d",
+      "status": 200
+    },
+    {
+      "at": "2026-10-11T04:02:44.421Z",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "bytes": 3151,
+      "rawSha256": "e6c6a42ef8510c601a99008cf68a6fdc4cc413efc5819597d0515cf8764b9bd2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-11T04:02:44.646Z",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "bytes": 3655,
+      "rawSha256": "eaa3c78d36e2a9e8e0188e71d30283984d1ada416ac4ded462d2ba9771711f0a",
+      "status": 200
+    },
+    {
+      "at": "2026-10-11T04:02:46.536Z",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "bytes": 2447,
+      "rawSha256": "b8252671f8f05be971e5a81384f65717688de2488d0761f062e54b08cbc6357d",
+      "status": 200
+    },
+    {
+      "at": "2026-10-11T04:02:46.557Z",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "bytes": 3151,
+      "rawSha256": "e6c6a42ef8510c601a99008cf68a6fdc4cc413efc5819597d0515cf8764b9bd2",
+      "status": 200
+    },
+    {
+      "at": "2026-10-11T04:02:46.707Z",
+      "method": "POST",
+      "path": "/v1/chat/completions",
+      "bytes": 3556,
+      "rawSha256": "1e29c7ed549fc6a9dee252c195f75e13318c8c4a76e6d28ceaa23d298c61ce9b",
+      "status": 200
+    }
+  ],
+  "tlsConnections": [
+    {
+      "at": "2026-10-11T04:02:44.410Z",
+      "protocol": "TLSv1.3"
+    },
+    {
+      "at": "2026-10-11T04:02:44.419Z",
+      "protocol": "TLSv1.3"
+    }
+  ],
+  "errors": [
+    {
+      "at": "2026-10-11T04:02:48.490Z",
+      "stage": "clientError",
+      "code": "ECONNRESET",
+      "name": "Error"
+    },
+    {
+      "at": "2026-10-11T04:02:48.492Z",
+      "stage": "clientError",
+      "code": "ECONNRESET",
+      "name": "Error"
+    }
+  ]
+}

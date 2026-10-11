@@ -1,0 +1,45 @@
+{
+  "representation": "本轮工具返回的检查失败观察；不是产品测试或原始 stdout 字节归档，缺原检查脚本版本不补造",
+  "observations": [
+    {
+      "command": ["python", "-B", "docs/plan/agent-mcp-m4/execution/verify-delivery-current.py"],
+      "toolChunkId": "2b1311",
+      "exitCode": 1,
+      "toolRuntimeSeconds": 0.4756518,
+      "failure": "KeyError: 'exactBytesSource'",
+      "resolution": "早期回执无该字段；按原长度/SHA定位已真正保全完整字节，无法定位的66条记录明确列出。原回执不改写。",
+      "originalCheckScriptBytes": null
+    },
+    {
+      "command": ["python", "-B", "docs/plan/agent-mcp-m4/execution/verify-delivery-current.py"],
+      "toolChunkId": "ee39f4",
+      "exitCode": 1,
+      "toolRuntimeSeconds": 5.6097447,
+      "failure": "凭据模式扫描命中两份基线测试源码的字面示例",
+      "matchedSourceObjects": ["4f3396b97d67976afb99e5ec6678e97f2190b8f7dc668073165d900a907b4e09", "94b9e7b104fd22b545a747e1f49c7f21826f30ce11fab5ca6eea58fe061cd0b3"],
+      "resolution": "对两份完整main测试源码逐字节核对，记录Git规范化字节与原运行字节差别，仅准确旧示例分类；真实私有环境凭据匹配始终拒绝。不是自动审批拒绝，不改变既有清理拒目标保护。",
+      "originalCheckScriptBytes": null
+    },
+    {
+      "command": ["python", "-B", "docs/plan/agent-mcp-m4/execution/verify-staged-bytes.py"],
+      "toolChunkId": "d2298b",
+      "exitCode": 1,
+      "toolRuntimeSeconds": 1.3634389,
+      "failure": "暂存Git blob与backend-a2a-final-gate-resumed/stdout.txt的完整本地原件字节不同",
+      "resolution": "本卡execution原件禁用Git换行转换，仅该受控目录重新暂存；原输出与receipt指纹不变。完整暂存blob随后核2206项全匹配。",
+      "finalProof": "staged-byte-preservation.json"
+    },
+    {
+      "command": ["git", "diff", "--cached", "--check"],
+      "toolChunkId": "826110",
+      "exitCode": 1,
+      "toolRuntimeSeconds": 0.6920989,
+      "failure": "保留CRLF的受控JSON被默认空白检查识别为行尾CR；工具显示截断，未保全该检查的完整输出，不能声称全文或hash",
+      "resolution": "用明确cr-at-eol的Git空白检查接受真实CRLF，仍检查其他行尾空白、空文件尾与tab前空格；退出0。未规范化或改写运行原件。",
+      "finalCommand": ["git", "-c", "core.whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol", "diff", "--cached", "--check"],
+      "finalToolChunkId": "f5b025",
+      "finalExitCode": 0
+    }
+  ],
+  "finalCheck": "checks/delivery-preflight-current/receipt.json"
+}

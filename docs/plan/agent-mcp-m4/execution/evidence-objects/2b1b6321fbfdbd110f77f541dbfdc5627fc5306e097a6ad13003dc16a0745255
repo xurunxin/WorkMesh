@@ -1,0 +1,61 @@
+{
+  "overlapResults": [
+    "fulfilled",
+    "rejected"
+  ],
+  "budgetResults": [
+    {
+      "kind": "cost",
+      "id": "4ab133cf-25d1-4c57-b4bd-76422b89ed34",
+      "outcomes": [
+        {
+          "status": "fulfilled",
+          "value": {
+            "runId": "5e33edf7-b4f9-4345-a2f1-f25c7fb7be28",
+            "sessionId": "731172f4-8ae8-4782-b9f8-a8c97d1f08aa",
+            "duplicate": false
+          }
+        },
+        {
+          "status": "rejected",
+          "code": "BUDGET_HARD_LIMIT"
+        }
+      ]
+    },
+    {
+      "kind": "tokens",
+      "id": "8c8ef28a-7272-4785-aa0a-e3d3acbd6ba7",
+      "outcomes": [
+        {
+          "status": "fulfilled",
+          "value": {
+            "runId": "b4940913-c599-4510-823b-5eba5c994915",
+            "sessionId": "3e5d2c99-82f7-4c90-a948-3358891fb7a6",
+            "duplicate": false
+          }
+        },
+        {
+          "status": "rejected",
+          "code": "BUDGET_HARD_LIMIT"
+        }
+      ]
+    }
+  ],
+  "before": {
+    "runs": 4,
+    "sessions": 6,
+    "delegations": 8,
+    "reservations": 4,
+    "events": 52,
+    "outbox": 52
+  },
+  "after": {
+    "runs": 5,
+    "sessions": 7,
+    "delegations": 9,
+    "reservations": 5,
+    "events": 54,
+    "outbox": 54
+  },
+  "triggerRemoved": true
+}

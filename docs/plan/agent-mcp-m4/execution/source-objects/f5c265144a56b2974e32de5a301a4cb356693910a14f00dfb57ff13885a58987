@@ -1,0 +1,32 @@
+-- WorkMesh consolidated executable schema entrypoint.
+--
+-- Run from the repository root with psql:
+--   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f SCHEMA.sql
+--
+-- The v1 baseline is the consolidated DDL reference for clean installations.
+-- Production installs and upgrades must use `pnpm db:migrate` so schema SQL,
+-- its SHA-256 checksum, and ledger registration commit atomically. The pre-v1
+-- numbered SQL remains immutable legacy inventory and is not a clean-install
+-- path after v1.
+\set ON_ERROR_STOP on
+
+\ir packages/db/migrations/v1/0001_v1_baseline.sql
+\ir packages/db/migrations/v1/0002_active_executor_projection.sql
+\ir packages/db/migrations/v1/0003_versioned_guidance.sql
+\ir packages/db/migrations/v1/0004_agent_connections.sql
+\ir packages/db/migrations/v1/0005_planning_domain_parity.sql
+\ir packages/db/migrations/v1/0006_human_attachments.sql
+\ir packages/db/migrations/v1/0007_active_milestone_name_uniqueness.sql
+\ir packages/db/migrations/v1/0008_autonomous_control_push_enrollment.sql
+\ir packages/db/migrations/v1/0009_workbench_llm_connections.sql
+\ir packages/db/migrations/v1/0010_workbench_conversations.sql
+\ir packages/db/migrations/v1/0012_workbench_turn_lineage_and_tools.sql
+
+\ir packages/db/migrations/v1/0011_versioned_documents.sql
+\ir packages/db/migrations/v1/0013_work_item_board_rank.sql
+
+\ir packages/db/migrations/v1/0014_channel_delivery_contract.sql
+\ir packages/db/migrations/v1/0015_channel_notification_kind.sql
+\ir packages/db/migrations/v1/0016_approval_notification_kind.sql
+
+\ir packages/db/migrations/v1/0017_execution_origin_and_waits.sql

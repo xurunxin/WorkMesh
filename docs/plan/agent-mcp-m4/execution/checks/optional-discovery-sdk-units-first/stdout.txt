@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88
+
+ ✓ packages/agent-sdk/src/optional-domains.test.ts (3 tests) 18ms
+ ❯ packages/contracts/src/agent-discovery.test.ts (21 tests | 1 failed) 694ms
+   × 已审发现规则的已知门禁和身份投影 > M4保全138旧bindings/137映射及所有identityVariants，不借新增工具改身份 16ms
+     → expected { …(2) } to deeply equal 'getAgentCapabilityManifest'
+   ✓ 已审发现规则的已知门禁和身份投影 > M4 getInitiativeRollup保留feature/state/capability与准确target待核 68ms
+   ✓ 已审发现规则的已知门禁和身份投影 > M4 getAutomationRun保留feature/state/capability与准确target待核 24ms
+   ✓ 已审发现规则的已知门禁和身份投影 > M4 getUsageSummary保留feature/state/capability与准确target待核 32ms
+   ✓ 已审发现规则的已知门禁和身份投影 > M4 streamA2ATaskEvents保留feature/state/capability与准确target待核 22ms
+   ✓ 已审发现规则的已知门禁和身份投影 > acknowledged 的 ACK 只广告回执重放条件，新命令须 REST 判断 17ms
+   ✓ 已审发现规则的已知门禁和身份投影 > 安装交接投影使用独立 null 身份，不复用 C/E 状态角色 9ms
+   ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  346ms
+   ✓ 已审发现规则的已知门禁和身份投影 > createProject已知team scope限制在发现层执行 15ms
+   ✓ 已审发现规则的已知门禁和身份投影 > updateProject已知team scope限制在发现层执行 9ms
+   ✓ 已审发现规则的已知门禁和身份投影 > createWorkItem已知team scope限制在发现层执行 15ms
+   ✓ 已审发现规则的已知门禁和身份投影 > updateWorkItem已知team scope限制在发现层执行 9ms
+   ✓ 已审发现规则的已知门禁和身份投影 > createProjectMilestone已知team scope限制在发现层执行 15ms
+   ✓ 已审发现规则的已知门禁和身份投影 > updateMilestone已知team scope限制在发现层执行 17ms
+   ✓ 已审发现规则的已知门禁和身份投影 > deleteMilestone已知team scope限制在发现层执行 9ms
+   ✓ 已审发现规则的已知门禁和身份投影 > createWorkItemRelation已知team scope限制在发现层执行 20ms
+   ✓ 已审发现规则的已知门禁和身份投影 > deleteWorkItemRelation已知team scope限制在发现层执行 16ms
+   ✓ 已审发现规则的已知门禁和身份投影 > reviewer完成/失败缺artifact能力、reviewer计划发布均已知拒绝 11ms
+   ✓ 已审发现规则的已知门禁和身份投影 > provider具名kind按联合能力判定 14ms
+   ✓ 已审发现规则的已知门禁和身份投影 > verify/claim不凭返回sessionId要求目标bridge；optional room保留current路径 6ms
+   ✓ 已审发现规则的已知门禁和身份投影 > 相同API资格按mode分别投影；Context只能使用本次eligible集合 3ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 23 passed (24)
+   Start at  11:50:08
+   Duration  2.25s (transform 267ms, setup 0ms, collect 810ms, tests 712ms, environment 0ms, prepare 564ms)
+

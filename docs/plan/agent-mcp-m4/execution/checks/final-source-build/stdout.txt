@@ -1,0 +1,148 @@
+
+> workmesh@ ci:source C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> node scripts/run-ci-source.mjs "build"
+
+CI build: @workmesh/agent-runner, @workmesh/api, @workmesh/fake-agent, @workmesh/mcp, @workmesh/web, @workmesh/worker, @workmesh/a2a-adapter, @workmesh/agent-sdk, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/git-provider, @workmesh/observability, @workmesh/recovery, @workmesh/ui
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running build in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/git-provider:build: cache hit, replaying logs fff523b9eb7a6935
+@workmesh/git-provider:build: 
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build: 
+@workmesh/artifact-storage:build: cache hit, replaying logs 18bc77579ea6c01a
+@workmesh/artifact-storage:build: 
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build: 
+@workmesh/contracts:build: cache hit, replaying logs f1e393cc8a19f0b8
+@workmesh/observability:build: cache hit, replaying logs b40426e8a2e6adb0
+@workmesh/contracts:build: 
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build: 
+@workmesh/observability:build: 
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build: 
+@workmesh/a2a-adapter:build: cache hit, replaying logs 5c93e9d4a690cb47
+@workmesh/a2a-adapter:build: 
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build: 
+@workmesh/agent-sdk:build: cache hit, replaying logs 284d3c878d78cd23
+@workmesh/config:build: cache hit, replaying logs a5b33df52ffeb078
+@workmesh/agent-sdk:build: 
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build: 
+@workmesh/config:build: 
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build: 
+@workmesh/fake-agent:build: cache miss, executing 08f434d98a5369cb
+@workmesh/domain:build: cache hit, replaying logs 23b03ca8f9cbba69
+@workmesh/mcp:build: cache hit, replaying logs 9d7f52b201da0e02
+@workmesh/domain:build: 
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build: 
+@workmesh/mcp:build: 
+@workmesh/mcp:build: > @workmesh/mcp@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\mcp
+@workmesh/mcp:build: > tsc -p tsconfig.build.json
+@workmesh/mcp:build: 
+@workmesh/ui:build: cache hit, replaying logs 52a0360bc21b7d59
+@workmesh/ui:build: 
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build: 
+@workmesh/web:build: cache miss, executing f6dabf0b8fe926e2
+@workmesh/agent-runner:build: cache hit, replaying logs 1c81f9f0f9dd278f
+@workmesh/agent-runner:build: 
+@workmesh/agent-runner:build: > @workmesh/agent-runner@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\agent-runner
+@workmesh/agent-runner:build: > tsc -p tsconfig.json
+@workmesh/agent-runner:build: 
+@workmesh/db:build: cache hit, replaying logs f4ee954937e5db02
+@workmesh/db:build: 
+@workmesh/db:build: > @workmesh/db@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build: 
+@workmesh/worker:build: cache miss, executing 982741d2ff31240a
+@workmesh/recovery:build: cache hit, replaying logs c6c08899da24302e
+@workmesh/recovery:build: 
+@workmesh/recovery:build: > @workmesh/recovery@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\recovery
+@workmesh/recovery:build: > tsc -p tsconfig.build.json
+@workmesh/recovery:build: 
+@workmesh/api:build: cache hit, replaying logs b21a3d1ab1078963
+@workmesh/api:build: 
+@workmesh/api:build: > @workmesh/api@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\api
+@workmesh/api:build: > tsc -p tsconfig.build.json
+@workmesh/api:build: 
+@workmesh/conformance:build: cache miss, executing d29a300d6f166c7b
+@workmesh/fake-agent:build: 
+@workmesh/fake-agent:build: > @workmesh/fake-agent@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\fake-agent
+@workmesh/fake-agent:build: > tsc -p tsconfig.json
+@workmesh/fake-agent:build: 
+@workmesh/worker:build: 
+@workmesh/worker:build: > @workmesh/worker@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\worker
+@workmesh/worker:build: > tsc -p tsconfig.build.json
+@workmesh/worker:build: 
+@workmesh/conformance:build: 
+@workmesh/conformance:build: > @workmesh/conformance@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\conformance
+@workmesh/conformance:build: > tsc -p tsconfig.build.json
+@workmesh/conformance:build: 
+@workmesh/web:build: 
+@workmesh/web:build: > @workmesh/web@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\web
+@workmesh/web:build: > next build
+@workmesh/web:build: 
+@workmesh/web:build:    ▲ Next.js 15.5.22
+@workmesh/web:build: 
+@workmesh/web:build:    Creating an optimized production build ...
+@workmesh/web:build:  ✓ Compiled successfully in 14.7s
+@workmesh/web:build:    Linting and checking validity of types ...
+@workmesh/web:build: 
+@workmesh/web:build:  ⚠ The Next.js plugin was not detected in your ESLint configuration. See https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+@workmesh/web:build:    Collecting page data ...
+@workmesh/web:build:    Generating static pages (0/16) ...
+@workmesh/web:build:    Generating static pages (4/16) 
+@workmesh/web:build:    Generating static pages (8/16) 
+@workmesh/web:build:    Generating static pages (12/16) 
+@workmesh/web:build:  ✓ Generating static pages (16/16)
+@workmesh/web:build:    Finalizing page optimization ...
+@workmesh/web:build:    Collecting build traces ...
+@workmesh/web:build: 
+@workmesh/web:build: Route (app)                                 Size  First Load JS
+@workmesh/web:build: ┌ ○ /                                    77.5 kB         363 kB
+@workmesh/web:build: ├ ○ /_not-found                            131 B         103 kB
+@workmesh/web:build: ├ ƒ /agent-sessions/[id]                   992 B         280 kB
+@workmesh/web:build: ├ ○ /agents                              27.6 kB         239 kB
+@workmesh/web:build: ├ ƒ /agents/[id]                         6.04 kB         285 kB
+@workmesh/web:build: ├ ○ /apple-icon.png                          0 B            0 B
+@workmesh/web:build: ├ ○ /connect                             13.1 kB         190 kB
+@workmesh/web:build: ├ ○ /icon.png                                0 B            0 B
+@workmesh/web:build: ├ ○ /install                             6.21 kB         183 kB
+@workmesh/web:build: ├ ƒ /livez                                 131 B         103 kB
+@workmesh/web:build: ├ ○ /login                               5.99 kB         183 kB
+@workmesh/web:build: ├ ○ /operations                          9.96 kB         201 kB
+@workmesh/web:build: ├ ƒ /readyz                                131 B         103 kB
+@workmesh/web:build: ├ ○ /settings                            14.6 kB         197 kB
+@workmesh/web:build: ├ ○ /settings/agent-workbench            45.3 kB         236 kB
+@workmesh/web:build: ├ ○ /ui-catalog                          3.09 kB         180 kB
+@workmesh/web:build: └ ○ /workbench                           10.4 kB         254 kB
+@workmesh/web:build: + First Load JS shared by all             103 kB
+@workmesh/web:build:   ├ chunks/202-579a6ac7273e6498.js       46.5 kB
+@workmesh/web:build:   ├ chunks/a1e4b416-8dc067520d41ca1a.js  54.2 kB
+@workmesh/web:build:   └ other shared chunks (total)          2.02 kB
+@workmesh/web:build: 
+@workmesh/web:build: 
+@workmesh/web:build: ○  (Static)   prerendered as static content
+@workmesh/web:build: ƒ  (Dynamic)  server-rendered on demand
+@workmesh/web:build: 
+
+ Tasks:    18 successful, 18 total
+Cached:    14 cached, 18 total
+  Time:    1m19.541s 
+

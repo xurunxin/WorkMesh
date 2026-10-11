@@ -1,0 +1,48 @@
+{
+  "argv": [
+    "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "run",
+    "--server",
+    "http://127.0.0.1:65175",
+    "--print-logs",
+    "--format",
+    "json",
+    "--model",
+    "m5-local/controlled",
+    "Call only the supplied WorkMesh tools, then report the verified public result."
+  ],
+  "startedAt": "2026-10-11T04:15:52.088Z",
+  "endedAt": "2026-10-11T04:15:53.723Z",
+  "runtimeMs": 1634.6447000000044,
+  "stdout": "{\"type\":\"step_start\",\"timestamp\":1791692152279,\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"part\":{\"id\":\"prt_1292c9dd7001ohoFEWbbHJmqG6\",\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"messageID\":\"msg_1292c9dba001rW3IAV2lw6h11C\",\"type\":\"step-start\"}}\n{\"type\":\"tool_use\",\"timestamp\":1791692152371,\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"part\":{\"partID\":\"prt_1292c9dda001JOWDZNFwR8f412\",\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"messageID\":\"msg_1292c9dba001rW3IAV2lw6h11C\",\"type\":\"tool\",\"id\":\"180db425-71ec-4cc1-8cb3-388ae96e9599\",\"tool\":\"workmesh_get_usage_summary\",\"state\":{\"status\":\"completed\",\"input\":{},\"output\":\"{\\\"input_tokens\\\":\\\"0\\\",\\\"output_tokens\\\":\\\"0\\\",\\\"runtime_ms\\\":\\\"0\\\",\\\"tool_calls\\\":\\\"0\\\",\\\"unknown_cost_records\\\":0,\\\"currency_buckets\\\":[]}\",\"title\":\"workmesh_get_usage_summary\",\"metadata\":{\"metadata\":{\"truncated\":false},\"content\":[{\"type\":\"text\",\"text\":\"{\\\"input_tokens\\\":\\\"0\\\",\\\"output_tokens\\\":\\\"0\\\",\\\"runtime_ms\\\":\\\"0\\\",\\\"tool_calls\\\":\\\"0\\\",\\\"unknown_cost_records\\\":0,\\\"currency_buckets\\\":[]}\"}],\"providerCall\":{\"executed\":false},\"providerResult\":{\"executed\":false},\"rawInput\":\"{}\"},\"time\":{\"start\":1791692152282,\"end\":1791692152371}}}}\n{\"type\":\"step_finish\",\"timestamp\":1791692152374,\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"part\":{\"id\":\"prt_1292c9e36001CgScHSB5VrPixl\",\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"messageID\":\"msg_1292c9dba001rW3IAV2lw6h11C\",\"type\":\"step-finish\",\"reason\":\"tool-calls\",\"cost\":0,\"tokens\":{\"input\":1,\"output\":1,\"reasoning\":\"[redacted]\",\"cache\":{\"read\":0,\"write\":0}}}}\n{\"type\":\"text\",\"timestamp\":1791692152421,\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"part\":{\"id\":\"prt_1292c9e40001gGUkwv2LaYomdT_text-0\",\"sessionID\":\"ses_ed6d36263ffeJdLEvhvKkOzixp\",\"messageID\":\"msg_1292c9e40001gGUkwv2LaYomdT\",\"type\":\"text\",\"text\":\"M5 public result verified.\",\"time\":{\"start\":1791692152401,\"end\":1791692152421}}}\n",
+  "stderr": "",
+  "nativeExit": 0,
+  "signal": null,
+  "captures": [
+    {
+      "sequence": 2,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [],
+      "call": {
+        "name": "workmesh_get_usage_summary",
+        "arguments": {}
+      }
+    },
+    {
+      "sequence": 3,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [
+        "{\"input_tokens\":\"0\",\"output_tokens\":\"0\",\"runtime_ms\":\"0\",\"tool_calls\":\"0\",\"unknown_cost_records\":0,\"currency_buckets\":[]}"
+      ],
+      "call": null
+    }
+  ],
+  "actualClient": "opencode",
+  "scope": "E"
+}

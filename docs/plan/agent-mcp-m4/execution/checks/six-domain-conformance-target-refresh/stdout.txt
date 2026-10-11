@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/conformance
+
+ ❯ src/optional-domains.conformance.test.ts (9 tests | 9 skipped) 2963ms
+   ↓ M4 独立六域实际消费者 > 真实SDK/MCP C/E分页与四读正反例，origin与target准确分离
+   ↓ M4 独立六域实际消费者 > 普通saved view保owner、分页cursor；同key/body回执与异体冲突
+   ↓ M4 独立六域实际消费者 > usage本人/projectless与币种unknown，dedupe及异体冲突
+   ↓ M4 独立六域实际消费者 > Loop同occurrence回执、两请求no-overlap竞争及Human暂停拒绝
+   ↓ M4 独立六域实际消费者 > usage事务真实触发器故障：usage/event/outbox零新增，恢复后一次提交
+   ↓ M4 独立六域实际消费者 > 六feature默认关闭明确拒绝，合法身份不变管理权限
+   ↓ M4 独立六域实际消费者 > 真实Pi模型实收完整Template、run、usage、规则/Loop、项目rollup与A2A拒绝
+   ↓ M4 独立六域实际消费者 > 现有native OpenCode实收准确E的rollup/usage，未使用Human cookie
+   ↓ M4 独立六域实际消费者 > API重启从A2A独立cursor恢复，Stop后旧E不能读run或写usage
+
+ Test Files  1 failed (1)
+      Tests  9 skipped (9)
+   Start at  12:01:17
+   Duration  6.42s (transform 1.21s, setup 0ms, collect 3.05s, tests 2.96s, environment 0ms, prepare 126ms)
+
+undefined
+C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\conformance:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config vitest.integration.config.ts src/optional-domains.conformance.test.ts

@@ -1,0 +1,233 @@
+{
+  "root": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-9bd8efdd-6202-4823-87ee-c8e5599e271b",
+  "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+  "binaryBytes": 212567080,
+  "binarySha256": "e13e57a7f6b7abddec887e0b2d912d22484077c50dff5bed4f3199bcf63b6088",
+  "paths": {
+    "config": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-9bd8efdd-6202-4823-87ee-c8e5599e271b\\config",
+    "data": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-9bd8efdd-6202-4823-87ee-c8e5599e271b\\data",
+    "state": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-9bd8efdd-6202-4823-87ee-c8e5599e271b\\state",
+    "cache": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-9bd8efdd-6202-4823-87ee-c8e5599e271b\\cache",
+    "work": "C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-m5-opencode-Ci8zD1",
+    "tmp": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-9bd8efdd-6202-4823-87ee-c8e5599e271b\\tmp"
+  },
+  "proxyUrl": "http://127.0.0.1:63767",
+  "homeUnchanged": true,
+  "userprofileUnchanged": true,
+  "protectedBefore": {
+    "path": "C:\\Users\\xurx\\.config\\opencode\\service.json",
+    "bytes": 64,
+    "mtimeMs": 1790335151963.1982
+  },
+  "protectedUserFilesBefore": [
+    {
+      "path": "C:\\Users\\xurx\\.config\\opencode\\opencode.json",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.config\\opencode\\opencode.jsonc",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.config\\opencode\\service.json",
+      "bytes": 64,
+      "mtimeMs": 1790335151963.1982
+    },
+    {
+      "path": "C:\\Users\\xurx\\.local\\share\\opencode\\auth.json",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.local\\state\\opencode\\service.json",
+      "bytes": 164,
+      "mtimeMs": 1791360843733.249
+    }
+  ],
+  "blockedRequests": [],
+  "processes": [
+    {
+      "pid": 39912,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "debug",
+        "paths"
+      ],
+      "registeredAt": "2026-10-11T04:34:33.092Z",
+      "exitObservedAt": "2026-10-11T04:34:33.795Z"
+    },
+    {
+      "pid": 45020,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "debug",
+        "config"
+      ],
+      "registeredAt": "2026-10-11T04:34:34.458Z",
+      "exitObservedAt": "2026-10-11T04:34:38.938Z"
+    },
+    {
+      "pid": 53108,
+      "parentPid": 45020,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "commandLine": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe serve --service",
+      "registeredAt": "2026-10-11T04:34:37.731Z",
+      "exitObservedAt": "2026-10-11T04:34:42.232Z"
+    },
+    {
+      "pid": 42900,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "service",
+        "stop"
+      ],
+      "registeredAt": "2026-10-11T04:34:38.965Z",
+      "exitObservedAt": "2026-10-11T04:34:45.771Z"
+    },
+    {
+      "pid": 27700,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "serve",
+        "--stdio",
+        "--hostname",
+        "127.0.0.1",
+        "--port",
+        "0",
+        "--print-logs"
+      ],
+      "registeredAt": "2026-10-11T04:34:45.773Z",
+      "exitObservedAt": "2026-10-11T04:34:53.423Z"
+    },
+    {
+      "pid": 34208,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "run",
+        "--server",
+        "http://127.0.0.1:63792",
+        "--print-logs",
+        "--format",
+        "json",
+        "--model",
+        "m5-local/controlled",
+        "Call only the supplied WorkMesh tools, then report the verified public result."
+      ],
+      "registeredAt": "2026-10-11T04:34:46.976Z",
+      "exitObservedAt": "2026-10-11T04:34:47.769Z"
+    },
+    {
+      "pid": 47288,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "run",
+        "--server",
+        "http://127.0.0.1:63792",
+        "--print-logs",
+        "--format",
+        "json",
+        "--model",
+        "m5-local/controlled",
+        "Call only the supplied WorkMesh tools, then report the verified public result."
+      ],
+      "registeredAt": "2026-10-11T04:34:48.405Z",
+      "exitObservedAt": "2026-10-11T04:34:49.138Z"
+    },
+    {
+      "pid": 39076,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "run",
+        "--server",
+        "http://127.0.0.1:63792",
+        "--print-logs",
+        "--format",
+        "json",
+        "--model",
+        "m5-local/controlled",
+        "Call only the supplied WorkMesh tools, then report the verified public result."
+      ],
+      "registeredAt": "2026-10-11T04:34:49.794Z",
+      "exitObservedAt": "2026-10-11T04:34:50.520Z"
+    },
+    {
+      "pid": 33336,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "run",
+        "--server",
+        "http://127.0.0.1:63792",
+        "--print-logs",
+        "--format",
+        "json",
+        "--model",
+        "m5-local/controlled",
+        "Call only the supplied WorkMesh tools, then report the verified public result."
+      ],
+      "registeredAt": "2026-10-11T04:34:51.198Z",
+      "exitObservedAt": "2026-10-11T04:34:51.946Z"
+    },
+    {
+      "pid": 38204,
+      "parentPid": 52248,
+      "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "argv": [
+        "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+        "service",
+        "stop"
+      ],
+      "registeredAt": "2026-10-11T04:34:52.719Z",
+      "exitObservedAt": "2026-10-11T04:34:53.423Z"
+    }
+  ],
+  "allOwnedProcessesExited": true,
+  "proxyClosed": true,
+  "nativeServerUrl": "http://127.0.0.1:63792",
+  "nativeServerListenerClosed": true,
+  "protectedAfter": {
+    "path": "C:\\Users\\xurx\\.config\\opencode\\service.json",
+    "bytes": 64,
+    "mtimeMs": 1790335151963.1982
+  },
+  "protectedUserFilesAfter": [
+    {
+      "path": "C:\\Users\\xurx\\.config\\opencode\\opencode.json",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.config\\opencode\\opencode.jsonc",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.config\\opencode\\service.json",
+      "bytes": 64,
+      "mtimeMs": 1790335151963.1982
+    },
+    {
+      "path": "C:\\Users\\xurx\\.local\\share\\opencode\\auth.json",
+      "exists": false
+    },
+    {
+      "path": "C:\\Users\\xurx\\.local\\state\\opencode\\service.json",
+      "bytes": 164,
+      "mtimeMs": 1791360843733.249
+    }
+  ],
+  "protectedUnchanged": true,
+  "recoveryDirectoryPreserved": true
+}

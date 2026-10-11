@@ -1,0 +1,564 @@
+{
+  "schemaVersion": 1,
+  "kind": "workmesh.d0.visual-baseline",
+  "generatedAt": "2026-10-07T10:39:57.956Z",
+  "sourceCommit": "32789cec4d50db0b85a63d91049cc425d9e917a2",
+  "sourcePlan": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+  "sourceAdr": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+  "platformTodo": {
+    "id": "MPhtZiff23B33m9i2equq",
+    "blocks": "IJQA_DfxU0hF5e8L5Xb3v"
+  },
+  "workmesh": {
+    "projectId": null,
+    "workItemId": null,
+    "synchronized": false,
+    "reason": "本批已获用户批准使用 Todos＋仓库替代双轨记录；未创建或同步真实 WorkMesh 记录，不再等待其连接。"
+  },
+  "visualStatus": "passed",
+  "d1Gate": "closed",
+  "gateReason": "D0 基线清单、DoD 与必需检查已满足；D1a 还依赖 G1/P1/R1，未由本交付验收，不放行其他前置。PRD 陈旧引用不是 D0 采集/检查阻塞。",
+  "screenshotCount": 14,
+  "independentCaptureCount": 56,
+  "browserLaunchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb"
+  ],
+  "comparator": {
+    "maxDiffPixels": 0,
+    "threshold": 0.005,
+    "captureEquality": "每轮两个独立上下文的 PNG SHA-256 必须相同",
+    "pairCaptureEvaluation": "仅比较原始 PNG SHA-256，不使用视觉容差",
+    "restartReplayEvaluation": "Playwright toHaveScreenshot 使用 threshold=0.005、maxDiffPixels=0；通过不蕴含哈希相同",
+    "thresholdBasis": "零颜色阈值时移动详情原始 13 个圆角边缘像素每通道最多差 1，比较器报告 1 个差异像素；保留失败证据后选择微小颜色感知容差，也可能容许其他微小颜色差异",
+    "productVisualApproval": false
+  },
+  "sources": [
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b"
+    },
+    {
+      "path": "packages/ui/src/tokens.css",
+      "sha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d"
+    },
+    {
+      "path": "apps/web/app/styles.css",
+      "sha256": "a653c821f08c154f9877123e5858e08daa4a2ff3e20558eedb13a962092ba910"
+    },
+    {
+      "path": "apps/web/features/navigation/theme.tsx",
+      "sha256": "05daf2cf407b8899b4d839450cb8d96f427c6f03181688ffcedef88a2ae0e32b"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.module.css",
+      "sha256": "26318e154f3e3209df8ec886599acc536c6cbbe77fb54a5d95896d80ae1aeac6"
+    },
+    {
+      "path": "apps/web/e2e/project-work-preview-server.mjs",
+      "sha256": "f92f5b068eca0c21a6d3752df7f0268607734ac498babf9f34d8f9a6790ca9c3"
+    },
+    {
+      "path": "apps/web/playwright.d0.config.ts",
+      "sha256": "6aedf7ff937aebcf3ba84f03493e0292cbd5f38bd119191293432885efef0865"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts",
+      "sha256": "2c5fb65c1386bc407029791faaa9ff1d641cf63e4fc715bc55bf6ff3d36975d3"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-screenshot.css",
+      "sha256": "d58e03cdd879ae52358a06dc67efed1e07d381fdb8f9ab3c8e5d207dc731ba2b"
+    }
+  ],
+  "entries": [
+    {
+      "surface": "Agent 详情",
+      "route": "/agents/agent%2F1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+      "captureSha256": [
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "看板",
+      "route": "/?view=projects&project=project-1&tab=board",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/board.png",
+      "captureSha256": [
+        "480d5a27d9f4f9c634596e6df66ded96a3bff995a9a2d385a604a9a33416252c",
+        "480d5a27d9f4f9c634596e6df66ded96a3bff995a9a2d385a604a9a33416252c"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "480d5a27d9f4f9c634596e6df66ded96a3bff995a9a2d385a604a9a33416252c",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "480d5a27d9f4f9c634596e6df66ded96a3bff995a9a2d385a604a9a33416252c",
+        "480d5a27d9f4f9c634596e6df66ded96a3bff995a9a2d385a604a9a33416252c"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "工作项详情",
+      "route": "/?view=my-work&workItem=work-101",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+      "captureSha256": [
+        "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+        "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+        "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "工作项列表",
+      "route": "/?view=my-work",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/issues-list.png",
+      "captureSha256": [
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "项目总览",
+      "route": "/?view=projects&project=project-1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/project.png",
+      "captureSha256": [
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+        "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "设置",
+      "route": "/settings?team=team-page-2",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/settings.png",
+      "captureSha256": [
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+        "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "工作台",
+      "route": "/workbench",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/workbench.png",
+      "captureSha256": [
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "Agent 详情",
+      "route": "/agents/agent%2F1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/agent-detail.png",
+      "captureSha256": [
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "看板",
+      "route": "/?view=projects&project=project-1&tab=board",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/board.png",
+      "captureSha256": [
+        "b28e57a008a634beba2efe006e6b4f7571eb7e4c513030f7b407fc4fb1227d51",
+        "b28e57a008a634beba2efe006e6b4f7571eb7e4c513030f7b407fc4fb1227d51"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "b28e57a008a634beba2efe006e6b4f7571eb7e4c513030f7b407fc4fb1227d51",
+      "imageSize": {
+        "width": 390,
+        "height": 897
+      },
+      "replaySha256": [
+        "b28e57a008a634beba2efe006e6b4f7571eb7e4c513030f7b407fc4fb1227d51",
+        "b28e57a008a634beba2efe006e6b4f7571eb7e4c513030f7b407fc4fb1227d51"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "工作项详情",
+      "route": "/?view=my-work&workItem=work-101",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/issue-detail.png",
+      "captureSha256": [
+        "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+        "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+        "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "工作项列表",
+      "route": "/?view=my-work",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/issues-list.png",
+      "captureSha256": [
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "项目总览",
+      "route": "/?view=projects&project=project-1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/project.png",
+      "captureSha256": [
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "设置",
+      "route": "/settings?team=team-page-2",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/settings.png",
+      "captureSha256": [
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    },
+    {
+      "surface": "工作台",
+      "route": "/workbench",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/workbench.png",
+      "captureSha256": [
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true
+    }
+  ],
+  "environment": {
+    "os": "Windows 11 专业工作站版",
+    "osVersion": "10.0.26300",
+    "node": "24.20.0",
+    "pnpm": "9.15.4",
+    "playwright": "1.61.1",
+    "chromium": "149.0.7827.55"
+  },
+  "requiredChecks": {
+    "succeeded": true,
+    "evidence": "evidence/checks.json",
+    "remainingConditionalSkips": 3
+  },
+  "batchExecution": {
+    "controlPlane": "todos-and-repository",
+    "approval": {
+      "approvedAt": "2026-10-07T18:38:00+08:00",
+      "scope": "仅本批使用 Todos 编排和执行记录、仓库存放规格及证据，替代真实 WorkMesh 双轨记录；其余领域、安全、测试约束保持",
+      "source": "用户本轮完整 D0 规格与反馈，已与 Todos #10 当前规格核对",
+      "sourceTodo": "MPhtZiff23B33m9i2equq",
+      "recordedIn": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+      "futureDesignCredentialPermissionAndExternalReleaseRequireSeparateApproval": true
+    },
+    "realWorkmeshSynchronizationRequiredForThisBatch": false
+  },
+  "d0Status": "passed",
+  "reviewStatus": "awaiting_independent_review",
+  "downstream": {
+    "d1a": "IJQA_DfxU0hF5e8L5Xb3v",
+    "d1b": "2j2sxT5wJ-l001efH_meJ",
+    "d1aPrerequisites": [
+      "G1",
+      "P1",
+      "R1",
+      "D0"
+    ],
+    "otherPrerequisitesVerifiedByThisDelivery": false
+  },
+  "feedbackVerification": "evidence/feedback-verification.json"
+}

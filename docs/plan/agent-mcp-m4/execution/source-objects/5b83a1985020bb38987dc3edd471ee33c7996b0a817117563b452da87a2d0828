@@ -1,0 +1,1048 @@
+import { describe, expect, it } from "vitest";
+import { appendActivityInputSchema } from "@workmesh/contracts";
+import {
+  assertRetentionSoakSessionLiveness,
+  RETENTION_SOAK_HARD_STALE_MS,
+  RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS,
+  RETENTION_SOAK_REFRESH_BUDGET_MS,
+  retentionSoakActivityPayload,
+  retentionSoakDryRunPlan,
+  retentionSoakLivenessBudget,
+  retentionSoakPreflight,
+  retentionSoakReport,
+  type RetentionSoakFormalEvidence,
+  type RetentionSoakSample,
+  type RetentionSoakThresholds,
+} from "./retention-soak.js";
+import { retentionSoakDrainConverged } from "./retention-soak-convergence.js";
+
+const safe = {
+  WORKMESH_RETENTION_SOAK: "1",
+  WORKMESH_RETENTION_SOAK_DRY_RUN: "1",
+  RUN_INTEGRATION: "1",
+  DATABASE_URL:
+    "postgres://user:password@localhost:5432/workmesh_test_retention",
+  REDIS_URL: "redis://localhost:6379",
+  WORKMESH_EVENT_PRUNE_ENABLED: "false",
+  WORKMESH_RETENTION_CLEANUP_ENABLED: "false",
+  WORKMESH_RETENTION_ARCHIVE_ENABLED: "true",
+  WORKMESH_RETENTION_SOAK_API_URL: "http://127.0.0.1:3001",
+  WORKMESH_RETENTION_SOAK_SESSION_ID: "00000000-0000-4000-8000-000000000001",
+  WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN: "test-installation-token",
+  WORKMESH_RETENTION_SOAK_STATE_PATH: "/private/session.json",
+  WORKMESH_RETENTION_SOAK_EXPECTED_SHA: "a".repeat(40),
+  WORKMESH_RETENTION_SOAK_API_CONTAINER: "workmesh-api",
+  WORKMESH_RETENTION_SOAK_WORKER_CONTAINER: "workmesh-worker",
+  WORKMESH_RETENTION_SOAK_POSTGRES_CONTAINER: "workmesh-postgres",
+  WORKMESH_RETENTION_SOAK_REDIS_CONTAINER: "workmesh-redis",
+  WORKMESH_RETENTION_SOAK_MINIO_CONTAINER: "workmesh-minio",
+};
+
+const thresholds: RetentionSoakThresholds = {
+  maximumArchiveBacklog: 5,
+  maximumArchiveLatencyMs: 300_000,
+  maximumOutboxPending: 5,
+  maximumOutboxLagMs: 60_000,
+  maximumCpuPercent: 85,
+  maximumMemoryBytes: 1_073_741_824,
+  maximumDatabaseConnections: 50,
+  maximumRedisConnections: 50,
+  maximumHeartbeatLatencyMs: 1_000,
+  maximumActivityLatencyMs: 2_000,
+  maximumDatabaseRowsSlopePerHour: 24,
+  maximumDatabaseBytesSlopePerHour: 16_777_216,
+  maximumTableBytesSlopePerHour: 8_388_608,
+  maximumDeadTuplesSlopePerHour: 100,
+  maximumRedisLengthSlopePerHour: 24,
+  maximumContainerMemorySlopeBytesPerHour: 16_777_216,
+};
+
+const workerContainerId = `sha256:${"worker".padEnd(64, "1").slice(0, 64)}`;
+const workerInstanceId = "00000000-0000-4000-8000-000000000001";
+const provenanceEvidence: RetentionSoakFormalEvidence["provenance"] = {
+  verified: true,
+  expectedBuildSha: "a".repeat(40),
+  sourceHeadSha: "a".repeat(40),
+  apiBuildSha: "a".repeat(40),
+  composeProject: "workmesh-proof",
+  workerRuntimeIdentity: {
+    schemaVersion: 1,
+    instanceId: workerInstanceId,
+    buildSha: "a".repeat(40),
+    startedAt: "2026-07-28T00:00:00.000Z",
+    containerId: workerContainerId,
+  },
+  endpoints: {
+    api: {
+      role: "api",
+      scheme: "http",
+      hostname: "127.0.0.1",
+      hostPort: 3001,
+      containerPort: 3001,
+      containerId: "sha256:api",
+    },
+    postgres: {
+      role: "postgres",
+      scheme: "postgres",
+      hostname: "localhost",
+      hostPort: 5432,
+      containerPort: 5432,
+      containerId: "sha256:postgres",
+    },
+    redis: {
+      role: "redis",
+      scheme: "redis",
+      hostname: "localhost",
+      hostPort: 6379,
+      containerPort: 6379,
+      containerId: "sha256:redis",
+    },
+  },
+  roles: Object.fromEntries(
+    ["api", "worker", "postgres", "redis", "minio"].map((role) => [
+      role,
+      {
+        containerName: `workmesh-${role}`,
+        containerId: `sha256:${role.padEnd(64, "1").slice(0, 64)}`,
+        imageId: `sha256:${role.padEnd(64, "2").slice(0, 64)}`,
+        imageDigest: `example/${role}@sha256:${role
+          .padEnd(64, "3")
+          .slice(0, 64)}`,
+        revision:
+          role === "api" || role === "worker"
+            ? "a".repeat(40)
+            : `infra-${role}`,
+        composeProject: "workmesh-proof",
+        composeService: role,
+      },
+    ]),
+  ) as RetentionSoakFormalEvidence["provenance"]["roles"],
+};
+const formalEvidence: RetentionSoakFormalEvidence = {
+  heartbeat: {
+    healthy: true,
+    successfulHeartbeats: 2,
+    initialServerAcceptedAt: "2026-07-28T00:00:00.000Z",
+    firstPumpAcceptedAt: "2026-07-28T00:00:01.000Z",
+    lastPumpAcceptedAt: "2026-07-29T00:00:00.000Z",
+    maximumObservedGapMs: 15_000,
+    maximumLatencyMs: 100,
+    lastLatencyMs: 50,
+    observedThroughAt: "2026-07-29T00:00:00.000Z",
+    trailingGapMs: 0,
+    failureCode: null,
+  },
+  lock: {
+    verified: true,
+    mechanism: "flock",
+    inheritedFd: 3,
+    sessionScopeSha256: `sha256:${"b".repeat(64)}`,
+    fdinfoLockMatched: true,
+    independentContentionObserved: true,
+  },
+  provenance: provenanceEvidence,
+  endingProvenance: provenanceEvidence,
+  provenanceUnchanged: true,
+  workerFreshness: {
+    initial: {
+      verified: true,
+      workerContainerId,
+      workerInstanceId,
+      workerBuildSha: "a".repeat(40),
+      workerIdentityConflictCount: "0",
+      workerMode: "archive_only",
+      workerSeenAt: "2026-07-27T23:59:59.000Z",
+      observedAt: "2026-07-28T00:00:00.000Z",
+      ageMs: 1_000,
+    },
+    ending: {
+      verified: true,
+      workerContainerId,
+      workerInstanceId,
+      workerBuildSha: "a".repeat(40),
+      workerIdentityConflictCount: "0",
+      workerMode: "archive_only",
+      workerSeenAt: "2026-07-28T23:59:59.000Z",
+      observedAt: "2026-07-29T00:00:00.000Z",
+      ageMs: 1_000,
+    },
+  },
+};
+
+const sample = (
+  overrides: Partial<RetentionSoakSample> = {},
+): RetentionSoakSample => ({
+  sampledAt: "2026-07-28T00:00:00.000Z",
+  floor: "0",
+  workerMode: "archive_only",
+  workerFresh: true,
+  archive: {
+    planned: 0,
+    uploaded: 0,
+    verified: 1,
+    verifiedRows: 1,
+    failed: 0,
+    pruned: 0,
+    backlog: 0,
+    maximumLatencyMs: 100,
+    currentRunGenerated: 0,
+    currentRunArchived: 0,
+  },
+  outbox: { pending: 0, maximumLagMs: 0 },
+  redis: { length: 10, connections: 2 },
+  database: {
+    rows: 100,
+    sizeBytes: 1_000,
+    tableSizeBytes: 500,
+    deadTuples: 0,
+    connections: 3,
+  },
+  workload: {
+    heartbeats: 1,
+    activities: 1,
+    heartbeatLatencyMs: 10,
+    activityLatencyMs: 20,
+  },
+  containers: {
+    "workmesh-api": { cpuPercent: 1, memoryBytes: 10_000 },
+  },
+  ...overrides,
+});
+
+describe("retention soak harness", () => {
+  it("uses a contract-valid durable activity pulse", () => {
+    expect(
+      appendActivityInputSchema.safeParse(retentionSoakActivityPayload).success,
+    ).toBe(true);
+    expect(retentionSoakActivityPayload).toMatchObject({
+      kind: "status",
+      visibility: "team",
+      ephemeral: false,
+    });
+  });
+
+  it("requires a formal 24-hour archive-only isolated workload", () => {
+    expect(retentionSoakPreflight(safe)).toMatchObject({
+      durationMs: 86_400_000,
+      sampleIntervalMs: 30_000,
+      dryRun: true,
+      thresholds,
+      liveness: {
+        hardStaleMs: 120_000,
+        sampleIntervalMs: 30_000,
+        heartbeatIntervalMs: 15_000,
+        refreshOperationBudgetMs: 45_000,
+        workloadRequestBudgetMs: 10_000,
+        maximumInitialHeartbeatGapMs: 100_000,
+        maximumSteadyHeartbeatGapMs: 80_000,
+        maximumExpectedHeartbeatGapMs: 100_000,
+        safetyMarginMs: 20_000,
+        maximumInitialHeartbeatAgeMs: 45_000,
+      },
+    });
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        DATABASE_URL: "postgres://user:password@localhost:5432/workmesh",
+      }),
+    ).toThrow("RETENTION_SOAK_REQUIRES_ISOLATED_TEST_DATABASE");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_CLEANUP_ENABLED: "true",
+      }),
+    ).toThrow("RETENTION_SOAK_REQUIRES_CLEANUP_DISABLED");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_HOURS: "1",
+      }),
+    ).toThrow("RETENTION_SOAK_FORMAL_DURATION_MUST_BE_24_HOURS");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_SAMPLE_SECONDS: "31",
+      }),
+    ).toThrow("RETENTION_SOAK_SAMPLE_INTERVAL_INVALID");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_MINIO_CONTAINER: "",
+      }),
+    ).toThrow("RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_MINIO_CONTAINER: "workmesh-redis",
+      }),
+    ).toThrow("RETENTION_SOAK_CONTAINER_ROLE_MAPPING_INVALID");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_EXPECTED_SHA: "dirty-sha",
+      }),
+    ).toThrow("RETENTION_SOAK_EXPECTED_SHA_INVALID");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_MAX_CPU_PERCENT: "86",
+      }),
+    ).toThrow("RETENTION_SOAK_THRESHOLDS_MUST_NOT_BE_LOOSENED");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_REALTIME_REDIS_MAXLEN: "100001",
+      }),
+    ).toThrow("RETENTION_SOAK_THRESHOLDS_MUST_NOT_BE_LOOSENED");
+    expect(() =>
+      retentionSoakPreflight({
+        ...safe,
+        WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN: "",
+        WORKMESH_RETENTION_SOAK_SESSION_TOKEN: "must-not-be-used",
+      }),
+    ).toThrow("RETENTION_SOAK_REQUIRES_ACTIVE_API_WORKLOAD");
+  });
+
+  it("derives a conservative heartbeat liveness budget and rejects delayed reuse", () => {
+    const budget = retentionSoakLivenessBudget(
+      RETENTION_SOAK_MAX_SAMPLE_INTERVAL_MS,
+    );
+    expect(budget).toEqual({
+      hardStaleMs: RETENTION_SOAK_HARD_STALE_MS,
+      sampleIntervalMs: 30_000,
+      heartbeatIntervalMs: 15_000,
+      refreshOperationBudgetMs: RETENTION_SOAK_REFRESH_BUDGET_MS,
+      workloadRequestBudgetMs: 10_000,
+      maximumInitialHeartbeatGapMs: 100_000,
+      maximumSteadyHeartbeatGapMs: 80_000,
+      maximumExpectedHeartbeatGapMs: 100_000,
+      safetyMarginMs: 20_000,
+      maximumInitialHeartbeatAgeMs: 45_000,
+    });
+    const now = new Date("2026-07-29T00:00:45.000Z");
+    expect(() =>
+      assertRetentionSoakSessionLiveness(
+        {
+          state: "executing",
+          heartbeatHealth: "healthy",
+          lastHeartbeatAt: new Date("2026-07-29T00:00:00.000Z"),
+        },
+        now,
+        budget,
+      ),
+    ).not.toThrow();
+    expect(() =>
+      assertRetentionSoakSessionLiveness(
+        {
+          state: "executing",
+          heartbeatHealth: "healthy",
+          lastHeartbeatAt: new Date("2026-07-28T23:59:59.999Z"),
+        },
+        now,
+        budget,
+      ),
+    ).toThrow("RETENTION_SOAK_SESSION_STALE_REPROVISION_REQUIRED");
+    expect(() =>
+      assertRetentionSoakSessionLiveness(
+        {
+          state: "stale",
+          heartbeatHealth: "stale",
+          lastHeartbeatAt: now,
+        },
+        now,
+        budget,
+      ),
+    ).toThrow("RETENTION_SOAK_SESSION_STALE_REPROVISION_REQUIRED");
+  });
+
+  it("persists verified lock and provenance in the sanitized dry-run plan", () => {
+    const options = retentionSoakPreflight(safe);
+    const plan = retentionSoakDryRunPlan(
+      options,
+      formalEvidence.lock,
+      formalEvidence.provenance,
+    );
+    expect(plan).toMatchObject({
+      status: "dry_run",
+      containerStatsTargets: 5,
+      checks: {
+        heartbeatLivenessBudget: true,
+        formalLockVerified: true,
+        provenanceVerified: true,
+      },
+      lock: formalEvidence.lock,
+      provenance: {
+        expectedBuildSha: "a".repeat(40),
+        sourceHeadSha: "a".repeat(40),
+        apiBuildSha: "a".repeat(40),
+      },
+    });
+    expect(JSON.stringify(plan)).not.toContain(
+      safe.WORKMESH_RETENTION_SOAK_INSTALLATION_TOKEN,
+    );
+  });
+
+  it("passes only when events generated by this run are archived and queues converge", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample({
+      workload: {
+        heartbeats: 0,
+        activities: 0,
+        heartbeatLatencyMs: 0,
+        activityLatencyMs: null,
+      },
+    });
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        planned: 0,
+        uploaded: 0,
+        verified: 2,
+        verifiedRows: 2,
+        failed: 0,
+        pruned: 0,
+        backlog: 0,
+        maximumLatencyMs: 100,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: {
+        rows: 101,
+        sizeBytes: 2_000,
+        tableSizeBytes: 1_000,
+        deadTuples: 0,
+        connections: 3,
+      },
+      workload: {
+        heartbeats: 1_440,
+        activities: 1,
+        heartbeatLatencyMs: 10,
+        activityLatencyMs: 20,
+      },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        retentionSoakLivenessBudget(30_000),
+        formalEvidence,
+      ),
+    ).toMatchObject({
+      schemaVersion: 4,
+      status: "passed",
+      retentionFloorAdvanced: false,
+      checks: {
+        archivesVerifiedThisRun: true,
+        generatedEventsArchived: true,
+        generatedCursorEvidenceComplete: true,
+        archiveBacklogConverged: true,
+        outboxConverged: true,
+        tokenRotationExercised: true,
+        tokenNeverExpiredBeforeRefresh: true,
+        heartbeatLivenessBudget: true,
+        tokenRefreshLatencyWithinBudget: true,
+        heartbeatPumpSucceeded: true,
+        observedHeartbeatGapBounded: true,
+        formalLockVerified: true,
+        provenanceVerified: true,
+      },
+      actual: {
+        credentials: {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        generatedCursors: ["101"],
+        deltas: {
+          verifiedSegments: 1,
+          verifiedRows: 1,
+          databaseRows: 1,
+          currentRunGenerated: 1,
+          currentRunArchived: 1,
+        },
+      },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        retentionSoakLivenessBudget(30_000),
+        {
+          ...formalEvidence,
+          heartbeat: {
+            ...formalEvidence.heartbeat,
+            healthy: false,
+            maximumObservedGapMs: 100_001,
+            failureCode: "RETENTION_SOAK_HEARTBEAT_PUMP_FAILED",
+          },
+        },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: {
+        heartbeatPumpSucceeded: false,
+        observedHeartbeatGapBounded: false,
+      },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        retentionSoakLivenessBudget(30_000),
+        { ...formalEvidence, provenanceUnchanged: false },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { provenanceVerified: false },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 120,
+          expiredBeforeRefreshCount: 0,
+        },
+        retentionSoakLivenessBudget(30_000),
+        {
+          ...formalEvidence,
+          workerFreshness: {
+            ...formalEvidence.workerFreshness,
+            ending: {
+              ...formalEvidence.workerFreshness.ending,
+              workerIdentityConflictCount: "1",
+            },
+          },
+        },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { provenanceVerified: false },
+    });
+  });
+
+  it("fails the formal gate unless at least two token rotations complete", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample({
+      workload: {
+        heartbeats: 0,
+        activities: 0,
+        heartbeatLatencyMs: 0,
+        activityLatencyMs: null,
+      },
+    });
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        verified: 2,
+        verifiedRows: 2,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 1,
+          maximumRefreshLatencyMs: 100,
+          expiredBeforeRefreshCount: 0,
+        },
+      ),
+    ).toMatchObject({
+      schemaVersion: 4,
+      status: "failed",
+      checks: { tokenRotationExercised: false },
+      actual: { credentials: { refreshCount: 1 } },
+    });
+  });
+
+  it("fails the formal gate if a token expires before refresh", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample();
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        verified: 2,
+        verifiedRows: 2,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 100,
+          expiredBeforeRefreshCount: 1,
+        },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { tokenNeverExpiredBeforeRefresh: false },
+      actual: { credentials: { expiredBeforeRefreshCount: 1 } },
+    });
+  });
+
+  it("fails the formal gate if refresh latency exceeds the liveness budget", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample();
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        verified: 2,
+        verifiedRows: 2,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+        {
+          refreshCount: 2,
+          maximumRefreshLatencyMs: 45_001,
+          expiredBeforeRefreshCount: 0,
+        },
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { tokenRefreshLatencyWithinBudget: false },
+      liveness: { refreshOperationBudgetMs: 45_000 },
+    });
+  });
+
+  it("rejects a historical verified segment and zero current-run archive delta", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample();
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        currentRunGenerated: 1,
+        currentRunArchived: 0,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: {
+        archivesVerifiedThisRun: false,
+        generatedEventsArchived: false,
+        verifiedRowAccounting: false,
+      },
+    });
+  });
+
+  it("rejects aggregate-only archive evidence without exact generated cursors", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample();
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        verified: 2,
+        verifiedRows: 2,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: { generatedCursorEvidenceComplete: false },
+      actual: { generatedCursors: [] },
+    });
+  });
+
+  it("fails on positive resource growth, backlog, latency, and CPU beyond thresholds", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const strict: RetentionSoakThresholds = {
+      ...thresholds,
+      maximumArchiveBacklog: 0,
+      maximumArchiveLatencyMs: 50,
+      maximumOutboxPending: 0,
+      maximumOutboxLagMs: 50,
+      maximumCpuPercent: 5,
+      maximumMemoryBytes: 15_000,
+      maximumDatabaseRowsSlopePerHour: 0,
+      maximumDatabaseBytesSlopePerHour: 0,
+      maximumTableBytesSlopePerHour: 0,
+      maximumDeadTuplesSlopePerHour: 0,
+      maximumRedisLengthSlopePerHour: 0,
+      maximumContainerMemorySlopeBytesPerHour: 0,
+    };
+    const baseline = sample();
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        planned: 0,
+        uploaded: 0,
+        verified: 2,
+        verifiedRows: 2,
+        failed: 0,
+        pruned: 0,
+        backlog: 1,
+        maximumLatencyMs: 100,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      outbox: { pending: 1, maximumLagMs: 100 },
+      redis: { length: 20, connections: 2 },
+      database: {
+        rows: 110,
+        sizeBytes: 2_000,
+        tableSizeBytes: 1_000,
+        deadTuples: 10,
+        connections: 3,
+      },
+      containers: {
+        "workmesh-api": { cpuPercent: 10, memoryBytes: 20_000 },
+      },
+    });
+    expect(
+      retentionSoakReport(start, end, baseline, [finalSample], 100, strict, 1, [
+        "101",
+      ]),
+    ).toMatchObject({
+      status: "failed",
+      checks: {
+        archiveBacklogBounded: false,
+        archiveBacklogConverged: false,
+        outboxBounded: false,
+        outboxConverged: false,
+        latencyBounded: false,
+        cpuBounded: false,
+        memoryBounded: false,
+        databaseRowsGrowthBounded: false,
+        databaseBytesGrowthBounded: false,
+        tableBytesGrowthBounded: false,
+        deadTuplesGrowthBounded: false,
+        redisGrowthBounded: false,
+        containerMemoryGrowthBounded: false,
+      },
+    });
+  });
+
+  it("keeps recovered short spikes as diagnostics rather than leak failures", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const middle = new Date("2026-07-28T00:01:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const strict: RetentionSoakThresholds = {
+      ...thresholds,
+      maximumDatabaseRowsSlopePerHour: 1,
+      maximumDatabaseBytesSlopePerHour: 0,
+      maximumTableBytesSlopePerHour: 0,
+      maximumDeadTuplesSlopePerHour: 0,
+      maximumRedisLengthSlopePerHour: 0,
+      maximumContainerMemorySlopeBytesPerHour: 0,
+    };
+    const baseline = sample();
+    const archive = {
+      ...baseline.archive,
+      verified: 2,
+      verifiedRows: 2,
+      currentRunGenerated: 1,
+      currentRunArchived: 1,
+    };
+    const middleSample = sample({
+      sampledAt: middle.toISOString(),
+      archive,
+      redis: { length: 20, connections: 2 },
+      database: {
+        rows: 120,
+        sizeBytes: 2_000,
+        tableSizeBytes: 1_000,
+        deadTuples: 10,
+        connections: 3,
+      },
+      containers: {
+        "workmesh-api": { cpuPercent: 1, memoryBytes: 20_000 },
+      },
+    });
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive,
+      redis: { length: 10, connections: 2 },
+      database: {
+        rows: 101,
+        sizeBytes: 1_000,
+        tableSizeBytes: 500,
+        deadTuples: 0,
+        connections: 3,
+      },
+    });
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [middleSample, finalSample],
+        100,
+        strict,
+        2,
+        ["101"],
+      ),
+    ).toMatchObject({
+      status: "failed",
+      checks: {
+        databaseRowsGrowthBounded: true,
+        databaseBytesGrowthBounded: true,
+        tableBytesGrowthBounded: true,
+        deadTuplesGrowthBounded: true,
+        redisGrowthBounded: true,
+        containerMemoryGrowthBounded: true,
+      },
+      actual: {
+        trendGrowthSlopesPerHour: {
+          databaseRows: 0,
+          databaseBytes: 0,
+          tableBytes: 0,
+          deadTuples: 0,
+          redisLength: 0,
+          containerMemoryBytes: { "workmesh-api": 0 },
+        },
+      },
+    });
+  });
+
+  it("waits for archive, row, backlog, and outbox drain convergence", () => {
+    const baseline = sample();
+    const converged = sample({
+      archive: {
+        ...baseline.archive,
+        verified: 2,
+        verifiedRows: 2,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: { ...baseline.database, rows: 101 },
+    });
+
+    expect(retentionSoakDrainConverged(baseline, converged)).toBe(true);
+    expect(
+      retentionSoakDrainConverged(baseline, {
+        ...converged,
+        archive: { ...converged.archive, currentRunArchived: 0 },
+      }),
+    ).toBe(false);
+    expect(
+      retentionSoakDrainConverged(baseline, {
+        ...converged,
+        archive: { ...converged.archive, backlog: 1 },
+      }),
+    ).toBe(false);
+    expect(
+      retentionSoakDrainConverged(baseline, {
+        ...converged,
+        outbox: { ...converged.outbox, pending: 1 },
+      }),
+    ).toBe(false);
+  });
+
+  it("tolerates millisecond sampling skew at an exact 24-per-hour workload", () => {
+    const start = new Date("2026-07-28T00:00:00.000Z");
+    const end = new Date("2026-07-29T00:00:00.000Z");
+    const baseline = sample({ sampledAt: start.toISOString() });
+    const generated = 576;
+    const finalSample = sample({
+      sampledAt: "2026-07-28T23:59:59.983Z",
+      archive: {
+        ...baseline.archive,
+        verified: baseline.archive.verified + 1,
+        verifiedRows: baseline.archive.verifiedRows + generated,
+        currentRunGenerated: generated,
+        currentRunArchived: generated,
+      },
+      redis: {
+        ...baseline.redis,
+        length: baseline.redis.length + generated,
+      },
+      database: {
+        ...baseline.database,
+        rows: baseline.database.rows + generated,
+      },
+    });
+    const report = retentionSoakReport(
+      start,
+      end,
+      baseline,
+      [finalSample],
+      100,
+      thresholds,
+      1,
+      Array.from({ length: generated }, (_, index) => String(index + 101)),
+    );
+
+    expect(report.actual.endToEndSlopesPerHour.databaseRows).toBeGreaterThan(
+      24,
+    );
+    expect(report.actual.endToEndSlopesPerHour.redisLength).toBeGreaterThan(24);
+    expect(report.checks.databaseRowsGrowthBounded).toBe(true);
+    expect(report.checks.redisGrowthBounded).toBe(true);
+  });
+
+  it("rejects database facts not accounted for by generated activities", () => {
+    const start = new Date("2026-07-28T00:00:00.000Z");
+    const end = new Date("2026-07-29T00:00:00.000Z");
+    const baseline = sample({ sampledAt: start.toISOString() });
+    const finalSample = sample({
+      sampledAt: end.toISOString(),
+      archive: {
+        ...baseline.archive,
+        verified: baseline.archive.verified + 1,
+        verifiedRows: baseline.archive.verifiedRows + 1,
+        currentRunGenerated: 1,
+        currentRunArchived: 1,
+      },
+      database: {
+        ...baseline.database,
+        rows: baseline.database.rows + 2,
+      },
+    });
+
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [finalSample],
+        100,
+        thresholds,
+        1,
+        ["101"],
+      ).checks.generatedRowAccounting,
+    ).toBe(false);
+  });
+
+  it("fails on missing samples, stale Worker, floor movement, or Redis overflow", () => {
+    const start = new Date("2026-07-28T00:00:00Z");
+    const end = new Date("2026-07-29T00:00:00Z");
+    const baseline = sample();
+    expect(
+      retentionSoakReport(
+        start,
+        end,
+        baseline,
+        [
+          sample({
+            phase: "drain",
+            sampledAt: end.toISOString(),
+            floor: "1",
+            workerFresh: false,
+            redis: { length: 101, connections: 2 },
+          }),
+        ],
+        100,
+        thresholds,
+        1,
+      ),
+    ).toMatchObject({
+      status: "failed",
+      retentionFloorAdvanced: true,
+      activeSampleCount: 0,
+      drainSampleCount: 1,
+      checks: {
+        samplesComplete: false,
+        workerStayedFresh: false,
+        redisBounded: false,
+      },
+    });
+  });
+});

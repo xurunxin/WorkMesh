@@ -1,0 +1,2301 @@
+{
+  "main": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+  "frozen": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+  "records": [
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": ".env.example",
+      "gitBlob": "a67670480eb14d733845ab63fcc092102305d9d1",
+      "gitBytes": 7184,
+      "gitSha256": "c1a4ba91969230f2f8fb9dafe22e36b6d272f4022e57c8b45c65556aa97fd758",
+      "completeBlobRead": true,
+      "lines": 144,
+      "worktreeBytes": 7328,
+      "worktreeSha256": "494c8bf1c3acfd24759fa91aa3ad320be18898adb830848e999c3482f5b14e15",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": ".github/workflows/ci.yml",
+      "gitBlob": "539561fc9cdc80fe61410c5d2e96df524b4f8b46",
+      "gitBytes": 33151,
+      "gitSha256": "0f1a9bea97c2a86ce358d0ab3eccb7414e876c44c8f6367ba1d3397b055e3cf8",
+      "completeBlobRead": true,
+      "lines": 801,
+      "worktreeBytes": 33952,
+      "worktreeSha256": "d7e2c9bab848a707d6499c42f75ccddf66fc11d62fe3243aff81bd3d5118663c",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": ".node-version",
+      "gitBlob": "e2228113dd09b59b7a0398d4e70af19b5d2aff4c",
+      "gitBytes": 8,
+      "gitSha256": "3151949a8b43e7df5385b69fbaeb5652bbdc7f7924e4278d550348f42b103f13",
+      "completeBlobRead": true,
+      "lines": 1,
+      "worktreeBytes": 9,
+      "worktreeSha256": "751fc97484d12d7946b0ec9c74d94ecfa555de9daa35f040f037ae1fadc22958",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "AGENTS.md",
+      "gitBlob": "fe9114d161ce694a5fa3d0b4ba0efbf2c8ab1642",
+      "gitBytes": 9050,
+      "gitSha256": "25a0c33887733812dd1fc7f488cea57ef2e38a6436c788b5814562f22a88bb25",
+      "completeBlobRead": true,
+      "lines": 256,
+      "worktreeBytes": 9306,
+      "worktreeSha256": "a3eb6f9d3e9ebe6db6887f561f400db76207645d3478a84d83ae4332af20cf96",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "AGENT_PROTOCOL.md",
+      "gitBlob": "9d4a02e77dcd0008baa94fe44cda073d504c3237",
+      "gitBytes": 79798,
+      "gitSha256": "1f7fffcf77671c0efaba95e442b40f237060dc175a4dccee3adc808bf1562c92",
+      "completeBlobRead": true,
+      "lines": 1849,
+      "worktreeBytes": 81647,
+      "worktreeSha256": "948afc0030ad9256beb20e5589fc738b1bf96bcb3241e042ccf5ad857e3db515",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "CONTEXT.md",
+      "gitBlob": "ec382a5cbaff07f16bd49acb4336f5d930c0eb23",
+      "gitBytes": 5072,
+      "gitSha256": "30a05e460cc2bc337cf98f721b942804c58ff9cd9d1ab1690928e93d554d1499",
+      "completeBlobRead": true,
+      "lines": 105,
+      "worktreeBytes": 5177,
+      "worktreeSha256": "f4c047a902dcac2b49631d2cc8013c3f8eca09cee29eb500ca60a2716dd2658f",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "OPENAPI.yaml",
+      "gitBlob": "e371d1070cd7fb2d757e45c863736774088d4dd9",
+      "gitBytes": 559270,
+      "gitSha256": "867a3151fb5ce4db49a425ca7bb9f1171dbe63d890278ffb5643c000a5aa1130",
+      "completeBlobRead": true,
+      "lines": 8850,
+      "worktreeBytes": 568120,
+      "worktreeSha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "SCHEMA.sql",
+      "gitBlob": "6b4d99d910c7db0a6547bf7e4cf88c38ea01c563",
+      "gitBytes": 1598,
+      "gitSha256": "3836495ed9355c19262de2eca2a0f0a02b9ca85e7d7bbc21b11aacd30784dd08",
+      "completeBlobRead": true,
+      "lines": 32,
+      "worktreeBytes": 1630,
+      "worktreeSha256": "f5c265144a56b2974e32de5a301a4cb356693910a14f00dfb57ff13885a58987",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/agent-runner/skills/workmesh-workbench/SKILL.md",
+      "gitBlob": "87e728d1c62e07d73e449c24deb6a1b271e3c878",
+      "gitBytes": 9560,
+      "gitSha256": "485e17b94c8b191c0c1104a754aa6613ce1d4b989d90c34afca54f73cae35fd0",
+      "completeBlobRead": true,
+      "lines": 59,
+      "worktreeBytes": 9560,
+      "worktreeSha256": "485e17b94c8b191c0c1104a754aa6613ce1d4b989d90c34afca54f73cae35fd0",
+      "byteMapping": "identity"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/agent-runner/src/permission-matrix.test.ts",
+      "gitBlob": "427619a3d7926491a0d03e2cc807f1843cae1862",
+      "gitBytes": 15213,
+      "gitSha256": "8e5d6e7f0a1e64fd5ff3aa72fce3cdf541f90154dcce93b96b57fef2640daee5",
+      "completeBlobRead": true,
+      "lines": 242,
+      "worktreeBytes": 15455,
+      "worktreeSha256": "cf915360fa96bf1e3f20cdfa779b75c986f360e60445ba4989c9ad46f8ce54a0",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/agent-runner/src/run-session.ts",
+      "gitBlob": "6777938c8f7c14802b7be07aab34cc0e7cea3374",
+      "gitBytes": 43985,
+      "gitSha256": "ec242238ff5317d1ff571fc12c91b6066a2bbeb25d7768525f48c07efa5a2d2a",
+      "completeBlobRead": true,
+      "lines": 729,
+      "worktreeBytes": 44714,
+      "worktreeSha256": "350813f44fb30bea5712cd6538e1cb220ddd1a77bf92c37bdb25c4040b21c261",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "gitBlob": "b7f1658f067869d83d48bbb0d0b15db275f1127d",
+      "gitBytes": 69918,
+      "gitSha256": "d63882b5bdea2be47d2c87cde61f3645dab56acb5cc97765bda7a8586635cca8",
+      "completeBlobRead": true,
+      "lines": 763,
+      "worktreeBytes": 70681,
+      "worktreeSha256": "6de23b739ba3a6d2bf886df66d4cce03d688e52d3e637455be9e5bd984abefee",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "gitBlob": "5009e8341e2bfb7aab748920559bd56e4937aac6",
+      "gitBytes": 77919,
+      "gitSha256": "931a7feb0ba0a8c28ce8ad3b5a28eb15a05c6134f41626816dba70d15bb75ea7",
+      "completeBlobRead": true,
+      "lines": 2198,
+      "worktreeBytes": 80117,
+      "worktreeSha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/package.json",
+      "gitBlob": "a2c369a2e61b2fbf020fc0bc189639121b13671e",
+      "gitBytes": 1007,
+      "gitSha256": "5015aa7a9cee7b0c847366bba7ebddd736709d0ab59f058eb8355982535147e1",
+      "completeBlobRead": true,
+      "lines": 1,
+      "worktreeBytes": 1008,
+      "worktreeSha256": "c23e4382f7f6189e8b4c28624bc2e333d64d9e4a621b7bffa6f9fcaad74cab6b",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/agent/guard.ts",
+      "gitBlob": "70bfec2e99aba4e36282cd12ad14a6489daed2e3",
+      "gitBytes": 24722,
+      "gitSha256": "4393d57b3122417976b9df0eee1c62b875a1f0f85eae2887cd4f7359d05f0022",
+      "completeBlobRead": true,
+      "lines": 562,
+      "worktreeBytes": 25284,
+      "worktreeSha256": "419f0ed84d0ab5adcd647c8a0b11eece2bb8aa1265e780f5b9583f96d336d96a",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/authz/authorize.ts",
+      "gitBlob": "ac607b54c9f26e0c7648df382026184b3bfb2a9b",
+      "gitBytes": 27066,
+      "gitSha256": "6da5f9b7fc603b2f4aee8c18561c9f032fdf4f30113cbd112bbc9573770144a4",
+      "completeBlobRead": true,
+      "lines": 629,
+      "worktreeBytes": 27695,
+      "worktreeSha256": "868c11ba6c32ead20a5c773592d1f7296fdf154f10388ef281b753fc3e8ed131",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/client-profile.ts",
+      "gitBlob": "03b689a0ea61dd556f6e20abef6529b7bf442fe2",
+      "gitBytes": 5993,
+      "gitSha256": "07ec7d07303dd7a47160eb717042a0a0eda5d37d9325ea737180bb90ccd015ff",
+      "completeBlobRead": true,
+      "lines": 126,
+      "worktreeBytes": 6119,
+      "worktreeSha256": "c275e229cb0a832a67cc4e7fa06004bc795f30072e2c5a888c81b88db72c6dac",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/commands.ts",
+      "gitBlob": "b7fbf7bd0e9c100ae6530f02f09a649951388e37",
+      "gitBytes": 41000,
+      "gitSha256": "bc488199218d3fa050a87e7435dbf45d3be19ec88bc0519b1e64f7e59540082d",
+      "completeBlobRead": true,
+      "lines": 1172,
+      "worktreeBytes": 42172,
+      "worktreeSha256": "8718fbb1d33108ad3271414f80f15af03c4c848f0e21e1b6662f44401f322d47",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/delivery/routes.ts",
+      "gitBlob": "3e19d58f8708d6fe63807ceb628cdbb481ea205a",
+      "gitBytes": 98496,
+      "gitSha256": "535f807355caff4450977b051c66dc4b8b442813254eaf447436a037acecc767",
+      "completeBlobRead": true,
+      "lines": 1595,
+      "worktreeBytes": 100091,
+      "worktreeSha256": "73856bed1abf83cebb827a5a18fc852c9fc29b463d6f12d57c0603c54d37eeb8",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "gitBlob": "c105e7c00e49e93438e1e2f93be2afaf0867b7aa",
+      "gitBytes": 9637,
+      "gitSha256": "421ac3ac205074c267e0d0bf33a0e396665c65f755726ba1b38acac19d8ea7a0",
+      "completeBlobRead": true,
+      "lines": 219,
+      "worktreeBytes": 9856,
+      "worktreeSha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/operations/routes.ts",
+      "gitBlob": "a7c61465730e7eb8a2ba868edfb49c14fdddef66",
+      "gitBytes": 118316,
+      "gitSha256": "1b5a1fd9678a3ff45514c4a0dc86f68b6febf4282e51a6f51c0afaf8f5743ee2",
+      "completeBlobRead": true,
+      "lines": 2408,
+      "worktreeBytes": 120724,
+      "worktreeSha256": "1c093bef2eb30ce01b6c9eb418112d31b5ebe4b93487af107dc4155989d0b39b",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/pagination.ts",
+      "gitBlob": "2fbe1a527b4b07e43d9b4ccaa86982369b218645",
+      "gitBytes": 9760,
+      "gitSha256": "29bb52a0fb0c75f66e1b586a0802dd8e0b3ae7ff95b01d6b7b3c58808e5a7fd3",
+      "completeBlobRead": true,
+      "lines": 281,
+      "worktreeBytes": 10041,
+      "worktreeSha256": "ce17f77b300e7d516fc263bfcc6bd0ea8eeab4735efbbf21965b6667c10977d5",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/server.ts",
+      "gitBlob": "84558fd6e132ba5f7406236864b0108173d2282f",
+      "gitBytes": 74026,
+      "gitSha256": "df00b33383e15628fb27708f5a790044f5f25e0d219d303da397700c62ce8a7c",
+      "completeBlobRead": true,
+      "lines": 1772,
+      "worktreeBytes": 75798,
+      "worktreeSha256": "930fd4be8ae5553f62e3bca16e04f59d2d19d70fbd01d66ba2a44bdae4348ed8",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/api/src/workbench-runner.ts",
+      "gitBlob": "2d2dc515f3ed8db97b001b84309b3d52122278eb",
+      "gitBytes": 33604,
+      "gitSha256": "9ceda3fa3f3d0daf931c749495fe597ba834c0718857c204f33178180a8a923e",
+      "completeBlobRead": true,
+      "lines": 488,
+      "worktreeBytes": 34092,
+      "worktreeSha256": "d4ac49e004abe8ec53ae5acbd5a43b4bad5b1d714a490ba3ea355a42bdac64db",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/mcp/src/discovery.ts",
+      "gitBlob": "9084eaed52c4acc54f8c806a111197525b6de587",
+      "gitBytes": 17147,
+      "gitSha256": "ac10ab24cc3080f254deb6396b60d7c16b66a3afb7b9c43927db740f984fc9b9",
+      "completeBlobRead": true,
+      "lines": 191,
+      "worktreeBytes": 17338,
+      "worktreeSha256": "60fc7e5e99bcd2df7528d67e609d4d341edc556ad0d711a76b3c12f8d61f5161",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/mcp/src/http.ts",
+      "gitBlob": "4aeb481531f126ed2c502a40a7ededcd1ce56b38",
+      "gitBytes": 6838,
+      "gitSha256": "2460bfee36cf8d674320450d81c13e3b2f841ff78260c4947c7217f55f999ff9",
+      "completeBlobRead": true,
+      "lines": 153,
+      "worktreeBytes": 6991,
+      "worktreeSha256": "bdba07249f3e20c29210574fdd46d66277c454b245088263ba338753ead8c314",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/mcp/src/index.ts",
+      "gitBlob": "544aff1e49fbabce8e3dadf7d5085a39fccb616d",
+      "gitBytes": 77032,
+      "gitSha256": "18462ce2cf114a5242c08e13c134d46699f36b2db5f2eb9a2adce49ebc753f7c",
+      "completeBlobRead": true,
+      "lines": 422,
+      "worktreeBytes": 77454,
+      "worktreeSha256": "6875aea2b808363defcc54aef755c93becda34a7ff5948eb6e8f789d3f8974b8",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/web/app/operations-content.tsx",
+      "gitBlob": "a8555b85fea9683ba8b66278c060e977d6f7f2df",
+      "gitBytes": 34124,
+      "gitSha256": "c13dd17212cee9dd85936338e753190cc42a54578191784e501f5791150dbde6",
+      "completeBlobRead": true,
+      "lines": 624,
+      "worktreeBytes": 34748,
+      "worktreeSha256": "7ffe9ceb2ceb79c4a985dc3eb9675c25aa769d5ccfe9c78fd877226885bc56b2",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "apps/web/app/operations/usage-metrics.tsx",
+      "gitBlob": "86338fae2966e8f0136decdb33961dc26ad1e33e",
+      "gitBytes": 8271,
+      "gitSha256": "7a4d19ff02781fd573e3dde558d94c948a1c827e758dcbc087cc66c96a8ea901",
+      "completeBlobRead": true,
+      "lines": 226,
+      "worktreeBytes": 8497,
+      "worktreeSha256": "b10b0efe9cc9595771a9ee4225e496f4fd720fda621bc3fac302007579e8be83",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docker-compose.lite.yml",
+      "gitBlob": "fa01a9cb7a3ef2afc1f8566428eb267a8c86b0f6",
+      "gitBytes": 14807,
+      "gitSha256": "d38694d2cf357a1938737a073328a0bccf0f2114032480257644774a917763a6",
+      "completeBlobRead": true,
+      "lines": 336,
+      "worktreeBytes": 15143,
+      "worktreeSha256": "588738965da9257771736799b40841b73631b2388690fa7bb975029ff3ab5a6d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docker-compose.yml",
+      "gitBlob": "7c1087f273949dbad9ccc0d1e49b2a165071a527",
+      "gitBytes": 14362,
+      "gitSha256": "14a3de0ae9387d97a5f31e04eac4e84bc6021d0eebefb29a383fdd76393ddad4",
+      "completeBlobRead": true,
+      "lines": 218,
+      "worktreeBytes": 14580,
+      "worktreeSha256": "e9dbdb81541906c920786dd31a5736976a6e79c9d9fda7d7dddeebaf2bc2ae18",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0001-monorepo-runtime-split.md",
+      "gitBlob": "2ffd88783309df50da8a76cbe8b37c46f4d689ce",
+      "gitBytes": 691,
+      "gitSha256": "33dbd6519177e4723e7c67dad00c3aab27431c6cedf07e5f7912e3b4021966b4",
+      "completeBlobRead": true,
+      "lines": 15,
+      "worktreeBytes": 706,
+      "worktreeSha256": "69bbe10d27cacb3bf95ee34eea7ed6878f9af888a47e396c84c19794fd188889",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0002-rest-sse.md",
+      "gitBlob": "39975e9a8c6087e8052d10a7623d1e49602f34e7",
+      "gitBytes": 575,
+      "gitSha256": "edba698ee94dc9ade419df2656eda0b816ffdcb5e38dc5e6f9d4f7d5a70c6b1b",
+      "completeBlobRead": true,
+      "lines": 15,
+      "worktreeBytes": 590,
+      "worktreeSha256": "4cba91335bb3438a1b9a68782e94a620b47c54acbe36db460ef7addc938b2a1d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0003-postgresql-transaction-outbox.md",
+      "gitBlob": "a12d8990dd423245198f9a680c0c3ea07e98e9de",
+      "gitBytes": 677,
+      "gitSha256": "42e4a363b77efd152c3edc464cef25b47fa600f00d6a978bd519148692fb83d7",
+      "completeBlobRead": true,
+      "lines": 15,
+      "worktreeBytes": 692,
+      "worktreeSha256": "8b5557e11cb0032274f854328ea940905481be2cb984af804b3b730199ff51df",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0004-actor-model.md",
+      "gitBlob": "43854ec7fe0f0dbcf945da0373b0e8db4a4c0467",
+      "gitBytes": 700,
+      "gitSha256": "8c0307d5b979af88c945a2423423b6829bef4540a3d4e2ede45985c7f3bbd5a2",
+      "completeBlobRead": true,
+      "lines": 15,
+      "worktreeBytes": 715,
+      "worktreeSha256": "b7118626c265bfbd7683205a17bb4cb2d51e6659c821a8fcd1b1f9b8e9343216",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0005-authentication-choice.md",
+      "gitBlob": "f364ef4ac701272a9e99c3afe55df929db2bf808",
+      "gitBytes": 731,
+      "gitSha256": "792445c6174a091203b8eb946a5e15ccada5da51193b22c11808e67273f75a60",
+      "completeBlobRead": true,
+      "lines": 15,
+      "worktreeBytes": 746,
+      "worktreeSha256": "f952f3a6176712a0b8cd66d0aa59c09a273827b3be55abaab3b950210f44d785",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0006-stage0-authorization-and-event-scope.md",
+      "gitBlob": "e60141cb75f5eb8daccd6aebd5b891a74f8ae8ce",
+      "gitBytes": 2162,
+      "gitSha256": "0ed4c0fdb2ddf7621a8ccd0d7e1098f3cc71f55454300afbbc1d1cef4ac82e95",
+      "completeBlobRead": true,
+      "lines": 31,
+      "worktreeBytes": 2193,
+      "worktreeSha256": "e01dbdc2a7309996c0bb9cffaeb6b1f3b6a6617041aa7c271a75a5610d961d25",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0007-redis-outbox-delivery.md",
+      "gitBlob": "2027d6866f6c6612a9332c253a5c476f797cf55b",
+      "gitBytes": 1585,
+      "gitSha256": "55a14a01a685fead307ec0ac69695b2006c72f75983559492526c864173ef6d3",
+      "completeBlobRead": true,
+      "lines": 24,
+      "worktreeBytes": 1609,
+      "worktreeSha256": "cd88faa2c65d7695e48ac1733e791e171d3c00727e0055520af800bfb8226332",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0008-agent-session-token-revocation.md",
+      "gitBlob": "bfe71633629746d09f99bd034b077a35bfac5822",
+      "gitBytes": 1483,
+      "gitSha256": "736a4bbc14480b50914ed834eaffebaa40ab198bbb9adad9cc091c62f292b697",
+      "completeBlobRead": true,
+      "lines": 27,
+      "worktreeBytes": 1510,
+      "worktreeSha256": "9f4da1580622f649fe851cb087da2256c5274b5beb3f933e67aad06d14df9440",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0009-agent-session-transition-table.md",
+      "gitBlob": "20fca408100ef54aacc5d3e337fe0c8622e4b64c",
+      "gitBytes": 1817,
+      "gitSha256": "484c7e0f914266f8a9fd28d8ff66755c8fc158e334ee4cbedf66b8b7515eaad9",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 1846,
+      "worktreeSha256": "ea9e802a875ace702ae1ed87f3cd9729917f23f50620668fd434b4b038b97805",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0010-agent-activity-immutability-and-redaction.md",
+      "gitBlob": "c327215d639abdb42a38a72bd5d92a12955ac90b",
+      "gitBytes": 1363,
+      "gitSha256": "32a684f6d091b98725e7f362937eda3ff46c0049bd186d1e679e1b1ae42832a5",
+      "completeBlobRead": true,
+      "lines": 27,
+      "worktreeBytes": 1390,
+      "worktreeSha256": "c8b54da207320a64f230f0044b3e72c6c09a6accd6c6520d3539725391bf9107",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0011-agent-plan-versioning-and-conflict.md",
+      "gitBlob": "e676ad5c21c87d00a8d976f2719a7d6c5c4fe070",
+      "gitBytes": 1850,
+      "gitSha256": "174011ebdb58367c87f4a912d486d9647b69d9898a26fa1d6c3c07b7bcc7d574",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 1879,
+      "worktreeSha256": "b2aa021ba4e84e29d2bdf718e90128fa8ade7d21d712bbc383aa49ee049b7817",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0012-mcp-domain-boundary.md",
+      "gitBlob": "f9a0719a326538023e462e546a2f5ef869fa8dd6",
+      "gitBytes": 1286,
+      "gitSha256": "31dbeecc6b37d93d207ebcf81ca80cefd082bc82906843bf783c7caa74d1b517",
+      "completeBlobRead": true,
+      "lines": 27,
+      "worktreeBytes": 1313,
+      "worktreeSha256": "92259a1bc30b7627ba04fede535029ae743097f312491f9d77bdd32f7adb76a2",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0013-lease-semantics.md",
+      "gitBlob": "4dff7bd367d37e5545053f2c087c2b0983b0050a",
+      "gitBytes": 962,
+      "gitSha256": "6be2820c3d804720824d93834b0dcb6749f779d4e2e8ad4037f8fd261abd7085",
+      "completeBlobRead": true,
+      "lines": 27,
+      "worktreeBytes": 989,
+      "worktreeSha256": "3879a74227692191c5e1a3e735b851e1afdb67cde310f951718fb209a6b0efb0",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0014-handoff-transaction.md",
+      "gitBlob": "812ae9ebf89251c36db122d4159c58ba5dc129eb",
+      "gitBytes": 1625,
+      "gitSha256": "67630e492331b285683082870e26356f95e0b1ce8d3279c327c8bc88b53ed819",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 1654,
+      "worktreeSha256": "15584d481254f2d82040457e96f93f30d594a4f3daaa76078a99e7ff6e245ba5",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0015-agent-routing.md",
+      "gitBlob": "1ff38d18995699112b149bdac46feee6d61f67ce",
+      "gitBytes": 1444,
+      "gitSha256": "2c0ca303b9bfdbff057c8ac06c87429ff440d29a92dd54ae3e8258bfc73e8327",
+      "completeBlobRead": true,
+      "lines": 27,
+      "worktreeBytes": 1471,
+      "worktreeSha256": "fd28de34a88d93391f3071e6fbaae79714cc128cb99246df73db8069cdd56793",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0016-work-room-projection.md",
+      "gitBlob": "720011a4bab1b7ca5b9d20152f2ac3889f459b4a",
+      "gitBytes": 1512,
+      "gitSha256": "a14d93aad70431749b013cc5ef63c2c1c47b018d84ff03f5320f9ac402df419a",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 1541,
+      "worktreeSha256": "4c0c135bf3183ddbd252475c1672c7134e0d62e2356258c0d84fc699b80fd864",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0017-parent-child-completion-policy.md",
+      "gitBlob": "de45cb4c3ff1a392dfb8fca96306ffedd73d799a",
+      "gitBytes": 1103,
+      "gitSha256": "62670971d8fee198b39d64fd9234f9394b642a8e32cb7aa11788ff56ea9fa933",
+      "completeBlobRead": true,
+      "lines": 27,
+      "worktreeBytes": 1130,
+      "worktreeSha256": "25238a1e6299017c02b5ceb3fd4a3d495cabcccbc4e37415efc05821a11d0844",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0018-provider-abstraction-webhook-recovery.md",
+      "gitBlob": "9b499ffdf5a06f4376228d2db1d4c95fa846ef67",
+      "gitBytes": 4195,
+      "gitSha256": "b9ef0f9cc0c44145677cc7c834932ae70d48daf359d81051cf277bc5a61f1f6c",
+      "completeBlobRead": true,
+      "lines": 33,
+      "worktreeBytes": 4228,
+      "worktreeSha256": "4a1c25e5c71a0999dde54dca56c1fc7247a1af11999d9cfbcd3277c02d4a0875",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0019-repository-context-and-agents-scope.md",
+      "gitBlob": "668316d34cd4357982eb8841032c6dc9d60fc210",
+      "gitBytes": 1856,
+      "gitSha256": "da740bda67988ffcc9aea1cb2573bc744eb4aa577c844430ae2ca54baeefc774",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 1885,
+      "worktreeSha256": "9e515c7d07c2f01eb64c03c2c6a0467edea9fd91a68219c8c99b0f5d6a6d0c00",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0020-exact-head-pull-request-approval.md",
+      "gitBlob": "26495e0a45229cea02610ae98e46ecb7e04c981f",
+      "gitBytes": 2791,
+      "gitSha256": "1dcb77e0cfebf575d0bd8736d077393e5c4b08b9fa767d9d3b7a287ff04d1e24",
+      "completeBlobRead": true,
+      "lines": 35,
+      "worktreeBytes": 2826,
+      "worktreeSha256": "e58c5b5d22f2254ce363dff0567cd0a500bfbbf88bae5b04b5910ab3364d23d5",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0021-artifact-upload-and-provenance.md",
+      "gitBlob": "dfd2e986835c5b363eec2415394e5dcba07f86b7",
+      "gitBytes": 2369,
+      "gitSha256": "252f3f8dd9f5ea008b9518a814dd920051d6b6faa8e99007edf11bd4cd6a69c6",
+      "completeBlobRead": true,
+      "lines": 31,
+      "worktreeBytes": 2400,
+      "worktreeSha256": "9a9f40503d143986a54c7f613d10c284b6a364433f71aae582dbcc9a779dea8f",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0022-completion-suggestion-and-project-progress.md",
+      "gitBlob": "966b29d8c5ae22f79abd1367d752e9aa48f5b287",
+      "gitBytes": 1426,
+      "gitSha256": "6ac6e7d37e69cfb5358f693ee1672150e3abe66506492cffec0f6909e5582e0f",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 1455,
+      "worktreeSha256": "6668b577783b81a31285e490171d32b5c1acbea750629fb295b00fc6ffb37eec",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0023-automation-versioning-and-effect-execution.md",
+      "gitBlob": "f678e20b48c246e1470d04614e1b615e9acb2299",
+      "gitBytes": 3228,
+      "gitSha256": "066cf776cfa9ba3719cd0cead4edce9efe9d8442118d1bc6f979732608832263",
+      "completeBlobRead": true,
+      "lines": 33,
+      "worktreeBytes": 3261,
+      "worktreeSha256": "065e909ca9b5d796cb7fde74f78b6f8e49f70d529a5372d49fb89f590ce619df",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0024-loop-admission-overlap-and-retry.md",
+      "gitBlob": "e64a2d8060ac506b9690cb9ae64471916e75cff3",
+      "gitBytes": 2217,
+      "gitSha256": "e075d553b1a404441ca6331320c60ae588f2c316ead94db1926e44bcd3f3df91",
+      "completeBlobRead": true,
+      "lines": 31,
+      "worktreeBytes": 2248,
+      "worktreeSha256": "3415a330676ca00cd2f2b6603155092f4ed37cacc6eff79714d4b78abb412b44",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0025-source-linked-project-forecast.md",
+      "gitBlob": "29503b301ad132ccd95889bad0b7d68566691be0",
+      "gitBytes": 1577,
+      "gitSha256": "6d3d6a59acdf3113302acdf3683b44bbef17bbe3d3c7a2497d397253fd497691",
+      "completeBlobRead": true,
+      "lines": 31,
+      "worktreeBytes": 1608,
+      "worktreeSha256": "76f5c6ee30871ebe430f025eaf4d5f4323ffb8433c64b03ea3530edcb2bacb7a",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0026-usage-and-cost-normalization.md",
+      "gitBlob": "b7918f41e5e36210ff673d428435831230f99e44",
+      "gitBytes": 2905,
+      "gitSha256": "a92c9dcefb8784f3459172156d68231f70f2c0d8d01de4a39241a9269ec8b02d",
+      "completeBlobRead": true,
+      "lines": 31,
+      "worktreeBytes": 2936,
+      "worktreeSha256": "6090f91c5da10787739d05f20c5ab4ea118eefd446d685c13cbdc2847a670507",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0027-a2a-version-boundary.md",
+      "gitBlob": "da84d8e51f0ee08bf6b9c3edb97c420947461260",
+      "gitBytes": 3663,
+      "gitSha256": "0d8e0b09085b164d2ede403fc4be98ec920fbbe57fc7a5523f22445e70f8b868",
+      "completeBlobRead": true,
+      "lines": 35,
+      "worktreeBytes": 3698,
+      "worktreeSha256": "dcaf081e63b3a1e457a4159ecd9acef813ae614e695f4a03fb3d9f8c5410ce22",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0028-declarative-route-policy-and-event-audience.md",
+      "gitBlob": "250f6580b7a536196c8560d7d98899484a91696e",
+      "gitBytes": 4661,
+      "gitSha256": "c45e1c3474a101c933fc2b888a8804859a4a871acd6c58236076fcacbcb4dd64",
+      "completeBlobRead": true,
+      "lines": 90,
+      "worktreeBytes": 4751,
+      "worktreeSha256": "5ef48f79774654d882a11c4044371419975ef4c3ea95802cdf0c757b34880871",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+      "gitBlob": "62b990aac7d68e0737a7ca4f23b6d5c2939ea7e8",
+      "gitBytes": 8037,
+      "gitSha256": "0d3f856506fe32cfe26cd88b9ad07acb4aab7e1a8e0d8ddffb13718fbfa731b3",
+      "completeBlobRead": true,
+      "lines": 79,
+      "worktreeBytes": 8116,
+      "worktreeSha256": "261fe3bdc7a5c71351074123646355e1c071273e4be75830ddf4d8e271bf840e",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0029-rich-content-sanitization-and-editor-boundary.md",
+      "gitBlob": "d4d95409f30820d0fff6427e8b74962fa78b8b4a",
+      "gitBytes": 9002,
+      "gitSha256": "fd7d575bae468ebf8c0de1b7279188086d0460f8093a2ca0e5fd7b386111c0a9",
+      "completeBlobRead": true,
+      "lines": 44,
+      "worktreeBytes": 9046,
+      "worktreeSha256": "900ac53fff49fe5e3df3596ffca30f80a720b3ab0d310c85e9a3ae98d981799d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0029-secret-aware-authentication-idempotency.md",
+      "gitBlob": "fed737f236984bfb171046fe2afe7a79c74bfc9a",
+      "gitBytes": 4260,
+      "gitSha256": "2b0aadecc21232814864ba2393ae46fe31bbed2acdf4038d4a27bb6314006b98",
+      "completeBlobRead": true,
+      "lines": 84,
+      "worktreeBytes": 4344,
+      "worktreeSha256": "633747f52a10dda0629f75e85725b29e65d7c85df34d04fc9674009fc645808c",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0030-shared-authentication-rate-limits.md",
+      "gitBlob": "b6be135cf8c8ec43d420912b5267b0e8396cef7b",
+      "gitBytes": 4217,
+      "gitSha256": "c24fff8535de7fd89a9a5550d6bafa75c3299c78c53fcda9a4a111cce7a23f54",
+      "completeBlobRead": true,
+      "lines": 85,
+      "worktreeBytes": 4302,
+      "worktreeSha256": "ee64886b2d983b8d19e5f4cfa0f2d00134703129912f917ef803ead206aff4a1",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0031-authenticated-single-use-bootstrap.md",
+      "gitBlob": "76f322c61dc1f833c5ba9f59d5d11f2efa3de920",
+      "gitBytes": 4364,
+      "gitSha256": "9da8f901f0c5242383e8c5dd45d5eb42a29816ebe1c88adb55c87af095cd04e5",
+      "completeBlobRead": true,
+      "lines": 91,
+      "worktreeBytes": 4455,
+      "worktreeSha256": "9f51a206b4e7e732207d5edce60dd1fe851238621d4a41593e880008d95e6766",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0032-signed-keyset-pagination.md",
+      "gitBlob": "90dc653dfb9398364d7626800b0981564c26d751",
+      "gitBytes": 3129,
+      "gitSha256": "a0530e1c1bc050c1efc39374db592e2dc692b40a1fb7bb984385e78c6d5edc51",
+      "completeBlobRead": true,
+      "lines": 33,
+      "worktreeBytes": 3162,
+      "worktreeSha256": "b8fb38cb423d6889a3cfaaa679c773226ad41662418bbb614d9bc37962b15046",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0033-postgres-authoritative-realtime-replay.md",
+      "gitBlob": "af861f34c179ccc1b6dc579bcc615b4a05464327",
+      "gitBytes": 5873,
+      "gitSha256": "870efadb1a2db8b5013d97bdf8d7e289e72c093bc428748e72c9d88eaeaf03a7",
+      "completeBlobRead": true,
+      "lines": 112,
+      "worktreeBytes": 5985,
+      "worktreeSha256": "ab2e51d435d7e9d33693d389519d291f4e40319fc01cca37643fd47ed57ba8cc",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0034-production-runtime-images.md",
+      "gitBlob": "50be9941752f1bb2049cc3ee518741bb1f37a302",
+      "gitBytes": 4611,
+      "gitSha256": "2dddf7f35bafe128a0688c4dd739225bd185728bd4fb366caf83558602642384",
+      "completeBlobRead": true,
+      "lines": 35,
+      "worktreeBytes": 4646,
+      "worktreeSha256": "5367b1453eaa3185b693a33c254227ccf0d055ddda7b0164234853e61107b62b",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0035-retention-archive-and-heartbeat-projections.md",
+      "gitBlob": "c0a51a1289923b0d9d5fb78f4bfdefbf9ba1cd3e",
+      "gitBytes": 5551,
+      "gitSha256": "71f20c7d552b7827123d4b0f0802fd5490c05eb365b1dccf4f4588187e213295",
+      "completeBlobRead": true,
+      "lines": 105,
+      "worktreeBytes": 5656,
+      "worktreeSha256": "4a993aafa0c720802a527194a29a0c11f7dd4df7c45c41a234bcb8cc20d00be2",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0036-exact-archive-membership.md",
+      "gitBlob": "0267132783bc6675f5c17062c27a91605c39bc65",
+      "gitBytes": 7695,
+      "gitSha256": "c57536b04d0125ddd89a3241928e8971342ddb9155aea620480533709e8cc981",
+      "completeBlobRead": true,
+      "lines": 137,
+      "worktreeBytes": 7832,
+      "worktreeSha256": "cdea929b4e446de8d26e29bacef57b06ce4b9ba7ede4558d74d96a8a82f8fcde",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+      "gitBlob": "bc5e363348525c1adadc616590f5ce96c60982c3",
+      "gitBytes": 8320,
+      "gitSha256": "9f08b6f7dac5c96769d585ad87e309f4ac1530100d70d30fd2003969902a8817",
+      "completeBlobRead": true,
+      "lines": 147,
+      "worktreeBytes": 8467,
+      "worktreeSha256": "bc8fdb66fc9ec62ed110726eb53c44b90e5488d8454c05a797577f454a31de57",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0038-atomic-checksummed-v1-migrations.md",
+      "gitBlob": "fe08050353b30de8a4efb8f69567bf024c599ac5",
+      "gitBytes": 2509,
+      "gitSha256": "768c2c6b803f50e2ad8ceed982c8fddee2985e46e61ffb0cfcb70865d5ae52cf",
+      "completeBlobRead": true,
+      "lines": 58,
+      "worktreeBytes": 2567,
+      "worktreeSha256": "0efb2e122bc1e9c7c1c77f5dc3ab6402ac803711afe87e318018c6ba07ba58f0",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0039-authenticated-complete-recovery-bundles.md",
+      "gitBlob": "d668adaa61e50092fd5d1dfa1e7a65d4540288d5",
+      "gitBytes": 3635,
+      "gitSha256": "ce047db95be691b092b4a25939b6e930ca43469f99a13ccee086dab3de71076e",
+      "completeBlobRead": true,
+      "lines": 73,
+      "worktreeBytes": 3708,
+      "worktreeSha256": "c52d79199407233631b56146e7bbccb78ad0af3742d54bba215a53d84e064dc9",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0040-transactional-active-executor-projection.md",
+      "gitBlob": "9981b8317fdb93e823f08dd40d06d8ccf2bc10aa",
+      "gitBytes": 3203,
+      "gitSha256": "f15c0e7272f974652535a5d96f90bb324e51c71598d1211061bc06ca488e5a9d",
+      "completeBlobRead": true,
+      "lines": 70,
+      "worktreeBytes": 3273,
+      "worktreeSha256": "d9344bdee0add7f8d8fbe6cdd1d2eab8536f8b063743c16891ff5f579b02c2f7",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0041-versioned-guidance-and-context-pinning.md",
+      "gitBlob": "1e4a9afef01fb517912f9efeade09e6f590bde44",
+      "gitBytes": 2950,
+      "gitSha256": "d4634ec14e2bafa576b3230543701ba5c50754bba1c71ea5f5cdc89eba1ae883",
+      "completeBlobRead": true,
+      "lines": 67,
+      "worktreeBytes": 3017,
+      "worktreeSha256": "2ac9b1aadbcc999fcd76ff792d3bda3662defd49865c0ccc6cb957fc5b499538",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+      "gitBlob": "5ad4e5434603fe83555cda3df4e6f507f51d8f7a",
+      "gitBytes": 2339,
+      "gitSha256": "a0530dfa3a65ee8e4771d94d8e64ee529f7f54462967b63b6331e00b73a50ce3",
+      "completeBlobRead": true,
+      "lines": 55,
+      "worktreeBytes": 2394,
+      "worktreeSha256": "c2ea95b82a92da00776713cb6c9874ba707d80d0fca61abbd50c57f87924ebae",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0043-agent-connection-and-coordination-mcp.md",
+      "gitBlob": "c57ff2216307a7c21940dd9fc0278954489f30cf",
+      "gitBytes": 23937,
+      "gitSha256": "b15dd4f6068b27520afbe55909c1323da0b5038d9e3cda4b038f834ff2cca938",
+      "completeBlobRead": true,
+      "lines": 503,
+      "worktreeBytes": 24440,
+      "worktreeSha256": "7f4ebf52f4a07b414468e9caa5f136d8c6bf291f40d2a08e8a49474b0ac3ab73",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0044-structured-planning-domain-parity.md",
+      "gitBlob": "2c53ac07cfc9493963011b219f5d88b74e093744",
+      "gitBytes": 3823,
+      "gitSha256": "e02b8367312309eb390ce3144d77fae644db70066b39034e6f3cdd22ec0e4f88",
+      "completeBlobRead": true,
+      "lines": 44,
+      "worktreeBytes": 3867,
+      "worktreeSha256": "01f9e76b5f3e4eea9ee352029122d324f827718147c509e08f23432f30cc6954",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+      "gitBlob": "68abe4588d1257ad0ece6b7807e06a0ec5d15d0b",
+      "gitBytes": 16377,
+      "gitSha256": "2dccd62b2d913f2df1329b7f862a1107026bf1d0410ec8994f08401be74fbb77",
+      "completeBlobRead": true,
+      "lines": 296,
+      "worktreeBytes": 16673,
+      "worktreeSha256": "fb4c0007af69e3a7477ff3c160e051eb7b12fa1776d9972b45a774d493605669",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+      "gitBlob": "81f20d769bc2040f8d7de986bc91a5bc0f12d8e5",
+      "gitBytes": 7620,
+      "gitSha256": "85594be22b5deb306b36ab061af7767b549ea4f126a7f79a8f7f10e2be8fce14",
+      "completeBlobRead": true,
+      "lines": 82,
+      "worktreeBytes": 7702,
+      "worktreeSha256": "db6a991b6562f41ca59846fb109a416d7cca90ee33bb5f92566c95f30005e7e4",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0047-agent-task-admission-and-forced-delegation.md",
+      "gitBlob": "50419b6291efddc8eabbd754bc6dbd3ce108e030",
+      "gitBytes": 10221,
+      "gitSha256": "d47278fd7bc877b2ebe7a5db475e0f087731b211f0c55795104208273858f994",
+      "completeBlobRead": true,
+      "lines": 203,
+      "worktreeBytes": 10424,
+      "worktreeSha256": "5cf3d7ebcee8cf542c98903434aaf03e12333942e7e3cec221fc283762b711cd",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0048-stale-self-claim-recovery.md",
+      "gitBlob": "dcc2aa14ad3b060eec0394b4894adf51d3e0de8c",
+      "gitBytes": 5421,
+      "gitSha256": "3f312b051e5e29756b6a8789bd226154566fd08876574e7d71258c461f75e942",
+      "completeBlobRead": true,
+      "lines": 108,
+      "worktreeBytes": 5529,
+      "worktreeSha256": "09a4d5d4b022dbe70d2231af38f65f68454266e2e80dfd5327178617d70222be",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0049-terminal-only-self-claim-recovery.md",
+      "gitBlob": "54e336506bd2853e71087364d38a16c8de2a5403",
+      "gitBytes": 4439,
+      "gitSha256": "c90cafc1afd736538b1fda8e6f0c1e6be138b8ddc9525df134c492bd8fc3f623",
+      "completeBlobRead": true,
+      "lines": 87,
+      "worktreeBytes": 4526,
+      "worktreeSha256": "c20ab3b54a94bd6097c33357f477657f97c1036347b90079512f9fbc47ec4e85",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0050-human-attention-authorized-projection.md",
+      "gitBlob": "7ddad5687de2d8cd02aece2a1242ee85307997ed",
+      "gitBytes": 5182,
+      "gitSha256": "387f0a781f3b394cf0f0a6446441cec1feb2ff5fe12aba9766264495676b492e",
+      "completeBlobRead": true,
+      "lines": 94,
+      "worktreeBytes": 5276,
+      "worktreeSha256": "a6489055edefc856d6f8ec0f2aef08480914f40c7fff4e9e27ca172f2419214e",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0051-human-control-plane-read-models.md",
+      "gitBlob": "c3a0a9b23b79183fae7ebc6bf892de1f1390719a",
+      "gitBytes": 2978,
+      "gitSha256": "2f3e6b7aaef18784082954aa2792323c49c8ef90ad4927950e8a3c13978cde4a",
+      "completeBlobRead": true,
+      "lines": 35,
+      "worktreeBytes": 3013,
+      "worktreeSha256": "81ce9f1519be88b3bb80328b41c2bca5149b788d1cf6446fbd6b929acdb582a7",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0052-human-control-plane-information-architecture.md",
+      "gitBlob": "cecf4709f229b60bdc171a82a13ad5add21198b3",
+      "gitBytes": 4739,
+      "gitSha256": "debe5a00cdd57beeb523453b5299d69ad60840fcbf5af766119b553e5bc013a4",
+      "completeBlobRead": true,
+      "lines": 98,
+      "worktreeBytes": 4837,
+      "worktreeSha256": "586b2c3b6e5e9de023c025c8861ac7f2e21f26060fb7f6d3f978f87eb8d2a389",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0053-human-attention-governed-responses.md",
+      "gitBlob": "6459e59f1b94c1df069bc6b435fc20fd4720c538",
+      "gitBytes": 3571,
+      "gitSha256": "bea8776ae07b2b4cb2f3984b4d9e50cca235acbde42665c8641227c0da31b74a",
+      "completeBlobRead": true,
+      "lines": 78,
+      "worktreeBytes": 3649,
+      "worktreeSha256": "c4c15c4d83dc7a2b6139520cb685735c9063f13f0729a27ef42b1722a53563c8",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0054-causal-agent-run-explanation.md",
+      "gitBlob": "a55f0dcd3cc08d37ca12a0d0975a33f50b179e3a",
+      "gitBytes": 3371,
+      "gitSha256": "36c3c581cfd12404ceff45f66b0838a7580ed8c8f1ec5a1a0c5d58cf74ed8077",
+      "completeBlobRead": true,
+      "lines": 68,
+      "worktreeBytes": 3439,
+      "worktreeSha256": "3608d4a43b489fe153ab1ebce8c8ed053e1f70fcbdf430af326653b20ad298fc",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0055-governed-agent-session-controls.md",
+      "gitBlob": "08834e00284b492769c1a475c604155dda7f8547",
+      "gitBytes": 2789,
+      "gitSha256": "f90bd2c48c33a09c4d5d8a3b7569eecff785e21d1e7cc93ccae84f490bb3bcb7",
+      "completeBlobRead": true,
+      "lines": 59,
+      "worktreeBytes": 2848,
+      "worktreeSha256": "44bf143070c7b4030198c918c484a6bc0e87afa2559beefa79f2055ddae3b6ed",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0056-work-item-execution-workspace.md",
+      "gitBlob": "6118c8b6ad2b9df93ef632099879194b810d7c15",
+      "gitBytes": 2162,
+      "gitSha256": "acf47037d682a202d16dd8a0b783a4a3d5d43be3d9137b7aca083241520735e1",
+      "completeBlobRead": true,
+      "lines": 52,
+      "worktreeBytes": 2214,
+      "worktreeSha256": "9f9746a29ca46872a1b8a76f06fdd60863fc0f9316afa827f067b4da183c3fec",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0057-actionable-collaboration-queues.md",
+      "gitBlob": "3775663746bd3a812f242e49f0971ee4eed85c21",
+      "gitBytes": 2823,
+      "gitSha256": "06b1bb8041fcc162cc05d18400bba61c10b8ea2ad9b4840a345ca32cebad9ca6",
+      "completeBlobRead": true,
+      "lines": 63,
+      "worktreeBytes": 2886,
+      "worktreeSha256": "970156f4ddbd8410b441a76834f39e590d3ebcee20cb8031a35e3bbd958863fb",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0058-authorized-recovery-and-freshness-projection.md",
+      "gitBlob": "c404428a9d77135607c0b397cac8fb1303b94027",
+      "gitBytes": 4035,
+      "gitSha256": "e2beabc72a73530d5bab166cc78fc51df354617e54dff864194a8bceb1664df3",
+      "completeBlobRead": true,
+      "lines": 82,
+      "worktreeBytes": 4117,
+      "worktreeSha256": "23e45674d364dae1b9d99d81ceb0741ca9502efdd9b3fdb1f14cd8bbdc5e1086",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+      "gitBlob": "77159f3bded074617f9ad6cb5f34e5f61414d180",
+      "gitBytes": 1889,
+      "gitSha256": "26b22fd8f3a620fee0399ae1d8f76dd580769a67e209ec1c2dbbad4e9ae24ec8",
+      "completeBlobRead": true,
+      "lines": 30,
+      "worktreeBytes": 1919,
+      "worktreeSha256": "6533a5ecf9e9ca63d93b3690486a86d7efbca12f6061245b7ff3f03ed48d7552",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0060-optional-graph-integration-boundary.md",
+      "gitBlob": "00ee9dfb882beefa9bc1a5149dd89dea619863b0",
+      "gitBytes": 2682,
+      "gitSha256": "a51c5d83bf129d2e088d164d78224fe59416fb7254a455f4576d8a03d2605a7f",
+      "completeBlobRead": true,
+      "lines": 57,
+      "worktreeBytes": 2739,
+      "worktreeSha256": "c996022870877909118f94fe33fd9e13e89d0f958bb2a37cf6e8ce78e0f1705f",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0061-human-control-plane-final-acceptance-and-telemetry.md",
+      "gitBlob": "b7a55fd8fe453ae939bad75308e27f99bd4ce6da",
+      "gitBytes": 3085,
+      "gitSha256": "447b5f3bf24ed2b8220d1fc71b12aa2eff27f9ecf6eb307d0da1b261a4988c6e",
+      "completeBlobRead": true,
+      "lines": 63,
+      "worktreeBytes": 3148,
+      "worktreeSha256": "8fa41e8f615f88a35ce4c52491830be7742b5c5db109a7ed2fddb8808da76215",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+      "gitBlob": "c014760b7d8d03d1ca30b81b662e371d13370ec4",
+      "gitBytes": 4005,
+      "gitSha256": "fdf589485a3e046ac0c9954193c9e2c26b783b6b8c24245f669511ad9e917c50",
+      "completeBlobRead": true,
+      "lines": 73,
+      "worktreeBytes": 4078,
+      "worktreeSha256": "ede95acd8464dc70e6540e03ed25c566a8c1cb68df1922c648d1f5f92c8ced00",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0063-multica-inspired-authority-first-human-agent-workspace.md",
+      "gitBlob": "65609aa810b9c0869e95720d92ea52b5b0d46708",
+      "gitBytes": 6804,
+      "gitSha256": "6b75de0d69d93d29b3e648a612a530f7d25b34792622ccb3f718c36a55903cba",
+      "completeBlobRead": true,
+      "lines": 138,
+      "worktreeBytes": 6942,
+      "worktreeSha256": "df3ee49158735646684e1df88d01fd404eb6abc949dca1ff637ee456a5e768ec",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0064-unified-human-control-plane-web-experience.md",
+      "gitBlob": "de55fdb6653a9a223bd991be5ae8348957a09a15",
+      "gitBytes": 4877,
+      "gitSha256": "35af6982572c2dd13537de1ed84a079480504b48b8a58e50d8d9eec48322e070",
+      "completeBlobRead": true,
+      "lines": 99,
+      "worktreeBytes": 4976,
+      "worktreeSha256": "fa88f734564ed3e8d5286474eb66223cac487c2d6c928a2dea8b42edbc3bdbea",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md",
+      "gitBlob": "b7ae31353dbf05d0ca5191c3d84e62820177aecf",
+      "gitBytes": 15616,
+      "gitSha256": "40d6ae1534023db60875663831d370d6976d998dcb81bbe5a3854b1f380f17ae",
+      "completeBlobRead": true,
+      "lines": 113,
+      "worktreeBytes": 15729,
+      "worktreeSha256": "46b0a2e76ab9970dfeca7b3dde34ed16be0195ef78f3ba9cd739756c1c54b524",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0066-versioned-project-and-issue-documents.md",
+      "gitBlob": "796cdee05bd67937f580696b9513725ae494a194",
+      "gitBytes": 3340,
+      "gitSha256": "62744917190f1ae7aec993e30b18c910c4b21b9d5c2a60e654ec96b9c879d17f",
+      "completeBlobRead": true,
+      "lines": 35,
+      "worktreeBytes": 3375,
+      "worktreeSha256": "35080bbbb181db61c9b5ad79ce76b6da4a4ac85cc286408f068bfd8fe4e16e41",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0067-governed-pi-workmesh-tools.md",
+      "gitBlob": "b80b176e8688c0269204a4f165e46a281c77fd6f",
+      "gitBytes": 4655,
+      "gitSha256": "f84e60c19538bfbbb3daa3c6775ce35d6cdac8ce3bce0e06e354d8f8a54465d3",
+      "completeBlobRead": true,
+      "lines": 38,
+      "worktreeBytes": 4693,
+      "worktreeSha256": "b9d27884633ce6f897fd9ab214ca95ec64e8d7f1c3ee3829c5e4c37825e3435e",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0068-atomic-workbench-turn-session-completion.md",
+      "gitBlob": "ff826704199e38904d66b3875ec25b49e6210c6c",
+      "gitBytes": 3545,
+      "gitSha256": "d56365f5b66b99826bf5e14bf4e89701e9430defce769c5c6ce4a4e8f0e00514",
+      "completeBlobRead": true,
+      "lines": 33,
+      "worktreeBytes": 3578,
+      "worktreeSha256": "ea0146641b7e7c25027ea2abbc4e3d536f43c8ed55e862f535bf0cf5eb24471a",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0069-embedded-pi-workbench-skill-pin.md",
+      "gitBlob": "234fc3b95629f858190653ba41918ab8930b53a1",
+      "gitBytes": 2413,
+      "gitSha256": "c5e7e090bd1d38f9a8147fa6cc4833d7c8ec8164a0eaae8962bbc6885d18395f",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 2442,
+      "worktreeSha256": "ec76ae8b961d79cc08d29536070c27f48bd67100a14f64621a919efbaab5f677",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0070-artifact-storage-on-rustfs-and-header-signed-uploads.md",
+      "gitBlob": "011b906c23a593f2e95a29d7e39959afb3893b90",
+      "gitBytes": 5469,
+      "gitSha256": "7287be92bff8c581223902793c7df8092c62bca3977e60ae8bfa407f0d851ccc",
+      "completeBlobRead": true,
+      "lines": 101,
+      "worktreeBytes": 5570,
+      "worktreeSha256": "a8485edb0df5b6563af0274a1014b73de8229ac6236b850b21a142efe9523054",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+      "gitBlob": "5309c6e3e4f78cdbe5846bac859e34cd9ff6ac6a",
+      "gitBytes": 16940,
+      "gitSha256": "bf5e4e81da36a4f9cc7bf615c3776c66620be50db768c99ff8c5a8f0484fdadc",
+      "completeBlobRead": true,
+      "lines": 317,
+      "worktreeBytes": 17257,
+      "worktreeSha256": "7b45fe73dc7d4a0ea27c668c076165273d8ab8b538b5d3c5dadcd2ca70384ef9",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+      "gitBlob": "fbfb4c866a00d6541c51b17228fe5de715d934d5",
+      "gitBytes": 16948,
+      "gitSha256": "5c9db399db9abf65d95b93e99f6e2d091de15c17ce922f160c2868445ba3f22e",
+      "completeBlobRead": true,
+      "lines": 309,
+      "worktreeBytes": 17257,
+      "worktreeSha256": "8d7b9a013b1fe99f6dc40040b93808f318017a46c107360242ac286a2f1bcd44",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0073-human-ordered-position-within-a-status-column.md",
+      "gitBlob": "a1dba01400d405b269d107d94e38ceb88779114b",
+      "gitBytes": 7330,
+      "gitSha256": "e9c84def5c80357ff53c702b86b99ad9af93eb7469088d5f7c9de2ade3a29417",
+      "completeBlobRead": true,
+      "lines": 145,
+      "worktreeBytes": 7474,
+      "worktreeSha256": "a138eaffd80ffd79e4dffa24f6bb7c3ee4efd5284554653d615483061b6ba4d3",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+      "gitBlob": "63c3f0aa59402558fa03c5a5ad5e8f5342c79c6f",
+      "gitBytes": 25497,
+      "gitSha256": "ccceb3668fd7e9f4b3bef29d1f102d17628135fa2c873478de91fdc26470e739",
+      "completeBlobRead": true,
+      "lines": 300,
+      "worktreeBytes": 25797,
+      "worktreeSha256": "b815acec4335722a757c8c750bb2750d58d90da93c2eaa16ca51579fb69c0bc6",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+      "gitBlob": "b0bc283a676fbd80eea302bf0b0600102db309a0",
+      "gitBytes": 17002,
+      "gitSha256": "f978c11ce175c7a34b0b177ef4155cd4713d1d6cf19959ececf82f29314616ae",
+      "completeBlobRead": true,
+      "lines": 251,
+      "worktreeBytes": 17253,
+      "worktreeSha256": "37faae9a63d424f768b513ae34dba9a841c0c573b0d3b3c1479632b43974e368",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+      "gitBlob": "9c6b4ccd48932edd0e12406b931e01c50aa2761c",
+      "gitBytes": 25862,
+      "gitSha256": "a0445b2c624436806bb9cdf58c4f3fdcb58ff00ff43ba87ae34338b0a6f5dd7a",
+      "completeBlobRead": true,
+      "lines": 332,
+      "worktreeBytes": 26194,
+      "worktreeSha256": "0427a4ffe9ee4dcb69997ca876c62ecc8fa96ae4cbef9f5b122c5ab8c0e7d8be",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+      "gitBlob": "2f9d700414fc9f6701456a2ee921a8ac9726d07b",
+      "gitBytes": 18365,
+      "gitSha256": "46d35bafe8558bce1d621016be09522780dc1b61c30a5f8b24f0b60c7dfdadfa",
+      "completeBlobRead": true,
+      "lines": 279,
+      "worktreeBytes": 18644,
+      "worktreeSha256": "fc636dfd0c99d956a32260e2378724461a75b131bb3e00669603d04fe99fe9d1",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+      "gitBlob": "2fa6fcfc3862fd89bf72ea262fbddd038272c84b",
+      "gitBytes": 55155,
+      "gitSha256": "c141d1a9dceba893ea59537626ad4dd1b3021c348389d70ef05cdfbea6e38f99",
+      "completeBlobRead": true,
+      "lines": 841,
+      "worktreeBytes": 55996,
+      "worktreeSha256": "c660858c0f7aaef6796f8c4c026f185707116c244c407b53b0e0ce1ccce0569a",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0078-review-round2.md",
+      "gitBlob": "058c70e617e1020c521d4cad2b9973789efa4ba0",
+      "gitBytes": 24468,
+      "gitSha256": "0f9ec7b53d8ba7dd9e8c11e247c1116fc6dadf932432c77b8cc5b391aca728e9",
+      "completeBlobRead": true,
+      "lines": 189,
+      "worktreeBytes": 24657,
+      "worktreeSha256": "8d1f0fd90a005b6f2aa0fd3ae7bcafaadc873a5cb75cb8507a9c83699c48f660",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0078-review.md",
+      "gitBlob": "d09c30e46c4ae5181298bc7b64a445ebff62188a",
+      "gitBytes": 40672,
+      "gitSha256": "2df03d61f25c354b6b663ac405ce9d6fd70c09c94688fdd966f64368d08090ec",
+      "completeBlobRead": true,
+      "lines": 248,
+      "worktreeBytes": 40920,
+      "worktreeSha256": "9bf4e715fa1241e3063bfec811d999cafa9e80d74ad8c4a598dae56448171a93",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0079-qualified-agent-discovery-and-recovery.md",
+      "gitBlob": "26cf2b41304385b3ddbfd45e192b6ea0d4b90807",
+      "gitBytes": 4896,
+      "gitSha256": "8a8647f82c980c92845d83332b896cc1970be5523014b949aae0b3496ddd4bff",
+      "completeBlobRead": true,
+      "lines": 41,
+      "worktreeBytes": 4937,
+      "worktreeSha256": "11df662dfa66e78db43f41c7db522bade400032c29121ddc52c05a9f80c78a3e",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0080-exact-session-execution-result-confirmation.md",
+      "gitBlob": "1d0df21b4f2e7301af84fde822fc49955725d291",
+      "gitBytes": 4016,
+      "gitSha256": "121be6acc7e51aebb82c71d3f386fb18ac79a30c04b381481b833c35725d58f0",
+      "completeBlobRead": true,
+      "lines": 39,
+      "worktreeBytes": 4055,
+      "worktreeSha256": "da259736a217d327c4729b8447504da0c39ec837dee0587690f7679b152783b7",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0081-pi-execution-wait-continuation.md",
+      "gitBlob": "d3ca541a7fb4d290a40abb7415176acd65d4f08c",
+      "gitBytes": 4358,
+      "gitSha256": "359b828acbe51984e996a0b511c9df6823c949dd920eb97350f0898fbc6e33c6",
+      "completeBlobRead": true,
+      "lines": 41,
+      "worktreeBytes": 4399,
+      "worktreeSha256": "f96de8731542d621a6678d029b5156ad7e48e17d29ba23ddf1d0593da03d82c3",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0082-parent-child-status-projection.md",
+      "gitBlob": "dff8f2efa43eb777cfebe3c0ac001211da5850be",
+      "gitBytes": 11960,
+      "gitSha256": "aaac7fce6d4da49fc0fbd3e5f36bbb1512bc3868ace24c5022c23c231b861680",
+      "completeBlobRead": true,
+      "lines": 48,
+      "worktreeBytes": 12008,
+      "worktreeSha256": "72fa34492cc442a165b9bde5d580baa6f5ab9b6906e8e947d14f40470682b6a9",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+      "gitBlob": "07d7cbba86fc82f3fa23c908cf73e8ecbc869de4",
+      "gitBytes": 5623,
+      "gitSha256": "7598e2879cc092b782a7a2528fb2f19b7511f223c9d91abb7149c9d84aafc65d",
+      "completeBlobRead": true,
+      "lines": 41,
+      "worktreeBytes": 5664,
+      "worktreeSha256": "20e7126d9840be8ae9ab26f4781ac6b0ff0cc137e1a415b542ec94e15f624529",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0084-runner-tool-bounded-transport-replay.md",
+      "gitBlob": "3c4573c88040e75a86b89d67bf4feee66afa9434",
+      "gitBytes": 2613,
+      "gitSha256": "abab33061847b0da37514ecb11435da0500ef437ac5de05921ee6f656a4614b5",
+      "completeBlobRead": true,
+      "lines": 35,
+      "worktreeBytes": 2648,
+      "worktreeSha256": "8ab2e0dcf2a92fb4bdd8e3e9a198f0602aeb5add7a289c60fa747b38c71ff9a4",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/0085-mcp-original-execution-recovery-discovery.md",
+      "gitBlob": "3aca66d052d458195318ea64df5edb06cbc18f11",
+      "gitBytes": 2257,
+      "gitSha256": "f4cd52f65f01121c37d86612a0d3e61f561586a34ff39f4d8e5981c5b0dcbf50",
+      "completeBlobRead": true,
+      "lines": 31,
+      "worktreeBytes": 2288,
+      "worktreeSha256": "4b1586eafd162ece83750eaf74a91c5cc053482c47da361ad1d8b6e6ae6293f0",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/adr/README.md",
+      "gitBlob": "9b98ee70c3fd5f521dc7fe060c5f0ea92a597363",
+      "gitBytes": 16064,
+      "gitSha256": "4d30c7b6febddb9d00bbf51be8a4b69a247fe35ef872560f3ded734baef3326e",
+      "completeBlobRead": true,
+      "lines": 121,
+      "worktreeBytes": 16185,
+      "worktreeSha256": "abee02e6eb97298a8ba8fe44a28a18a3a6b0d5f8b2e8f81737bd70df6f4e79c8",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/agent-mcp-m0/domain-audit.md",
+      "gitBlob": "f0024144c135f863457a578a95080c300e3b62f7",
+      "gitBytes": 229377,
+      "gitSha256": "83da21681065859a9f626cc9008f1cce0f41b3b71b3ea7c938a0a30d112d96a5",
+      "completeBlobRead": true,
+      "lines": 105,
+      "worktreeBytes": 229482,
+      "worktreeSha256": "9784a2f0d8fbb3657041681de2b4c204a1bddbe5fcb3ab33a1d58e91ba12df17",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/agent-mcp-m0/domain-rules.json",
+      "gitBlob": "39d9f36d90fcdc15e3706945fecb4f43cf3a9ac7",
+      "gitBytes": 102800,
+      "gitSha256": "dc224cf15b2edefc482e6ff60dabe1cad02ba342a81e0b7a42051c79f37f11eb",
+      "completeBlobRead": true,
+      "lines": 3199,
+      "worktreeBytes": 105999,
+      "worktreeSha256": "07c26f2138792d23c5b55d52411d28b1b924d28f65a620eaa412fb4f92c699cd",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/agent-mcp-m0/operation-decisions.json",
+      "gitBlob": "a2b286578af5368163c17fb1cbb14f6983026f87",
+      "gitBytes": 11319331,
+      "gitSha256": "97d0b5015d611e5aa06c540d2820ac55b929b1142d588519d29e2929738f9cf1",
+      "completeBlobRead": true,
+      "lines": 280846,
+      "worktreeBytes": 11600177,
+      "worktreeSha256": "b845f8c7e647ce8d3e0146eb4717914956699f0ef788477f5ffddd4b95a6cc6f",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/agent-mcp-m5/product-current-matrix.md",
+      "gitBlob": "98ec4d7bfff9e6f04c15c369266e7da381792ba2",
+      "gitBytes": 4938,
+      "gitSha256": "5440354193448f6ec967384b157ef979cf39da545bb4ae6a6e07b198a3b60cb6",
+      "completeBlobRead": true,
+      "lines": 28,
+      "worktreeBytes": 4966,
+      "worktreeSha256": "0b4843786a40c4b0a7092b5839d6ba74da3c198e56f1b0c52555c3193758962d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/agent-mcp-m5/product-current-report.md",
+      "gitBlob": "9cbbf3f6d4ebd060fdeb6248cb4aaa52d067b414",
+      "gitBytes": 10416,
+      "gitSha256": "87063538cc75fc923d5547003a0d87574a8d6b0ad46d84ea5b517f51dc3b5d9b",
+      "completeBlobRead": true,
+      "lines": 45,
+      "worktreeBytes": 10461,
+      "worktreeSha256": "bfe53f1c9e4003afa418f9c9209cda1ae2bd28f1696be61d6c1441bae3c561b1",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/agent-mcp-m5/product-pr-ci-report.md",
+      "gitBlob": "f7aaf2b3a056198cd5caaa353fa517fef06f7ca3",
+      "gitBytes": 2845,
+      "gitSha256": "4c1d24b90d400fdac5a9d1ef6134016b7067c94657dae16e4ab3fcccfe1d08d6",
+      "completeBlobRead": true,
+      "lines": 13,
+      "worktreeBytes": 2858,
+      "worktreeSha256": "f9dfa956c7084f334344ecda5dfa5de215c63944918f90a24081fdf0bd150478",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/agent-mcp-m5/product-resources-current.md",
+      "gitBlob": "e487a01dd2ea2ce67eeb7331fc635401d20872d8",
+      "gitBytes": 5966,
+      "gitSha256": "aa85d6edd6784a89384ee51a5427298e5d85c21ee6a575a7865919bcf9a69bf0",
+      "completeBlobRead": true,
+      "lines": 29,
+      "worktreeBytes": 5995,
+      "worktreeSha256": "ab0390612edecf370d2b16cc82e5aa1edf9a67b6d84cf8edac68bffa414e9e1d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/backend-agent-mcp-priority/README.md",
+      "gitBlob": "95d56c599bcb9ea20e1ce7105deb694e54fff4e0",
+      "gitBytes": 9139,
+      "gitSha256": "b156d436c2222adca9ad25ab0d9224b0388b278bc58743d294c803e7961209a1",
+      "completeBlobRead": true,
+      "lines": 61,
+      "worktreeBytes": 9200,
+      "worktreeSha256": "1c4756741e0b69013240f2baa62951c1a3066d09c0b3d8278d0c1232fb3e54ff",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "gitBlob": "4d194d771c251de5def0c61ff61ce568f7c7fe61",
+      "gitBytes": 38635,
+      "gitSha256": "8fd80172cda4734fcb750e3415c2da38304072f992c58781a2e677ae9eab633f",
+      "completeBlobRead": true,
+      "lines": 222,
+      "worktreeBytes": 38857,
+      "worktreeSha256": "cd3164833198bbdc5ca85cae0cdd48fc718d90cb3c6f714c3a5547ad778fc004",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "gitBlob": "dfbd2d95d962fcfc2ddf0030054b56c3139bd48d",
+      "gitBytes": 15001,
+      "gitSha256": "b3981214b3aabb7c760d5408dad2b5d3393dfed444ffba5503a8d7c5e8e5e7ce",
+      "completeBlobRead": true,
+      "lines": 89,
+      "worktreeBytes": 15090,
+      "worktreeSha256": "3ccb18d1b6b495f1109404a54ed764e0462d12f28da2b1838cdbc8fc529626d0",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "gitBlob": "0d2ab85cc22e398d95751ffbeea30b26a7f69dc0",
+      "gitBytes": 26429,
+      "gitSha256": "34d6527d056df873b33cd3e5344e7b9f5fa8698db59665fa455627a79c751fd2",
+      "completeBlobRead": true,
+      "lines": 75,
+      "worktreeBytes": 26504,
+      "worktreeSha256": "b5cc4b4eef8a347f7a4abe5ea1ef529818fc41e179fd10998a1af8424aa1fcd6",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "gitBlob": "53b0019d9bced0bbaad8948b3a49e9ce38df5912",
+      "gitBytes": 162368,
+      "gitSha256": "7fefa525a0b555094dd521eb3690ef9c3cf0c0a4917eb76a7177a43724879f0a",
+      "completeBlobRead": true,
+      "lines": 2505,
+      "worktreeBytes": 164873,
+      "worktreeSha256": "d8dda84f4025c91f31c19f96b14af9da964dec13209b972aec745d61f769a246",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/backend-agent-mcp-priority/review.md",
+      "gitBlob": "8e7a26b786d7e2d93a7de65161eb5d9db0979685",
+      "gitBytes": 10968,
+      "gitSha256": "df3fe6b47f895fef7439c7ecb2433dc6637cd4c4eb3725e035ebb973696ced09",
+      "completeBlobRead": true,
+      "lines": 80,
+      "worktreeBytes": 11048,
+      "worktreeSha256": "a80c25b26459dcfd3100212db5e2b64b0a8077b1bc566fb88340d1856a9432d9",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/plan/backend-agent-mcp-priority/sources.md",
+      "gitBlob": "615ddaf879cbe1894c13c781d8a5243fa4d69582",
+      "gitBytes": 50119,
+      "gitSha256": "e029c6fc747e896516c91cb7285fa6cc4cf9cce4265bd589c405fff9355145a1",
+      "completeBlobRead": true,
+      "lines": 379,
+      "worktreeBytes": 50498,
+      "worktreeSha256": "977c72867ec4b103c15a47fb11b61dc36f4218fbf4a1506c065a98baa245d7ca",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/cleanup-rules.json",
+      "gitBlob": "286f8277b88f67bab4c93d958fc1182fda7ee2db",
+      "gitBytes": 1896,
+      "gitSha256": "1a7381e1218a4b455f382b8063fb375f40cb40825e2c0b15da0c07efd2c3a205",
+      "completeBlobRead": true,
+      "lines": 17,
+      "worktreeBytes": 1913,
+      "worktreeSha256": "3f1daab3967c50cf0ceb116938d1c3ca6d36f392153e421710a0f83c966c6f99",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/report.md",
+      "gitBlob": "47fc43cc66ac2e231b592447b4926e32cab6ec6f",
+      "gitBytes": 14799,
+      "gitSha256": "c54668a14770296466aef874b3e964fdbd455959a0c2b3c533947460e6df640e",
+      "completeBlobRead": true,
+      "lines": 90,
+      "worktreeBytes": 14889,
+      "worktreeSha256": "ff0d22cc93c4bfb142d1724c766f30a50698b3744a9065abc482500e79967239",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/followup/blocked-cleanup-old.json",
+      "gitBlob": "c5c2c705ccb1241c5d6138d0c0af4235cedfbce2",
+      "gitBytes": 3383,
+      "gitSha256": "237837be7e07ecd226bb097a6bdd1f484e9eadaaec2228fd109c3329f4c928ef",
+      "completeBlobRead": true,
+      "lines": 87,
+      "worktreeBytes": 3470,
+      "worktreeSha256": "878db6b92e68ba19d5d69162b9a46fb3b6eeee0388e572a37afb2d0434eebd60",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/followup/readonly-boundary.json",
+      "gitBlob": "c1d9dc4bb514e042a549a208cb92cf7f9884b811",
+      "gitBytes": 904,
+      "gitSha256": "8244bed200f9d54a9d87c77d0ef29aefbf08c9d722ff839b80e7cd24113cc053",
+      "completeBlobRead": true,
+      "lines": 12,
+      "worktreeBytes": 916,
+      "worktreeSha256": "f6ff26832db4238d06751c813b479435b9b5cbad29ebfb2d1eeeb76cb0acefef",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/followup/report.md",
+      "gitBlob": "4a301617a56a86afff56adbf0d4971373e37ec7f",
+      "gitBytes": 18368,
+      "gitSha256": "0976d44fa2bc864e06c8b822bdfd98a351a6cb3c49e0cfb28f239b8fb4af4a65",
+      "completeBlobRead": true,
+      "lines": 123,
+      "worktreeBytes": 18491,
+      "worktreeSha256": "ef93880f7886f57abc4c2168f67222fad413c42fdb47ec80be42723ad4dff40d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/mechanism.md",
+      "gitBlob": "133a76443aa62013ddfa35976eefb628ca0149af",
+      "gitBytes": 5887,
+      "gitSha256": "65644f99ef2858b4bd612bf9cf38226512fdcb99fc87baf8c45a6c0eb6318407",
+      "completeBlobRead": true,
+      "lines": 39,
+      "worktreeBytes": 5926,
+      "worktreeSha256": "40f9e1ea983a80b26fa1ab3f94ac740c84905bcf39f4f96508f5480ec654b0a5",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/protected-paths.json",
+      "gitBlob": "7acf78fad047f09f3542ca2082a5e47ab07c7592",
+      "gitBytes": 2390757,
+      "gitSha256": "8c137eb869785a442a3fe3156e6c45db5e64800ce5107d04bb2491a24dc8084a",
+      "completeBlobRead": true,
+      "lines": 31233,
+      "worktreeBytes": 2421990,
+      "worktreeSha256": "89e1a69b045263eb30ac9c6c9826fe205490a36681759e6d6e01a57033381fc0",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/report.md",
+      "gitBlob": "5d5d32798bf4d25232039e2c9e531b2d5c7ebfed",
+      "gitBytes": 11735,
+      "gitSha256": "91c2d06834341a6098f7c3596d6a7b750d144b4c9579d8bd3730f6d5bc7b260f",
+      "completeBlobRead": true,
+      "lines": 83,
+      "worktreeBytes": 11818,
+      "worktreeSha256": "44ceda2ae0b3e7dff15ab2881e4d61d32a87ad8c6271c7029537640bf12c0c8d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/usage-inventory.py",
+      "gitBlob": "054feb85e71626cd231e1577a6625153f5a9b6ee",
+      "gitBytes": 9784,
+      "gitSha256": "afc1a0a6d03b224e3f47dc26072d078531c982b7664ed6f8df288224913645e3",
+      "completeBlobRead": true,
+      "lines": 181,
+      "worktreeBytes": 9965,
+      "worktreeSha256": "a8d5ee88a6c39c5ac9e5e9abd3767358044d73cb5b33db418e1b2f051cf8a276",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "package.json",
+      "gitBlob": "7652f1cb897f4535ee1fc5f4a93ae34794a99231",
+      "gitBytes": 4825,
+      "gitSha256": "d0a65d74e63d8f3629a4521eaa253153635d908c6a3e41e52abccadd409ed34c",
+      "completeBlobRead": true,
+      "lines": 72,
+      "worktreeBytes": 4897,
+      "worktreeSha256": "2bcf1b9506418f1d136abf3a0a83f114db4f4404303ccabcde5ff5c07c10deb7",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/a2a-adapter/src/index.ts",
+      "gitBlob": "fb06af35c60c30b07b394549e3e188442c6c28d4",
+      "gitBytes": 11358,
+      "gitSha256": "de0532ea50a5a0ec4f1d286882286d79193c1527f622394595b2aba7c7c1f6b9",
+      "completeBlobRead": true,
+      "lines": 313,
+      "worktreeBytes": 11671,
+      "worktreeSha256": "e44d0b85202fda64285f134f8950a1d2cd7c660c73645e6cf926f68ab33f82ee",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/agent-sdk/src/index.ts",
+      "gitBlob": "b2d5915291bbb84a49adec04d741e7ea1486d2b0",
+      "gitBytes": 85184,
+      "gitSha256": "da27533eda554e8bbe18a62d9d060a44a04256b6c300596629f99aa6aedb1d44",
+      "completeBlobRead": true,
+      "lines": 987,
+      "worktreeBytes": 86171,
+      "worktreeSha256": "354b02cb496b9ec6adc3840bb987db3e8dbcb750ea858c92eb9bfc464817ee37",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/conformance/package.json",
+      "gitBlob": "0c24ba15a908ad4dceae468202ef1cd3bf7aed75",
+      "gitBytes": 963,
+      "gitSha256": "e6e5c905b3b4385076d5d5ba0d3264c98fa3399a2afe2e8e3e26419234ce5ea6",
+      "completeBlobRead": true,
+      "lines": 32,
+      "worktreeBytes": 995,
+      "worktreeSha256": "46c0c857ad8c597ea721c43243b1e9e33fbb373a570bccbd5d709f79d4fec91a",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/conformance/src/joint-clients.drivers.ts",
+      "gitBlob": "0f75ea99fc8d6abacfa03fcf7e59fabf8913e50c",
+      "gitBytes": 27987,
+      "gitSha256": "154844b5f0300c7e3023dc7272846ea43a1b0ee11a34e296b035a9ebb0f5fa10",
+      "completeBlobRead": true,
+      "lines": 334,
+      "worktreeBytes": 28321,
+      "worktreeSha256": "234c6701cc9c04288cb466da13b032ff26670fcbc746a97fcafb44d1c530fed9",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/conformance/src/joint-clients.external.ts",
+      "gitBlob": "b181f32d6a2a6bc736d35e2a1ea2b5e83996189e",
+      "gitBytes": 6202,
+      "gitSha256": "8410de7fd864e832c275062ae6807dc3d3048dd1a92466e67ebc237d3ea59528",
+      "completeBlobRead": true,
+      "lines": 83,
+      "worktreeBytes": 6285,
+      "worktreeSha256": "c47920b7b30acf17585e28c8587a758facb19c87d043ddc06cea67ce1b04b982",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/conformance/src/mcp-coverage.fixture.ts",
+      "gitBlob": "7535b59b69846a03937c49d0ba2ee499b23a0a3f",
+      "gitBytes": 17533,
+      "gitSha256": "2f49eacd1ddc4773b82116b33874784818347c6e7bcfca9e65a3a1b571bef15a",
+      "completeBlobRead": true,
+      "lines": 208,
+      "worktreeBytes": 17741,
+      "worktreeSha256": "25fd586e2e207b4a3e72cc66289ac7e7838778ad2f3c1cbb029e0bde26355679",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/conformance/src/planning-collaboration.fixture.ts",
+      "gitBlob": "6df951b4638104d9a45d9485ef08fff0baf1d11c",
+      "gitBytes": 17268,
+      "gitSha256": "9a149f67ff2563565af97b50a86a254c9913a7c08bdc9b4894833a6d75b5f695",
+      "completeBlobRead": true,
+      "lines": 189,
+      "worktreeBytes": 17457,
+      "worktreeSha256": "5a2cf29617a122e711f424abbd6ede87280acf4232864d48884ce3aa31b53fb6",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/conformance/tsconfig.build.json",
+      "gitBlob": "61aa2dcbae5deeb160c60196b283bcd2e16f908f",
+      "gitBytes": 676,
+      "gitSha256": "220f36c7d9991c00f4b7c6dee94c8a337cccecb536702f703349b86bc23a3e4a",
+      "completeBlobRead": true,
+      "lines": 23,
+      "worktreeBytes": 699,
+      "worktreeSha256": "cda1c41c0e1ae28760d5643aeccbb7b4a3f22c48cf0721b01a339a56f3dd8578",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/conformance/vitest.integration.config.ts",
+      "gitBlob": "6b9a449946f5b3a13569dcda35e192739961eb81",
+      "gitBytes": 448,
+      "gitSha256": "e89b152b6d1096e21955fdc9935ef397d3e5d8a9dce3aaf443c7d0281e82531d",
+      "completeBlobRead": true,
+      "lines": 6,
+      "worktreeBytes": 454,
+      "worktreeSha256": "3540963fc540ce4b1bae447ec89e4225a494b7cee025ffdf3f5e3869e8f64982",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/contracts/src/agent-discovery-rules.ts",
+      "gitBlob": "47f3cf9b43dce1c585d007cf08e05e37007d9fdb",
+      "gitBytes": 258698,
+      "gitSha256": "ae0523d9aa2bcb24334679e6a8b0a0a9d4aba478f7daf5cc45b2afc853642c99",
+      "completeBlobRead": true,
+      "lines": 426,
+      "worktreeBytes": 259124,
+      "worktreeSha256": "5195317bf61b22611eb6047e496b6a5d7dbebad7ce1233ebfe59248c7e3a047d",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/contracts/src/agent-discovery.ts",
+      "gitBlob": "edc4cb8b67013d06c342eccf26c0247aed712ca0",
+      "gitBytes": 12181,
+      "gitSha256": "e0dc4a87c19f39c16c20a5b41c49ebf11180a66b290519e61b9b1018dc94ce4b",
+      "completeBlobRead": true,
+      "lines": 181,
+      "worktreeBytes": 12362,
+      "worktreeSha256": "a7c8178f9856c6e82657499838ca0016322b282dc51ade5abb8b246a852b55d8",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/contracts/src/index.ts",
+      "gitBlob": "81c76bfdf733b58b03add70be8c20064de1d96b0",
+      "gitBytes": 189059,
+      "gitSha256": "1cc10d3b5d5b5f7843a63b7b8ffa56cc543f5e486d9ba7d9d3ce61f5c9d70023",
+      "completeBlobRead": true,
+      "lines": 3201,
+      "worktreeBytes": 192260,
+      "worktreeSha256": "8fa16fa34cd26fea7a2cdf24badb503a1edcaa5cc9361ed1fe5c7be4219fd119",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/contracts/src/route-policy-bindings.ts",
+      "gitBlob": "5b3ce465dfb6df690910a2c375ba27ea8030f1f5",
+      "gitBytes": 32378,
+      "gitSha256": "18e18541a8f8afb2f577816d8cbeea1c8d3b7d0c987dc8aa594a61bde5bda623",
+      "completeBlobRead": true,
+      "lines": 1219,
+      "worktreeBytes": 33597,
+      "worktreeSha256": "914cb23d15893485eb896f0b7491778ff52b4daa66b91aa471c1d45a8b21873b",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/contracts/src/route-policy.ts",
+      "gitBlob": "28dbb90416506958f12058778454d10ea2c3ec0f",
+      "gitBytes": 26858,
+      "gitSha256": "3723e2d5265f9e6d879e568c84ff672afd80f021f2ec9282026bf299b3462931",
+      "completeBlobRead": true,
+      "lines": 703,
+      "worktreeBytes": 27561,
+      "worktreeSha256": "d56aa54d39ee395e048c07ef287b7a7f5a4823d44b05d630dc44c6ac9c456c81",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/db/src/agent-lock-order-manifest.ts",
+      "gitBlob": "1180f67b0535f332d0dce95923ff701aa836059a",
+      "gitBytes": 28140,
+      "gitSha256": "f4942d4422af9f62aec15e13b56e9725ba596a6ede25f8d9000c3b637c7fc649",
+      "completeBlobRead": true,
+      "lines": 377,
+      "worktreeBytes": 28517,
+      "worktreeSha256": "8365e910fe71a5201dc8918c693a56451a82ef40a888b67488148ea371ec0d25",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/db/src/principal-team-authority.ts",
+      "gitBlob": "e6ef849a15fcfa303d36f6b1fe1df3ab86cff932",
+      "gitBytes": 734,
+      "gitSha256": "944e613c404890e8b484453f06dc0daca83ebed06dc105c702b2eb7d800c7d80",
+      "completeBlobRead": true,
+      "lines": 9,
+      "worktreeBytes": 743,
+      "worktreeSha256": "1153b3f3584d399b22e5958b60a869d0bfa5dd8b0c49399d45f897716d607dd3",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/db/src/stage4.ts",
+      "gitBlob": "29808e46c1684364bdbdd91f639bf3067d64de98",
+      "gitBytes": 58725,
+      "gitSha256": "a51a60a91618c7db18e872f41605bd87a5f8e48add1471d5ee6f7fc80709a260",
+      "completeBlobRead": true,
+      "lines": 1423,
+      "worktreeBytes": 60148,
+      "worktreeSha256": "d015f67038a77076de3f9e81a4c13a33f6b283cd1ffcdb998b936b1f9e00931b",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "packages/domain/src/stage4.ts",
+      "gitBlob": "437d56906612313f07b17e0b41d1d8c7ef9fd1bf",
+      "gitBytes": 13110,
+      "gitSha256": "d48356c3148163ab189f38b86a833d8614a8cc5c1a3f999dedaf12ddc3c2e7a9",
+      "completeBlobRead": true,
+      "lines": 357,
+      "worktreeBytes": 13467,
+      "worktreeSha256": "321bd7fa283f88404e1a684116f645ce4d613158d2ca67bdae89c6efd0f24276",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "scripts/ci-policy.mjs",
+      "gitBlob": "9983256c9697ea645447f4df4c43fc15ad1f1605",
+      "gitBytes": 12042,
+      "gitSha256": "40af5183b18cf9b684fb154afe7419c05e99a8a6e9ef05eb2c9db6cfb4a94ac7",
+      "completeBlobRead": true,
+      "lines": 160,
+      "worktreeBytes": 12202,
+      "worktreeSha256": "21c35fe507e5eaa0a6b4b64e4885801b9b6a0ae644c440498026ece335a0e28f",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "scripts/ci-policy.test.mjs",
+      "gitBlob": "326daf8f15f5583c0dd865b68ebb5093bfd3a187",
+      "gitBytes": 13077,
+      "gitSha256": "0fdb0a6096a27c5db7ece21a748c9aa7f493a57ef984b448fb863f528e670942",
+      "completeBlobRead": true,
+      "lines": 214,
+      "worktreeBytes": 13291,
+      "worktreeSha256": "5f2d4213e89914bc95dfcc3e1d11da86e65a80683362a88dd626c9a4431e90a9",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "scripts/generate-route-policy-artifacts.mts",
+      "gitBlob": "ba65a6b192eab0c01774b16931dbe8314ff82001",
+      "gitBytes": 9112,
+      "gitSha256": "29a66c26374c07814a05aa3ee7a9098110b64ff0bfe3b6cbdf4d253d29a15907",
+      "completeBlobRead": true,
+      "lines": 193,
+      "worktreeBytes": 9305,
+      "worktreeSha256": "e37f7b39f0ff11daeab57f35d0f7b5007a1dd1428c8f1f62f973b58f0796ca25",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "scripts/generate-runner-skill-manifest.mjs",
+      "gitBlob": "693fe62c45d09f715f184a0d356db3c86db0b26b",
+      "gitBytes": 1517,
+      "gitSha256": "05d70480456868fa7d0447bda45183e095492e8973df23f4083220a9daaee78b",
+      "completeBlobRead": true,
+      "lines": 26,
+      "worktreeBytes": 1543,
+      "worktreeSha256": "9016fc4ba1a5d8e6b86f23249dc9acec534edbdbffb05af8888cda1ce0a85075",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "scripts/require-integration-env.mjs",
+      "gitBlob": "bbc51967ec87a58f7ceec1e74a01775ceb80cf43",
+      "gitBytes": 640,
+      "gitSha256": "166188cf462527f2350819b34f5ffa2b0cd60a80d604b09038f3443335c81c73",
+      "completeBlobRead": true,
+      "lines": 13,
+      "worktreeBytes": 653,
+      "worktreeSha256": "bd25e10d3ef38110cbdc37451eea617e5a0cb3c271e6caf57270475cce578825",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "vitest.config.ts",
+      "gitBlob": "177ddfd7d2df1b2d028509602b44523391a97d26",
+      "gitBytes": 1677,
+      "gitSha256": "dcfeb72a18bae8a22e13c5ac49eb6857d2ae8646122e639a3d5dbb53bdede655",
+      "completeBlobRead": true,
+      "lines": 31,
+      "worktreeBytes": 1708,
+      "worktreeSha256": "9eab23174af29468cc9b52a6f229238f06f96db1b89874e946c27c79c28df7ff",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+      "path": "vitest.integration.config.ts",
+      "gitBlob": "e6a813d2cecd039ad9be481a26e6b4129caefba3",
+      "gitBytes": 733,
+      "gitSha256": "472847e308368450c040b27e9ddc4f6f694f8af4eaadecc63fb7cf06f433425b",
+      "completeBlobRead": true,
+      "lines": 19,
+      "worktreeBytes": 752,
+      "worktreeSha256": "ca9031eca23a729d89184c49246b8f1891c784382293cc91ac7ad25b58b3ccfe",
+      "byteMapping": "LF_to_CRLF"
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/README.md",
+      "gitBlob": "95d56c599bcb9ea20e1ce7105deb694e54fff4e0",
+      "gitBytes": 9139,
+      "gitSha256": "b156d436c2222adca9ad25ab0d9224b0388b278bc58743d294c803e7961209a1",
+      "completeBlobRead": true,
+      "lines": 61
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md",
+      "gitBlob": "4d194d771c251de5def0c61ff61ce568f7c7fe61",
+      "gitBytes": 38635,
+      "gitSha256": "8fd80172cda4734fcb750e3415c2da38304072f992c58781a2e677ae9eab633f",
+      "completeBlobRead": true,
+      "lines": 222
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/coverage-matrix.md",
+      "gitBlob": "0d2ab85cc22e398d95751ffbeea30b26a7f69dc0",
+      "gitBytes": 26429,
+      "gitSha256": "34d6527d056df873b33cd3e5344e7b9f5fa8698db59665fa455627a79c751fd2",
+      "completeBlobRead": true,
+      "lines": 75
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/operation-index.md",
+      "gitBlob": "53b0019d9bced0bbaad8948b3a49e9ce38df5912",
+      "gitBytes": 162368,
+      "gitSha256": "7fefa525a0b555094dd521eb3690ef9c3cf0c0a4917eb76a7177a43724879f0a",
+      "completeBlobRead": true,
+      "lines": 2505
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/branch-separation.md",
+      "gitBlob": "dfbd2d95d962fcfc2ddf0030054b56c3139bd48d",
+      "gitBytes": 15001,
+      "gitSha256": "b3981214b3aabb7c760d5408dad2b5d3393dfed444ffba5503a8d7c5e8e5e7ce",
+      "completeBlobRead": true,
+      "lines": 89
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/sources.md",
+      "gitBlob": "615ddaf879cbe1894c13c781d8a5243fa4d69582",
+      "gitBytes": 50119,
+      "gitSha256": "e029c6fc747e896516c91cb7285fa6cc4cf9cce4265bd589c405fff9355145a1",
+      "completeBlobRead": true,
+      "lines": 379
+    },
+    {
+      "commit": "c768e1e3db297d8b91b53dd68b60e723a8a40e7d",
+      "path": "docs/plan/backend-agent-mcp-priority/review.md",
+      "gitBlob": "8e7a26b786d7e2d93a7de65161eb5d9db0979685",
+      "gitBytes": 10968,
+      "gitSha256": "df3fe6b47f895fef7439c7ecb2433dc6637cd4c4eb3725e035ebb973696ced09",
+      "completeBlobRead": true,
+      "lines": 80
+    }
+  ],
+  "missingPaths": [],
+  "symbolLocations": [
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/initiatives'",
+      "lines": [
+        409,
+        411,
+        461
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/initiatives/:id/rollup'",
+      "lines": [
+        491
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/automation-runs/:runId'",
+      "lines": [
+        1867
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/usage-summary'",
+      "lines": [
+        1540
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/a2a-bindings/:id/tasks/:taskId/events'",
+      "lines": [
+        2273
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/templates'",
+      "lines": [
+        1691,
+        1693,
+        1739
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/advanced-views'",
+      "lines": [
+        569,
+        571,
+        611
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/loops/:id/run'",
+      "lines": [
+        1426
+      ]
+    },
+    {
+      "path": "apps/api/src/operations/routes.ts",
+      "symbol": "'/api/v1/usage-records'",
+      "lines": [
+        1459
+      ]
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "symbol": "async function createView",
+      "lines": [
+        1339
+      ]
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "symbol": "app.get(\"/api/v1/views\"",
+      "lines": [
+        1155
+      ]
+    },
+    {
+      "path": "packages/contracts/src/agent-discovery.ts",
+      "symbol": "const queryDifferences",
+      "lines": [
+        58
+      ]
+    },
+    {
+      "path": "packages/contracts/src/agent-discovery.ts",
+      "symbol": "deriveOperationEligibility",
+      "lines": [
+        64
+      ]
+    },
+    {
+      "path": "packages/contracts/src/agent-discovery.ts",
+      "symbol": "projectAdapterDiscovery",
+      "lines": [
+        125
+      ]
+    },
+    {
+      "path": "packages/db/src/stage4.ts",
+      "symbol": "async function assertAdmissionAuthorization",
+      "lines": [
+        26
+      ]
+    },
+    {
+      "path": "packages/db/src/stage4.ts",
+      "symbol": "export async function admitLoopRun",
+      "lines": [
+        314
+      ]
+    },
+    {
+      "path": "packages/db/src/stage4.ts",
+      "symbol": "async function revalidateAutomationSession",
+      "lines": [
+        851
+      ]
+    },
+    {
+      "path": "packages/db/src/stage4.ts",
+      "symbol": "export async function executeAutomationAction",
+      "lines": [
+        1125
+      ]
+    },
+    {
+      "path": "apps/api/src/authz/authorize.ts",
+      "symbol": "async function loadAgentFacts",
+      "lines": [
+        284
+      ]
+    },
+    {
+      "path": "apps/api/src/authz/authorize.ts",
+      "symbol": "function resourceInScope",
+      "lines": [
+        344
+      ]
+    },
+    {
+      "path": "apps/api/src/authz/authorize.ts",
+      "symbol": "export function sessionActiveForOperation",
+      "lines": [
+        379
+      ]
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "symbol": "function boundedResult",
+      "lines": [
+        65
+      ]
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "symbol": "async function recordToolActivity",
+      "lines": [
+        86
+      ]
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "symbol": "function makeTool",
+      "lines": [
+        107
+      ]
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "symbol": "export async function createWorkMeshTools",
+      "lines": [
+        193
+      ]
+    },
+    {
+      "path": "apps/agent-runner/src/workmesh-tools.ts",
+      "symbol": "const completeDocumentRead",
+      "lines": [
+        181
+      ]
+    }
+  ],
+  "readLimit": "完整 Git blob 与 UTF-8 已读取校验；本卡语义审计仅所选操作，非全仓重新验收。"
+}

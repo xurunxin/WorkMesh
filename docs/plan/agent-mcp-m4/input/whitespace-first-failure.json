@@ -1,0 +1,7 @@
+{
+  "command": "git diff --cached --check",
+  "exitCode": 1,
+  "stdout": "docs/plan/agent-mcp-m4/input/remote-main-final.json:9: new blank line at EOF.",
+  "resolution": "只删除该规划JSON额外空白EOF，不改远端main工具返回正文；修复后重新暂存并实际复验",
+  "productChecks": "未运行"
+}

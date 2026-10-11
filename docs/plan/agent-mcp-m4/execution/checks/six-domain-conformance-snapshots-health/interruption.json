@@ -1,0 +1,10 @@
+{
+  "command": ["pnpm.cmd", "--filter", "@workmesh/conformance", "exec", "vitest", "run", "--config", "vitest.integration.config.ts", "src/optional-domains.conformance.test.ts"],
+  "exitCode": null,
+  "wrapperExitObserved": 1,
+  "reason": "主力发现纯读屏障夹具拦截 Pool.query 时未转发 callback，手动中断本会话命令。随后改用真实 PoolClient 查询；产品查询未改。",
+  "rawOutputMissing": "包装器完成前缓冲输出，故此次 stdout/stderr 与前后完整指纹未落盘；不补造。",
+  "processObservation": "中断后核当前工作区 optional-domains/vitest 进程已无活动；未停止其他服务。",
+  "replacementEvidence": "../six-domain-snapshot-direct-client/receipt.json",
+  "productTestPassed": false
+}

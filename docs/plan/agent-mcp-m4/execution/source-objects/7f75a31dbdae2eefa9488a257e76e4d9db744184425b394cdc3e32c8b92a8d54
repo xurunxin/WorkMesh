@@ -1,0 +1,144 @@
+{
+  "expected": "pre-stabilization/mobile-390x844/issue-detail.png",
+  "actual": "strict-mobile-issue-detail-actual.png",
+  "width": 390,
+  "height": 844,
+  "expectedSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+  "actualSha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+  "differingPixels": 13,
+  "maxChannelDifference": 1,
+  "pixels": [
+    {
+      "x": 375,
+      "y": 211,
+      "deltaRgba": [
+        -1,
+        -1,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 375,
+      "y": 212,
+      "deltaRgba": [
+        -1,
+        -1,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 376,
+      "y": 213,
+      "deltaRgba": [
+        0,
+        0,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 377,
+      "y": 213,
+      "deltaRgba": [
+        0,
+        0,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 376,
+      "y": 214,
+      "deltaRgba": [
+        0,
+        0,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 376,
+      "y": 215,
+      "deltaRgba": [
+        -1,
+        -1,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 377,
+      "y": 215,
+      "deltaRgba": [
+        -1,
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "x": 376,
+      "y": 246,
+      "deltaRgba": [
+        -1,
+        -1,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 377,
+      "y": 246,
+      "deltaRgba": [
+        -1,
+        -1,
+        0,
+        0
+      ]
+    },
+    {
+      "x": 376,
+      "y": 247,
+      "deltaRgba": [
+        0,
+        0,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 377,
+      "y": 248,
+      "deltaRgba": [
+        -1,
+        -1,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 375,
+      "y": 249,
+      "deltaRgba": [
+        -1,
+        -1,
+        -1,
+        0
+      ]
+    },
+    {
+      "x": 376,
+      "y": 249,
+      "deltaRgba": [
+        -1,
+        -1,
+        -1,
+        0
+      ]
+    }
+  ],
+  "historicalExpected": "../win32/mobile-390x844/issue-detail.png",
+  "resourcePointerNote": "当前基线采集条件修订后，将旧比较 expected 指向已保留历史原图；原始 PNG/哈希/差异指标/失败结论均未改变"
+}

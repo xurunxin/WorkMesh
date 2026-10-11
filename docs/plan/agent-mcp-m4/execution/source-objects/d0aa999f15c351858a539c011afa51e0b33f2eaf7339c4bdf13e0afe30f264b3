@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "note": "历史 manifest 的 snapshot 是当时路径标识，不能用同名当前 PNG 代替其哈希；本映射核对到每个历史原始 PNG 的当前保留路径",
+  "versions": [
+    {
+      "manifest": "pre-review-manifest.json",
+      "entries": [
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/agent-detail.png",
+          "sha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+          "archivedPng": "win32/desktop-1440x1000/agent-detail.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/board.png",
+          "sha256": "480d5a27d9f4f9c634596e6df66ded96a3bff995a9a2d385a604a9a33416252c",
+          "archivedPng": "failures/pre-review-desktop-board.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/issue-detail.png",
+          "sha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+          "archivedPng": "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/issues-list.png",
+          "sha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+          "archivedPng": "win32/desktop-1440x1000/issues-list.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/project.png",
+          "sha256": "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+          "archivedPng": "failures/pre-stabilization/desktop-1440x1000/project.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/settings.png",
+          "sha256": "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+          "archivedPng": "failures/pre-stabilization/desktop-1440x1000/settings.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/workbench.png",
+          "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+          "archivedPng": "win32/desktop-1440x1000/workbench.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/agent-detail.png",
+          "sha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+          "archivedPng": "win32/mobile-390x844/agent-detail.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/board.png",
+          "sha256": "b28e57a008a634beba2efe006e6b4f7571eb7e4c513030f7b407fc4fb1227d51",
+          "archivedPng": "failures/pre-review-mobile-board.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/issue-detail.png",
+          "sha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+          "archivedPng": "failures/review-mobile-issue-detail-capture-2.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/issues-list.png",
+          "sha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+          "archivedPng": "win32/mobile-390x844/issues-list.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/project.png",
+          "sha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+          "archivedPng": "win32/mobile-390x844/project.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/settings.png",
+          "sha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+          "archivedPng": "win32/mobile-390x844/settings.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/workbench.png",
+          "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+          "archivedPng": "win32/mobile-390x844/workbench.png"
+        }
+      ]
+    },
+    {
+      "manifest": "pre-stabilization-manifest.json",
+      "entries": [
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/agent-detail.png",
+          "sha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+          "archivedPng": "win32/desktop-1440x1000/agent-detail.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/board.png",
+          "sha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+          "archivedPng": "win32/desktop-1440x1000/board.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/issue-detail.png",
+          "sha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+          "archivedPng": "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/issues-list.png",
+          "sha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+          "archivedPng": "win32/desktop-1440x1000/issues-list.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/project.png",
+          "sha256": "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+          "archivedPng": "failures/pre-stabilization/desktop-1440x1000/project.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/settings.png",
+          "sha256": "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+          "archivedPng": "failures/pre-stabilization/desktop-1440x1000/settings.png"
+        },
+        {
+          "historicalSnapshot": "win32/desktop-1440x1000/workbench.png",
+          "sha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+          "archivedPng": "win32/desktop-1440x1000/workbench.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/agent-detail.png",
+          "sha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+          "archivedPng": "win32/mobile-390x844/agent-detail.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/board.png",
+          "sha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+          "archivedPng": "win32/mobile-390x844/board.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/issue-detail.png",
+          "sha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+          "archivedPng": "failures/review-mobile-issue-detail-capture-2.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/issues-list.png",
+          "sha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+          "archivedPng": "win32/mobile-390x844/issues-list.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/project.png",
+          "sha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+          "archivedPng": "win32/mobile-390x844/project.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/settings.png",
+          "sha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+          "archivedPng": "win32/mobile-390x844/settings.png"
+        },
+        {
+          "historicalSnapshot": "win32/mobile-390x844/workbench.png",
+          "sha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+          "archivedPng": "win32/mobile-390x844/workbench.png"
+        }
+      ]
+    }
+  ]
+}

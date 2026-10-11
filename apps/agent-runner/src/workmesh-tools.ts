@@ -13,6 +13,7 @@ import {
   providerActionInputSchema, deliveryArtifactInputSchema, artifactUploadIntentInputSchema,
   structuredReviewInputSchema, mergeIntentInputSchema, ciRetryInputSchema, projectUpdateInputSchema,
   completionSuggestionInputSchema, projectHealthInputSchema, durableEventCursorSchema,
+  savedViewInputSchema, usageInputSchema, usageSummaryQuerySchema, runLoopNowInputSchema, optionalDomainCursorSchema,
 } from '@workmesh/contracts'
 import { Type } from 'typebox'
 import { z } from 'zod'
@@ -180,7 +181,9 @@ function makeTool(api: RunnerToolApi, attemptId: string, onCall: (name: string) 
       // the ordinary display summary cannot be resumed by these read tools.
       const completeDocumentRead = request.method === 'GET'
         && ['getDocument', 'getDocumentRevision', 'exportDocumentMarkdown','getProviderAction','getRepositoryContext',
-          'getProjectDelivery','listWorkItemArtifacts','downloadVerifiedArtifact','listEvents'].includes(operationId)
+          'getProjectDelivery','listWorkItemArtifacts','downloadVerifiedArtifact','listEvents',
+          'listCycles','listInitiatives','getInitiativeRollup','listSavedViews','listAdvancedViews','evaluateAdvancedView',
+          'listAutomationRules','listAutomationRuns','getAutomationRun','listLoops','getUsageSummary','listTemplates','streamA2ATaskEvents'].includes(operationId)
       if(completeDocumentRead&&JSON.stringify(reported).length>12_000_000)
         throw new Error('TOOL_EVIDENCE_TOO_LARGE: no evidence was consumed; select the exact pullRequestId')
       return { content: [{ type: 'text' as const,
@@ -215,6 +218,45 @@ export async function createWorkMeshTools(api: RunnerToolApi, attemptId: string,
     if (eligible.has(operationId)) available.push(makeTool(api, attemptId, onCall,
       name, operationId, description, parameters, build, recordStart, recordCompletion))
   }
+
+  for (const [name,operation,path] of [
+    ['list_cycles','listCycles','cycles'],['list_initiatives','listInitiatives','initiatives'],
+    ['list_saved_views','listSavedViews','views'],['list_advanced_views','listAdvancedViews','advanced-views'],
+    ['list_automation_rules','listAutomationRules','automation-rules'],['list_automation_runs','listAutomationRuns','automation-runs'],
+    ['list_loops','listLoops','loops'],['list_templates','listTemplates','templates'],
+  ] as const) add(`workmesh_${name}`,operation,'读取当前准确Session现行授权的完整页；保存nextCursor，管理权限由Human保留。',
+    pageParameters,input=>({method:'GET',path:`/api/v1/${path}?${pageQuery(input)}`}))
+  add('workmesh_get_initiative_rollup','getInitiativeRollup','仅聚合当前准确授权linked项目；currency与unknown保持原值。',
+    Type.Object({initiativeId:idParameter}),input=>({method:'GET',path:`/api/v1/initiatives/${z.object({initiativeId:id}).parse(input).initiativeId}/rollup`}))
+  add('workmesh_get_automation_run','getAutomationRun','只读取本人准确Session run/effects；origin admission不授target读取。',
+    Type.Object({runId:idParameter}),input=>({method:'GET',path:`/api/v1/automation-runs/${z.object({runId:id}).parse(input).runId}`}))
+  add('workmesh_get_advanced_view_results','evaluateAdvancedView','读取现行View/result scope交集，完整分页。',
+    Type.Object({viewId:idParameter,...pageParameters.properties}),input=>{
+      const {viewId,...page}=z.object({viewId:id,limit:z.number().int().min(1).max(200).optional(),cursor:z.string().max(8192).optional()}).strict().parse(input)
+      return {method:'GET',path:`/api/v1/advanced-views/${viewId}/results?${pageQuery(page)}`}
+    })
+  add('workmesh_get_usage_summary','getUsageSummary','仅汇总准确本人Session；unknown及无currency观测不表示免费。',
+    Type.Object({agentId:Type.Optional(idParameter),sessionId:Type.Optional(idParameter),projectId:Type.Optional(idParameter),from:Type.Optional(Type.String({format:'date-time'})),to:Type.Optional(Type.String({format:'date-time'}))}),input=>{
+      const query=usageSummaryQuerySchema.parse(input)
+      const params=new URLSearchParams(Object.entries(query).map(([key,value])=>[key,value instanceof Date?value.toISOString():String(value)]))
+      return {method:'GET',path:`/api/v1/usage-summary${params.size?'?'+params.toString():''}`}
+    })
+  add('workmesh_get_a2a_task_events','streamA2ATaskEvents','准确当前task单页最多扫描200原事件；独立after cursor，无无限流，保留空映射页cursor。',
+    Type.Object({bindingId:idParameter,taskId:Type.String({minLength:1,maxLength:500}),after:Type.Optional(Type.String({pattern:'^[0-9]{1,19}$'}))}),input=>{
+      const query=z.object({bindingId:id,taskId:z.string().min(1).max(500),after:optionalDomainCursorSchema.default('0')}).strict().parse(input)
+      return {method:'GET',path:`/api/v1/a2a-bindings/${query.bindingId}/tasks/${encodeURIComponent(query.taskId)}/events?after=${query.after}`}
+    })
+  add('workmesh_create_saved_view','createSavedView','创建本人普通saved view，不创建或管理高级View。',
+    Type.Object({name:Type.String({minLength:1,maxLength:80}),teamId:Type.Optional(idParameter),filters:Type.Optional(Type.Record(Type.String(),Type.Unknown())),layout:Type.Optional(Type.Union([Type.Literal('list'),Type.Literal('board')]))}),input=>({method:'POST',path:'/api/v1/views',body:savedViewInputSchema.parse(input)}))
+  add('workmesh_run_loop_now','runLoopNow','按当前能力准入Loop，固定occurrenceKey/scheduledFor，target需真实接单取得自己的E。',
+    Type.Object({loopId:idParameter,occurrenceKey:Type.String({minLength:1,maxLength:500}),scheduledFor:Type.String({format:'date-time'})}),input=>{
+      const {loopId,...body}=z.object({loopId:id,...runLoopNowInputSchema.shape,scheduledFor:z.coerce.date()}).strict().parse(input)
+      return {method:'POST',path:`/api/v1/loops/${loopId}/run`,body}
+    })
+  add('workmesh_record_usage','recordUsage','记录准确本人Session usage；固定dedupeKey/occurredAt，projectless不得补项目，unknown不填金额。',
+    Type.Object({dedupeKey:Type.String({minLength:1,maxLength:500}),agentId:idParameter,occurredAt:Type.String({format:'date-time'}),projectId:Type.Optional(idParameter),
+      inputTokens:Type.Optional(Type.Integer({minimum:0})),outputTokens:Type.Optional(Type.Integer({minimum:0})),runtimeMs:Type.Optional(Type.Integer({minimum:0})),toolCalls:Type.Optional(Type.Integer({minimum:0})),
+      costMinor:Type.Optional(Type.String({pattern:'^[0-9]+$'})),currency:Type.String({minLength:3,maxLength:3}),costSource:Type.Union([Type.Literal('provider_reported'),Type.Literal('rate_card'),Type.Literal('manual'),Type.Literal('unknown')]),metadata:Type.Optional(Type.Record(Type.String(),Type.Unknown()))}),input=>({method:'POST',path:'/api/v1/usage-records',body:usageInputSchema.parse({...z.record(z.unknown()).parse(input),sessionId:api.sessionId})}),false,false)
 
   add('workmesh_get_session', 'getAgentSession',
     'Read the exact current Agent Session, including its revision for plan publication and other guarded commands.',

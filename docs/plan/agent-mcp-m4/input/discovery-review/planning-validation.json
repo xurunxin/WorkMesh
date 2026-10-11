@@ -1,0 +1,21 @@
+{
+  "command": "python -B docs/plan/agent-mcp-m4/validate-plan.py",
+  "startUtc": "2026-10-11T03:11:27.807916+00:00",
+  "endUtc": "2026-10-11T03:11:40.933744+00:00",
+  "runtimeSeconds": 13.125711300002877,
+  "exitCode": 0,
+  "counts": {
+    "json": 32,
+    "utf8": 59,
+    "localLinks": 90,
+    "sourceBlobs": 177,
+    "reviewSourceBlobs": 14,
+    "operationContracts": 19,
+    "proposedRules": 4,
+    "proposedBindings": 19
+  },
+  "failures": [],
+  "productTestsRun": false,
+  "productGeneratorsRun": false,
+  "independentReview": "原High(blocking)保留，待Chief交接正式复审"
+}

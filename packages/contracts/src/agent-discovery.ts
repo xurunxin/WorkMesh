@@ -55,7 +55,6 @@ export type DiscoveryFacts = Readonly<{
   features: Readonly<Record<string, boolean>>; workItemId: string | null; projectId: string | null
 }>
 
-const queryDifferences = new Set(['getInitiativeRollup', 'getAutomationRun', 'getUsageSummary', 'streamA2ATaskEvents'])
 const humanDomainOperations = new Set(['cancelHandoff', 'completeHandoff', 'createComment', 'updateComment'])
 export const eligibility = (status: DiscoveryEligibility['status'], reasons: string[] = [], pendingChecks: string[] = []): DiscoveryEligibility =>
   ({ status, reasons, pendingChecks })
@@ -81,7 +80,6 @@ export function deriveOperationEligibility(facts: DiscoveryFacts): QualifiedDisc
       if (facts.state !== 'awaiting_approval') known.planApprovalBound = true
       const reasons: string[] = [], pending: string[] = []
       if (humanDomainOperations.has(rule.operationId)) reasons.push('ROLE_REQUIRED')
-      if (queryDifferences.has(rule.operationId)) reasons.push('DOMAIN_QUERY_NOT_AGENT_ALIGNED')
       for (const predicate of rule.predicates) {
         if (predicate.when && Object.entries(predicate.when).some(([key, value]) => known[key] !== undefined && known[key] !== value)) continue
         if (predicate.when && Object.keys(predicate.when).some(key => known[key] === undefined)) {

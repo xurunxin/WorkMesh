@@ -1,0 +1,80 @@
+{
+  "uploadId": "a167e408-3b68-4c04-8d9c-9db643535152",
+  "verified": {
+    "id": "a167e408-3b68-4c04-8d9c-9db643535152",
+    "status": "verified",
+    "filename": "evidence.txt",
+    "mimeType": "text/plain",
+    "sizeBytes": 28,
+    "expectedChecksum": "sha256:528347028f15011f1e61e45de93bf415f9a522f146b7cc7f8bdc093dd3ff5d42",
+    "actualChecksum": "sha256:528347028f15011f1e61e45de93bf415f9a522f146b7cc7f8bdc093dd3ff5d42",
+    "expiresAt": "2026-10-11T05:08:39.951Z",
+    "verifiedAt": "2026-10-11T04:53:40.285Z",
+    "artifactId": "7d836db7-36d3-42ff-9ed1-2ba588ecb94b",
+    "lastErrorCode": null
+  },
+  "artifactId": "7d836db7-36d3-42ff-9ed1-2ba588ecb94b",
+  "canceledId": "c0824ccf-0498-4d3e-aa69-018bfd0ad65e",
+  "checksum": "sha256:528347028f15011f1e61e45de93bf415f9a522f146b7cc7f8bdc093dd3ff5d42",
+  "approvalId": "f3e5daed-c707-4f7c-b31c-c222cd9991b1",
+  "history": {
+    "items": [
+      {
+        "id": "7d2f1d14-c16e-4df7-9bce-e96658a95bc9",
+        "project_id": "b57bea03-0967-460c-b162-7c53a4a1d379",
+        "health": "on_track",
+        "status": "published",
+        "revision": 1,
+        "workspace_id": "6cde306e-baa5-49e2-8b5b-67a2e5d49949",
+        "author_actor_id": "2ff2e3dc-7a63-4ce5-b297-a784ec8d0df5",
+        "source": "agent",
+        "summary": "Exact observed file evidence",
+        "forecast_at": null,
+        "confidence": "0.700",
+        "uncertainty": "Only local fake provider tested",
+        "approval_id": "f3e5daed-c707-4f7c-b31c-c222cd9991b1",
+        "published_at": "2026-10-11T04:53:41.142Z",
+        "created_at": "2026-10-11T04:53:41.128Z",
+        "sources": [
+          {
+            "id": "a2efa66e-7bdb-4a32-b6ea-8b131578de9d",
+            "kind": "work_item",
+            "value": {
+              "artifactId": "7d836db7-36d3-42ff-9ed1-2ba588ecb94b"
+            },
+            "observedAt": "2026-10-11T04:53:40.767+00:00"
+          }
+        ]
+      },
+      {
+        "id": "084cf34f-44d1-4d40-a387-c04ffd30d845",
+        "project_id": "b57bea03-0967-460c-b162-7c53a4a1d379",
+        "health": "on_track",
+        "status": "draft",
+        "revision": 1,
+        "workspace_id": "6cde306e-baa5-49e2-8b5b-67a2e5d49949",
+        "author_actor_id": "2ff2e3dc-7a63-4ce5-b297-a784ec8d0df5",
+        "source": "agent",
+        "summary": "Exact observed file evidence",
+        "forecast_at": null,
+        "confidence": "0.700",
+        "uncertainty": "Only local fake provider tested",
+        "approval_id": null,
+        "published_at": null,
+        "created_at": "2026-10-11T04:53:40.842Z",
+        "sources": [
+          {
+            "id": "a2efa66e-7bdb-4a32-b6ea-8b131578de9d",
+            "kind": "work_item",
+            "value": {
+              "artifactId": "7d836db7-36d3-42ff-9ed1-2ba588ecb94b"
+            },
+            "observedAt": "2026-10-11T04:53:40.767+00:00"
+          }
+        ]
+      }
+    ],
+    "nextCursor": null
+  },
+  "signedMaterialHiddenFromModel": false
+}

@@ -1,0 +1,1131 @@
+{
+  "schemaVersion": 1,
+  "kind": "workmesh.d0.visual-baseline",
+  "generatedAt": "2026-10-07T12:27:15.953Z",
+  "sourceCommit": "32789cec4d50db0b85a63d91049cc425d9e917a2",
+  "sourcePlan": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+  "sourceAdr": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+  "platformTodo": {
+    "id": "MPhtZiff23B33m9i2equq",
+    "blocks": "IJQA_DfxU0hF5e8L5Xb3v"
+  },
+  "workmesh": {
+    "projectId": null,
+    "workItemId": null,
+    "synchronized": false,
+    "reason": "本批已获用户批准使用 Todos＋仓库替代双轨记录；未创建或同步真实 WorkMesh 记录，不再等待其连接。"
+  },
+  "visualStatus": "passed",
+  "d1Gate": "closed",
+  "gateReason": "此前两轮各 14 通过、56 次原始 PNG 与基线严格一致；撤回通用 upstream 默认覆盖后本轮另有 14/14 重放及 28 次原始字节核验，lint/typecheck/test 重跑成功，集成/正式 E2E 为历史结果。通用 mocked-dev 旧失败未处置且 115 项未执行，不宣称 D0 完成。G1/P1/R1 独立验收。",
+  "screenshotCount": 14,
+  "independentCaptureCount": 56,
+  "browserLaunchArguments": [
+    "--disable-gpu",
+    "--disable-skia-runtime-opts",
+    "--force-color-profile=srgb",
+    "--disable-partial-raster"
+  ],
+  "comparator": {
+    "maxDiffPixels": 0,
+    "threshold": 0.005,
+    "captureEquality": "每轮两个独立上下文的 PNG SHA-256 必须相同",
+    "pairCaptureEvaluation": "仅比较原始 PNG SHA-256，不使用视觉容差",
+    "restartReplayEvaluation": "Playwright toHaveScreenshot 使用 threshold=0.005、maxDiffPixels=0；通过不蕴含哈希相同",
+    "thresholdBasis": "零颜色阈值时移动详情原始 13 个圆角边缘像素每通道最多差 1，比较器报告 1 个差异像素；保留失败证据后选择微小颜色感知容差，也可能容许其他微小颜色差异",
+    "productVisualApproval": false
+  },
+  "sources": [
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b"
+    },
+    {
+      "path": "packages/ui/src/tokens.css",
+      "sha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d"
+    },
+    {
+      "path": "apps/web/app/styles.css",
+      "sha256": "a653c821f08c154f9877123e5858e08daa4a2ff3e20558eedb13a962092ba910"
+    },
+    {
+      "path": "apps/web/features/navigation/theme.tsx",
+      "sha256": "05daf2cf407b8899b4d839450cb8d96f427c6f03181688ffcedef88a2ae0e32b"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.module.css",
+      "sha256": "26318e154f3e3209df8ec886599acc536c6cbbe77fb54a5d95896d80ae1aeac6"
+    },
+    {
+      "path": "apps/web/e2e/project-work-preview-server.mjs",
+      "sha256": "f92f5b068eca0c21a6d3752df7f0268607734ac498babf9f34d8f9a6790ca9c3"
+    },
+    {
+      "path": "apps/web/playwright.d0.config.ts",
+      "sha256": "f880637a042b1974a1b8c2b6aca72f7a0d6e8f084bc5b6b49a519a4181308bea"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts",
+      "sha256": "a4b784986c56c3c7d8ad2084d50f6fddcc313b15b3a66465209191b3199252c2"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-screenshot.css",
+      "sha256": "d58e03cdd879ae52358a06dc67efed1e07d381fdb8f9ab3c8e5d207dc731ba2b"
+    },
+    {
+      "path": "apps/web/playwright.mocked.config.ts",
+      "sha256": "ec5a997c7f86358d80593fd4571f252d554e5b94272610bb03ec3cea67b8b85d"
+    },
+    {
+      "path": "apps/web/e2e/playwright-config-contract.test.ts",
+      "sha256": "8f5858b7d84afbed852780788af25934dcea5226b18598a06697d931cd004acc"
+    },
+    {
+      "path": "scripts/verify-playwright-suite-scope.mts",
+      "sha256": "1ea51992f492477ed8a5e9eaf9032c66eebfd67d696b45ea6ce4a5addc4fa0a6"
+    },
+    {
+      "path": "scripts/verify-web-ui-final-verification.test.ts",
+      "sha256": "53a95c4ed9f5de0dcdf146156e8fcbbd3cbb91904d9b4ebef894c3d8d9729e65"
+    },
+    {
+      "path": "apps/web/e2e/baselines/d0/evidence/diagnose-raster.mjs",
+      "sha256": "5235543208853b25628b374437189fe57d6b68e88ab7485aa160a07c10c4f8b7"
+    }
+  ],
+  "entries": [
+    {
+      "surface": "Agent 详情",
+      "route": "/agents/agent%2F1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+      "captureSha256": [
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+        "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "看板",
+      "route": "/?view=projects&project=project-1&tab=board",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/board.png",
+      "captureSha256": [
+        "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+        "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+        "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      },
+      "scrollPositions": {
+        "capture": [
+          {
+            "window": {
+              "x": 0,
+              "y": 0
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 87
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 676,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 592.1875,
+              "y": 642.09375,
+              "width": 295.625,
+              "height": 274.34375,
+              "top": 642.09375,
+              "right": 887.8125,
+              "bottom": 916.4375,
+              "left": 592.1875
+            },
+            "columnHeaderBounds": {
+              "x": 581,
+              "y": 596.90625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 596.90625,
+              "right": 899,
+              "bottom": 642.09375,
+              "left": 581
+            }
+          },
+          {
+            "window": {
+              "x": 0,
+              "y": 0
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 87
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 676,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 592.1875,
+              "y": 642.09375,
+              "width": 295.625,
+              "height": 274.34375,
+              "top": 642.09375,
+              "right": 887.8125,
+              "bottom": 916.4375,
+              "left": 592.1875
+            },
+            "columnHeaderBounds": {
+              "x": 581,
+              "y": 596.90625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 596.90625,
+              "right": 899,
+              "bottom": 642.09375,
+              "left": 581
+            }
+          }
+        ],
+        "restartReplay": [
+          {
+            "window": {
+              "x": 0,
+              "y": 0
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 87
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 676,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 592.1875,
+              "y": 642.09375,
+              "width": 295.625,
+              "height": 274.34375,
+              "top": 642.09375,
+              "right": 887.8125,
+              "bottom": 916.4375,
+              "left": 592.1875
+            },
+            "columnHeaderBounds": {
+              "x": 581,
+              "y": 596.90625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 596.90625,
+              "right": 899,
+              "bottom": 642.09375,
+              "left": 581
+            }
+          },
+          {
+            "window": {
+              "x": 0,
+              "y": 0
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 87
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 676,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 592.1875,
+              "y": 642.09375,
+              "width": 295.625,
+              "height": 274.34375,
+              "top": 642.09375,
+              "right": 887.8125,
+              "bottom": 916.4375,
+              "left": 592.1875
+            },
+            "columnHeaderBounds": {
+              "x": 581,
+              "y": 596.90625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 596.90625,
+              "right": 899,
+              "bottom": 642.09375,
+              "left": 581
+            }
+          }
+        ]
+      }
+    },
+    {
+      "surface": "工作项详情",
+      "route": "/?view=my-work&workItem=work-101",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+      "captureSha256": [
+        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+        "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "工作项列表",
+      "route": "/?view=my-work",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/issues-list.png",
+      "captureSha256": [
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+        "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "项目总览",
+      "route": "/?view=projects&project=project-1",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/project.png",
+      "captureSha256": [
+        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+        "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "设置",
+      "route": "/settings?team=team-page-2",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/settings.png",
+      "captureSha256": [
+        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+        "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "工作台",
+      "route": "/workbench",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/desktop-1440x1000/workbench.png",
+      "captureSha256": [
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+      "imageSize": {
+        "width": 1440,
+        "height": 1000
+      },
+      "replaySha256": [
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+        "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "Agent 详情",
+      "route": "/agents/agent%2F1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/agent-detail.png",
+      "captureSha256": [
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+        "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "看板",
+      "route": "/?view=projects&project=project-1&tab=board",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/board.png",
+      "captureSha256": [
+        "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+        "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+      "imageSize": {
+        "width": 390,
+        "height": 897
+      },
+      "replaySha256": [
+        "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+        "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      },
+      "scrollPositions": {
+        "capture": [
+          {
+            "window": {
+              "x": 0,
+              "y": 53
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 16,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 672,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 12.1875,
+              "y": 430.578125,
+              "width": 295.625,
+              "height": 292.75,
+              "top": 430.578125,
+              "right": 307.8125,
+              "bottom": 723.328125,
+              "left": 12.1875
+            },
+            "columnHeaderBounds": {
+              "x": 1,
+              "y": 385.390625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 385.390625,
+              "right": 319,
+              "bottom": 430.578125,
+              "left": 1
+            }
+          },
+          {
+            "window": {
+              "x": 0,
+              "y": 53
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 16,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 672,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 12.1875,
+              "y": 430.578125,
+              "width": 295.625,
+              "height": 292.75,
+              "top": 430.578125,
+              "right": 307.8125,
+              "bottom": 723.328125,
+              "left": 12.1875
+            },
+            "columnHeaderBounds": {
+              "x": 1,
+              "y": 385.390625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 385.390625,
+              "right": 319,
+              "bottom": 430.578125,
+              "left": 1
+            }
+          }
+        ],
+        "restartReplay": [
+          {
+            "window": {
+              "x": 0,
+              "y": 53
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 16,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 672,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 12.1875,
+              "y": 430.578125,
+              "width": 295.625,
+              "height": 292.75,
+              "top": 430.578125,
+              "right": 307.8125,
+              "bottom": 723.328125,
+              "left": 12.1875
+            },
+            "columnHeaderBounds": {
+              "x": 1,
+              "y": 385.390625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 385.390625,
+              "right": 319,
+              "bottom": 430.578125,
+              "left": 1
+            }
+          },
+          {
+            "window": {
+              "x": 0,
+              "y": 53
+            },
+            "containers": [
+              {
+                "selector": "app-content",
+                "left": 16,
+                "top": 0
+              },
+              {
+                "selector": "content projects-page",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "project-detail-pane",
+                "left": 0,
+                "top": 0
+              },
+              {
+                "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                "left": 672,
+                "top": 0
+              }
+            ],
+            "cardBounds": {
+              "x": 12.1875,
+              "y": 430.578125,
+              "width": 295.625,
+              "height": 292.75,
+              "top": 430.578125,
+              "right": 307.8125,
+              "bottom": 723.328125,
+              "left": 12.1875
+            },
+            "columnHeaderBounds": {
+              "x": 1,
+              "y": 385.390625,
+              "width": 318,
+              "height": 45.1875,
+              "top": 385.390625,
+              "right": 319,
+              "bottom": 430.578125,
+              "left": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "surface": "工作项详情",
+      "route": "/?view=my-work&workItem=work-101",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/issue-detail.png",
+      "captureSha256": [
+        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+        "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "工作项列表",
+      "route": "/?view=my-work",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/issues-list.png",
+      "captureSha256": [
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+        "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "项目总览",
+      "route": "/?view=projects&project=project-1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/project.png",
+      "captureSha256": [
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+        "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "设置",
+      "route": "/settings?team=team-page-2",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/settings.png",
+      "captureSha256": [
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+        "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    },
+    {
+      "surface": "工作台",
+      "route": "/workbench",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "zh-CN",
+      "colorScheme": "light",
+      "timezoneId": "UTC",
+      "deviceScaleFactor": 1,
+      "fixedTime": "2026-08-22T09:30:00.000Z",
+      "browserVersion": "149.0.7827.55",
+      "platform": "win32",
+      "snapshot": "win32/mobile-390x844/workbench.png",
+      "captureSha256": [
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+      ],
+      "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+      "baselineSha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+      "imageSize": {
+        "width": 390,
+        "height": 844
+      },
+      "replaySha256": [
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+        "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+      ],
+      "identicalAcrossFourCaptures": true,
+      "replayVisualComparisonPassed": true,
+      "fourCapturesMatchBaselineBytes": true,
+      "captureVisualComparisonPassed": true,
+      "currentValidation": {
+        "capture": "passed",
+        "restartReplay": "passed",
+        "capturePairSha256Equal": true,
+        "replayPairSha256Equal": true
+      }
+    }
+  ],
+  "environment": {
+    "os": "Windows 11 专业工作站版",
+    "osVersion": "10.0.26300",
+    "node": "24.20.0",
+    "pnpm": "9.15.4",
+    "playwright": "1.61.1",
+    "chromium": "149.0.7827.55"
+  },
+  "requiredChecks": {
+    "succeeded": true,
+    "evidence": "evidence/stabilized-verification.json",
+    "remainingConditionalSkips": 3,
+    "latestScopeVerification": "evidence/upstream-scope-verification.json",
+    "latestRerun": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm test"
+    ],
+    "historicalOnly": [
+      "pnpm test:integration",
+      "pnpm test:e2e"
+    ]
+  },
+  "batchExecution": {
+    "controlPlane": "todos-and-repository",
+    "approval": {
+      "approvedAt": "2026-10-07T18:38:00+08:00",
+      "scope": "仅本批使用 Todos 编排和执行记录、仓库存放规格及证据，替代真实 WorkMesh 双轨记录；其余领域、安全、测试约束保持",
+      "source": "用户本轮完整 D0 规格与反馈，已与 Todos #10 当前规格核对",
+      "sourceTodo": "MPhtZiff23B33m9i2equq",
+      "recordedIn": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+      "futureDesignCredentialPermissionAndExternalReleaseRequireSeparateApproval": true
+    },
+    "realWorkmeshSynchronizationRequiredForThisBatch": false
+  },
+  "d0Status": "blocked",
+  "reviewStatus": "blocked-mocked-dev-failures",
+  "downstream": {
+    "d1a": "IJQA_DfxU0hF5e8L5Xb3v",
+    "d1b": "2j2sxT5wJ-l001efH_meJ",
+    "d1aPrerequisites": [
+      "G1",
+      "P1",
+      "R1",
+      "D0"
+    ],
+    "otherPrerequisitesVerifiedByThisDelivery": false
+  },
+  "feedbackVerification": "evidence/feedback-verification.json",
+  "validationBaseCommit": "0e9968dd24748f864370819a239093b42c80ba61",
+  "captureCountScope": "上一栅格修订两个完整全量验证轮各 14 项、每项两个独立上下文，共 56 次；对应来源与日志冻结在 stabilized-verification.json。本轮另有 28 次，见 latestReplay，不混记为旧轮重跑。",
+  "historicalEvidence": {
+    "manifest": "evidence/pre-review-manifest.json",
+    "verification": "evidence/pre-review-verification.md",
+    "feedback": "evidence/feedback-verification.json",
+    "statusScope": "修订前历史版本，不能代替当前验收",
+    "preStabilization": "evidence/pre-stabilization-manifest.json",
+    "reviewFailureEvidence": "evidence/review-fix-verification.json",
+    "stabilizedVerification": "evidence/stabilized-verification.json"
+  },
+  "currentEvidence": "evidence/upstream-scope-verification.json",
+  "referenceInput": {
+    "path": "docs/references/todos-analysis/",
+    "addressSynchronized": true,
+    "includedInValidationBase": false,
+    "reason": "用户最新 G1 交接仅同步地址；输入包尚在 G1 审查分支，git ls-tree HEAD 未发现该目录；不导入、不提前放行 G1"
+  },
+  "rasterDiagnosis": "evidence/raster-diagnosis.json",
+  "latestSourceValidationBaseCommit": "d8dcbbcd151011f5696200e6a99ce99fcaf3a93d",
+  "latestReplay": {
+    "evidence": "evidence/upstream-scope-verification.json",
+    "passed": 14,
+    "originalCaptureCount": 28,
+    "allMatchBaselineBytes": true,
+    "sourceVersion": "d8dcbbcd151011f5696200e6a99ce99fcaf3a93d"
+  },
+  "latestEvidenceAudit": "evidence/upstream-evidence-audit.json"
+}

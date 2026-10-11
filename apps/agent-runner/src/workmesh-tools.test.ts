@@ -27,6 +27,37 @@ function manifest(capabilities: Capability[]): AgentCapabilityManifest {
 }
 
 describe('Pi WorkMesh tools', () => {
+  it('M4 work:read usage只提交自身业务事实，不附加Activity或transportReplay',async()=>{
+    const calls:Array<{method:string;path:string;body:unknown;options:unknown;key:unknown}>=[]
+    const api:RunnerToolApi={sessionId,async request<T>(method:Parameters<RunnerToolApi['request']>[0],path:string,body?:unknown,_revision?:number,key?:string,options?:Parameters<RunnerToolApi['request']>[5]):Promise<T>{
+      if(path==='/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read']) as T
+      calls.push({method,path,body,options,key});return {id:documentId,duplicate:false} as T
+    }}
+    const tools=await createWorkMeshTools(api,'m4-attempt',()=>undefined)
+    const usage=tools.find(tool=>tool.name==='workmesh_record_usage')!
+    expect(usage).toBeDefined()
+    const input={agentId:ownerId,dedupeKey:'exact-usage',occurredAt:'2020-01-01T00:00:00Z',currency:'USD',costSource:'unknown'}
+    await usage.execute('same-call',input,undefined,undefined,{} as never)
+    await usage.execute('same-call',input,undefined,undefined,{} as never)
+    expect(calls).toHaveLength(2)
+    expect(calls.every(call=>call.path==='/api/v1/usage-records'&&call.options===undefined)).toBe(true)
+    expect(calls[0]!.body).toMatchObject({sessionId,agentId:ownerId,costSource:'unknown'})
+    expect(calls[0]!.key).toBe(calls[1]!.key)
+  })
+  it('M4大Template页保持全文/cursor，GET不记Activity；超12M明确拒绝',async()=>{
+    let markdown='中文\\"'.repeat(60_000)
+    const paths:string[]=[]
+    const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string):Promise<T>{
+      if(path==='/api/v1/agent-capabilities?discovery=qualified') return manifest(['work:read']) as T
+      paths.push(path);return {items:[{id:documentId,name:'Pinned',version:3,body:{markdown}}],nextCursor:'signed-next'} as T
+    }}
+    const tool=(await createWorkMeshTools(api,'m4-read',()=>undefined)).find(tool=>tool.name==='workmesh_list_templates')!
+    const result=await tool.execute('read',{limit:1,cursor:'signed-start'},undefined,undefined,{} as never)
+    expect(JSON.parse((result.content[0] as {text:string}).text)).toEqual({items:[{id:documentId,name:'Pinned',version:3,body:{markdown}}],nextCursor:'signed-next'})
+    expect(paths).toEqual(['/api/v1/templates?limit=1&cursor=signed-start'])
+    markdown='x'.repeat(12_000_001)
+    await expect(tool.execute('oversize',{limit:1,cursor:'signed-start'},undefined,undefined,{} as never)).rejects.toThrow('TOOL_EVIDENCE_TOO_LARGE')
+  })
   it('一次execute只调用一次业务request，重放选项不重复Activity或用于GET',async()=>{
     const calls:Array<{path:string;options:unknown}>=[]
     const api:RunnerToolApi={sessionId,async request<T>(_method:Parameters<RunnerToolApi['request']>[0],path:string,body?:unknown,_revision?:number,_key?:string,options?:Parameters<RunnerToolApi['request']>[5]):Promise<T>{

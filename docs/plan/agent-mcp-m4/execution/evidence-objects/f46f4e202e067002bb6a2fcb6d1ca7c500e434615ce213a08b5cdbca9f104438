@@ -1,0 +1,62 @@
+{
+  "first": {
+    "id": "5796e5f5-eeda-4170-8f71-2390d8c0cb48",
+    "revision": 1
+  },
+  "own": {
+    "items": [
+      {
+        "id": "builtin:active",
+        "name": "Active",
+        "filters": {
+          "status_category": "started"
+        },
+        "layout": "board",
+        "built_in": true
+      }
+    ],
+    "nextCursor": "eyJhY3RvcklkIjoiZjFlYTBjOWUtZGVhZS00YjJkLTg1YTctMWJhZDM5NzAwYjEwIiwiZXhwIjoxNzkxNjkzMDIyLCJmaWx0ZXJIYXNoIjoiNDQxMzZmYTM1NWIzNjc4YTExNDZhZDE2ZjdlODY0OWU5NGZiNGZjMjFmZTc3ZTgzMTBjMDYwZjYxY2FhZmY4YSIsImlhdCI6MTc5MTY5MjEyMiwia2lkIjoiZGV2LWVwaGVtZXJhbCIsInJvdXRlIjoiL2FwaS92MS92aWV3cyIsInNvcnQiOiJuYW1lOkFTQyxpZDpBU0MiLCJ2IjoxLCJ2YWx1ZXMiOlsiQWN0aXZlIiwiYnVpbHRpbjphY3RpdmUiXSwid29ya3NwYWNlSWQiOiIxYWNmZDM3My1kMTgxLTRkMWMtYjE4ZS1mZjU2NjE0MjM5N2EifQ.jklSY1gCjxxYsP5XOze6LM7X3z0zqg5pJK7o3xr3k2U"
+  },
+  "all": [
+    {
+      "id": "builtin:active",
+      "name": "Active",
+      "filters": {
+        "status_category": "started"
+      },
+      "layout": "board",
+      "built_in": true
+    },
+    {
+      "id": "builtin:backlog",
+      "name": "Backlog",
+      "filters": {
+        "status_category": "backlog"
+      },
+      "layout": "list",
+      "built_in": true
+    },
+    {
+      "id": "5796e5f5-eeda-4170-8f71-2390d8c0cb48",
+      "workspace_id": "1acfd373-d181-4d1c-b18e-ff566142397a",
+      "owner_actor_id": "f1ea0c9e-deae-4b2d-85a7-1bad39700b10",
+      "team_id": "0ccbd752-3fd8-4794-9ea4-0aa4feaac2d8",
+      "name": "M4 own ordinary view",
+      "filters": {},
+      "layout": "list",
+      "revision": 1,
+      "created_at": "2026-10-11T04:15:22.458464+00:00",
+      "updated_at": "2026-10-11T04:15:22.458464+00:00"
+    },
+    {
+      "id": "builtin:my-work",
+      "name": "My Work",
+      "filters": {
+        "responsible_human_actor_id": "f1ea0c9e-deae-4b2d-85a7-1bad39700b10"
+      },
+      "layout": "list",
+      "built_in": true
+    }
+  ],
+  "readOnlyWriteRefused": true
+}

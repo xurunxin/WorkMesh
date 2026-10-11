@@ -1,6 +1,7 @@
 """从已独审受控清单生成发现规则；不从回调文本猜测调用身份。"""
 import json,re
 from pathlib import Path
+from agent_discovery_source_binding import verify_registration_sources
 
 root = Path(__file__).resolve().parent.parent
 source = json.loads((root / 'docs/plan/agent-mcp-m0/operation-decisions.json').read_text(encoding='utf-8'))
@@ -102,13 +103,43 @@ binding_by_id = {binding['bindingId']: binding for binding in bindings}
 for binding in m3['bindings']:
     binding_by_id[binding['bindingId']] = binding
 bindings = list(binding_by_id.values())
+historical_bindings = {binding['bindingId']: binding for binding in bindings}
+m4 = json.loads((root / 'docs/plan/agent-mcp-m4/product-discovery-decisions.json').read_text(encoding='utf-8'))
+if not all(m4['activation'][key] for key in ('formalReviewClosed','backendContractPassed','registrationCaptured')):
+    raise ValueError('M4不得在合同与实际注册关口之前激活')
+capture = verify_registration_sources(root, m4['registrationEvidence'], m4['registrationSourceBinding'])
+if capture.get('kind') != 'actual_registerTool_registerResource':
+    raise ValueError('M4要求真实公共注册捕获')
+actual = set(next(item['bindings'] for item in capture['captures'] if item['mode']=='read-write'))
+if set(m4['registeredBindingIds']) != actual:
+    raise ValueError('M4注册输入与实际捕获不同')
+known_operations = set(re.findall(r'operationId:\s*([A-Za-z][A-Za-z0-9]*)', (root/'OPENAPI.yaml').read_text(encoding='utf-8')))
+for key,id_key in [('rules','operationId'),('bindings','bindingId')]:
+    ids = [item[id_key] for item in m4[key]]
+    if len(ids) != len(set(ids)):
+        raise ValueError('M4增量含重复'+id_key)
+for rule in m4['rules']:
+    if rule['operationId'] not in known_operations:
+        raise ValueError('M4未知操作：'+rule['operationId'])
+    rule_by_id[rule['operationId']] = rule
+for binding in m4['bindings']:
+    if any(operation not in known_operations for operation in binding['operationIds']):
+        raise ValueError('M4绑定含未知操作：'+binding['bindingId'])
+    if binding['bindingId'] in historical_bindings and historical_bindings[binding['bindingId']] != binding:
+        raise ValueError('M4不能改写旧binding/identityVariants：'+binding['bindingId'])
+    binding_by_id[binding['bindingId']] = binding
+rules = list(rule_by_id.values())
+bindings = list(binding_by_id.values())
+registered = set(m2['registeredBindingIds']) | set(m3['registeredBindingIds']) | actual
+missing = {binding['bindingId'] for binding in bindings} - registered
+if missing:
+    raise ValueError('绑定缺真实注册输入：'+','.join(sorted(missing)))
 output = '// 由 scripts/generate-agent-discovery.py 从已独审清单生成；修改规则须先核授权源码。\n'
 output += "import type { DiscoveryRule, DiscoveryBindingRule } from './agent-discovery.js'\n\n"
 for name, data, type_name in [('agentDiscoveryRules', rules, 'DiscoveryRule'), ('agentDiscoveryBindings', bindings, 'DiscoveryBindingRule')]:
     output += f'export const {name}: readonly {type_name}[] = [\n'
     output += ',\n'.join('  ' + json.dumps(row, ensure_ascii=False, separators=(',', ':')) for row in data)
     output += '\n]\n\n'
-(root / 'packages/contracts/src/agent-discovery-rules.ts').write_text(output.rstrip() + '\n', encoding='utf-8', newline='\n')
 
 # 单操作 policy 与真实已冻结注册面一致；复合导入保原主操作，全部命令仍由 discovery 判权。
 policy_path = root / 'packages/contracts/src/route-policy.ts'
@@ -116,7 +147,6 @@ policy_text = policy_path.read_text(encoding='utf-8')
 start = policy_text.index('const mcpOperationIds = {')
 end = policy_text.index('} as const', start) + len('} as const')
 current = dict(re.findall(r"'([^']+)': '([^']+)'", policy_text[start:end]))
-registered = set(m2['registeredBindingIds']) | set(m3['registeredBindingIds'])
 missing = {binding['bindingId'] for binding in m3['bindings']} - registered
 if missing:
     raise ValueError('M3绑定缺真实注册输入：' + ','.join(sorted(missing)))
@@ -125,4 +155,5 @@ for binding in bindings:
     if binding['bindingId'] in registered and binding['execution']=='api' and len(binding['operationIds'])==1:
         current[binding['bindingId']] = binding['operationIds'][0]
 replacement = 'const mcpOperationIds = {\n' + ''.join(f"  '{key}': '{value}',\n" for key,value in sorted(current.items())) + '} as const'
+(root / 'packages/contracts/src/agent-discovery-rules.ts').write_text(output.rstrip() + '\n', encoding='utf-8', newline='\n')
 policy_path.write_text(policy_text[:start]+replacement+policy_text[end:],encoding='utf-8',newline='\n')

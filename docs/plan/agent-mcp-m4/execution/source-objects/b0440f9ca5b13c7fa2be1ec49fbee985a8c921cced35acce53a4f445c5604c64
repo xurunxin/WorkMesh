@@ -1,0 +1,114 @@
+{
+  "version": "2026-10-08",
+  "entries": [
+    {
+      "id": "minimax-cn",
+      "provider": "MiniMax",
+      "region": "中国大陆",
+      "apiType": "openai-completions",
+      "baseUrl": "https://api.minimax.cn/v1",
+      "modelId": "MiniMax-M3",
+      "sourceUrl": "https://platform.minimax.cn/docs/api-reference/text-openai-api",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用中国区标准 API Key 与已开通模型。官方入门示例中的 Flash Preview 仅用于 M Plan/MiniMax Code，本条取标准 API 文档所列 MiniMax-M3。"
+    },
+    {
+      "id": "dashscope-beijing",
+      "provider": "DashScope",
+      "region": "中国大陆·北京",
+      "apiType": "openai-completions",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "modelId": "qwen3.8-max",
+      "sourceUrl": "https://help.aliyun.com/zh/model-studio/compatibility-of-openai-with-dashscope",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用北京地域对应的 API Key 和模型开通权限。官方说明原固定域名继续可用；新接入推荐真实业务空间专属域名，可在草稿中替换。不要把 WorkspaceId 模板当有效域名。"
+    },
+    {
+      "id": "zhipu-cn",
+      "provider": "智谱",
+      "region": "中国大陆",
+      "apiType": "openai-completions",
+      "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
+      "modelId": "glm-5.3",
+      "sourceUrl": "https://docs.bigmodel.cn/cn/guide/start/quick-start",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用标准开放平台 API Key 与模型权限；GLM Coding Plan 使用独立专属端点，不可混用。"
+    },
+    {
+      "id": "moonshot-cn",
+      "provider": "Moonshot·Kimi",
+      "region": "中国大陆",
+      "apiType": "openai-completions",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "modelId": "kimi-k3",
+      "sourceUrl": "https://platform.kimi.com/docs/get-api-key",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用中国区平台 API Key，并核对账号的模型开通与余额条件。国际平台的域名及凭据不能直接混用。"
+    },
+    {
+      "id": "deepseek",
+      "provider": "DeepSeek",
+      "region": "官方 API 服务区域，以账号条件为准",
+      "apiType": "openai-completions",
+      "baseUrl": "https://api.deepseek.com",
+      "modelId": "deepseek-flash",
+      "sourceUrl": "https://api-docs.deepseek.com/zh-cn/",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用官方平台 API Key。按当前文档采用 deepseek-flash；本条不填上下文上限、思考或工具能力，不代表该配置经过探测。"
+    },
+    {
+      "id": "volcengine-beijing",
+      "provider": "火山引擎·方舟",
+      "region": "中国大陆·北京",
+      "apiType": "openai-responses",
+      "baseUrl": "https://ark.cn-beijing.volces.com/api/v3",
+      "modelId": "doubao-seed-2-1-pro-260628",
+      "sourceUrl": "https://docs.volcengine.com/docs/ark/quick-start",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用北京地域方舟 API Key，并在控制台核对模型开通。入门示例采用公开模型 ID；自建推理接入点由部署方填写真实标识，不生成 ep 模板。"
+    },
+    {
+      "id": "siliconflow-cn",
+      "provider": "SiliconFlow",
+      "region": "中国大陆平台",
+      "apiType": "openai-completions",
+      "baseUrl": "https://api.siliconflow.cn/v1",
+      "modelId": "Pro/deepseek-ai/DeepSeek-R1",
+      "sourceUrl": "https://docs.siliconflow.cn/docs/userguide/quickstart",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用 cloud.siliconflow.cn 的 API Key。模型 ID 的 Pro/ 路径必须保留；使用前核对模型服务状态、账号权限和余额。"
+    },
+    {
+      "id": "qianfan",
+      "provider": "百度千帆",
+      "region": "中国大陆平台",
+      "apiType": "openai-completions",
+      "baseUrl": "https://qianfan.baidubce.com/v2",
+      "modelId": "deepseek-r1-distill-qwen-32b",
+      "sourceUrl": "https://cloud.baidu.com/doc/qianfan-docs/s/Fm9l6ocai",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "使用千帆 ModelBuilder API Key，并开通对应模型；不是旧版 AK/SK/OAuth 调用地址。此条沿用官方 SDK 入门示例中的模型。"
+    },
+    {
+      "id": "openai",
+      "provider": "OpenAI",
+      "region": "官方支持的国家和地区",
+      "apiType": "openai-responses",
+      "baseUrl": "https://api.openai.com/v1",
+      "modelId": "gpt-6-astra",
+      "sourceUrl": "https://developers.openai.com/api/docs/quickstart",
+      "checkedAt": "2026-10-08",
+      "confirmationMethod": "machine",
+      "notes": "仅适用于 OpenAI 官方支持的国家和地区；中国大陆未列入支持列表。需满足账号、项目及模型权限条件，本条不承诺部署网络可达。"
+    }
+  ],
+  "disabledIds": []
+}

@@ -1,0 +1,477 @@
+[
+  {
+    "path": "CONTEXT.md",
+    "bytes": 5177,
+    "sha256": "f4c047a902dcac2b49631d2cc8013c3f8eca09cee29eb500ca60a2716dd2658f"
+  },
+  {
+    "path": "AGENT_PROTOCOL.md",
+    "bytes": 81647,
+    "sha256": "948afc0030ad9256beb20e5589fc738b1bf96bcb3241e042ccf5ad857e3db515"
+  },
+  {
+    "path": "OPENAPI.yaml",
+    "bytes": 572562,
+    "sha256": "aa24a9671adc6fce6eb18b83f0c846d24f1c65887660219f899f0e79df701a32"
+  },
+  {
+    "path": "SCHEMA.sql",
+    "bytes": 1630,
+    "sha256": "f5c265144a56b2974e32de5a301a4cb356693910a14f00dfb57ff13885a58987"
+  },
+  {
+    "path": "docs/adr/0001-monorepo-runtime-split.md",
+    "bytes": 706,
+    "sha256": "69bbe10d27cacb3bf95ee34eea7ed6878f9af888a47e396c84c19794fd188889"
+  },
+  {
+    "path": "docs/adr/0002-rest-sse.md",
+    "bytes": 590,
+    "sha256": "4cba91335bb3438a1b9a68782e94a620b47c54acbe36db460ef7addc938b2a1d"
+  },
+  {
+    "path": "docs/adr/0003-postgresql-transaction-outbox.md",
+    "bytes": 692,
+    "sha256": "8b5557e11cb0032274f854328ea940905481be2cb984af804b3b730199ff51df"
+  },
+  {
+    "path": "docs/adr/0004-actor-model.md",
+    "bytes": 715,
+    "sha256": "b7118626c265bfbd7683205a17bb4cb2d51e6659c821a8fcd1b1f9b8e9343216"
+  },
+  {
+    "path": "docs/adr/0005-authentication-choice.md",
+    "bytes": 746,
+    "sha256": "f952f3a6176712a0b8cd66d0aa59c09a273827b3be55abaab3b950210f44d785"
+  },
+  {
+    "path": "docs/adr/0006-stage0-authorization-and-event-scope.md",
+    "bytes": 2193,
+    "sha256": "e01dbdc2a7309996c0bb9cffaeb6b1f3b6a6617041aa7c271a75a5610d961d25"
+  },
+  {
+    "path": "docs/adr/0007-redis-outbox-delivery.md",
+    "bytes": 1609,
+    "sha256": "cd88faa2c65d7695e48ac1733e791e171d3c00727e0055520af800bfb8226332"
+  },
+  {
+    "path": "docs/adr/0008-agent-session-token-revocation.md",
+    "bytes": 1510,
+    "sha256": "9f4da1580622f649fe851cb087da2256c5274b5beb3f933e67aad06d14df9440"
+  },
+  {
+    "path": "docs/adr/0009-agent-session-transition-table.md",
+    "bytes": 1846,
+    "sha256": "ea9e802a875ace702ae1ed87f3cd9729917f23f50620668fd434b4b038b97805"
+  },
+  {
+    "path": "docs/adr/0010-agent-activity-immutability-and-redaction.md",
+    "bytes": 1390,
+    "sha256": "c8b54da207320a64f230f0044b3e72c6c09a6accd6c6520d3539725391bf9107"
+  },
+  {
+    "path": "docs/adr/0011-agent-plan-versioning-and-conflict.md",
+    "bytes": 1879,
+    "sha256": "b2aa021ba4e84e29d2bdf718e90128fa8ade7d21d712bbc383aa49ee049b7817"
+  },
+  {
+    "path": "docs/adr/0012-mcp-domain-boundary.md",
+    "bytes": 1313,
+    "sha256": "92259a1bc30b7627ba04fede535029ae743097f312491f9d77bdd32f7adb76a2"
+  },
+  {
+    "path": "docs/adr/0013-lease-semantics.md",
+    "bytes": 989,
+    "sha256": "3879a74227692191c5e1a3e735b851e1afdb67cde310f951718fb209a6b0efb0"
+  },
+  {
+    "path": "docs/adr/0014-handoff-transaction.md",
+    "bytes": 1654,
+    "sha256": "15584d481254f2d82040457e96f93f30d594a4f3daaa76078a99e7ff6e245ba5"
+  },
+  {
+    "path": "docs/adr/0015-agent-routing.md",
+    "bytes": 1471,
+    "sha256": "fd28de34a88d93391f3071e6fbaae79714cc128cb99246df73db8069cdd56793"
+  },
+  {
+    "path": "docs/adr/0016-work-room-projection.md",
+    "bytes": 1541,
+    "sha256": "4c0c135bf3183ddbd252475c1672c7134e0d62e2356258c0d84fc699b80fd864"
+  },
+  {
+    "path": "docs/adr/0017-parent-child-completion-policy.md",
+    "bytes": 1130,
+    "sha256": "25238a1e6299017c02b5ceb3fd4a3d495cabcccbc4e37415efc05821a11d0844"
+  },
+  {
+    "path": "docs/adr/0018-provider-abstraction-webhook-recovery.md",
+    "bytes": 4228,
+    "sha256": "4a1c25e5c71a0999dde54dca56c1fc7247a1af11999d9cfbcd3277c02d4a0875"
+  },
+  {
+    "path": "docs/adr/0019-repository-context-and-agents-scope.md",
+    "bytes": 1885,
+    "sha256": "9e515c7d07c2f01eb64c03c2c6a0467edea9fd91a68219c8c99b0f5d6a6d0c00"
+  },
+  {
+    "path": "docs/adr/0020-exact-head-pull-request-approval.md",
+    "bytes": 2826,
+    "sha256": "e58c5b5d22f2254ce363dff0567cd0a500bfbbf88bae5b04b5910ab3364d23d5"
+  },
+  {
+    "path": "docs/adr/0021-artifact-upload-and-provenance.md",
+    "bytes": 2400,
+    "sha256": "9a9f40503d143986a54c7f613d10c284b6a364433f71aae582dbcc9a779dea8f"
+  },
+  {
+    "path": "docs/adr/0022-completion-suggestion-and-project-progress.md",
+    "bytes": 1455,
+    "sha256": "6668b577783b81a31285e490171d32b5c1acbea750629fb295b00fc6ffb37eec"
+  },
+  {
+    "path": "docs/adr/0023-automation-versioning-and-effect-execution.md",
+    "bytes": 3261,
+    "sha256": "065e909ca9b5d796cb7fde74f78b6f8e49f70d529a5372d49fb89f590ce619df"
+  },
+  {
+    "path": "docs/adr/0024-loop-admission-overlap-and-retry.md",
+    "bytes": 2248,
+    "sha256": "3415a330676ca00cd2f2b6603155092f4ed37cacc6eff79714d4b78abb412b44"
+  },
+  {
+    "path": "docs/adr/0025-source-linked-project-forecast.md",
+    "bytes": 1608,
+    "sha256": "76f5c6ee30871ebe430f025eaf4d5f4323ffb8433c64b03ea3530edcb2bacb7a"
+  },
+  {
+    "path": "docs/adr/0026-usage-and-cost-normalization.md",
+    "bytes": 2936,
+    "sha256": "6090f91c5da10787739d05f20c5ab4ea118eefd446d685c13cbdc2847a670507"
+  },
+  {
+    "path": "docs/adr/0027-a2a-version-boundary.md",
+    "bytes": 3698,
+    "sha256": "dcaf081e63b3a1e457a4159ecd9acef813ae614e695f4a03fb3d9f8c5410ce22"
+  },
+  {
+    "path": "docs/adr/0028-declarative-route-policy-and-event-audience.md",
+    "bytes": 4751,
+    "sha256": "5ef48f79774654d882a11c4044371419975ef4c3ea95802cdf0c757b34880871"
+  },
+  {
+    "path": "docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+    "bytes": 8116,
+    "sha256": "261fe3bdc7a5c71351074123646355e1c071273e4be75830ddf4d8e271bf840e"
+  },
+  {
+    "path": "docs/adr/0029-rich-content-sanitization-and-editor-boundary.md",
+    "bytes": 9046,
+    "sha256": "900ac53fff49fe5e3df3596ffca30f80a720b3ab0d310c85e9a3ae98d981799d"
+  },
+  {
+    "path": "docs/adr/0029-secret-aware-authentication-idempotency.md",
+    "bytes": 4344,
+    "sha256": "633747f52a10dda0629f75e85725b29e65d7c85df34d04fc9674009fc645808c"
+  },
+  {
+    "path": "docs/adr/0030-shared-authentication-rate-limits.md",
+    "bytes": 4302,
+    "sha256": "ee64886b2d983b8d19e5f4cfa0f2d00134703129912f917ef803ead206aff4a1"
+  },
+  {
+    "path": "docs/adr/0031-authenticated-single-use-bootstrap.md",
+    "bytes": 4455,
+    "sha256": "9f51a206b4e7e732207d5edce60dd1fe851238621d4a41593e880008d95e6766"
+  },
+  {
+    "path": "docs/adr/0032-signed-keyset-pagination.md",
+    "bytes": 3162,
+    "sha256": "b8fb38cb423d6889a3cfaaa679c773226ad41662418bbb614d9bc37962b15046"
+  },
+  {
+    "path": "docs/adr/0033-postgres-authoritative-realtime-replay.md",
+    "bytes": 5985,
+    "sha256": "ab2e51d435d7e9d33693d389519d291f4e40319fc01cca37643fd47ed57ba8cc"
+  },
+  {
+    "path": "docs/adr/0034-production-runtime-images.md",
+    "bytes": 4646,
+    "sha256": "5367b1453eaa3185b693a33c254227ccf0d055ddda7b0164234853e61107b62b"
+  },
+  {
+    "path": "docs/adr/0035-retention-archive-and-heartbeat-projections.md",
+    "bytes": 5656,
+    "sha256": "4a993aafa0c720802a527194a29a0c11f7dd4df7c45c41a234bcb8cc20d00be2"
+  },
+  {
+    "path": "docs/adr/0036-exact-archive-membership.md",
+    "bytes": 7832,
+    "sha256": "cdea929b4e446de8d26e29bacef57b06ce4b9ba7ede4558d74d96a8a82f8fcde"
+  },
+  {
+    "path": "docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+    "bytes": 8467,
+    "sha256": "bc8fdb66fc9ec62ed110726eb53c44b90e5488d8454c05a797577f454a31de57"
+  },
+  {
+    "path": "docs/adr/0038-atomic-checksummed-v1-migrations.md",
+    "bytes": 2567,
+    "sha256": "0efb2e122bc1e9c7c1c77f5dc3ab6402ac803711afe87e318018c6ba07ba58f0"
+  },
+  {
+    "path": "docs/adr/0039-authenticated-complete-recovery-bundles.md",
+    "bytes": 3708,
+    "sha256": "c52d79199407233631b56146e7bbccb78ad0af3742d54bba215a53d84e064dc9"
+  },
+  {
+    "path": "docs/adr/0040-transactional-active-executor-projection.md",
+    "bytes": 3273,
+    "sha256": "d9344bdee0add7f8d8fbe6cdd1d2eab8536f8b063743c16891ff5f579b02c2f7"
+  },
+  {
+    "path": "docs/adr/0041-versioned-guidance-and-context-pinning.md",
+    "bytes": 3017,
+    "sha256": "2ac9b1aadbcc999fcd76ff792d3bda3662defd49865c0ccc6cb957fc5b499538"
+  },
+  {
+    "path": "docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+    "bytes": 2394,
+    "sha256": "c2ea95b82a92da00776713cb6c9874ba707d80d0fca61abbd50c57f87924ebae"
+  },
+  {
+    "path": "docs/adr/0043-agent-connection-and-coordination-mcp.md",
+    "bytes": 24440,
+    "sha256": "7f4ebf52f4a07b414468e9caa5f136d8c6bf291f40d2a08e8a49474b0ac3ab73"
+  },
+  {
+    "path": "docs/adr/0044-structured-planning-domain-parity.md",
+    "bytes": 3867,
+    "sha256": "01f9e76b5f3e4eea9ee352029122d324f827718147c509e08f23432f30cc6954"
+  },
+  {
+    "path": "docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+    "bytes": 16673,
+    "sha256": "fb4c0007af69e3a7477ff3c160e051eb7b12fa1776d9972b45a774d493605669"
+  },
+  {
+    "path": "docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+    "bytes": 7702,
+    "sha256": "db6a991b6562f41ca59846fb109a416d7cca90ee33bb5f92566c95f30005e7e4"
+  },
+  {
+    "path": "docs/adr/0047-agent-task-admission-and-forced-delegation.md",
+    "bytes": 10424,
+    "sha256": "5cf3d7ebcee8cf542c98903434aaf03e12333942e7e3cec221fc283762b711cd"
+  },
+  {
+    "path": "docs/adr/0048-stale-self-claim-recovery.md",
+    "bytes": 5529,
+    "sha256": "09a4d5d4b022dbe70d2231af38f65f68454266e2e80dfd5327178617d70222be"
+  },
+  {
+    "path": "docs/adr/0049-terminal-only-self-claim-recovery.md",
+    "bytes": 4526,
+    "sha256": "c20ab3b54a94bd6097c33357f477657f97c1036347b90079512f9fbc47ec4e85"
+  },
+  {
+    "path": "docs/adr/0050-human-attention-authorized-projection.md",
+    "bytes": 5276,
+    "sha256": "a6489055edefc856d6f8ec0f2aef08480914f40c7fff4e9e27ca172f2419214e"
+  },
+  {
+    "path": "docs/adr/0051-human-control-plane-read-models.md",
+    "bytes": 3013,
+    "sha256": "81ce9f1519be88b3bb80328b41c2bca5149b788d1cf6446fbd6b929acdb582a7"
+  },
+  {
+    "path": "docs/adr/0052-human-control-plane-information-architecture.md",
+    "bytes": 4837,
+    "sha256": "586b2c3b6e5e9de023c025c8861ac7f2e21f26060fb7f6d3f978f87eb8d2a389"
+  },
+  {
+    "path": "docs/adr/0053-human-attention-governed-responses.md",
+    "bytes": 3649,
+    "sha256": "c4c15c4d83dc7a2b6139520cb685735c9063f13f0729a27ef42b1722a53563c8"
+  },
+  {
+    "path": "docs/adr/0054-causal-agent-run-explanation.md",
+    "bytes": 3439,
+    "sha256": "3608d4a43b489fe153ab1ebce8c8ed053e1f70fcbdf430af326653b20ad298fc"
+  },
+  {
+    "path": "docs/adr/0055-governed-agent-session-controls.md",
+    "bytes": 2848,
+    "sha256": "44bf143070c7b4030198c918c484a6bc0e87afa2559beefa79f2055ddae3b6ed"
+  },
+  {
+    "path": "docs/adr/0056-work-item-execution-workspace.md",
+    "bytes": 2214,
+    "sha256": "9f9746a29ca46872a1b8a76f06fdd60863fc0f9316afa827f067b4da183c3fec"
+  },
+  {
+    "path": "docs/adr/0057-actionable-collaboration-queues.md",
+    "bytes": 2886,
+    "sha256": "970156f4ddbd8410b441a76834f39e590d3ebcee20cb8031a35e3bbd958863fb"
+  },
+  {
+    "path": "docs/adr/0058-authorized-recovery-and-freshness-projection.md",
+    "bytes": 4117,
+    "sha256": "23e45674d364dae1b9d99d81ceb0741ca9502efdd9b3fdb1f14cd8bbdc5e1086"
+  },
+  {
+    "path": "docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+    "bytes": 1919,
+    "sha256": "6533a5ecf9e9ca63d93b3690486a86d7efbca12f6061245b7ff3f03ed48d7552"
+  },
+  {
+    "path": "docs/adr/0060-optional-graph-integration-boundary.md",
+    "bytes": 2739,
+    "sha256": "c996022870877909118f94fe33fd9e13e89d0f958bb2a37cf6e8ce78e0f1705f"
+  },
+  {
+    "path": "docs/adr/0061-human-control-plane-final-acceptance-and-telemetry.md",
+    "bytes": 3148,
+    "sha256": "8fa41e8f615f88a35ce4c52491830be7742b5c5db109a7ed2fddb8808da76215"
+  },
+  {
+    "path": "docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+    "bytes": 4078,
+    "sha256": "ede95acd8464dc70e6540e03ed25c566a8c1cb68df1922c648d1f5f92c8ced00"
+  },
+  {
+    "path": "docs/adr/0063-multica-inspired-authority-first-human-agent-workspace.md",
+    "bytes": 6942,
+    "sha256": "df3ee49158735646684e1df88d01fd404eb6abc949dca1ff637ee456a5e768ec"
+  },
+  {
+    "path": "docs/adr/0064-unified-human-control-plane-web-experience.md",
+    "bytes": 4976,
+    "sha256": "fa88f734564ed3e8d5286474eb66223cac487c2d6c928a2dea8b42edbc3bdbea"
+  },
+  {
+    "path": "docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md",
+    "bytes": 15729,
+    "sha256": "46b0a2e76ab9970dfeca7b3dde34ed16be0195ef78f3ba9cd739756c1c54b524"
+  },
+  {
+    "path": "docs/adr/0066-versioned-project-and-issue-documents.md",
+    "bytes": 3375,
+    "sha256": "35080bbbb181db61c9b5ad79ce76b6da4a4ac85cc286408f068bfd8fe4e16e41"
+  },
+  {
+    "path": "docs/adr/0067-governed-pi-workmesh-tools.md",
+    "bytes": 4693,
+    "sha256": "b9d27884633ce6f897fd9ab214ca95ec64e8d7f1c3ee3829c5e4c37825e3435e"
+  },
+  {
+    "path": "docs/adr/0068-atomic-workbench-turn-session-completion.md",
+    "bytes": 3578,
+    "sha256": "ea0146641b7e7c25027ea2abbc4e3d536f43c8ed55e862f535bf0cf5eb24471a"
+  },
+  {
+    "path": "docs/adr/0069-embedded-pi-workbench-skill-pin.md",
+    "bytes": 2442,
+    "sha256": "ec76ae8b961d79cc08d29536070c27f48bd67100a14f64621a919efbaab5f677"
+  },
+  {
+    "path": "docs/adr/0070-artifact-storage-on-rustfs-and-header-signed-uploads.md",
+    "bytes": 5570,
+    "sha256": "a8485edb0df5b6563af0274a1014b73de8229ac6236b850b21a142efe9523054"
+  },
+  {
+    "path": "docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+    "bytes": 17257,
+    "sha256": "7b45fe73dc7d4a0ea27c668c076165273d8ab8b538b5d3c5dadcd2ca70384ef9"
+  },
+  {
+    "path": "docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+    "bytes": 17257,
+    "sha256": "8d7b9a013b1fe99f6dc40040b93808f318017a46c107360242ac286a2f1bcd44"
+  },
+  {
+    "path": "docs/adr/0073-human-ordered-position-within-a-status-column.md",
+    "bytes": 7474,
+    "sha256": "a138eaffd80ffd79e4dffa24f6bb7c3ee4efd5284554653d615483061b6ba4d3"
+  },
+  {
+    "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+    "bytes": 25797,
+    "sha256": "b815acec4335722a757c8c750bb2750d58d90da93c2eaa16ca51579fb69c0bc6"
+  },
+  {
+    "path": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+    "bytes": 17253,
+    "sha256": "37faae9a63d424f768b513ae34dba9a841c0c573b0d3b3c1479632b43974e368"
+  },
+  {
+    "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+    "bytes": 26194,
+    "sha256": "0427a4ffe9ee4dcb69997ca876c62ecc8fa96ae4cbef9f5b122c5ab8c0e7d8be"
+  },
+  {
+    "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+    "bytes": 18644,
+    "sha256": "fc636dfd0c99d956a32260e2378724461a75b131bb3e00669603d04fe99fe9d1"
+  },
+  {
+    "path": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+    "bytes": 55996,
+    "sha256": "c660858c0f7aaef6796f8c4c026f185707116c244c407b53b0e0ce1ccce0569a"
+  },
+  {
+    "path": "docs/adr/0078-review-round2.md",
+    "bytes": 24657,
+    "sha256": "8d1f0fd90a005b6f2aa0fd3ae7bcafaadc873a5cb75cb8507a9c83699c48f660"
+  },
+  {
+    "path": "docs/adr/0078-review.md",
+    "bytes": 40920,
+    "sha256": "9bf4e715fa1241e3063bfec811d999cafa9e80d74ad8c4a598dae56448171a93"
+  },
+  {
+    "path": "docs/adr/0079-qualified-agent-discovery-and-recovery.md",
+    "bytes": 4937,
+    "sha256": "11df662dfa66e78db43f41c7db522bade400032c29121ddc52c05a9f80c78a3e"
+  },
+  {
+    "path": "docs/adr/0080-exact-session-execution-result-confirmation.md",
+    "bytes": 4055,
+    "sha256": "da259736a217d327c4729b8447504da0c39ec837dee0587690f7679b152783b7"
+  },
+  {
+    "path": "docs/adr/0081-pi-execution-wait-continuation.md",
+    "bytes": 4399,
+    "sha256": "f96de8731542d621a6678d029b5156ad7e48e17d29ba23ddf1d0593da03d82c3"
+  },
+  {
+    "path": "docs/adr/0082-parent-child-status-projection.md",
+    "bytes": 12008,
+    "sha256": "72fa34492cc442a165b9bde5d580baa6f5ab9b6906e8e947d14f40470682b6a9"
+  },
+  {
+    "path": "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+    "bytes": 5664,
+    "sha256": "20e7126d9840be8ae9ab26f4781ac6b0ff0cc137e1a415b542ec94e15f624529"
+  },
+  {
+    "path": "docs/adr/0084-runner-tool-bounded-transport-replay.md",
+    "bytes": 2648,
+    "sha256": "8ab2e0dcf2a92fb4bdd8e3e9a198f0602aeb5add7a289c60fa747b38c71ff9a4"
+  },
+  {
+    "path": "docs/adr/0085-mcp-original-execution-recovery-discovery.md",
+    "bytes": 2288,
+    "sha256": "4b1586eafd162ece83750eaf74a91c5cc053482c47da361ad1d8b6e6ae6293f0"
+  },
+  {
+    "path": "docs/adr/0086-optional-agent-domain-read-projections.md",
+    "bytes": 6071,
+    "sha256": "0e400a2e49827721b3ffc90e0bf6367968de3a83cac6f1055715fb1f93867feb"
+  },
+  {
+    "path": "docs/adr/README.md",
+    "bytes": 16185,
+    "sha256": "abee02e6eb97298a8ba8fe44a28a18a3a6b0d5f8b2e8f81737bd70df6f4e79c8"
+  }
+]

@@ -1,0 +1,117 @@
+{
+  "commands": [
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+        "--format",
+        "{\"id\":{{json .Id}},\"name\":{{json .Name}},\"labels\":{{json .Config.Labels}},\"state\":{{json .State}}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.08893980001448654,
+      "stdout": "{\"id\":\"99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003\",\"name\":\"/m4-01a127d4-4adc5e39-postgres\",\"labels\":{\"workmesh.m4.owner\":\"m4-01a127d4-4adc5e39\"},\"state\":{\"Dead\":false,\"Error\":\"\",\"ExitCode\":0,\"FinishedAt\":\"2026-10-11T05:09:55.779581Z\",\"OOMKilled\":false,\"Paused\":false,\"Pid\":0,\"Restarting\":false,\"Running\":false,\"StartedAt\":\"2026-10-11T03:24:55.2952145Z\",\"Status\":\"exited\"}}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "start",
+        "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.4285183999745641,
+      "stdout": "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+        "--format",
+        "{{json .State}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.06964219998917542,
+      "stdout": "{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":83723,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2026-10-11T05:35:35.4868216Z\",\"FinishedAt\":\"2026-10-11T05:09:55.779581Z\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+        "--format",
+        "{\"id\":{{json .Id}},\"name\":{{json .Name}},\"labels\":{{json .Config.Labels}},\"state\":{{json .State}}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.0682061999978032,
+      "stdout": "{\"id\":\"a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde\",\"name\":\"/m4-01a127d4-4adc5e39-redis\",\"labels\":{\"workmesh.m4.owner\":\"m4-01a127d4-4adc5e39\"},\"state\":{\"Dead\":false,\"Error\":\"\",\"ExitCode\":0,\"FinishedAt\":\"2026-10-11T05:09:56.2953309Z\",\"OOMKilled\":false,\"Paused\":false,\"Pid\":0,\"Restarting\":false,\"Running\":false,\"StartedAt\":\"2026-10-11T03:24:55.9610769Z\",\"Status\":\"exited\"}}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "start",
+        "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.1390413999906741,
+      "stdout": "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+        "--format",
+        "{{json .State}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.07198390000849031,
+      "stdout": "{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":83808,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2026-10-11T05:35:35.7795245Z\",\"FinishedAt\":\"2026-10-11T05:09:56.2953309Z\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+        "--format",
+        "{\"id\":{{json .Id}},\"name\":{{json .Name}},\"labels\":{{json .Config.Labels}},\"state\":{{json .State}}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.07429610000690445,
+      "stdout": "{\"id\":\"717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df\",\"name\":\"/m4-01a127d4-4adc5e39-objectstore\",\"labels\":{\"build-date\":\"\",\"description\":\"RustFS is a distributed object storage system written in Rust, supporting erasure coding, multi-tenant management, and observability.\",\"license\":\"Apache-2.0\",\"maintainer\":\"RustFS Team <dev@rustfs.com>\",\"name\":\"RustFS\",\"org.opencontainers.image.title\":\"RustFS,org.opencontainers.image.description=RustFS distributed object storage system,org.opencontainers.image.version=1.0.0,org.opencontainers.image.revision=d47f54bfb2f39f48bd1adda334bd27e151fe85b8,org.opencontainers.image.source=https://github.com/rustfs/rustfs,org.opencontainers.image.created=2026-09-16T10:05:14Z,org.opencontainers.image.build-type=release\",\"release\":\"1.0.0\",\"summary\":\"High-performance distributed object storage system compatible with S3 API\",\"url\":\"https://rustfs.com\",\"vcs-ref\":\"\",\"vendor\":\"RustFS Team\",\"version\":\"v1.0.0\",\"workmesh.m4.owner\":\"m4-01a127d4-4adc5e39\"},\"state\":{\"Dead\":false,\"Error\":\"\",\"ExitCode\":0,\"FinishedAt\":\"2026-10-11T05:09:56.7195823Z\",\"OOMKilled\":false,\"Paused\":false,\"Pid\":0,\"Restarting\":false,\"Running\":false,\"StartedAt\":\"2026-10-11T03:24:56.5787973Z\",\"Status\":\"exited\"}}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "start",
+        "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.14670290000503883,
+      "stdout": "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+        "--format",
+        "{{json .State}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.08193200000096112,
+      "stdout": "{\"Status\":\"running\",\"Running\":true,\"Paused\":false,\"Restarting\":false,\"OOMKilled\":false,\"Dead\":false,\"Pid\":83876,\"ExitCode\":0,\"Error\":\"\",\"StartedAt\":\"2026-10-11T05:35:36.0687108Z\",\"FinishedAt\":\"2026-10-11T05:09:56.7195823Z\"}\n",
+      "stderr": ""
+    }
+  ],
+  "reuseOnlyExactOwnedContainers": true,
+  "protectedRecoveryAndRefusedTargetsUntouched": true
+}

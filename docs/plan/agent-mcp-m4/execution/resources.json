@@ -1,0 +1,280 @@
+{
+  "owner": "本会话M4",
+  "prefix": "m4-01a127d4-4adc5e39",
+  "privatePath": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39",
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88",
+  "containers": [
+    {
+      "role": "postgres",
+      "name": "m4-01a127d4-4adc5e39-postgres",
+      "volume": "m4-01a127d4-4adc5e39-postgres-data",
+      "image": "postgres:16.9-alpine",
+      "port": 5432,
+      "containerId": "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+      "status": "已创建",
+      "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "volumeId": "m4-01a127d4-4adc5e39-postgres-data",
+      "hostPort": 64433
+    },
+    {
+      "role": "redis",
+      "name": "m4-01a127d4-4adc5e39-redis",
+      "volume": "m4-01a127d4-4adc5e39-redis-data",
+      "image": "redis:7.4.5-alpine",
+      "port": 6379,
+      "containerId": "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+      "status": "已创建",
+      "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "volumeId": "m4-01a127d4-4adc5e39-redis-data",
+      "hostPort": 64435
+    },
+    {
+      "role": "objectstore",
+      "name": "m4-01a127d4-4adc5e39-objectstore",
+      "volume": "m4-01a127d4-4adc5e39-objectstore-data",
+      "image": "rustfs/rustfs:1.0.0",
+      "port": 9000,
+      "containerId": "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+      "status": "已创建",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "volumeId": "m4-01a127d4-4adc5e39-objectstore-data",
+      "hostPort": 64437
+    }
+  ],
+  "network": "各独有container默认bridge；无共享服务或自建network清理",
+  "processes": [],
+  "physicalNetReleasedBytes": null,
+  "diskUsageBefore": {
+    "total": 998956331008,
+    "used": 693030715392,
+    "free": 305925615616
+  },
+  "protectedResources": "M5恢复、旧9对象、G1D0C3与父目录、其他workspace/store/image不动",
+  "receipts": [
+    {
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "postgres:16.9-alpine",
+        "--format",
+        "{{.Id}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.1034533000056399,
+      "stdout": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "volume",
+        "create",
+        "--label",
+        "workmesh.m4.owner=m4-01a127d4-4adc5e39",
+        "m4-01a127d4-4adc5e39-postgres-data"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.06630360000417568,
+      "stdout": "m4-01a127d4-4adc5e39-postgres-data\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "m4-01a127d4-4adc5e39-postgres",
+        "--label",
+        "workmesh.m4.owner=m4-01a127d4-4adc5e39",
+        "--memory",
+        "512m",
+        "-p",
+        "127.0.0.1::5432",
+        "-e",
+        "POSTGRES_PASSWORD=[REDACTED]",
+        "-e",
+        "POSTGRES_USER=workmesh",
+        "-e",
+        "POSTGRES_DB=workmesh_m4_test",
+        "-v",
+        "m4-01a127d4-4adc5e39-postgres-data:/var/lib/postgresql/data",
+        "postgres:16.9-alpine"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.23864700000558514,
+      "stdout": "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+        "--format",
+        "{{json .NetworkSettings.Ports}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.07113090000348166,
+      "stdout": "{\"5432/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"64433\"}]}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "redis:7.4.5-alpine",
+        "--format",
+        "{{.Id}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.11133270000573248,
+      "stdout": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "volume",
+        "create",
+        "--label",
+        "workmesh.m4.owner=m4-01a127d4-4adc5e39",
+        "m4-01a127d4-4adc5e39-redis-data"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.06920110000646673,
+      "stdout": "m4-01a127d4-4adc5e39-redis-data\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "m4-01a127d4-4adc5e39-redis",
+        "--label",
+        "workmesh.m4.owner=m4-01a127d4-4adc5e39",
+        "--memory",
+        "512m",
+        "-p",
+        "127.0.0.1::6379",
+        "-v",
+        "m4-01a127d4-4adc5e39-redis-data:/data",
+        "redis:7.4.5-alpine"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.4769079999969108,
+      "stdout": "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+        "--format",
+        "{{json .NetworkSettings.Ports}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.07024770000134595,
+      "stdout": "{\"6379/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"64435\"}]}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "image",
+        "inspect",
+        "rustfs/rustfs:1.0.0",
+        "--format",
+        "{{.Id}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.09553900000173599,
+      "stdout": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "volume",
+        "create",
+        "--label",
+        "workmesh.m4.owner=m4-01a127d4-4adc5e39",
+        "m4-01a127d4-4adc5e39-objectstore-data"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.1095972999901278,
+      "stdout": "m4-01a127d4-4adc5e39-objectstore-data\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "m4-01a127d4-4adc5e39-objectstore",
+        "--label",
+        "workmesh.m4.owner=m4-01a127d4-4adc5e39",
+        "--memory",
+        "512m",
+        "-p",
+        "127.0.0.1::9000",
+        "-e",
+        "RUSTFS_ACCESS_KEY=[REDACTED]",
+        "-e",
+        "RUSTFS_SECRET_KEY=[REDACTED]",
+        "-v",
+        "m4-01a127d4-4adc5e39-objectstore-data:/data",
+        "rustfs/rustfs:1.0.0",
+        "/data"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.28090669999073725,
+      "stdout": "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+        "--format",
+        "{{json .NetworkSettings.Ports}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.0948740000021644,
+      "stdout": "{\"9000/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"64437\"}]}\n",
+      "stderr": ""
+    }
+  ],
+  "environmentNames": [
+    "DATABASE_URL",
+    "NODE_ENV",
+    "REDIS_URL",
+    "RUN_INTEGRATION",
+    "S3_ACCESS_KEY_ID",
+    "S3_BUCKET",
+    "S3_ENDPOINT",
+    "S3_FORCE_PATH_STYLE",
+    "S3_REGION",
+    "S3_SECRET_ACCESS_KEY",
+    "SESSION_SECRET",
+    "WORKMESH_BETA_COORDINATION_MCP",
+    "WORKMESH_BETA_COSTS",
+    "WORKMESH_BETA_PLANNING",
+    "WORKMESH_BETA_TEMPLATES",
+    "WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK",
+    "WORKMESH_BOOTSTRAP_TOKEN",
+    "WORKMESH_ENCRYPTION_KEY",
+    "WORKMESH_EXPERIMENTAL_A2A",
+    "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+    "WORKMESH_EXPERIMENTAL_AUTOMATION",
+    "WORKMESH_RUNNER_SERVICE_TOKEN"
+  ],
+  "preparedUtc": "2026-10-11T03:24:56.766228+00:00"
+}

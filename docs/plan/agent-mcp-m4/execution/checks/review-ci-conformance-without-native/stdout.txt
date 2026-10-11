@@ -1,0 +1,14 @@
+removedEnvironmentNames=M5_CLIENT_EXECUTABLE,M5_EVIDENCE_ROOT
+command=['pnpm.cmd', 'test:conformance:integration']
+
+> workmesh@ test:conformance:integration C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration
+
+
+> @workmesh/db@ test:reset C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+> tsx scripts/reset-test.ts
+
+C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/db@ test:reset: `tsx scripts/reset-test.ts`
+Exit status 1
+ ELIFECYCLE  Command failed with exit code 1.

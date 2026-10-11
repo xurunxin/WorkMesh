@@ -1,0 +1,24 @@
+(node:50676) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts > Stage 4 planning and operations API > atomically applies sequenced A2A deliveries to one Session across outbound streaming
+AssertionError: {"error":{"code":"INTERNAL_ERROR","message":"Unexpected server error","correlationId":"3f30c5be-a17b-48f0-a418-c4a6690d0be3"}}: expected 500 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 500
+
+ ❯ integration/stage4-operations.integration.test.ts:1139:71
+    1137| 
+    1138|     const agentStream=await agentCall(agentToken,'GET',`/api/v1/a2a-bi…
+    1139|     expect(agentStream.statusCode,JSON.stringify(agentStream.json())).…
+       |                                                                       ^
+    1140|     expect(agentStream.json<{events:unknown[]}>().events.length).toBeG…
+    1141|     const repeatedStream=await agentCall(agentToken,'GET',`/api/v1/a2a…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

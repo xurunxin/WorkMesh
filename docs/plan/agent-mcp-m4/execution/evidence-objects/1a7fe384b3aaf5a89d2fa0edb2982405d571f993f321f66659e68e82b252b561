@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"Installation Token is invalid or inactive\",\"correlationId\":\"1feb44f7-8e28-4595-9b64-cfbe44de1867\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+    }
+  ],
+  "structuredContent": {
+    "error": {
+      "code": "UNAUTHENTICATED",
+      "message": "Installation Token is invalid or inactive",
+      "correlationId": "1feb44f7-8e28-4595-9b64-cfbe44de1867",
+      "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+    }
+  },
+  "isError": true
+}

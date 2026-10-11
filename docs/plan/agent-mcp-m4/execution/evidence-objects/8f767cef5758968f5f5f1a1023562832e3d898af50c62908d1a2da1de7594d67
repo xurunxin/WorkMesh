@@ -1,0 +1,68 @@
+{
+  "denials": [
+    {
+      "method": "GET",
+      "path": "/api/v1/agent-sessions/6262ffe5-3375-49c3-b382-e182144f1cea",
+      "status": 409,
+      "result": {
+        "error": {
+          "code": "DELEGATION_NOT_ACTIVE",
+          "message": "The Delegation is no longer active",
+          "details": {
+            "authorizationStage": "delegation",
+            "policyId": "route.getAgentSession"
+          },
+          "correlationId": "fa323e36-559f-48af-a919-87980dd8bb06"
+        }
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/agent-sessions/6262ffe5-3375-49c3-b382-e182144f1cea/plan",
+      "status": 409,
+      "result": {
+        "error": {
+          "code": "DELEGATION_NOT_ACTIVE",
+          "message": "The Delegation is no longer active",
+          "details": {
+            "authorizationStage": "delegation",
+            "policyId": "route.publishAgentPlan"
+          },
+          "correlationId": "7ec04ca8-6c23-4ca1-b7c1-9450336c7caf"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/approvals",
+      "status": 409,
+      "result": {
+        "error": {
+          "code": "DELEGATION_NOT_ACTIVE",
+          "message": "The Delegation is no longer active",
+          "details": {
+            "authorizationStage": "delegation",
+            "policyId": "route.requestApproval"
+          },
+          "correlationId": "ecc21a72-35df-4f77-8714-fa945ef3db09"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/agent-sessions/6262ffe5-3375-49c3-b382-e182144f1cea/complete",
+      "status": 409,
+      "result": {
+        "error": {
+          "code": "DELEGATION_NOT_ACTIVE",
+          "message": "The Delegation is no longer active",
+          "details": {
+            "authorizationStage": "delegation",
+            "policyId": "route.completeAgentSession"
+          },
+          "correlationId": "5f15f36d-61b1-4396-b818-a01eca78ab45"
+        }
+      }
+    }
+  ]
+}

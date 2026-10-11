@@ -1,0 +1,11 @@
+{
+  "requestPath": "/v1/chat/completions",
+  "sequence": 3,
+  "tools": [
+    "workmesh_get_initiative_rollup",
+    "workmesh_get_usage_summary"
+  ],
+  "publicToolResults": [
+    "{\"input_tokens\":\"0\",\"output_tokens\":\"0\",\"runtime_ms\":\"0\",\"tool_calls\":\"0\",\"unknown_cost_records\":0,\"currency_buckets\":[]}"
+  ]
+}

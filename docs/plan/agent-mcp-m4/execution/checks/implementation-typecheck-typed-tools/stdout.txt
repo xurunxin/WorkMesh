@@ -1,0 +1,114 @@
+
+> workmesh@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> turbo run typecheck
+
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running typecheck in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/contracts:typecheck: cache miss, executing c57491f63827b24b
+@workmesh/ui:typecheck: cache hit, replaying logs 90be40ecf9d7f680
+@workmesh/ui:typecheck: 
+@workmesh/ui:typecheck: > @workmesh/ui@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:typecheck: > tsc --noEmit
+@workmesh/ui:typecheck: 
+@workmesh/artifact-storage:typecheck: cache hit, replaying logs 96c0dc1ab85dfc0c
+@workmesh/artifact-storage:typecheck: 
+@workmesh/artifact-storage:typecheck: > @workmesh/artifact-storage@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:typecheck: > tsc --noEmit
+@workmesh/artifact-storage:typecheck: 
+@workmesh/git-provider:typecheck: cache hit, replaying logs 6bb6482e36891217
+@workmesh/git-provider:typecheck: 
+@workmesh/git-provider:typecheck: > @workmesh/git-provider@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:typecheck: > tsc --noEmit
+@workmesh/git-provider:typecheck: 
+@workmesh/observability:typecheck: cache hit, replaying logs 29d15a25fd800c45
+@workmesh/observability:typecheck: 
+@workmesh/observability:typecheck: > @workmesh/observability@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:typecheck: > tsc --noEmit
+@workmesh/observability:typecheck: 
+@workmesh/contracts:typecheck: 
+@workmesh/contracts:typecheck: > @workmesh/contracts@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:typecheck: > tsc --noEmit
+@workmesh/contracts:typecheck: 
+@workmesh/domain:typecheck: cache miss, executing cb862aa1c5efed4e
+@workmesh/a2a-adapter:typecheck: cache miss, executing 96a4f7f56b513d69
+@workmesh/web:typecheck: cache miss, executing b7c1725892abdde7
+@workmesh/agent-runner:typecheck: cache miss, executing 93f446cdffbcbec9
+@workmesh/agent-sdk:typecheck: cache miss, executing d7ed8e308ab6d11b
+@workmesh/config:typecheck: cache miss, executing 28931e6303a77bb9
+@workmesh/domain:typecheck: 
+@workmesh/domain:typecheck: > @workmesh/domain@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\domain
+@workmesh/domain:typecheck: > tsc --noEmit
+@workmesh/domain:typecheck: 
+@workmesh/a2a-adapter:typecheck: 
+@workmesh/a2a-adapter:typecheck: > @workmesh/a2a-adapter@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\a2a-adapter
+@workmesh/a2a-adapter:typecheck: > tsc --noEmit
+@workmesh/a2a-adapter:typecheck: 
+@workmesh/web:typecheck: 
+@workmesh/web:typecheck: > @workmesh/web@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\web
+@workmesh/web:typecheck: > tsc --noEmit
+@workmesh/web:typecheck: 
+@workmesh/agent-runner:typecheck: 
+@workmesh/agent-runner:typecheck: > @workmesh/agent-runner@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\agent-runner
+@workmesh/agent-runner:typecheck: > tsc --noEmit
+@workmesh/agent-runner:typecheck: 
+@workmesh/agent-sdk:typecheck: 
+@workmesh/agent-sdk:typecheck: > @workmesh/agent-sdk@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:typecheck: > tsc --noEmit
+@workmesh/agent-sdk:typecheck: 
+@workmesh/config:typecheck: 
+@workmesh/config:typecheck: > @workmesh/config@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\config
+@workmesh/config:typecheck: > tsc --noEmit
+@workmesh/config:typecheck: 
+@workmesh/db:typecheck: cache miss, executing a0d203690ad4659d
+@workmesh/db:typecheck: 
+@workmesh/db:typecheck: > @workmesh/db@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+@workmesh/db:typecheck: > tsc --noEmit
+@workmesh/db:typecheck: 
+@workmesh/mcp:typecheck: cache miss, executing 2d963a03626c9cc1
+@workmesh/fake-agent:typecheck: cache miss, executing cba593b5b325cc43
+@workmesh/mcp:typecheck: 
+@workmesh/mcp:typecheck: > @workmesh/mcp@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\mcp
+@workmesh/mcp:typecheck: > tsc --noEmit
+@workmesh/mcp:typecheck: 
+@workmesh/fake-agent:typecheck: 
+@workmesh/fake-agent:typecheck: > @workmesh/fake-agent@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\fake-agent
+@workmesh/fake-agent:typecheck: > tsc --noEmit
+@workmesh/fake-agent:typecheck: 
+@workmesh/worker:typecheck: cache miss, executing 2eed300d7c490a6f
+@workmesh/recovery:typecheck: cache miss, executing ccb63d7332a9e630
+@workmesh/worker:typecheck: 
+@workmesh/worker:typecheck: > @workmesh/worker@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\worker
+@workmesh/worker:typecheck: > tsc --noEmit
+@workmesh/worker:typecheck: 
+@workmesh/recovery:typecheck: 
+@workmesh/recovery:typecheck: > @workmesh/recovery@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\recovery
+@workmesh/recovery:typecheck: > tsc --noEmit
+@workmesh/recovery:typecheck: 
+@workmesh/api:typecheck: cache miss, executing 162f02d6771e7ce4
+@workmesh/api:typecheck: 
+@workmesh/api:typecheck: > @workmesh/api@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\api
+@workmesh/api:typecheck: > tsc --noEmit
+@workmesh/api:typecheck: 
+@workmesh/conformance:typecheck: cache miss, executing 608264937bdc6788
+@workmesh/conformance:typecheck: 
+@workmesh/conformance:typecheck: > @workmesh/conformance@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\conformance
+@workmesh/conformance:typecheck: > tsc --noEmit
+@workmesh/conformance:typecheck: 
+@workmesh/conformance:typecheck: src/optional-domains.fixture.ts(28,40): error TS2684: The 'this' context of type '<OutputArgs extends ZodRawShapeCompat | AnySchema, InputArgs extends undefined | ZodRawShapeCompat | AnySchema = undefined>(name: string, config: { title?: string | undefined; description?: string | undefined; inputSchema?: InputArgs | undefined; outputSchema?: OutputArgs | undefined; annotations?: { ...; } | undefi...' is not assignable to method's 'this' of type '(this: McpServer, name: string, config: { title?: string | undefined; description?: string | undefined; inputSchema?: AnySchema | ZodRawShapeCompat | undefined; outputSchema?: AnySchema | ... 1 more ... | undefined; annotations?: { ...; } | undefined; _meta?: Record<...> | undefined; }, cb: ((extra: RequestHandlerEx...'.
+@workmesh/conformance:typecheck:   Types of parameters 'config' and 'config' are incompatible.
+@workmesh/conformance:typecheck:     Type '{ title?: string | undefined; description?: string | undefined; inputSchema?: AnySchema | ZodRawShapeCompat | undefined; outputSchema?: AnySchema | ZodRawShapeCompat | undefined; annotations?: { ...; } | undefined; _meta?: Record<...> | undefined; }' is not assignable to type '{ title?: string | undefined; description?: string | undefined; inputSchema?: ZodRawShapeCompat | undefined; outputSchema?: ZodTypeAny | $ZodType<unknown, unknown, $ZodTypeInternals<...>> | ZodRawShapeCompat | undefined; annotations?: { ...; } | undefined; _meta?: Record<...> | undefined; }'.
+@workmesh/conformance:typecheck:       Types of property 'inputSchema' are incompatible.
+@workmesh/conformance:typecheck:         Type 'AnySchema | ZodRawShapeCompat | undefined' is not assignable to type 'ZodRawShapeCompat | undefined'.
+@workmesh/conformance:typecheck:           Type 'ZodTypeAny' is not assignable to type 'ZodRawShapeCompat'.
+@workmesh/conformance:typecheck:             Index signature for type 'string' is missing in type 'ZodType<any, any, any>'.
+@workmesh/conformance:typecheck:  ELIFECYCLE  Command failed with exit code 2.
+
+ Tasks:    17 successful, 18 total
+Cached:    4 cached, 18 total
+  Time:    1m11.276s 
+Failed:    @workmesh/conformance#typecheck
+
+ ELIFECYCLE  Command failed with exit code 2.

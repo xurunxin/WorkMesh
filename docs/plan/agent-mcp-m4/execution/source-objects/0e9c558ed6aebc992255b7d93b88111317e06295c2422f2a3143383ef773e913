@@ -1,0 +1,4245 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-07T11:45:55.061Z",
+  "scope": "原始帧诊断不执行基线比较，不代表 D0 或产品视觉验收；正式全量重放另行记录",
+  "hypothesis": "固定布局下 Chromium 部分栅格复用造成圆角边缘颜色取整差异",
+  "conclusion": "A/B/重启/恢复原条件对照支持将不稳定来源定位至部分栅格复用的渲染条件；尚未定位 Chromium 内部具体绘制函数",
+  "primarySource": {
+    "url": "https://raw.githubusercontent.com/chromium/chromium/main/third_party/blink/common/switches.cc",
+    "path": "third_party/blink/common/switches.cc",
+    "lines": [
+      44,
+      45,
+      46
+    ],
+    "checkedAt": "2026-10-07",
+    "supports": "--disable-partial-raster 禁用 renderer 部分栅格；源码解释参数用途，实际因果判断来自本地对照，不声称 main 与所用浏览器源码版本相同"
+  },
+  "reproduction": "evidence/diagnose-raster.mjs",
+  "constantConditions": [
+    "未改产品/token/字体/视口/主题/夹具数据",
+    "两次上下文布局、计算样式、焦点和动画状态一致",
+    "比较器参数未改变，原始哈希判断不使用容差"
+  ],
+  "runs": [
+    {
+      "name": "d0-diagnostic-original",
+      "partialRasterDisabled": false,
+      "exitCode": 1,
+      "passed": 8,
+      "failed": 2,
+      "captureCount": 20,
+      "successfulPairs": [
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat2/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat1/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat4/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat3/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat2/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat1/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        }
+      ],
+      "failedPairHashes": [
+        {
+          "project": "mobile-390x844",
+          "captureSha256": [
+            "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/strict-mobile-issue-detail-actual.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "project": "mobile-390x844",
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "d83caf59926913cfad490a7aef75b8e1631892c51a27e481275a95495a5f2b07"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+            "failures/review-mobile-issue-detail-actual.png"
+          ]
+        }
+      ],
+      "states": [],
+      "originalPngAttachments": [
+        {
+          "sha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+          "path": "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+        },
+        {
+          "sha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+          "path": "failures/strict-mobile-issue-detail-actual.png"
+        },
+        {
+          "sha256": "d83caf59926913cfad490a7aef75b8e1631892c51a27e481275a95495a5f2b07",
+          "path": "failures/review-mobile-issue-detail-actual.png"
+        },
+        {
+          "sha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+          "path": "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+        }
+      ],
+      "rawLogSha256": "cb34a744d853b1dffac72816452efa70097c7566b46592bd5517a18bede1ba19",
+      "excerpt": [
+        "  x   9 [mobile-390x844] › .tmp\\d0-diagnostic.spec.ts:90:9 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.7s)",
+        "  x  10 [mobile-390x844] › .tmp\\d0-diagnostic.spec.ts:90:9 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.5s)",
+        "    Error: 两个独立上下文的 PNG 必须逐字节一致",
+        "    Expected: \"c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002\"",
+        "    Received: \"f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a\"",
+        "    Error: 两个独立上下文的 PNG 必须逐字节一致",
+        "    Expected: \"f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a\"",
+        "    Received: \"d83caf59926913cfad490a7aef75b8e1631892c51a27e481275a95495a5f2b07\"",
+        "  2 failed",
+        "  8 passed (1.1m)"
+      ]
+    },
+    {
+      "name": "d0-diagnostic-no-partial-raster",
+      "partialRasterDisabled": true,
+      "exitCode": 0,
+      "passed": 10,
+      "failed": 0,
+      "captureCount": 20,
+      "successfulPairs": [
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat4/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat3/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat2/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat1/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat4/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat3/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat2/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat1/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        }
+      ],
+      "failedPairHashes": [],
+      "states": [
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat4/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat3/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat2/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat1/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat4/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat3/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat2/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat1/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        }
+      ],
+      "originalPngAttachments": [
+        {
+          "sha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+          "path": "win32/mobile-390x844/issue-detail.png"
+        },
+        {
+          "sha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+          "path": "failures/review-desktop-issue-detail-actual.png"
+        }
+      ],
+      "rawLogSha256": "ff8b56d10946317d8607075dcff8d4afda9a940a975b85d669e95d706aea7158",
+      "excerpt": [
+        "  10 passed (1.1m)"
+      ]
+    },
+    {
+      "name": "d0-diagnostic-no-partial-raster-restart",
+      "partialRasterDisabled": true,
+      "exitCode": 0,
+      "passed": 10,
+      "failed": 0,
+      "captureCount": 20,
+      "successfulPairs": [
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat4/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat3/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat2/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat1/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat4/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat3/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat2/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat1/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        }
+      ],
+      "failedPairHashes": [],
+      "states": [
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat4/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat3/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat2/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat1/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat4/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat3/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat2/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat1/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        }
+      ],
+      "originalPngAttachments": [
+        {
+          "sha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+          "path": "win32/mobile-390x844/issue-detail.png"
+        },
+        {
+          "sha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+          "path": "failures/review-desktop-issue-detail-actual.png"
+        }
+      ],
+      "rawLogSha256": "8c86b76c14f45c7158159809273cd3ce2fcaba450df35d0c0f90a6e5322eb01e",
+      "excerpt": [
+        "  10 passed (54.8s)"
+      ]
+    },
+    {
+      "name": "d0-diagnostic-partial-control-final",
+      "partialRasterDisabled": false,
+      "exitCode": 1,
+      "passed": 6,
+      "failed": 4,
+      "captureCount": 20,
+      "successfulPairs": [
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat3/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat2/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat1/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/issue-detail-replay.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "captureSha256": [
+            "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+            "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002"
+          ],
+          "originalPngFiles": [
+            "failures/strict-mobile-issue-detail-actual.png",
+            "failures/strict-mobile-issue-detail-actual.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat4/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat3/issue-detail-replay.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        }
+      ],
+      "failedPairHashes": [
+        {
+          "project": "desktop-1440x1000",
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "project": "desktop-1440x1000",
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c"
+          ],
+          "originalPngFiles": [
+            "failures/review-desktop-issue-detail-actual.png",
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+          ]
+        },
+        {
+          "project": "desktop-1440x1000",
+          "captureSha256": [
+            "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "originalPngFiles": [
+            "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+            "failures/review-desktop-issue-detail-actual.png"
+          ]
+        },
+        {
+          "project": "mobile-390x844",
+          "captureSha256": [
+            "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+            "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a"
+          ],
+          "originalPngFiles": [
+            "failures/strict-mobile-issue-detail-actual.png",
+            "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+          ]
+        }
+      ],
+      "states": [
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat4/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat3/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat2/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844-repeat1/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-mobile-390x844/render-state-1.json",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "stateSha256": [
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f",
+            "2fbb048514e199f7f43e6d1ab6b0581c4498f1d7b83cef396e6dc12d7b13b89f"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat4/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat3/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat2/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000-repeat1/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        },
+        {
+          "case": "output/d0-diagnostic-D0-亮色视觉基线-工作项详情：覆盖、两次采集一致、D1-可直接比对-desktop-1440x1000/render-state-1.json",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stateSha256": [
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966",
+            "96c8c42f2af0b957d48d80516ad2ffbd4ab95c8916a41a22d84ba4d62e5a7966"
+          ],
+          "identicalStates": true,
+          "identicalLayoutAndComputedStyles": true,
+          "animations": [
+            [],
+            []
+          ]
+        }
+      ],
+      "originalPngAttachments": [
+        {
+          "sha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+          "path": "failures/pre-stabilization/mobile-390x844/issue-detail.png"
+        },
+        {
+          "sha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+          "path": "failures/strict-mobile-issue-detail-actual.png"
+        },
+        {
+          "sha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+          "path": "failures/pre-stabilization/desktop-1440x1000/issue-detail.png"
+        },
+        {
+          "sha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+          "path": "failures/review-desktop-issue-detail-actual.png"
+        }
+      ],
+      "rawLogSha256": "767cac831f86ba6a7011c725a5e072d29c21ab2675af6a6543f1cb8df037e5b6",
+      "excerpt": [
+        "  x   1 [desktop-1440x1000] › .tmp\\d0-diagnostic.spec.ts:90:9 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.7s)",
+        "  x   2 [desktop-1440x1000] › .tmp\\d0-diagnostic.spec.ts:90:9 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (4.0s)",
+        "  x   3 [desktop-1440x1000] › .tmp\\d0-diagnostic.spec.ts:90:9 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (3.4s)",
+        "  x  10 [mobile-390x844] › .tmp\\d0-diagnostic.spec.ts:90:9 › D0 亮色视觉基线 › 工作项详情：覆盖、两次采集一致、D1 可直接比对 (3.4s)",
+        "    Error: 两个独立上下文的 PNG 必须逐字节一致",
+        "    Expected: \"9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c\"",
+        "    Received: \"e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137\"",
+        "    Error: 两个独立上下文的 PNG 必须逐字节一致",
+        "    Expected: \"e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137\"",
+        "    Received: \"9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c\"",
+        "    Error: 两个独立上下文的 PNG 必须逐字节一致",
+        "    Expected: \"9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c\"",
+        "    Received: \"e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137\"",
+        "    Error: 两个独立上下文的 PNG 必须逐字节一致",
+        "    Expected: \"c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002\"",
+        "    Received: \"f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a\"",
+        "  4 failed",
+        "  6 passed (56.9s)"
+      ]
+    }
+  ],
+  "stabilizedChanges": [
+    {
+      "before": "failures/pre-stabilization/desktop-1440x1000/agent-detail.png",
+      "after": "win32/desktop-1440x1000/agent-detail.png",
+      "beforeSha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+      "afterSha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/desktop-1440x1000/board.png",
+      "after": "win32/desktop-1440x1000/board.png",
+      "beforeSha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+      "afterSha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/desktop-1440x1000/issue-detail.png",
+      "after": "win32/desktop-1440x1000/issue-detail.png",
+      "beforeSha256": "9a64d370a4069c8ca14b8486191decea5ab2a78f37ffaff2ebad41245cbeb07c",
+      "afterSha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 134,
+      "maxChannelDifference": 2,
+      "pixels": [
+        {
+          "x": 131,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 132,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 185,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 185,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 186,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 186,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 187,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 188,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 189,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 190,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 190,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 257,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 258,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 258,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 259,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 260,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 260,
+          "deltaRgba": [
+            -2,
+            -2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 261,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 261,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 262,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 263,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 381,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 381,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 382,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 383,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 383,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 384,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 384,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 385,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 386,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 386,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 387,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 432,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 433,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 433,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 434,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 435,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 435,
+          "deltaRgba": [
+            -2,
+            -2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 436,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 436,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 437,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 438,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 477,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 477,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 478,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 479,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 479,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 480,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 480,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 481,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 482,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 482,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 483,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 570,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 570,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 571,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 571,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 571,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 571,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 572,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 572,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 573,
+          "deltaRgba": [
+            -1,
+            -1,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 573,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 573,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 573,
+          "deltaRgba": [
+            -2,
+            -2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 574,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 574,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 574,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 575,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 575,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 576,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 132,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1307,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 615,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 616,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 616,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 617,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 617,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 617,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 617,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 618,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 618,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 618,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 618,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 619,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 619,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 619,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 620,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 620,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 620,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 1309,
+          "y": 620,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 621,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 1308,
+          "y": 621,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 855,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 856,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 856,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 857,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 858,
+          "deltaRgba": [
+            -1,
+            -1,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 858,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 859,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 860,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 900,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 132,
+          "y": 900,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 901,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 902,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 902,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 903,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 903,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 904,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 904,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 905,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 905,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 906,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 981,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 982,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 982,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 983,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 984,
+          "deltaRgba": [
+            -1,
+            -1,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 984,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 130,
+          "y": 985,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 131,
+          "y": 986,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "unchangedComparatorPassedAgainstOldBaseline": false,
+      "comparatorError": "3 pixels (ratio 0.01 of all image pixels) are different."
+    },
+    {
+      "before": "failures/pre-stabilization/desktop-1440x1000/issues-list.png",
+      "after": "win32/desktop-1440x1000/issues-list.png",
+      "beforeSha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+      "afterSha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/desktop-1440x1000/project.png",
+      "after": "win32/desktop-1440x1000/project.png",
+      "beforeSha256": "5002d0c2988b3b48e1bdf2a4783a334cdf0895ff75806a758eb01ae953633a46",
+      "afterSha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 36,
+      "maxChannelDifference": 1,
+      "pixels": [
+        {
+          "x": 18,
+          "y": 89,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 90,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 90,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 91,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 92,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 92,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 107,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 107,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 108,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 109,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 109,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 110,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 18,
+          "y": 110,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 153,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 18,
+          "y": 153,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 155,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 155,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 156,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 156,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 183,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 183,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 184,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 185,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 18,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 201,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 202,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 203,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 204,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 219,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 219,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 220,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 221,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 222,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        }
+      ],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/desktop-1440x1000/settings.png",
+      "after": "win32/desktop-1440x1000/settings.png",
+      "beforeSha256": "e06d683caba5e895db3747c89c728aeabcae2eb285d0872662101acb6be2ecfd",
+      "afterSha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 44,
+      "maxChannelDifference": 2,
+      "pixels": [
+        {
+          "x": 228,
+          "y": 152,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 152,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 153,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 18,
+          "y": 153,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 228,
+          "y": 153,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 153,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 154,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 230,
+          "y": 154,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 155,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 155,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 155,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 156,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 156,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 156,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 230,
+          "y": 156,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 183,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 183,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 183,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 230,
+          "y": 183,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 184,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 184,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 184,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 16,
+          "y": 185,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 185,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 230,
+          "y": 185,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 18,
+          "y": 186,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 229,
+          "y": 186,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 17,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 19,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 227,
+          "y": 187,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 18,
+          "y": 188,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 19,
+          "y": 188,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 20,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 21,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 22,
+          "y": 188,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 224,
+          "y": 188,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 225,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 226,
+          "y": 188,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 227,
+          "y": 188,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 20,
+          "y": 189,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 22,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 224,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 226,
+          "y": 189,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        }
+      ],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/desktop-1440x1000/workbench.png",
+      "after": "win32/desktop-1440x1000/workbench.png",
+      "beforeSha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+      "afterSha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+      "width": 1440,
+      "height": 1000,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/mobile-390x844/agent-detail.png",
+      "after": "win32/mobile-390x844/agent-detail.png",
+      "beforeSha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+      "afterSha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/mobile-390x844/board.png",
+      "after": "win32/mobile-390x844/board.png",
+      "beforeSha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+      "afterSha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+      "width": 390,
+      "height": 897,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+      "after": "win32/mobile-390x844/issue-detail.png",
+      "beforeSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+      "afterSha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 65,
+      "maxChannelDifference": 2,
+      "pixels": [
+        {
+          "x": 375,
+          "y": 211,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 212,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 213,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 213,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 214,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 215,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 215,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 246,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 246,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 247,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 248,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 249,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 249,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 280,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 14,
+          "y": 280,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 280,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 280,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 281,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 281,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 12,
+          "y": 282,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 282,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 282,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 282,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 12,
+          "y": 283,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 283,
+          "deltaRgba": [
+            0,
+            0,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 283,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 283,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 12,
+          "y": 284,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 284,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 284,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 12,
+          "y": 285,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 285,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 285,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 285,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 286,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 286,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 390,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 390,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 12,
+          "y": 391,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 391,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 391,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 391,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 392,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 392,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 12,
+          "y": 393,
+          "deltaRgba": [
+            -1,
+            -1,
+            -2,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 393,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 393,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 393,
+          "deltaRgba": [
+            -2,
+            -2,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 12,
+          "y": 394,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 394,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 394,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 13,
+          "y": 395,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 395,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 396,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 375,
+          "y": 721,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 721,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 722,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 723,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 723,
+          "deltaRgba": [
+            0,
+            0,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 724,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 724,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 725,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 726,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 377,
+          "y": 726,
+          "deltaRgba": [
+            -1,
+            -1,
+            0,
+            0
+          ]
+        },
+        {
+          "x": 376,
+          "y": 727,
+          "deltaRgba": [
+            -1,
+            -1,
+            -1,
+            0
+          ]
+        }
+      ],
+      "unchangedComparatorPassedAgainstOldBaseline": false,
+      "comparatorError": "1 pixels (ratio 0.01 of all image pixels) are different."
+    },
+    {
+      "before": "failures/pre-stabilization/mobile-390x844/issues-list.png",
+      "after": "win32/mobile-390x844/issues-list.png",
+      "beforeSha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+      "afterSha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/mobile-390x844/project.png",
+      "after": "win32/mobile-390x844/project.png",
+      "beforeSha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+      "afterSha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/mobile-390x844/settings.png",
+      "after": "win32/mobile-390x844/settings.png",
+      "beforeSha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+      "afterSha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    },
+    {
+      "before": "failures/pre-stabilization/mobile-390x844/workbench.png",
+      "after": "win32/mobile-390x844/workbench.png",
+      "beforeSha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+      "afterSha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+      "width": 390,
+      "height": 844,
+      "differingPixels": 0,
+      "maxChannelDifference": 0,
+      "pixels": [],
+      "unchangedComparatorPassedAgainstOldBaseline": true,
+      "comparatorError": null
+    }
+  ],
+  "excludedAttempt": {
+    "log": "d0-diagnostic-partial-control.log",
+    "reason": "进行中修改了继承配置，立即中止；不作为 A/B 证据，另以显式排除参数的新完整控制轮替代"
+  }
+}

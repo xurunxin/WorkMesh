@@ -1,0 +1,351 @@
+{
+  "prepared": {
+    "contentHash": "sha256:96e835a88f147a9e63acb854a9bbb2b20b15a9d0ff699a00a60adc988b8c6dd1",
+    "plan": {
+      "teamRef": "FB5170CC-41F6-42C1-89C5-349E8A2F745B",
+      "defaultStatus": "Ready",
+      "project": {
+        "sourceId": "project",
+        "name": "M2 import"
+      },
+      "milestones": [
+        {
+          "sourceId": "m1",
+          "name": "M2 milestone"
+        }
+      ],
+      "workItems": [
+        {
+          "sourceId": "a",
+          "title": "M2 import parent",
+          "status": "Ready",
+          "priority": "none",
+          "labels": [],
+          "milestoneSourceId": "m1"
+        },
+        {
+          "sourceId": "b",
+          "title": "M2 import child",
+          "status": "Ready",
+          "priority": "none",
+          "labels": [],
+          "milestoneSourceId": "m1",
+          "parentSourceId": "a"
+        }
+      ],
+      "relations": [
+        {
+          "sourceId": "blocks:a:b",
+          "sourceWorkItemId": "a",
+          "targetWorkItemId": "b",
+          "kind": "blocks"
+        }
+      ],
+      "schemaVersion": 1
+    },
+    "counts": {
+      "projects": 1,
+      "milestones": 1,
+      "workItems": 2,
+      "relations": 1
+    },
+    "sideEffectFree": true
+  },
+  "partial": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"954694af-0543-4b83-89b3-9520ef601c24\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "INTERNAL_ERROR",
+        "message": "Unexpected server error",
+        "correlationId": "954694af-0543-4b83-89b3-9520ef601c24",
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  },
+  "restored": {
+    "contentHash": "sha256:96e835a88f147a9e63acb854a9bbb2b20b15a9d0ff699a00a60adc988b8c6dd1",
+    "reportHash": "sha256:acf794f3a99cf5ffc5da40a5613fb500d29618469241fe6050d338a93ccc2cb1",
+    "complete": true,
+    "persistedBy": "api_idempotency_keys",
+    "replayWindowSeconds": 86400,
+    "mapping": {
+      "project": {
+        "sourceId": "project",
+        "targetId": "b624b0e2-8efe-4b9a-a225-7c7a4aa8664e",
+        "targetRef": "GEN/m2-import~7c7a4aa8664e",
+        "revision": 1
+      },
+      "milestones": [
+        {
+          "sourceId": "m1",
+          "targetId": "01f57017-8338-458d-8200-860984ac2023",
+          "targetRef": "GEN/m2-import~7c7a4aa8664e#m2-milestone~860984ac2023",
+          "revision": 1
+        }
+      ],
+      "workItems": [
+        {
+          "sourceId": "a",
+          "targetId": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+          "targetRef": "GEN-3",
+          "revision": 1
+        },
+        {
+          "sourceId": "b",
+          "targetId": "5d09a368-349f-4995-91fd-9d616b6559fd",
+          "targetRef": "GEN-4",
+          "revision": 1
+        }
+      ],
+      "relations": [
+        {
+          "sourceId": "blocks:a:b",
+          "targetId": "286ad979-aefe-4116-a55b-dba3993e28f9",
+          "targetRef": "relation:286ad979-aefe-4116-a55b-dba3993e28f9",
+          "revision": 1
+        }
+      ]
+    }
+  },
+  "replay": {
+    "contentHash": "sha256:96e835a88f147a9e63acb854a9bbb2b20b15a9d0ff699a00a60adc988b8c6dd1",
+    "reportHash": "sha256:acf794f3a99cf5ffc5da40a5613fb500d29618469241fe6050d338a93ccc2cb1",
+    "complete": true,
+    "persistedBy": "api_idempotency_keys",
+    "replayWindowSeconds": 86400,
+    "mapping": {
+      "project": {
+        "sourceId": "project",
+        "targetId": "b624b0e2-8efe-4b9a-a225-7c7a4aa8664e",
+        "targetRef": "GEN/m2-import~7c7a4aa8664e",
+        "revision": 1
+      },
+      "milestones": [
+        {
+          "sourceId": "m1",
+          "targetId": "01f57017-8338-458d-8200-860984ac2023",
+          "targetRef": "GEN/m2-import~7c7a4aa8664e#m2-milestone~860984ac2023",
+          "revision": 1
+        }
+      ],
+      "workItems": [
+        {
+          "sourceId": "a",
+          "targetId": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+          "targetRef": "GEN-3",
+          "revision": 1
+        },
+        {
+          "sourceId": "b",
+          "targetId": "5d09a368-349f-4995-91fd-9d616b6559fd",
+          "targetRef": "GEN-4",
+          "revision": 1
+        }
+      ],
+      "relations": [
+        {
+          "sourceId": "blocks:a:b",
+          "targetId": "286ad979-aefe-4116-a55b-dba3993e28f9",
+          "targetRef": "relation:286ad979-aefe-4116-a55b-dba3993e28f9",
+          "revision": 1
+        }
+      ]
+    }
+  },
+  "page": {
+    "items": [
+      {
+        "id": "5d09a368-349f-4995-91fd-9d616b6559fd",
+        "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+        "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+        "number": 4,
+        "title": "M2 import child",
+        "description": null,
+        "status_id": "aafe5329-5c5f-4801-af8b-4e82fb90a06d",
+        "priority": "none",
+        "due_date": null,
+        "responsible_human_actor_id": "8017ac99-6992-464f-9fe9-8b9d69c41751",
+        "labels": [],
+        "project_id": "b624b0e2-8efe-4b9a-a225-7c7a4aa8664e",
+        "revision": 1,
+        "deleted_at": null,
+        "created_at": "2026-10-11T05:50:11.271Z",
+        "updated_at": "2026-10-11T05:50:11.271Z",
+        "milestone_id": "01f57017-8338-458d-8200-860984ac2023",
+        "cycle_id": null,
+        "parent_id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+        "board_rank": "1024",
+        "team_key": "GEN",
+        "status_name": "Ready",
+        "status_category": "planned",
+        "responsible_human": {
+          "actor_id": "8017ac99-6992-464f-9fe9-8b9d69c41751",
+          "display_name": "M0 admin"
+        },
+        "active_assignment": null,
+        "active_executor": null,
+        "shared_reviewers": []
+      }
+    ],
+    "nextCursor": "eyJhY3RvcklkIjoiZWU4YTdmOGUtZDY1My00YjFhLWJlMDktN2E1NmE0ZGIxNTg4IiwiZXhwIjoxNzkxNjk4NzExLCJmaWx0ZXJIYXNoIjoiMmQzZmNiYWVmNGRlOTE1ZDQyNGIxZTAyOTVlNDRmNDg2YTcxNDkzNzg2MTNlZjMxMDc0YmQxNjcxMzc5YTg3MiIsImlhdCI6MTc5MTY5NzgxMSwia2lkIjoiZGV2LWVwaGVtZXJhbCIsInJvdXRlIjoiL2FwaS92MS93b3JrLWl0ZW1zIiwic29ydCI6InVwZGF0ZWRfYXQ6REVTQyxpZDpERVNDIiwidiI6MSwidmFsdWVzIjpbIjIwMjYtMTAtMTFUMDU6NTA6MTEuMjcxWiIsIjVkMDlhMzY4LTM0OWYtNDk5NS05MWZkLTlkNjE2YjY1NTlmZCJdLCJ3b3Jrc3BhY2VJZCI6ImQ2MWMzYTAxLTNmNjgtNDI2Mi04MmQ3LWM1ZDQyOTEwZDM0ZiJ9.kWmVi-b1zMRRy1AyrzxeoPdDNw7jsy-UiykOAYgR90w"
+  },
+  "tail": {
+    "items": [
+      {
+        "id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+        "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+        "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+        "number": 3,
+        "title": "M2 import parent",
+        "description": null,
+        "status_id": "aafe5329-5c5f-4801-af8b-4e82fb90a06d",
+        "priority": "none",
+        "due_date": null,
+        "responsible_human_actor_id": "8017ac99-6992-464f-9fe9-8b9d69c41751",
+        "labels": [],
+        "project_id": "b624b0e2-8efe-4b9a-a225-7c7a4aa8664e",
+        "revision": 1,
+        "deleted_at": null,
+        "created_at": "2026-10-11T05:50:10.425Z",
+        "updated_at": "2026-10-11T05:50:10.425Z",
+        "milestone_id": "01f57017-8338-458d-8200-860984ac2023",
+        "cycle_id": null,
+        "parent_id": null,
+        "board_rank": "1024",
+        "team_key": "GEN",
+        "status_name": "Ready",
+        "status_category": "planned",
+        "responsible_human": {
+          "actor_id": "8017ac99-6992-464f-9fe9-8b9d69c41751",
+          "display_name": "M0 admin"
+        },
+        "active_assignment": null,
+        "active_executor": null,
+        "shared_reviewers": []
+      }
+    ],
+    "nextCursor": null
+  },
+  "cycle": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"WORK_ITEM_BLOCK_CYCLE\",\"message\":\"Planning relationship violates a WorkMesh invariant\",\"correlationId\":\"0231660b-9455-4e13-85f0-aa3997b71ef3\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "WORK_ITEM_BLOCK_CYCLE",
+        "message": "Planning relationship violates a WorkMesh invariant",
+        "correlationId": "0231660b-9455-4e13-85f0-aa3997b71ef3",
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  },
+  "milestones": [
+    "01f57017-8338-458d-8200-860984ac2023",
+    "6c121d4e-9568-45a8-9f64-d30df6d265d8",
+    "fe494622-dde5-4d47-8015-a38c32f397e5",
+    "b9b4dc09-6268-4d64-a8c7-d8335b23d70e",
+    "aceada4f-f4c6-47b0-89a7-619d5048b92a"
+  ],
+  "seen": [
+    "01f57017-8338-458d-8200-860984ac2023",
+    "6c121d4e-9568-45a8-9f64-d30df6d265d8",
+    "aceada4f-f4c6-47b0-89a7-619d5048b92a",
+    "b9b4dc09-6268-4d64-a8c7-d8335b23d70e",
+    "fe494622-dde5-4d47-8015-a38c32f397e5"
+  ],
+  "related": {
+    "id": "45525cfc-003e-4aa7-a74e-394f509f2372",
+    "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+    "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+    "source_work_item_id": "5d09a368-349f-4995-91fd-9d616b6559fd",
+    "target_work_item_id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+    "kind": "related",
+    "created_by_actor_id": "ee8a7f8e-d653-4b1a-be09-7a56a4db1588",
+    "revision": 1,
+    "deleted_at": null,
+    "created_at": "2026-10-11T05:50:13.494Z",
+    "updated_at": "2026-10-11T05:50:13.494Z"
+  },
+  "relations": {
+    "items": [
+      {
+        "id": "286ad979-aefe-4116-a55b-dba3993e28f9",
+        "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+        "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+        "source_work_item_id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+        "target_work_item_id": "5d09a368-349f-4995-91fd-9d616b6559fd",
+        "kind": "blocks",
+        "created_by_actor_id": "ee8a7f8e-d653-4b1a-be09-7a56a4db1588",
+        "revision": 1,
+        "deleted_at": null,
+        "created_at": "2026-10-11T05:50:11.303Z",
+        "updated_at": "2026-10-11T05:50:11.303Z"
+      },
+      {
+        "id": "45525cfc-003e-4aa7-a74e-394f509f2372",
+        "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+        "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+        "source_work_item_id": "5d09a368-349f-4995-91fd-9d616b6559fd",
+        "target_work_item_id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+        "kind": "related",
+        "created_by_actor_id": "ee8a7f8e-d653-4b1a-be09-7a56a4db1588",
+        "revision": 1,
+        "deleted_at": null,
+        "created_at": "2026-10-11T05:50:13.494Z",
+        "updated_at": "2026-10-11T05:50:13.494Z"
+      },
+      {
+        "id": "2aecc1a6-386c-41e3-9497-0f501d79b07b",
+        "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+        "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+        "source_work_item_id": "002e6b38-e31c-4af2-958e-a28e80fabfb0",
+        "target_work_item_id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+        "kind": "related",
+        "created_by_actor_id": "ee8a7f8e-d653-4b1a-be09-7a56a4db1588",
+        "revision": 1,
+        "deleted_at": null,
+        "created_at": "2026-10-11T05:50:13.596Z",
+        "updated_at": "2026-10-11T05:50:13.596Z"
+      },
+      {
+        "id": "aec5a4c2-5e5c-46e8-9dbe-d66efc29abd4",
+        "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+        "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+        "source_work_item_id": "74d9df91-5aa9-43e6-b97e-4f75a9ce2548",
+        "target_work_item_id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+        "kind": "related",
+        "created_by_actor_id": "ee8a7f8e-d653-4b1a-be09-7a56a4db1588",
+        "revision": 1,
+        "deleted_at": null,
+        "created_at": "2026-10-11T05:50:13.695Z",
+        "updated_at": "2026-10-11T05:50:13.695Z"
+      },
+      {
+        "id": "f13b1764-3b94-489f-a061-a2e0b4cf6681",
+        "workspace_id": "d61c3a01-3f68-4262-82d7-c5d42910d34f",
+        "team_id": "fb5170cc-41f6-42c1-89c5-349e8a2f745b",
+        "source_work_item_id": "7507290a-8f91-4b36-ae61-6cae3bc50c56",
+        "target_work_item_id": "a84af4f3-adcb-46d0-8c7f-4b3d123a036d",
+        "kind": "related",
+        "created_by_actor_id": "ee8a7f8e-d653-4b1a-be09-7a56a4db1588",
+        "revision": 1,
+        "deleted_at": null,
+        "created_at": "2026-10-11T05:50:13.784Z",
+        "updated_at": "2026-10-11T05:50:13.784Z"
+      }
+    ],
+    "nextCursor": null
+  },
+  "expiredWindowReconciledBySavedMapping": true,
+  "automaticReapplyAfterTtl": false
+}

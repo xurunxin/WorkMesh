@@ -1,0 +1,86 @@
+{
+  "restored": {
+    "id": "799e8cc9-0e7c-4ffc-9ea1-1cc5f7ed01a9",
+    "workspace_id": "78c77bab-f884-45aa-baf5-144d9593bc4a",
+    "team_id": "e729f972-66e0-4759-a137-f07edbb29484",
+    "agent_id": "e246b79b-317d-4576-899f-d67cd6b75ba9",
+    "agent_actor_id": "2d961e5c-6878-429f-8a0e-ec54d555ca7e",
+    "delegation_id": "688bdf16-3b71-4d52-b1f6-8134e09b2631",
+    "parent_session_id": null,
+    "work_item_id": "6aff0656-aca3-4d30-8802-be65dd3fb32f",
+    "project_id": null,
+    "plan_step_id": null,
+    "state": "acknowledged",
+    "state_reason": "M0 exact stale ACK",
+    "sequence": 3,
+    "revision": 4,
+    "current_plan_version_id": null,
+    "context_snapshot_id": "2d924078-b3f2-4c05-a9e2-4dc0632435bc",
+    "budget": {},
+    "external_urls": [],
+    "acknowledged_at": "2026-10-11T05:52:04.051Z",
+    "last_heartbeat_at": null,
+    "stop_requested_at": null,
+    "stop_acknowledged_at": null,
+    "result_summary": null,
+    "result_evidence": [],
+    "no_artifact_reason": null,
+    "error_code": null,
+    "error_summary": null,
+    "ended_at": null,
+    "created_at": "2026-10-11T05:52:03.763Z",
+    "updated_at": "2026-10-11T05:52:04.051Z",
+    "retry_of_session_id": null,
+    "retry_reason": null,
+    "retry_count": 0,
+    "max_child_sessions": 8,
+    "inherited_budget": {},
+    "required_for_parent": false,
+    "plan_step_version_id": null,
+    "automation_run_id": null,
+    "heartbeat_health": "healthy",
+    "heartbeat_health_changed_at": "2026-10-11T05:52:03.763Z",
+    "heartbeat_checked_at": null,
+    "heartbeat_current_step_id": null,
+    "heartbeat_usage": {},
+    "heartbeat_idempotency_key": null,
+    "heartbeat_request_hash": null,
+    "session_kind": "execution",
+    "coordination_connection_id": null
+  },
+  "state": "canceled",
+  "denied": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"Agent session token is invalid or expired\",\"correlationId\":\"eb218850-40b9-4f39-914f-6951d585ab59\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "UNAUTHENTICATED",
+        "message": "Agent session token is invalid or expired",
+        "correlationId": "eb218850-40b9-4f39-914f-6951d585ab59",
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  },
+  "deniedAck": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"Agent session token is invalid or expired\",\"correlationId\":\"3ff40f58-318e-460e-8dd1-fcb688b70e9a\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "UNAUTHENTICATED",
+        "message": "Agent session token is invalid or expired",
+        "correlationId": "3ff40f58-318e-460e-8dd1-fcb688b70e9a",
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  }
+}

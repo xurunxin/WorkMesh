@@ -1,0 +1,3 @@
+用户本轮反馈全文：
+
+10:50正式_oY方案独审提出一项High(blocking)：discovery生成器只消费M0–M3且registry仅M2/M3，会删除M4新增bindings；四投影仍含humanAuthorityMatches/legacyMembershipQueryVisible，单删queryDifferences不够。10:54你只修订平台plan doc:2lrk57A39k3aZfYY5BGeJ，独立remote branch仍4e144f35，blocking未关闭。请继续同卡规划修订，沿已授权规划文件写入，实际同步docs/plan/agent-mcp-m4/及ADR0086相关提案/实施步骤/兼容/操作决策/九类/来源与规划检查，保留原审及旧候选，新增逐项review-response说明。明确未来产品实施将纳入M4受控discovery增量与scripts/generate-agent-discovery.py，四读新资格谓词和实际bindings、历史输入与旧bindings保留、重新生成零差异以及feature关闭/非法状态/合法target待核的发现回归。规划阶段不修改产品生成器/派生结果、不跑产品测试/起部署；不得把未来验证写通过。本次无需重问同一规划写许可，不只回平台摘要；完成真实新head与受控文件推送、准确source/变更验证与未测后回confirm，由Chief按既定授权正式复审。

@@ -5,6 +5,7 @@ import { z } from 'zod'
 import {
   durableEventCursorSchema, decisionInputSchema, childBudgetInputSchema, artifactTypeSchema,
   projectHealthInputSchema,
+  savedViewInputSchema, usageInputSchema, usageSummaryQuerySchema, optionalDomainCursorSchema,
   mcpPolicyBindings,
   workmeshSkillManifest,
 } from '@workmesh/contracts'
@@ -22,6 +23,7 @@ const capability = z.enum(['work:read', 'work:write', 'comment:write', 'plan:wri
 export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer {
   const server = new McpServer({ name: 'workmesh-mcp', version: releaseMetadata.mcpVersion })
   const discovery = installDiscovery(server, options, error => tool(async () => { throw error }))
+  registerOptionalDomainTools(server, options.client, options.mode)
   const serverErrorAdapter = server as unknown as {
     createToolError: (errorMessage: string) => ReturnType<typeof errorToolResult>
   }
@@ -159,6 +161,27 @@ export function createWorkMeshMcpServer(options: WorkMeshMcpOptions): McpServer 
   server.registerTool('create_project_health_update',{description:'Agent草拟健康记录；publish=true仍需要Human精确批准。',inputSchema:{...projectHealthInputSchema.innerType().shape,source:z.literal('agent'),projectId:z.string().uuid(),sessionId,revision:z.number().int().positive(),idempotencyKey}},async ({projectId,sessionId,revision,idempotencyKey,...input})=>tool(()=>deliveryClient.createProjectHealthUpdate(projectId,input,{sessionId,ifMatch:revision,idempotencyKey})))
   server.registerTool('suggest_work_item_completion', {description:'向Human建议完成准确WorkItem；不改变工作流、不代替Human裁决。',inputSchema:{projectId:z.string().uuid(),workItemId:z.string().uuid(),pullRequestId:z.string().uuid().optional(),rationale:z.string().min(1).max(10000),evidenceArtifactIds:z.array(z.string().uuid()).max(100).optional(),sessionId,idempotencyKey}},async ({projectId,sessionId,idempotencyKey,...input})=>tool(()=>deliveryClient.suggestCompletion(projectId,input,{sessionId,idempotencyKey})))
   return server
+}
+
+function registerOptionalDomainTools(server: McpServer, client: WorkMeshClient, mode: McpMode | undefined): void {
+  const page={cursor:z.string().min(1).max(8192).optional(),limit:z.number().int().min(1).max(200).optional()}
+  server.registerTool('list_cycles',{description:'读取准确当前Session可见Cycle及完整分页。',inputSchema:{teamId:sessionId.optional(),...page}},async ({teamId,...paging})=>tool(()=>client.listCycles({teamId},paging)))
+  server.registerTool('list_initiatives',{description:'读取准确Session授权项目关联的Initiative。',inputSchema:page},async input=>tool(()=>client.listInitiatives(input)))
+  server.registerTool('get_initiative_rollup',{description:'仅聚合当前Session准确授权项目；unknown不表示免费。',inputSchema:{initiativeId:sessionId}},async ({initiativeId})=>tool(()=>client.getInitiativeRollup(initiativeId)))
+  server.registerTool('list_saved_views',{description:'读取当前owner的普通saved view及内置view。',inputSchema:{teamId:sessionId.optional(),...page}},async ({teamId,...paging})=>tool(()=>client.listSavedViews({teamId},paging)))
+  server.registerTool('list_advanced_views',{description:'读取既有owner/workspace/Team可见高级View；管理由Human执行。',inputSchema:page},async input=>tool(()=>client.listAdvancedViews(input)))
+  server.registerTool('get_advanced_view_results',{description:'按现行View与准确Session的交集读取完整结果页。',inputSchema:{viewId:sessionId,...page}},async ({viewId,...paging})=>tool(()=>client.getAdvancedViewResults(viewId,paging)))
+  server.registerTool('list_automation_rules',{description:'读取现行可见规则；不修改或触发规则。',inputSchema:page},async input=>tool(()=>client.listAutomationRules(input)))
+  server.registerTool('list_automation_runs',{description:'只读取准确当前Session的runs。origin不得看target run。',inputSchema:{ruleId:sessionId.optional(),loopId:sessionId.optional(),...page}},async ({ruleId,loopId,...paging})=>tool(()=>client.listAutomationRuns({ruleId,loopId},paging)))
+  server.registerTool('get_automation_run',{description:'读取准确本人run及有序effects；其他Session隐藏。',inputSchema:{runId:sessionId}},async ({runId})=>tool(()=>client.getAutomationRun(runId)))
+  server.registerTool('list_loops',{description:'读取现行可见Loop；不会赋予target Session读取权。',inputSchema:page},async input=>tool(()=>client.listLoops(input)))
+  server.registerTool('get_usage_summary',{description:'仅汇总本人准确Session/Agent/绑定项目，currency分桶，unknown保留。',inputSchema:{...usageSummaryQuerySchema.shape,from:z.string().datetime({offset:true}).optional(),to:z.string().datetime({offset:true}).optional()}},async input=>tool(()=>client.getUsageSummary(input)))
+  server.registerTool('list_templates',{description:'只读取准确当前run执行pin的Template版本与完整body。',inputSchema:page},async input=>tool(()=>client.listTemplates(input)))
+  server.registerTool('get_a2a_task_events',{description:'读取准确当前task最多200扫描事件的单页。独立after cursor；无无限流。既有派生delivery去重。',inputSchema:{bindingId:sessionId,taskId:z.string().min(1).max(500),after:optionalDomainCursorSchema.optional()}},async ({bindingId,taskId,after})=>tool(()=>client.getA2ATaskEvents(bindingId,taskId,after)))
+  if (mode==='read-only') return
+  server.registerTool('create_saved_view',{description:'创建准确当前owner普通saved view；不创建高级共享View。',inputSchema:{...savedViewInputSchema.shape,idempotencyKey}},async ({idempotencyKey,...input})=>tool(()=>client.createSavedView(input,{idempotencyKey})))
+  server.registerTool('run_loop_now',{description:'按现行批准能力手动准入Loop。返回targetID不授予读取身份；固定occurrenceKey及scheduledFor。',inputSchema:{loopId:sessionId,occurrenceKey:z.string().min(1).max(500),scheduledFor:z.string().datetime({offset:true}),idempotencyKey}},async ({loopId,idempotencyKey,...input})=>tool(()=>client.runLoopNow(loopId,input,{idempotencyKey})))
+  server.registerTool('record_usage',{description:'记录准确本人Session的append-only usage，固定dedupeKey与事实；unknown不填写已知金额。',inputSchema:{...usageInputSchema.innerType().shape,occurredAt:z.string().datetime({offset:true}),idempotencyKey}},async ({idempotencyKey,...input})=>tool(()=>client.recordUsage(input,{idempotencyKey})))
 }
 
 const coordinationKey = (toolName: string, payload: unknown): string =>

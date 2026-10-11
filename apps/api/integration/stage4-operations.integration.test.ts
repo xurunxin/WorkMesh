@@ -11,6 +11,10 @@ import { loadFeatureConfig } from "@workmesh/config";
 import { featureDefinitions } from "@workmesh/contracts";
 import { buildApp } from "../src/server.js";
 import { seedAgentSessionBearer } from "./agent-session-test-credentials.js";
+import { readA2ATaskEventPage } from '../src/operations/read-projections.js'
+import { liveSessionReadPredicate } from '../src/live-read-authorization.js'
+import type { ApiActor } from '../src/agent/types.js'
+import { a2aScanBarrier } from './optional-domain-barriers.js'
 
 const databaseUrl = process.env.DATABASE_URL;
 if (process.env.RUN_INTEGRATION !== "1" || !databaseUrl)
@@ -33,6 +37,7 @@ const enabledFeatures = loadFeatureConfig({
   WORKMESH_EXPERIMENTAL_A2A: "true",
   WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS: "true",
   WORKMESH_EXPERIMENTAL_MULTI_RUNTIME: "true",
+  WORKMESH_BETA_COORDINATION_MCP: "true",
 });
 const app = buildApp({ features: enabledFeatures });
 type Response = {
@@ -1135,6 +1140,14 @@ describe("Stage 4 planning and operations API", () => {
       ).rowCount,
     ).toBe(0);
 
+    const agentStream=await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/${externalTask.id}/events`)
+    expect(agentStream.statusCode,JSON.stringify(agentStream.json())).toBe(200)
+    expect(agentStream.json<{events:unknown[]}>().events.length).toBeGreaterThan(0)
+    const repeatedStream=await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/${externalTask.id}/events`)
+    expect(repeatedStream.json()).toEqual(agentStream.json())
+    expect((await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/not-this-task/events`)).statusCode).toBe(404)
+    expect((await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/${externalTask.id}/events?after=9223372036854775808`)).statusCode).toBe(400)
+
     const firstStream = await call(
       human,
       "GET",
@@ -2195,4 +2208,218 @@ describe("Stage 4 planning and operations API", () => {
       ).statusCode,
     ).toBe(401);
   });
+  const a2aReadFixture = async (identity: 'E' | 'C' | 'Human', mapped: boolean) => {
+    let actor: ApiActor
+    let agentId: string
+    let sessionId: string
+    let credentialTable: 'agent_session_tokens' | 'agent_connection_credentials' | 'sessions'
+    let credentialHash: string
+    if (identity === 'C') {
+      const slug = `m4-c-${randomUUID().slice(0,8)}`
+      const paired = await call(human,'POST','/api/v1/agent-connections',{
+        name:slug,agentSlug:slug,clientType:'generic_mcp',teamId,principalHumanActorId:human.actorId,
+        requestedCapabilities:['work:read'],grantAgentDelegate:false,
+      })
+      expect(paired.statusCode,JSON.stringify(paired.json())).toBe(201)
+      const envelope=paired.json<{connection:{id:string};connect_url:string}>()
+      const redeemed=await app.inject({method:'POST',url:'/api/v1/agent-connections/redeem',headers:{'idempotency-key':randomUUID()},
+        payload:{pairingCode:new URL(envelope.connect_url).hash.slice(1),agentSlug:slug,client:{type:'generic_mcp',version:'1'}}})
+      expect(redeemed.statusCode,redeemed.body).toBe(200)
+      const token=redeemed.json<{installation_token:string}>().installation_token
+      const authenticated=await app.inject({method:'GET',url:'/api/v1/agent-connections/current-identity',headers:{'x-workmesh-installation-token':token}})
+      expect(authenticated.statusCode,authenticated.body).toBe(200)
+      const session=(await db.query<{agent_id:string;agent_actor_id:string;agent_session_id:string}>(
+        'SELECT agent_id,agent_actor_id,agent_session_id FROM agent_coordination_sessions WHERE connection_id=$1 AND status=\'active\'',[envelope.connection.id])).rows[0]!
+      sessionId=session.agent_session_id; agentId=session.agent_id; credentialHash=tokenHash(token); credentialTable='agent_connection_credentials'
+      actor={id:session.agent_actor_id,workspaceId,displayName:slug,workspaceRole:'member',csrfToken:'',kind:'agent',authentication:'coordination_connection',agentSessionId:sessionId,credentialHash}
+    } else {
+      const {github}=await repositoryFixtures()
+      const execution=await createExecutingReviewer(human,workspaceId,teamId,workItemId,github.id)
+      const session=(await db.query<{agent_id:string;agent_actor_id:string}>('SELECT agent_id,agent_actor_id FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!
+      sessionId=execution.sessionId; agentId=session.agent_id; credentialHash=tokenHash(execution.token); credentialTable='agent_session_tokens'
+      actor={id:session.agent_actor_id,workspaceId,displayName:'M4 barrier E',workspaceRole:'member',csrfToken:'',kind:'agent',authentication:'agent_session',agentSessionId:sessionId,credentialHash}
+      if (identity==='Human') {
+        const credential=(await db.query<{id:string;token_hash:string}>('SELECT id,token_hash FROM sessions WHERE actor_id=$1 AND revoked_at IS NULL ORDER BY created_at DESC LIMIT 1',[human.actorId])).rows[0]!
+        credentialHash=credential.token_hash; credentialTable='sessions'
+        actor={id:human.actorId,workspaceId,displayName:'Admin',workspaceRole:'admin',csrfToken:human.csrf,kind:'human',authentication:'human_session',humanSessionId:credential.id,credentialHash}
+      }
+    }
+    // Privileged DB protocol fixture only: no external provider or expanded grant.
+    const binding=(await db.query<{id:string}>("INSERT INTO a2a_agent_bindings(workspace_id,agent_id,protocol_version,external_agent_url,card_hash) VALUES($1,$2,'0.3','http://127.0.0.1/controlled','fixture') RETURNING id",[workspaceId,agentId])).rows[0]!
+    const taskId=`m4-task-${randomUUID()}`
+    await db.query('INSERT INTO a2a_task_bindings(binding_id,external_task_id,session_id) VALUES($1,$2,$3)',[binding.id,taskId,sessionId])
+    const after=(await db.query<{cursor:string}>('SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events WHERE workspace_id=$1',[workspaceId])).rows[0]!.cursor
+    const inserted=(await db.query<{id:string;cursor:string}>(
+      `INSERT INTO domain_events(workspace_id,event_type,event_version,aggregate_type,aggregate_id,aggregate_revision,actor_id,correlation_id,payload)
+       VALUES($1,$2,2,'agent_session',$3,1,$4,$5,$6) RETURNING id,cursor::text`,
+      [workspaceId,mapped?'agent.activity.created':'m4.unmapped',sessionId,actor.id,randomUUID(),{sessionId,bodyMarkdown:'M4 exact protected event'}])).rows[0]!
+    const count=async ()=>(await db.query<{count:number}>('SELECT count(*)::int AS count FROM a2a_deliveries WHERE binding_id=$1 AND direction=\'outbound\'',[binding.id])).rows[0]!.count
+    return {actor,sessionId,agentId,bindingId:binding.id,taskId,after,inserted,credentialTable,credentialHash,count}
+  }
+
+  for (const mapped of [true,false]) {
+    for (const identity of ['E','C','Human'] as const) {
+      it(`M4 A2A ${identity} 扫描后原凭据到期：${mapped?'非空':'空映射'}页最终拒且无delivery/cursor`,async()=>{
+        const fixture=await a2aReadFixture(identity,mapped)
+        const barrier=a2aScanBarrier(databaseUrl!)
+        const expiryColumn=identity==='C'?'overlap_until':'expires_at'
+        const expiry=(await db.query<{expires:Date}>(`UPDATE ${fixture.credentialTable} SET ${expiryColumn}=clock_timestamp()+interval '1 second'${identity==='C'?',status=\'overlap\'':''} WHERE token_hash=$1 RETURNING ${expiryColumn} AS expires`,[fixture.credentialHash])).rows[0]!.expires
+        const pending=readA2ATaskEventPage(barrier.pool,fixture.actor,fixture.bindingId,fixture.taskId,fixture.after)
+        const refusal=expect(pending).rejects.toMatchObject({code:'SESSION_SCOPE_DENIED'})
+        try {
+          await barrier.reached
+          await db.query('SELECT pg_sleep(GREATEST(0,extract(epoch FROM ($1::timestamptz-clock_timestamp())))+0.03)',[expiry])
+          barrier.release(); await refusal
+          expect(barrier.evidence[0]?.isolation).toBe('read committed')
+          expect(await fixture.count()).toBe(0)
+          console.log('M4-PG-BARRIER',JSON.stringify({case:`${identity}-expiry-${mapped}`,events:barrier.evidence,outboundDeliveries:0,successfulCursor:false}))
+        } finally {
+          barrier.release(); await pending.catch(()=>undefined); await barrier.pool.end()
+          await db.query(`UPDATE ${fixture.credentialTable} SET ${expiryColumn}=clock_timestamp()+interval '1 hour'${identity==='C'?',status=\'active\'':''} WHERE token_hash=$1`,[fixture.credentialHash])
+        }
+      },20_000)
+    }
+    it(`M4 A2A 扫描后已提交撤Team grant：${mapped?'非空':'空映射'}页，默认repeatable-read连接被显式修复`,async()=>{
+      const fixture=await a2aReadFixture('E',mapped)
+      const barrier=a2aScanBarrier(databaseUrl!)
+      const pending=readA2ATaskEventPage(barrier.pool,fixture.actor,fixture.bindingId,fixture.taskId,fixture.after)
+      const refusal=expect(pending).rejects.toMatchObject({code:'SESSION_SCOPE_DENIED'})
+      try {
+        await barrier.reached
+        await db.query('UPDATE agent_team_access SET revoked_at=clock_timestamp() WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,teamId])
+        barrier.evidence.push({phase:'revocation_committed',at:new Date().toISOString()})
+        barrier.release(); await refusal
+        expect(barrier.evidence[0]?.isolation).toBe('read committed')
+        expect(await fixture.count()).toBe(0)
+        console.log('M4-PG-BARRIER',JSON.stringify({case:`committed-revocation-${mapped}`,events:barrier.evidence,outboundDeliveries:0,successfulCursor:false}))
+      } finally {
+        barrier.release(); await pending.catch(()=>undefined); await barrier.pool.end()
+        await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,teamId])
+      }
+    })
+  }
+
+  it('M4 PG旧隔离与now时钟负例分列；冻结快照看不见已提交撤权或自然到期',async()=>{
+    const fixture=await a2aReadFixture('E',true)
+    const tx=await db.connect()
+    try {
+      await db.query("UPDATE agent_session_tokens SET expires_at=clock_timestamp()+interval '1 second' WHERE token_hash=$1",[fixture.credentialHash])
+      await tx.query('BEGIN ISOLATION LEVEL REPEATABLE READ')
+      const values:unknown[]=[fixture.sessionId,workspaceId]
+      const legacy=liveSessionReadPredicate(fixture.actor,'$1','$2',values)
+      const fresh=liveSessionReadPredicate(fixture.actor,'$1','$2',values,'work:read','statement_timestamp()')
+      const sql=`SELECT ${legacy} AS legacy_allowed,${fresh} AS fresh_allowed`
+      expect((await tx.query(sql,values)).rows[0]).toEqual({legacy_allowed:true,fresh_allowed:true})
+      await db.query('UPDATE agent_team_access SET revoked_at=clock_timestamp() WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,teamId])
+      expect((await tx.query(sql,values)).rows[0]).toEqual({legacy_allowed:true,fresh_allowed:true})
+      await tx.query("SELECT pg_sleep(GREATEST(0,extract(epoch FROM ((SELECT expires_at FROM agent_session_tokens WHERE token_hash=$1)-clock_timestamp())))+0.03)",[fixture.credentialHash])
+      expect((await tx.query(sql,values)).rows[0]).toEqual({legacy_allowed:true,fresh_allowed:false})
+      console.log('M4-PG-LEGACY-NEGATIVE',{repeatableReadIgnoresCommittedRevocation:true,transactionClockIgnoresExpiry:true})
+    } finally {
+      await tx.query('ROLLBACK');tx.release()
+      await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[fixture.agentId,teamId])
+      await db.query("UPDATE agent_session_tokens SET expires_at=clock_timestamp()+interval '1 hour' WHERE token_hash=$1",[fixture.credentialHash])
+    }
+  })
+
+  it('M4 A2A 同页并发与重复只有一份delivery；空映射推进扫描cursor',async()=>{
+    const fixture=await a2aReadFixture('E',true)
+    const results=await Promise.all([0,1].map(()=>readA2ATaskEventPage(db,fixture.actor,fixture.bindingId,fixture.taskId,fixture.after)))
+    expect(results[0]).toEqual(results[1]); expect(results[0]?.events).toHaveLength(1)
+    expect(await fixture.count()).toBe(1)
+    expect(await readA2ATaskEventPage(db,fixture.actor,fixture.bindingId,fixture.taskId,fixture.after)).toEqual(results[0])
+    expect(await fixture.count()).toBe(1)
+    const empty=await a2aReadFixture('E',false)
+    expect(await readA2ATaskEventPage(db,empty.actor,empty.bindingId,empty.taskId,empty.after)).toEqual({events:[],cursor:empty.inserted.cursor})
+    expect(await empty.count()).toBe(0)
+  })
+
+  it('M4 A2A guarded INSERT后真实SQL故障整事务回滚，重试可恢复',async()=>{
+    const fixture=await a2aReadFixture('E',true)
+    const barrier=a2aScanBarrier(databaseUrl!)
+    barrier.injectTransactionFailure()
+    const pending=readA2ATaskEventPage(barrier.pool,fixture.actor,fixture.bindingId,fixture.taskId,fixture.after)
+    const refusal=expect(pending).rejects.toMatchObject({code:'22012'})
+    try {
+      await barrier.reached; barrier.release(); await refusal
+      expect(await fixture.count()).toBe(0)
+      const result=await readA2ATaskEventPage(db,fixture.actor,fixture.bindingId,fixture.taskId,fixture.after)
+      expect(result.events).toHaveLength(1); expect(await fixture.count()).toBe(1)
+    } finally {barrier.release();await pending.catch(()=>undefined);await barrier.pool.end()}
+  })
+
+  it('M4 四读仅返回准确Session范围：非零rollup、币种unknown、本人run及Human对照', async () => {
+    const { github } = await repositoryFixtures()
+    const projectId=(await call(human,'POST','/api/v1/projects',{teamId,name:'M4 isolated project'})).json<{id:string}>().id
+    const stateId=(await call(human,'GET',`/api/v1/teams/${teamId}/states`)).json<Page<{id:string;category:string}>>().items.find(state=>state.category==='backlog')!.id
+    const workItemId=(await call(human,'POST','/api/v1/work-items',{teamId,projectId,title:'M4 isolated item',statusId:stateId,responsibleHumanActorId:human.actorId})).json<{id:string}>().id
+    const execution = await createExecutingReviewer(human,workspaceId,teamId,workItemId,github.id)
+    const session=(await db.query<{agent_id:string;delegation_id:string}>('SELECT agent_id,delegation_id FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!
+    const other=(await call(human,'POST','/api/v1/projects',{teamId,name:'M4 hidden linked project'})).json<{id:string}>()
+    const initiativeResponse=await call(human,'POST','/api/v1/initiatives',{name:'M4 authorized nonempty',ownerActorId:human.actorId,status:'active',projectIds:[projectId,other.id]})
+    expect(initiativeResponse.statusCode).toBe(200)
+    const initiativeId=initiativeResponse.json<{id:string}>().id
+    for (const input of [{currency:'USD',costMinor:'9007199254740993',costSource:'manual'},{currency:'EUR',costSource:'unknown'}]) {
+      const response=await agentCall(execution.token,'POST','/api/v1/usage-records',{...input,dedupeKey:randomUUID(),agentId:session.agent_id,sessionId:execution.sessionId,projectId,occurredAt:new Date().toISOString(),inputTokens:7})
+      expect(response.statusCode,JSON.stringify(response.json())).toBe(200)
+    }
+    const list=await agentCall(execution.token,'GET','/api/v1/initiatives')
+    expect(list.json<Page<{id:string}>>().items.some(item=>item.id===initiativeId)).toBe(true)
+    const rollup=await agentCall(execution.token,'GET',`/api/v1/initiatives/${initiativeId}/rollup`)
+    expect(rollup.statusCode,JSON.stringify(rollup.json())).toBe(200)
+    expect(rollup.json()).toMatchObject({projectCount:1,totalItems:1,hasUnknownCost:true,currencyBuckets:expect.arrayContaining([
+      {currency:'USD',knownCostMinor:'9007199254740993',hasUnknownCost:false},{currency:'EUR',knownCostMinor:'0',hasUnknownCost:true}])})
+    expect((await call(human,'GET',`/api/v1/initiatives/${initiativeId}/rollup`)).json()).toMatchObject({projectCount:2})
+    const summary=await agentCall(execution.token,'GET','/api/v1/usage-summary')
+    expect(summary.statusCode,JSON.stringify(summary.json())).toBe(200)
+    expect(summary.json()).toMatchObject({input_tokens:'14',unknown_cost_records:1,currency_buckets:expect.arrayContaining([
+      {currency:'USD',known_cost_minor:'9007199254740993',unknown_cost_records:0}])})
+    for (const filter of [`sessionId=${randomUUID()}`,`agentId=${randomUUID()}`,`projectId=${other.id}`]) {
+      const denied=await agentCall(execution.token,'GET',`/api/v1/usage-summary?${filter}`)
+      expect(denied.statusCode,JSON.stringify(denied.json())).toBe(403)
+      expect(denied.json()).toMatchObject({error:{code:'RESOURCE_SCOPE_DENIED'}})
+    }
+    const own=(await db.query<{id:string}>("INSERT INTO automation_runs(workspace_id,session_id,max_attempts,status) VALUES($1,$2,1,'succeeded') RETURNING id",[workspaceId,execution.sessionId])).rows[0]!
+    const hidden=(await db.query<{id:string}>('INSERT INTO automation_runs(workspace_id,max_attempts) VALUES($1,1) RETURNING id',[workspaceId])).rows[0]!
+    await db.query("INSERT INTO automation_effects(run_id,action_ordinal,effect_key,action) VALUES($1,0,$2,'{}')",[own.id,randomUUID()])
+    const run=await agentCall(execution.token,'GET',`/api/v1/automation-runs/${own.id}`)
+    expect(run.statusCode,JSON.stringify(run.json())).toBe(200)
+    expect(run.json()).toMatchObject({id:own.id,session_id:execution.sessionId,effects:[expect.objectContaining({action_ordinal:0})]})
+    expect((await agentCall(execution.token,'GET',`/api/v1/automation-runs/${hidden.id}`)).statusCode).toBe(404)
+    expect((await call(human,'GET',`/api/v1/automation-runs/${hidden.id}`)).statusCode).toBe(200)
+    await db.query("UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1",[session.delegation_id])
+    for (const url of [`/api/v1/initiatives/${initiativeId}/rollup`,'/api/v1/usage-summary',`/api/v1/automation-runs/${own.id}`]) {
+      const denied=await agentCall(execution.token,'GET',url)
+      expect(denied.statusCode).toBe(409)
+      expect(denied.json()).toMatchObject({error:{code:'DELEGATION_NOT_ACTIVE'}})
+    }
+  })
+
+  it('M4 最后读取快照重核principal与Team grant，不能以旧list或零聚合掩拒', async () => {
+    const {github}=await repositoryFixtures()
+    const execution=await createExecutingReviewer(human,workspaceId,teamId,workItemId,github.id)
+    const linked=(await call(human,'POST','/api/v1/initiatives',{name:'M4 revoke barrier',ownerActorId:human.actorId,status:'active',projectIds:[projectId]})).json<{id:string}>()
+    const session=(await db.query<{agent_id:string}>('SELECT agent_id FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!
+    expect((await agentCall(execution.token,'GET','/api/v1/initiatives')).statusCode).toBe(200)
+    const withdrawing=buildApp({features:enabledFeatures,logger:false,afterAuthorizeRequest:async request=>{
+      if(request.url.endsWith('/rollup')) await db.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1 AND team_id=$2',[session.agent_id,teamId])
+    }})
+    try {
+      const result=await withdrawing.inject({method:'GET',url:`/api/v1/initiatives/${linked.id}/rollup`,headers:{authorization:`Bearer ${execution.token}`}})
+      expect(result.statusCode,JSON.stringify(result.json())).toBe(403)
+      expect(result.json()).toMatchObject({error:{code:'SESSION_SCOPE_DENIED'}})
+    } finally {
+      await withdrawing.close()
+      await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[session.agent_id,teamId])
+    }
+    const principalWithdrawal=buildApp({features:enabledFeatures,logger:false,afterAuthorizeRequest:async request=>{
+      if(request.url==='/api/v1/usage-summary') await db.query('UPDATE actors SET is_active=false WHERE id=$1',[human.actorId])
+    }})
+    try {
+      const result=await principalWithdrawal.inject({method:'GET',url:'/api/v1/usage-summary',headers:{authorization:`Bearer ${execution.token}`}})
+      expect(result.statusCode).toBe(403)
+      expect(result.json()).toMatchObject({error:{code:'SESSION_SCOPE_DENIED'}})
+    } finally { await db.query('UPDATE actors SET is_active=true WHERE id=$1',[human.actorId]); await principalWithdrawal.close() }
+  })
+
 });

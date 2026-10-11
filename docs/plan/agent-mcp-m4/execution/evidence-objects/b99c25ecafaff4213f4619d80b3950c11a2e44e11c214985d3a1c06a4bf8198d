@@ -1,0 +1,1324 @@
+{
+  "first": {
+    "items": [
+      {
+        "id": "66952219-a87f-486c-b31e-1321478feff6",
+        "parentSessionId": "e41fef73-b677-4b52-ba08-338a546885eb",
+        "requiredForParent": true,
+        "state": "queued",
+        "revision": 1,
+        "planStepId": "d0061e6f-98e2-4724-a107-0106f675cb3b",
+        "planVersionId": "e0366a1a-35aa-4969-a1d7-8029a194fbc5",
+        "resultArtifactIds": []
+      }
+    ],
+    "nextCursor": "eyJhY3RvcklkIjoiNDgzZDZmMGEtOTM2Zi00N2Q0LTgzMjEtZDQzZGVmMDk1NDNiIiwiZXhwIjoxNzkxNjk0ODg4LCJmaWx0ZXJIYXNoIjoiYjM4N2FkNzM5ZTI0N2E0YTQ2MjU4NTQzYTBhNThkOTQzNzU3MzIyY2MyMjJhMjViNDBmYmUwNDk3MDBiZTAwMCIsImlhdCI6MTc5MTY5Mzk4OCwia2lkIjoiZGV2LWVwaGVtZXJhbCIsInJvdXRlIjoiL2FwaS92MS9hZ2VudC1zZXNzaW9ucy86aWQvY2hpbGRyZW4iLCJzb3J0IjoiY3JlYXRlZF9hdDpERVNDLGlkOkRFU0MiLCJ2IjoxLCJ2YWx1ZXMiOlsiMjAyNi0xMC0xMVQwNDo0NjoyOC4xNjE0MjUrMDA6MDAiLCI2Njk1MjIxOS1hODdmLTQ4NmMtYjMxZS0xMzIxNDc4ZmVmZjYiXSwid29ya3NwYWNlSWQiOiJkNzA4YmYwMS0wMDFlLTQ5NjItOWY4Yi1iYjM4MTBjOGUzNjcifQ.DCAd-UW-ngFk1WAt8JZOB3dNAlJhrYDwWR_mXGsXm_Y"
+  },
+  "second": {
+    "items": [
+      {
+        "id": "0e30b1dd-4df2-4560-9c2a-5177555e0c85",
+        "parentSessionId": "e41fef73-b677-4b52-ba08-338a546885eb",
+        "requiredForParent": true,
+        "state": "queued",
+        "revision": 1,
+        "planStepId": "d0061e6f-98e2-4724-a107-0106f675cb3b",
+        "planVersionId": "e0366a1a-35aa-4969-a1d7-8029a194fbc5",
+        "resultArtifactIds": []
+      },
+      {
+        "id": "ea79ed5d-1442-4e19-9894-3f355df4f69e",
+        "parentSessionId": "e41fef73-b677-4b52-ba08-338a546885eb",
+        "requiredForParent": true,
+        "state": "queued",
+        "revision": 1,
+        "planStepId": "d0061e6f-98e2-4724-a107-0106f675cb3b",
+        "planVersionId": "e0366a1a-35aa-4969-a1d7-8029a194fbc5",
+        "resultArtifactIds": []
+      }
+    ],
+    "nextCursor": null
+  },
+  "before": {
+    "agent_session_tokens": {
+      "rows": 80,
+      "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+    },
+    "agent_sessions": {
+      "rows": 33,
+      "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+    },
+    "delegations": {
+      "rows": 39,
+      "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+    },
+    "api_idempotency_keys": {
+      "rows": 307,
+      "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+    },
+    "inbox_item_receipts": {
+      "rows": 4,
+      "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+    },
+    "workbench_turns": {
+      "rows": 17,
+      "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+    },
+    "workbench_runner_attempts": {
+      "rows": 17,
+      "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+    },
+    "domain_events": {
+      "rows": 461,
+      "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+    },
+    "outbox_events": {
+      "rows": 461,
+      "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+    },
+    "agent_activities": {
+      "rows": 18,
+      "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+    },
+    "inbox_items": {
+      "rows": 7,
+      "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+    },
+    "session_budget_reservations": {
+      "rows": 11,
+      "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+    },
+    "leases": {
+      "rows": 2,
+      "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+    },
+    "agent_plan_versions": {
+      "rows": 7,
+      "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+    },
+    "agent_plan_steps": {
+      "rows": 9,
+      "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+    },
+    "agent_plan_step_identities": {
+      "rows": 9,
+      "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+    },
+    "agent_plan_step_dependencies": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "agent_session_prompts": {
+      "rows": 31,
+      "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+    },
+    "artifacts": {
+      "rows": 3,
+      "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+    },
+    "room_messages": {
+      "rows": 5,
+      "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+    },
+    "room_message_recipients": {
+      "rows": 3,
+      "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+    },
+    "room_message_session_recipients": {
+      "rows": 1,
+      "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+    }
+  },
+  "probeResults": [
+    {
+      "label": "原Connection撤权",
+      "denied": true,
+      "before": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      },
+      "after": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      }
+    },
+    {
+      "label": "principal失效",
+      "denied": true,
+      "before": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      },
+      "after": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      }
+    },
+    {
+      "label": "membership移除",
+      "denied": true,
+      "before": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      },
+      "after": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      }
+    },
+    {
+      "label": "父暂停",
+      "denied": true,
+      "before": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "81349357a235afab78214f8aa2ffc5f811e3ca599c17431acad08e55917b1d33"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      },
+      "after": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "81349357a235afab78214f8aa2ffc5f811e3ca599c17431acad08e55917b1d33"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      }
+    },
+    {
+      "label": "父终态",
+      "denied": true,
+      "before": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "87a620471eabba5c1ba44eda6cf1d882c14ccb60e0fffde962f49aa3e2af700a"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      },
+      "after": {
+        "agent_session_tokens": {
+          "rows": 80,
+          "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+        },
+        "agent_sessions": {
+          "rows": 33,
+          "sha256": "87a620471eabba5c1ba44eda6cf1d882c14ccb60e0fffde962f49aa3e2af700a"
+        },
+        "delegations": {
+          "rows": 39,
+          "sha256": "903d4bb648cd06128da6e214b68c37e11a7071f37381b54ce174f3d9aa1381ed"
+        },
+        "api_idempotency_keys": {
+          "rows": 307,
+          "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+        },
+        "inbox_item_receipts": {
+          "rows": 4,
+          "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+        },
+        "workbench_turns": {
+          "rows": 17,
+          "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+        },
+        "workbench_runner_attempts": {
+          "rows": 17,
+          "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+        },
+        "domain_events": {
+          "rows": 461,
+          "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+        },
+        "outbox_events": {
+          "rows": 461,
+          "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+        },
+        "agent_activities": {
+          "rows": 18,
+          "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+        },
+        "inbox_items": {
+          "rows": 7,
+          "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+        },
+        "session_budget_reservations": {
+          "rows": 11,
+          "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+        },
+        "leases": {
+          "rows": 2,
+          "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+        },
+        "agent_plan_versions": {
+          "rows": 7,
+          "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+        },
+        "agent_plan_steps": {
+          "rows": 9,
+          "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+        },
+        "agent_plan_step_identities": {
+          "rows": 9,
+          "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+        },
+        "agent_plan_step_dependencies": {
+          "rows": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "agent_session_prompts": {
+          "rows": 31,
+          "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+        },
+        "artifacts": {
+          "rows": 3,
+          "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+        },
+        "room_messages": {
+          "rows": 5,
+          "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+        },
+        "room_message_recipients": {
+          "rows": 3,
+          "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+        },
+        "room_message_session_recipients": {
+          "rows": 1,
+          "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+        }
+      }
+    }
+  ],
+  "bindingBefore": {
+    "agent_session_tokens": {
+      "rows": 80,
+      "sha256": "ec09e2bfd76de24aab8af29dd55761b0e281a2e3f67e333be4b108ace68ac5b4"
+    },
+    "agent_sessions": {
+      "rows": 33,
+      "sha256": "68583f8d5085db6be59c658636f4835bb529df8334a8d97c4310272954fa82fd"
+    },
+    "delegations": {
+      "rows": 39,
+      "sha256": "eab6d6380e0a77524c0f8e290234bc63dddef19f6f5ee51dc96cb6e32e723828"
+    },
+    "api_idempotency_keys": {
+      "rows": 307,
+      "sha256": "f2c52a7d907749b681b0d3036852265b527df0d7487e3af9824c77a24159ecf2"
+    },
+    "inbox_item_receipts": {
+      "rows": 4,
+      "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+    },
+    "workbench_turns": {
+      "rows": 17,
+      "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+    },
+    "workbench_runner_attempts": {
+      "rows": 17,
+      "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+    },
+    "domain_events": {
+      "rows": 461,
+      "sha256": "bd4eab443ac97d1f42e88a0f9094496e4b7f19e369b7abb2d3a393918337c9b8"
+    },
+    "outbox_events": {
+      "rows": 461,
+      "sha256": "ba8fa0f15f106c557711dae22df78a3cfb6d32ba2301f577158fe9bbd3e88cf0"
+    },
+    "agent_activities": {
+      "rows": 18,
+      "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+    },
+    "inbox_items": {
+      "rows": 7,
+      "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+    },
+    "session_budget_reservations": {
+      "rows": 11,
+      "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+    },
+    "leases": {
+      "rows": 2,
+      "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+    },
+    "agent_plan_versions": {
+      "rows": 7,
+      "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+    },
+    "agent_plan_steps": {
+      "rows": 9,
+      "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+    },
+    "agent_plan_step_identities": {
+      "rows": 9,
+      "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+    },
+    "agent_plan_step_dependencies": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "agent_session_prompts": {
+      "rows": 31,
+      "sha256": "ab134069859fb12629008e57e7bb804dbd74fe8f3ab95035548f136b1b693fc7"
+    },
+    "artifacts": {
+      "rows": 3,
+      "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+    },
+    "room_messages": {
+      "rows": 5,
+      "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+    },
+    "room_message_recipients": {
+      "rows": 3,
+      "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+    },
+    "room_message_session_recipients": {
+      "rows": 1,
+      "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+    }
+  },
+  "revokedBefore": {
+    "agent_session_tokens": {
+      "rows": 83,
+      "sha256": "3d1ab50fe5cb67636f94044f16eab8e12526466984ea0dc3b49c9043f1144cad"
+    },
+    "agent_sessions": {
+      "rows": 34,
+      "sha256": "87153b53915887172b0ef589ba7f7c0ad68346dfde5575e29951972ba6c7bd86"
+    },
+    "delegations": {
+      "rows": 40,
+      "sha256": "80898f00358391fc0625e6a6f503d780bce65970c74265ac2045e3aa4c192bd8"
+    },
+    "api_idempotency_keys": {
+      "rows": 310,
+      "sha256": "2d5fafdbde9ac83acfcbd952bfacfcaf7e0c40f0154920ac9474232364d4cf54"
+    },
+    "inbox_item_receipts": {
+      "rows": 4,
+      "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+    },
+    "workbench_turns": {
+      "rows": 17,
+      "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+    },
+    "workbench_runner_attempts": {
+      "rows": 17,
+      "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+    },
+    "domain_events": {
+      "rows": 466,
+      "sha256": "f37a0d33298bc2cfa03826d306ae25a9d5fe9b557ad5a383f87b67d1c00205ee"
+    },
+    "outbox_events": {
+      "rows": 466,
+      "sha256": "c5a59875d9d41e8abee425f10b8f1104af78ffb4cd5127c78bd4ff9a3fa27011"
+    },
+    "agent_activities": {
+      "rows": 18,
+      "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+    },
+    "inbox_items": {
+      "rows": 7,
+      "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+    },
+    "session_budget_reservations": {
+      "rows": 11,
+      "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+    },
+    "leases": {
+      "rows": 2,
+      "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+    },
+    "agent_plan_versions": {
+      "rows": 7,
+      "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+    },
+    "agent_plan_steps": {
+      "rows": 9,
+      "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+    },
+    "agent_plan_step_identities": {
+      "rows": 9,
+      "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+    },
+    "agent_plan_step_dependencies": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "agent_session_prompts": {
+      "rows": 32,
+      "sha256": "64410cebb7a3465e3c6811c9f3469447249bf6e7687e3bdabbd15c0d1ff26d43"
+    },
+    "artifacts": {
+      "rows": 3,
+      "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+    },
+    "room_messages": {
+      "rows": 5,
+      "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+    },
+    "room_message_recipients": {
+      "rows": 3,
+      "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+    },
+    "room_message_session_recipients": {
+      "rows": 1,
+      "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+    }
+  },
+  "after": {
+    "agent_session_tokens": {
+      "rows": 83,
+      "sha256": "3d1ab50fe5cb67636f94044f16eab8e12526466984ea0dc3b49c9043f1144cad"
+    },
+    "agent_sessions": {
+      "rows": 34,
+      "sha256": "87153b53915887172b0ef589ba7f7c0ad68346dfde5575e29951972ba6c7bd86"
+    },
+    "delegations": {
+      "rows": 40,
+      "sha256": "80898f00358391fc0625e6a6f503d780bce65970c74265ac2045e3aa4c192bd8"
+    },
+    "api_idempotency_keys": {
+      "rows": 310,
+      "sha256": "2d5fafdbde9ac83acfcbd952bfacfcaf7e0c40f0154920ac9474232364d4cf54"
+    },
+    "inbox_item_receipts": {
+      "rows": 4,
+      "sha256": "9c7cc380de14636a2163c21e7f58703320bb44b8833beb21b50af9d0c92a0c91"
+    },
+    "workbench_turns": {
+      "rows": 17,
+      "sha256": "b4bb91662e3d7a956cfca7ddaee73fff59e8d854b37f2b3f873767771979a09c"
+    },
+    "workbench_runner_attempts": {
+      "rows": 17,
+      "sha256": "d4d3c8508fa8c3d0174e42e550407b40143ce7c42083e48b47637fc690de0d93"
+    },
+    "domain_events": {
+      "rows": 466,
+      "sha256": "f37a0d33298bc2cfa03826d306ae25a9d5fe9b557ad5a383f87b67d1c00205ee"
+    },
+    "outbox_events": {
+      "rows": 466,
+      "sha256": "c5a59875d9d41e8abee425f10b8f1104af78ffb4cd5127c78bd4ff9a3fa27011"
+    },
+    "agent_activities": {
+      "rows": 18,
+      "sha256": "72d2aa17c257fbc01466034ae488566e659c032d0ff2f28ab5614e5b0ce34984"
+    },
+    "inbox_items": {
+      "rows": 7,
+      "sha256": "bfa5302669339f5065c014e6f3a2eb3b48d151be71651213bbbb638c14bb9d68"
+    },
+    "session_budget_reservations": {
+      "rows": 11,
+      "sha256": "9478706a4f9231e04966fc05ed1739f167a151852b34d041f53cc7360658cd21"
+    },
+    "leases": {
+      "rows": 2,
+      "sha256": "0970f84cd4b4f30649562656e1c0cf8917f3070b696a7c7e3d651e190644ca2d"
+    },
+    "agent_plan_versions": {
+      "rows": 7,
+      "sha256": "f765f974aa9aae793b332805b4005cd96d83247d8dabe11b5a453ac622d39ad1"
+    },
+    "agent_plan_steps": {
+      "rows": 9,
+      "sha256": "4dfc1c86f95260a250dba6a4c44e1674020a0ca143f9458111d80af277d98d39"
+    },
+    "agent_plan_step_identities": {
+      "rows": 9,
+      "sha256": "f12ca2e62cf46ffdd6e8f94f57d5e313c51b02010c9abfb0c505055e2589665e"
+    },
+    "agent_plan_step_dependencies": {
+      "rows": 0,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "agent_session_prompts": {
+      "rows": 32,
+      "sha256": "64410cebb7a3465e3c6811c9f3469447249bf6e7687e3bdabbd15c0d1ff26d43"
+    },
+    "artifacts": {
+      "rows": 3,
+      "sha256": "c915a8a5cd2f38be881d83b8406df3c9f743be825346352328772f4c601f1766"
+    },
+    "room_messages": {
+      "rows": 5,
+      "sha256": "1146931c8409dde239925fa02f6ec445104ec7a944fb5a2e608d7802d843069d"
+    },
+    "room_message_recipients": {
+      "rows": 3,
+      "sha256": "195cd2ae78f748c0917e0e1079000fa7c14d5b13f61f29355a70808eba376441"
+    },
+    "room_message_session_recipients": {
+      "rows": 1,
+      "sha256": "bc2f5a524dc8e9d279e9fa29b1f1d087916402fac230c27903592df851f9d3fb"
+    }
+  }
+}

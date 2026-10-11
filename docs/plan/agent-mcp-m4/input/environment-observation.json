@@ -1,0 +1,703 @@
+{
+  "sampleUtc": "2026-10-11T02:40:55.552529+00:00",
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88",
+  "nodeModulesExists": false,
+  "disk": {
+    "totalBytes": 998956331008,
+    "usedBytes": 689675010048,
+    "freeBytes": 309281320960
+  },
+  "existingApi": {
+    "id": "a3b6f726f524d99b34f5b2b97b1d2356ef3692ffdcac5392b7eab44791e45b6c",
+    "name": "/workmesh-api-1",
+    "running": false,
+    "featureWhitelist": {
+      "WORKMESH_BETA_TEMPLATES": "false",
+      "WORKMESH_BETA_COSTS": "false",
+      "WORKMESH_EXPERIMENTAL_AGENT_LOOPS": "false",
+      "WORKMESH_EXPERIMENTAL_AUTOMATION": "false",
+      "WORKMESH_BETA_PLANNING": "false",
+      "WORKMESH_EXPERIMENTAL_A2A": "false"
+    },
+    "inspectExitCode": 0,
+    "inspectRuntimeSeconds": 0.06728820000716951,
+    "fullInspectPersisted": false
+  },
+  "containers": [
+    {
+      "ID": "e78c04363d9af6f6b386ee5f505f3ee8492ffb5281d80595002bf8e7d0a50251",
+      "Names": "qhub-verify-55439",
+      "Image": "postgres:16-alpine",
+      "State": "created",
+      "Ports": "",
+      "Networks": ""
+    },
+    {
+      "ID": "2d4e450411e371eb821506f6dc87c165a47a667f4a1fd53445369706c0d21273",
+      "Names": "neochat-maintenance-pg-fixture-noautovacuum-20261010",
+      "Image": "postgres:18-alpine",
+      "State": "running",
+      "Ports": "127.0.0.1:25439->5432/tcp",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "ce2d13ec425887c068ba4fb7f4d3bc5de0624174da6058f6e369ab90d9d677f7",
+      "Names": "qhub-patch-0013",
+      "Image": "postgres:16-alpine",
+      "State": "running",
+      "Ports": "0.0.0.0:55439->5432/tcp, [::]:55439->5432/tcp",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "3896b1121df5645f2d42845d65e698aec458def8c4f43f8f726bf9eca620943d",
+      "Names": "neochat-abort-pg-fixture-7ecec55",
+      "Image": "postgres:18-alpine",
+      "State": "running",
+      "Ports": "127.0.0.1:25438->5432/tcp",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "03079247a0b2ebf7d053e42d5856416ebb9e9d28443cac08446fa8c2d64632b6",
+      "Names": "neochat-offline-dns-api-fixture-7ece",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "neochat-offline-dns-fixture-7ece"
+    },
+    {
+      "ID": "8400a137ee25c8fa99da7c0da2482dce987b231f870bb25c0bec0eb14e2c66f5",
+      "Names": "neochat-keyring-helper-synthetic-7ece",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "none"
+    },
+    {
+      "ID": "767a71cca26cf85f9f8f4a6cb2c32fbd28b3706bb53a2bc25a707ccd34d16cb3",
+      "Names": "cdc-fixed-7ecec55-local-r3-api-auth",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "51afea88106afd603daf553945f5a2ab7752aa9b7464bfb726e2c3eb106b0c0b",
+      "Names": "cdc-fixed-7ecec55-local-r3-maintenance-negative",
+      "Image": "neochat/neochat-maintenance:7ecec5548d22-pg18",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "none"
+    },
+    {
+      "ID": "086ff7b184a6880e9caf6eaeb105a1c0e08ad2ffa425511a7d072c483c869443",
+      "Names": "cdc-fixed-7ecec55-local-r3-maintenance-versions",
+      "Image": "neochat/neochat-maintenance:7ecec5548d22-pg18",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "none"
+    },
+    {
+      "ID": "2fd816bae57e4985028717c1abba3ff84cdf9226abb0ba598f012597741cf341",
+      "Names": "cdc-fixed-7ecec55-local-r3-cdc",
+      "Image": "neochat/cdc-runtime:772413e69282-candidate-7ecec55",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "556b19085fe1af3f57b166467eee1aabbc748a9131580f8704fc037c6b69151e",
+      "Names": "cdc-fixed-7ecec55-local-r3-web",
+      "Image": "neochat/neochat-web:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "27855fcafaee9e01c1863a23a96aa9795c7d90011c7d0a60f558c8bb6a6d06db",
+      "Names": "cdc-fixed-7ecec55-local-r3-worker",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "dede93ad0cf2b25691e74fbbf78bef26fedbeb9d957dbf6e2569f42a8da6887f",
+      "Names": "cdc-fixed-7ecec55-local-r3-realtime",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "174cacc349978b1a4dc1fdab5443f8663a9a84ea277c7dbd4184479b77d7dc4d",
+      "Names": "cdc-fixed-7ecec55-local-r3-api",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "77d22a520b5f155d362cac2a2b7ffcb20e9571d927f0df5dc3aaaa941873caf2",
+      "Names": "cdc-fixed-7ecec55-local-r3-valkey",
+      "Image": "valkey/valkey:9-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "07a79a308e1982c21d9118beaa3c47ff821f55515d058f875ba986bf2592026f",
+      "Names": "cdc-fixed-7ecec55-local-r3-migrate",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "7afcdf5184b3bf06984227e80732313bda2c7704637a6e4a7456eccab1bb4937",
+      "Names": "cdc-fixed-7ecec55-local-r3-postgres",
+      "Image": "postgres:18-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r3"
+    },
+    {
+      "ID": "7185e794ecf79872b2617fbb1bf6206154e96e42b86335a0282836f5f3188a01",
+      "Names": "cdc-fixed-7ecec55-local-r2-api",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r2"
+    },
+    {
+      "ID": "44cb4ec43c9861e66cec9361d6f98b92b7f07709eff31558f2269d64ce2c4af9",
+      "Names": "cdc-fixed-7ecec55-local-r2-valkey",
+      "Image": "valkey/valkey:9-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r2"
+    },
+    {
+      "ID": "88c568cde2262d264d2f6fa7bf0e221da8d894f364afe4c2419a8abf39188d95",
+      "Names": "cdc-fixed-7ecec55-local-r2-migrate",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r2"
+    },
+    {
+      "ID": "da37a42f1531f82cf938ded88df09991aa6d5cbf6eea7062c1c5f5b53da74477",
+      "Names": "cdc-fixed-7ecec55-local-r2-postgres",
+      "Image": "postgres:18-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local-r2"
+    },
+    {
+      "ID": "f28bdb0e23be4a24cdd506c1d5f00def50e9c06504c83ce10cca729d9d4e53ee",
+      "Names": "cdc-fixed-7ecec55-local-migrate",
+      "Image": "neochat/neochat-app:7ecec5548d22-lite",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local"
+    },
+    {
+      "ID": "22e898d902d457618e2d2c61ac67a6624ecd2f7b272893d47b2cb0cee5ac611d",
+      "Names": "cdc-fixed-7ecec55-local-postgres",
+      "Image": "postgres:18-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "cdc-fixed-7ecec55-local"
+    },
+    {
+      "ID": "4c71f8fe346a599cfeab3d8f4ee32669001609dbdb76f2241ff45369ee135c5d",
+      "Names": "buildx_buildkit_cdc-fixed-8b062ae-202610100",
+      "Image": "moby/buildkit:buildx-stable-1",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67",
+      "Names": "m5-5dbe32e19a-store",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9",
+      "Names": "m5-5dbe32e19a-redis",
+      "Image": "redis:7.4.5-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "c012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737",
+      "Names": "m5-5dbe32e19a-postgres",
+      "Image": "postgres:16.9-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "76c9f3c67abbcef0df16adeedd6a3124a4a11564a9fd86d4df3bba64d84763df",
+      "Names": "neochat-hct-fixture-20261010",
+      "Image": "postgres:18-alpine",
+      "State": "running",
+      "Ports": "127.0.0.1:23432->5432/tcp",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "7c8d3cd93f42dc4c0b0608c5dc21d09c5d41019e53ba61daf2f1ca27db4e30bb",
+      "Names": "neochat-cdc-test-cdc-1",
+      "Image": "neochat/cdc-runtime:91b63854a540",
+      "State": "running",
+      "Ports": "127.0.0.1:24320->4320/tcp",
+      "Networks": "neochat-cdc-test_default"
+    },
+    {
+      "ID": "f74d0a1c7164a7c7dbd8d13c21504a4fd42ed5370c1089f18f8e5c0bd902c1b0",
+      "Names": "neochat-cdc-acceptance-postgres-1",
+      "Image": "postgres:18-alpine",
+      "State": "running",
+      "Ports": "127.0.0.1:23032->5432/tcp",
+      "Networks": "neochat-cdc-acceptance_default"
+    },
+    {
+      "ID": "ec6efeeed205173409d801c574cd4b91675b5ad93936bbb3ad47af446d96409b",
+      "Names": "neochat-cdc-acceptance-valkey-1",
+      "Image": "valkey/valkey:9-alpine",
+      "State": "running",
+      "Ports": "127.0.0.1:23079->6379/tcp",
+      "Networks": "neochat-cdc-acceptance_default"
+    },
+    {
+      "ID": "8955a6225785bee60cd769ac3737635df6a8c6a53435ad6294d92435417fd52b",
+      "Names": "r1ci381d-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "fdbfaf96fc4b7ae621bd07f221fbedd437526ba50f22683ef322d905baa0c376",
+      "Names": "r1ci381d-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "afb321d3ab8803113c81dd79dd99c4be7fcb9a94a05b88ba53b4ee9604b3a507",
+      "Names": "r1ci381d-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "42c1f96772b6b91e9175cbd40fe394efcb9756bca2ff483a4620ea4d1d5afb39",
+      "Names": "r1ci381c-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "16d965766d2c75a3b4e53b5cf0df183ccfb70388cf752d4d813a5bf03a8f21ca",
+      "Names": "r1ci381c-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "567c5c781c262f1cb2dc31b33a77cbc48b64b595cbbf822d3d0e45082ca844a0",
+      "Names": "r1ci381c-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "bb6b39f0959dc975ebba12692e3de8aadea191fdf0596d184ce7bc08fab9f027",
+      "Names": "r1ci381b-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "1244d5e4667d93ef394142c0bb18cb7a44eccdc7abc04a9278a7775c2df1f0dd",
+      "Names": "r1ci381b-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "4d8e4c20dc847b9edeae08745328d208a6a6f7dac72e186c36f63ea2f3bbc434",
+      "Names": "r1ci381b-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "959f0cabf5d696e3ce51871df90f1b568687eb9e0cc50c0a1e0f40896c37476b",
+      "Names": "r1ci381-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "f3359d7c72a758eace150cb87c35e215a0b6f291061556f782caeeab39258a39",
+      "Names": "r1ci381-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "4b9d5cc52acd838f691b711dadab09bc6aebb42ed567c67129308927044f3d01",
+      "Names": "r1ci381-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "54f147c18124aa0e4664cb5d15e36244d7e2f32c020225b80ed48e86e8ff3d6e",
+      "Names": "r1i-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "ebf6f15a199ee0b9d88c92242124cf6e39cc411457525fb95f434340d81b20a9",
+      "Names": "r1i-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "2709a753abebe3bc0fd4961a81a05f0051468cb03bb831abdb41d4f5cfae3f0d",
+      "Names": "r1i-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "39acded25c5fc47bbc59704fa6a63e504cb5a9adb4329d1712e7d2009210fd5d",
+      "Names": "r1h-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "446d990bae3d184b8dc04c3faf0150834abb8f6c80a323c4fd2f5d3e8c86a76c",
+      "Names": "r1h-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "1aa94d42b532791bc4946c34e8c83d7c613c9fa8c4b8f071f2f05a94f82cf3d7",
+      "Names": "r1h-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "885491d285b034daaa3f48e4f3f91c8a96f422f7f591b62a5f6a7ad93a824ba0",
+      "Names": "r1g-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "88d7597271c372a248f89d4bfe02e1cd796a5d65d34752d72661f2620efef724",
+      "Names": "r1g-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "68ddd591771d178bc3052cadb356ffab1daf3cfeeff714cba60246251645d8b1",
+      "Names": "r1g-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "accb377d0f75666bd9236f5e9f0fd773a6414c425c99dc17fe578ea63f4ec0a8",
+      "Names": "r1f-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "95612d167478ff04dba11d79b7563eb6f7a7458440d9d56780898d3db34d309f",
+      "Names": "r1f-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "666b8a945f4e3f073701b69d8409e87aa7d5fc4defd7e33a4d24a434f357f492",
+      "Names": "r1f-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "6572b97faee7dbe4b1df1eee31623605ed21b589e66cae09421f796a76a73075",
+      "Names": "r1e-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "d74db6d52c2161ed926ba031189ea8ef79ed212cf79752a172b28bbbd744d606",
+      "Names": "r1e-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "25a2355963559e11c9ec2a717e6b4d0148f5eb7fdc0d8e3a0a6c61b474f9b0f3",
+      "Names": "r1e-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "a31c79775de3b1ac268262fbd4e984bcdb38c3340cb73c66a7c0c1326c828bf1",
+      "Names": "r1d-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "cef8749bbce413c24a9b13b712ec62de9f92f79df09601bf6191adcb29584289",
+      "Names": "r1d-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "16bd2b3e98244acda74dfd797991b920a16dafece83caa4031dd91e232e35946",
+      "Names": "r1d-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "d89c37d3a22e8beca1b294dc16db0a69c01664c7f8b3693a422ca6c3b421105e",
+      "Names": "r1c-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "1da14d685015528a2c539646ba1ff6a29839656d7e186cea8028c4e37b84b13e",
+      "Names": "r1c-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "a4173ad93c5a950bb76c9b0522bbc4d8487371ba651dbd52ce4cd0ab82dc64fa",
+      "Names": "r1c-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "fb305d53eee075b81f091d76dd1ef6abb8678077459e6c22c0fff822908eca78",
+      "Names": "r1b-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "8be4c0b2f3b233e1c560c9f368564e420d0cb94df6e7008ed9408fb2464c75c1",
+      "Names": "r1b-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "3ac7b4978d975b63928f70b6c9365972ab309f1363b89e690f9af02b82198d3b",
+      "Names": "r1b-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "a016713d06d3f11dfe2ee9533efd521946fb6077acceaf32d876a16206a17ac1",
+      "Names": "r1-rustfs-test",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "7a1f3fad0cc930f18dd57ce7c684a2265f0a06076fbb39782c1df8fcc3465366",
+      "Names": "r1-redis-test",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "557e9b8f1cabae46fbc219d4cabf1fed34955c23e1804fd5e021754226365fc2",
+      "Names": "r1-postgres-test",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "bridge"
+    },
+    {
+      "ID": "00f4596dc354a7096d54930f4786ca4e501f6d31371c317a95b36e289e9b5153",
+      "Names": "workmesh-postgres-1",
+      "Image": "postgres:16-alpine",
+      "State": "exited",
+      "Ports": "127.0.0.1:5432->5432/tcp",
+      "Networks": "workmesh_default"
+    },
+    {
+      "ID": "16feb81cf9d2a48d111dcfbda161e7a472616a9c0ac58a83d0a201cfb0e05fc0",
+      "Names": "workmesh-redis-1",
+      "Image": "redis:7-alpine",
+      "State": "exited",
+      "Ports": "6379/tcp",
+      "Networks": "workmesh_default"
+    },
+    {
+      "ID": "34820cf2e25e8dff19d42892bd67609cc316df2a1173d5403a9d52817fe72eee",
+      "Names": "workmesh-web-1",
+      "Image": "workmesh-web",
+      "State": "exited",
+      "Ports": "127.0.0.1:3000->3000/tcp",
+      "Networks": "workmesh_default"
+    },
+    {
+      "ID": "a3b6f726f524d99b34f5b2b97b1d2356ef3692ffdcac5392b7eab44791e45b6c",
+      "Names": "workmesh-api-1",
+      "Image": "workmesh-api",
+      "State": "exited",
+      "Ports": "127.0.0.1:3001->3001/tcp",
+      "Networks": "workmesh_default"
+    },
+    {
+      "ID": "951afd926067ecb9835f623429abf4d0411874ffbce132da76e8046f0b0227c2",
+      "Names": "workmesh-worker-1",
+      "Image": "workmesh-worker",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "workmesh_default"
+    },
+    {
+      "ID": "70078a3028a6e09537f0890446759fb739244e33c4f1b6b7adf885a5811ff296",
+      "Names": "workmesh-migrate-1",
+      "Image": "workmesh-migrate",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "workmesh_default"
+    },
+    {
+      "ID": "f8b614913c4efea2e944686c9b4c855cb5e61167d9bad0e7e6f35c150b9d473c",
+      "Names": "workmesh-minio-init-1",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "",
+      "Networks": "workmesh_default"
+    },
+    {
+      "ID": "ed7ebe27231e729a3176572704a99846a8b180d1742f62002add5a11b12179cd",
+      "Names": "workmesh-minio-1",
+      "Image": "rustfs/rustfs:1.0.0",
+      "State": "exited",
+      "Ports": "127.0.0.1:9000->9000/tcp, 9001/tcp",
+      "Networks": "workmesh_default"
+    }
+  ],
+  "readOnlyReceipts": [
+    {
+      "command": [
+        "docker",
+        "ps",
+        "-a",
+        "--no-trunc",
+        "--format",
+        "{{.ID}}\t{{.Names}}\t{{.Image}}\t{{.State}}\t{{.Ports}}\t{{.Networks}}"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.21090669999830425,
+      "stdout": "e78c04363d9af6f6b386ee5f505f3ee8492ffb5281d80595002bf8e7d0a50251\tqhub-verify-55439\tpostgres:16-alpine\tcreated\t\t\n2d4e450411e371eb821506f6dc87c165a47a667f4a1fd53445369706c0d21273\tneochat-maintenance-pg-fixture-noautovacuum-20261010\tpostgres:18-alpine\trunning\t127.0.0.1:25439->5432/tcp\tbridge\nce2d13ec425887c068ba4fb7f4d3bc5de0624174da6058f6e369ab90d9d677f7\tqhub-patch-0013\tpostgres:16-alpine\trunning\t0.0.0.0:55439->5432/tcp, [::]:55439->5432/tcp\tbridge\n3896b1121df5645f2d42845d65e698aec458def8c4f43f8f726bf9eca620943d\tneochat-abort-pg-fixture-7ecec55\tpostgres:18-alpine\trunning\t127.0.0.1:25438->5432/tcp\tbridge\n03079247a0b2ebf7d053e42d5856416ebb9e9d28443cac08446fa8c2d64632b6\tneochat-offline-dns-api-fixture-7ece\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tneochat-offline-dns-fixture-7ece\n8400a137ee25c8fa99da7c0da2482dce987b231f870bb25c0bec0eb14e2c66f5\tneochat-keyring-helper-synthetic-7ece\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tnone\n767a71cca26cf85f9f8f4a6cb2c32fbd28b3706bb53a2bc25a707ccd34d16cb3\tcdc-fixed-7ecec55-local-r3-api-auth\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r3\n51afea88106afd603daf553945f5a2ab7752aa9b7464bfb726e2c3eb106b0c0b\tcdc-fixed-7ecec55-local-r3-maintenance-negative\tneochat/neochat-maintenance:7ecec5548d22-pg18\texited\t\tnone\n086ff7b184a6880e9caf6eaeb105a1c0e08ad2ffa425511a7d072c483c869443\tcdc-fixed-7ecec55-local-r3-maintenance-versions\tneochat/neochat-maintenance:7ecec5548d22-pg18\texited\t\tnone\n2fd816bae57e4985028717c1abba3ff84cdf9226abb0ba598f012597741cf341\tcdc-fixed-7ecec55-local-r3-cdc\tneochat/cdc-runtime:772413e69282-candidate-7ecec55\texited\t\tcdc-fixed-7ecec55-local-r3\n556b19085fe1af3f57b166467eee1aabbc748a9131580f8704fc037c6b69151e\tcdc-fixed-7ecec55-local-r3-web\tneochat/neochat-web:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r3\n27855fcafaee9e01c1863a23a96aa9795c7d90011c7d0a60f558c8bb6a6d06db\tcdc-fixed-7ecec55-local-r3-worker\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r3\ndede93ad0cf2b25691e74fbbf78bef26fedbeb9d957dbf6e2569f42a8da6887f\tcdc-fixed-7ecec55-local-r3-realtime\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r3\n174cacc349978b1a4dc1fdab5443f8663a9a84ea277c7dbd4184479b77d7dc4d\tcdc-fixed-7ecec55-local-r3-api\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r3\n77d22a520b5f155d362cac2a2b7ffcb20e9571d927f0df5dc3aaaa941873caf2\tcdc-fixed-7ecec55-local-r3-valkey\tvalkey/valkey:9-alpine\texited\t\tcdc-fixed-7ecec55-local-r3\n07a79a308e1982c21d9118beaa3c47ff821f55515d058f875ba986bf2592026f\tcdc-fixed-7ecec55-local-r3-migrate\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r3\n7afcdf5184b3bf06984227e80732313bda2c7704637a6e4a7456eccab1bb4937\tcdc-fixed-7ecec55-local-r3-postgres\tpostgres:18-alpine\texited\t\tcdc-fixed-7ecec55-local-r3\n7185e794ecf79872b2617fbb1bf6206154e96e42b86335a0282836f5f3188a01\tcdc-fixed-7ecec55-local-r2-api\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r2\n44cb4ec43c9861e66cec9361d6f98b92b7f07709eff31558f2269d64ce2c4af9\tcdc-fixed-7ecec55-local-r2-valkey\tvalkey/valkey:9-alpine\texited\t\tcdc-fixed-7ecec55-local-r2\n88c568cde2262d264d2f6fa7bf0e221da8d894f364afe4c2419a8abf39188d95\tcdc-fixed-7ecec55-local-r2-migrate\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local-r2\nda37a42f1531f82cf938ded88df09991aa6d5cbf6eea7062c1c5f5b53da74477\tcdc-fixed-7ecec55-local-r2-postgres\tpostgres:18-alpine\texited\t\tcdc-fixed-7ecec55-local-r2\nf28bdb0e23be4a24cdd506c1d5f00def50e9c06504c83ce10cca729d9d4e53ee\tcdc-fixed-7ecec55-local-migrate\tneochat/neochat-app:7ecec5548d22-lite\texited\t\tcdc-fixed-7ecec55-local\n22e898d902d457618e2d2c61ac67a6624ecd2f7b272893d47b2cb0cee5ac611d\tcdc-fixed-7ecec55-local-postgres\tpostgres:18-alpine\texited\t\tcdc-fixed-7ecec55-local\n4c71f8fe346a599cfeab3d8f4ee32669001609dbdb76f2241ff45369ee135c5d\tbuildx_buildkit_cdc-fixed-8b062ae-202610100\tmoby/buildkit:buildx-stable-1\texited\t\tbridge\n23d2ad68bd312a452e11722554dfda530a18fe48cc7456d862a955379d18ed67\tm5-5dbe32e19a-store\trustfs/rustfs:1.0.0\texited\t\tbridge\n47947951bc4edd333185c9ad651cbc09fdef502602e4d0635bdf9988b7a0d3a9\tm5-5dbe32e19a-redis\tredis:7.4.5-alpine\texited\t\tbridge\nc012ede214cf08a989936d01fde107d923bb9fb94be1ae45f33a6cfcdbcf7737\tm5-5dbe32e19a-postgres\tpostgres:16.9-alpine\texited\t\tbridge\n76c9f3c67abbcef0df16adeedd6a3124a4a11564a9fd86d4df3bba64d84763df\tneochat-hct-fixture-20261010\tpostgres:18-alpine\trunning\t127.0.0.1:23432->5432/tcp\tbridge\n7c8d3cd93f42dc4c0b0608c5dc21d09c5d41019e53ba61daf2f1ca27db4e30bb\tneochat-cdc-test-cdc-1\tneochat/cdc-runtime:91b63854a540\trunning\t127.0.0.1:24320->4320/tcp\tneochat-cdc-test_default\nf74d0a1c7164a7c7dbd8d13c21504a4fd42ed5370c1089f18f8e5c0bd902c1b0\tneochat-cdc-acceptance-postgres-1\tpostgres:18-alpine\trunning\t127.0.0.1:23032->5432/tcp\tneochat-cdc-acceptance_default\nec6efeeed205173409d801c574cd4b91675b5ad93936bbb3ad47af446d96409b\tneochat-cdc-acceptance-valkey-1\tvalkey/valkey:9-alpine\trunning\t127.0.0.1:23079->6379/tcp\tneochat-cdc-acceptance_default\n8955a6225785bee60cd769ac3737635df6a8c6a53435ad6294d92435417fd52b\tr1ci381d-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\nfdbfaf96fc4b7ae621bd07f221fbedd437526ba50f22683ef322d905baa0c376\tr1ci381d-redis-test\tredis:7-alpine\texited\t\tbridge\nafb321d3ab8803113c81dd79dd99c4be7fcb9a94a05b88ba53b4ee9604b3a507\tr1ci381d-postgres-test\tpostgres:16-alpine\texited\t\tbridge\n42c1f96772b6b91e9175cbd40fe394efcb9756bca2ff483a4620ea4d1d5afb39\tr1ci381c-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n16d965766d2c75a3b4e53b5cf0df183ccfb70388cf752d4d813a5bf03a8f21ca\tr1ci381c-redis-test\tredis:7-alpine\texited\t\tbridge\n567c5c781c262f1cb2dc31b33a77cbc48b64b595cbbf822d3d0e45082ca844a0\tr1ci381c-postgres-test\tpostgres:16-alpine\texited\t\tbridge\nbb6b39f0959dc975ebba12692e3de8aadea191fdf0596d184ce7bc08fab9f027\tr1ci381b-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n1244d5e4667d93ef394142c0bb18cb7a44eccdc7abc04a9278a7775c2df1f0dd\tr1ci381b-redis-test\tredis:7-alpine\texited\t\tbridge\n4d8e4c20dc847b9edeae08745328d208a6a6f7dac72e186c36f63ea2f3bbc434\tr1ci381b-postgres-test\tpostgres:16-alpine\texited\t\tbridge\n959f0cabf5d696e3ce51871df90f1b568687eb9e0cc50c0a1e0f40896c37476b\tr1ci381-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\nf3359d7c72a758eace150cb87c35e215a0b6f291061556f782caeeab39258a39\tr1ci381-redis-test\tredis:7-alpine\texited\t\tbridge\n4b9d5cc52acd838f691b711dadab09bc6aebb42ed567c67129308927044f3d01\tr1ci381-postgres-test\tpostgres:16-alpine\texited\t\tbridge\n54f147c18124aa0e4664cb5d15e36244d7e2f32c020225b80ed48e86e8ff3d6e\tr1i-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\nebf6f15a199ee0b9d88c92242124cf6e39cc411457525fb95f434340d81b20a9\tr1i-redis-test\tredis:7-alpine\texited\t\tbridge\n2709a753abebe3bc0fd4961a81a05f0051468cb03bb831abdb41d4f5cfae3f0d\tr1i-postgres-test\tpostgres:16-alpine\texited\t\tbridge\n39acded25c5fc47bbc59704fa6a63e504cb5a9adb4329d1712e7d2009210fd5d\tr1h-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n446d990bae3d184b8dc04c3faf0150834abb8f6c80a323c4fd2f5d3e8c86a76c\tr1h-redis-test\tredis:7-alpine\texited\t\tbridge\n1aa94d42b532791bc4946c34e8c83d7c613c9fa8c4b8f071f2f05a94f82cf3d7\tr1h-postgres-test\tpostgres:16-alpine\texited\t\tbridge\n885491d285b034daaa3f48e4f3f91c8a96f422f7f591b62a5f6a7ad93a824ba0\tr1g-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n88d7597271c372a248f89d4bfe02e1cd796a5d65d34752d72661f2620efef724\tr1g-redis-test\tredis:7-alpine\texited\t\tbridge\n68ddd591771d178bc3052cadb356ffab1daf3cfeeff714cba60246251645d8b1\tr1g-postgres-test\tpostgres:16-alpine\texited\t\tbridge\naccb377d0f75666bd9236f5e9f0fd773a6414c425c99dc17fe578ea63f4ec0a8\tr1f-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n95612d167478ff04dba11d79b7563eb6f7a7458440d9d56780898d3db34d309f\tr1f-redis-test\tredis:7-alpine\texited\t\tbridge\n666b8a945f4e3f073701b69d8409e87aa7d5fc4defd7e33a4d24a434f357f492\tr1f-postgres-test\tpostgres:16-alpine\texited\t\tbridge\n6572b97faee7dbe4b1df1eee31623605ed21b589e66cae09421f796a76a73075\tr1e-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\nd74db6d52c2161ed926ba031189ea8ef79ed212cf79752a172b28bbbd744d606\tr1e-redis-test\tredis:7-alpine\texited\t\tbridge\n25a2355963559e11c9ec2a717e6b4d0148f5eb7fdc0d8e3a0a6c61b474f9b0f3\tr1e-postgres-test\tpostgres:16-alpine\texited\t\tbridge\na31c79775de3b1ac268262fbd4e984bcdb38c3340cb73c66a7c0c1326c828bf1\tr1d-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\ncef8749bbce413c24a9b13b712ec62de9f92f79df09601bf6191adcb29584289\tr1d-redis-test\tredis:7-alpine\texited\t\tbridge\n16bd2b3e98244acda74dfd797991b920a16dafece83caa4031dd91e232e35946\tr1d-postgres-test\tpostgres:16-alpine\texited\t\tbridge\nd89c37d3a22e8beca1b294dc16db0a69c01664c7f8b3693a422ca6c3b421105e\tr1c-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n1da14d685015528a2c539646ba1ff6a29839656d7e186cea8028c4e37b84b13e\tr1c-redis-test\tredis:7-alpine\texited\t\tbridge\na4173ad93c5a950bb76c9b0522bbc4d8487371ba651dbd52ce4cd0ab82dc64fa\tr1c-postgres-test\tpostgres:16-alpine\texited\t\tbridge\nfb305d53eee075b81f091d76dd1ef6abb8678077459e6c22c0fff822908eca78\tr1b-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n8be4c0b2f3b233e1c560c9f368564e420d0cb94df6e7008ed9408fb2464c75c1\tr1b-redis-test\tredis:7-alpine\texited\t\tbridge\n3ac7b4978d975b63928f70b6c9365972ab309f1363b89e690f9af02b82198d3b\tr1b-postgres-test\tpostgres:16-alpine\texited\t\tbridge\na016713d06d3f11dfe2ee9533efd521946fb6077acceaf32d876a16206a17ac1\tr1-rustfs-test\trustfs/rustfs:1.0.0\texited\t\tbridge\n7a1f3fad0cc930f18dd57ce7c684a2265f0a06076fbb39782c1df8fcc3465366\tr1-redis-test\tredis:7-alpine\texited\t\tbridge\n557e9b8f1cabae46fbc219d4cabf1fed34955c23e1804fd5e021754226365fc2\tr1-postgres-test\tpostgres:16-alpine\texited\t\tbridge\n00f4596dc354a7096d54930f4786ca4e501f6d31371c317a95b36e289e9b5153\tworkmesh-postgres-1\tpostgres:16-alpine\texited\t127.0.0.1:5432->5432/tcp\tworkmesh_default\n16feb81cf9d2a48d111dcfbda161e7a472616a9c0ac58a83d0a201cfb0e05fc0\tworkmesh-redis-1\tredis:7-alpine\texited\t6379/tcp\tworkmesh_default\n34820cf2e25e8dff19d42892bd67609cc316df2a1173d5403a9d52817fe72eee\tworkmesh-web-1\tworkmesh-web\texited\t127.0.0.1:3000->3000/tcp\tworkmesh_default\na3b6f726f524d99b34f5b2b97b1d2356ef3692ffdcac5392b7eab44791e45b6c\tworkmesh-api-1\tworkmesh-api\texited\t127.0.0.1:3001->3001/tcp\tworkmesh_default\n951afd926067ecb9835f623429abf4d0411874ffbce132da76e8046f0b0227c2\tworkmesh-worker-1\tworkmesh-worker\texited\t\tworkmesh_default\n70078a3028a6e09537f0890446759fb739244e33c4f1b6b7adf885a5811ff296\tworkmesh-migrate-1\tworkmesh-migrate\texited\t\tworkmesh_default\nf8b614913c4efea2e944686c9b4c855cb5e61167d9bad0e7e6f35c150b9d473c\tworkmesh-minio-init-1\trustfs/rustfs:1.0.0\texited\t\tworkmesh_default\ned7ebe27231e729a3176572704a99846a8b180d1742f62002add5a11b12179cd\tworkmesh-minio-1\trustfs/rustfs:1.0.0\texited\t127.0.0.1:9000->9000/tcp, 9001/tcp\tworkmesh_default\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--version"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.04215269999986049,
+      "stdout": "git version 2.55.0.windows.3\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "--version"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.054175500001292676,
+      "stdout": "v24.20.0\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pnpm.cmd",
+        "--version"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.4830091000039829,
+      "stdout": "9.15.4\n",
+      "stderr": ""
+    }
+  ],
+  "ownedM4RuntimeResources": [],
+  "startedServices": [],
+  "deletedPaths": [],
+  "physicalNetReleasedBytes": null,
+  "limits": "此刻卷级空间不是可归因释放；停止M5容器仍保护，不重用或删除。非白名单Env不落盘。"
+}

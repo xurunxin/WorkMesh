@@ -1,0 +1,135 @@
+{
+  "captures": [
+    {
+      "sequence": 0,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [],
+      "call": {
+        "name": "workmesh_get_initiative_rollup",
+        "arguments": {
+          "initiativeId": "60c455c8-497f-4674-a0c7-abee6afb00f7"
+        }
+      }
+    },
+    {
+      "sequence": 1,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [
+        "{\"projectCount\":1,\"completedProjectCount\":0,\"completedItems\":0,\"totalItems\":1,\"progressPercent\":0,\"health\":\"on_track\",\"currencyBuckets\":[],\"hasUnknownCost\":false}"
+      ],
+      "call": null
+    },
+    {
+      "sequence": 2,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [],
+      "call": {
+        "name": "workmesh_get_usage_summary",
+        "arguments": {}
+      }
+    },
+    {
+      "sequence": 3,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [
+        "{\"input_tokens\":\"0\",\"output_tokens\":\"0\",\"runtime_ms\":\"0\",\"tool_calls\":\"0\",\"unknown_cost_records\":0,\"currency_buckets\":[]}"
+      ],
+      "call": null
+    }
+  ],
+  "transport": {
+    "requests": [
+      {
+        "at": "2026-10-11T04:22:11.602Z",
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "bytes": 2447,
+        "rawSha256": "b8252671f8f05be971e5a81384f65717688de2488d0761f062e54b08cbc6357d",
+        "status": 200
+      },
+      {
+        "at": "2026-10-11T04:22:11.614Z",
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "bytes": 3151,
+        "rawSha256": "e2fee892bca06a0020b69c0888ce48b718b2fc59a9dc89ae186528e37b184b1f",
+        "status": 200
+      },
+      {
+        "at": "2026-10-11T04:22:12.307Z",
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "bytes": 3656,
+        "rawSha256": "6244eaca52b0dbb25ea29fe1898dbf37c5f2628cf80ff5e673cece4ddb1fe51c",
+        "status": 200
+      },
+      {
+        "at": "2026-10-11T04:22:16.653Z",
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "bytes": 2447,
+        "rawSha256": "b8252671f8f05be971e5a81384f65717688de2488d0761f062e54b08cbc6357d",
+        "status": 200
+      },
+      {
+        "at": "2026-10-11T04:22:16.709Z",
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "bytes": 3151,
+        "rawSha256": "e2fee892bca06a0020b69c0888ce48b718b2fc59a9dc89ae186528e37b184b1f",
+        "status": 200
+      },
+      {
+        "at": "2026-10-11T04:22:17.046Z",
+        "method": "POST",
+        "path": "/v1/chat/completions",
+        "bytes": 3556,
+        "rawSha256": "5df904e3dcf0b6e26c9a6bfcd4c621efdd7843acbf0e135d5abde8cffa57abcb",
+        "status": 200
+      }
+    ],
+    "tlsConnections": [
+      {
+        "at": "2026-10-11T04:22:11.599Z",
+        "protocol": "TLSv1.3"
+      },
+      {
+        "at": "2026-10-11T04:22:11.611Z",
+        "protocol": "TLSv1.3"
+      }
+    ],
+    "errors": [
+      {
+        "at": "2026-10-11T04:22:19.124Z",
+        "stage": "clientError",
+        "code": "ECONNRESET",
+        "name": "Error"
+      }
+    ]
+  },
+  "auxiliary": [
+    {
+      "at": "2026-10-11T04:22:11.608Z",
+      "path": "/v1/chat/completions",
+      "kind": "no-tool-request"
+    },
+    {
+      "at": "2026-10-11T04:22:16.659Z",
+      "path": "/v1/chat/completions",
+      "kind": "no-tool-request"
+    }
+  ],
+  "closed": true
+}

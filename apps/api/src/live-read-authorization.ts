@@ -5,6 +5,10 @@ const bind = (values: unknown[], value: unknown): string => {
   return `$${values.length}`
 }
 
+// Closed SQL expressions, never caller-supplied SQL. Existing readers retain
+// transaction time; multi-statement derived writes explicitly choose fresh time.
+export type ReadAuthorizationClock = 'now()' | 'statement_timestamp()'
+
 /**
  * Produces a correlated predicate that revalidates the authenticated human
  * credential and current Team authority in the same statement that returns
@@ -15,6 +19,7 @@ export function liveHumanTeamReadPredicate(
   workspaceSql: string,
   teamSql: string,
   values: unknown[],
+  clock: ReadAuthorizationClock = 'now()',
 ): string {
   const actorId = bind(values, current.id)
   const sessionId = bind(values, current.humanSessionId ?? null)
@@ -26,7 +31,7 @@ export function liveHumanTeamReadPredicate(
         ON live_credential.id=${sessionId}
        AND live_credential.actor_id=live_reader.id
        AND live_credential.token_hash=${credentialHash}
-       AND live_credential.expires_at>now()
+       AND live_credential.expires_at>${clock}
        AND live_credential.revoked_at IS NULL
      WHERE live_reader.id=${actorId}
        AND live_reader.workspace_id=${workspaceSql}
@@ -61,6 +66,7 @@ export function liveSessionReadPredicate(
   workspaceSql: string,
   values: unknown[],
   requiredCapability: 'work:read' | 'repo:read' = 'work:read',
+  clock: ReadAuthorizationClock = 'now()',
 ): string {
   const actorId = bind(values, current.id)
   const humanSessionId = bind(values, current.humanSessionId ?? null)
@@ -85,7 +91,7 @@ export function liveSessionReadPredicate(
                   live_credential.status='active'
                   OR (
                     live_credential.status='overlap'
-                    AND live_credential.overlap_until>now()
+                    AND live_credential.overlap_until>${clock}
                   )
                 )
                JOIN actors live_principal
@@ -95,7 +101,7 @@ export function liveSessionReadPredicate(
                 AND live_principal.is_active
               WHERE live_coordination.agent_session_id=live_session.id
                 AND live_coordination.status='active'
-                AND live_coordination.expires_at>now()
+                AND live_coordination.expires_at>${clock}
                 AND live_coordination.workspace_id=live_session.workspace_id
                 AND live_coordination.team_id=live_session.team_id
                 AND live_coordination.agent_id=live_session.agent_id
@@ -110,7 +116,7 @@ export function liveSessionReadPredicate(
                FROM agent_session_tokens live_credential
               WHERE live_credential.session_id=live_session.id
                 AND live_credential.token_hash=${credentialHash}
-                AND live_credential.expires_at>now()
+                AND live_credential.expires_at>${clock}
                 AND live_credential.exchanged_at IS NOT NULL
                 AND live_credential.revoked_at IS NULL
            )`
@@ -132,7 +138,7 @@ export function liveSessionReadPredicate(
               WHERE live_credential.id=${humanSessionId}
                 AND live_credential.actor_id=live_reader.id
                 AND live_credential.token_hash=${credentialHash}
-                AND live_credential.expires_at>now()
+                AND live_credential.expires_at>${clock}
                 AND live_credential.revoked_at IS NULL
            )
            AND (

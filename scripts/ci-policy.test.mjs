@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
-import { readFileSync } from 'node:fs'
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
+import { execFileSync, spawnSync } from 'node:child_process'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { parse } from './ci-bootstrap/yaml.mjs'
 
 const workspaces = readWorkspaces()
@@ -198,10 +201,15 @@ test('real workflow semantic mutations cannot silently omit MCP conformance', ()
     value => { value.rootScripts['test:integration'] = 'pnpm test:integration:api' },
     value => { value.rootScripts['test:conformance:integration'] = 'pnpm --filter @workmesh/conformance test:integration' },
     value => { value.packageScripts['test:integration'] = 'vitest run' },
-    ...['src/mcp-coverage.conformance.test.ts', 'src/execution-recovery.conformance.test.ts', 'src/planning-collaboration.conformance.test.ts', 'src/delivery-recovery.conformance.test.ts', 'src/joint-clients.conformance.test.ts'].map(suite => value => {
+    value => { delete value.rootScripts['test:acceptance:m4'] },
+    value => { delete value.packageScripts['acceptance:optional'] },
+    value => { value.integrationConfig += "'src/optional-domains.acceptance.ts'" },
+    value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance').run += '\npnpm test:acceptance:m4' },
+    ...['src/mcp-coverage.conformance.test.ts', 'src/execution-recovery.conformance.test.ts', 'src/planning-collaboration.conformance.test.ts', 'src/delivery-recovery.conformance.test.ts', 'src/joint-clients.conformance.test.ts', 'src/optional-domains.conformance.test.ts'].map(suite => value => {
       assert.ok(value.integrationConfig.includes(suite), 'Mutation must remove an existing suite')
       value.integrationConfig = value.integrationConfig.replace(suite, 'deleted-suite.test.ts')
     }),
+    value => { value.unitConfig = value.unitConfig.replace('**/optional-domains.conformance.test.ts', '**/deleted-suite.test.ts') },
     value => { value.integrationConfig = value.integrationConfig.replace('passWithNoTests: false', 'passWithNoTests: true') },
     value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance').run = 'pnpm test:conformance:integration' },
     value => { value.job.steps.find(step => step.name === 'Run real MCP and Pi conformance')['continue-on-error'] = true },
@@ -211,4 +219,30 @@ test('real workflow semantic mutations cannot silently omit MCP conformance', ()
     mutate(candidate)
     assert.ok(validateMcpConformanceEntrypoints(candidate).length > 0)
   }
+})
+
+test('controlled CRLF evidence preserves bytes and all other whitespace gates', () => {
+  // 仅本次新建的 Git 夹具；不删除或修改任何已有资源。
+  const directory = mkdtempSync(join(tmpdir(), 'workmesh-evidence-whitespace-'))
+  const git = args => execFileSync('git', ['-c', 'core.autocrlf=false', '-c', 'core.whitespace=blank-at-eol,blank-at-eof,space-before-tab', ...args], { cwd: directory })
+  git(['init', '--quiet'])
+  const evidence = join(directory, 'docs/plan/agent-mcp-m4/execution')
+  mkdirSync(evidence, { recursive: true })
+  const attrs = readFileSync(new URL('../docs/plan/agent-mcp-m4/execution/.gitattributes', import.meta.url))
+  writeFileSync(join(evidence, '.gitattributes'), attrs)
+  const path = 'docs/plan/agent-mcp-m4/execution/probe.json'
+  const exact = Buffer.from('{"actual":true}\r\n')
+  writeFileSync(join(directory, path), exact)
+  git(['add', '.'])
+  git(['diff', '--cached', '--check'])
+  assert.deepEqual(git(['show', `:${path}`]), exact)
+  for (const bytes of ['bad \r\n', ' \tbad\r\n', 'bad\r\n\r\n']) {
+    writeFileSync(join(directory, path), bytes)
+    git(['add', path])
+    assert.notEqual(spawnSync('git', ['diff', '--cached', '--check'], { cwd: directory }).status, 0)
+  }
+  writeFileSync(join(directory, path), exact)
+  writeFileSync(join(directory, 'outside.json'), exact)
+  git(['add', '.'])
+  assert.notEqual(spawnSync('git', ['-c', 'core.whitespace=blank-at-eol,blank-at-eof,space-before-tab', 'diff', '--cached', '--check'], { cwd: directory }).status, 0)
 })

@@ -1,0 +1,70 @@
+{
+  "exactTargetSession": "0f1b7a2c-70c5-4eab-be0c-9684500ddfc1",
+  "fullTemplateReceived": true,
+  "runUsageAndA2AReceived": true,
+  "entry": "test:acceptance:m4",
+  "run": {
+    "id": "a7824e7f-9c8c-499b-93a7-8caa6fdb19f1",
+    "session_id": "0f1b7a2c-70c5-4eab-be0c-9684500ddfc1",
+    "status": "pending",
+    "effects": [],
+    "trace": {
+      "scheduledFor": "2020-01-01T00:00:00.000Z",
+      "occurrenceKey": "m4-first"
+    },
+    "dry_run": false,
+    "loop_id": "c082ac30-0999-41bf-8c7e-b274afa1f520",
+    "rule_id": null,
+    "team_id": "c6a41ad3-5b3d-4e06-949d-e30f3730948b",
+    "claimed_at": null,
+    "claimed_by": null,
+    "created_at": "2026-10-11T05:52:30.136696+00:00",
+    "last_error": null,
+    "started_at": null,
+    "claim_fence": 0,
+    "finished_at": null,
+    "available_at": "2020-01-01T00:00:00+00:00",
+    "max_attempts": 5,
+    "workspace_id": "d95090af-4d9d-4154-8e7a-ca7f6cfaa78d",
+    "attempt_count": 0,
+    "occurrence_id": null,
+    "rule_version_id": null,
+    "enforce_no_overlap": true
+  },
+  "usage": {
+    "input_tokens": "34",
+    "output_tokens": "0",
+    "runtime_ms": "0",
+    "tool_calls": "0",
+    "unknown_cost_records": 1,
+    "currency_buckets": [
+      {
+        "currency": "EUR",
+        "known_cost_minor": "0",
+        "unknown_cost_records": 1
+      },
+      {
+        "currency": "USD",
+        "known_cost_minor": "9007199254740993",
+        "unknown_cost_records": 0
+      }
+    ]
+  },
+  "page": {
+    "events": [
+      {
+        "cursor": "3001",
+        "event": {
+          "kind": "status-update",
+          "taskId": "m4-loop-task",
+          "final": false,
+          "status": {
+            "state": "working",
+            "timestamp": "2026-10-11T05:52:31.319Z"
+          }
+        }
+      }
+    ],
+    "cursor": "3005"
+  }
+}

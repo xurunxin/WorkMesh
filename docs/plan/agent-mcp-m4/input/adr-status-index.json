@@ -1,0 +1,452 @@
+[
+  {
+    "path": "docs/adr/0001-monorepo-runtime-split.md",
+    "heading": "# Monorepo and runtime split",
+    "statusExcerpt": "Status: Accepted\n\n## Context\nStage 0 needs a strict TypeScript codebase that can keep UI, HTTP API, background delivery and domain rules independently testable.\n## Decision\nUse pnpm workspaces and Turbo. `apps/web`, `apps/api`, and `apps/worker` are separate runtimes. Framework-independent rules live in `packages/domain`; contracts, database, configuration and observability have separate packages.\n## Alternatives\nOne combined Next server; duplicated business policy in routes and workers.\n## Consequences\nThe API and worker share only package interfaces and PostgreSQL, not in-process state.\n## Migration"
+  },
+  {
+    "path": "docs/adr/0002-rest-sse.md",
+    "heading": "# REST and SSE transport",
+    "statusExcerpt": "Status: Accepted\n\n## Context\nThe web client needs ordinary CRUD and durable realtime updates without retaining application connection state.\n## Decision\nUse REST JSON under `/api/v1` for CRUD and SSE for event streaming. SSE resumes from `Last-Event-ID` or `cursor` and reads PostgreSQL events.\n## Alternatives\nWebSocket-only state; Redis-only pub/sub.\n## Consequences\nConsumers may see an event more than once and must use its durable cursor/idempotency semantics.\n## Migration"
+  },
+  {
+    "path": "docs/adr/0003-postgresql-transaction-outbox.md",
+    "heading": "# PostgreSQL transaction and outbox",
+    "statusExcerpt": "Status: Accepted\n\n## Context\nState mutations must never commit without their event or lose externally deliverable work after an API or worker restart.\n## Decision\nEvery successful command inserts current state, one domain event and one outbox event in one PostgreSQL transaction. Worker claims use `FOR UPDATE SKIP LOCKED`; a timed-out delivering lock is reclaimable and retry count is bounded.\n## Alternatives\nPublish before commit; Redis as authoritative queue.\n## Consequences\nDelivery is at least once; handlers must be idempotent.\n## Migration"
+  },
+  {
+    "path": "docs/adr/0004-actor-model.md",
+    "heading": "# Actor model",
+    "statusExcerpt": "Status: Accepted\n\n## Context\nThe durable model must be future-compatible with humans, agents and services while Stage 0 authorizes only people.\n## Decision\nStore all principals in `actors` with a `human|agent|service` kind. Expose only human password/session authentication in Stage 0. Work items remain project-optional and require `responsible_human_actor_id` only in a `started` workflow category.\n## Alternatives\nSeparate human and agent entity tables; make projects mandatory.\n## Consequences\nStage 1 can add Agent delegation without taking human responsibility away.\n## Migration"
+  },
+  {
+    "path": "docs/adr/0005-authentication-choice.md",
+    "heading": "# Authentication choice",
+    "statusExcerpt": "Status: Accepted\n\n## Context\nThe initial self-hosted UI needs secure browser authentication with a direct CSRF story and server-side revocation.\n## Decision\nUse Argon2id password hashes and an opaque server-side session cookie. Cookie is HttpOnly, SameSite=Lax and Secure when configured. Authenticated unsafe requests carry a server-issued CSRF token; login/install additionally require idempotency keys.\n## Alternatives\nBrowser JWTs; a cookie without CSRF protection.\n## Consequences\nSessions can be revoked by deleting their server record and credentials never enter event payloads.\n## Migration"
+  },
+  {
+    "path": "docs/adr/0006-stage0-authorization-and-event-scope.md",
+    "heading": "# Stage 0 authorization and event scope integrity",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nStage 0 stores a workspace identifier on many resources, but the original foreign keys did not prove that related teams, actors, workflow states, comments, and event audiences belonged to that workspace. The initial installation check also allowed concurrent callers to race on an empty `workspaces` table.\n\n## Decision\n\nUse composite unique keys and foreign keys to bind workspace-scoped relationships. Workflow states and comments carry their owning workspace explicitly. Comment mentions are normalized and may reference only human actors; thread parent and reply references must remain in the same channel.\n"
+  },
+  {
+    "path": "docs/adr/0007-redis-outbox-delivery.md",
+    "heading": "# Redis Stream outbox delivery",
+    "statusExcerpt": "Status: Accepted\n\n## Context\nStage 0 commits domain state, its domain event, and an outbox row atomically in PostgreSQL. The previous worker acknowledged rows without making an observable delivery, so a committed event had no external delivery path.\n\n## Decision\nThe worker claims eligible outbox rows with `FOR UPDATE SKIP LOCKED`, joins their domain events, and sends them to the Redis Stream `workmesh:domain-events`. Each stream entry contains `outboxId`, `eventId`, `cursor`, `workspaceId`, `topic`, and serialized `payload`.\n\nThe worker marks a row delivered only after `XADD` succeeds. Claims are bounded to eight attempts. Failed deliveries use capped exponential backoff; the eighth failure is terminal (`dead`) and cannot be claimed again. Expired delivery locks are reclaimable.\n\nThis is at-least-once delivery. A process can crash after `XADD` and before the PostgreSQL acknowledgement, so stream consumers must deduplicate by `eventId` or `outboxId`."
+  },
+  {
+    "path": "docs/adr/0008-agent-session-token-revocation.md",
+    "heading": "# Agent session token format and revocation",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nStage 1 agents need short-lived credentials that identify an agent session, its active delegation, scoped capabilities, and expiry. A self-contained token alone cannot immediately reflect Stop or delegation revocation.\n\n## Decision\n\nIssue an opaque, short-lived session token only after a one-time exchange token is redeemed. The durable server record is authoritative for token id/nonce, expiry, session state, delegation status, capability intersection, and resource scope. Every agent mutation checks that record, so Stop, capability changes, delegation revocation, and expiry take effect immediately. Persistent event/activity data never contains a bearer or exchange token.\n"
+  },
+  {
+    "path": "docs/adr/0009-agent-session-transition-table.md",
+    "heading": "# Agent session transition table and server-side stop gate",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nWork-item workflow status cannot express an individual agent run. Agents must be stoppable even when their runner is delayed or malicious.\n\n## Decision\n\nUse the Stage 1 closed transition table for `queued`, `acknowledged`, `planning`, `executing`, wait/block/pause states, `stopping`, `stale`, and terminal states. Route handlers submit commands; a shared domain policy validates the current state and transition. Entering `stopping` revokes ordinary agent writes immediately. It permits exactly one `stop_ack` cleanup summary, then transitions only to `canceled`; heartbeat may be accepted diagnostically without restoring authority.\n"
+  },
+  {
+    "path": "docs/adr/0010-agent-activity-immutability-and-redaction.md",
+    "heading": "# Agent activity immutability and redaction",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nAgent progress and tool use must be auditable, but activity content can contain credentials, personal data, or private model reasoning that WorkMesh must not retain.\n\n## Decision\n\nActivities are append-only facts with a session-local sequence. They contain concise operational summaries, sanitized tool inputs, result summaries, evidence references, and visibility. They never require hidden chain-of-thought. Writers redact secrets before persistence; sensitive content is handled as a tombstoned/redacted replacement rather than silently deleting the fact that an activity existed. Large tool output belongs in an artifact, not the activity timeline.\n"
+  },
+  {
+    "path": "docs/adr/0011-agent-plan-versioning-and-conflict.md",
+    "heading": "# Agent plan versioning and conflict handling",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nPlans are collaborative execution objects, not mutable todo text. Concurrent edits and removal of started work can otherwise erase accountability or re-run work incorrectly.\n\n## Decision\n\nEach publication creates a new immutable plan version and advances the session projection only with `If-Match`. Steps retain stable IDs across versions; all dependencies must resolve inside the version and form a DAG. A started, blocked, or completed old step cannot disappear: it remains completed or is marked canceled with a reason. A stale plan revision returns a conflict and must be re-read and merged, never blindly overwritten.\n"
+  },
+  {
+    "path": "docs/adr/0012-mcp-domain-boundary.md",
+    "heading": "# MCP transport boundary",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nMCP is a useful agent integration surface, but its request and resource conventions must not define WorkMesh authorization, state, or persistence semantics.\n\n## Decision\n\nKeep MCP as an adapter over shared contracts and domain commands. MCP resources expose bounded context manifests, plans, activities, and guidance; MCP mutation tools carry an idempotency key and invoke the same server-side command gate as REST. The domain package imports no MCP SDK or transport type. Session tokens, capability scope, approval, revision, and Stop are enforced by the API/domain boundary rather than tool descriptions.\n"
+  },
+  {
+    "path": "docs/adr/0013-lease-semantics.md",
+    "heading": "# Lease semantics",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nParallel agents need coordination without turning a lock into authority.\n\n## Decision\n\nLeases are durable PostgreSQL projections. Exclusive leases conflict with every active lease for the resource; `review_shared` leases may coexist only with other review leases. Acquisition takes a transaction advisory lock and checks/updates expired rows before insertion. TTL, heartbeat, renew, release, force release, worker expiry, and stale/terminal-session expiry are all audited events. Force release requires a human and a reason.\n"
+  },
+  {
+    "path": "docs/adr/0014-handoff-transaction.md",
+    "heading": "# Handoff transaction",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nA handoff must not strand a work item with partially transferred authority.\n\n## Decision\n\nOffering a handoff creates an immutable handoff context snapshot linked to the prior snapshot; it never rewrites prior context. A requested exact-agent handoff is delivered to that agent's configured webhook before acceptance. The installation credential may authenticate only the exact pending target's reject operation; it does not grant session or resource mutation authority. Machine rejection reasons are a closed protocol enum.\n"
+  },
+  {
+    "path": "docs/adr/0015-agent-routing.md",
+    "heading": "# Agent routing",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nSkill-targeted handoffs and plan proposals need explainable, non-escalating selection.\n\n## Decision\n\nRouting considers only active agents with the requested skill, permitted team access, the parent-delegation capability intersection, and remaining concurrency. Skill shortlists sort deterministically by active-session count, slug, then agent ID; exact-agent requests still pass the same access, capability, status, and concurrency gates. Candidate and selected records contain concise filter/rank rationale, and the handoff keeps a routing snapshot. Every accept request also writes an idempotent routing-attempt fact with a sanitized filter summary, candidate count, outcome, and failure code. The attempt is committed independently of acceptance so a no-candidate or later validation failure remains explainable; it never creates delegation, session, lease, event, or outbox state. Per-agent row locking serializes the final concurrency check with session creation. Routing can never add a capability not already approved for the agent, team, and parent delegation.\n"
+  },
+  {
+    "path": "docs/adr/0016-work-room-projection.md",
+    "heading": "# Work Room projection",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nCollaboration needs a shared chronological view without hidden agent private chat.\n\n## Decision\n\nRooms are durable channels for work items, projects, and sessions. Their timeline is a PostgreSQL union projection of room messages, plan steps/comments/assignment proposals, activities, context deltas, decisions, artifacts, handoffs, leases, and events across the room's session subtree. Messages support typed intent, recipients, reply/thread, structured payload, and response resolution. Every explicit recipient must be authorized for the room Team before an Inbox item or webhook is created. Ask, review request, blocker, and handoff always route an Inbox observer item to the responsible human even when the direct recipient is another agent.\n"
+  },
+  {
+    "path": "docs/adr/0017-parent-child-completion-policy.md",
+    "heading": "# Parent child completion policy",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nParent sessions must not report complete while delegated required work is unresolved.\n\n## Decision\n\nChild sessions carry a required-for-parent flag, stable plan-step/version identity, and bounded parent and per-step child-session counts. Child capabilities must remain a subset of the parent delegation and target agent/team grants. Child budgets inherit the parent budget and may only be reduced by child input. Parent completion rejects with stable blocker session IDs until every required child is `completed`; failed, canceled, stale, or active required children remain blockers. Review delegations are required children and additionally require a reviewer-authored `review_result` plus `code_review` artifact. Plan dependencies continue to be an acyclic DAG.\n"
+  },
+  {
+    "path": "docs/adr/0018-provider-abstraction-webhook-recovery.md",
+    "heading": "# Provider abstraction, webhook verification, and recovery",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nStage 3 needs GitHub delivery now without making GitHub identifiers or SDK types part of the domain. Provider calls can fail after an API request commits, and native GitHub webhooks use a raw-body HMAC plus a unique delivery ID rather than WorkMesh's timestamped agent-webhook protocol.\n\n## Decision\n\nThe API authorizes and persists provider intent, a domain event, and an outbox row in one PostgreSQL transaction. Immediately before every not-yet-performed provider mutation, the worker revalidates the exact actor, active ordinary-write session, delegation, agent and team grants, capability, scope, repository context, repository, provider connection, work item, project, and current plan step from PostgreSQL. Revocation is terminal and audited without calling the provider. A worker then calls a provider-neutral interface using opaque connection, repository, commit, and pull-request IDs. The deterministic fake provider implements that same interface before the built-in GitHub adapter. Provider action IDs are carried as idempotency markers in GitHub commits and pull requests; retries recover a checkpointed provider result without another external mutation. A merge that the provider already reports as completed may likewise reconcile locally only when its provider head and merge result still match the persisted exact-head approval binding; this recovery path does not grant authority for a new provider write. GitHub App is the production credential model: the private key is encrypted at rest, decrypted only by the worker, used to sign a short-lived app JWT, and exchanged for an installation token cached only in worker memory.\n"
+  },
+  {
+    "path": "docs/adr/0019-repository-context-and-agents-scope.md",
+    "heading": "# Repository context and AGENTS scope",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nAgents require reproducible repository context, but repository guidance is untrusted input and must not grant capabilities or disclose repositories outside a live delegation.\n\n## Decision\n\nA repository context immutably pins repository, base branch, base SHA, branch naming pattern, allowed paths, allowed repository operations, and exactly one project, work item, or session. The caller supplies scope and the pinned SHA, but never supplies guidance content or provenance. After the API commits a human-authorized resolution intent, the worker revalidates the human administrator/maintainer authority and asks the provider to read the pinned commit tree and applicable blobs. Applicable `AGENTS.md` files are discovered root-to-leaf and recorded with provider blob SHA, SHA-256 content hash, and exact content. Context is authorized before it is read or returned. Agent access requires active definition, Team grant, delegation, `repo:read`, and a matching resource link.\n"
+  },
+  {
+    "path": "docs/adr/0020-exact-head-pull-request-approval.md",
+    "heading": "# Exact-head pull request review and merge approval",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nA generic approval or review becomes unsafe when a pull-request head changes. Reviewers must not approve their own produced change, and a lease is not merge authorization.\n\n## Decision\n\nThe canonical merge payload binds provider, connection, repository, provider pull-request ID, exact head SHA, and merge method. Only action `provider.pull_request.merge` is accepted. Generic approval consumption rejects merge approvals; the provider worker alone consumes one after a live provider head recheck and successful merge.\n"
+  },
+  {
+    "path": "docs/adr/0021-artifact-upload-and-provenance.md",
+    "heading": "# Artifact upload and provenance",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nStage 3 artifacts include provider links and uploaded test/build evidence. Metadata without a checksum and producer/resource links is not sufficient audit evidence.\n\n## Decision\n\nEvery delivery artifact has a SHA-256 checksum, source tool, producer actor, session, work item, optional project/plan step, repository, and PR link. Test reports may include the command and normalized result. Provider-created branch, commit, and PR artifacts are produced by the worker after provider success.\n"
+  },
+  {
+    "path": "docs/adr/0022-completion-suggestion-and-project-progress.md",
+    "heading": "# Completion suggestion and project progress policy",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nMerged code is evidence, not proof that a work item should change workflow status. Project reporting needs milestones, health updates, dependencies, and an artifact shelf without introducing Stage 4 automation.\n\n## Decision\n\nProjects retain the existing single-Team model. Milestones group work items and calculate progress from human-controlled workflow status categories. Updates may be drafted by an authorized agent through the HTTP API, TypeScript SDK, or MCP tool, but publishing is a separate human-only action. Basic project dependencies must form an acyclic graph.\n"
+  },
+  {
+    "path": "docs/adr/0023-automation-versioning-and-effect-execution.md",
+    "heading": "# Automation Versioning and Effect Execution",
+    "statusExcerpt": "\nStatus\n\nAccepted for Stage 4.\n\nContext\n\nRules may run from schedules or durable domain events. A retry, worker crash, duplicate delivery, or rule edit must not change what an admitted run means or repeat an already completed external effect. A dry-run must remain useful without mutating domain state or contacting external systems.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0024-loop-admission-overlap-and-retry.md",
+    "heading": "# Loop Admission, Overlap, and Retry",
+    "statusExcerpt": "\nStatus\n\nAccepted for Stage 4.\n\nContext\n\nA Loop repeatedly starts Agent work from a pinned template. Duplicate schedules, concurrent workers, stale authorization, or exhausted budgets must not create overlapping or unauthorized Sessions. A Loop run has no requirement to fabricate a Work Item.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0025-source-linked-project-forecast.md",
+    "heading": "# Source-linked Project Forecast",
+    "statusExcerpt": "\nStatus\n\nAccepted for Stage 4.\n\nContext\n\nProject health and forecasts influence prioritization but are estimates. A single unexplained status or a model-generated conclusion presented as fact is not sufficiently auditable.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0026-usage-and-cost-normalization.md",
+    "heading": "# Usage and Cost Normalization",
+    "statusExcerpt": "\nStatus\n\nAccepted for Stage 4.\n\nContext\n\nProviders report tokens, runtime, tool calls, and money in different shapes and at different times. Treating a missing provider price as zero would understate cost and make budget decisions unsafe.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0027-a2a-version-boundary.md",
+    "heading": "# A2A Version Boundary",
+    "statusExcerpt": "\nStatus\n\nAccepted for Stage 4.\n\nContext\n\nA2A evolves independently from WorkMesh. External Agent cards, tasks, messages, artifacts, and streaming states cannot be allowed to leak protocol-version details into the domain or bypass WorkMesh authorization.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0028-declarative-route-policy-and-event-audience.md",
+    "heading": "# Declarative route policy and event audience",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nWorkMesh had transport schemas and distributed authorization checks, but no\nfail-closed inventory proving that every Fastify route was declared. Bearer\nauthentication identified a principal, while mutable Agent authority still\ndepended on live Session, Delegation, capability, resource, Approval, Lease,"
+  },
+  {
+    "path": "docs/adr/0028-kaneo-frontend-architecture-and-dependency-policy.md",
+    "heading": "# Kaneo frontend architecture and dependency policy",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nWorkMesh is selectively adopting Kaneo's Human-facing interaction patterns after GA. The current Web is intentionally small: route components call a shared fetch helper directly, transport-shaped types are often local to screens, and `packages/ui` exports only a minimal Button. This is fast to understand today but does not yet provide a stable boundary for the M1-M5 redesign.\n\nCopying Kaneo routes, stores, hooks or component dependencies as one stack would create a second application architecture and could blur WorkMesh authority. WorkMesh must continue to distinguish Human responsibility from delegated Agent execution, Work Item workflow state from Agent Session execution state, and client projections from PostgreSQL/API authority.\n\nThe PRD previously listed Tailwind, shadcn/ui, TanStack Query/Table and TipTap as a recommended Web stack. The v23 upstream audit showed that several candidates should be conditional, deferred or rejected rather than adopted unconditionally.\n"
+  },
+  {
+    "path": "docs/adr/0029-rich-content-sanitization-and-editor-boundary.md",
+    "heading": "# Rich-content sanitization and editor boundary",
+    "statusExcerpt": "\nStatus\n\nProposed, revision 2, for the repaired GEN-9 contract Gate. Implementation remains blocked until an independent Gate accepts the machine contract. No editor dependency is selected in this slice.\n\nContext\n\nWorkMesh already stores Work Item descriptions and comments as bounded text and exposes canonical comment, mention, artifact-upload, checksum, provenance, revision, CSRF, and idempotency contracts. Kaneo uses Tiptap-based editors, but its editor extensions, stores, upload behavior, router, and backend authority cannot be copied into WorkMesh. The existing frontend architecture explicitly deferred Tiptap, DOMPurify, and Mermaid until M3 decided the content model, paste and upload behavior, SSR, sanitizer ownership, license, and bundle budget.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0029-secret-aware-authentication-idempotency.md",
+    "heading": "# Secret-aware authentication idempotency",
+    "statusExcerpt": "\nStatus\n\nAccepted.\n\nContext\n\nAuthentication and Agent-session bootstrap mutations issue cookies, CSRF values,\none-time exchange codes, or bearer tokens. The generic\n`api_idempotency_keys.response_body` JSON replay mechanism is appropriate for\nordinary commands but would persist those credentials in plaintext. Installation"
+  },
+  {
+    "path": "docs/adr/0030-shared-authentication-rate-limits.md",
+    "heading": "# Shared authentication rate limits",
+    "statusExcerpt": "\nStatus\n\nAccepted.\n\nContext\n\nCredential verification is intentionally more expensive and more abuse-sensitive\nthan ordinary WorkMesh reads and commands. Per-process counters do not provide a\nsingle budget across API replicas, and trusting an arbitrary forwarded address\nlets a caller evade an IP dimension. A rate-limit denial must not claim an"
+  },
+  {
+    "path": "docs/adr/0031-authenticated-single-use-bootstrap.md",
+    "heading": "# Authenticated single-use installation bootstrap",
+    "statusExcerpt": "\nStatus\n\nAccepted.\n\nContext\n\nThe installation endpoint creates the first human administrator. Treating the\nabsence of `platform_installation` as authorization allowed the first remote\ncaller to claim a newly exposed deployment. Installation also participates in\nthe shared Redis credential limiter, declarative route policy, and encrypted"
+  },
+  {
+    "path": "docs/adr/0032-signed-keyset-pagination.md",
+    "heading": "# Signed, authorization-aware keyset pagination",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nUnbounded REST collections produced response-size and memory risk. Offset pagination cannot give stable traversal under repeated sort values and makes sparse authorization expensive. A cursor must not become a substitute for current authorization or reveal filters, actor identity, or database tuples.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0033-postgres-authoritative-realtime-replay.md",
+    "heading": "# PostgreSQL-authoritative realtime replay",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nWorkMesh clients need restart-safe realtime delivery without turning every SSE\nconnection into a database poller. Redis is already operational infrastructure,\nbut it is not the durable source of truth and its availability or retention must\nnot decide whether an authorized client can replay a committed domain event."
+  },
+  {
+    "path": "docs/adr/0034-production-runtime-images.md",
+    "heading": "# Production runtime images and lifecycle",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nThe development Compose stack builds from the checkout and runs source-oriented commands. That is useful for local work, but it does not provide immutable application artifacts, exact source provenance, minimal runtime contents, fail-closed production configuration, independent readiness, or a bounded shutdown contract. Reusing that file for production would also couple safe local defaults to production policy.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0035-retention-archive-and-heartbeat-projections.md",
+    "heading": "# Retention archive and bounded heartbeat projections",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nUnbounded heartbeat facts and indefinite replay/event retention make a\nself-hosted WorkMesh installation grow with pulse frequency rather than domain\nwork. Event deletion is high risk because PostgreSQL cursors are the durable\nrealtime contract and A2A, audit, recovery, and outbox rows may reference an"
+  },
+  {
+    "path": "docs/adr/0036-exact-archive-membership.md",
+    "heading": "# Exact archive membership",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nArchive segments can contain events selected by age rather than a contiguous\nWorkspace cursor prefix. For example, an old event, a recent event, and a later\nbackdated old event produce one object whose cursor envelope spans all three\nwhile containing only the first and third. Treating `start_cursor..end_cursor`"
+  },
+  {
+    "path": "docs/adr/0037-agent-inbox-recipients-claims-and-receipts.md",
+    "heading": "# Agent Inbox recipients, claims, and receipts",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nThe original Inbox projected actionable work only to Human actors. Agent\ncollaboration used Work Room messages and webhooks, but it did not preserve\nwhether a message addressed an Agent actor or one exact Agent Session. A\nHuman-only recipient column and mutable Inbox status could not safely support"
+  },
+  {
+    "path": "docs/adr/0038-atomic-checksummed-v1-migrations.md",
+    "heading": "# Atomic checksummed v1 migrations",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nThe pre-v1 migrator discovered numbered files from the filesystem, let each SQL\nfile own its transaction, and registered the version afterward. A process loss\nbetween SQL commit and registration could replay non-idempotent DDL. Applied\nfiles also had no durable checksum, and clean installs replayed the full"
+  },
+  {
+    "path": "docs/adr/0039-authenticated-complete-recovery-bundles.md",
+    "heading": "# Authenticated complete recovery bundles",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nA PostgreSQL dump does not contain Artifact bodies or retention archive objects.\nIt also cannot prove that operator-held encryption material still decrypts\nprovider and Agent webhook secrets. Restoring a database alone can therefore\nproduce an apparently healthy but incomplete WorkMesh installation."
+  },
+  {
+    "path": "docs/adr/0040-transactional-active-executor-projection.md",
+    "heading": "# Transactional active executor projection",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nA Work Item keeps a responsible Human, while Agent execution is authorized by\nDelegations and coordinated by Leases. Reconstructing the currently executing\nAgent from Session, Delegation, and Lease tables at every transport surface is\nslow, inconsistent, and prone to treating a Lease as authority."
+  },
+  {
+    "path": "docs/adr/0041-versioned-guidance-and-context-pinning.md",
+    "heading": "# Versioned Guidance and context pinning",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nWorkspace and Team Guidance endpoints returned placeholders, while Project\nGuidance reused descriptive project metadata. Agent Sessions therefore could\nnot reproduce which instruction revisions were actually used.\n"
+  },
+  {
+    "path": "docs/adr/0042-agent-client-profile-and-derived-capability-manifest.md",
+    "heading": "# Agent Client Profile and derived capability manifest",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nNative HTTP, MCP, webhook, Inbox, realtime, Session, Artifact, and Handoff\nsurfaces existed without one adapter-neutral client contract. A separately\nmaintained capability list would drift from route authorization and could be\nmisread as a grant."
+  },
+  {
+    "path": "docs/adr/0043-agent-connection-and-coordination-mcp.md",
+    "heading": "# Agent Connection & Coordination MCP",
+    "statusExcerpt": "\nStatus\n\nAccepted for v1.1 (Agent-first coordination).\n\n## Context\n\nToday WorkMesh assumes a Human opens a Linear-style work item and a\nWorkspace Admin hand-configures an external Agent to receive a webhook\nfor that one work item. The Agent's Installation Token is created in an\nout-of-band setup, the per-work-item Session is opened by the platform,"
+  },
+  {
+    "path": "docs/adr/0044-structured-planning-domain-parity.md",
+    "heading": "# Structured planning domain parity",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nThe WorkMesh GA model already stored Projects and a create-only Milestone record, but Kaneo-to-WorkMesh migration exposed three gaps. Agents could not manage Milestones through MCP, Work Item hierarchy was only expressible in prose, and blocker/related links had no durable typed representation. This prevented the Human Experience adoption project from using WorkMesh itself as its complete planning control plane.\n\nDecision\n"
+  },
+  {
+    "path": "docs/adr/0045-webui-redesign-i18n-theme-unification.md",
+    "heading": "# WebUI i18n entry consolidation and single-token theme unification",
+    "statusExcerpt": "\nStatus: Proposed\n\n## Context\n\nThe current WorkMesh web app (`apps/web`) carries design debt that makes the\nHuman-facing UI feel uneven and creates translation drift. Three concrete\nproblems have accumulated under ADR 0028's M1 \"tokens + presentation\nprimitives\" pass:\n\n1. **Three coexisting design systems in one CSS file** —"
+  },
+  {
+    "path": "docs/adr/0046-agent-connection-recovery-and-execution-capacity.md",
+    "heading": "# Agent Connection recovery, execution capacity, and credential proof",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nReal-world Agent Connection use exposed four related reliability gaps:\n\n- a live `agent_coordination_sessions` row could point at a terminal or otherwise invalid backing `agent_sessions` row;\n- Coordination Sessions were included in `max_concurrency` admission even though they are control-plane identity and not executor work;\n- the signed WorkMesh Skill was absent from the production Web standalone image, while the Windows checkout could silently rewrite its signed LF bytes to CRLF;\n- the MCP bootstrap tools could prove an Agent Session capability manifest, but could not prove which Connection credential authenticated the request during rotation overlap."
+  },
+  {
+    "path": "docs/adr/0047-agent-task-admission-and-forced-delegation.md",
+    "heading": "# Agent task admission and forced delegation",
+    "statusExcerpt": "\nStatus\n\nAccepted for implementation.\n\nContext\n\nWorkMesh already separates the responsible Human from Agent execution, and it\nalready exposes an atomic Human operation that creates a Delegation and initial\nAgent Session. The Web UI hid that operation below Discussion, passed the\nlogged-in Human instead of the Issue's responsible Human, and showed only the"
+  },
+  {
+    "path": "docs/adr/0048-stale-self-claim-recovery.md",
+    "heading": "# Stale self-claim recovery",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nGitHub Issue #83 exposed two related recovery gaps. An acknowledged execution\nSession with no heartbeat was classified as stale immediately, and an active\nexecutor Delegation whose only non-terminal Session was stale made its Work\nItem permanently unclaimable. The generic state endpoint also advertised the\ndomain transition `stale -> acknowledged` while its route authorization\nrejected every stale Session before the command could run."
+  },
+  {
+    "path": "docs/adr/0049-terminal-only-self-claim-recovery.md",
+    "heading": "# Terminal-only self-claim recovery",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nGitHub Issue #85 exposed a remaining autonomous-intake dead end after ADR 0048.\nAn active executor Delegation can outlive its execution attempt. When every\nexecution Session on that Delegation is terminal, the execution-capacity\npredicate correctly returns no rows, but claim admission treated the empty\nnon-terminal set as incompatible. The Work Item was neither actively executing\nnor claimable, and the terminal Session could not be reopened."
+  },
+  {
+    "path": "docs/adr/0050-human-attention-authorized-projection.md",
+    "heading": "# Human Attention authorized projection",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nIssue #88 requires one typed Human Attention contract for Human and Agent\nclients. The existing Decisions, Approvals, Inbox items, Agent Sessions, and\nCompletion Suggestions remain authoritative. A browser-side union of Session\nstates, message intent names, or free text cannot preserve their different\nlifecycle, authorization, revision, evidence, and response semantics.\n"
+  },
+  {
+    "path": "docs/adr/0051-human-control-plane-read-models.md",
+    "heading": "# Human Control Plane authorized read models",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nHuman operators and authorized Agents currently reconstruct execution status from independent Project, Work Item, Session, Plan, Activity, Attention, Artifact, Approval, Decision, Lease, and Handoff reads. Client-side joins create N+1 load and can combine facts that were not authorized under the same live identity state. Session controls also lack a current-revision consequence preview.\n\n## Decision\n\nAdd version 1 server-side projections for Workspace/Project Control Center, Run Explanation, Work Item execution summary, and Session Action Preview.\n"
+  },
+  {
+    "path": "docs/adr/0052-human-control-plane-information-architecture.md",
+    "heading": "# Human Control Plane information architecture",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nWorkMesh exposes durable Project, Work Item, Attention, Agent Session, Plan,\nActivity, Evidence, and policy resources. The existing Web navigation mirrors\nthose implementation surfaces. Human operators therefore need to know internal\nresource names before they can answer the product questions that matter: what\nneeds a decision, what is running, what is at risk, and what was verified.\n"
+  },
+  {
+    "path": "docs/adr/0053-human-attention-governed-responses.md",
+    "heading": "# Human Attention governed responses",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nADR 0050 made Human Attention a read-only projection over Decisions,\nApprovals, Inbox items, Agent Sessions, and Completion Suggestions. Issue #92\nrequires Humans to respond from that projection without introducing a second\nworkflow authority or allowing the browser to invent command scope, bulk\ncompatibility, or lifecycle.\n"
+  },
+  {
+    "path": "docs/adr/0054-causal-agent-run-explanation.md",
+    "heading": "# Causal Agent Run explanation",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nThe version 1 Run Explanation projection established in ADR 0051 identifies a\nSession, its current Plan, bounded Activity groups, Attention, changes, evidence,\nhealth, and controls. Issue #93 requires the projection to explain the complete\nexecution story without asking the browser to infer causality from Activity text\nor exposing hidden reasoning and unsanitized payloads.\n"
+  },
+  {
+    "path": "docs/adr/0055-governed-agent-session-controls.md",
+    "heading": "# Governed Agent Session controls",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nAgent Session controls currently mix direct mutations, fixed audit reasons, and\nbrowser-native prompts. The control-preview projection introduced by ADR 0051\nalready evaluates the shared domain state policy, but the Web does not bind a\nHuman-reviewed preview to the final revisioned command or preserve drafts when\nthat revision becomes stale.\n"
+  },
+  {
+    "path": "docs/adr/0056-work-item-execution-workspace.md",
+    "heading": "# Work Item execution and decision workspace",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nWork Item detail currently gives editable Issue fields first and places Human\nresponsibility, Agent execution, relationships, and collaboration behind separate\nsecondary tabs. WorkMesh already exposes authoritative Work Item execution\nsummaries, Human Attention, Run explanations, Active Executor projections, and"
+  },
+  {
+    "path": "docs/adr/0057-actionable-collaboration-queues.md",
+    "heading": "# Actionable collaboration queues and contextual threads",
+    "statusExcerpt": "\nStatus\n\nAccepted\n\nContext\n\nWorkMesh already persists typed Human Attention, Human and Agent Inbox items,\nsession-scoped claims and receipts, Work Room messages, notifications, and\ngoverned response commands. The current Web surface shows Human Attention alone\nat `view=inbox`; the older Inbox cards and notification delivery cards are not"
+  },
+  {
+    "path": "docs/adr/0058-authorized-recovery-and-freshness-projection.md",
+    "heading": "# Authorized Recovery and freshness projection",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nIssue #97 requires one Recovery Center that explains why execution is unsafe,\nwhich durable facts are preserved, and which existing command can reconcile the\ncondition. Human Attention already identifies several recovery-shaped requests,\nwhile Run Explanation, Action Preview, Leases, Approvals, and realtime expose\nthe source facts independently. Reclassifying those facts in the browser would\nduplicate policy and could leak hidden resources."
+  },
+  {
+    "path": "docs/adr/0059-canonical-navigation-and-evidence-drawer.md",
+    "heading": "# Canonical navigation and Evidence Drawer",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nHuman Control Plane surfaces expose related Project, Work Item, Run, Plan, Attention, collaboration, Recovery, and evidence facts, but their local route parameters and evidence presentations are inconsistent. URI presence is not validation, and source visibility cannot grant target visibility.\n\n## Decision\n\nDefine one typed canonical-route map for supported object identities and one URL-owned Evidence Drawer contract. Existing authorized projections remain authoritative: Run `evidenceDetails` supplies rich producer/Plan/validation/provider facts while Attention, Work Item, collaboration, and Recovery may provide bounded references. Missing relationships remain `unknown`; the client never infers links from text.\n"
+  },
+  {
+    "path": "docs/adr/0060-optional-graph-integration-boundary.md",
+    "heading": "# Optional Graph integration boundary",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nWM-UX-012 integrates the Human Control Plane with the Graph, graph change-set,\nrecommendation, and governed-autonomy domains only when those domains exist.\nGitHub Issues #46, #48, #49, and #50 are open at this decision point. The current\nrepository contains no authoritative Graph version, Ready Set, coordination\nrecommendation, or autonomy policy schema, route, or persistence model.\n"
+  },
+  {
+    "path": "docs/adr/0061-human-control-plane-final-acceptance-and-telemetry.md",
+    "heading": "# Human Control Plane final acceptance and product telemetry",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nThe Human Control Plane now spans Project, Work Item, Attention, Run, governed\ncontrol, collaboration, Recovery, canonical navigation, and Evidence surfaces.\nComponent success alone does not prove the complete Human outcome. The repository\nalready owns deterministic real-local, mocked-dev, and production-Web plus mocked\nAPI Playwright topologies, a four-viewport visual tour, semantic/keyboard helpers,\nand 300-object performance fixtures. WM-UX-013 must make those assets the program"
+  },
+  {
+    "path": "docs/adr/0062-autonomous-control-plane-and-agent-lifecycle.md",
+    "heading": "# Autonomous control plane and Agent lifecycle",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nWorkMesh already exposes governed Approvals, Human Attention, durable Inbox and\nAgent Connection lifecycles, but the deployed Human Control Plane still requires\nmanual approval for every protected action, browser notification delivery is a\nstub, revoked Agents remain prominent in operational lists, and creating a new\nAgent Connection requires a Human to enter every Agent-specific field.\n"
+  },
+  {
+    "path": "docs/adr/0063-multica-inspired-authority-first-human-agent-workspace.md",
+    "heading": "# Multica-inspired authority-first Human-Agent workspace",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nWorkMesh already owns the authoritative Project, Work Item, Human Attention,\nApproval, Agent Session, Plan, Activity, Recovery, and Evidence domains. The\nHuman Control Plane is complete, but two usability defects remain material:\n\n- the Web Markdown renderer is a handwritten line parser that turns soft line\n  wraps into separate paragraphs and does not correctly render CommonMark/GFM;"
+  },
+  {
+    "path": "docs/adr/0064-unified-human-control-plane-web-experience.md",
+    "heading": "# Unified Human Control Plane Web experience",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nWorkMesh has a complete Human Control Plane, but successive frontend iterations\nleft multiple navigation systems, duplicated authenticated shells, preview-only\nroutes, and mixed URL state ownership. Observable failures include clipped long\nProject descriptions, Project selection races, a legacy Work layout reached\nfrom the Project Control Center, missing sidebar footers, an Agent detail crash\ncaused by PostgreSQL enum-array transport, and a Recovery projection query that"
+  },
+  {
+    "path": "docs/adr/0065-prototype-web-pi-workbench-and-llm-connections.md",
+    "heading": "# Prototype Web UI, Pi Workbench, and user-configured LLM connections",
+    "statusExcerpt": "\n## Status\n\nProposed — 2026-09-24. 本 ADR 是实施路线图的设计输入。W01 已完成兼容性 Spike（5/5 通过）、Node 基线升级与传输契约冻结，钉住结果见下文\"W01 验证结果与钉住基线\"；实现版本以此为准。W07–W10 与 W13 的纵向路径正在实装，尚未满足整项路线图的发布门槛。\n\n稳定规划标识：`WM-WEBPI-20260924`。本地执行计划：`docs/plan/2026-09-24-prototype-pi-agent-workbench.md`；GitHub 与 WorkMesh 映射见同目录的 `.index.json`。\n\n## Context\n\n当前仓库已经具备 Next.js/React Web、共享 UI、Markdown 编辑/渲染、版本化 Guidance、受控 Agent Session/Connection、MCP、审批、租约、事务 outbox 和持久事件游标。静态原型提供新的暗浅主题、工作台布局、工具/制品卡、审批后果预览与移动布局，但使用模拟数据。用户要求以该原型替换实装 Web，引入 Pi 后端，提供用户自定义 LLM 接入以及 Agent 操作 Skill/文档。\n"
+  },
+  {
+    "path": "docs/adr/0066-versioned-project-and-issue-documents.md",
+    "heading": "# Versioned Project and Issue Documents",
+    "statusExcerpt": "\n## Status\n\nAccepted — 2026-09-25. Implements W06 of `docs/plan/2026-09-24-prototype-pi-agent-workbench.md` under GitHub issue #128. The isolated Docker stage tracks this ADR in Project `f5884215-8b1c-48bb-9b7f-717fa9994cd5` and WorkItem `9007b561-aabd-4a9a-b5fc-42b006a7db3b`, separately from the earlier persistent WorkMesh IDs.\n\n## Context\n\nProject descriptions, Issue descriptions, versioned Guidance, and evidence artifacts have different authority and retention rules. A Project or Issue needs multiple named Markdown documents with reviewable history. Concurrent Human and Agent edits must preserve committed revisions and identify the author. Agent session context must continue to refer to the revision it originally received.\n\n## Decision\n"
+  },
+  {
+    "path": "docs/adr/0067-governed-pi-workmesh-tools.md",
+    "heading": "# Governed WorkMesh Tools for Pi Runner",
+    "statusExcerpt": "\n## Status\n\nAccepted — 2026-09-25. This records the first W11 implementation slice. The remaining operation families stay open in W11. The isolated Docker WorkMesh tracks this ADR in Project `19a58123-88c7-4d5e-9bc7-619165bfc818` and WorkItem `ee2e9dbd-a657-47e5-8cb1-0b488df99ab3`.\n\n## Context\n\nThe isolated Pi Runner could read Session context but could not use WorkMesh commands. Giving it a Human cookie, direct database access, or unrestricted Pi filesystem and shell tools would bypass delegation, capability, Stop, revision, and audit rules. Pi tool calls can be retried after transport failure, so a write must retain an operation identity across a retry.\n\n## Decision\n"
+  },
+  {
+    "path": "docs/adr/0068-atomic-workbench-turn-session-completion.md",
+    "heading": "# Atomic Workbench Turn and Agent Session Completion",
+    "statusExcerpt": "\n## Status\n\nAccepted — 2026-09-25. W11 implementation; Docker test control plane Project `19a58123-88c7-4d5e-9bc7-619165bfc818`, WorkItem `ee2e9dbd-a657-47e5-8cb1-0b488df99ab3`.\n\n## Context\n\nPi's `workmesh_complete_session` tool produces a completion intent while an Agent Session is executing. The public Turn must be settled before the Session becomes terminal. Separate REST transactions left a crash window after Turn settlement and before Session completion, during which the intent existed only in Runner memory.\n\n## Decision\n"
+  },
+  {
+    "path": "docs/adr/0069-embedded-pi-workbench-skill-pin.md",
+    "heading": "# Embedded Pi Workbench Skill pin",
+    "statusExcerpt": "\nStatus: Accepted for W12 partial implementation; public Skill release remains open.\n\n## Context\n\nThe Pi Runner had no WorkMesh Skill loaded. It already offered capability filtered tools, but model behavior depended on a turn prompt to discover authority, read before a write, and report evidence. The public WorkMesh coordination Skill 1.1.0 is a signed release pinned by existing Agent Connections. Its signing key is unavailable in this environment; changing its bytes in place would invalidate those pins.\n\n## Decision\n\nShip a separate, self-contained `workmesh-workbench` 0.1.0 Skill inside the Runner image. Generate a SHA-256 manifest from its exact bytes and check it before release. Before each Pi session starts, the Runner checks the packaged file against that manifest and fails closed on mismatch. Pi receives only this Skill and its content in the system prompt; ambient extensions, Skills, templates, themes, and context files are disabled. The server remains the sole authorization authority. The public signed WorkMesh 1.1.0 artifact remains unchanged.\n"
+  },
+  {
+    "path": "docs/adr/0070-artifact-storage-on-rustfs-and-header-signed-uploads.md",
+    "heading": "# Artifact storage on RustFS and header-signed uploads",
+    "statusExcerpt": "\nStatus: Accepted\n\n## Context\n\nArtifact storage ran on MinIO. MinIO withdrew the `minio/minio` and `minio/mc`\nrepositories from Docker Hub (the repository endpoint now returns 404), and its\n`quay.io` namespace then began answering unauthenticated manifest requests with\n`401 Unauthorized` for both images. Local caches still worked, so a developer\nmachine could pass while every CI run failed: `api-integration` and\n`recovery-integration` both died in their infrastructure step with"
+  },
+  {
+    "path": "docs/adr/0071-lite-single-node-self-hosted-deployment.md",
+    "heading": "# Lite single-node self-hosted deployment class",
+    "statusExcerpt": "\nStatus: Proposed\n\n## Context\n\n`docker-compose.production.yml` is a release-grade contract: four application\nimages pinned by GHCR digest, a matching release manifest, one-shot\n`migrate` and `minio-init` steps, the same non-root read-only hardening on\nevery application container, and an RC workflow that gates the composition.\nIt is the right shape for a shared or long-lived environment.\n"
+  },
+  {
+    "path": "docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md",
+    "heading": "# Redis-free and object-store-free runtime profiles, and the SQLite assessment",
+    "statusExcerpt": "\nStatus: Proposed\n\n## Context\n\nADR 0071 adds a Lite deployment class for a single operator on a single weak\ndevice, and sets the supported floor at 2 GB of RAM. That floor is uncomfortable\nfor the class of device people actually keep on a shelf: an old mini PC, a\nthin client, a small NAS. This ADR asks whether the three data services can be\nremoved, and if so what is actually lost.\n"
+  },
+  {
+    "path": "docs/adr/0073-human-ordered-position-within-a-status-column.md",
+    "heading": "# A Human-ordered position within a status column",
+    "statusExcerpt": "\nStatus: Proposed\n\n## Context\n\nAn Issue's position inside a status column is currently not a fact. `work_items`\n(`packages/db/src/schema.ts:98`) carries `status_id`, `priority`, `due_date`,\n`responsible_human_actor_id`, `labels` and the project/milestone/cycle/parent\nlinks — and nothing that says \"this one comes before that one\". The board\ntherefore cannot reorder anything; a Human can only change which column a card\nis in."
+  },
+  {
+    "path": "docs/adr/0074-workspace-configuration-readiness-check-and-first-run-surface.md",
+    "heading": "# Workspace configuration readiness check and the first-run surface",
+    "statusExcerpt": "\nStatus\n\nProposed\n\nContext\n\nWorkMesh already owns every individual step a new operator must take. An\nadministrator is created once through the authenticated bootstrap credential\n(ADR 0031). An Agent is enrolled through a policy or bound to a client through a\nconnection. A model is configured through `LlmConnection`"
+  },
+  {
+    "path": "docs/adr/0075-verifiable-and-simplified-agent-connection-onboarding.md",
+    "heading": "# Verifiable and simplified agent connection onboarding",
+    "statusExcerpt": "\nStatus\n\nProposed\n\n仅替换 ADR 0046 的人工操作流程，不撤销 ADR 0043 的新 key 拒绝规则。\n客户端恢复仍须重放同一请求身份；这里改变执行校验的工具，不减少校验或放宽凭据重放。\n\nContext\n\nAgents get stuck at connection authentication. Before deciding what to change,"
+  },
+  {
+    "path": "docs/adr/0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md",
+    "heading": "# China-ecosystem ingress, channel delivery contract, and model presets",
+    "statusExcerpt": "\nStatus\n\nProposed\n\nContext\n\nThe Lite class (ADR 0071, both **Proposed** and not yet implemented) targets a\nperson, a small team, or an internal team inside a company. In the Chinese market\nthat audience reaches its tools through a specific set of surfaces, and the\nrepository has no adapter for any of them. Scoped honestly: no existing"
+  },
+  {
+    "path": "docs/adr/0077-reference-derived-visual-system-and-workbench-layout.md",
+    "heading": "# Reference-derived visual system, card anatomy, and workbench layout",
+    "statusExcerpt": "\nStatus\n\nProposed\n\nReads with, retaining these boundaries except the bounded ADR 0064 visual baseline\namendment below: ADR 0028 (Accepted) frontend architecture and\nM1-M5 staging, ADR 0045 (Proposed) single-token theme unification, ADR 0052\n(Accepted) information architecture, ADR 0064 (Accepted) unified shell, ADR 0073\n(Proposed) column position, ADR 0074 (Proposed) configuration readiness.\n"
+  },
+  {
+    "path": "docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md",
+    "heading": "# A designated coordinating Chief over an agent graph",
+    "statusExcerpt": "\nStatus\n\nProposed\n\nReads with, and does not re-decide: ADR 0004 (actor model), ADR 0012 (MCP domain\nboundary), ADR 0013 (lease semantics), ADR 0014 (handoff transaction), ADR 0020\n(exact-head approval), ADR 0023 and ADR 0024 (automation versioning and loop\nadmission), ADR 0037 (agent inbox), ADR 0038 (atomic checksummed migrations),\nADR 0042 (agent client profile and derived capability manifest), ADR 0050 and\nADR 0053 (human attention and governed responses), ADR 0062 (autonomous control"
+  },
+  {
+    "path": "docs/adr/0078-review-round2.md",
+    "heading": "# ADR 0078 第二轮审查：自主分派模型",
+    "statusExcerpt": "\n日期：2026-10-07。结论：**自主分派模型可以成立，但当前文本还不足以确认没有引入新的授权漏洞；实施前需补齐下列契约。** 共 3 high、2 medium、1 low；无 blocking、nit。不建议恢复逐次人类批准。\n\n审查范围：ADR 0078 全文、对应计划的修订与 F 链、ADR 0062、第一轮 B1/H3，以及当前 CONTEXT、AGENT_PROTOCOL、OPENAPI、SCHEMA 入口和相关授权源码。以下简称：\n\n- **ADR**：`docs/adr/0078-designated-coordinating-chief-over-an-agent-graph.md`\n- **计划**：`docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md`\n\n行号以本次读取的工作区文本为准。仅执行任务中明确列出的两种只读 `git diff origin/main..HEAD -- <file>`；未执行其他 git 操作。仅写本报告，不修改 ADR、计划或 `docs/CI.md`，不写远端记录，不运行 pnpm 或运行时测试。源码证据用于说明现有构件的边界，**不将尚未实现的 Chief guard 描述成已复现漏洞**。\n\n## blocking"
+  },
+  {
+    "path": "docs/adr/0078-review.md",
+    "heading": "# ADR 0078 对抗式审查",
+    "statusExcerpt": "\n审查日期：2026-10-07。结论：**当前版本不宜进入实现；复用方向成立，但两处 blocking 和下述 high 项必须先落成协议。**\n\n范围：ADR 0078，先读同批 0074–0077 与 `docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md`，再核对 schema、contracts、实际命令、迁移 SQL 和相关 ADR。下文位置以本次磁盘内容为准；`0078:Lx` 指被审查文件的行号。0074–0077 的文本状态仍为 Proposed，计划 L4 写着未开工；这不否认文件可能已合入，但不能把合入当成功能已实现。\n\n本次只写此报告，不修改被审查文件，不调用远端写入，不执行 Git 操作、不执行 pnpm 全量或其他运行测试。代码和 SQL 证据是静态核查，不能标为运行验收通过。仓库根 `WORKMESH_PRD.md` 不存在，普通文件名搜索也未找到对应 PRD；该项无法核读，以下依据实际存在的协议、OpenAPI、CONTEXT、SCHEMA 入口及 ADR。没有据此猜测 PRD 内容。\n\n## Schema 断言逐条核实\n\n| 待验证断言 | 判定 | 实际证据与边界 |\n| --- | --- | --- |"
+  },
+  {
+    "path": "docs/adr/0079-qualified-agent-discovery-and-recovery.md",
+    "heading": "# 精确 Session 资格与 adapter 工具发现及恢复契约",
+    "statusExcerpt": "\n## Status\n\nProposed。受控方案已独审通过并获本轮实施指令；本 ADR 记录实现合同，保留独立合同复核及最终验收门禁。\n\n## Context\n\n承接 ADR0012、0042、0067。旧 manifest 只表示部署 feature 与能力交集，不能表达 Session 角色、凭据用途、领域状态及 MCP 的只读部署。受控操作审计见 `../plan/agent-mcp-m0/operation-decisions.json`；原件与旧失败回执保留，不将静态工具数量计作产品验收。\n\n## Decision\n"
+  },
+  {
+    "path": "docs/adr/0080-exact-session-execution-result-confirmation.md",
+    "heading": "# 精确 Session 原动作结果只读确认",
+    "statusExcerpt": "\n## Status\n\nProposed。本轮为方案修订，未产品实施，须平台另一 Agent 完整独审两项 blocking 并由 Chief confirm。旧候选在 docs/plan/agent-mcp-m1/history 保全，旧错误证明不再作为当前合同。\n\n以上描述冻结规划阶段。该方案已由平台另一 Agent 独审并获 Chief 实施确认；当前实现和真实检查见 [M1 产品报告](../plan/agent-mcp-m1/product-report.md)。产品成果仍待独审/Required CI/main 门禁，未以规划通过冒产品验收。\n\n## Context\n\n停止/完成原请求已提交而响应丢失时，普通终态 E 不允许重新写或普通读取。用户已选准确归属只读确认。现行 resolveCoordinationIdentity 会写 usage、创建/续 C Session，不能用于纯查询；现行 refreshAgentToken 能让另一 Connection 为同 Session 取得 Token，幂等回执只有 actor/operation/key/body，没有原提交凭据来源，因此“曾有历史Token”不能证明原动作。\n"
+  },
+  {
+    "path": "docs/adr/0081-pi-execution-wait-continuation.md",
+    "heading": "# Pi 等待公开结算与自动续 Turn",
+    "statusExcerpt": "\n## Status\n\nProposed。用户已裁定“结算等待，自动继续”；本 ADR 的wire/数据/锁序仍待另一 Agent 独审，不表示产品确认或验收。\n\n以上描述冻结规划阶段。方案合同已经平台独审及 Chief 实施确认；当前持久等待、唯一续接、Stop/撤权取消和实际运行见 [M1 产品报告](../plan/agent-mcp-m1/product-report.md)。不以本说明代产品成果独审、Required CI 或 main 合入。\n\n## Context\n\n当前runPi在非executing状态abort，executeTurn遇RUNNER_ABORTED跳settle；assignment只接queued/acknowledged/executing。直接加等待态工具会悬挂Turn。等待批准或输入可能超过单模型Turn时限，不能长占旧Attempt或擅自resume/pause。\n"
+  },
+  {
+    "path": "docs/adr/0082-parent-child-status-projection.md",
+    "heading": "# 父读子最小状态投影与有界 reviewer 创建",
+    "statusExcerpt": "\nStatus\nAccepted。规划候选独审三项 blocking 已闭合且无新增 blocking/high；按用户明确执行已审方案的指令实施。产品成果验收与规划审查分开。\n\nContext\nADR0017 已定义两种创建、稳定 step、有限能力及预算；当前 agent/routes.ts 的 get/list 仅准自身。collaboration/routes.ts 的 createChild 有父／step 限额和 reservation，createReview 仅目标并发、继承预算和 review_shared Lease，父无法靠通用 get 确认子终态。commands.ts 的 finishSessionInTransaction 已要求 required 子 completed 及 reviewer 本人双证据，不重写该门禁。\n\nDecision\n新增 GET /api/v1/agent-sessions/{id}/children，operationId=listAgentSessionChildren，仅准确 live 父 E，绑定当前 Token／Delegation／principal／membership／definition／Team grant／资源与真实创建关系；只读直接子状态、revision、required、原 Plan/version/stable step 和授权 Artifact IDs。子终态可读，父终态／失权拒绝。使用 signed cursor，有界分页逐页重新授权；不返回子 token/prompt/正文，不扩大通用 get 权限，没有业务写副作用。\n\n两种创建共用现有 authority 锁序、父现有累计总量及活跃限额、stable step 跨版本活跃限额、三方能力交集、目标并发和 reservation。保留 enforce_stage2_session_tree 的所有直接子总量保障，终态不释放父总量槽位。父和step客户端输入不新增上限配置，正常使用DB默认8；低上限／跨版本边界只由测试专用特权DB夹具构造并标记。"
+  },
+  {
+    "path": "docs/adr/0083-exact-provider-action-query-and-review-repository-scope.md",
+    "heading": "# 精确 provider action 查询与显式 reviewer 仓库读范围",
+    "statusExcerpt": "\n## Status\n\nProposed。受控方案已独审并经Chief确认进入实现；产品与实际检查见M3 product-report，待正式成果独审。此状态不表示验收、Required CI或合入。\n\n## Context\n\n现有异步Git动作在API事务持久化、Worker外发，缺精确action只读结果入口；context任意变化不能证明原action。M2 reviewer仅具work:read/work:write/artifact:write，仓库与绑定仓库证据还要求repo:read。用户已在原问题卡裁定显式repositoryIds，不能默认继承repo写或Human权。\n\n完整受控来源与限制见[M3来源](../plan/agent-mcp-m3/sources.md)。upload cancel无If-Match、health Agent publish准确Human approval、五类action status及context绑定差异均为现源码观察；零迁移与下列安全细化为待审规划决定，不称用户新裁定。\n"
+  },
+  {
+    "path": "docs/adr/0084-runner-tool-bounded-transport-replay.md",
+    "heading": "# Runner 普通工具的有界传输重放",
+    "statusExcerpt": "\n## Status\n\nProposed。M5 方案独审已认可此合同；产品实现与运行结果另行验收。仅 Todos 与仓库记录。\n\n## Context\n\n`makeTool` 调用一次 `RunnerApi.request`，现有普通请求只发送一次 HTTP。外层 `replayableSettle` 属于专用结算恢复，不能证明普通工具响应丢失后的恢复。丢响应可能发生在事务提交后，换 key 或重新调用工具会重复业务意图或活动。\n\n## Decision\n"
+  },
+  {
+    "path": "docs/adr/0085-mcp-original-execution-recovery-discovery.md",
+    "heading": "# 原执行凭据的 MCP Stop 恢复发现",
+    "statusExcerpt": "\n## Status\n\nProposed；本批已实施并有真实 OpenCode/REST 回归，待正式成果独审。不以本文件宣告 M5 验收。\n\n## Context\n\n原生客户端缓存初始 MCP 工具清单。既有 `stop_ack` 精确使用 client 原 E，不走普通 manifest 或 Token 刷新，REST 独立校验准确 Session、状态、实时授权和幂等回执。此前 executing 下的普通资格投影过滤掉它；Human 发出 Stop 后普通发现又被拒绝，真实 OpenCode 因缓存中没有工具而无法调用既有恢复入口。\n\n## Decision\n"
+  },
+  {
+    "path": "docs/adr/README.md",
+    "heading": "# ADR 索引",
+    "statusExcerpt": "\n本目录共 **79** 份 ADR，编号 `0001` – `0077`，另有本索引；当前 80 个 Markdown\n文件均由 Git 跟踪。目录中没有 `.gitignore`，新增 ADR 按普通 Git 跟踪规则入库。\n\n状态分布：`Accepted` 61、`Accepted for Stage 4` 5、`Proposed, revision 2, for the repaired GEN-9 contract Gate. Implementation remains blocked until an independent Gate accepts the machine contract. No editor dependency is selected in this slice` 1、`Accepted for v1.1 (Agent-first coordination)` 1、`Proposed` 9、`Accepted for implementation` 1、`Accepted for W12 partial implementation; public Skill release remains open` 1\n\n## 重复编号（既有缺陷，未擅自重编号）\n\n以下编号各有两份文件。**重编号不是安全操作**：全仓 80 份 ADR、27 份 plan 与\n多份 spec 都按编号交叉引用，改号会让这些引用静默失效。因此本索引只**记录**\n现状，处置方案（重编号 + 全量引用更新，作为独立任务）留给决定。"
+  }
+]

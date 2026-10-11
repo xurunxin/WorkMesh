@@ -1,0 +1,1067 @@
+{
+  "formatVersion": 1,
+  "reports": [
+    {
+      "suiteVersion": "1.0",
+      "profileVersion": "1.0",
+      "adapter": "native-http",
+      "fixture": "codex-style",
+      "status": "passed",
+      "checks": [
+        {
+          "id": "profile.negotiation",
+          "status": "passed",
+          "diagnostic": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "id": "lifecycle.assignment-ack",
+          "status": "passed",
+          "diagnostic": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "id": "lifecycle.transition-executing",
+          "status": "passed",
+          "diagnostic": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "id": "lifecycle.context-inbox",
+          "status": "passed",
+          "diagnostic": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "id": "lifecycle.collaborate-evidence-handoff",
+          "status": "passed",
+          "diagnostic": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "id": "idempotency.duplicate-mutation",
+          "status": "passed",
+          "diagnostic": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "id": "reconnect.cursor-recovery",
+          "status": "passed",
+          "diagnostic": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "id": "hostile.fail-closed-matrix",
+          "status": "passed",
+          "diagnostic": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "id": "lifecycle.complete",
+          "status": "passed",
+          "diagnostic": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "transcript": [
+        {
+          "sequence": 1,
+          "operation": "profile.negotiation",
+          "outcome": "passed",
+          "summary": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "sequence": 2,
+          "operation": "lifecycle.assignment-ack",
+          "outcome": "passed",
+          "summary": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "sequence": 3,
+          "operation": "lifecycle.transition-executing",
+          "outcome": "passed",
+          "summary": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "sequence": 4,
+          "operation": "lifecycle.context-inbox",
+          "outcome": "passed",
+          "summary": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "sequence": 5,
+          "operation": "lifecycle.collaborate-evidence-handoff",
+          "outcome": "passed",
+          "summary": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "sequence": 6,
+          "operation": "idempotency.duplicate-mutation",
+          "outcome": "passed",
+          "summary": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "sequence": 7,
+          "operation": "reconnect.cursor-recovery",
+          "outcome": "passed",
+          "summary": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "sequence": 8,
+          "operation": "hostile.revoked-delegation",
+          "outcome": "passed",
+          "summary": "Observed DELEGATION_NOT_ACTIVE; fail closed: discard_session_credentials.",
+          "errorCode": "DELEGATION_NOT_ACTIVE"
+        },
+        {
+          "sequence": 9,
+          "operation": "hostile.expired-session-token",
+          "outcome": "passed",
+          "summary": "Observed UNAUTHENTICATED; fail closed: refresh_credentials_or_stop.",
+          "errorCode": "UNAUTHENTICATED"
+        },
+        {
+          "sequence": 10,
+          "operation": "hostile.stopped-session",
+          "outcome": "passed",
+          "summary": "Observed SESSION_STOPPED; fail closed: stop_and_acknowledge.",
+          "errorCode": "SESSION_STOPPED"
+        },
+        {
+          "sequence": 11,
+          "operation": "hostile.out-of-scope-resource",
+          "outcome": "passed",
+          "summary": "Observed RESOURCE_SCOPE_DENIED; fail closed: do_not_retry_out_of_scope.",
+          "errorCode": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "sequence": 12,
+          "operation": "hostile.stale-revision",
+          "outcome": "passed",
+          "summary": "Observed REVISION_CONFLICT; fail closed: refetch_and_rebase.",
+          "errorCode": "REVISION_CONFLICT"
+        },
+        {
+          "sequence": 13,
+          "operation": "hostile.lost-lease",
+          "outcome": "passed",
+          "summary": "Observed LEASE_EXPIRED; fail closed: stop_protected_action.",
+          "errorCode": "LEASE_EXPIRED"
+        },
+        {
+          "sequence": 14,
+          "operation": "hostile.approval-required",
+          "outcome": "passed",
+          "summary": "Observed APPROVAL_REQUIRED; fail closed: request_or_wait_for_approval.",
+          "errorCode": "APPROVAL_REQUIRED"
+        },
+        {
+          "sequence": 15,
+          "operation": "hostile.feature-disabled",
+          "outcome": "passed",
+          "summary": "Observed FEATURE_DISABLED; fail closed: disable_optional_capability.",
+          "errorCode": "FEATURE_DISABLED"
+        },
+        {
+          "sequence": 16,
+          "operation": "hostile.cursor-gap",
+          "outcome": "passed",
+          "summary": "Observed CURSOR_EXPIRED; fail closed: resync_from_server_cursor.",
+          "errorCode": "CURSOR_EXPIRED"
+        },
+        {
+          "sequence": 17,
+          "operation": "hostile.fail-closed-matrix",
+          "outcome": "passed",
+          "summary": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "sequence": 18,
+          "operation": "lifecycle.complete",
+          "outcome": "passed",
+          "summary": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "summary": {
+        "passed": 9,
+        "failed": 0
+      }
+    },
+    {
+      "suiteVersion": "1.0",
+      "profileVersion": "1.0",
+      "adapter": "mcp",
+      "fixture": "codex-style",
+      "status": "passed",
+      "checks": [
+        {
+          "id": "profile.negotiation",
+          "status": "passed",
+          "diagnostic": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "id": "lifecycle.assignment-ack",
+          "status": "passed",
+          "diagnostic": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "id": "lifecycle.transition-executing",
+          "status": "passed",
+          "diagnostic": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "id": "lifecycle.context-inbox",
+          "status": "passed",
+          "diagnostic": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "id": "lifecycle.collaborate-evidence-handoff",
+          "status": "passed",
+          "diagnostic": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "id": "idempotency.duplicate-mutation",
+          "status": "passed",
+          "diagnostic": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "id": "reconnect.cursor-recovery",
+          "status": "passed",
+          "diagnostic": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "id": "hostile.fail-closed-matrix",
+          "status": "passed",
+          "diagnostic": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "id": "lifecycle.complete",
+          "status": "passed",
+          "diagnostic": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "transcript": [
+        {
+          "sequence": 1,
+          "operation": "profile.negotiation",
+          "outcome": "passed",
+          "summary": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "sequence": 2,
+          "operation": "lifecycle.assignment-ack",
+          "outcome": "passed",
+          "summary": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "sequence": 3,
+          "operation": "lifecycle.transition-executing",
+          "outcome": "passed",
+          "summary": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "sequence": 4,
+          "operation": "lifecycle.context-inbox",
+          "outcome": "passed",
+          "summary": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "sequence": 5,
+          "operation": "lifecycle.collaborate-evidence-handoff",
+          "outcome": "passed",
+          "summary": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "sequence": 6,
+          "operation": "idempotency.duplicate-mutation",
+          "outcome": "passed",
+          "summary": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "sequence": 7,
+          "operation": "reconnect.cursor-recovery",
+          "outcome": "passed",
+          "summary": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "sequence": 8,
+          "operation": "hostile.revoked-delegation",
+          "outcome": "passed",
+          "summary": "Observed DELEGATION_NOT_ACTIVE; fail closed: discard_session_credentials.",
+          "errorCode": "DELEGATION_NOT_ACTIVE"
+        },
+        {
+          "sequence": 9,
+          "operation": "hostile.expired-session-token",
+          "outcome": "passed",
+          "summary": "Observed UNAUTHENTICATED; fail closed: refresh_credentials_or_stop.",
+          "errorCode": "UNAUTHENTICATED"
+        },
+        {
+          "sequence": 10,
+          "operation": "hostile.stopped-session",
+          "outcome": "passed",
+          "summary": "Observed SESSION_STOPPED; fail closed: stop_and_acknowledge.",
+          "errorCode": "SESSION_STOPPED"
+        },
+        {
+          "sequence": 11,
+          "operation": "hostile.out-of-scope-resource",
+          "outcome": "passed",
+          "summary": "Observed RESOURCE_SCOPE_DENIED; fail closed: do_not_retry_out_of_scope.",
+          "errorCode": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "sequence": 12,
+          "operation": "hostile.stale-revision",
+          "outcome": "passed",
+          "summary": "Observed REVISION_CONFLICT; fail closed: refetch_and_rebase.",
+          "errorCode": "REVISION_CONFLICT"
+        },
+        {
+          "sequence": 13,
+          "operation": "hostile.lost-lease",
+          "outcome": "passed",
+          "summary": "Observed LEASE_EXPIRED; fail closed: stop_protected_action.",
+          "errorCode": "LEASE_EXPIRED"
+        },
+        {
+          "sequence": 14,
+          "operation": "hostile.approval-required",
+          "outcome": "passed",
+          "summary": "Observed APPROVAL_REQUIRED; fail closed: request_or_wait_for_approval.",
+          "errorCode": "APPROVAL_REQUIRED"
+        },
+        {
+          "sequence": 15,
+          "operation": "hostile.feature-disabled",
+          "outcome": "passed",
+          "summary": "Observed FEATURE_DISABLED; fail closed: disable_optional_capability.",
+          "errorCode": "FEATURE_DISABLED"
+        },
+        {
+          "sequence": 16,
+          "operation": "hostile.cursor-gap",
+          "outcome": "passed",
+          "summary": "Observed CURSOR_EXPIRED; fail closed: resync_from_server_cursor.",
+          "errorCode": "CURSOR_EXPIRED"
+        },
+        {
+          "sequence": 17,
+          "operation": "hostile.fail-closed-matrix",
+          "outcome": "passed",
+          "summary": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "sequence": 18,
+          "operation": "lifecycle.complete",
+          "outcome": "passed",
+          "summary": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "summary": {
+        "passed": 9,
+        "failed": 0
+      }
+    },
+    {
+      "suiteVersion": "1.0",
+      "profileVersion": "1.0",
+      "adapter": "native-http",
+      "fixture": "opencode-style",
+      "status": "passed",
+      "checks": [
+        {
+          "id": "profile.negotiation",
+          "status": "passed",
+          "diagnostic": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "id": "lifecycle.assignment-ack",
+          "status": "passed",
+          "diagnostic": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "id": "lifecycle.transition-executing",
+          "status": "passed",
+          "diagnostic": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "id": "lifecycle.context-inbox",
+          "status": "passed",
+          "diagnostic": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "id": "lifecycle.collaborate-evidence-handoff",
+          "status": "passed",
+          "diagnostic": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "id": "idempotency.duplicate-mutation",
+          "status": "passed",
+          "diagnostic": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "id": "reconnect.cursor-recovery",
+          "status": "passed",
+          "diagnostic": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "id": "hostile.fail-closed-matrix",
+          "status": "passed",
+          "diagnostic": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "id": "lifecycle.complete",
+          "status": "passed",
+          "diagnostic": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "transcript": [
+        {
+          "sequence": 1,
+          "operation": "profile.negotiation",
+          "outcome": "passed",
+          "summary": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "sequence": 2,
+          "operation": "lifecycle.assignment-ack",
+          "outcome": "passed",
+          "summary": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "sequence": 3,
+          "operation": "lifecycle.transition-executing",
+          "outcome": "passed",
+          "summary": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "sequence": 4,
+          "operation": "lifecycle.context-inbox",
+          "outcome": "passed",
+          "summary": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "sequence": 5,
+          "operation": "lifecycle.collaborate-evidence-handoff",
+          "outcome": "passed",
+          "summary": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "sequence": 6,
+          "operation": "idempotency.duplicate-mutation",
+          "outcome": "passed",
+          "summary": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "sequence": 7,
+          "operation": "reconnect.cursor-recovery",
+          "outcome": "passed",
+          "summary": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "sequence": 8,
+          "operation": "hostile.revoked-delegation",
+          "outcome": "passed",
+          "summary": "Observed DELEGATION_NOT_ACTIVE; fail closed: discard_session_credentials.",
+          "errorCode": "DELEGATION_NOT_ACTIVE"
+        },
+        {
+          "sequence": 9,
+          "operation": "hostile.expired-session-token",
+          "outcome": "passed",
+          "summary": "Observed UNAUTHENTICATED; fail closed: refresh_credentials_or_stop.",
+          "errorCode": "UNAUTHENTICATED"
+        },
+        {
+          "sequence": 10,
+          "operation": "hostile.stopped-session",
+          "outcome": "passed",
+          "summary": "Observed SESSION_STOPPED; fail closed: stop_and_acknowledge.",
+          "errorCode": "SESSION_STOPPED"
+        },
+        {
+          "sequence": 11,
+          "operation": "hostile.out-of-scope-resource",
+          "outcome": "passed",
+          "summary": "Observed RESOURCE_SCOPE_DENIED; fail closed: do_not_retry_out_of_scope.",
+          "errorCode": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "sequence": 12,
+          "operation": "hostile.stale-revision",
+          "outcome": "passed",
+          "summary": "Observed REVISION_CONFLICT; fail closed: refetch_and_rebase.",
+          "errorCode": "REVISION_CONFLICT"
+        },
+        {
+          "sequence": 13,
+          "operation": "hostile.lost-lease",
+          "outcome": "passed",
+          "summary": "Observed LEASE_EXPIRED; fail closed: stop_protected_action.",
+          "errorCode": "LEASE_EXPIRED"
+        },
+        {
+          "sequence": 14,
+          "operation": "hostile.approval-required",
+          "outcome": "passed",
+          "summary": "Observed APPROVAL_REQUIRED; fail closed: request_or_wait_for_approval.",
+          "errorCode": "APPROVAL_REQUIRED"
+        },
+        {
+          "sequence": 15,
+          "operation": "hostile.feature-disabled",
+          "outcome": "passed",
+          "summary": "Observed FEATURE_DISABLED; fail closed: disable_optional_capability.",
+          "errorCode": "FEATURE_DISABLED"
+        },
+        {
+          "sequence": 16,
+          "operation": "hostile.cursor-gap",
+          "outcome": "passed",
+          "summary": "Observed CURSOR_EXPIRED; fail closed: resync_from_server_cursor.",
+          "errorCode": "CURSOR_EXPIRED"
+        },
+        {
+          "sequence": 17,
+          "operation": "hostile.fail-closed-matrix",
+          "outcome": "passed",
+          "summary": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "sequence": 18,
+          "operation": "lifecycle.complete",
+          "outcome": "passed",
+          "summary": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "summary": {
+        "passed": 9,
+        "failed": 0
+      }
+    },
+    {
+      "suiteVersion": "1.0",
+      "profileVersion": "1.0",
+      "adapter": "mcp",
+      "fixture": "opencode-style",
+      "status": "passed",
+      "checks": [
+        {
+          "id": "profile.negotiation",
+          "status": "passed",
+          "diagnostic": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "id": "lifecycle.assignment-ack",
+          "status": "passed",
+          "diagnostic": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "id": "lifecycle.transition-executing",
+          "status": "passed",
+          "diagnostic": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "id": "lifecycle.context-inbox",
+          "status": "passed",
+          "diagnostic": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "id": "lifecycle.collaborate-evidence-handoff",
+          "status": "passed",
+          "diagnostic": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "id": "idempotency.duplicate-mutation",
+          "status": "passed",
+          "diagnostic": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "id": "reconnect.cursor-recovery",
+          "status": "passed",
+          "diagnostic": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "id": "hostile.fail-closed-matrix",
+          "status": "passed",
+          "diagnostic": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "id": "lifecycle.complete",
+          "status": "passed",
+          "diagnostic": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "transcript": [
+        {
+          "sequence": 1,
+          "operation": "profile.negotiation",
+          "outcome": "passed",
+          "summary": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "sequence": 2,
+          "operation": "lifecycle.assignment-ack",
+          "outcome": "passed",
+          "summary": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "sequence": 3,
+          "operation": "lifecycle.transition-executing",
+          "outcome": "passed",
+          "summary": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "sequence": 4,
+          "operation": "lifecycle.context-inbox",
+          "outcome": "passed",
+          "summary": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "sequence": 5,
+          "operation": "lifecycle.collaborate-evidence-handoff",
+          "outcome": "passed",
+          "summary": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "sequence": 6,
+          "operation": "idempotency.duplicate-mutation",
+          "outcome": "passed",
+          "summary": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "sequence": 7,
+          "operation": "reconnect.cursor-recovery",
+          "outcome": "passed",
+          "summary": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "sequence": 8,
+          "operation": "hostile.revoked-delegation",
+          "outcome": "passed",
+          "summary": "Observed DELEGATION_NOT_ACTIVE; fail closed: discard_session_credentials.",
+          "errorCode": "DELEGATION_NOT_ACTIVE"
+        },
+        {
+          "sequence": 9,
+          "operation": "hostile.expired-session-token",
+          "outcome": "passed",
+          "summary": "Observed UNAUTHENTICATED; fail closed: refresh_credentials_or_stop.",
+          "errorCode": "UNAUTHENTICATED"
+        },
+        {
+          "sequence": 10,
+          "operation": "hostile.stopped-session",
+          "outcome": "passed",
+          "summary": "Observed SESSION_STOPPED; fail closed: stop_and_acknowledge.",
+          "errorCode": "SESSION_STOPPED"
+        },
+        {
+          "sequence": 11,
+          "operation": "hostile.out-of-scope-resource",
+          "outcome": "passed",
+          "summary": "Observed RESOURCE_SCOPE_DENIED; fail closed: do_not_retry_out_of_scope.",
+          "errorCode": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "sequence": 12,
+          "operation": "hostile.stale-revision",
+          "outcome": "passed",
+          "summary": "Observed REVISION_CONFLICT; fail closed: refetch_and_rebase.",
+          "errorCode": "REVISION_CONFLICT"
+        },
+        {
+          "sequence": 13,
+          "operation": "hostile.lost-lease",
+          "outcome": "passed",
+          "summary": "Observed LEASE_EXPIRED; fail closed: stop_protected_action.",
+          "errorCode": "LEASE_EXPIRED"
+        },
+        {
+          "sequence": 14,
+          "operation": "hostile.approval-required",
+          "outcome": "passed",
+          "summary": "Observed APPROVAL_REQUIRED; fail closed: request_or_wait_for_approval.",
+          "errorCode": "APPROVAL_REQUIRED"
+        },
+        {
+          "sequence": 15,
+          "operation": "hostile.feature-disabled",
+          "outcome": "passed",
+          "summary": "Observed FEATURE_DISABLED; fail closed: disable_optional_capability.",
+          "errorCode": "FEATURE_DISABLED"
+        },
+        {
+          "sequence": 16,
+          "operation": "hostile.cursor-gap",
+          "outcome": "passed",
+          "summary": "Observed CURSOR_EXPIRED; fail closed: resync_from_server_cursor.",
+          "errorCode": "CURSOR_EXPIRED"
+        },
+        {
+          "sequence": 17,
+          "operation": "hostile.fail-closed-matrix",
+          "outcome": "passed",
+          "summary": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "sequence": 18,
+          "operation": "lifecycle.complete",
+          "outcome": "passed",
+          "summary": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "summary": {
+        "passed": 9,
+        "failed": 0
+      }
+    },
+    {
+      "suiteVersion": "1.0",
+      "profileVersion": "1.0",
+      "adapter": "native-http",
+      "fixture": "pi-style",
+      "status": "passed",
+      "checks": [
+        {
+          "id": "profile.negotiation",
+          "status": "passed",
+          "diagnostic": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "id": "lifecycle.assignment-ack",
+          "status": "passed",
+          "diagnostic": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "id": "lifecycle.transition-executing",
+          "status": "passed",
+          "diagnostic": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "id": "lifecycle.context-inbox",
+          "status": "passed",
+          "diagnostic": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "id": "lifecycle.collaborate-evidence-handoff",
+          "status": "passed",
+          "diagnostic": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "id": "idempotency.duplicate-mutation",
+          "status": "passed",
+          "diagnostic": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "id": "reconnect.cursor-recovery",
+          "status": "passed",
+          "diagnostic": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "id": "hostile.fail-closed-matrix",
+          "status": "passed",
+          "diagnostic": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "id": "lifecycle.complete",
+          "status": "passed",
+          "diagnostic": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "transcript": [
+        {
+          "sequence": 1,
+          "operation": "profile.negotiation",
+          "outcome": "passed",
+          "summary": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "sequence": 2,
+          "operation": "lifecycle.assignment-ack",
+          "outcome": "passed",
+          "summary": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "sequence": 3,
+          "operation": "lifecycle.transition-executing",
+          "outcome": "passed",
+          "summary": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "sequence": 4,
+          "operation": "lifecycle.context-inbox",
+          "outcome": "passed",
+          "summary": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "sequence": 5,
+          "operation": "lifecycle.collaborate-evidence-handoff",
+          "outcome": "passed",
+          "summary": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "sequence": 6,
+          "operation": "idempotency.duplicate-mutation",
+          "outcome": "passed",
+          "summary": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "sequence": 7,
+          "operation": "reconnect.cursor-recovery",
+          "outcome": "passed",
+          "summary": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "sequence": 8,
+          "operation": "hostile.revoked-delegation",
+          "outcome": "passed",
+          "summary": "Observed DELEGATION_NOT_ACTIVE; fail closed: discard_session_credentials.",
+          "errorCode": "DELEGATION_NOT_ACTIVE"
+        },
+        {
+          "sequence": 9,
+          "operation": "hostile.expired-session-token",
+          "outcome": "passed",
+          "summary": "Observed UNAUTHENTICATED; fail closed: refresh_credentials_or_stop.",
+          "errorCode": "UNAUTHENTICATED"
+        },
+        {
+          "sequence": 10,
+          "operation": "hostile.stopped-session",
+          "outcome": "passed",
+          "summary": "Observed SESSION_STOPPED; fail closed: stop_and_acknowledge.",
+          "errorCode": "SESSION_STOPPED"
+        },
+        {
+          "sequence": 11,
+          "operation": "hostile.out-of-scope-resource",
+          "outcome": "passed",
+          "summary": "Observed RESOURCE_SCOPE_DENIED; fail closed: do_not_retry_out_of_scope.",
+          "errorCode": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "sequence": 12,
+          "operation": "hostile.stale-revision",
+          "outcome": "passed",
+          "summary": "Observed REVISION_CONFLICT; fail closed: refetch_and_rebase.",
+          "errorCode": "REVISION_CONFLICT"
+        },
+        {
+          "sequence": 13,
+          "operation": "hostile.lost-lease",
+          "outcome": "passed",
+          "summary": "Observed LEASE_EXPIRED; fail closed: stop_protected_action.",
+          "errorCode": "LEASE_EXPIRED"
+        },
+        {
+          "sequence": 14,
+          "operation": "hostile.approval-required",
+          "outcome": "passed",
+          "summary": "Observed APPROVAL_REQUIRED; fail closed: request_or_wait_for_approval.",
+          "errorCode": "APPROVAL_REQUIRED"
+        },
+        {
+          "sequence": 15,
+          "operation": "hostile.feature-disabled",
+          "outcome": "passed",
+          "summary": "Observed FEATURE_DISABLED; fail closed: disable_optional_capability.",
+          "errorCode": "FEATURE_DISABLED"
+        },
+        {
+          "sequence": 16,
+          "operation": "hostile.cursor-gap",
+          "outcome": "passed",
+          "summary": "Observed CURSOR_EXPIRED; fail closed: resync_from_server_cursor.",
+          "errorCode": "CURSOR_EXPIRED"
+        },
+        {
+          "sequence": 17,
+          "operation": "hostile.fail-closed-matrix",
+          "outcome": "passed",
+          "summary": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "sequence": 18,
+          "operation": "lifecycle.complete",
+          "outcome": "passed",
+          "summary": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "summary": {
+        "passed": 9,
+        "failed": 0
+      }
+    },
+    {
+      "suiteVersion": "1.0",
+      "profileVersion": "1.0",
+      "adapter": "mcp",
+      "fixture": "pi-style",
+      "status": "passed",
+      "checks": [
+        {
+          "id": "profile.negotiation",
+          "status": "passed",
+          "diagnostic": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "id": "lifecycle.assignment-ack",
+          "status": "passed",
+          "diagnostic": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "id": "lifecycle.transition-executing",
+          "status": "passed",
+          "diagnostic": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "id": "lifecycle.context-inbox",
+          "status": "passed",
+          "diagnostic": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "id": "lifecycle.collaborate-evidence-handoff",
+          "status": "passed",
+          "diagnostic": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "id": "idempotency.duplicate-mutation",
+          "status": "passed",
+          "diagnostic": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "id": "reconnect.cursor-recovery",
+          "status": "passed",
+          "diagnostic": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "id": "hostile.fail-closed-matrix",
+          "status": "passed",
+          "diagnostic": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "id": "lifecycle.complete",
+          "status": "passed",
+          "diagnostic": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "transcript": [
+        {
+          "sequence": 1,
+          "operation": "profile.negotiation",
+          "outcome": "passed",
+          "summary": "Negotiated 1.0 from route_policy_manifest; authorization remains live per request."
+        },
+        {
+          "sequence": 2,
+          "operation": "lifecycle.assignment-ack",
+          "outcome": "passed",
+          "summary": "Acknowledged Session 00000000-0000-4000-8000-000000000001 at revision 8."
+        },
+        {
+          "sequence": 3,
+          "operation": "lifecycle.transition-executing",
+          "outcome": "passed",
+          "summary": "Transitioned Session to executing at revision 9."
+        },
+        {
+          "sequence": 4,
+          "operation": "lifecycle.context-inbox",
+          "outcome": "passed",
+          "summary": "Retrieved exact Context and acknowledged the durable Inbox item."
+        },
+        {
+          "sequence": 5,
+          "operation": "lifecycle.collaborate-evidence-handoff",
+          "outcome": "passed",
+          "summary": "Collaborated visibly, published Artifact 00000000-0000-4000-8000-000000000200, and offered a scoped Handoff."
+        },
+        {
+          "sequence": 6,
+          "operation": "idempotency.duplicate-mutation",
+          "outcome": "passed",
+          "summary": "Duplicate delivery replayed effect 00000000-0000-4000-8000-000000000106 without a second commit."
+        },
+        {
+          "sequence": 7,
+          "operation": "reconnect.cursor-recovery",
+          "outcome": "passed",
+          "summary": "Recovered 2 unique events from cursor 40."
+        },
+        {
+          "sequence": 8,
+          "operation": "hostile.revoked-delegation",
+          "outcome": "passed",
+          "summary": "Observed DELEGATION_NOT_ACTIVE; fail closed: discard_session_credentials.",
+          "errorCode": "DELEGATION_NOT_ACTIVE"
+        },
+        {
+          "sequence": 9,
+          "operation": "hostile.expired-session-token",
+          "outcome": "passed",
+          "summary": "Observed UNAUTHENTICATED; fail closed: refresh_credentials_or_stop.",
+          "errorCode": "UNAUTHENTICATED"
+        },
+        {
+          "sequence": 10,
+          "operation": "hostile.stopped-session",
+          "outcome": "passed",
+          "summary": "Observed SESSION_STOPPED; fail closed: stop_and_acknowledge.",
+          "errorCode": "SESSION_STOPPED"
+        },
+        {
+          "sequence": 11,
+          "operation": "hostile.out-of-scope-resource",
+          "outcome": "passed",
+          "summary": "Observed RESOURCE_SCOPE_DENIED; fail closed: do_not_retry_out_of_scope.",
+          "errorCode": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "sequence": 12,
+          "operation": "hostile.stale-revision",
+          "outcome": "passed",
+          "summary": "Observed REVISION_CONFLICT; fail closed: refetch_and_rebase.",
+          "errorCode": "REVISION_CONFLICT"
+        },
+        {
+          "sequence": 13,
+          "operation": "hostile.lost-lease",
+          "outcome": "passed",
+          "summary": "Observed LEASE_EXPIRED; fail closed: stop_protected_action.",
+          "errorCode": "LEASE_EXPIRED"
+        },
+        {
+          "sequence": 14,
+          "operation": "hostile.approval-required",
+          "outcome": "passed",
+          "summary": "Observed APPROVAL_REQUIRED; fail closed: request_or_wait_for_approval.",
+          "errorCode": "APPROVAL_REQUIRED"
+        },
+        {
+          "sequence": 15,
+          "operation": "hostile.feature-disabled",
+          "outcome": "passed",
+          "summary": "Observed FEATURE_DISABLED; fail closed: disable_optional_capability.",
+          "errorCode": "FEATURE_DISABLED"
+        },
+        {
+          "sequence": 16,
+          "operation": "hostile.cursor-gap",
+          "outcome": "passed",
+          "summary": "Observed CURSOR_EXPIRED; fail closed: resync_from_server_cursor.",
+          "errorCode": "CURSOR_EXPIRED"
+        },
+        {
+          "sequence": 17,
+          "operation": "hostile.fail-closed-matrix",
+          "outcome": "passed",
+          "summary": "Verified 9 hostile states with actionable fail-closed reactions."
+        },
+        {
+          "sequence": 18,
+          "operation": "lifecycle.complete",
+          "outcome": "passed",
+          "summary": "Refreshed revision 11 and completed Session with Artifact 00000000-0000-4000-8000-000000000200."
+        }
+      ],
+      "summary": {
+        "passed": 9,
+        "failed": 0
+      }
+    }
+  ]
+}

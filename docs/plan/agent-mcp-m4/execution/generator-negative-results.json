@@ -1,0 +1,30 @@
+[
+  {
+    "case": "missing-registration",
+    "exitCode": 1,
+    "derivedBytesUnchanged": true,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\discovery-negative-fixture\\scripts\\generate-agent-discovery.py\", line 118, in <module>\r\n    raise ValueError('M4注册输入与实际捕获不同')\r\nValueError: M4注册输入与实际捕获不同\r\n"
+  },
+  {
+    "case": "unknown-operation",
+    "exitCode": 1,
+    "derivedBytesUnchanged": true,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\discovery-negative-fixture\\scripts\\generate-agent-discovery.py\", line 130, in <module>\r\n    raise ValueError('M4绑定含未知操作：'+binding['bindingId'])\r\nValueError: M4绑定含未知操作：tool:list_cycles\r\n"
+  },
+  {
+    "case": "changed-old-binding",
+    "exitCode": 1,
+    "derivedBytesUnchanged": true,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\discovery-negative-fixture\\scripts\\generate-agent-discovery.py\", line 132, in <module>\r\n    raise ValueError('M4不能改写旧binding/identityVariants：'+binding['bindingId'])\r\nValueError: M4不能改写旧binding/identityVariants：tool:create_project_health_update\r\n"
+  },
+  {
+    "case": "stale-capture",
+    "exitCode": 1,
+    "derivedBytesUnchanged": true,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\discovery-negative-fixture\\scripts\\generate-agent-discovery.py\", line 115, in <module>\r\n    raise ValueError('M4注册捕获源码已变：'+evidence['path'])\r\nValueError: M4注册捕获源码已变：apps/mcp/src/index.ts\r\n"
+  }
+]

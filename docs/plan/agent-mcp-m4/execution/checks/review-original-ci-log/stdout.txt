@@ -1,0 +1,470 @@
+Classify changes and validate CI selection	Select required jobs	﻿2026-10-11T05:21:04.2796916Z ##[group]Run set -o pipefail
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.2797243Z ^[[36;1mset -o pipefail^[[0m
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.2797592Z ^[[36;1mnode scripts/ci-policy.mjs 2>&1 | tee ci-logs/ci-plan.log^[[0m
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.2863670Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.2864054Z ##[endgroup]
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5373268Z node:internal/child_process:1120
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5400479Z     result.error = new ErrnoException(result.error, 'spawnSync ' + options.file);
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5401241Z                    ^
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5401470Z 
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5401733Z <ref *1> Error: spawnSync git ENOBUFS
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5402383Z     at Object.spawnSync (node:internal/child_process:1120:20)
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5402812Z     at spawnSync (node:child_process:901:24)
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5403194Z     at execFileSync (node:child_process:944:15)
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5403762Z     at git (file:///home/runner/work/WorkMesh/WorkMesh/scripts/ci-policy.mjs:122:74)
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5425549Z     at planForEvent (file:///home/runner/work/WorkMesh/WorkMesh/scripts/ci-policy.mjs:143:3)
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5426774Z     at file:///home/runner/work/WorkMesh/WorkMesh/scripts/ci-policy.mjs:156:18
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5428063Z     at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5429701Z     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5430948Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5431799Z   errno: -105,
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5432210Z   code: 'ENOBUFS',
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5432615Z   syscall: 'spawnSync git',
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5433063Z   path: 'git',
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5433436Z   spawnargs: [
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5433809Z     'diff',
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5434154Z     '--check',
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5434650Z     'c2b3d363c037157df13beb82799d99d07a9b7db8',
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5435299Z     '603f5001513872d4e973566d6a4c07ec4e7b179b'
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5435834Z   ],
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5436200Z   error: [Circular *1],
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5436622Z   status: null,
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5437001Z   signal: 'SIGTERM',
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5437405Z   output: [
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5437749Z     null,
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5438566Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:1: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5439756Z       '+[\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5440512Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:2: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5441262Z       '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5441989Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:3: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5442908Z       '+    "label": "a2a-binding-first-failure-db-log",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5443957Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:4: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5444758Z       '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5445471Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:5: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5445989Z       '+      "docker.exe",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5446479Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:6: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5446938Z       '+      "logs",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5447390Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:7: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5447862Z       '+      "--tail",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5448317Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:8: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5448743Z       '+      "12",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5449960Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:9: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5450521Z       '+      "m4-01a127d4-4adc5e39-postgres"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5451052Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:10: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5451509Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5452210Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:11: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5452683Z       '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5453153Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:12: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5453663Z       '+    "runtimeSeconds": 3.2351378000021214,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5454167Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:13: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5454675Z       '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5455196Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:14: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5455662Z       '+    "summaryLines": [],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5456128Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:15: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5456752Z       '+    "receipt": "checks/a2a-binding-first-failure-db-log/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5457372Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:16: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5457800Z       '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5458363Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:17: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5458794Z       '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5459482Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:18: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5460041Z       '+    "label": "actual-management-feature-discovery",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5460585Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:19: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5461036Z       '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5461481Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:20: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5461941Z       '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5462390Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:21: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5462835Z       '+      "--filter",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5463273Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:22: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5463755Z       '+      "@workmesh/conformance",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5464239Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:23: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5464670Z       '+      "exec",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5465107Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:24: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5465552Z       '+      "vitest",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5465990Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:25: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5466422Z       '+      "run",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5466850Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:26: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5467293Z       '+      "--config",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5467735Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:27: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5468232Z       '+      "vitest.integration.config.ts",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5468737Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:28: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5469513Z       '+      "src/optional-domains.conformance.test.ts",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5470058Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:29: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5470483Z       '+      "-t",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5470909Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:30: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5471567Z       '+      "六feature"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5472013Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:31: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5472439Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5472853Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:32: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5473302Z       '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5473950Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:33: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5474451Z       '+    "runtimeSeconds": 12.69818770000711,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5474939Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:34: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5475443Z       '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5475946Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:35: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5476407Z       '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5476862Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:36: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5477702Z       '+      "✓ src/optional-domains.conformance.test.ts (13 tests | 12 skipped) 3681ms",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5478835Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:37: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5479815Z       '+      "Test Files  1 passed (1)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5480593Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:38: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5481779Z       '+      "Tests  1 passed | 12 skipped (13)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5482700Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:39: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5484024Z       '+      "Duration  6.92s (transform 1.15s, setup 0ms, collect 2.83s, tests 3.68s, environment 0ms, prepare 118ms)"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5485217Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:40: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5485917Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5486613Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:41: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5487709Z       '+    "receipt": "checks/actual-management-feature-discovery/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5488728Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:42: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5489751Z       '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5490499Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:43: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5491295Z       '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5492045Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:44: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5492942Z       '+    "label": "adapters-first-typecheck",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5493863Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:45: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5494686Z       '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5495445Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:46: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5496200Z       '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5496953Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:47: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5497773Z       '+      "ci:source",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5498589Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:48: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5499917Z       '+      "typecheck"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5500486Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:49: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5500931Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5501371Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:50: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5501841Z       '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5502296Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:51: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5502808Z       '+    "runtimeSeconds": 67.62005709999357,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5503298Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:52: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5503803Z       '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5504321Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:53: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5504990Z       '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5505456Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:54: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5505959Z       '+      "Tasks:    18 successful, 18 total",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5506454Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:55: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5506934Z       '+      "Cached:    0 cached, 18 total"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5507416Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:56: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5507841Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5508256Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:57: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5508855Z       '+    "receipt": "checks/adapters-first-typecheck/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5509699Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:58: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5510139Z       '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5510561Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:59: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5510983Z       '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5511556Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:60: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5512039Z       '+    "label": "agent-smoke-current",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5512527Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:61: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5512969Z       '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5513409Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:62: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5513873Z       '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5514331Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:63: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5514788Z       '+      "smoke:agents"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5515246Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:64: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5515666Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5516083Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:65: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5516544Z       '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5516988Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:66: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5517478Z       '+    "runtimeSeconds": 10.128078499998082,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5517966Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:67: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5518471Z       '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5519214Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:68: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5519720Z       '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5520197Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:69: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5520680Z       '+      "Test Files  4 passed (4)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5521179Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:70: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5521649Z       '+      "Tests  56 passed (56)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5522131Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:71: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5522877Z       '+      "Duration  1.63s (transform 372ms, setup 0ms, collect 1.53s, tests 465ms, environment 0ms, prepare 1.18s)"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5523600Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:72: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5524039Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5524457Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:73: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5525008Z       '+    "receipt": "checks/agent-smoke-current/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5525562Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:74: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5525982Z       '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5526574Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:75: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5527003Z       '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5527415Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:76: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5527961Z       '+    "label": "backend-a2a-final-gate-current-identity",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5528513Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:77: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5529158Z       '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5529625Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:78: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5530077Z       '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5530523Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:79: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5530969Z       '+      "--filter",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5531410Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:80: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5531871Z       '+      "@workmesh/api",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5532328Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:81: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5532900Z       '+      "exec",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5533329Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:82: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5533779Z       '+      "vitest",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5534212Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:83: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5534634Z       '+      "run",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5535060Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:84: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5535499Z       '+      "--config",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5535944Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:85: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5536442Z       '+      "../../vitest.integration.config.ts",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5536954Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:86: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5537513Z       '+      "integration/stage4-operations.integration.test.ts"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5538137Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:87: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5538570Z       '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5539179Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:88: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5539655Z       '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5540107Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:89: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5540593Z       '+    "runtimeSeconds": 24.64534440000716,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5541090Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:90: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5541595Z       '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5542095Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:91: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5542555Z       '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5543017Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:92: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5543501Z       '+      "Test Files  1 passed (1)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5543988Z       'docs/plan/agent-mcp-m4/execution/checks-current.json:93: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5544462Z       '+      "Tests  26 passed (26)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5544796Z       'docs/plan/age'... 1045998 more characters,
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5545080Z     ''
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5545270Z   ],
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5545460Z   pid: 2478,
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5545895Z   stdout: 'docs/plan/agent-mcp-m4/execution/checks-current.json:1: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5546346Z     '+[\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5546749Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:2: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5547306Z     '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5547711Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:3: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5548240Z     '+    "label": "a2a-binding-first-failure-db-log",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5548767Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:4: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5549464Z     '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5549915Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:5: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5550386Z     '+      "docker.exe",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5550833Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:6: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5551258Z     '+      "logs",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5551681Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:7: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5552105Z     '+      "--tail",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5552530Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:8: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5552951Z     '+      "12",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5553358Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:9: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5553980Z     '+      "m4-01a127d4-4adc5e39-postgres"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5554469Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:10: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5554892Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5555298Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:11: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5555739Z     '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5556171Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:12: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5556650Z     '+    "runtimeSeconds": 3.2351378000021214,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5557132Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:13: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5557628Z     '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5558126Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:14: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5558578Z     '+    "summaryLines": [],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5559281Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:15: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5559897Z     '+    "receipt": "checks/a2a-binding-first-failure-db-log/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5560492Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:16: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5560914Z     '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5561316Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:17: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5561730Z     '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5562134Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:18: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5562661Z     '+    "label": "actual-management-feature-discovery",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5563200Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:19: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5563635Z     '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5564065Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:20: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5564520Z     '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5564952Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:21: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5565395Z     '+      "--filter",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5565832Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:22: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5566296Z     '+      "@workmesh/conformance",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5566778Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:23: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5567203Z     '+      "exec",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5567626Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:24: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5568048Z     '+      "vitest",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5568471Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:25: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5569264Z     '+      "run",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5569715Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:26: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5570159Z     '+      "--config",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5570601Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:27: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5571094Z     '+      "vitest.integration.config.ts",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5571599Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:28: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5572121Z     '+      "src/optional-domains.conformance.test.ts",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5572659Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:29: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5573083Z     '+      "-t",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5573503Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:30: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5574049Z     '+      "六feature"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5574482Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:31: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5575048Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5575450Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:32: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5575894Z     '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5576331Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:33: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5576806Z     '+    "runtimeSeconds": 12.69818770000711,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5577286Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:34: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5577777Z     '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5578267Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:35: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5578720Z     '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5579383Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:36: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5580147Z     '+      "✓ src/optional-domains.conformance.test.ts (13 tests | 12 skipped) 3681ms",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5580813Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:37: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5581288Z     '+      "Test Files  1 passed (1)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5581770Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:38: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5582256Z     '+      "Tests  1 passed | 12 skipped (13)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5582736Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:39: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5583468Z     '+      "Duration  6.92s (transform 1.15s, setup 0ms, collect 2.83s, tests 3.68s, environment 0ms, prepare 118ms)"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5584166Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:40: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5584584Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5584990Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:41: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5585601Z     '+    "receipt": "checks/actual-management-feature-discovery/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5586206Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:42: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5586622Z     '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5587019Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:43: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5587434Z     '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5587843Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:44: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5588335Z     '+    "label": "adapters-first-typecheck",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5588831Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:45: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5589489Z     '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5589926Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:46: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5590522Z     '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5590965Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:47: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5591430Z     '+      "ci:source",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5591871Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:48: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5592320Z     '+      "typecheck"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5592754Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:49: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5593171Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5593568Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:50: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5594015Z     '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5594442Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:51: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5594919Z     '+    "runtimeSeconds": 67.62005709999357,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5595394Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:52: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5595886Z     '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5596512Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:53: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5596963Z     '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5597408Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:54: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5597890Z     '+      "Tasks:    18 successful, 18 total",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5598373Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:55: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5598854Z     '+      "Cached:    0 cached, 18 total"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5599600Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:56: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5600030Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5600433Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:57: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5601006Z     '+    "receipt": "checks/adapters-first-typecheck/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5601587Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:58: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5602018Z     '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5602426Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:59: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5602847Z     '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5603246Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:60: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5603728Z     '+    "label": "agent-smoke-current",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5604211Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:61: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5604645Z     '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5605079Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:62: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5605523Z     '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5605966Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:63: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5606419Z     '+      "smoke:agents"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5606868Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:64: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5607288Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5607686Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:65: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5608137Z     '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5608568Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:66: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5609245Z     '+    "runtimeSeconds": 10.128078499998082,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5609748Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:67: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5610247Z     '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5610752Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:68: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5611209Z     '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5611798Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:69: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5612271Z     '+      "Test Files  4 passed (4)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5612743Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:70: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5613205Z     '+      "Tests  56 passed (56)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5613668Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:71: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5614398Z     '+      "Duration  1.63s (transform 372ms, setup 0ms, collect 1.53s, tests 465ms, environment 0ms, prepare 1.18s)"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5615105Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:72: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5615532Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5615932Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:73: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5616472Z     '+    "receipt": "checks/agent-smoke-current/receipt.json"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5617025Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:74: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5617569Z     '+  },\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5617968Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:75: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5618386Z     '+  {\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5618778Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:76: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5619537Z     '+    "label": "backend-a2a-final-gate-current-identity",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5620101Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:77: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5620542Z     '+    "command": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5620970Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:78: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5621415Z     '+      "pnpm.cmd",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5621845Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:79: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5622289Z     '+      "--filter",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5622714Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:80: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5623173Z     '+      "@workmesh/api",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5623621Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:81: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5624044Z     '+      "exec",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5624466Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:82: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5624895Z     '+      "vitest",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5625332Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:83: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5625753Z     '+      "run",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5626180Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:84: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5626642Z     '+      "--config",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5627075Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:85: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5627584Z     '+      "../../vitest.integration.config.ts",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5628089Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:86: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5628647Z     '+      "integration/stage4-operations.integration.test.ts"\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5629437Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:87: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5629882Z     '+    ],\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5630309Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:88: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5630784Z     '+    "exitCode": 0,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5631229Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:89: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5631716Z     '+    "runtimeSeconds": 24.64534440000716,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5632201Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:90: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5632838Z     '+    "sourceChangedDuringCommand": false,\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5633334Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:91: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5633790Z     '+    "summaryLines": [\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5634235Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:92: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5634707Z     '+      "Test Files  1 passed (1)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5635185Z     'docs/plan/agent-mcp-m4/execution/checks-current.json:93: trailing whitespace.\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5635645Z     '+      "Tests  26 passed (26)",\r\n' +
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5635972Z     'docs/plan/age'... 1045998 more characters,
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5636256Z   stderr: ''
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5636453Z }
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5636559Z 
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5636652Z Node.js v22.19.0
+Classify changes and validate CI selection	Select required jobs	2026-10-11T05:21:04.5646126Z ##[error]Process completed with exit code 1.
+Required CI	Aggregate required results	﻿2026-10-11T05:21:50.1576365Z ##[group]Run mkdir -p ci-logs
+Required CI	Aggregate required results	2026-10-11T05:21:50.1576586Z ^[[36;1mmkdir -p ci-logs^[[0m
+Required CI	Aggregate required results	2026-10-11T05:21:50.1576729Z ^[[36;1mset -o pipefail^[[0m
+Required CI	Aggregate required results	2026-10-11T05:21:50.1576956Z ^[[36;1mnode scripts/ci-policy.mjs aggregate 2>&1 | tee ci-logs/required-ci.log^[[0m
+Required CI	Aggregate required results	2026-10-11T05:21:50.1781291Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+Required CI	Aggregate required results	2026-10-11T05:21:50.1781499Z env:
+Required CI	Aggregate required results	2026-10-11T05:21:50.1782300Z   NEEDS_JSON: {
+Required CI	Aggregate required results	  "changes": {
+Required CI	Aggregate required results	    "result": "failure",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  },
+Required CI	Aggregate required results	  "source-gates": {
+Required CI	Aggregate required results	    "result": "skipped",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  },
+Required CI	Aggregate required results	  "db-integration": {
+Required CI	Aggregate required results	    "result": "skipped",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  },
+Required CI	Aggregate required results	  "api-integration": {
+Required CI	Aggregate required results	    "result": "skipped",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  },
+Required CI	Aggregate required results	  "worker-integration": {
+Required CI	Aggregate required results	    "result": "skipped",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  },
+Required CI	Aggregate required results	  "e2e": {
+Required CI	Aggregate required results	    "result": "skipped",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  },
+Required CI	Aggregate required results	  "recovery-integration": {
+Required CI	Aggregate required results	    "result": "skipped",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  },
+Required CI	Aggregate required results	  "agent-smoke": {
+Required CI	Aggregate required results	    "result": "skipped",
+Required CI	Aggregate required results	    "outputs": {}
+Required CI	Aggregate required results	  }
+Required CI	Aggregate required results	}
+Required CI	Aggregate required results	2026-10-11T05:21:50.1783123Z ##[endgroup]
+Required CI	Aggregate required results	2026-10-11T05:21:50.2065682Z file:///home/runner/work/WorkMesh/WorkMesh/scripts/ci-policy.mjs:109
+Required CI	Aggregate required results	2026-10-11T05:21:50.2066205Z   if (!plan || !['full', 'affected', 'docs'].includes(plan.mode) || !plan.checks) throw new Error('Missing or invalid CI plan')
+Required CI	Aggregate required results	2026-10-11T05:21:50.2066598Z                                                                                         ^
+Required CI	Aggregate required results	2026-10-11T05:21:50.2066755Z 
+Required CI	Aggregate required results	2026-10-11T05:21:50.2066849Z Error: Missing or invalid CI plan
+Required CI	Aggregate required results	2026-10-11T05:21:50.2067139Z     at evaluateResults (file:///home/runner/work/WorkMesh/WorkMesh/scripts/ci-policy.mjs:109:89)
+Required CI	Aggregate required results	2026-10-11T05:21:50.2067483Z     at file:///home/runner/work/WorkMesh/WorkMesh/scripts/ci-policy.mjs:151:22
+Required CI	Aggregate required results	2026-10-11T05:21:50.2068608Z     at ModuleJob.run (node:internal/modules/esm/module_job:345:25)
+Required CI	Aggregate required results	2026-10-11T05:21:50.2068980Z     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:651:26)
+Required CI	Aggregate required results	2026-10-11T05:21:50.2069315Z     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+Required CI	Aggregate required results	2026-10-11T05:21:50.2069605Z 
+Required CI	Aggregate required results	2026-10-11T05:21:50.2069663Z Node.js v22.19.0
+Required CI	Aggregate required results	2026-10-11T05:21:50.2088230Z ##[error]Process completed with exit code 1.

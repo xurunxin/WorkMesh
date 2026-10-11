@@ -1,0 +1,156 @@
+{
+  "events": [
+    {
+      "kind": "api",
+      "url": "http://127.0.0.1:57819",
+      "ready": 200
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-only",
+      "url": "http://127.0.0.1:57825",
+      "executionSessionId": null
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57828",
+      "executionSessionId": null
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-only",
+      "url": "http://127.0.0.1:57836",
+      "executionSessionId": "ea774977-b7d0-42fe-beb6-101494176c99"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57840",
+      "executionSessionId": "ea774977-b7d0-42fe-beb6-101494176c99"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57847",
+      "executionSessionId": null
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57848",
+      "executionSessionId": null
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57857",
+      "executionSessionId": "ae83531c-012a-4cdc-a0a7-b3c80b031bf3"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57862",
+      "executionSessionId": "ae83531c-012a-4cdc-a0a7-b3c80b031bf3"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57866",
+      "executionSessionId": "6d7d0041-c3fd-42be-bd81-ceafd565bcbe"
+    },
+    {
+      "kind": "model",
+      "port": 57872,
+      "transport": "https",
+      "externalConnections": false
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57878",
+      "executionSessionId": "91dc6c7d-365b-4ced-90d5-4eaa826d3b9c"
+    },
+    {
+      "kind": "api-restart",
+      "port": 57819
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57881",
+      "executionSessionId": "91dc6c7d-365b-4ced-90d5-4eaa826d3b9c"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57889",
+      "executionSessionId": "42d96f3c-faea-4226-8706-781de4f86b69"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "transport": "in-memory SDK transport to real HTTP API"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57894",
+      "executionSessionId": "cad40428-8b37-4d45-a0bc-87b0f5452a0a"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57899",
+      "executionSessionId": "a3b8c6a9-1585-4795-88d7-dc4e8aa935c8"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57902",
+      "executionSessionId": null
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57905",
+      "executionSessionId": null
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57911",
+      "executionSessionId": "c4bb3b5c-6598-4879-833d-add1175c22ca"
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "url": "http://127.0.0.1:57915",
+      "executionSessionId": null
+    }
+  ],
+  "cleanup": [
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled",
+    "fulfilled"
+  ],
+  "ownedListenersClosed": true,
+  "database": "/workmesh_m4_test",
+  "databasePreserved": true
+}

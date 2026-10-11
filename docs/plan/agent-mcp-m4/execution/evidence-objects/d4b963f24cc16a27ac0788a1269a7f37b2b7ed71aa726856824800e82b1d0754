@@ -1,0 +1,113 @@
+[
+  {
+    "pid": 36296,
+    "parentPid": 51148,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "debug",
+      "paths"
+    ],
+    "registeredAt": "2026-10-11T04:21:51.606Z",
+    "exitObservedAt": "2026-10-11T04:21:52.451Z"
+  },
+  {
+    "pid": 51268,
+    "parentPid": 51148,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "debug",
+      "config"
+    ],
+    "registeredAt": "2026-10-11T04:21:53.161Z",
+    "exitObservedAt": "2026-10-11T04:21:59.631Z"
+  },
+  {
+    "pid": 18156,
+    "parentPid": 51268,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "commandLine": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe serve --service",
+    "registeredAt": "2026-10-11T04:21:57.898Z",
+    "exitObservedAt": "2026-10-11T04:22:04.190Z"
+  },
+  {
+    "pid": 35976,
+    "parentPid": 51148,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "service",
+      "stop"
+    ],
+    "registeredAt": "2026-10-11T04:21:59.675Z",
+    "exitObservedAt": "2026-10-11T04:22:07.182Z"
+  },
+  {
+    "pid": 24360,
+    "parentPid": 51148,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "serve",
+      "--stdio",
+      "--hostname",
+      "127.0.0.1",
+      "--port",
+      "0",
+      "--print-logs"
+    ],
+    "registeredAt": "2026-10-11T04:22:08.074Z",
+    "exitObservedAt": "2026-10-11T04:22:20.238Z"
+  },
+  {
+    "pid": 41500,
+    "parentPid": 51148,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "run",
+      "--server",
+      "http://127.0.0.1:64392",
+      "--print-logs",
+      "--format",
+      "json",
+      "--model",
+      "m5-local/controlled",
+      "Call only the supplied WorkMesh tools, then report the verified public result."
+    ],
+    "registeredAt": "2026-10-11T04:22:10.738Z",
+    "exitObservedAt": "2026-10-11T04:22:14.073Z"
+  },
+  {
+    "pid": 54180,
+    "parentPid": 51148,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "run",
+      "--server",
+      "http://127.0.0.1:64392",
+      "--print-logs",
+      "--format",
+      "json",
+      "--model",
+      "m5-local/controlled",
+      "Call only the supplied WorkMesh tools, then report the verified public result."
+    ],
+    "registeredAt": "2026-10-11T04:22:16.241Z",
+    "exitObservedAt": "2026-10-11T04:22:17.822Z"
+  },
+  {
+    "pid": 50364,
+    "parentPid": 51148,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "service",
+      "stop"
+    ],
+    "registeredAt": "2026-10-11T04:22:19.167Z",
+    "exitObservedAt": "2026-10-11T04:22:20.238Z"
+  }
+]

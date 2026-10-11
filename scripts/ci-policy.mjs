@@ -45,6 +45,10 @@ export function validateMcpConformanceEntrypoints({ job, rootScripts, packageScr
   require(integrationConfig.includes("'src/mcp-coverage.conformance.test.ts'") && integrationConfig.includes("'src/execution-recovery.conformance.test.ts'") && integrationConfig.includes("'src/planning-collaboration.conformance.test.ts'") && integrationConfig.includes("'src/delivery-recovery.conformance.test.ts'") && integrationConfig.includes('passWithNoTests: false') && integrationConfig.includes('fileParallelism: false'), 'Real conformance must be explicit, nonempty and serial')
   require(unitConfig.includes('**/mcp-coverage.conformance.test.ts') && unitConfig.includes('**/execution-recovery.conformance.test.ts') && unitConfig.includes('**/planning-collaboration.conformance.test.ts') && unitConfig.includes('**/delivery-recovery.conformance.test.ts'), 'Real conformance must be excluded from memory units')
   require(integrationConfig.includes("'src/joint-clients.conformance.test.ts'") && unitConfig.includes('**/joint-clients.conformance.test.ts'), 'Joint client conformance must run in integration, excluded from units')
+  require(integrationConfig.includes("'src/optional-domains.conformance.test.ts'") && unitConfig.includes('**/optional-domains.conformance.test.ts'), 'Optional domain conformance must run in integration, excluded from units')
+  require(rootScripts['test:acceptance:m4'] === 'node scripts/require-integration-env.mjs && pnpm --filter @workmesh/conformance acceptance:optional'
+    && packageScripts['acceptance:optional'] === 'tsx src/optional-domains.acceptance.ts', 'M4 native acceptance must retain its explicit required local entry')
+  require(!integrationConfig.includes('optional-domains.acceptance') && !step?.run?.includes('test:acceptance:m4'), 'M4 native acceptance must remain separate from Required API CI')
   return failures
 }
 

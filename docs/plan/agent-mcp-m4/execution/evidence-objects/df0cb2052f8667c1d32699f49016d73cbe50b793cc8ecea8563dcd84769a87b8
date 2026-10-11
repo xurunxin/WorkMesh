@@ -1,0 +1,48 @@
+{
+  "evidence": [
+    {
+      "operation": "rollup",
+      "phase": "before",
+      "revocationCommitted": true,
+      "firstRefused": true,
+      "nextReadRefused": true
+    },
+    {
+      "operation": "rollup",
+      "phase": "after",
+      "revocationCommitted": true,
+      "firstRefused": false,
+      "nextReadRefused": true
+    },
+    {
+      "operation": "run",
+      "phase": "before",
+      "revocationCommitted": true,
+      "firstRefused": true,
+      "nextReadRefused": true
+    },
+    {
+      "operation": "run",
+      "phase": "after",
+      "revocationCommitted": true,
+      "firstRefused": false,
+      "nextReadRefused": true
+    },
+    {
+      "operation": "usage",
+      "phase": "before",
+      "revocationCommitted": true,
+      "firstRefused": true,
+      "nextReadRefused": true
+    },
+    {
+      "operation": "usage",
+      "phase": "after",
+      "revocationCommitted": true,
+      "firstRefused": false,
+      "nextReadRefused": true
+    }
+  ],
+  "queryResultsMocked": false,
+  "grantRestored": true
+}

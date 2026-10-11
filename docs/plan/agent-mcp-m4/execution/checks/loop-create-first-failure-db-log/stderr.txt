@@ -1,0 +1,16 @@
+2026-10-11 03:32:23.458 UTC [55] LOG:  checkpoint complete: wrote 1469 buffers (9.0%); 0 WAL file(s) added, 0 removed, 1 recycled; write=146.327 s, sync=0.140 s, total=146.483 s; sync files=4141, longest=0.001 s, average=0.001 s; distance=16268 kB, estimate=16268 kB; lsn=0/29CDA10, redo lsn=0/2901A18
+2026-10-11 03:42:05.654 UTC [134] ERROR:  division by zero
+2026-10-11 03:42:05.654 UTC [134] STATEMENT:  SELECT 1 / 0
+2026-10-11 03:42:41.622 UTC [149] ERROR:  division by zero
+2026-10-11 03:42:41.622 UTC [149] STATEMENT:  SELECT 1 / 0
+2026-10-11 03:44:56.950 UTC [55] LOG:  checkpoint starting: time
+2026-10-11 03:46:22.132 UTC [55] LOG:  checkpoint complete: wrote 855 buffers (5.2%); 0 WAL file(s) added, 0 removed, 0 recycled; write=85.067 s, sync=0.102 s, total=85.182 s; sync files=1641, longest=0.002 s, average=0.001 s; distance=7010 kB, estimate=15342 kB; lsn=0/2FDA508, redo lsn=0/2FDA4D0
+2026-10-11 03:54:56.333 UTC [55] LOG:  checkpoint starting: time
+2026-10-11 03:55:35.335 UTC [55] LOG:  checkpoint complete: wrote 197 buffers (1.2%); 0 WAL file(s) added, 0 removed, 1 recycled; write=38.894 s, sync=0.098 s, total=39.002 s; sync files=1623, longest=0.006 s, average=0.001 s; distance=1061 kB, estimate=13914 kB; lsn=0/31F0840, redo lsn=0/30E3C38
+2026-10-11 03:55:54.945 UTC [195] ERROR:  operator is not unique: unknown ->> unknown at character 275
+2026-10-11 03:55:54.945 UTC [195] HINT:  Could not choose a best candidate operator. You might need to add explicit type casts.
+2026-10-11 03:55:54.945 UTC [195] STATEMENT:  INSERT INTO loops(
+	          workspace_id,team_id,project_id,name,owner_actor_id,agent_id,run_template_version_id,
+	          trigger,budget,no_overlap,visibility,failure_notification,next_run_at
+	        ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,
+	          CASE WHEN $8->>'type'='schedule' THEN now() ELSE NULL END) RETURNING id,revision

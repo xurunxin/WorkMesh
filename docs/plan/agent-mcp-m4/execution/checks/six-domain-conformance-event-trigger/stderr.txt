@@ -1,0 +1,16 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者
+Error: Human fixture POST /api/v1/loops: 500 {"error":{"code":"INTERNAL_ERROR","message":"Unexpected server error","correlationId":"fe5d1c54-737a-4b9c-930f-7f71870b97e2"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:63:29
+     61|     body: body === undefined ? undefined : JSON.stringify(body) })
+     62|     const text = await response.text()
+     63|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     64|     return (text ? JSON.parse(text) : undefined) as T
+     65|   }
+ ❯ src/optional-domains.conformance.test.ts:38:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

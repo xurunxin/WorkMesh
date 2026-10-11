@@ -15,7 +15,7 @@ export default defineConfig({
   esbuild: { jsx: 'automatic' },
   test: {
     include: ['**/*.test.ts', '**/*.test.tsx'],
-    exclude: ['**/node_modules/**', '**/integration/**', '**/mcp-coverage.conformance.test.ts', '**/execution-recovery.conformance.test.ts', '**/planning-collaboration.conformance.test.ts', '**/delivery-recovery.conformance.test.ts', '**/joint-clients.conformance.test.ts'],
+    exclude: ['**/node_modules/**', '**/integration/**', '**/mcp-coverage.conformance.test.ts', '**/execution-recovery.conformance.test.ts', '**/planning-collaboration.conformance.test.ts', '**/delivery-recovery.conformance.test.ts', '**/joint-clients.conformance.test.ts', '**/optional-domains.conformance.test.ts'],
     setupFiles: localVitestSetup(),
     passWithNoTests: true,
     // Turbo runs every package's suite in parallel, and each suite was asking
@@ -26,6 +26,8 @@ export default defineConfig({
     // the pool keeps a suite's cost proportional to the boxes actually running
     // and leaves a full core's worth of headroom for the package running
     // beside it. It changes no assertion.
+    // Vitest's default forks pool must obey the same existing worker budget.
+    minWorkers: 1, maxWorkers: 4,
     poolOptions: { threads: { minThreads: 1, maxThreads: 4 } },
   },
 })

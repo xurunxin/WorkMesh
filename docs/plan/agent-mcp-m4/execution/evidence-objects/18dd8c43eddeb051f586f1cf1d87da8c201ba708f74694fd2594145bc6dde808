@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "run",
+    "--server",
+    "http://127.0.0.1:65245",
+    "--print-logs",
+    "--format",
+    "json",
+    "--model",
+    "m5-local/controlled",
+    "Call only the supplied WorkMesh tools, then report the verified public result."
+  ],
+  "startedAt": "2026-10-11T04:16:16.047Z",
+  "endedAt": "2026-10-11T04:16:16.382Z",
+  "runtimeMs": 334.45299999999406,
+  "pid": 38468,
+  "nativeExit": 0,
+  "signal": null,
+  "stdout": "{\"type\":\"step_start\",\"timestamp\":1791692176244,\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"part\":{\"id\":\"prt_1292cfb74001nPlBkPWTaNEf6v\",\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"messageID\":\"msg_1292cfb59001oUuOBxdEnwVyeo\",\"type\":\"step-start\"}}\n{\"type\":\"tool_use\",\"timestamp\":1791692176309,\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"part\":{\"partID\":\"prt_1292cfb77001NMEJhWWXIyt6vr\",\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"messageID\":\"msg_1292cfb59001oUuOBxdEnwVyeo\",\"type\":\"tool\",\"id\":\"4c2625ab-6b35-4881-9caf-b1a670ba7963\",\"tool\":\"workmesh_get_usage_summary\",\"state\":{\"status\":\"completed\",\"input\":{},\"output\":\"{\\\"input_tokens\\\":\\\"34\\\",\\\"output_tokens\\\":\\\"0\\\",\\\"runtime_ms\\\":\\\"0\\\",\\\"tool_calls\\\":\\\"0\\\",\\\"unknown_cost_records\\\":2,\\\"currency_buckets\\\":[{\\\"currency\\\":\\\"EUR\\\",\\\"known_cost_minor\\\":\\\"0\\\",\\\"unknown_cost_records\\\":1},{\\\"currency\\\":\\\"USD\\\",\\\"known_cost_minor\\\":\\\"9007199254740993\\\",\\\"unknown_cost_records\\\":1}]}\",\"title\":\"workmesh_get_usage_summary\",\"metadata\":{\"metadata\":{\"truncated\":false},\"content\":[{\"type\":\"text\",\"text\":\"{\\\"input_tokens\\\":\\\"34\\\",\\\"output_tokens\\\":\\\"0\\\",\\\"runtime_ms\\\":\\\"0\\\",\\\"tool_calls\\\":\\\"0\\\",\\\"unknown_cost_records\\\":2,\\\"currency_buckets\\\":[{\\\"currency\\\":\\\"EUR\\\",\\\"known_cost_minor\\\":\\\"0\\\",\\\"unknown_cost_records\\\":1},{\\\"currency\\\":\\\"USD\\\",\\\"known_cost_minor\\\":\\\"9007199254740993\\\",\\\"unknown_cost_records\\\":1}]}\"}],\"providerCall\":{\"executed\":false},\"providerResult\":{\"executed\":false},\"rawInput\":\"{}\"},\"time\":{\"start\":1791692176247,\"end\":1791692176309}}}}\n{\"type\":\"step_finish\",\"timestamp\":1791692176312,\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"part\":{\"id\":\"prt_1292cfbb8001k25y2NYyNswWkm\",\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"messageID\":\"msg_1292cfb59001oUuOBxdEnwVyeo\",\"type\":\"step-finish\",\"reason\":\"tool-calls\",\"cost\":0,\"tokens\":{\"input\":1,\"output\":1,\"reasoning\":\"[redacted]\",\"cache\":{\"read\":0,\"write\":0}}}}\n{\"type\":\"text\",\"timestamp\":1791692176353,\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"part\":{\"id\":\"prt_1292cfbc2001TO0RC6qBupeq4o_text-0\",\"sessionID\":\"ses_ed6d304beffeLQ8Od9ae5QZ1mO\",\"messageID\":\"msg_1292cfbc2001TO0RC6qBupeq4o\",\"type\":\"text\",\"text\":\"M5 public result verified.\",\"time\":{\"start\":1791692176337,\"end\":1791692176353}}}\n",
+  "stderr": "",
+  "rawOutput": {
+    "stdout": {
+      "bytes": 2200,
+      "sha256": "cf270576339bcd36fc7a3bc5a92c16cc50a2a1c234783b743d82fa89ca9bfe65"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rawBytesPreserved": false
+}

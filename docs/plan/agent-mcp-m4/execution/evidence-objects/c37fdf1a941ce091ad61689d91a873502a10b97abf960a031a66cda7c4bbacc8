@@ -1,0 +1,75 @@
+[
+  {
+    "pid": 17980,
+    "parentPid": 31200,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "debug",
+      "paths"
+    ],
+    "registeredAt": "2026-10-11T04:06:10.959Z",
+    "exitObservedAt": "2026-10-11T04:06:12.513Z"
+  },
+  {
+    "pid": 37164,
+    "parentPid": 31200,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "debug",
+      "config"
+    ],
+    "registeredAt": "2026-10-11T04:06:13.920Z",
+    "exitObservedAt": "2026-10-11T04:06:22.194Z"
+  },
+  {
+    "pid": 51700,
+    "parentPid": 37164,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "commandLine": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe serve --service",
+    "registeredAt": "2026-10-11T04:06:20.493Z",
+    "exitObservedAt": "2026-10-11T04:06:27.088Z"
+  },
+  {
+    "pid": 44184,
+    "parentPid": 31200,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "service",
+      "stop"
+    ],
+    "registeredAt": "2026-10-11T04:06:22.231Z",
+    "exitObservedAt": "2026-10-11T04:06:30.351Z"
+  },
+  {
+    "pid": 52968,
+    "parentPid": 31200,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "serve",
+      "--stdio",
+      "--hostname",
+      "127.0.0.1",
+      "--port",
+      "0",
+      "--print-logs"
+    ],
+    "registeredAt": "2026-10-11T04:06:31.205Z",
+    "exitObservedAt": "2026-10-11T04:06:48.607Z"
+  },
+  {
+    "pid": 45624,
+    "parentPid": 31200,
+    "executable": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "argv": [
+      "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+      "service",
+      "stop"
+    ],
+    "registeredAt": "2026-10-11T04:06:47.837Z",
+    "exitObservedAt": "2026-10-11T04:06:48.607Z"
+  }
+]

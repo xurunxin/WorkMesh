@@ -1,0 +1,9 @@
+stderr | apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > M2计划评论/提案/context delta固定自身身份，验证来源并复用同调用幂等包装
+{"tool":"workmesh_propose_plan_step_assignment","stage":"input_validation","paths":[""]}
+
+stderr | apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+{"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+
+stderr | apps/agent-runner/src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+{"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+

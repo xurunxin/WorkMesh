@@ -1,0 +1,181 @@
+import { readFileSync } from 'node:fs'
+import { describe, expect, it } from 'vitest'
+
+describe('human UI layout contract', () => {
+  it('keeps work item drawers above the narrow navigation', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/\.mobile-navigation\s*\{[^}]*z-index:\s*10;/s)
+    expect(styles).toMatch(/\.app-shell \.drawer\s*\{[^}]*z-index:\s*20;/s)
+    expect(styles).toMatch(/\.content > \.conflict-notice\s*\{[^}]*z-index:\s*30;/s)
+  })
+
+  it('keeps Project list and long detail content independently accessible', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/\.project-rail-list\s*\{[^}]*overflow:\s*auto;[^}]*overscroll-behavior:\s*contain;/s)
+    expect(styles).toMatch(/\.project-detail-pane\s*\{[^}]*container-name:\s*project-detail;[^}]*overflow-x:\s*hidden;[^}]*overflow-y:\s*auto;/s)
+    expect(styles).toMatch(/\.hcp-reference\s*\{[^}]*box-sizing:\s*border-box;[^}]*width:\s*100%;/s)
+    expect(styles).toMatch(/@container\s+project-detail\s*\(max-width:\s*960px\)\s*\{[^}]*\.wm-page-head\s*\{[^}]*flex-wrap:\s*wrap;/s)
+    expect(styles).toMatch(/\.hcp-project-description \.rich-markdown\s*\{[^}]*overflow-wrap:\s*anywhere;/s)
+  })
+
+  it('removes the real Work Surface pulse under reduced motion without hiding its state', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[^}]*\.work-surface-stale\s*\{[^}]*animation:\s*none\s*!important;/s)
+    expect(styles).toContain('.wm-work-surface-stale { opacity: .72; }')
+    expect(styles).toContain('.wm-work-surface-state-marker')
+  })
+
+  it('covers public Connect descendants with the reduced-motion duration contract', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\.connect-page\s+\*,\s*\.connect-page\s+\*::before,\s*\.connect-page\s+\*::after\s*\{[^}]*transition-duration:\s*\.01ms\s*!important;[^}]*animation-duration:\s*\.01ms\s*!important;[^}]*animation-iteration-count:\s*1\s*!important;/s)
+  })
+
+  it('keeps the 760/761 shell boundary and mobile discrete controls explicit', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/\.app-brand-title\s*>\s*strong\s*\{[^}]*font-size:\s*1\.08rem;[^}]*letter-spacing:\s*-\.02em;/s)
+    expect(styles).not.toMatch(/\.app-brand\s+h1\s*\{/)
+    expect(styles).toMatch(/main#workmesh-main:focus-visible\s*\{[^}]*outline:\s*0;[^}]*box-shadow:\s*inset\s+0\s+3px\s+0\s+var\(--wm-focus\);/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)\s*\{[^}]*\.app-shell\s*\{\s*display:\s*block;/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)[\s\S]*\.app-shell\s+button,\s*\.app-shell\s+select,\s*\.app-shell\s+summary\s*\{[^}]*min-height:\s*44px;/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*900px\)[\s\S]*\.app-shell\s+\.agent-registry-filters\s*\{[^}]*grid-template-columns:\s*repeat\(2,/s)
+    expect(styles).toMatch(/@media\s*\(max-width:\s*600px\)\s*\{[^}]*\.operations-tab\s*>\s*header\.operations-header\s*\{[^}]*flex-direction:\s*column;/s)
+  })
+
+  it('keeps compact text controls above the measured 40px touch boundary', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    expect(styles).toMatch(/@media\s*\(max-width:\s*760px\)[\s\S]*?\.app-shell\s+input:not\(\[type='checkbox'\]\):not\(\[type='radio'\]\):not\(\[type='file'\]\):not\(\[type='range'\]\):not\(\[type='date'\]\):not\(\[type='time'\]\):not\(\[type='color'\]\)\s*\{[^}]*min-height:\s*42px;/s)
+  })
+
+  it('keeps standalone Operations metrics dense without crossing the padded content box', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    // The metric grid's own density lives in @workmesh/ui now; what stays here
+    // is the loading placeholder, which is this screen's arrangement.
+    expect(styles).toMatch(/@media\s*\(min-width:\s*1200px\)\s*and\s*\(max-width:\s*1599px\)\s*\{[\s\S]*?\.content--full\s+\.operations-usage-loading\s+\.skeleton-list\s*\{[^}]*grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*13rem\),\s*17rem\)\);/s)
+    expect(styles).toMatch(/@media\s*\(min-width:\s*1600px\)\s*\{[\s\S]*?\.content--full\s+\.operations-metrics\s*\{[^}]*width:\s*calc\(85%\s*\+\s*3rem\s*\+\s*1px\);/s)
+  })
+
+  it('owns foundation tokens in packages/ui and migrates the four workspace shell routes', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+    const layout = readFileSync(new URL('./layout.tsx', import.meta.url), 'utf8')
+    const home = readFileSync(new URL('./page.tsx', import.meta.url), 'utf8')
+    const settings = readFileSync(new URL('./settings/page.tsx', import.meta.url), 'utf8')
+    const agents = readFileSync(new URL('./agents/page.tsx', import.meta.url), 'utf8')
+    const operations = readFileSync(new URL('./operations/page.tsx', import.meta.url), 'utf8')
+
+    expect(styles).not.toMatch(/--wm-color-canvas\s*:/)
+    expect(layout).toContain("import '@workmesh/ui/tokens.css'")
+    for (const route of [home, settings, agents, operations]) {
+      expect(route).toContain('AuthenticatedWorkspaceShell')
+    }
+    // settings intentionally omits RealtimeStatus (administrative surface, no live workspace data)
+    for (const route of [home, agents, operations]) {
+      expect(route).toContain('RealtimeStatus')
+    }
+    expect(home).toContain('ErrorState')
+    expect(agents).toContain('ErrorState')
+    expect(settings).not.toContain('OperationsContent')
+    // The standalone /operations route owns the only production Operations surface.
+    expect(operations).toContain('AuthenticatedWorkspaceShell')
+    expect(operations).toContain('OperationsContent')
+  })
+
+  it('removes legacy dark theme colors and class names', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+    for (const color of ['#0f172a', '#1e293b', '#334155', '#475569', '#1d4ed8', '#fca5a5', '#94a3b8', '#cbd5e1', '#e2e8f0', '#7f1d1d', '#111827']) {
+      expect(styles, `legacy color ${color} should be gone`).not.toContain(color)
+    }
+    for (const cls of ['.shell ', '.auth,', '.auth {', '.work-tabs']) {
+      expect(styles, `legacy class ${cls} should be gone`).not.toContain(cls)
+    }
+    // The bare class names .agent-center / .session-page and the agent-state
+    // sub-classes .state-executing / .state-completed / .state-failed are all
+    // still in use as compound selectors under .app-shell .agent-state (e.g.
+    // .app-shell .agent-state.state-executing). A plain substring check would
+    // over-match, so use anchored patterns that only fire when these names
+    // start a selector (the legacy form), not when they're mid-compound.
+    expect(styles, 'legacy .agent-center should be gone').not.toMatch(/(^|[,;{])\.agent-center[, >{]/)
+    expect(styles, 'legacy .session-page should be gone').not.toMatch(/(^|[,;{])\.session-page[, >{]/)
+    for (const stateClass of ['.state-executing', '.state-completed', '.state-failed']) {
+      expect(styles, `legacy class ${stateClass} should be gone`).not.toMatch(new RegExp(`(^|[,;{])\\${stateClass}[, >{]`))
+    }
+  })
+
+  it('removes operations-only theme colors and class names', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+    for (const color of ['#f7f8fb', '#e4e7ec', '#667085', '#475467', '#eaecf0']) {
+      expect(styles, `operations color ${color} should be gone`).not.toContain(color)
+    }
+    expect(styles, '.operations-shell { should be gone').not.toContain('.operations-shell {')
+  })
+
+  it('keeps styles.css on --wm-* tokens with zero hardcoded hex theme colors', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+    // Allowlisted literals are structural, mode-independent colors with no
+    // --wm-* counterpart yet; each entry documents why it cannot be tokenized.
+    // Do not grow this list for theme colors — map them to a token instead.
+    const allowlist: Array<{ hex: string; reason: string }> = [
+      { hex: '#e7e5e4', reason: 'config-preview code panel foreground: intentional always-dark terminal-style surface' },
+      { hex: '#292524', reason: 'config-preview code panel background: intentional always-dark terminal-style surface' },
+      { hex: '#44403c', reason: 'config-preview code panel border: intentional always-dark terminal-style surface' },
+    ]
+    const matches = styles.match(/#[0-9a-fA-F]{3,8}\b/g) ?? []
+    const offenders = matches.filter((hex) => !allowlist.some((entry) => entry.hex === hex.toLowerCase()))
+    expect(
+      offenders,
+      `hardcoded hex colors must move to --wm-* tokens (or join the documented allowlist): ${[...new Set(offenders)].join(', ')}`,
+    ).toEqual([])
+    // An allowlist entry that no longer occurs is stale and must be pruned.
+    for (const { hex, reason } of allowlist) {
+      expect(styles, `allowlisted ${hex} (${reason}) no longer occurs; prune the entry`).toContain(hex)
+    }
+    // Shadow/scrim alpha colors ride the --wm-shadow-* / --wm-scrim tokens too.
+    expect(styles, 'raw rgb()/rgba() colors must use --wm-* tokens').not.toMatch(/rgba?\(/)
+  })
+
+  it('renders the four migrated routes inside the unified AppShell', () => {
+    const layout = readFileSync(new URL('./layout.tsx', import.meta.url), 'utf8')
+    const home = readFileSync(new URL('./page.tsx', import.meta.url), 'utf8')
+    const settings = readFileSync(new URL('./settings/page.tsx', import.meta.url), 'utf8')
+    const operations = readFileSync(new URL('./operations/page.tsx', import.meta.url), 'utf8')
+    const connect = readFileSync(new URL('./connect/page.tsx', import.meta.url), 'utf8')
+    const login = readFileSync(new URL('./login/page.tsx', import.meta.url), 'utf8')
+    const install = readFileSync(new URL('./install/page.tsx', import.meta.url), 'utf8')
+    const agents = readFileSync(new URL('./agents/page.tsx', import.meta.url), 'utf8')
+
+    expect(layout).toContain("import '@workmesh/ui/tokens.css'")
+    for (const route of [home, settings, operations, connect, agents, login, install]) {
+      expect(route, 'route should import LocaleToggle/useLocale').toMatch(/useLocale|from '[^']*lib\/i18n'/)
+    }
+    for (const route of [home, settings, operations, agents]) {
+      expect(route, 'workspace route should wrap in the authenticated shell').toContain('AuthenticatedWorkspaceShell')
+    }
+    for (const route of [login, install]) {
+      expect(route, 'public route should wrap in AppShell').toContain('AppShell')
+      expect(route, 'public route should use auth-shell').toContain('auth-shell')
+    }
+  })
+
+  it('keeps the work item fact strips from re-specifying shared controls', () => {
+    const styles = readFileSync(new URL('./styles.css', import.meta.url), 'utf8')
+
+    // The app styles the fact spans it renders. The run budget chip is a shared
+    // control from packages/ui, and a bare `span` rule here out-specified it:
+    // the chip lost its 6px gap, its inline-flex box, and its tabular figures.
+    expect(styles).not.toMatch(/\.wm-work-item-(?:metadata|facts)\s+span\s*\{/)
+    expect(styles).not.toMatch(/\.wm-work-item-(?:metadata|facts)\s+span\s*,\s*\.wm-work-item-(?:metadata|facts)\s+span\s*\{/)
+    expect(styles).toMatch(/\.wm-work-item-metadata span:not\(\.wm-budget-chip\):not\(\.wm-budget-chip \*\)/)
+    expect(styles).toMatch(/\.wm-work-item-facts span:not\(\.wm-budget-chip\):not\(\.wm-budget-chip \*\)/)
+  })
+
+  it('no longer carries an inline text object in settings/page.tsx', () => {
+    const settings = readFileSync(new URL('./settings/page.tsx', import.meta.url), 'utf8')
+    expect(settings).not.toContain("locale === 'zh-CN' ?")
+  })
+})

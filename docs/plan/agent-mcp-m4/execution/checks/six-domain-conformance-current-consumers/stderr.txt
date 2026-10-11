@@ -1,0 +1,51 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > 真实SDK/MCP C/E分页与四读正反例，origin与target准确分离
+AssertionError: [{"type":"text","text":"{\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"dd4daadd-04a9-4f9d-a824-604761847417\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"}]: expected true not to be true // Object.is equality
+ ❯ tool src/optional-domains.conformance.test.ts:14:61
+     12| const tool=async<T>(client:Client,name:string,args:Record<string,unkno…
+     13|   const result=await client.callTool({name,arguments:args})
+     14|   expect(result.isError,JSON.stringify(result.content)).not.toBe(true)
+       |                                                             ^
+     15|   return (result.structuredContent as {data:T}).data
+     16| }
+ ❯ src/optional-domains.conformance.test.ts:75:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > Loop同occurrence回执、两请求no-overlap竞争及Human暂停拒绝
+Error: Human fixture POST /api/v1/loops/ca8d0f77-01d8-4ca1-b14c-52323429e9fb/state: 500 {"error":{"code":"INTERNAL_ERROR","message":"Unexpected server error","correlationId":"e78fea43-f7f6-44e7-a6f8-702425cefff4"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:63:29
+     61|     body: body === undefined ? undefined : JSON.stringify(body) })
+     62|     const text = await response.text()
+     63|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     64|     return (text ? JSON.parse(text) : undefined) as T
+     65|   }
+ ❯ src/optional-domains.conformance.test.ts:127:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > 真实Pi准确project/item E实收rollup、usage、规则/Loop及跨Session拒绝
+TypeError: Cannot read properties of undefined (reading 'results')
+ ❯ src/optional-domains.conformance.test.ts:173:33
+    171|     // or WorkItem. A projectless Loop target is not given a synthetic…
+    172|     const captures=await f.pi(origin,f.connectionToken,calls.map(call=…
+    173|     const results=captures.at(-1)!.results.map(text=>{const value:unkn…
+       |                                 ^
+    174|     expect(results[0]).toMatchObject({items:[]})
+    175|     expect(JSON.stringify(results[1])).toContain('NOT_FOUND')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > 现有native OpenCode实收准确E的rollup/usage，未使用Human cookie
+Error: M5_NATIVE_WORKMESH_REGISTRY_NOT_READY
+ ❯ startNativeServer src/joint-clients.drivers.ts:326:108
+
+ ❯ Object.run src/joint-clients.drivers.ts:332:51
+ ❯ Object.invoke src/joint-clients.external.ts:65:20
+ ❯ src/optional-domains.conformance.test.ts:192:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

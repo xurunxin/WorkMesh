@@ -4,6 +4,7 @@
     "rootDir": "src"
   },
   "exclude": [
+    "src/optional-domains.fixture.ts",
     "src/**/*.test.ts",
     "src/mcp-coverage.fixture.ts",
     "src/execution-recovery.fixture.ts",
@@ -18,6 +19,8 @@
     "src/joint-clients.external.ts",
     "src/joint-clients.journeys.fixture.ts",
     "src/joint-clients.faults.fixture.ts",
-    "src/joint-clients.provider.fixture.ts"
+    "src/joint-clients.provider.fixture.ts",
+    "src/optional-domains.consumer.fixture.ts",
+    "src/optional-domains.acceptance.ts"
   ]
 }

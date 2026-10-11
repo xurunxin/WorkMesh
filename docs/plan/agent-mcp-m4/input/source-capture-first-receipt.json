@@ -1,0 +1,9 @@
+{
+  "command": "python docs/plan/agent-mcp-m4/capture-sources.py",
+  "exitCode": 0,
+  "validFullBlobRecords": 163,
+  "missingCandidatePaths": ["apps/agent-runner/src/runner-api.ts", "apps/api/src/agent/auth.ts", "packages/contracts/src/feature-registry.ts"],
+  "gitShowExitCodesForMissingPaths": [128, 128, 128],
+  "resolution": "RunnerApi 实际在 run-session.ts；featureDefinitions 实际在 contracts/index.ts；未假设存在 agent/auth.ts，不为不存在来源生成 hash。下一次按实际路径重读。",
+  "consoleEncoding": "首次 Python stdout 中文在工具显示中损坏；实际 JSON 文件使用 UTF-8，原文件单独核验。本次不是产品测试。"
+}
