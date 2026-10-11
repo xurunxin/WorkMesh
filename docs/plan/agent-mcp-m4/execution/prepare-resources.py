@@ -1,7 +1,7 @@
 """仅准备本卡登记的独有loopback容器；不删除或改现有服务。"""
 from pathlib import Path
 from datetime import datetime,timezone
-import json,subprocess,secrets,time,shutil,os,hashlib
+import json,subprocess,secrets,time,shutil,os,hashlib,base64
 OUT=Path(__file__).resolve().parent
 ROOT=OUT.parents[3]
 PRIVATE=ROOT/'.tmp/m4-4adc5e39'
@@ -38,8 +38,8 @@ for item in resources:
  item['hostPort']=int(info[str(item['port'])+'/tcp'][0]['HostPort']); save()
 pg,redis,store=resources
 env={'NODE_ENV':'test','RUN_INTEGRATION':'1','DATABASE_URL':f"postgres://workmesh:{password}@127.0.0.1:{pg['hostPort']}/workmesh_m4_test",'REDIS_URL':f"redis://127.0.0.1:{redis['hostPort']}",
- 'SESSION_SECRET':secrets.token_hex(32),'WORKMESH_RUNNER_SERVICE_TOKEN':secrets.token_hex(32),'WORKMESH_BOOTSTRAP_TOKEN':secrets.token_hex(32),
- 'WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK':'true','WORKMESH_ENCRYPTION_KEY':secrets.token_hex(32),
+ 'SESSION_SECRET':secrets.token_hex(32),'WORKMESH_RUNNER_SERVICE_TOKEN':secrets.token_hex(32),'WORKMESH_BOOTSTRAP_TOKEN':secrets.token_urlsafe(32),
+ 'WORKMESH_BOOTSTRAP_ALLOW_LOOPBACK':'true','WORKMESH_MASTER_KEY':base64.b64encode(secrets.token_bytes(32)).decode(), 'API_HOST':'127.0.0.1',
  'S3_ENDPOINT':f"http://127.0.0.1:{store['hostPort']}",'S3_ACCESS_KEY_ID':key,'S3_SECRET_ACCESS_KEY':secret,'S3_BUCKET':'workmesh-m4-test','S3_REGION':'us-east-1','S3_FORCE_PATH_STYLE':'true'}
 for feature in ['WORKMESH_BETA_PLANNING','WORKMESH_BETA_TEMPLATES','WORKMESH_BETA_COSTS','WORKMESH_EXPERIMENTAL_AUTOMATION','WORKMESH_EXPERIMENTAL_AGENT_LOOPS','WORKMESH_EXPERIMENTAL_A2A','WORKMESH_BETA_COORDINATION_MCP']: env[feature]='true'
 (PRIVATE/'environment.json').write_text(json.dumps(env,indent=2)+'\n',encoding='utf-8',newline='\n')

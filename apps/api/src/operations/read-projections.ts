@@ -4,16 +4,16 @@ import { DomainError, rollupInitiative } from '@workmesh/domain'
 import { a2aTaskEventPageSchema, automationRunDetailResponseSchema, usageSummaryResponseSchema, type UsageSummaryQuery } from '@workmesh/contracts'
 import { mapStreamEvent, type WorkMeshStreamEvent } from '@workmesh/a2a-adapter'
 import type { ApiActor } from '../agent/types.js'
-import { liveHumanTeamReadPredicate, liveSessionReadPredicate } from '../live-read-authorization.js'
+import { liveHumanTeamReadPredicate, liveSessionReadPredicate, type ReadAuthorizationClock } from '../live-read-authorization.js'
 
 type QueryDb = Pool | PoolClient
 const bind = (values: unknown[], value: unknown): string => { values.push(value); return `$${values.length}` }
 
 // One row survives missing/revoked authority: callers must reject before
 // interpreting an empty aggregate, rather than accidentally returning zero.
-function agentAuthority(current: ApiActor, workspace: string, values: unknown[], unused: readonly string[] = []): string {
+function agentAuthority(current: ApiActor, workspace: string, values: unknown[], unused: readonly string[] = [], clock: ReadAuthorizationClock = 'now()'): string {
   const session = bind(values, current.agentSessionId ?? null)
-  const live = liveSessionReadPredicate(current, 'scoped.id', workspace, values)
+  const live = liveSessionReadPredicate(current, 'scoped.id', workspace, values, 'work:read', clock)
   return `authority AS (
     SELECT scoped.id,scoped.agent_id,scoped.team_id,scoped.project_id,
            item.project_id AS work_item_project_id,${unused.map((value,index)=>`${value} AS parameter_${index},`).join('')}
@@ -137,10 +137,13 @@ function mappedEvent(taskId:string,sessionId:string,event:ScannedEvent) {
 
 export async function readA2ATaskEventPage(db:Pool,current:ApiActor,bindingId:string,taskId:string,after:string) {
   return withTx(db,async tx=>{
+    // Connection defaults may be REPEATABLE READ. The final derived write must
+    // see revocations committed after the scan and evaluate expiry at its own time.
+    await tx.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED')
     const values:unknown[]=[bindingId,taskId,current.workspaceId,after]
     const agent=current.kind==='agent'
-    const authority=agent ? agentAuthority(current,'$3',values) : null
-    const humanGate=agent ? null : liveHumanTeamReadPredicate(current,'session.workspace_id','session.team_id',values)
+    const authority=agent ? agentAuthority(current,'$3',values,[], 'statement_timestamp()') : null
+    const humanGate=agent ? null : liveHumanTeamReadPredicate(current,'session.workspace_id','session.team_id',values,'statement_timestamp()')
     const targetSQL=`SELECT session.id AS session_id FROM a2a_agent_bindings binding
       JOIN a2a_task_bindings task ON task.binding_id=binding.id AND task.external_task_id=$2
       JOIN agent_sessions session ON session.id=task.session_id AND session.workspace_id=binding.workspace_id
