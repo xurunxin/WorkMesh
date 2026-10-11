@@ -131,7 +131,7 @@ try {
     const log = await must('docker', ['logs', container.id])
     const loaded = deploymentClass === 'lite' ? log.includes(`role=${role} `)
       : role === 'migrate' ? /connect ECONNREFUSED/.test(log)
-        : role === 'api' ? /Server listening at http/.test(log) : /worker identity initialization failed/.test(log)
+        : role === 'api' ? /Server listening at http/.test(log) : /worker (?:identity initialization failed|readiness failed at startup)/.test(log)
     if (!loaded || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载实际入口`)
     save()
   }

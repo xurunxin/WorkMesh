@@ -41,3 +41,5 @@
 资源清理、原拒绝路径保留和私有依赖去向见 `cleanup.md`。尚未在真实低功耗设备、真实通知厂商或正式生产环境验证；没有发布。本轮回成果 review，方案通过不等于产品通过。独立成果审查闭合 blocking/high、最终 head 的最新适用 Required CI 成功并确认 PR/main 实际落地前，不 merge 或 Done；后续顺序保持退役→接入文档初版→既定客户端适配→后续交付。
 
 CI `38178554946` 的 Lite 实际部署（`backend-lite-e07a9c8f`）完整通过，原件在 artifact `11717163412`；实际源码为 PR 合成检出 `811b3cb356ba1688d784eb8eee6ee3f6782500d1`。生产三个镜像构建和 save/load 通过，随后探针把生产入口当作 Lite 的分派入口而失败；`backend-production-4978c9fa/26.log` 显示实际启动了 API。修订探针读取真实生产 Compose migrate command，并分别核对实际服务启动日志；不改生产入口或放宽无源码部署、ready、TLS、Skill 与 MCP 后续要求。首败原 ZIP 保留，本轮产品验收仍待复验。
+
+CI `38179856023` 的 API/协议、worker、DB、灾备和三平台原生全部成功；Lite 再次完整通过。生产迁移、API 入口探针及三个镜像构建/save-load 通过，worker 实际进入 readiness 后按不可达数据库预期报 `WORKER_STARTUP_FAILED`，验收脚本只识别 identity 阶段，因而失败。artifact `11717457465` 的 `backend-production-f85136c6/30.log` 保留原输出；按 worker 现有源码补齐两种实际启动阶段日志，并继续要求后续真实 Compose ready/worker/Skill/MCP 全部通过。该首败没有标成生产通过。
