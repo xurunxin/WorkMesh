@@ -44,7 +44,7 @@ secret-manager records. Losing either key makes a valid restore impossible.
 ## Capture from production Compose
 
 1. Announce the maintenance window. Stop API, Worker, and optional MCP; wait for
-   their 35-second drain. Web may remain up as a static maintenance page but the
+   their 35-second drain. 反向代理可返回维护状态，但
    API must not accept traffic.
 
    ```powershell
@@ -75,7 +75,7 @@ secret-manager records. Losing either key makes a valid restore impossible.
    directory to independent durable storage and retain its backup key according
    to policy. Do not edit any bundle file.
 
-5. Restart API/Worker/Web only after the bundle has been copied and its report
+5. Restart API/worker/MCP only after the bundle has been copied and its report
    reviewed. A failed capture remains evidence; create a new directory for the
    next attempt.
 
@@ -119,8 +119,8 @@ The source-checkout equivalent is `pnpm db:backup <new-bundle-directory>` with
    Preserve it until acceptance finishes; rerunning the same command resumes or
    revalidates the same target. Never copy a journal to another target.
 
-4. Start API, Worker, and Web with the original runtime key/configuration set.
-   Require `/readyz` from API and Worker, Web HTTP readiness, and run an
+4. Start API、worker 和 MCP with the original runtime key/configuration set.
+   Require `/readyz` from API and Worker, MCP readiness 及 initialize, and run an
    authenticated Agent workflow smoke. The CI reference performs a durable
    Agent Session heartbeat after all three restored services start.
 
@@ -150,4 +150,4 @@ explicit `*test*` source and target databases. CI runs it with isolated
 PostgreSQL and MinIO, checks wrong keys, interruption/resume, complete restore,
 repeat validation, non-empty target rejection, missing/truncated payloads,
 object/version/checksum/lock metadata, and secret decryption. It then starts the
-restored API, Worker, and Web and stores a machine-readable Agent smoke report.
+restored API、worker 和 MCP and stores a machine-readable Agent smoke report.

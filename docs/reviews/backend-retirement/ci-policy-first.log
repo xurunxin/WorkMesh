@@ -1,0 +1,39 @@
+node:internal/modules/cjs/loader:1447
+  const err = new Error(message);
+              ^
+
+Error: Cannot find module 'yaml'
+Require stack:
+- I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\scripts\ci-bootstrap\package.json
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1447:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1058:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1063:22)
+    at Module._load (node:internal/modules/cjs/loader:1233:25)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:245:24)
+    at Module.require (node:internal/modules/cjs/loader:1547:12)
+    at require (node:internal/modules/helpers:152:16)
+    at file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/ci-bootstrap/yaml.mjs:4:73
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    'I:\\tds_workspace\\workspaces\\01a12c22-01d6-7eb1-a3c1-592edda7d055\\scripts\\ci-bootstrap\\package.json'
+  ]
+}
+
+Node.js v25.4.0
+✖ scripts\ci-policy.test.mjs (182.9942ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 194.5111
+
+✖ failing tests:
+
+test at scripts\ci-policy.test.mjs:1:1
+✖ scripts\ci-policy.test.mjs (182.9942ms)
+  'test failed'

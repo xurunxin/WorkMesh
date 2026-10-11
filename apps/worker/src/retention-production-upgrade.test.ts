@@ -24,7 +24,6 @@ const environment = {
   WORKMESH_API_IMAGE: image("api"),
   WORKMESH_WORKER_IMAGE: image("worker"),
   WORKMESH_MCP_IMAGE: image("mcp"),
-  WORKMESH_WEB_IMAGE: image("web"),
   WORKMESH_SESSION_TOKEN: mcpSessionToken,
   WORKMESH_MCP_ACCESS_TOKEN: mcpAccessToken,
   SESSION_SECRET: sessionSecret,
@@ -114,15 +113,6 @@ const renderedCompose = ({
         S3_BUCKET: "workmesh-artifacts",
         S3_ACCESS_KEY_ID: "workmesh",
         S3_SECRET_ACCESS_KEY: objectStoreSecret,
-      },
-    },
-    web: {
-      image: image("web"),
-      environment: {
-        NODE_ENV: "production",
-        WORKMESH_SERVICE: "web",
-        WORKMESH_BUILD_SHA: buildSha,
-        NEXT_PUBLIC_API_URL: "https://workmesh.test/api",
       },
     },
     ...(includeMcp
@@ -236,7 +226,7 @@ const successfulRunner = ({
     }
     if (arguments_[0] === "image" && arguments_[1] === "inspect") {
       const reference = arguments_[2]!;
-      const role = reference.match(/workmesh-(api|worker|mcp|web)@/)?.[1]!;
+      const role = reference.match(/workmesh-(api|worker|mcp)@/)?.[1]!;
       return result(
         JSON.stringify([
           {
@@ -308,7 +298,7 @@ const successfulRunner = ({
             ? "api"
             : id === "444444444444"
               ? "mcp"
-              : "web";
+              : "unknown";
       return result(
         JSON.stringify([
           {
@@ -339,7 +329,6 @@ const successfulRunner = ({
     }
     if (joined.includes("compose") && joined.includes("ps -q api")) return result("333333333333");
     if (joined.includes("compose") && joined.includes("ps -q mcp")) return result("444444444444");
-    if (joined.includes("compose") && joined.includes("ps -q web")) return result("555555555555");
     if (joined.includes("stop -t 35 worker") && failStop) return result("", 1);
     if (joined.includes("dist/run-retention-upgrade-barrier.js") && failBarrier)
       return result("", 1);
@@ -385,11 +374,11 @@ describe("production retention upgrade executor", () => {
       project: "workmesh-production",
       topology: {
         mcpEnabled: true,
-        applicationServices: ["api", "worker", "mcp", "web"],
+        applicationServices: ["api", "worker", "mcp"],
       },
     });
     const text = commandText(commands);
-    expect(text).toHaveLength(11);
+    expect(text).toHaveLength(10);
     expect(text.some((command) => command.includes(" update "))).toBe(false);
     expect(text.some((command) => command.includes(" stop "))).toBe(false);
     expect(text.some((command) => command.includes(" run "))).toBe(false);
@@ -405,7 +394,7 @@ describe("production retention upgrade executor", () => {
       workerContainerId: "222222222222",
       topology: {
         mcpEnabled: true,
-        applicationServices: ["api", "worker", "mcp", "web"],
+        applicationServices: ["api", "worker", "mcp"],
       },
     });
     const text = commandText(commands);
@@ -416,7 +405,7 @@ describe("production retention upgrade executor", () => {
     const includedConfigValidated = text.findIndex((command) =>
       command.includes("--profile agent config --format json"),
     );
-    const runtimePreflightIndexes = ["migrate", "api", "worker", "web", "mcp"].map((service) =>
+    const runtimePreflightIndexes = ["migrate", "api", "worker", "mcp"].map((service) =>
       text.findIndex((command) =>
         command.includes(
           `run --rm --no-deps -T --entrypoint node ${service} /app/runtime-guard.mjs`,
@@ -435,7 +424,7 @@ describe("production retention upgrade executor", () => {
       command.includes("--force-recreate --wait --wait-timeout 120 worker"),
     );
     const remaining = text.findIndex((command) =>
-      command.includes("--force-recreate --wait --wait-timeout 240 api mcp web"),
+      command.includes("--force-recreate --wait --wait-timeout 240 api mcp"),
     );
     expect(topologyFrozen).toBeGreaterThan(-1);
     expect(includedConfigValidated).toBeGreaterThan(topologyFrozen);
@@ -460,7 +449,6 @@ describe("production retention upgrade executor", () => {
       WORKMESH_API_IMAGE: image("api"),
       WORKMESH_WORKER_IMAGE: image("worker"),
       WORKMESH_MCP_IMAGE: image("mcp"),
-      WORKMESH_WEB_IMAGE: image("web"),
       POSTGRES_USER: "workmesh",
       POSTGRES_DB: "workmesh",
     };
@@ -468,7 +456,7 @@ describe("production retention upgrade executor", () => {
       execute: true,
       topology: {
         mcpEnabled: false,
-        applicationServices: ["api", "worker", "web"],
+        applicationServices: ["api", "worker"],
       },
     });
     const text = commandText(commands);
@@ -478,9 +466,9 @@ describe("production retention upgrade executor", () => {
     );
     const migrate = text.findIndex((command) => command.includes("run --rm --no-deps migrate"));
     const remaining = text.findIndex((command) =>
-      command.includes("--force-recreate --wait --wait-timeout 240 api web"),
+      command.includes("--force-recreate --wait --wait-timeout 240 api"),
     );
-    const runtimePreflightIndexes = ["migrate", "api", "worker", "web"].map((service) =>
+    const runtimePreflightIndexes = ["migrate", "api", "worker"].map((service) =>
       text.findIndex((command) =>
         command.includes(
           `run --rm --no-deps -T --entrypoint node ${service} /app/runtime-guard.mjs`,
@@ -499,7 +487,7 @@ describe("production retention upgrade executor", () => {
         (command) =>
           command.includes("workmesh-mcp@") ||
           command.includes("ps -q mcp") ||
-          command.includes("api mcp web") ||
+          command.includes("api mcp") ||
           command.includes("node mcp /app/runtime-guard.mjs"),
       ),
     ).toBe(false);
@@ -580,7 +568,6 @@ describe("production retention upgrade executor", () => {
     };
     expect(frozen.services.api?.image).toBe(image("api"));
     expect(frozen.services.worker?.image).toBe(image("worker"));
-    expect(frozen.services.web?.image).toBe(image("web"));
     expect(frozen.services.mcp?.image).toBe(image("mcp"));
     expect(frozen.services.api?.environment?.SESSION_SECRET).toBe(
       dollarSessionSecret.split("$").join("$$"),
@@ -786,7 +773,7 @@ describe("production retention upgrade executor", () => {
     expect(text.some((command) => command.includes("update --restart=no"))).toBe(false);
   });
 
-  it.each(["migrate", "api", "worker", "web", "mcp"])(
+  it.each(["migrate", "api", "worker", "mcp"])(
     "does not mutate the deployment when the %s target runtime guard fails",
     async (service) => {
       const { runner, commands } = successfulRunner({

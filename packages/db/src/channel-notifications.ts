@@ -684,16 +684,24 @@ export async function prepareChannelSend(
     return null
   }
   if (canSend && !await canSend()) throw new DomainError('NOTIFICATION_CLAIM_LOST', 'Channel admission expired before checkpoint')
-  const content: ChannelContent = {
+  const legacyContent: ChannelContent = {
     effectKey: claim.effectKey,
     title: 'WorkMesh 有待处理事项',
     body: '请登录 WorkMesh 查看并处理。',
     url: `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:${row.source_type}:${row.source_id}`)}`,
     sourceRevision: row.source_revision,
   }
-  const requestHash = digest(content)
-  if (row.request_hash && row.request_hash !== requestHash)
+  const content: ChannelContent = {
+    ...legacyContent,
+    body: '请通过鉴权 API 查看并处理。',
+    url: `/api/v1/human-attention/${encodeURIComponent(`v1:${row.source_type}:${row.source_id}`)}`,
+  }
+  const currentHash = digest(content)
+  // Old receipts bind every original field, including the retired page URL.
+  // Validate that exact contract, preserve its hash, then render the new link.
+  if (row.request_hash && row.request_hash !== currentHash && row.request_hash !== digest(legacyContent))
     throw new DomainError('IDEMPOTENCY_KEY_REUSED', 'Delivery content changed')
+  const requestHash = row.request_hash ?? currentHash
   const secret = (
     await tx.query<{ secret: string }>(
       `SELECT pgp_sym_decrypt(secret_ciphertext,$2) AS secret FROM notification_channel_targets WHERE id=$1`,

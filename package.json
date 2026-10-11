@@ -13,7 +13,6 @@
     "test:integration:api": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/api test:integration",
     "test:integration:worker": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/worker test:integration",
     "test:integration:recovery": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/recovery test:integration",
-    "test:e2e": "turbo run test:e2e --filter=@workmesh/web",
     "ci:validate": "node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs",
     "ci:source": "node scripts/run-ci-source.mjs",
     "ci:test": "node --test scripts/ci-policy.test.mjs",
@@ -50,7 +49,6 @@
     "test:acceptance:m4": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/conformance acceptance:optional"
   },
   "devDependencies": {
-    "@playwright/test": "^1.55.0",
     "@types/node": "^22.15.2",
     "eslint": "^9.25.1",
     "prettier": "^3.5.3",

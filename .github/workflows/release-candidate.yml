@@ -143,11 +143,9 @@ jobs:
     permissions:
       contents: read
     outputs:
-      web-api-url: ${{ steps.config.outputs.web_api_url }}
       web-origin: ${{ steps.config.outputs.web_origin }}
     env:
       SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
-      RELEASE_WEB_API_URL: ${{ vars.WORKMESH_RELEASE_WEB_API_URL }}
       RELEASE_WEB_ORIGIN: ${{ vars.WORKMESH_RELEASE_WEB_ORIGIN }}
     steps:
       - name: Check out exact candidate
@@ -178,11 +176,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-          test -n "$RELEASE_WEB_API_URL"
           test -n "$RELEASE_WEB_ORIGIN"
           node --input-type=module <<'NODE'
           for (const [name, value] of [
-            ['WORKMESH_RELEASE_WEB_API_URL', process.env.RELEASE_WEB_API_URL],
             ['WORKMESH_RELEASE_WEB_ORIGIN', process.env.RELEASE_WEB_ORIGIN],
           ]) {
             const url = new URL(value)
@@ -191,7 +187,6 @@ jobs:
             }
           }
           NODE
-          echo "web_api_url=$RELEASE_WEB_API_URL" >> "$GITHUB_OUTPUT"
           echo "web_origin=$RELEASE_WEB_ORIGIN" >> "$GITHUB_OUTPUT"
 
   build-scan-publish-images:
@@ -208,13 +203,12 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        service: [api, worker, mcp, web]
+        service: [api, worker, mcp]
     env:
       CANDIDATE_TAG: ${{ needs.validate-candidate.outputs.candidate-tag }}
       SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
       IMAGE: ghcr.io/${{ github.repository_owner }}/workmesh-${{ matrix.service }}
       LOCAL_IMAGE: workmesh-release-${{ matrix.service }}:${{ needs.validate-candidate.outputs.source-sha }}
-      RELEASE_WEB_API_URL: ${{ needs.release-config-preflight.outputs.web-api-url }}
     steps:
       - name: Check out exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -224,10 +218,6 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-          if [[ "${{ matrix.service }}" == 'web' ]]; then
-            test -n "$RELEASE_WEB_API_URL"
-            node -e "new URL(process.env.RELEASE_WEB_API_URL)"
-          fi
       - name: Set up Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f
       - name: Log in to GHCR
@@ -256,9 +246,6 @@ jobs:
             --build-arg "WORKMESH_BUILD_SHA=$SOURCE_SHA"
             --tag "$LOCAL_IMAGE"
           )
-          if [[ "${{ matrix.service }}" == 'web' ]]; then
-            arguments+=(--build-arg "NEXT_PUBLIC_API_URL=$RELEASE_WEB_API_URL")
-          fi
           docker buildx build "${arguments[@]}" .
           test "$(docker image inspect "$LOCAL_IMAGE" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$SOURCE_SHA"
       - name: Block High image findings
@@ -359,7 +346,7 @@ jobs:
             candidateTag: process.env.CANDIDATE_TAG,
             image: process.env.IMAGE,
             digest: process.env.DIGEST,
-            webApiUrl: process.env.SERVICE === 'web' ? process.env.RELEASE_WEB_API_URL : null,
+            webApiUrl: null,
             provenanceUrl: process.env.PROVENANCE_URL,
             sbomAttestationUrl: process.env.SBOM_ATTESTATION_URL,
           }
@@ -384,7 +371,6 @@ jobs:
       packages: read
     env:
       SOURCE_SHA: ${{ needs.validate-candidate.outputs.source-sha }}
-      RELEASE_WEB_API_URL: ${{ needs.release-config-preflight.outputs.web-api-url }}
       RELEASE_WEB_ORIGIN: ${{ needs.release-config-preflight.outputs.web-origin }}
       COMPOSE_PROJECT_NAME: workmesh-rc-smoke-${{ github.run_id }}-${{ github.run_attempt }}
       RELEASE_ENV_FILE: ${{ github.workspace }}/.release-smoke.env
@@ -455,7 +441,6 @@ jobs:
           S3_PUBLIC_ENDPOINT=http://127.0.0.1:9000
           S3_ACCESS_KEY_ID=workmesh
           S3_SECRET_ACCESS_KEY=$minio_password
-          NEXT_PUBLIC_API_URL=$RELEASE_WEB_API_URL
           WORKMESH_SESSION_TOKEN=session-token-$(hex_secret)
           WORKMESH_MCP_ACCESS_TOKEN=mcp-access-$(hex_secret)
           EOF
@@ -466,7 +451,7 @@ jobs:
           const records = entries
             .filter(entry => entry.isFile() && entry.name === 'image.json')
             .map(entry => JSON.parse(readFileSync(path.join(entry.parentPath, entry.name), 'utf8')))
-          for (const service of ['api', 'mcp', 'web', 'worker']) {
+          for (const service of ['api', 'mcp', 'worker']) {
             const matches = records.filter(record => record.service === service)
             if (matches.length !== 1) throw new Error(`Expected one ${service} image record`)
             const record = matches[0]
@@ -491,7 +476,6 @@ jobs:
             --profile agent up --detach --wait --wait-timeout 180
           curl --fail --silent http://127.0.0.1:3001/readyz > release-runtime/api-ready.json
           curl --fail --silent http://127.0.0.1:3002/readyz > release-runtime/mcp-ready.json
-          curl --fail --silent http://127.0.0.1:3000/readyz > release-runtime/web-ready.json
           docker compose \
             --project-name "$COMPOSE_PROJECT_NAME" \
             --env-file "$RELEASE_ENV_FILE" \

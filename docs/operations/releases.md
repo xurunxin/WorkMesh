@@ -23,16 +23,7 @@ reviewer and a deployment tag policy matching `v1.0.0*`. Ordinary CI has only
 `contents: read`; package, OIDC, attestation, and Release write permissions exist
 only on protected release jobs.
 
-Set the repository variable `WORKMESH_RELEASE_WEB_API_URL` to the externally
-visible HTTPS API origin before creating an RC. It is a non-secret Web build
-input and is recorded in both the OCI label and release manifest. Changing it
-requires a new candidate.
-
-Set `WORKMESH_RELEASE_WEB_ORIGIN` to the externally visible HTTPS Web origin,
-without a path or trailing slash. The protected production smoke uses it for
-the API origin check. A protected preflight freezes both release origins after
-CI and security checks; an empty value, a path, or a non-HTTPS URL blocks the
-candidate before any immutable image is published.
+配置 `WORKMESH_RELEASE_WEB_ORIGIN` 为对外 HTTPS API origin，无路径或尾斜杠。兼容变量名保留，已移除编译 Web bundle 的 URL 配置。受保护预检校验 API origin，空值、路径或非 HTTPS 地址阻断发布。官方 RC/GA 发布仅要求 API、worker、MCP 三个不可变镜像，其他扫描、签名、来源及晋级门禁保持。
 
 The release smoke creates its bootstrap credential as 32 random bytes encoded
 with canonical unpadded base64url. The protected release preflight runs the
@@ -74,7 +65,7 @@ may be created. Retain the failed run URL as Issue #10 evidence.
    new RC number is required.
 3. Approve the `stable-release` deployment. The workflow reproduces full CI,
    blocks High/Critical dependency, source, secret, configuration, and image
-   findings, then builds API, Worker, MCP, and Web production images.
+   findings, then builds API、worker 和 MCP 生产镜像.
 4. Verify the prerelease contains `release-manifest.json`, its Sigstore bundle,
    tag provenance, four uniquely prefixed image records, SPDX SBOMs, scan
    reports, image signatures, and GitHub attestation bundles.

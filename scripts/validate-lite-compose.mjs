@@ -48,8 +48,8 @@ const assert = (condition, message) => {
 
 const services = compose.services ?? {}
 const serviceNames = Object.keys(services)
-const appServices = ['migrate', 'api', 'worker', 'web']
-const nodeServices = ['api', 'worker', 'web']
+const appServices = ['migrate', 'api', 'worker']
+const nodeServices = ['api', 'worker']
 const dataServices = ['postgres', 'redis', 'minio', 'minio-init']
 
 for (const name of [...appServices, ...dataServices]) {
@@ -114,7 +114,7 @@ for (const name of appServices) {
   )
 }
 
-// One image, four roles: the Lite image cannot carry MCP or the Agent Runner, and
+// One image, three backend roles: the Lite image cannot carry MCP or the Agent Runner, and
 // a compose that tried to start them from it would fail at the dispatch table.
 for (const name of ['mcp', 'agent-runner']) {
   assert(!services[name], `the Lite compose must not define ${name}; it runs on the operator's machine`)

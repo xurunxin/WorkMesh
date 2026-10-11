@@ -5,7 +5,7 @@ import type { WebhookFetch } from './agent-webhook.js'
 
 const endpoint = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=fake-key'
 const origin = 'https://workmesh.example.test'
-const href = `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:inbox_item:${randomUUID()}`)}`
+const href = `/api/v1/human-attention/${encodeURIComponent(`v1:inbox_item:${randomUUID()}`)}`
 const input = () => ({ provider: 'wecom', secretMaterial: endpoint,
   content: { effectKey: 'private-effect', title: '私密标题', body: '私密正文', url: href, sourceRevision: 1 }, signal: new AbortController().signal })
 const admission = { reserve: async () => ({ retryAfterMs: 60_000 }) }

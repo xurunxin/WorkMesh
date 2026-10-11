@@ -12,7 +12,6 @@ COPY --chown=workmesh:workmesh package.json pnpm-lock.yaml pnpm-workspace.yaml t
 COPY --chown=workmesh:workmesh apps/api/package.json apps/api/package.json
 COPY --chown=workmesh:workmesh apps/connector/package.json apps/connector/package.json
 COPY --chown=workmesh:workmesh apps/connector/scripts/prepare-native.mjs apps/connector/scripts/prepare-native.mjs
-COPY --chown=workmesh:workmesh apps/web/package.json apps/web/package.json
 COPY --chown=workmesh:workmesh apps/worker/package.json apps/worker/package.json
 COPY --chown=workmesh:workmesh apps/mcp/package.json apps/mcp/package.json
 COPY --chown=workmesh:workmesh apps/fake-agent/package.json apps/fake-agent/package.json
@@ -25,7 +24,6 @@ COPY --chown=workmesh:workmesh packages/domain/package.json packages/domain/pack
 COPY --chown=workmesh:workmesh packages/git-provider/package.json packages/git-provider/package.json
 COPY --chown=workmesh:workmesh packages/observability/package.json packages/observability/package.json
 COPY --chown=workmesh:workmesh packages/recovery/package.json packages/recovery/package.json
-COPY --chown=workmesh:workmesh packages/ui/package.json packages/ui/package.json
 COPY --chown=workmesh:workmesh packages/agent-sdk/package.json packages/agent-sdk/package.json
 RUN --mount=type=cache,id=workmesh-worker-pnpm-store,target=/pnpm/store,sharing=locked \
   pnpm install --frozen-lockfile --store-dir /pnpm/store

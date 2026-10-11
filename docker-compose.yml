@@ -103,7 +103,7 @@ services:
       WORKMESH_MASTER_KEY: ${WORKMESH_MASTER_KEY:-0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
-      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3001}
       PUBLIC_MCP_ORIGIN: ${PUBLIC_MCP_ORIGIN:-}
       WORKMESH_WEB_PUSH_PUBLIC_KEY: ${WORKMESH_WEB_PUSH_PUBLIC_KEY:-}
       WORKMESH_WEB_PUSH_PRIVATE_KEY: ${WORKMESH_WEB_PUSH_PRIVATE_KEY:-}
@@ -138,7 +138,7 @@ services:
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:-workmesh-local-postgres-change-me}@postgres:5432/${POSTGRES_DB:-workmesh}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3001}
       WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-100000}
       WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
       WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
@@ -185,7 +185,7 @@ services:
     build: { context: ., dockerfile: infra/docker/mcp.Dockerfile }
     environment:
       WORKMESH_API_URL: ${WORKMESH_API_URL:-http://api:3001}
-      WORKMESH_BROWSER_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      WORKMESH_BROWSER_ORIGIN: ${WEB_ORIGIN:-http://localhost:3001}
       WORKMESH_SESSION_TOKEN: ${WORKMESH_SESSION_TOKEN:-}
       WORKMESH_MCP_ACCESS_TOKEN: ${WORKMESH_MCP_ACCESS_TOKEN:-}
       WORKMESH_MCP_MODE: ${WORKMESH_MCP_MODE:-read-write}
@@ -203,16 +203,4 @@ services:
       WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
     depends_on: { api: { condition: service_healthy } }
     restart: unless-stopped
-  web:
-    build: { context: ., dockerfile: infra/docker/web.Dockerfile }
-    environment:
-      # The Browser must stay same-origin with the API so the session cookie is
-      # first-party. NEXT_PUBLIC_API_URL is intentionally left empty: a relative
-      # base makes the Browser call this server, and the Next.js proxy forwards
-      # to the API. Naming the API host here made the cookie third-party and
-      # bounced the Human straight back to /login.
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
-      NEXT_API_UPSTREAM: http://api:3001
-    ports: ["127.0.0.1:${WEB_HOST_PORT:-3000}:3000"]
-    depends_on: { api: { condition: service_healthy } }
 volumes: { postgres-data: {}, redis-data: {}, minio-data: {} }

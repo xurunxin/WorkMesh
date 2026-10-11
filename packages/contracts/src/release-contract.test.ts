@@ -29,7 +29,12 @@ describe('1.0 release contract documentation', () => {
       expect(openapi).toContain(feature.key)
       expect(environment).toContain(`${feature.key}=false`)
       expect(feature.defaultEnabled).toBe(false)
-      expect(feature.runtimeDependencies.length).toBeGreaterThan(0)
+      expect(feature.runtimeDependencies).not.toContain('web')
+      if (feature.key === 'WORKMESH_BETA_OPERATIONS_UI') {
+        expect(feature.runtimeDependencies).toEqual([])
+      } else {
+        expect(feature.runtimeDependencies.length).toBeGreaterThan(0)
+      }
       expect(versionPolicy).toContain(feature.key)
     }
     for (const path of [
@@ -71,7 +76,8 @@ describe('1.0 release contract documentation', () => {
     expect(releasePolicy).toContain('v1.0.0-rc.N')
     expect(releasePolicy).toContain('same Git commit')
     expect(releasePolicy).toContain('same immutable')
-    expect(releaseOperations).toContain('WORKMESH_RELEASE_WEB_API_URL')
+    expect(releaseOperations).toContain('WORKMESH_RELEASE_WEB_ORIGIN')
+    expect(candidateWorkflow).not.toContain('WORKMESH_RELEASE_WEB_API_URL')
     expect(releaseOperations).toContain('PROMOTION_DIGEST_MISMATCH')
     expect(candidateWorkflow).toContain('uses: ./.github/workflows/ci.yml')
     expect(candidateWorkflow).toContain('pnpm audit --audit-level high')

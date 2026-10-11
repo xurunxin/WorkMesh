@@ -35,7 +35,7 @@ x-logging: &logging
     max-size: "10m"
     max-file: "3"
 
-# One tag, four roles. WORKMESH_SERVICE selects what starts; the image entrypoint
+# One tag, three roles. WORKMESH_SERVICE selects what starts; the image entrypoint
 # resolves the entry point through packages/config/src/service-command.ts.
 x-lite-image: &lite-image ${WORKMESH_LITE_IMAGE:?WORKMESH_LITE_IMAGE is required}
 
@@ -195,6 +195,8 @@ services:
 
   api:
     <<: *app-hardening
+    ports:
+      - "${WORKMESH_BIND_ADDRESS:-0.0.0.0}:${API_HOST_PORT:-3001}:3001"
     image: *lite-image
     environment:
       <<: *feature-flags
@@ -221,9 +223,10 @@ services:
       AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: ${AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS:-}
       # LAN-only default. A LAN deployment with no TLS is the documented Lite
       # default; a deployment that terminates TLS must set this to true and put
-      # Caddy (or something else) in front of Web.
+      # Caddy (or something else) in front of API.
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
       WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
+      PUBLIC_MCP_ORIGIN: ${PUBLIC_MCP_ORIGIN:-}
       API_HOST: 0.0.0.0
       API_PORT: 3001
       S3_ENDPOINT: ${S3_PUBLIC_ENDPOINT:?S3_PUBLIC_ENDPOINT is required}
@@ -258,13 +261,14 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
       REDIS_URL: redis://redis:6379
       WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
+      PUBLIC_MCP_ORIGIN: ${PUBLIC_MCP_ORIGIN:-}
       WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-10000}
       WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
       WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
       WORKMESH_EVENT_ONLINE_DAYS: ${WORKMESH_EVENT_ONLINE_DAYS:-90}
       WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS: ${WORKMESH_EVENT_ARCHIVE_RETAIN_DAYS:-365}
       # Relaxed from the 3600 s default so archive traffic does not compete with
-      # the UI on a slow disk. Deletion stays disabled in both directions.
+      # API requests on a slow disk. Deletion stays disabled in both directions.
       WORKMESH_RETENTION_CLEANUP_DAYS: ${WORKMESH_RETENTION_CLEANUP_DAYS:-30}
       WORKMESH_RETENTION_BATCH_SIZE: ${WORKMESH_RETENTION_BATCH_SIZE:-100}
       WORKMESH_RETENTION_LEASE_SECONDS: ${WORKMESH_RETENTION_LEASE_SECONDS:-120}
@@ -296,36 +300,6 @@ services:
     logging: *logging
     healthcheck:
       test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3003/readyz"]
-      interval: 10s
-      timeout: 3s
-      retries: 12
-
-  web:
-    <<: *app-hardening
-    image: *lite-image
-    environment:
-      NODE_ENV: production
-      WORKMESH_SERVICE: web
-      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
-      NODE_OPTIONS: --max-old-space-size=256
-      # NEXT_PUBLIC_API_URL is intentionally empty: a relative base makes the
-      # Browser call this server, and the Next.js proxy forwards to the API, which
-      # is what keeps the session cookie first-party. A device can be reached by
-      # LAN address, hostname, or tunnel name, and none of those are knowable when
-      # the bundle is built. lite.Dockerfile compiles this private service address
-      # into Next rewrites; changing runtime env does not rebuild those rules.
-      # NEXT_API_UPSTREAM also declares the proxy to the runtime guard.
-      NEXT_API_UPSTREAM: http://api:3001
-      HOSTNAME: 0.0.0.0
-      PORT: 3000
-    ports:
-      - "${WORKMESH_BIND_ADDRESS:-0.0.0.0}:${WEB_HOST_PORT:-3000}:3000"
-    depends_on:
-      api: { condition: service_healthy }
-    mem_limit: 448m
-    logging: *logging
-    healthcheck:
-      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3000/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12

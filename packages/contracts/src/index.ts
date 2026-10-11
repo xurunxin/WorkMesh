@@ -71,18 +71,18 @@ export type FeatureRegistry = z.infer<typeof featureRegistryResponseSchema>
 export type FeatureRuntime = 'api' | 'web' | 'worker' | 'sdk-mcp' | 'reserved'
 
 export const featureDefinitions = Object.freeze([
-  { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
-  { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker'] },
-  { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
-  { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web'] },
+  { key: 'WORKMESH_BETA_MODEL_PRESETS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api'] },
+  { key: 'WORKMESH_BETA_PLANNING', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
+  { key: 'WORKMESH_BETA_TEMPLATES', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api'] },
+  { key: 'WORKMESH_BETA_COSTS', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api'] },
   { key: 'WORKMESH_BETA_GITEA', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'sdk-mcp'] },
-  { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['web'] },
-  { key: 'WORKMESH_BETA_COORDINATION_MCP', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker', 'sdk-mcp'] },
-  { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
-  { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'web'] },
+  { key: 'WORKMESH_BETA_OPERATIONS_UI', tier: 'beta', defaultEnabled: false, runtimeDependencies: [] },
+  { key: 'WORKMESH_BETA_COORDINATION_MCP', tier: 'beta', defaultEnabled: false, runtimeDependencies: ['api', 'worker', 'sdk-mcp'] },
+  { key: 'WORKMESH_EXPERIMENTAL_AUTOMATION', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
+  { key: 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
   { key: 'WORKMESH_EXPERIMENTAL_A2A', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api'] },
   { key: 'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
-  { key: 'WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'web', 'worker'] },
+  { key: 'WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['api', 'worker'] },
   { key: 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', tier: 'experimental', defaultEnabled: false, runtimeDependencies: ['reserved'] },
 ] as const satisfies readonly {
   key: FeatureKey
@@ -2498,6 +2498,7 @@ export const notificationChannelRouteManifest = [
 ] as const
 
 export const agentRouteManifest = [
+  { method: 'GET', path: '/skills/workmesh-1.1.0.md', authenticated: false },
   ...stage0RouteManifest,
   ...stage1RouteManifest,
   ...stage2RouteManifest,
@@ -2736,7 +2737,7 @@ export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotatin
 // parser rejects userinfo (https://user:pass@host/...) so an attacker
 // cannot carry a secret in the userinfo segment. The reviewer-flagged
 // bypass `https://code@host.test/connect#wmp_...` is rejected here.
-const connectUrlPattern = /^https:\/\/[a-zA-Z0-9.\-]+(:[0-9]+)?\/connect#wmp_[A-Za-z0-9_-]{43}$/
+const connectUrlPattern = /^https:\/\/[a-zA-Z0-9.\-]+(:[0-9]+)?\/(?:api\/v1\/agent-connections\/redeem|connect)#wmp_[A-Za-z0-9_-]{43}$/
 const connectUrlSchema = z
   .string()
   .superRefine((value, ctx) => {
@@ -2744,7 +2745,7 @@ const connectUrlSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message:
-          'connect_url must be https://<host>/connect#wmp_<43-char-pairing-code>; userinfo, query/path credentials, and malformed fragments are rejected',
+          'connect_url must be an HTTPS redeem locator with a wmp_ fragment (legacy /connect locators are accepted for exact receipt replay); userinfo, query/path credentials, and malformed fragments are rejected',
       })
       return
     }

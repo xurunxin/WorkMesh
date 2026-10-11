@@ -1,5 +1,5 @@
 #!/bin/sh
-# Verify that one Lite image really serves all four roles, on the machine that
+# Verify that one Lite image really serves all three roles, on the machine that
 # built it, before the tarball is copied to a device.
 #
 # The unit tests pin the dispatch table and the compose validator pins the
@@ -136,7 +136,7 @@ run_role api \
   -e S3_BUCKET=workmesh-artifacts \
   -e S3_ACCESS_KEY_ID=workmesh \
   -e S3_SECRET_ACCESS_KEY=gggggggggggggggggggggggggggggggg \
-  -e WEB_ORIGIN=http://127.0.0.1:3000
+  -e WEB_ORIGIN=http://127.0.0.1:3001
 assert_role_started api
 
 # --- worker -------------------------------------------------------------------
@@ -151,65 +151,9 @@ run_role worker \
   -e S3_SECRET_ACCESS_KEY=iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
 assert_role_started worker
 
-# --- web: the only role that serves without a dependency, so it is proven ------
-# Probed from inside the container with the Node that is already in the image, so
-# the check needs no published port, no second image, and no host port parsing.
-# HOSTNAME and PORT are supplied exactly as the compose supplies them: without
-# them the Next runtime binds to the container hostname and nothing local answers.
-container="workmesh-lite-verify-$RUN_ID-web"
-docker run --rm --detach --name "$container" \
-  -e WORKMESH_SERVICE=web \
-  -e NEXT_API_UPSTREAM=http://api:3001 \
-  -e HOSTNAME=0.0.0.0 \
-  -e PORT=3000 \
-  "$IMAGE" >/dev/null
-attempt=0
-while [ "$attempt" -lt 40 ]; do
-  if ready="$(docker exec "$container" node -e "
-    fetch('http://127.0.0.1:3000/readyz')
-      .then((response) => { process.stdout.write(String(response.status)); process.exit(response.ok ? 0 : 1) })
-      .catch(() => process.exit(1))
-  " 2>/dev/null)"; then
-    break
-  fi
-  attempt=$((attempt + 1))
-  sleep 1
-done
-if [ -n "$ready" ]; then
-  pass "web serves /readyz from its own tree"
-else
-  fail "web never became ready"
-  docker logs "$container" 2>&1 | sed -n '1,20p'
-fi
-
-# The application root is not enough. A Next standalone runtime started from the
-# wrong working directory serves HTML that 404s its own assets, so the first
-# /_next/static reference in the page is fetched too. That is the check that
-# proves the Web role's cwd is the standalone root.
-assets="$(docker exec "$container" node -e "
-  const base = 'http://127.0.0.1:3000'
-  fetch(base + '/')
-    .then((response) => response.text())
-    .then((html) => {
-      const match = html.match(/\/_next\/static\/[^\"']+/)
-      if (!match) { process.stdout.write('NO_ASSET_REFERENCE'); return }
-      return fetch(base + match[0]).then((asset) => {
-        process.stdout.write(String(asset.status))
-        process.exit(asset.ok ? 0 : 1)
-      })
-    })
-    .catch((error) => { process.stdout.write('ERROR_' + error.message); process.exit(1) })
-" 2>/dev/null || true)"
-case "$assets" in
-  2*) pass "web serves the application root and its _next/static asset" ;;
-  NO_ASSET_REFERENCE) fail "web served no /_next/static reference; the bundle is not wired" ;;
-  *) fail "web did not serve a static asset (got '${assets:-no response}')" ;;
-esac
-docker stop --time 20 "$container" >/dev/null 2>&1 || true
-
 printf '\n'
 if [ "$failures" -eq 0 ]; then
-  printf 'Lite image role verification passed: one image, four roles.\n'
+  printf 'Lite image role verification passed: one image, three backend roles.\n'
   exit 0
 fi
 printf 'Lite image role verification FAILED with %s problem(s).\n' "$failures"

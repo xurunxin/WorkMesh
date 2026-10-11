@@ -115,6 +115,7 @@ import { loadModelPresets, registerModelPresetRoutes } from "./model-presets.js"
 import { registerWorkbenchConversationRoutes } from "./workbench-conversations.js";
 import { registerWorkbenchRunnerRoutes } from "./workbench-runner.js";
 import { registerConfigurationReadinessRoutes } from "./configuration-readiness.js";
+import { registerSkillDownloadRoute } from './skill-download.js';
 
 declare module "fastify" {
   interface FastifyRequest {
@@ -139,6 +140,7 @@ const sessionCookie = "workmesh_session";
 const dummyPasswordHash = "$argon2id$v=19$m=65536,t=3,p=4$jIrvJoYL8u7zyxBFSmb4rQ$ktNePxUds6iumXhzFBjTTBxpNThz95LuN0QCV/z1ixY";
 const mutationMethods = new Set(["POST", "PATCH", "PUT", "DELETE"]);
 const publicPaths = new Set([
+  "/skills/workmesh-1.1.0.md",
   "/api/v1/workbench/model-presets",
   "/api/v1/auth/login",
   "/api/v1/install-status",
@@ -1249,6 +1251,7 @@ export const buildApp = (options: {
   registerAdminRetentionRoutes(app, db);
   registerWorkbenchLlmConnectionRoutes(app, { db, meta: commandContext, header, paginator });
   registerModelPresetRoutes(app, modelPresets);
+  registerSkillDownloadRoute(app);
   registerWorkbenchConversationRoutes(app, { db, meta: commandContext, header, paginator });
   registerWorkbenchRunnerRoutes(app, { db, meta: commandContext, header });
   registerConfigurationReadinessRoutes(app, { db, features });

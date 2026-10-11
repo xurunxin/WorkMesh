@@ -82,28 +82,27 @@ test('known prose on PR and main avoids every install/service/test job', () => {
   }
 })
 
-test('UI changes test web consumers and E2E, but skip unrelated backend/protocol/recovery jobs', () => {
-  const plan = classify(['packages/ui/src/button.tsx'])
-  assert.deepEqual(plan.packages, ['@workmesh/ui', '@workmesh/web'])
-  assert.deepEqual(Object.entries(plan.checks).filter(([, enabled]) => enabled).map(([id]) => id), ['source-gates', 'e2e'])
-})
-
-test('direct web tests, assets and package-local skills are runtime changes', () => {
-  for (const path of ['apps/web/e2e/example.spec.ts', 'apps/web/public/icon.svg', 'apps/agent-runner/skills/workmesh-workbench/SKILL.md']) {
+test('retired workspace paths fail closed to full without a browser check', () => {
+  for (const path of ['apps/web/app/page.tsx', 'packages/ui/src/button.tsx']) {
     const plan = classify([path])
-    assert.equal(plan.mode, 'affected')
-    assert.equal(plan.checks['source-gates'], true)
-    assert.equal(plan.checks.e2e, true)
+    assert.equal(plan.mode, 'full')
+    assert.ok(Object.values(plan.checks).every(Boolean))
+    assert.equal('e2e' in plan.checks, false)
   }
 })
 
-test('API and worker changes retain destructive recovery and real browser integration', () => {
+test('backend assets and fake-agent changes require API checks', () => {
+  for (const path of ['apps/api/assets/skills/workmesh-1.1.0.md', 'apps/fake-agent/src/index.ts']) {
+    assert.equal(classify([path]).checks['api-integration'], true)
+  }
+})
+
+test('API and worker changes retain destructive recovery and real backend integration', () => {
   for (const name of ['api', 'worker']) {
     const plan = classify([`apps/${name}/src/index.ts`])
     assert.equal(plan.checks[`${name}-integration`], true)
     assert.equal(plan.checks['recovery-integration'], true)
-    assert.equal(plan.checks.e2e, true)
-    assert.equal(plan.checks['api-integration'], true)
+      assert.equal(plan.checks['api-integration'], true)
   }
 })
 
@@ -116,7 +115,7 @@ test('cross-workspace lock audits are selected without inventing runtime depende
     assert.equal(plan.checks['db-integration'], false)
     assert.equal(plan.checks['worker-integration'], name === 'worker')
   }
-  assert.deepEqual(classify(['apps/web/app/page.tsx']).testPackages, ['@workmesh/web'])
+  assert.ok(classify(['apps/web/app/page.tsx']).testPackages.includes('@workmesh/api'))
   assert.deepEqual(classify(['README.md']).testPackages, [])
 })
 
@@ -133,11 +132,10 @@ test('upstream contracts/domain/db/config changes include transitive consumers',
   assert.ok(Object.values(plan.checks).every(Boolean))
 })
 
-test('protocol changes retain SDK consumers, conformance and direct E2E imports', () => {
+test('protocol changes retain SDK consumers, conformance and direct backend imports', () => {
   const plan = classify(['packages/agent-sdk/src/index.ts'])
   for (const name of ['agent-sdk', 'mcp', 'fake-agent', 'conformance']) assert.ok(plan.packages.includes(`@workmesh/${name}`))
   assert.equal(plan.checks['agent-smoke'], true)
-  assert.equal(plan.checks.e2e, true)
 })
 
 test('root config, unknown/deleted workspaces and executable-looking docs fail closed to full', () => {
@@ -177,7 +175,7 @@ test('PR uses merge-base, main push uses before/after, renames include both path
     if (args.includes('--check')) throw new Error('Invalid whitespace')
     return args[0] === 'merge-base' ? mergeBase : 'README.md\0'
   }), /Invalid whitespace/)
-  assert.equal(classify(['docs/old.md', 'apps/web/app/new.md']).checks.e2e, true)
+  assert.equal(classify(['docs/old.md', 'apps/api/src/new.ts']).checks['api-integration'], true)
 })
 
 test('aggregate rejects failure, cancellation and accidental skips for every required job', () => {
@@ -191,7 +189,7 @@ test('aggregate rejects failure, cancellation and accidental skips for every req
 })
 
 test('aggregate only accepts planned skips and rejects incomplete/malformed decisions', () => {
-  const plan = classify(['apps/web/app/page.tsx'])
+  const plan = classify(['apps/connector/src/connect.ts'])
   assert.deepEqual(evaluateResults(plan, results(plan)), [])
   for (const result of ['success', 'failure', 'cancelled']) {
     const needs = results(plan); needs['db-integration'].result = result

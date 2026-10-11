@@ -144,7 +144,7 @@ const envSchema = z
     PAGINATION_CURSOR_ACTIVE_KID: optionalString,
     PAGINATION_CURSOR_TTL_SECONDS: boundedInt(60, 86_400, 900),
     SESSION_COOKIE_SECURE: z.enum(['true', 'false']).default('false'),
-    WEB_ORIGIN: z.string().url().default('http://localhost:3000'),
+    WEB_ORIGIN: z.string().url().default('http://localhost:3001'),
     PUBLIC_MCP_ORIGIN: z.preprocess(
       (value) => (value === '' ? undefined : value),
       z.string().url().optional(),

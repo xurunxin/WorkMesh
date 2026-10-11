@@ -2,7 +2,7 @@
 
 ## 模型预置目录
 
-`WORKMESH_BETA_MODEL_PRESETS=false` 默认关闭，属于 beta，仅依赖 API 和 Web。公开只读 `GET /api/v1/workbench/model-presets` 在关闭时返回 `FEATURE_DISABLED`，手工配置仍可用。目录版本独立于 REST 与事件版本；官方出处、核对日期、确认方式每条必填，模型和地区变更须重新阅读官方资料并更新目录版本。`WORKMESH_MODEL_PRESETS_FILE` 仅接受本地完整目录，启动时替换，禁用优先，不热更新、不在请求中写回。预置不验证凭据，保存不验证可达性或兼容性。
+`WORKMESH_BETA_MODEL_PRESETS=false` 默认关闭，属于 beta，仅依赖 API。公开只读 `GET /api/v1/workbench/model-presets` 在关闭时返回 `FEATURE_DISABLED`，手工配置仍可用。目录版本独立于 REST 与事件版本；官方出处、核对日期、确认方式每条必填，模型和地区变更须重新阅读官方资料并更新目录版本。`WORKMESH_MODEL_PRESETS_FILE` 仅接受本地完整目录，启动时替换，禁用优先，不热更新、不在请求中写回。预置不验证凭据，保存不验证可达性或兼容性。
 
 This document defines the WorkMesh 1.0 support boundary. Historical stage names
 remain in migrations, tests, and ADRs as provenance; they are not the public
@@ -40,12 +40,12 @@ contract refinements during the 1.x line. Each defaults disabled:
 
 | Capability | Flag | Runtime dependencies | Data while disabled |
 | --- | --- | --- | --- |
-| Cycles, Initiatives, Advanced Views, project health, Notifications | `WORKMESH_BETA_PLANNING` | API, worker, web | Durable rows remain; admission, claim, delivery, and UI reads stop. Re-enable resumes pending work under current authorization. |
-| Versioned Templates | `WORKMESH_BETA_TEMPLATES` | API, web | Versions remain queryable only after re-enable; imports remain inert drafts. |
-| Usage, cost summaries, budgets | `WORKMESH_BETA_COSTS` | API, web | Append-only facts and policies remain; no gated aggregation is performed while disabled. |
+| Cycles, Initiatives, Advanced Views, project health, Notifications | `WORKMESH_BETA_PLANNING` | API, worker | Durable rows remain; admission, claim, delivery, and API reads stop. Re-enable resumes pending work under current authorization. |
+| Versioned Templates | `WORKMESH_BETA_TEMPLATES` | API | Versions remain queryable only after re-enable; imports remain inert drafts. |
+| Usage, cost summaries, budgets | `WORKMESH_BETA_COSTS` | API | Append-only facts and policies remain; no gated aggregation is performed while disabled. |
 | Gitea provider | `WORKMESH_BETA_GITEA` | API, provider worker, SDK/MCP through REST | Connections, repositories, contexts, actions, and webhook deliveries remain. They are not disclosed, claimed, or effected until re-enabled. |
-| Operations UI | `WORKMESH_BETA_OPERATIONS_UI` | web only | Hides the optional UI entry point. It never enables any API or worker capability. |
-| Agent Connections and Coordination MCP | `WORKMESH_BETA_COORDINATION_MCP` | API, worker, web, SDK/MCP | Connections, pairing ledgers, credentials, and coordination sessions remain durable; discovery, redeem, request admission, refresh, and UI entry points stop until re-enabled. |
+| Operations UI | `WORKMESH_BETA_OPERATIONS_UI` | retired | 保留兼容开关；自带 UI 已退役，无运行角色。 It never enables any API or worker capability. |
+| Agent Connections and Coordination MCP | `WORKMESH_BETA_COORDINATION_MCP` | API, worker, SDK/MCP | Connections, pairing ledgers, credentials, and coordination sessions remain durable; discovery, redeem, request admission, refresh, and request admission stop until re-enabled. |
 
 Notifications belong to Beta Planning. A notification webhook additionally
 requires `WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS`; disabling that second flag
@@ -62,8 +62,8 @@ instructions are required for every such evolution:
 
 | Capability | Flag | Runtime dependencies | Data while disabled |
 | --- | --- | --- | --- |
-| Automation Rules and effects | `WORKMESH_EXPERIMENTAL_AUTOMATION` | API, worker, web | Rules, runs, and effects remain durable; no new gated admission or claim occurs. |
-| recurring Agent Loops | `WORKMESH_EXPERIMENTAL_AGENT_LOOPS` | API, worker, web | Loops, reservations, runs, and Sessions remain; scheduling and reconciliation stop until re-enabled. |
+| Automation Rules and effects | `WORKMESH_EXPERIMENTAL_AUTOMATION` | API, worker | Rules, runs, and effects remain durable; no new gated admission or claim occurs. |
+| recurring Agent Loops | `WORKMESH_EXPERIMENTAL_AGENT_LOOPS` | API, worker | Loops, reservations, runs, and Sessions remain; scheduling and reconciliation stop until re-enabled. |
 | A2A 0.3 adapter | `WORKMESH_EXPERIMENTAL_A2A` | API | Bindings and task facts remain; task admission and event reads are disabled. |
 | outbound webhook effects | `WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS` | API, worker | Durable intents/deliveries remain unclaimed; non-webhook channels continue when their parent capability is enabled. |
 | multi-runtime reservation | `WORKMESH_EXPERIMENTAL_MULTI_RUNTIME` | reserved, no runtime | Registry reservation only. There is no supported multi-runtime execution path in 1.0. |

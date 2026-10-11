@@ -48,12 +48,7 @@ The official split `@modelcontextprotocol/server` / `@modelcontextprotocol/node`
 
 ## Agent Connection quick start
 
-A Workspace Admin creates an Agent Connection from **Agents → Agent
-Connections**. Choose the Team, principal Human, client type, and the smallest
-capability preset. Grant `agent:delegate` only to a coordinator that must start
-other Agents. Give the generated one-line instruction to the Agent; the
-10-minute pairing code is kept in the URL fragment and is never sent in an HTTP
-request while the landing page opens.
+Workspace Admin 使用 Cookie、CSRF 和幂等键调用 `POST /api/v1/agent-connections`，明确 Team、principal Human、client type 和最小 capability。`agent:delegate` 只授予需要启动其他 Agent 的协调连接。响应 `connect_url` 是 `/api/v1/agent-connections/redeem#<配对码>` 定位符，客户端提取 fragment 后调用兑换接口；没有 landing page，fragment 不作为请求 URL 发送。
 
 The Agent installs the pinned `workmesh` Skill, redeems the `wmp_` code once,
 stores only the returned `wmi_` Installation Token in its secret store, verifies
@@ -88,7 +83,7 @@ old credential.
 
 ### Server-derived MCP client setup
 
-Humans should use `/connect#<one-time-fragment>` or **Agents → Agent Connections** instead of hand-authoring an endpoint. Both surfaces read `/.well-known/workmesh-agent`, `/api/v1/info`, and the authenticated feature registry, then produce a secret-safe configuration for Codex, OpenCode, Pi, or a generic Streamable HTTP MCP client. The rendered template contains only `WORKMESH_INSTALLATION_TOKEN` (or the client's equivalent environment-secret reference), never the redeemed value.
+客户端从 API origin 读取 `/.well-known/workmesh-agent` 并校验公开元数据，完成授权配对兑换后下载 `redeemed.skill.download_url`。Skill 与 discovery 由 API 服务；MCP 使用配置的 `PUBLIC_MCP_ORIGIN`。模板只引用环境秘密名，不把安装凭据放进仓库或 URL。没有自动恢复或额外客户端实现。
 
 The client must fail closed when discovery is unavailable, its client type is not advertised, the preferred Client Profile or pinned Skill selector is unknown, or the Coordination MCP feature is disabled. After pairing, call `verify_connection` and require the live Team probe plus the returned bootstrap receipt. Then call `get_workmesh_context` before selecting work. These checks establish identity and current server facts only: tool discovery does not create a Session, Delegation, approval, lease, revision, or idempotency authority.
 

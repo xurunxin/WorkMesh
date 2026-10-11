@@ -212,6 +212,7 @@ export function createAutomationWorker({
   afterExternalDelivery,
   channelAdapters = {},
   channelRuntimeProfile = 'redis',
+  apiOrigin = process.env.WEB_ORIGIN ?? 'http://localhost:3001',
   now = () => new Date(),
   features = loadFeatureConfig(),
 }: {
@@ -222,6 +223,7 @@ export function createAutomationWorker({
   afterExternalDelivery?: (effectKey: string) => Promise<void>
   channelAdapters?: Readonly<Record<string, ChannelAdapter>>
   channelRuntimeProfile?: 'redis' | 'noRedis'
+  apiOrigin?: string
   now?: () => Date
   features?: FeatureConfig
 }) {
@@ -846,9 +848,9 @@ export function createAutomationWorker({
           endpoint: delivery.browserEndpoint,
           p256dh: delivery.browserP256dh,
           auth: delivery.browserAuth,
-          url: delivery.sourceType === 'approval'
-            ? `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:approval:${delivery.sourceId}`)}`
-            : `/?view=inbox&queue=messages&inboxItem=${encodeURIComponent(delivery.notificationId)}`,
+          url: new URL(delivery.sourceType === 'approval'
+            ? `/api/v1/human-attention/${encodeURIComponent(`v1:approval:${delivery.sourceId}`)}`
+            : '/api/v1/notifications', apiOrigin).href,
         })
       }
       await withTx(db, async tx => {

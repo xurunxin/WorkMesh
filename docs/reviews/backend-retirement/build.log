@@ -1,0 +1,107 @@
+
+> workmesh@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> turbo run build
+
+
+Attention:
+Turborepo now collects completely anonymous telemetry regarding usage.
+This information is used to shape the Turborepo roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://turborepo.dev/docs/telemetry
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/connector, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/worker
+   • Running build in 17 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/observability:build: cache miss, executing ea68b15f3a38d4fa
+@workmesh/contracts:build: cache miss, executing 7da3a731f26a55ee
+@workmesh/git-provider:build: cache miss, executing cd6a740135e2ce64
+@workmesh/artifact-storage:build: cache miss, executing 58571f67c7414663
+@workmesh/observability:build: 
+@workmesh/observability:build: > @workmesh/observability@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build: 
+@workmesh/contracts:build: 
+@workmesh/contracts:build: > @workmesh/contracts@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build: 
+@workmesh/git-provider:build: 
+@workmesh/git-provider:build: > @workmesh/git-provider@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build: 
+@workmesh/artifact-storage:build: 
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build: 
+@workmesh/config:build: cache miss, executing c43b78c5c8a6878c
+@workmesh/connector:build: cache miss, executing 2eec8b0b19d850ef
+@workmesh/agent-sdk:build: cache miss, executing ed49cfcd823c1a53
+@workmesh/domain:build: cache miss, executing 8c2188585bc4d659
+@workmesh/a2a-adapter:build: cache miss, executing a49effaea4d5c695
+@workmesh/agent-runner:build: cache miss, executing 6b097f37345bb3ce
+@workmesh/config:build: 
+@workmesh/config:build: > @workmesh/config@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build: 
+@workmesh/connector:build: 
+@workmesh/connector:build: > @workmesh/connector@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\connector
+@workmesh/connector:build: > tsc -p tsconfig.build.json
+@workmesh/connector:build: 
+@workmesh/agent-sdk:build: 
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build: 
+@workmesh/domain:build: 
+@workmesh/domain:build: > @workmesh/domain@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build: 
+@workmesh/a2a-adapter:build: 
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build: 
+@workmesh/agent-runner:build: 
+@workmesh/agent-runner:build: > @workmesh/agent-runner@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\agent-runner
+@workmesh/agent-runner:build: > tsc -p tsconfig.json
+@workmesh/agent-runner:build: 
+@workmesh/db:build: cache miss, executing 72ec1e02000df9f3
+@workmesh/fake-agent:build: cache miss, executing bea3cca44f34d06d
+@workmesh/mcp:build: cache miss, executing 644ad6cd243a978a
+@workmesh/db:build: 
+@workmesh/db:build: > @workmesh/db@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build: 
+@workmesh/fake-agent:build: 
+@workmesh/fake-agent:build: > @workmesh/fake-agent@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\fake-agent
+@workmesh/fake-agent:build: > tsc -p tsconfig.json
+@workmesh/fake-agent:build: 
+@workmesh/mcp:build: 
+@workmesh/mcp:build: > @workmesh/mcp@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\mcp
+@workmesh/mcp:build: > tsc -p tsconfig.build.json
+@workmesh/mcp:build: 
+@workmesh/recovery:build: cache miss, executing a45202f77191ebdd
+@workmesh/worker:build: cache miss, executing eca1fd44151b1127
+@workmesh/recovery:build: 
+@workmesh/recovery:build: > @workmesh/recovery@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\recovery
+@workmesh/recovery:build: > tsc -p tsconfig.build.json
+@workmesh/recovery:build: 
+@workmesh/worker:build: 
+@workmesh/worker:build: > @workmesh/worker@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\worker
+@workmesh/worker:build: > tsc -p tsconfig.build.json
+@workmesh/worker:build: 
+@workmesh/api:build: cache miss, executing 6b359787ca636890
+@workmesh/api:build: 
+@workmesh/api:build: > @workmesh/api@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\api
+@workmesh/api:build: > tsc -p tsconfig.build.json
+@workmesh/api:build: 
+@workmesh/conformance:build: cache miss, executing e6a4f742a05e0907
+@workmesh/conformance:build: 
+@workmesh/conformance:build: > @workmesh/conformance@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\conformance
+@workmesh/conformance:build: > tsc -p tsconfig.build.json
+@workmesh/conformance:build: 
+
+ Tasks:    17 successful, 17 total
+Cached:    0 cached, 17 total
+  Time:    1m33.441s 
+

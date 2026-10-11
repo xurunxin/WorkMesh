@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url'
 import { featureDefinitions, releaseMetadata } from '../packages/contracts/src/index.js'
 
 type ImageRecord = Readonly<{
-  service: 'api' | 'worker' | 'mcp' | 'web'
+  service: 'api' | 'worker' | 'mcp'
   sourceSha: string
   candidateTag: string
   image: string
@@ -46,12 +46,12 @@ export const createReleaseManifest = async (input: Readonly<{
   assert(/^https:\/\//.test(input.runUrl), `Invalid workflow run URL: ${input.runUrl}`)
 
   const records = await collectImageRecords(input.imagesDirectory)
-  const expectedServices = ['api', 'mcp', 'web', 'worker'] as const
-  assert(records.length === expectedServices.length, 'Exactly four image records are required')
+  const expectedServices = ['api', 'mcp', 'worker'] as const
+  assert(records.length === expectedServices.length, 'Exactly three image records are required')
   const sorted = [...records].sort((left, right) => left.service.localeCompare(right.service))
   assert(
     JSON.stringify(sorted.map(record => record.service)) === JSON.stringify(expectedServices),
-    'Image records must contain api, mcp, web, and worker exactly once',
+    'Image records must contain api, mcp, and worker exactly once',
   )
 
   for (const record of sorted) {
@@ -64,8 +64,7 @@ export const createReleaseManifest = async (input: Readonly<{
     assert(/^sha256:[0-9a-f]{64}$/.test(record.digest), `${record.service} digest is invalid`)
     assert(/^https:\/\//.test(record.provenanceUrl), `${record.service} provenance URL is invalid`)
     assert(/^https:\/\//.test(record.sbomAttestationUrl), `${record.service} SBOM URL is invalid`)
-    if (record.service === 'web') assert(record.webApiUrl !== null, 'Web API URL is required')
-    else assert(record.webApiUrl === null, `${record.service} must not declare a Web API URL`)
+    assert(record.webApiUrl === null, `${record.service} must not declare a Web API URL`)
   }
 
   const lock = await readFile(path.join(input.root, 'pnpm-lock.yaml'))

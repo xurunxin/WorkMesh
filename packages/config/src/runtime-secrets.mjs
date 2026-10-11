@@ -40,7 +40,6 @@ const requiredByService = {
     'S3_SECRET_ACCESS_KEY',
   ],
   mcp: ['WORKMESH_API_URL', 'WORKMESH_SESSION_TOKEN', 'WORKMESH_MCP_ACCESS_TOKEN'],
-  web: ['NEXT_PUBLIC_API_URL'],
   migrate: ['DATABASE_URL'],
   'agent-runner': ['WORKMESH_API_URL', 'WORKMESH_RUNNER_SERVICE_TOKEN', 'WORKMESH_AGENT_INSTALLATION_TOKEN'],
 }
@@ -63,7 +62,6 @@ const urlNames = [
   'WEB_ORIGIN',
   'PUBLIC_MCP_ORIGIN',
   'WORKMESH_API_URL',
-  'NEXT_PUBLIC_API_URL',
   'S3_ENDPOINT',
 ]
 
@@ -175,35 +173,7 @@ export const assertRuntimeSecretSeparation = (environment, comparisonEnvironment
   inspect(environment)
 }
 
-/**
- * The Web image bakes NEXT_PUBLIC_API_URL into the bundle. A deployment where
- * the Web server proxies the API itself does not need one: the Browser then
- * uses a relative base, calls the Web origin, and the Next.js rewrite forwards
- * to NEXT_API_UPSTREAM, which is what keeps the session cookie first-party.
- *
- * NEXT_API_UPSTREAM is the variable `apps/web/next.config.ts` already reads to
- * build those rewrites, so its presence is the deployment's own statement that
- * the Web server terminates /api. A value that *is* supplied is still validated
- * for placeholders and shape: only the presence requirement is relaxed.
- *
- * This is deliberately not tied to WORKMESH_WEB_SAME_ORIGIN_API, which means the
- * opposite thing: that one removes the Next rewrites because something other
- * than the Web server routes /api.
- *
- * @param {NodeJS.ProcessEnv} environment
- */
-const webProxiesApi = (environment) =>
-  (environment.NEXT_API_UPSTREAM ?? '').trim() !== ''
-
-/**
- * @param {NodeJS.ProcessEnv} environment
- * @param {string} service
- * @param {string} name
- */
-const presenceRequired = (environment, service, name) => {
-  if (service === 'web' && name === 'NEXT_PUBLIC_API_URL') return !webProxiesApi(environment)
-  return true
-}
+const presenceRequired = () => true
 
 /**
  * @param {NodeJS.ProcessEnv} environment

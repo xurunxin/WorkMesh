@@ -1,4 +1,5 @@
-import {randomUUID} from 'node:crypto'
+import { canonicalActionApprovalPayload } from '@workmesh/domain'
+import {createHash,randomUUID} from 'node:crypto'
 import {afterAll,afterEach,beforeAll,beforeEach,describe,expect,it} from 'vitest'
 import {createDb,applyMigrations,installWorkspace,withTx,appendEvent,createChannelTarget,admitChannelEvent,claimChannelNotifications,prepareChannelSend,settleChannelSend,reconcileChannelSend} from '@workmesh/db'
 import {loadFeatureConfig} from '@workmesh/config'
@@ -111,6 +112,46 @@ describe('C2 channel delivery with existing Redis integration fixture',()=>{
       }
       throw new Error('Expected a real PostgreSQL lock wait, not a sequential revocation')
     }
+    it('旧 request_hash 全字段匹配后发送新 API 链接，保留旧摘要；字段篡改零外发', async () => {
+      for (const scenario of ['pending', 'retry', 'tampered'] as const) {
+        const tampered = scenario === 'tampered'
+        await withTx(db, tx => createChannelTarget(tx, meta('legacy-target'), { name: 'Legacy hash', provider: 'wecom', enabled: true,
+          secretMaterial: `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${randomUUID()}` }))
+        const item = await source(); await withTx(db, tx => admitChannelEvent(tx, item.eventId))
+        const sends: string[] = []
+        const worker = createBaseAutomationWorker({ db, features, workerId: 'legacy-hash', channelAdapters: {
+          wecom: { send: async ({ content }) => { sends.push(content.url); return { result: scenario === 'retry' && sends.length === 1 ? 'unknown' : 'delivered' } } },
+        } })
+        const [delivery] = await worker.claimNotifications()
+        expect(delivery).toBeDefined()
+        const row = (await db.query<{ effect_key: string; source_revision: number }>(
+          'SELECT d.effect_key,i.source_revision FROM notification_deliveries d JOIN notification_intents i ON i.id=d.intent_id WHERE d.id=$1', [delivery!.id],
+        )).rows[0]!
+        const legacy = { effectKey: row.effect_key, title: 'WorkMesh 有待处理事项', body: '请登录 WorkMesh 查看并处理。',
+          url: `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:inbox_item:${item.id}`)}`, sourceRevision: row.source_revision }
+        const oldHash = createHash('sha256').update(canonicalActionApprovalPayload({ ...legacy, ...(tampered ? { title: 'changed' } : {}) })).digest('hex')
+        await db.query('UPDATE notification_deliveries SET request_hash=$2 WHERE id=$1', [delivery!.id, oldHash])
+        if (tampered) {
+          await expect(worker.deliverNotification(delivery!)).rejects.toMatchObject({ code: 'IDEMPOTENCY_KEY_REUSED' })
+          expect(sends).toEqual([])
+        } else {
+          await worker.deliverNotification(delivery!)
+          const apiLink = `/api/v1/human-attention/${encodeURIComponent(`v1:inbox_item:${item.id}`)}`
+          expect(sends).toEqual([apiLink])
+          if (scenario === 'retry') {
+            expect(await state(delivery!.id)).toMatchObject({ outcome: 'uncertain' })
+            await worker.tick(); expect(sends).toEqual([apiLink])
+            const current = await state(delivery!.id)
+            await withTx(db, tx => reconcileChannelSend(tx, meta('legacy-retry'), delivery!.id, current.revision, 'retry'))
+            await worker.tick(); expect(sends).toEqual([apiLink, apiLink])
+            expect(await state(delivery!.id)).toMatchObject({ status: 'delivered', effect_key: delivery!.effectKey })
+          }
+        }
+        expect((await db.query<{ request_hash: string }>('SELECT request_hash FROM notification_deliveries WHERE id=$1', [delivery!.id])).rows[0]!.request_hash).toBe(oldHash)
+        await db.query("UPDATE notification_deliveries SET status='dead',outcome='failed',claimed_at=NULL,claimed_by=NULL WHERE intent_id IS NOT NULL")
+        await db.query('UPDATE notification_channel_targets SET enabled=false')
+      }
+    })
     describe('C2 fake provider 与真实 Redis Lua', () => {
       const redis = createClient({ url: process.env.REDIS_URL })
       let clock = 0

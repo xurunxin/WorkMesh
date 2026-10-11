@@ -135,7 +135,6 @@ const requiredJobs = [
   'db-integration',
   'api-integration',
   'worker-integration',
-  'e2e',
   'recovery-integration',
   'agent-smoke',
   'connector-platform',
@@ -152,7 +151,6 @@ const rawArtifacts = new Map([
   ['db-integration', 'db-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['api-integration', 'api-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['worker-integration', 'worker-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
-  ['e2e', 'e2e-raw-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['recovery-integration', 'recovery-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['connector-platform', 'connector-platform-raw-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}'],
@@ -190,32 +188,6 @@ for (const jobId of requiredJobs) {
   }
 }
 
-const playwrightArtifact = 'e2e-playwright-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}'
-const playwrightUploads = (uploadStepsByJob.get('e2e') ?? [])
-  .filter(step => step.artifact === playwrightArtifact)
-requireCondition(
-  playwrightUploads.length === 1,
-  `e2e/${playwrightArtifact} must have exactly one upload step`,
-)
-const playwrightUpload = playwrightUploads[0]
-if (playwrightUpload) {
-  requireCondition(
-    playwrightUpload.condition === '${{ always() }}',
-    `e2e/${playwrightArtifact} must run with always()`,
-  )
-  requireCondition(
-    playwrightUpload.path === '|' &&
-      playwrightUpload.section.includes('            apps/web/playwright-report') &&
-      playwrightUpload.section.includes('            apps/web/test-results'),
-    `e2e/${playwrightArtifact} must upload Playwright evidence from the web package directory`,
-  )
-  requireCondition(
-    playwrightUpload.missingFiles === 'error',
-    `e2e/${playwrightArtifact} must fail when Playwright evidence is missing`,
-  )
-  requireCondition(playwrightUpload.retentionDays === '14', `e2e/${playwrightArtifact} must be retained for 14 days`)
-}
-
 for (const [jobId, uploads] of uploadStepsByJob) {
   for (const upload of uploads) {
     const failureOnlyServiceLogs =
@@ -248,18 +220,12 @@ requireCondition(
 requireCondition(!/(?:node_modules|\.next|dist\/\*\*)\s*$/m.test(workflow), 'build or install outputs must not be cached or uploaded')
 
 const source = jobSections.get('source-gates') ?? ''
-const browserInstall = parsedWorkflow.jobs.e2e.steps.find(step => step.name === 'Install Playwright Chromium')
-requireCondition(browserInstall?.['timeout-minutes'] === 8, 'browser installation must have an eight-minute bound')
-for (const input of ['https://archive.ubuntu.com/ubuntu/', 'https://security.ubuntu.com/ubuntu/', 'Acquire::Retries "2";', 'Acquire::http::Timeout "15";', 'Acquire::https::Timeout "15";']) {
-  requireCondition(browserInstall?.run?.includes(input), `browser preparation must retain official mirrors and bounded downloads: ${input}`)
-}
-requireCondition(browserInstall?.run?.includes('playwright install --with-deps chromium'), 'browser preparation must retain required OS dependencies')
 const cacheSteps = Object.entries(parsedWorkflow.jobs).flatMap(([jobId, job]) =>
   (job.steps ?? []).filter(step => step.uses?.startsWith('actions/cache/')).map(step => ({ jobId, ...step })))
 requireCondition(cacheSteps.length === 2, 'only one compiler/static cache restore and save pair is allowed')
 for (const step of cacheSteps) {
   requireCondition(step.jobId === 'source-gates', 'compiler/static caches belong only to source-gates')
-  requireCondition(step.with?.path === '.turbo/typecheck\napps/web/.next/cache\n', 'cross-run cache paths must be exactly pure typechecks and Next compiler intermediates')
+  requireCondition(step.with?.path === '.turbo/typecheck\n', 'cross-run cache paths must be exactly pure typechecks')
   requireCondition(step.with?.key === "source-v2-${{ runner.os }}-node22-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}", 'cache key must bind platform, toolchain, lockfile and commit')
   if (step.uses?.startsWith('actions/cache/save@')) {
     requireCondition(step.if === "${{ success() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}", 'only successful main pushes may publish compiler/static caches')
@@ -268,7 +234,7 @@ for (const step of cacheSteps) {
 requireCondition(!turboJson.globalEnv, 'runtime credentials must not invalidate pure static tasks globally')
 const sourceRunner = readFileSync(resolve(root, 'scripts/run-ci-source.mjs'), 'utf8')
 requireCondition(sourceRunner.includes("if (task === 'lint') args.push('--only')") && !/if\s*\([^\n]*typecheck[^\n]*\)[^\n]*args\.push\('--only'\)/.test(sourceRunner), 'cached typechecks must retain Turbo upstream dependency hashes')
-for (const input of ['scripts/**', 'playwright*.ts']) requireCondition(turboJson.globalDependencies?.includes(input), `static caches must hash imported root input ${input}`)
+for (const input of ['scripts/**']) requireCondition(turboJson.globalDependencies?.includes(input), `static caches must hash imported root input ${input}`)
 for (const [name, inputs] of Object.entries(externalTypecheckInputs)) {
   requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#typecheck`]?.inputs) === JSON.stringify(['$TURBO_DEFAULT$', ...inputs.map(input => `$TURBO_ROOT$/${input}`)]), `${name} typecheck must hash directly imported fixture source outside runtime dependencies`)
   requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#typecheck`]?.dependsOn) === JSON.stringify(turboJson.tasks.typecheck.dependsOn), `${name} typecheck must retain upstream typechecks`)
@@ -278,17 +244,13 @@ for (const [name, inputs] of Object.entries(externalTestInputs)) {
   requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#test`]?.env) === JSON.stringify(turboJson.tasks.test.env), `${name} tests must retain runtime environment hashing`)
   requireCondition(JSON.stringify(turboJson.tasks?.[`${name}#test`]?.dependsOn) === JSON.stringify(turboJson.tasks.test.dependsOn), `${name} tests must retain prerequisite builds`)
 }
-for (const task of ['build', 'test', 'test:integration', 'test:e2e']) {
+for (const task of ['build', 'test', 'test:integration']) {
   requireCondition(JSON.stringify(turboJson.tasks?.[task]?.env) === JSON.stringify(turboJson.globalPassThroughEnv), `${task} must retain runtime environment hashing`)
 }
-for (const task of ['test:integration', 'test:e2e']) requireCondition(turboJson.tasks?.[task]?.cache === false, `${task} results must never be cached`)
+for (const task of ['test:integration']) requireCondition(turboJson.tasks?.[task]?.cache === false, `${task} results must never be cached`)
 requireCondition(parsedWorkflow.jobs.changes.outputs['test-packages'] === '${{ steps.scope.outputs.test-packages }}', 'changes must expose external test consumers')
 requireCondition(parsedWorkflow.jobs['source-gates'].env.CI_TEST_PACKAGES === '${{ needs.changes.outputs.test-packages }}', 'source tests must consume the separate audit selection')
-requireCondition(packageJson.scripts['test:e2e'] === 'turbo run test:e2e --filter=@workmesh/web', 'browser acceptance must avoid synthetic E2E builds in unrelated packages')
-requireCondition(JSON.stringify(readWorkspaces().filter(workspace => workspace.scripts['test:e2e']).map(workspace => workspace.name)) === JSON.stringify(['@workmesh/web']), 'review the E2E scope when another workspace gains an executable acceptance suite')
-requireCondition(JSON.stringify(parsedWorkflow.jobs.e2e.strategy) === JSON.stringify({ 'fail-fast': false, matrix: { shard: [1, 2] } }), 'browser acceptance must run both isolated shards without cancelling evidence')
-requireCondition((jobSections.get('e2e') ?? '').includes('pnpm test:e2e -- --shard=${{ matrix.shard }}/2'), 'E2E must execute the matrix shard')
-requireCondition((jobSections.get('e2e') ?? '').includes('node ../../scripts/check-e2e-shards.mjs'), 'E2E must prove complete and disjoint shard collection before execution')
+requireCondition(!packageJson.scripts['test:e2e'] && !parsedWorkflow.jobs.e2e, 'retired browser acceptance must not remain executable')
 for (const command of [
   'pnpm ci:validate',
   'pnpm ci:source lint',
@@ -344,41 +306,20 @@ requireCondition(
 requireCondition((jobSections.get('worker-integration') ?? '').includes('pnpm test:integration:worker'), 'worker integration command is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery test:integration'), 'recovery integration command is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('pnpm --filter @workmesh/recovery smoke:restored'), 'restored service and Agent smoke command is missing')
-for (const dockerfile of ['api.production.Dockerfile', 'worker.production.Dockerfile', 'web.production.Dockerfile']) {
+for (const dockerfile of ['api.production.Dockerfile', 'worker.production.Dockerfile', 'mcp.production.Dockerfile']) {
   requireCondition((jobSections.get('recovery-integration') ?? '').includes(dockerfile), `recovery integration must build ${dockerfile}`)
 }
-for (const service of ['api', 'worker', 'web']) {
+for (const service of ['api', 'worker', 'mcp']) {
   requireCondition((jobSections.get('recovery-integration') ?? '').includes(`--name workmesh-ci-recovery-${service}`), `recovery integration must start the production ${service} image`)
 }
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('RECOVERY_TEST_REPORT_PATH: ${{ github.workspace }}/ci-logs/recovery-report.json'), 'recovery report evidence path is missing')
 requireCondition((jobSections.get('recovery-integration') ?? '').includes('RECOVERY_SMOKE_REPORT_PATH: ${{ github.workspace }}/ci-logs/recovery-service-smoke.json'), 'recovery smoke evidence path is missing')
 requireCondition(!(jobSections.get('worker-integration') ?? '').includes('redis:'), 'worker integration must not provision Redis')
-requireCondition((jobSections.get('e2e') ?? '').includes('playwright install --with-deps chromium'), 'E2E must install Chromium only')
-requireCondition((jobSections.get('e2e') ?? '').includes('playwright-report'), 'E2E must upload playwright-report')
-requireCondition((jobSections.get('e2e') ?? '').includes('test-results'), 'E2E must upload test-results')
-const requiredE2eEnvironment = [
-  'RUN_INTEGRATION',
-  'DATABASE_URL',
-  'SESSION_SECRET',
-  'WORKMESH_MASTER_KEY',
-]
-const e2e = jobSections.get('e2e') ?? ''
-for (const name of requiredE2eEnvironment) {
-  requireCondition(
-    new RegExp(`^\\s{6}${name}:`, 'm').test(e2e),
-    `E2E must declare ${name}`,
-  )
-  requireCondition(
-    Array.isArray(turboJson.tasks['test:e2e'].env) && turboJson.tasks['test:e2e'].env.includes(name),
-    `Turbo E2E env must forward and hash ${name}`,
-  )
-}
 const expectedBootstrapInvocations = [
   ['source-gates', 'source-gates'],
   ['db-integration', 'db-integration'],
   ['api-integration', 'api-integration'],
   ['worker-integration', 'worker-integration'],
-  ['e2e', 'e2e'],
   ['recovery-integration', 'recovery-integration'],
 ]
 const bootstrapHelper = 'scripts/set-ci-bootstrap-token.mjs'
@@ -486,7 +427,7 @@ const postgresImage = 'postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864d
 // both roles: it ships curl with --aws-sigv4, so the bucket step no longer needs
 // a second image. The digest pins the exact reviewed build.
 const artifactStorageImage = 'rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff'
-requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 5, 'five isolated jobs must use the reviewed PostgreSQL image')
+requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 4, 'four isolated jobs must use the reviewed PostgreSQL image')
 const api = jobSections.get('api-integration') ?? ''
 requireCondition(api.includes(artifactStorageImage), 'API integration must use the reviewed artifact-storage image')
 requireCondition(
@@ -512,12 +453,11 @@ for (const database of [
   'workmesh_db_integration_test',
   'workmesh_api_integration_test',
   'workmesh_worker_integration_test',
-  'workmesh_e2e_test',
   'workmesh_recovery_source_test',
   'workmesh_recovery_target_test',
 ])
   requireCondition(workflow.includes(database), `missing isolated database ${database}`)
-for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration']) {
+for (const jobId of ['db-integration', 'api-integration', 'worker-integration', 'recovery-integration']) {
   const section = jobSections.get(jobId) ?? ''
   requireCondition(section.includes("${{ failure() }}"), `${jobId} must capture service logs on failure`)
   requireCondition(section.includes('docker logs'), `${jobId} must capture raw service logs`)

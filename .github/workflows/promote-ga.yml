@@ -96,7 +96,7 @@ jobs:
           if (manifest.promotion.rebuildAllowed !== false) throw new Error('Rebuild must be forbidden')
           if (manifest.promotion.requiredDigestEquality !== true) throw new Error('Digest equality must be required')
           const services = Object.keys(manifest.images).sort()
-          if (JSON.stringify(services) !== JSON.stringify(['api', 'mcp', 'web', 'worker']))
+          if (JSON.stringify(services) !== JSON.stringify(['api', 'mcp', 'worker']))
             throw new Error('Exactly four release images are required')
           appendFileSync(process.env.GITHUB_ENV, `SOURCE_SHA=${manifest.release.sourceSha}\n`)
           NODE
@@ -115,7 +115,7 @@ jobs:
           set -euo pipefail
           identity="^https://github.com/${GITHUB_REPOSITORY}/\\.github/workflows/release-candidate\\.yml@refs/tags/${CANDIDATE_TAG}$"
           issuer='https://token.actions.githubusercontent.com'
-          for service in api mcp web worker; do
+          for service in api mcp worker; do
             image="$(node -p "JSON.parse(require('fs').readFileSync('release-evidence/release-manifest.json')).images['$service'].name")"
             digest="$(node -p "JSON.parse(require('fs').readFileSync('release-evidence/release-manifest.json')).images['$service'].digest")"
             observed="sha256:$(docker buildx imagetools inspect "$image@$digest" --raw | sha256sum | cut -d' ' -f1)"
@@ -134,7 +134,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p promotion-observed
-          for service in api mcp web worker; do
+          for service in api mcp worker; do
             image="$(node -p "JSON.parse(require('fs').readFileSync('release-evidence/release-manifest.json')).images['$service'].name")"
             digest="$(node -p "JSON.parse(require('fs').readFileSync('release-evidence/release-manifest.json')).images['$service'].digest")"
             docker pull "$image@$digest"

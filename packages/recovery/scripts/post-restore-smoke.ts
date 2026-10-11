@@ -11,7 +11,9 @@ if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) {
 
 const apiUrl = process.env.RECOVERY_SMOKE_API_URL ?? 'http://127.0.0.1:3001'
 const workerUrl = process.env.RECOVERY_SMOKE_WORKER_URL ?? 'http://127.0.0.1:3003'
-const webUrl = process.env.RECOVERY_SMOKE_WEB_URL ?? 'http://127.0.0.1:3000'
+const mcpUrl = process.env.RECOVERY_SMOKE_MCP_URL ?? 'http://127.0.0.1:3002'
+const mcpToken = process.env.RECOVERY_SMOKE_MCP_TOKEN
+if (!mcpToken) throw new Error('RECOVERY_SMOKE_MCP_TOKEN_REQUIRED')
 const agentToken = process.env.RECOVERY_SMOKE_AGENT_TOKEN
 if (!agentToken) throw new Error('RECOVERY_SMOKE_AGENT_TOKEN_REQUIRED')
 const reportPath = resolve(process.env.RECOVERY_SMOKE_REPORT_PATH ?? 'recovery-service-smoke.json')
@@ -37,11 +39,21 @@ try {
   `)).rows[0]
   if (!session) throw new Error('RECOVERY_SMOKE_SESSION_MISSING')
 
-  const [apiStatus, workerStatus, webStatus] = await Promise.all([
+  const [apiStatus, workerStatus, mcpStatus] = await Promise.all([
     check('api', `${apiUrl}/readyz`),
     check('worker', `${workerUrl}/readyz`),
-    check('web', webUrl),
+    check('mcp', `${mcpUrl}/readyz`),
   ])
+  const initialization = await fetch(`${mcpUrl}/mcp`, {
+    method: 'POST', headers: { authorization: `Bearer ${mcpToken}`,
+      'content-type': 'application/json', accept: 'application/json, text/event-stream' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: {
+      protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'recovery-smoke', version: '1.0.0' },
+    } }), signal: AbortSignal.timeout(10_000),
+  })
+  const initializationText = await initialization.text()
+  if (initialization.status !== 200 || !initializationText.includes('serverInfo') || initializationText.includes('"error":'))
+    throw new Error(`RECOVERY_SMOKE_MCP_INITIALIZE_FAILED:${initialization.status}`)
   const heartbeat = await fetch(`${apiUrl}/api/v1/agent-sessions/${session.id}/heartbeat`, {
     method: 'POST',
     headers: {
@@ -66,7 +78,8 @@ try {
     checks: {
       apiReady: apiStatus,
       workerReady: workerStatus,
-      webReady: webStatus,
+      mcpReady: mcpStatus,
+      mcpInitialized: true,
       agentHeartbeat: heartbeat.status,
       agentHeartbeatDurable: true,
     },

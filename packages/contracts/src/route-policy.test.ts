@@ -70,7 +70,9 @@ describe('routePolicyManifest', () => {
     const policyRoutes = routePolicyManifest.map(keyOf)
     const legacyRoutes = agentRouteManifest.map(keyOf)
 
-    expect(routePolicyManifest).toHaveLength(280)
+    expect(routePolicyManifest.find(route => route.operationId === 'downloadWorkMeshSkill')).toMatchObject({
+      method: 'GET', path: '/skills/workmesh-1.1.0.md', authentication: 'public',
+    })
     expect(new Set(policyRoutes).size).toBe(routePolicyManifest.length)
     expect(new Set(routePolicyManifest.map(route => route.operationId)).size)
       .toBe(routePolicyManifest.length)

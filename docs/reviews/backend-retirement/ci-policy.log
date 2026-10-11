@@ -1,0 +1,27 @@
+✔ 开发镜像构建接线不能被删除、跳过或吞掉失败 (58.9071ms)
+✔ classification bootstrap locks only YAML and cannot bypass policy or evidence (240.3356ms)
+✔ YAML semantics preserve flow maps, aliases and literal command bodies (4.4302ms)
+✔ 连接器改动必须实际运行平台矩阵，失败/跳过不能放行 (0.6977ms)
+✔ known prose on PR and main avoids every install/service/test job (0.3253ms)
+✔ retired workspace paths fail closed to full without a browser check (0.2628ms)
+✔ backend assets and fake-agent changes require API checks (0.2152ms)
+✔ API and worker changes retain destructive recovery and real backend integration (0.2103ms)
+✔ cross-workspace lock audits are selected without inventing runtime dependency cycles (0.8486ms)
+✔ upstream contracts/domain/db/config changes include transitive consumers (0.6417ms)
+✔ protocol changes retain SDK consumers, conformance and direct backend imports (0.2746ms)
+✔ root config, unknown/deleted workspaces and executable-looking docs fail closed to full (0.4939ms)
+✔ main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full (0.5123ms)
+✔ PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full (1.0711ms)
+✔ aggregate rejects failure, cancellation and accidental skips for every required job (0.6804ms)
+✔ aggregate only accepts planned skips and rejects incomplete/malformed decisions (0.542ms)
+✔ MCP discovery consumers require real conformance and propagate failed or skipped job (1.5415ms)
+✔ real workflow semantic mutations cannot silently omit MCP conformance (60.9306ms)
+✔ controlled CRLF evidence preserves bytes and all other whitespace gates (2001.959ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8301.1582

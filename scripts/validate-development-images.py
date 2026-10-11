@@ -1,4 +1,4 @@
-"""构建四个真实开发镜像；使用独有 builder，保留原始日志并定向收尾。"""
+"""构建三个后端真实开发镜像；使用独有 builder，保留原始日志并定向收尾。"""
 import hashlib
 import argparse
 import json
@@ -26,7 +26,7 @@ def save(name, value):
 
 source_tree = command(["git", "write-tree"]).decode().strip()
 head = command(["git", "rev-parse", "HEAD"]).decode().strip()
-targets = ["api", "web", "worker", "mcp"]
+targets = ["api", "worker", "mcp"]
 tags = {name: owner + ":" + name for name in targets}
 baseline = {
     "images": command(["docker", "image", "ls", "--no-trunc", "--format", "{{json .}}"] ).decode(),
@@ -109,6 +109,6 @@ finally:
             failed = failed or not absent
     save("cleanup.json", {"owner": owner, "results": cleanup,
          "retained": "已有资源与共享node/buildkit基础镜像不删除；只移除准确本任务标签与builder自有缓存/卷，不做全局prune"})
-save("result.json", {"owner": owner, "passed": not failed and len(results) == 4,
+save("result.json", {"owner": owner, "passed": not failed and len(results) == 3,
                      "head": head, "indexTree": source_tree, "buildCount": len(results)})
-raise SystemExit(1 if failed or len(results) != 4 else 0)
+raise SystemExit(1 if failed or len(results) != 3 else 0)

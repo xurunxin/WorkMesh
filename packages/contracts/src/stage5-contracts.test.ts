@@ -193,6 +193,14 @@ describe('Stage 5 (v1.1) Agent Connection & Coordination MCP contracts', () => {
     expect(() => agentConnectionRotateResponseSchema.parse(accepted)).not.toThrow()
   })
 
+  it('accepts the backend redeem locator without granting query or userinfo credentials', () => {
+    const base = { connection: makeResponse(), pairing_code_expires_at: '2026-08-07T10:10:00Z', overlap_until: '2026-08-07T10:15:00Z' }
+    const locator = `https://workmesh.example/api/v1/agent-connections/redeem#wmp_${'a'.repeat(43)}`
+    expect(() => agentConnectionRotateResponseSchema.parse({ ...base, connect_url: locator })).not.toThrow()
+    for (const unsafe of [locator.replace('https://', 'https://user:pass@'), locator.replace('#', '?token=secret#')])
+      expect(() => agentConnectionRotateResponseSchema.parse({ ...base, connect_url: unsafe })).toThrow()
+  })
+
   it('locks the cross-field invariant: grant_agent_delegate=false forbids agent:delegate in granted_capabilities', () => {
     const ok = makeResponse({ grant_agent_delegate: false, granted_capabilities: ['work:read', 'work:write'] })
     expect(() => agentConnectionResponseSchema.parse(ok)).not.toThrow()

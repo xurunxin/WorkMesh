@@ -1,111 +1,41 @@
-# Production container deployment
+# 纯后端生产部署
 
-Production uses `docker-compose.production.yml`. The existing `docker-compose.yml` remains the local development stack and is not an application-image release contract.
+生产栈提供 API、worker 和独立 MCP 镜像。PostgreSQL、Redis、对象存储和外部 Runner 继续承担后端职责。当前交付没有 Web 页面、登录页面、Next 代理或浏览器测试。首次安装和 Human 管理通过现有 REST、Cookie 与 CSRF 完成；完整接入手册由后续文档任务维护。
 
-## Refresh only the Web service
+## 构建与配置
 
-For frontend-only changes that do not alter API, event, database, Worker, or MCP contracts, the local source stack can rebuild and replace only Web:
-
-```powershell
-docker compose build web
-docker compose up -d --no-deps web
-```
-
-In production, after selecting an already qualified immutable Web image, update only `WORKMESH_WEB_IMAGE`, pull it, and replace the Web service without restarting its dependencies:
-
-```powershell
-docker compose --env-file .env.production -f docker-compose.production.yml pull web
-docker compose --env-file .env.production -f docker-compose.production.yml up -d --no-deps web
-```
-
-This operational shortcut does not create a separate release class. Official RC and GA releases still use the verified four-image manifest and matching release provenance described below; API, Worker, MCP, PostgreSQL, Redis, and object storage are not restarted for an isolated Web refresh.
-
-## Build and publish an exact revision
-
-Build from a clean checkout of the commit being released. Use the full, lower-case 40-character Git SHA for every pre-release image tag and for `WORKMESH_BUILD_SHA`.
+在源码工作站构建准确提交，不在部署主机构建。官方发布使用三个镜像的摘要、来源证明、SBOM、签名和同源提交；晋级保持摘要不变。
 
 ```powershell
 $sha = git rev-parse HEAD
-$namespace = 'your-ghcr-organization'
-$apiUrl = 'https://workmesh.example.com/api'
-
-docker build --build-arg WORKMESH_BUILD_SHA=$sha -f infra/docker/api.production.Dockerfile -t "ghcr.io/$namespace/workmesh-api:$sha" .
-docker build --build-arg WORKMESH_BUILD_SHA=$sha -f infra/docker/worker.production.Dockerfile -t "ghcr.io/$namespace/workmesh-worker:$sha" .
-docker build --build-arg WORKMESH_BUILD_SHA=$sha -f infra/docker/mcp.production.Dockerfile -t "ghcr.io/$namespace/workmesh-mcp:$sha" .
-docker build --build-arg WORKMESH_BUILD_SHA=$sha --build-arg NEXT_PUBLIC_API_URL=$apiUrl -f infra/docker/web.production.Dockerfile -t "ghcr.io/$namespace/workmesh-web:$sha" .
-
-docker push "ghcr.io/$namespace/workmesh-api:$sha"
-docker push "ghcr.io/$namespace/workmesh-worker:$sha"
-docker push "ghcr.io/$namespace/workmesh-mcp:$sha"
-docker push "ghcr.io/$namespace/workmesh-web:$sha"
+docker build --build-arg WORKMESH_BUILD_SHA=$sha -f infra/docker/api.production.Dockerfile -t "workmesh-api:$sha" .
+docker build --build-arg WORKMESH_BUILD_SHA=$sha -f infra/docker/worker.production.Dockerfile -t "workmesh-worker:$sha" .
+docker build --build-arg WORKMESH_BUILD_SHA=$sha -f infra/docker/mcp.production.Dockerfile -t "workmesh-mcp:$sha" .
 ```
 
-The Web production build runs `pnpm check:workmesh-skill` before Next.js and
-fails unless the tracked versioned Skill artifact has the canonical LF UTF-8
-bytes, manifest SHA-256, and valid Ed25519 signature. The signing private key is
-never part of the image build. The verified `apps/web/public` tree is copied
-into the Next.js standalone runtime so `/skills/workmesh-1.1.0.md` is present in
-the final image rather than only in the source checkout.
-
-Exact-SHA tags are accepted for pre-release validation. Release deployment uses the immutable digest returned by GHCR after each push. Set the four full references in the production environment:
+复制 `.env.example` 到仓库外的私有环境文件，填写三个 `WORKMESH_*_IMAGE` 完整摘要引用及准确 `WORKMESH_BUILD_SHA`。替换数据库、对象存储、Session、加密、bootstrap、分页与限流秘密；禁止复用秘密或把真实值写入文档。`WEB_ORIGIN` 保留配置名，值为对外 API origin；HTTPS 反向代理转发 API 路由、SSE、`/.well-known/workmesh-agent` 和固定 Skill 路径，另将 MCP `/mcp` 转发至独立服务。`PUBLIC_MCP_ORIGIN` 是客户端可达的 MCP origin。它不授予权限。
 
 ```powershell
-$env:WORKMESH_API_IMAGE = "ghcr.io/$namespace/workmesh-api@sha256:<api-digest>"
-$env:WORKMESH_WORKER_IMAGE = "ghcr.io/$namespace/workmesh-worker@sha256:<worker-digest>"
-$env:WORKMESH_MCP_IMAGE = "ghcr.io/$namespace/workmesh-mcp@sha256:<mcp-digest>"
-$env:WORKMESH_WEB_IMAGE = "ghcr.io/$namespace/workmesh-web@sha256:<web-digest>"
+docker compose --env-file <私有环境文件> -f docker-compose.production.yml config --quiet
+docker compose --env-file <私有环境文件> -f docker-compose.production.yml up -d api worker
 ```
 
-Issue #10 RC validation enforces digest-only application references. The exact-SHA tag form remains available before RC to validate unpublished composition, but a release must not use floating tags or rely on tag mutability.
+Coordination MCP 按下面既有配置启用后，执行 `docker compose --env-file <私有环境文件> -f docker-compose.production.yml --profile agent up -d mcp`。未开启该能力时，静态模式仍要求精确 Session 凭据及独立 MCP access token。不公开数据库、Redis 或对象存储管理入口。
 
-`NEXT_PUBLIC_API_URL` is compiled into the Web bundle. Build a new Web image when that public URL changes. Confirm both provenance labels before publishing:
+API 镜像在构建时用公开生成源与公钥执行 `pnpm check:workmesh-skill`；`assets/skills/workmesh-1.1.0.md` 随 API 包进入镜像。原件 LF 字节、摘要和签名保持不变，私钥不入构建上下文。先检查 discovery 元数据，再用现有授权创建并兑换配对，下载 `redeemed.skill.download_url`；discovery 不提供下载 URL。
+
+## 部署验收
 
 ```powershell
-docker image inspect "ghcr.io/$namespace/workmesh-web:$sha" --format '{{json .Config.Labels}}'
+pnpm validate:production-images --env-file=<私有环境文件>
 ```
 
-## Configure
-
-Copy `.env.example` to a deployment-only environment file. At minimum, replace all four full application image references, the exact source SHA, public origins, PostgreSQL and MinIO credentials, session and master keys, bootstrap token, pagination key ring, rate-limit HMAC key, and object-store credentials. Prefer GHCR digest references. When the MCP `agent` profile is used, also set its session and access tokens.
-
-Required production credentials have no usable defaults. Compose can render while the optional MCP profile is disabled; if that profile is started with empty session or access tokens, MCP fails preflight before listening. The containers reject missing values, `CHANGE_ME`-style placeholders, short secrets, invalid key formats, and exact secret reuse. Generate the installation token with:
-
-```powershell
-pnpm --silent bootstrap:token
-```
-
-Render `infra/s3/worker-retention-policy.template.json` with the exact
-`S3_BUCKET` and `WORKMESH_RETENTION_ARCHIVE_PREFIX`, and attach it only to the
-Worker object-store identity. The required archive mutation permissions are
-conditional `s3:PutObject` and exact-version `s3:PutObjectRetention`; the latter
-is required to repair a lock horizon after a delayed losing upload. The
-template intentionally excludes object deletion permissions.
-
-Keep the environment file outside source control and readable only by the deployment operator. Put a TLS reverse proxy in front of Web and API. Do not publish PostgreSQL, Redis, or MinIO directly to the internet.
-
-Validate both the repository contract and the fully rendered configuration before changing a running deployment:
-
-```powershell
-pnpm validate:production-images --env-file=.env.production
-docker compose --env-file .env.production -f docker-compose.production.yml --profile agent config --quiet
-```
-
-The validator uses Node's built-in environment-file loader and checks the four
-image references from `.env.production` before rendering Compose. It then
-starts the exact configured Web image with no external network, requests the
-versioned Skill over the container loopback interface without following
-redirects, and requires a 200 response whose raw bytes match the tracked
-artifact, SHA-256, and Ed25519 signature. The response is also checked for
-credential-shaped `wmp_` or `wmi_` values. Without `--env-file`, the same command
-builds an ephemeral Web image from the current checkout, runs the identical
-runtime probe, and removes only its uniquely labelled container and image. The
-Docker daemon and access to any configured private image are therefore required.
-Omit `--profile agent` when MCP is not deployed.
+该命令先核 Compose、镜像引用和启动合同，再创建本轮独有测试数据库、Compose 项目及本机 TLS 提供方夹具，使用真实 API/worker/MCP 验证安装、认证、provider 幂等、精确仓库上下文和配对下载。提供的生产镜像必须绑定当前 HEAD；测试副本执行 save/load，实际镜像文件与 Git blob、HTTP 响应及签名逐字节核对。测试不连接业务数据库，不向真实厂商外发，结束按资源归属清理并保存原日志。未提供环境文件时只构建本轮私有镜像。完整结果见本次交付的验收记录，不以静态合同通过代替运行成功。
 
 ### Coordination MCP pre-release deployment
 
 Agent Connections remain behind `WORKMESH_BETA_COORDINATION_MCP` during the
-development candidate. Set it to `true` on API, Worker, Web, and MCP through the
+development candidate. Set it to `true` on API、worker 和 MCP through the
 shared production Compose feature environment, then start the `agent` profile.
 In Coordination mode the MCP container does not need a static Session token or
 MCP boundary token: each request authenticates directly with its own
@@ -113,12 +43,12 @@ MCP boundary token: each request authenticates directly with its own
 testing the older exact-Session mode.
 
 Route the public HTTPS origin so `/.well-known/workmesh-agent`, `/mcp`,
-`/connect`, and `/skills/` reach the corresponding API/MCP/Web services. With
-Tailscale Serve, expose only those HTTPS routes plus the normal Web/API paths;
+`/api/v1/agent-connections/redeem`, and `/skills/` reach the corresponding API/MCP services. With
+Tailscale Serve, expose only those HTTPS routes plus the API paths;
 do not expose PostgreSQL, Redis, MinIO, or MCP port 3002 directly. Validate
 discovery and call `verify_connection` before beginning a soak.
 
-The final `v1.1.0-rc.N` must use four digest-pinned images from one exact SHA.
+The final `v1.1.0-rc.N` must use three digest-pinned images from one exact SHA.
 Run the three-client, multi-Agent 24-hour soak on those unchanged images. The
 Stable/default-on promotion is a release gate after that evidence passes and
 must not rebuild or substitute any image digest.
@@ -132,7 +62,7 @@ docker compose --env-file .env.production -f docker-compose.production.yml --pro
 docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240
 ```
 
-The production stack waits for the final PostgreSQL TCP server, runs the compiled one-shot migrator, creates the configured object-store bucket, and then starts API and worker. Web and MCP wait for API readiness. The migrator is safe to rerun for a new installation or an already-completed supported upgrade. It verifies the explicit manifest, SHA-256 ledger, and accepted pre-v1 endpoint before applying SQL; see [Database migrations](operations/migrations.md).
+The production stack waits for the final PostgreSQL TCP server, runs the compiled one-shot migrator, creates the configured object-store bucket, and then starts API and worker. MCP waits for API readiness. The migrator is safe to rerun for a new installation or an already-completed supported upgrade. It verifies the explicit manifest, SHA-256 ledger, and accepted pre-v1 endpoint before applying SQL; see [Database migrations](operations/migrations.md).
 
 ```powershell
 docker compose --env-file .env.production -f docker-compose.production.yml run --rm migrate
@@ -147,7 +77,7 @@ already active.
 
 ## Migration 29 to 30 maintenance barrier
 
-Publish API, Worker, and Web from one clean exact SHA, resolve their immutable
+Publish API、worker 和 MCP from one clean exact SHA, resolve their immutable
 digests, and update those three `WORKMESH_*_IMAGE` references plus
 `WORKMESH_BUILD_SHA` in `.env.production`. If MCP is already enabled in the
 running Compose project, publish and update MCP from that same SHA as well.
@@ -189,7 +119,7 @@ The executor validates each exact rendered environment with the same pure
 helper used by `/app/runtime-guard.mjs`. API and Worker preflight additionally
 invoke the same authoritative configuration parsers as application startup. In
 execute mode the executor then runs that guard from the exact target image, with
-the frozen Compose service environment, for migrate, API, Worker, and Web,
+the frozen Compose service environment, for migrate, API、worker 和 MCP,
 followed by MCP only when MCP is in the frozen topology. Every guard must pass
 before `docker update --restart=no` is issued. This includes cross-secret reuse
 checks between enabled MCP tokens and all other deployment runtime secrets.
@@ -205,12 +135,12 @@ pnpm upgrade:retention:production -- --env-file=.env.production --execute
 
 The executable path is intentionally ordered:
 
-1. Inspect API, Worker, and Web target image digests, freeze the current MCP
+1. Inspect API、worker 和 MCP target image digests, freeze the current MCP
    membership from auditable Compose/container state, then inspect MCP only when
    that frozen topology is enabled. Require every included OCI revision label
    to equal `WORKMESH_BUILD_SHA`; validate and freeze all later local values,
    including PostgreSQL CLI identifiers; and run the target-image runtime guard
-   against the exact rendered migrate, API, Worker, Web, and optional MCP
+   against the exact rendered migrate, API、worker 和按原配置启用的 MCP
    service environments before any Docker update or stop.
 2. Using that frozen topology, run
    `docker update --restart=no <old-worker-id>`, then
@@ -233,7 +163,7 @@ The executable path is intentionally ordered:
    `UPGRADE_BARRIER_RETENTION_CLAIM_ACTIVE` if a residual claim is active.
 5. Force-recreate only the target Worker. Verify its actual image ID/digest,
    then require fresh `worker_runtime` rows whose build SHA is the target SHA.
-   Only then force-recreate API and Web plus MCP if and only if MCP was in the
+   Only then force-recreate API plus MCP if and only if MCP was in the
    frozen pre-migration topology. An MCP-disabled upgrade never starts, waits
    for, or verifies MCP and never passes `--profile agent`.
 
@@ -255,7 +185,7 @@ continue forward with the exact target SHA. The executor performs no automatic
 rollback and never removes an orphan.
 
 Other upgrades still require one exact application SHA: publish all images,
-resolve all four digests, update the four image references and
+resolve all three digests, update the three image references and
 `WORKMESH_BUILD_SHA`, and do not mix application revisions.
 
 ## Rollback
@@ -269,7 +199,7 @@ the failing revision changed the schema.
 ### Path A — application rollback (schema unchanged)
 
 When the candidate and the previous release share a schema (the common case for
-UI, workbench, and worker changes), roll back by pointing the four image
+UI, workbench, and worker changes), roll back by pointing the three image
 references and `WORKMESH_BUILD_SHA` at the previous revision and re-creating the
 services. PostgreSQL keeps its data; nothing is replayed.
 
@@ -278,11 +208,10 @@ services. PostgreSQL keeps its data; nothing is replayed.
 $previousSha = '<known-good-40-char-sha>'
 docker image inspect "ghcr.io/$namespace/workmesh-api:$previousSha" --format '{{index .Config.Labels "org.opencontainers.image.revision"}}'
 
-# 2. Repoint every reference. All four must move together; never mix revisions.
+# 2. Repoint every reference. All three must move together; never mix revisions.
 $env:WORKMESH_API_IMAGE    = "ghcr.io/$namespace/workmesh-api@sha256:<previous-api-digest>"
 $env:WORKMESH_WORKER_IMAGE = "ghcr.io/$namespace/workmesh-worker@sha256:<previous-worker-digest>"
 $env:WORKMESH_MCP_IMAGE    = "ghcr.io/$namespace/workmesh-mcp@sha256:<previous-mcp-digest>"
-$env:WORKMESH_WEB_IMAGE    = "ghcr.io/$namespace/workmesh-web@sha256:<previous-web-digest>"
 $env:WORKMESH_BUILD_SHA    = $previousSha
 
 # 3. Recreate and wait for readiness rather than trusting the running state.
@@ -323,7 +252,7 @@ the verification the restore performs.
 
 ### After either path
 
-- Confirm `/readyz` on API, Worker, MCP, and Web before reopening traffic.
+- Confirm `/readyz` on API、worker 和 MCP before reopening traffic.
 - Reconcile any external effect the failed revision may have started; a rolled
   back application does not undo outbound calls. The outbox and the delivery
   ledgers are the record of what was attempted.
@@ -340,7 +269,6 @@ Each runtime owns independent endpoints:
 | API     | `/livez` on port 3001          | PostgreSQL, Redis, and request admission                               |
 | Worker  | `/livez` on internal port 3003 | PostgreSQL, Redis/queue transport, object storage, and claim admission |
 | MCP     | `/livez` on port 3002          | API readiness and request admission                                    |
-| Web     | `/livez` on port 3000          | Web process readiness                                                  |
 
 The Compose healthchecks use `/readyz`. A healthy liveness response does not mean a service is ready to accept work.
 
@@ -353,7 +281,7 @@ docker compose --env-file .env.production -f docker-compose.production.yml stop 
 After restart, wait for health instead of treating the `running` state as readiness:
 
 ```powershell
-docker compose --env-file .env.production -f docker-compose.production.yml restart api worker web
+docker compose --env-file .env.production -f docker-compose.production.yml restart api worker mcp
 docker compose --env-file .env.production -f docker-compose.production.yml ps
 ```
 
@@ -366,7 +294,7 @@ docker image inspect $env:WORKMESH_API_IMAGE --format 'user={{.Config.User}} rev
 docker run --rm --entrypoint node $env:WORKMESH_API_IMAGE -e "const fs=require('node:fs'); for (const p of ['/app/src','/app/integration','/app/node_modules/.bin/tsx']) if (fs.existsSync(p)) process.exit(1)"
 ```
 
-Repeat the content check for worker and MCP. For Web, inspect the standalone runtime and confirm the baked API URL label. Inspect running application containers to confirm UID/GID `10001:10001`, read-only root filesystem, `CapDrop: ALL`, `no-new-privileges:true`, and the `/tmp` tmpfs.
+对 worker 和 MCP 重复内容检查；API 另核签名 Skill 原件。 Inspect running application containers to confirm UID/GID `10001:10001`, read-only root filesystem, `CapDrop: ALL`, `no-new-privileges:true`, and the `/tmp` tmpfs.
 
 Before an upgrade that includes schema migrations, capture and rehearse the
 authenticated PostgreSQL plus object-storage bundle described in
@@ -409,7 +337,7 @@ services:
 
 `WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS=true` 在 API/Worker 同时开启后，Worker 注册单一企业微信群组 Webhook 适配器；默认关闭。需要既有 Redis profile、`REDIS_URL` 和可从企业微信打开的 HTTPS `WEB_ORIGIN`（仅 origin，不带路径、凭据、查询或 fragment）。noRedis 不支持该渠道。API 的 `configured_providers` 只报告部署能力，不证明 Worker 健康、凭据有效或已成功投递。
 
-当前 Human 在既有个人渠道设置中管理自己的目标，部署方先确认企业及目标群允许“消息推送（原群机器人）”。目标秘密沿用 C1 加密存储，不能写到配置样例、聊天、日志或证据；完整目标必须是 `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=<编码后的秘密>`，不接受其它主机、路径、参数、端口、凭据、fragment、重定向或私网 DNS。网络须允许该 HTTPS 主机并维持正常证书验证。
+当前 Human 通过既有通知渠道 REST 合同管理自己的目标，部署方先确认企业及目标群允许“消息推送（原群机器人）”。目标秘密沿用 C1 加密存储，不能写到配置样例、聊天、日志或证据；完整目标必须是 `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=<编码后的秘密>`，不接受其它主机、路径、参数、端口、凭据、fragment、重定向或私网 DNS。网络须允许该 HTTPS 主机并维持正常证书验证。
 
 消息只有固定通用提醒和 WorkMesh canonical 登录深链，Markdown 内容最多 4096 UTF-8 字节；不发送事项正文、人员信息、卡片决策或身份绑定。网页登录后按当前 Human 重新鉴权，转发不授予权限。授权撤销先于发送 checkpoint 提交时零外发，提交后的在途请求不能召回。
 

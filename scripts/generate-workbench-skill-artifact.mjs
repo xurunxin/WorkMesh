@@ -2,7 +2,7 @@
 //
 // The runner embeds the SKILL.md bytes directly (see workbench-skill-manifest.ts),
 // which pins what the Runner executes. The public artifact is the release copy of the
-// same bytes: published under apps/web/public/skills, hashed, and signed with the
+// same bytes: published under apps/api/assets/skills, hashed, and signed with the
 // WorkMesh Skill ed25519 key, so a Human or a deployment can verify that the
 // published instructions are exactly the ones the Runner enforces.
 //
@@ -17,7 +17,7 @@ const check = process.argv.includes('--check')
 const skillPath = resolve(root, 'apps/agent-runner/skills/workmesh-workbench/SKILL.md')
 const publicKeyPath = resolve(root, 'skills/workmesh/public-key.pem')
 const version = '1.0.0'
-const artifactPath = resolve(root, `apps/web/public/skills/workmesh-workbench-${version}.md`)
+const artifactPath = resolve(root, `apps/api/assets/skills/workmesh-workbench-${version}.md`)
 const manifestPath = resolve(root, 'packages/contracts/src/workbench-skill-release-manifest.ts')
 
 // The pin and the artifact are over the canonical LF bytes, so a Windows checkout
