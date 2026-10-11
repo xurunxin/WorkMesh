@@ -93,3 +93,9 @@ Windows4通过1失败，新首败发生在夹具准备 `/grant *S-1-1-0:DE` 的 
 下一轮增加原生job前后源码绑定：scripts/capture-connector-source.mjs只读取明确的源码/规范路径，逐文件保存运行原字节SHA-256与长度、真实Git属性计算的blob、index/提交三方值及checkout HEAD/tree、Node/Git/OS/arch；拒绝源码不匹配和检查期间原字节变化。只输出摘要和路径，不读取环境秘密或pending。两次JSON随已有原生工件上传；失败时仍保存可得后置快照。不以API run.head_sha代替各runner实际checkout/源码身份。脚本语法检查通过，实际三OS执行待下一CI。
 
 本轮执行历史verify-plan.mjs时，它在固定旧branch身份断言失败，原冻结文件/源计划不改；不能用这个历史入口冒新分支完整验证。当前完整中文计划和原始正文仍在docs/plan/connector-recovery.md及source-snapshot.json，plan-source.json记录doc:m7WeSHWZt1Bv3FZwYlnlv、原正文SHA72e6fcb9d46a3f433291db4b1db3e351c243bc38202fdc884d463f5d50341230、可读文件SHA71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352。当前todos回读未提供独立Saved plan正文，版本/计划时间字段继续未知，不新建同源计划或猜测字段。
+
+## CI447：各OS源码绑定与替代目录创建首败
+
+[CI447](https://github.com/xurunxin/WorkMesh/actions/runs/38143859973) head `8dc82b0348069d8cb6ed1ec2a019b9f4abb5a102`：Linux6平台＋73单元及前后源码绑定成功，macOS9平台＋73单元及前后绑定成功。Windows完整日志确认高级参数设置成功、不安全祖先已实际移动，随后替代目录创建返回2005，不能冒整体攻击正对照通过。原先WD/AD只授父目录、不继承，新建unsafe仅继承读取权限，不能在其中再建connector；本轮错误聚合在单次CreateDirectory调用，未单独定位哪一层。下一轮仅在一次性安全父设置可继承WD/AD，不增加DELETE/DC；原私有目录/文件禁继承DACL保持。分开创建unsafe/connector并分别保2000/3000加原HRESULT低16位，保持原强断言，使用新UUID测试。没有改原失败目录或产品权限。
+
+ci447-native/保存三OS完整原日志和准确运行来源；ci447-artifacts/选定原字节源码JSON/Windows清理回执与下载ZIP的hash/长度，完整ZIP未保留。新机local-source-binding/实跑准确Node22.19.0：1103文件与Git三方一致，实际追加非秘密源码注释后原脚本exit1拒绝，再恢复原字节后exit0且前后匹配。此为绑定脚本验收，期间没有运行产品套件，不冒产品测试或第二用户证明。local-source-binding-node25/仅保存最初PATH Node25的脚本试跑，不冒仓库指定runtime。两次本任务ci-logs普通JSON已保全后逐文件移除，准确原源码字节恢复。

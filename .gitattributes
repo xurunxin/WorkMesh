@@ -21,3 +21,5 @@ docs/reviews/b1-b2/current-spec.md text eol=lf
 
 # 新机验收原件无损归档；源码格式门禁不因日志空白而放宽。
 docs/reviews/b1-b2/blueberry-recovery/*.zip -text
+docs/reviews/b1-b2/blueberry-recovery/ci*-artifacts/*/connector-source-*.json -text
+docs/reviews/b1-b2/blueberry-recovery/ci*-artifacts/*/connector-cleanup.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

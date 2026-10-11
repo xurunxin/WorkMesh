@@ -106,7 +106,7 @@ try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
         // 另证明授 DELETE 的祖先可连同私有子项被整体移动；安全父只授新增条目权限。
         await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DE)'], { windowsHide: true })
-        await execute('icacls.exe', [parent, '/grant', '*S-1-1-0:(WD,AD)'], { windowsHide: true })
+        await execute('icacls.exe', [parent, '/grant', '*S-1-1-0:(OI)(CI)(WD,AD)'], { windowsHide: true })
         const fixtureAcl = await execute('icacls.exe', [unsafe], { windowsHide: true })
         console.log(JSON.stringify({ resource: 'aclFixture', path: unsafe, acl: fixtureAcl.stdout }))
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
@@ -116,7 +116,8 @@ try { [IO.File]::ReadAllText([IO.Path]::Combine($p,'control.txt'))|Out-Null } ca
 foreach($target in @($p,[IO.Path]::Combine($p,'connector'))) { try { [IO.Directory]::Move($target,$target+'-moved'); exit 25 } catch {} }
 $v=[IO.Path]::Combine($p,'unsafe')
 try { [IO.Directory]::Move($v,$v+'-moved') } catch {exit (1000+($_.Exception.GetBaseException().HResult -band 65535))}
-try { [IO.Directory]::CreateDirectory([IO.Path]::Combine($v,'connector'))|Out-Null } catch {exit (2000+($_.Exception.GetBaseException().HResult -band 65535))}
+try { [IO.Directory]::CreateDirectory($v)|Out-Null } catch {exit (2000+($_.Exception.GetBaseException().HResult -band 65535))}
+try { [IO.Directory]::CreateDirectory([IO.Path]::Combine($v,'connector'))|Out-Null } catch {exit (3000+($_.Exception.GetBaseException().HResult -band 65535))}
 # 必需攻击已完成；其他用户不需要拥有新目录的删除权限，由夹具 owner 收尾。
 exit 0
 `
