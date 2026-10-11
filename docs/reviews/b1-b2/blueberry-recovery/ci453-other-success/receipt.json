@@ -1,0 +1,91 @@
+{
+  "capturedAt": "2026-10-11T16:32:16.824275+00:00",
+  "runId": 38154334929,
+  "head": "afffde68fe257b86a5a4a9338091552e801b7e13",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38154334929",
+  "status": "in_progress",
+  "conclusion": null,
+  "logs": [
+    {
+      "jobId": 114514074371,
+      "name": "Classify changes and validate CI selection",
+      "conclusion": "success",
+      "path": "job-114514074371-original.log",
+      "bytes": 41548,
+      "sha256": "149ed7401dd8e349713284ec461cecd225cf9084f7e9d5ad22236c58e9b8569a",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114514305089,
+      "name": "Complete disaster recovery",
+      "conclusion": "success",
+      "path": "job-114514305089-original.log",
+      "bytes": 143855,
+      "sha256": "07b08ad56a4200900c4bc07c0821013b282a761c838f647b052f6622f3386d10",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114514305092,
+      "name": "Database integration",
+      "conclusion": "success",
+      "path": "job-114514305092-original.log",
+      "bytes": 137624,
+      "sha256": "721fa56a08cc86a1988ff5f7bae29f76808d6385283bda2b7caef6f5e86eef92",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114514305097,
+      "name": "API integration",
+      "conclusion": "success",
+      "path": "job-114514305097-original.log",
+      "bytes": 2359405,
+      "sha256": "92dbf7c5c3f161fb72b64d14e4f9d148f432a0b3610a31e6b716a61192fadf36",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114514305119,
+      "name": "Browser acceptance (1/2)",
+      "conclusion": "success",
+      "path": "job-114514305119-original.log",
+      "bytes": 595521,
+      "sha256": "7eecbeb30d76b963c8b3ccabe6a83e525d81ea66153762c30f2610e0a5f09dae",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114514305166,
+      "name": "Browser acceptance (2/2)",
+      "conclusion": "success",
+      "path": "job-114514305166-original.log",
+      "bytes": 1478912,
+      "sha256": "07545ec771d77a6864c02242c776f5ccde86409d310a724b9b3efdca4039ba16",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114514305204,
+      "name": "Worker integration",
+      "conclusion": "success",
+      "path": "job-114514305204-original.log",
+      "bytes": 319939,
+      "sha256": "474a6232389299212066857a4ba16223683f7f1a23c3211788471e6ee7ec8d84",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114514305218,
+      "name": "Agent construction and protocol smoke",
+      "conclusion": "success",
+      "path": "job-114514305218-original.log",
+      "bytes": 29512,
+      "sha256": "e4f73a41da07cadb5a48e196ef46dc97c990dd1741e8f745a6f0219f520629b3",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

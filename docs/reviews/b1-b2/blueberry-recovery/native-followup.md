@@ -137,3 +137,9 @@ Windows临时账户wmcta863b93e7729（准确SID见回执）、C:/Users/Public/wo
 ## CI452：三镜像构建与钩子缓存证据首败
 
 CI452/d553 的其余11项检查成功，Source gates 的 lint/typecheck/build/unit/Compose 成功；API/Web 实际构建和本次正常钩子原行成功。Worker 构建成功但安装层 CACHED，没有新钩子原行，验证器正常拒绝，MCP 未运行。Required CI 失败，不冒整体通过。只给下一轮真实构建命令加 --no-cache，保持四镜像独立钩子成功条件。失败完整原件、准确 source tree、三个镜像和 builder/容器/卷定向清理回执见 ci452-development-artifacts/，receipt verified=false；全job首败见 ci452-development-first-failure/。三OS各1104文件及Windows账户/目录清理成功原件仍单独保留，不能覆盖汇总失败。
+
+## CI453：四开发镜像无缓存正常安装及完整门禁成功
+
+CI453/afffde68fe257b86a5a4a9338091552e801b7e13 的13项job全部成功，Required CI job114518992705成功。Source gates job114514305110使用准确Git树、四个真实开发Dockerfile及 --no-cache，各自安装钩子执行与Done原行、buildExit/archiveExit0、镜像User=workmesh均通过。ci453-development-artifacts/的receipt绑定artifact11707964203和完整ZIP/原件摘要，独立复核四命令、原日志SHA/长度、源码树、image ID及定向清理，verified=true。四镜像标签、builder wm-connector-dev-bb1b4f2ea4e1及准确容器/卷已移除，无全局prune，历史首败保留。
+
+三OS实际原生及单元入口成功，各1104文件前后原字节与Git blob一致，实际checkout168b4760a801f472b6f38d16f726a80444a7670a/tree与准确源parent绑定，零不等价。Windows临时账户wmctdebee77e7848及C:/Users/Public/workmesh-connector-1e7aa249b82b4eaca00cf4eb7733be33实际移除、errors为空。完整原日志/metadata在ci453-native、ci453-other-success、ci453-complete；源码与清理JSON在ci453-artifacts，等价证明与相对eb67的10处受测源码差异单独保存。报告与原件收齐不再改受测源码，最终证据head仍须自身Required CI成功，随后正式复审/Chief/main门禁保持，不提前Done。

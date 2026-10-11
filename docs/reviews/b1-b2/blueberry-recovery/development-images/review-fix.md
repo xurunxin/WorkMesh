@@ -52,7 +52,7 @@ tls: received record with version e414 when expecting version 303
 
 新增 CI 接线反例验证删除步骤、条件跳过、吞掉失败和以 help 代替执行必须拒绝。准确 Node22.19.0 下 `scripts/validate-ci.mjs` 成功，`node --test scripts/ci-policy.test.mjs` 19/19 成功、零 skip；Python AST、四 Dockerfile 安装前输入闭包与复制顺序核对成功，`git diff --check HEAD` 成功。这些检查不替代实际四镜像构建。
 
-本修正尚待新提交自身的真实四镜像、三系统及完整 Required CI。只有实际构建成功才能关闭此 blocking；随后仍须正式成果复审、Chief 确认和 actual main 落地，不提前 Done 或推进 #7/#20。最终 run、准确 head 和逐镜像结果由后续证据追加，不在本文件中猜测。
+修正源已取得真实四镜像、三系统及完整 Required CI 成功，结果见下文 CI453。证据提交自身仍须最新CI，随后须正式成果复审、Chief 确认和 actual main 落地，不提前 Done 或推进 #7/#20。最终证据 head/run 由最终回复及PR准确head检查给出，避免文件自引用形成新的提交。
 
 ## CI452 的实际结果及验证入口修正
 
@@ -70,3 +70,22 @@ Worker 没有本次钩子原行，验证器按原要求返回1；MCP 未运行�
 `ci452-artifacts/`、`ci452-native/` 和 `ci452-source-equivalence.json` 保留实际三系统成功及各1104文件前后原字节、Git blob、checkout `8ff05878b8bf72f5d3391097eedba33ea3ab69c0` 的 tree/parents 绑定；Windows 临时账户 `wmctd7b165d72f9c` 与 `C:/Users/Public/workmesh-connector-3e82bcb6437643e8b715e1357bded267` 实际移除、errors为空。不以这些成功替代失败的汇总门禁。后续源改变后仍须新完整CI。
 
 本机五份 JSON 首次普通暂存被 Git 换行转换；已为准确开发镜像原件路径增加 -text 与限定 CR 行尾属性，并用 `git add --renormalize` 强制重暂存，逐文件比较 index blob 与原始工作树字节全部一致。没有改原日志、下载 receipt 或全仓空白规则。后续工件同样按准确原字节核 index，首败阻断提交。
+
+## CI453：四镜像正常钩子与完整门禁通过
+
+[CI453](https://github.com/xurunxin/WorkMesh/actions/runs/38154334929) 精确源 `afffde68fe257b86a5a4a9338091552e801b7e13` 的13项 job 全部成功，Required CI job114518992705成功。Source gates job114514305110实际执行四个完整开发 Dockerfile，全部使用 `--no-cache`、buildExit/archiveExit均为0、正式镜像User均为workmesh。
+
+| 开发镜像 | 正常安装钩子原行 | 完成原行 |
+| --- | --- | --- |
+| api | `#29 15.92 apps/connector postinstall$ node scripts/prepare-native.mjs` | `#29 15.97 apps/connector postinstall: Done` |
+| web | `#27 14.34 apps/connector postinstall$ node scripts/prepare-native.mjs` | `#27 14.39 apps/connector postinstall: Done` |
+| worker | `#28 14.29 apps/connector postinstall$ node scripts/prepare-native.mjs` | `#28 14.35 apps/connector postinstall: Done` |
+| mcp | `#27 14.24 apps/connector postinstall$ node scripts/prepare-native.mjs` | `#27 14.29 apps/connector postinstall: Done` |
+
+原件 `ci453-development-artifacts/receipt.json` 绑定 artifact11707964203、完整ZIP摘要及九份选定原件的原字节摘要；四日志按逻辑路径无损归档于上级 raw-evidence。`builds.json` 保完整命令、原行和四镜像ID；`registration.json` 的实际 checkout 为 `168b4760a801f472b6f38d16f726a80444a7670a`，index tree 为 `cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e`。复核器独立检查实际命令含 --no-cache、日志原SHA/长度、四个正常钩子、源码tree/parents、镜像ID及定向收尾，receipt verified=true，不用缓存成功或静态 COPY 代本次执行。
+
+四个任务标签 `wm-connector-dev-bb1b4f2ea4e1:{api,web,worker,mcp}` 及对应image ID已正常删除；builder `wm-connector-dev-bb1b4f2ea4e1`、准确容器 `buildx_buildkit_wm-connector-dev-bb1b4f2ea4e10` 和卷 `buildx_buildkit_wm-connector-dev-bb1b4f2ea4e10_state` 已移除并核不存在。cleanup.json逐操作exit0，其他已有资源和共享基础镜像保留，不做全局prune。CI452与本机首败、各次清理回执完整保留。
+
+本次各OS实际入口与结果：Linux x64 `dbus-run-session -- bash scripts/test-connector-linux.sh`：6平台＋73单元；Windows x64 `./scripts/test-connector-windows.ps1`：5平台＋73单元；macOS arm64 `pnpm --filter @workmesh/connector test:platform` 后 `test`：9平台＋73单元。全部成功，无skip或弱化断言。三OS各1104文件前后原字节、Git blob与准确源checkout树等价证明在 `ci453-source-equivalence.json`；Windows账户 `wmctdebee77e7848` 和 `C:/Users/Public/workmesh-connector-1e7aa249b82b4eaca00cf4eb7733be33` 实际移除、errors为空。其余原测试/全仓检查原件在 `ci453-other-success/`、完整收尾在 `ci453-complete/`。
+
+相对独审 eb67 的10处受测源码差异见 `ci453-source-delta.json`：只有四开发Dockerfile、CI接线/验证脚本及精确原件属性，已审连接器/领域代码、Schema、迁移、API、事件和lockfile零变化。收齐本报告及原件后的提交只改变docs，仍要求该最终head自身最新Required CI成功；不能以源CI453替代最终提交门禁。此修正的正式成果复审与Chief/main落地仍待闭合。

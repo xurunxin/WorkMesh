@@ -1,0 +1,176 @@
+{
+  "head": "168b4760a801f472b6f38d16f726a80444a7670a",
+  "indexTree": "cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e",
+  "results": [
+    {
+      "name": "api",
+      "command": [
+        "docker",
+        "buildx",
+        "build",
+        "--builder",
+        "wm-connector-dev-bb1b4f2ea4e1",
+        "--platform",
+        "linux/amd64",
+        "--progress=plain",
+        "--no-cache",
+        "--load",
+        "--label",
+        "com.workmesh.validation.owner=wm-connector-dev-bb1b4f2ea4e1",
+        "--label",
+        "com.workmesh.validation.index-tree=cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e",
+        "--tag",
+        "wm-connector-dev-bb1b4f2ea4e1:api",
+        "--file",
+        "infra/docker/api.Dockerfile",
+        "-"
+      ],
+      "buildExit": 0,
+      "archiveExit": 0,
+      "log": "api.log",
+      "logBytes": 20603,
+      "logSha256": "b47604b4718c88a3b8dbb52f25ac7efefc7083336508748bb38ae872a5d246de",
+      "postinstallLines": [
+        "#29 15.92 apps/connector postinstall$ node scripts/prepare-native.mjs",
+        "#29 15.97 apps/connector postinstall: Done"
+      ],
+      "imageId": "sha256:14fdd97c304cfe508a0ed5c8128f480a5af8ca41cb3dea355cc20946bed99e5b",
+      "user": "workmesh",
+      "cmd": [
+        "pnpm",
+        "--filter",
+        "@workmesh/api",
+        "dev"
+      ],
+      "normalPostinstallVerified": true
+    },
+    {
+      "name": "web",
+      "command": [
+        "docker",
+        "buildx",
+        "build",
+        "--builder",
+        "wm-connector-dev-bb1b4f2ea4e1",
+        "--platform",
+        "linux/amd64",
+        "--progress=plain",
+        "--no-cache",
+        "--load",
+        "--label",
+        "com.workmesh.validation.owner=wm-connector-dev-bb1b4f2ea4e1",
+        "--label",
+        "com.workmesh.validation.index-tree=cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e",
+        "--tag",
+        "wm-connector-dev-bb1b4f2ea4e1:web",
+        "--file",
+        "infra/docker/web.Dockerfile",
+        "-"
+      ],
+      "buildExit": 0,
+      "archiveExit": 0,
+      "log": "web.log",
+      "logBytes": 17202,
+      "logSha256": "b9b11d28b3c6193590c062f49757ecbc304f26f958357b0751cbc006307305aa",
+      "postinstallLines": [
+        "#27 14.34 apps/connector postinstall$ node scripts/prepare-native.mjs",
+        "#27 14.39 apps/connector postinstall: Done"
+      ],
+      "imageId": "sha256:d737c7bb327cb1645374524b5baeb811014784c1ab89176d26a59906d05d6448",
+      "user": "workmesh",
+      "cmd": [
+        "pnpm",
+        "--filter",
+        "@workmesh/web",
+        "dev",
+        "--hostname",
+        "0.0.0.0"
+      ],
+      "normalPostinstallVerified": true
+    },
+    {
+      "name": "worker",
+      "command": [
+        "docker",
+        "buildx",
+        "build",
+        "--builder",
+        "wm-connector-dev-bb1b4f2ea4e1",
+        "--platform",
+        "linux/amd64",
+        "--progress=plain",
+        "--no-cache",
+        "--load",
+        "--label",
+        "com.workmesh.validation.owner=wm-connector-dev-bb1b4f2ea4e1",
+        "--label",
+        "com.workmesh.validation.index-tree=cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e",
+        "--tag",
+        "wm-connector-dev-bb1b4f2ea4e1:worker",
+        "--file",
+        "infra/docker/worker.Dockerfile",
+        "-"
+      ],
+      "buildExit": 0,
+      "archiveExit": 0,
+      "log": "worker.log",
+      "logBytes": 17281,
+      "logSha256": "1f76ed5a2e9a139a92e436a94d7d41c76c222741ba5335cfa3772119409ab4d6",
+      "postinstallLines": [
+        "#28 14.29 apps/connector postinstall$ node scripts/prepare-native.mjs",
+        "#28 14.35 apps/connector postinstall: Done"
+      ],
+      "imageId": "sha256:49694be56b34610675fafcca8f64b09eb772f106f411b9475c399735a8fb9f92",
+      "user": "workmesh",
+      "cmd": [
+        "pnpm",
+        "--filter",
+        "@workmesh/worker",
+        "dev"
+      ],
+      "normalPostinstallVerified": true
+    },
+    {
+      "name": "mcp",
+      "command": [
+        "docker",
+        "buildx",
+        "build",
+        "--builder",
+        "wm-connector-dev-bb1b4f2ea4e1",
+        "--platform",
+        "linux/amd64",
+        "--progress=plain",
+        "--no-cache",
+        "--load",
+        "--label",
+        "com.workmesh.validation.owner=wm-connector-dev-bb1b4f2ea4e1",
+        "--label",
+        "com.workmesh.validation.index-tree=cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e",
+        "--tag",
+        "wm-connector-dev-bb1b4f2ea4e1:mcp",
+        "--file",
+        "infra/docker/mcp.Dockerfile",
+        "-"
+      ],
+      "buildExit": 0,
+      "archiveExit": 0,
+      "log": "mcp.log",
+      "logBytes": 17203,
+      "logSha256": "5429101c399849ae232b2fd58e9ec06e87445286890cd4f6d5dfaf30e7973cb7",
+      "postinstallLines": [
+        "#27 14.24 apps/connector postinstall$ node scripts/prepare-native.mjs",
+        "#27 14.29 apps/connector postinstall: Done"
+      ],
+      "imageId": "sha256:a30171f2ab45a4668952dffacc82315afe6c00b4543b9ad42c4496c434f1cfb1",
+      "user": "workmesh",
+      "cmd": [
+        "pnpm",
+        "--filter",
+        "@workmesh/mcp",
+        "start"
+      ],
+      "normalPostinstallVerified": true
+    }
+  ]
+}
