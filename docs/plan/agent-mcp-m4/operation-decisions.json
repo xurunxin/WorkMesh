@@ -1,0 +1,2603 @@
+{
+  "main": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+  "status": "待审设计，非已实现支持表",
+  "selected": [
+    {
+      "operationId": "listCycles",
+      "domain": "Planning",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 196
+      },
+      "sourceRule": {
+        "operationId": "listCycles",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "teamCollectionScope",
+            "allowed": [
+              "workspace",
+              "current_team"
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listCycles",
+        "mcpTool": "list_cycles",
+        "runnerTool": "workmesh_list_cycles",
+        "readWriteOnly": false,
+        "scope": "当前Team/null集合；签名分页",
+        "positive": "当前Team current/upcoming/history分页",
+        "negative": "跨Team、撤grant、关闭Planning",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "listInitiatives",
+      "domain": "Planning",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 201
+      },
+      "sourceRule": {
+        "operationId": "listInitiatives",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "initiativeLinkedProjectScope",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listInitiatives",
+        "mcpTool": "list_initiatives",
+        "runnerTool": "workmesh_list_initiatives",
+        "readWriteOnly": false,
+        "scope": "准确Session或WorkItem项目关联；Team-only C不自动含项目",
+        "positive": "两个关联Initiative分页且仅授权项目可见",
+        "negative": "跨项目、先list撤Delegation",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "getInitiativeRollup",
+      "domain": "Planning",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 203
+      },
+      "sourceRule": {
+        "operationId": "getInitiativeRollup",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "legacyMembershipQueryVisible",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "Human membership查询差异，发现明确阻断",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "待审最小投影修复",
+        "sdkMethod": "getInitiativeRollup",
+        "mcpTool": "get_initiative_rollup",
+        "runnerTool": "workmesh_get_initiative_rollup",
+        "readWriteOnly": false,
+        "scope": "与list相同linked授权项目；200上限/COSTS",
+        "positive": "非零completed/health/多币种准确排除另一scope",
+        "negative": "撤grant后拒绝而非零；Human、201可见上限",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "listSavedViews",
+      "domain": "SavedView",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 49
+      },
+      "sourceRule": {
+        "operationId": "listSavedViews",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "savedViewVisibleScope",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": null,
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listSavedViews",
+        "mcpTool": "list_saved_views",
+        "runnerTool": "workmesh_list_saved_views",
+        "readWriteOnly": false,
+        "scope": "内置＋准确owner/当前Team；非Advanced管理",
+        "positive": "本人private保存过滤和内置页",
+        "negative": "另一个owner私有项、跨Team、撤权",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "createSavedView",
+      "domain": "SavedView",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 50
+      },
+      "sourceRule": {
+        "operationId": "createSavedView",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "idempotencyValid",
+            "allowed": [
+              true
+            ],
+            "reason": "IDEMPOTENCY_CONFLICT"
+          },
+          {
+            "fact": "savedViewVisibleScope",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          }
+        ],
+        "capabilities": [
+          "work:write"
+        ],
+        "feature": null,
+        "variants": [],
+        "write": true
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "createSavedView",
+        "mcpTool": "create_saved_view",
+        "runnerTool": "workmesh_create_saved_view",
+        "readWriteOnly": true,
+        "scope": "owner固定current actor；原Team和work:write",
+        "positive": "同key/body只一个saved_view及event/outbox",
+        "negative": "异体key冲突、他Team、owner注入不能生效",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "listAdvancedViews",
+      "domain": "Planning",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 204
+      },
+      "sourceRule": {
+        "operationId": "listAdvancedViews",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "viewVisibility",
+            "allowed": [
+              "owner",
+              "workspace",
+              "current_team"
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listAdvancedViews",
+        "mcpTool": "list_advanced_views",
+        "runnerTool": "workmesh_list_advanced_views",
+        "readWriteOnly": false,
+        "scope": "owner/workspace/currentTeam；列表不授管理",
+        "positive": "三种现行可见范围分页",
+        "negative": "他owner private、关闭Planning",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "evaluateAdvancedView",
+      "domain": "Planning",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 206
+      },
+      "sourceRule": {
+        "operationId": "evaluateAdvancedView",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "viewVisibility",
+            "allowed": [
+              "owner",
+              "workspace",
+              "current_team"
+            ],
+            "reason": "NOT_FOUND"
+          },
+          {
+            "fact": "viewResultScope",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          },
+          {
+            "fact": "viewLayoutFilterSupported",
+            "allowed": [
+              true
+            ],
+            "reason": "VIEW_FILTER_UNSUPPORTED"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "evaluateAdvancedView",
+        "mcpTool": "get_advanced_view_results",
+        "runnerTool": "workmesh_get_advanced_view_results",
+        "readWriteOnly": false,
+        "scope": "额外resultScope及受支持layout/filter；cost需currency",
+        "positive": "准确workItem/project/Session结果和cursor",
+        "negative": "越resultScope、非法filter、混币请求",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "listAutomationRules",
+      "domain": "Automation",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 209
+      },
+      "sourceRule": {
+        "operationId": "listAutomationRules",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "routeResolvedScope",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "teamCollectionScope",
+            "allowed": [
+              "workspace",
+              "current_team"
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listAutomationRules",
+        "mcpTool": "list_automation_rules",
+        "runnerTool": "workmesh_list_automation_rules",
+        "readWriteOnly": false,
+        "scope": "当前Team/null规则读取；管理Human",
+        "positive": "规则current version/condition/actions完整",
+        "negative": "跨Team、撤grant、Agent触发/改版拒绝",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "listAutomationRuns",
+      "domain": "Automation",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 215
+      },
+      "sourceRule": {
+        "operationId": "listAutomationRuns",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "routeResolvedScope",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "automationRunSessionMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listAutomationRuns",
+        "mcpTool": "list_automation_runs",
+        "runnerTool": "workmesh_list_automation_runs",
+        "readWriteOnly": false,
+        "scope": "run.session_id==当前Session；rule/loop过滤",
+        "positive": "本人run分页/source/trace",
+        "negative": "另Session、session_id=null、跨Team",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "getAutomationRun",
+      "domain": "Automation",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 216
+      },
+      "sourceRule": {
+        "operationId": "getAutomationRun",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "legacyMembershipQueryVisible",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "Human membership查询差异，发现明确阻断",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "待审最小投影修复",
+        "sdkMethod": "getAutomationRun",
+        "mcpTool": "get_automation_run",
+        "runnerTool": "workmesh_get_automation_run",
+        "readWriteOnly": false,
+        "scope": "准确当前Session run/effects；nullTeam不豁免",
+        "positive": "本人真实Loop target E读run及ordered effects",
+        "negative": "origin E读target、别人nullTeam run、Stop",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "listLoops",
+      "domain": "AgentLoops",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 217
+      },
+      "sourceRule": {
+        "operationId": "listLoops",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "routeResolvedScope",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "loopVisibility",
+            "allowed": [
+              "workspace",
+              "owner",
+              "current_team"
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listLoops",
+        "mcpTool": "list_loops",
+        "runnerTool": "workmesh_list_loops",
+        "readWriteOnly": false,
+        "scope": "workspace/owner/currentTeam现行列表；recent_runs仅元数据",
+        "positive": "可见Loop/pin/预算与最近运行",
+        "negative": "private owner、跨Team、feature关闭",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "runLoopNow",
+      "domain": "AgentLoops",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 219
+      },
+      "sourceRule": {
+        "operationId": "runLoopNow",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "routeResolvedScope",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "idempotencyValid",
+            "allowed": [
+              true
+            ],
+            "reason": "IDEMPOTENCY_CONFLICT"
+          },
+          {
+            "fact": "loopSameTeam",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "loopTemplateActive",
+            "allowed": [
+              true
+            ],
+            "reason": "RUN_TEMPLATE_INVALID"
+          },
+          {
+            "fact": "loopAdmissionCapacity",
+            "allowed": [
+              true
+            ],
+            "reason": "LOOP_RUN_LIMIT"
+          }
+        ],
+        "capabilities": [
+          "automation:manage",
+          "work:write"
+        ],
+        "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+        "variants": [],
+        "write": true
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "runLoopNow",
+        "mcpTool": "run_loop_now",
+        "runnerTool": "workmesh_run_loop_now",
+        "readWriteOnly": true,
+        "scope": "automation:manage＋work:write；同Team/admission/no-overlap/预算",
+        "positive": "合法origin admission后target另接单；同occurrence单事实",
+        "negative": "停用pin/Loop、竞争容量预算、跨Team/撤权",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "recordUsage",
+      "domain": "Costs",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 221
+      },
+      "sourceRule": {
+        "operationId": "recordUsage",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "idempotencyValid",
+            "allowed": [
+              true
+            ],
+            "reason": "IDEMPOTENCY_CONFLICT"
+          },
+          {
+            "fact": "usageSessionMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          },
+          {
+            "fact": "usageAgentMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          },
+          {
+            "fact": "usageProjectMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_COSTS",
+        "variants": [],
+        "write": true
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "recordUsage",
+        "mcpTool": "record_usage",
+        "runnerTool": "workmesh_record_usage",
+        "readWriteOnly": true,
+        "scope": "本人Session/Agent/准确项目或projectless；仅work:read",
+        "positive": "已知/unknown usage及独立币种；命令事实完整",
+        "negative": "冒他Session/Agent/项目、同key异body、extra Activity禁止",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "getUsageSummary",
+      "domain": "Costs",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 222
+      },
+      "sourceRule": {
+        "operationId": "getUsageSummary",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "legacyMembershipQueryVisible",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_COSTS",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "Human membership查询差异，发现明确阻断",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "待审最小投影修复",
+        "sdkMethod": "getUsageSummary",
+        "mcpTool": "get_usage_summary",
+        "runnerTool": "workmesh_get_usage_summary",
+        "readWriteOnly": false,
+        "scope": "准确本人Session/Agent/项目；totals/buckets同快照",
+        "positive": "from-inclusive/to-exclusive和known/unknown；合法空",
+        "negative": "异Session显式过滤、撤权、零记录不能呈免费",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "listTemplates",
+      "domain": "Template",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 228
+      },
+      "sourceRule": {
+        "operationId": "listTemplates",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution",
+              "coordination"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "reviewer",
+              "researcher",
+              "coordinator",
+              "triager"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "routeResolvedScope",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          },
+          {
+            "fact": "featureEnabled",
+            "allowed": [
+              true
+            ],
+            "reason": "FEATURE_DISABLED"
+          },
+          {
+            "fact": "templatePinnedToRun",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_BETA_TEMPLATES",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "listTemplates",
+        "mcpTool": "list_templates",
+        "runnerTool": "workmesh_list_templates",
+        "readWriteOnly": false,
+        "scope": "仅当前run执行pin的Template/version/body",
+        "positive": "Loop target pinned body/hash/version分页",
+        "negative": "普通E无pin合法空、他owner/pin、停用Template",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "streamA2ATaskEvents",
+      "domain": "A2A",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 236
+      },
+      "sourceRule": {
+        "operationId": "streamA2ATaskEvents",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session",
+              "agent_session",
+              "coordination_connection"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "legacyMembershipQueryVisible",
+            "allowed": [
+              true
+            ],
+            "reason": "NOT_FOUND"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": "WORKMESH_EXPERIMENTAL_A2A",
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "Human membership查询差异，发现明确阻断",
+        "consumer": "具名SDK/MCP/Runner尚待本批适配",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "待审最小投影修复",
+        "sdkMethod": "getA2ATaskEvents",
+        "mcpTool": "get_a2a_task_events",
+        "runnerTool": "workmesh_get_a2a_task_events",
+        "readWriteOnly": false,
+        "scope": "active绑定task到准确Session；最多扫描200；派生去重",
+        "positive": "target E单页和无映射页推进checkpoint",
+        "negative": "另task/session、越bigint、撤权between scan/insert",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "getProjectHealthHistory",
+      "domain": "Health",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 207
+      },
+      "sourceRule": {
+        "operationId": "getProjectHealthHistory",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "agent_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "researcher",
+              "reviewer"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          }
+        ],
+        "capabilities": [
+          "work:read"
+        ],
+        "feature": null,
+        "variants": [],
+        "write": false
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "SDK/MCP/Runner已有，补具名返回和联用回归",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "getProjectHealthHistory",
+        "mcpTool": "get_project_health_history",
+        "runnerTool": "workmesh_get_project_health_history",
+        "readWriteOnly": false,
+        "scope": "已有准确project execution E；current grant",
+        "positive": "合法project E分页published/draft合同对照",
+        "negative": "projectless Loop E、C模式、跨project",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "createProjectHealthUpdate",
+      "domain": "Health",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 208
+      },
+      "sourceRule": {
+        "operationId": "createProjectHealthUpdate",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "agent_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "researcher",
+              "reviewer"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          },
+          {
+            "fact": "idempotencyValid",
+            "allowed": [
+              true
+            ],
+            "reason": "IDEMPOTENCY_CONFLICT"
+          },
+          {
+            "fact": "exactHumanApproval",
+            "allowed": [
+              true
+            ],
+            "reason": "APPROVAL_REQUIRED",
+            "when": {
+              "publish": true
+            }
+          }
+        ],
+        "capabilities": [
+          "work:write"
+        ],
+        "feature": null,
+        "variants": [],
+        "write": true
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "SDK/MCP/Runner已有，补具名返回和联用回归",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "createProjectHealthUpdate",
+        "mcpTool": "create_project_health_update",
+        "runnerTool": "workmesh_create_project_health_update",
+        "readWriteOnly": true,
+        "scope": "已有agent草拟；source=agent/If-Match；publish需批准",
+        "positive": "draft与Human精确approval后published",
+        "negative": "旧revision、未批准publish、非精确project",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    },
+    {
+      "operationId": "suggestWorkItemCompletion",
+      "domain": "Completion",
+      "source": {
+        "commit": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "line": 194
+      },
+      "sourceRule": {
+        "operationId": "suggestWorkItemCompletion",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "agent_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "sessionKind",
+            "allowed": [
+              "execution"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "role",
+            "allowed": [
+              "executor",
+              "researcher",
+              "reviewer"
+            ],
+            "reason": "ROLE_REQUIRED"
+          },
+          {
+            "fact": "state",
+            "allowed": [
+              "acknowledged",
+              "planning",
+              "executing",
+              "awaiting_input",
+              "awaiting_approval",
+              "blocked"
+            ],
+            "reason": "SESSION_STATE_DENIED"
+          },
+          {
+            "fact": "liveAuthority",
+            "allowed": [
+              true
+            ],
+            "reason": "AUTHORITY_REVOKED"
+          },
+          {
+            "fact": "capabilitiesAllPresent",
+            "allowed": [
+              true
+            ],
+            "reason": "CAPABILITY_DENIED"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "RESOURCE_SCOPE_DENIED"
+          },
+          {
+            "fact": "idempotencyValid",
+            "allowed": [
+              true
+            ],
+            "reason": "IDEMPOTENCY_CONFLICT"
+          }
+        ],
+        "capabilities": [
+          "work:write"
+        ],
+        "feature": null,
+        "variants": [],
+        "write": true
+      },
+      "current": {
+        "backend": "既有领域合同，目标仍逐次核验",
+        "consumer": "SDK/MCP/Runner已有，补具名返回和联用回归",
+        "productTest": "本批未运行"
+      },
+      "planned": {
+        "backend": "复用现有，不扩权限",
+        "sdkMethod": "suggestCompletion",
+        "mcpTool": "suggest_work_item_completion",
+        "runnerTool": "workmesh_suggest_work_item_completion",
+        "readWriteOnly": true,
+        "scope": "已有准确project/workItem E提案；不transition",
+        "positive": "合法suggestion＋evidence，工作流保持",
+        "negative": "越workItem、Agent decide/publish管理拒绝",
+        "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
+        "actualStatus": "未实施/未测",
+        "requiresFormalReview": true
+      }
+    }
+  ],
+  "humanReserved": [
+    {
+      "operationId": "createCycle",
+      "sourceLine": 197,
+      "feature": "WORKMESH_BETA_PLANNING",
+      "sourceRule": {
+        "operationId": "createCycle",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "generateCycles",
+      "sourceLine": 198,
+      "feature": "WORKMESH_BETA_PLANNING",
+      "sourceRule": {
+        "operationId": "generateCycles",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "carryOverCycleWork",
+      "sourceLine": 199,
+      "feature": "WORKMESH_BETA_PLANNING",
+      "sourceRule": {
+        "operationId": "carryOverCycleWork",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "createInitiative",
+      "sourceLine": 202,
+      "feature": "WORKMESH_BETA_PLANNING",
+      "sourceRule": {
+        "operationId": "createInitiative",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "createAdvancedView",
+      "sourceLine": 205,
+      "feature": "WORKMESH_BETA_PLANNING",
+      "sourceRule": {
+        "operationId": "createAdvancedView",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_PLANNING",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "createAutomationRule",
+      "sourceLine": 210,
+      "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+      "sourceRule": {
+        "operationId": "createAutomationRule",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "createAutomationRuleVersion",
+      "sourceLine": 211,
+      "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+      "sourceRule": {
+        "operationId": "createAutomationRuleVersion",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "dryRunAutomationRule",
+      "sourceLine": 212,
+      "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+      "sourceRule": {
+        "operationId": "dryRunAutomationRule",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "triggerAutomationRule",
+      "sourceLine": 213,
+      "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+      "sourceRule": {
+        "operationId": "triggerAutomationRule",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "setAutomationRuleState",
+      "sourceLine": 214,
+      "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+      "sourceRule": {
+        "operationId": "setAutomationRuleState",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "createLoop",
+      "sourceLine": 218,
+      "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+      "sourceRule": {
+        "operationId": "createLoop",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "setLoopState",
+      "sourceLine": 220,
+      "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+      "sourceRule": {
+        "operationId": "setLoopState",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "setBudgetPolicy",
+      "sourceLine": 223,
+      "feature": "WORKMESH_BETA_COSTS",
+      "sourceRule": {
+        "operationId": "setBudgetPolicy",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_COSTS",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "createTemplate",
+      "sourceLine": 229,
+      "feature": "WORKMESH_BETA_TEMPLATES",
+      "sourceRule": {
+        "operationId": "createTemplate",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_TEMPLATES",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "createTemplateVersion",
+      "sourceLine": 230,
+      "feature": "WORKMESH_BETA_TEMPLATES",
+      "sourceRule": {
+        "operationId": "createTemplateVersion",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_TEMPLATES",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "setTemplateState",
+      "sourceLine": 231,
+      "feature": "WORKMESH_BETA_TEMPLATES",
+      "sourceRule": {
+        "operationId": "setTemplateState",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_TEMPLATES",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "exportTemplates",
+      "sourceLine": 232,
+      "feature": "WORKMESH_BETA_TEMPLATES",
+      "sourceRule": {
+        "operationId": "exportTemplates",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_TEMPLATES",
+        "variants": [],
+        "write": false
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "importTemplatesAsDrafts",
+      "sourceLine": 233,
+      "feature": "WORKMESH_BETA_TEMPLATES",
+      "sourceRule": {
+        "operationId": "importTemplatesAsDrafts",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_BETA_TEMPLATES",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "configureA2ABinding",
+      "sourceLine": 234,
+      "feature": "WORKMESH_EXPERIMENTAL_A2A",
+      "sourceRule": {
+        "operationId": "configureA2ABinding",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_A2A",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    },
+    {
+      "operationId": "acceptA2ATask",
+      "sourceLine": 235,
+      "feature": "WORKMESH_EXPERIMENTAL_A2A",
+      "sourceRule": {
+        "operationId": "acceptA2ATask",
+        "predicates": [
+          {
+            "fact": "credentialMode",
+            "allowed": [
+              "human_session"
+            ],
+            "reason": "CREDENTIAL_MODE_MISMATCH"
+          },
+          {
+            "fact": "humanAuthorityMatches",
+            "allowed": [
+              true
+            ],
+            "reason": "FORBIDDEN"
+          },
+          {
+            "fact": "domainTargetFactsMatch",
+            "allowed": [
+              true
+            ],
+            "reason": "TARGET_PREREQUISITE_DENIED"
+          }
+        ],
+        "capabilities": [],
+        "feature": "WORKMESH_EXPERIMENTAL_A2A",
+        "variants": [],
+        "write": true
+      },
+      "disposition": "保持Human管理，不新增Agent适配或授权"
+    }
+  ],
+  "frozenM0Policy": "原operation-decisions.json不修改，本卡增量与现行规则合成",
+  "a2aDerivedWrite": "read分类不表示零DB写，保既有delivery去重并最终gate",
+  "credentialModeBoundary": "sourceRule逐项列准许模式；Runner额外仅executing E，C走SDK/MCP",
+  "notSelected": "F/TA新域、出站、UI、发行、真实provider/外发"
+}

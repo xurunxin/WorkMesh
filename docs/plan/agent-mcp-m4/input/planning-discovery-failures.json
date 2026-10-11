@@ -1,0 +1,16 @@
+{
+  "status": "只读探索首败与纠正，不是产品测试",
+  "failures": [
+    {
+      "command": "Get-Content apps/api/vitest.integration.config.ts",
+      "actual": "Get-Content 找不到该路径；所在组合PowerShell调用exit1",
+      "resolution": "实际 apps/api/package.json test:integration 引用 ../../vitest.integration.config.ts；规划命令已按实际脚本修正"
+    },
+    {
+      "command": "rg -n 'INTEGRATION|integration' vitest* apps/api/package.json",
+      "actual": "Windows glob vitest* 报 os error123，另一个准确package.json参数有返回",
+      "resolution": "改准确文件路径读取，不从错误glob宣称已读配置"
+    }
+  ],
+  "productChecks": "未运行"
+}
