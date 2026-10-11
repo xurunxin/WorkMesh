@@ -189,5 +189,7 @@ C卷可用差值为 21,642,752,000 B；同时存在其他项目/当前构建写�
 
 本轮新增成果仍须重新独审、blocking/high闭合及准确最终head自己的最新 RequiredCI。旧1266审查与CI不能证明本次新增删除/共享入口；本报告不宣称已合入。最终head与实时CI查询保在本轮回复/平台记录；合入后本轮工作树仅登记为未来独立候选，本轮不删除自身。
 
+独审发现工具名规范化的索引缺口，修订 capture-tools.py 同时识别 wait/exec 与 functions.wait/functions.exec；旧 ending 原件不覆盖，追加 [tool-receipts-ending-supplement.json.gz](tool-receipts-ending-supplement.json.gz)，补齐cell66/cell125两个预检推送的原wait最终返回及全部原行。修订后实际解析见 [final-verification-review.json](final-verification-review.json)；新head须重新独审绑定与自己的最新RequiredCI。
+
 规则实际触发分列：本轮开工只读盘点已执行，旧环境回收按逐目标原件实际执行；本轮自身尚未合入，合入后触发未发生，只登记为受保护的后续候选，见 current-lifecycle-registration.json。
 本轮不改产品源码、数据库迁移、API或事件；交付和条件合入完成后暂停后续任务，等待换机并明确恢复，不自动追加下一轮。

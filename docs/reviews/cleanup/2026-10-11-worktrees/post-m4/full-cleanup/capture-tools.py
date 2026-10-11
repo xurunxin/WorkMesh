@@ -23,7 +23,8 @@ def main():
             continue
         value = p.get('input',p.get('arguments',''))
         # exec 的早期 yield、notify 与最终 return 都保原行；wait 的调用不含目录名。
-        if 'full-cleanup' not in value and not any(s in value for s in sessions) and p.get('name') not in ('functions.wait','functions.exec'):
+        tool_name=p.get('name','').rsplit('.',1)[-1]
+        if 'full-cleanup' not in value and not any(s in value for s in sessions) and tool_name not in ('wait','exec'):
             continue
         calls[(source,p['call_id'])] = dict(source=source,callId=p['call_id'], dispatchLine=i, dispatchOriginalLine=raw,
                                   dispatchOriginalLineSha256=sha(raw.encode()))
