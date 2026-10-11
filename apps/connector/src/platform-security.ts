@@ -50,17 +50,24 @@ const macAclGet = process.platform === 'darwin' ? libc?.func('void * acl_get_fil
 const macAclText = process.platform === 'darwin' ? libc?.func('void * acl_to_text(void * acl, void * length)') : null
 const macAclFree = process.platform === 'darwin' ? libc?.func('int acl_free(void * acl)') : null
 
-async function verifyMacAcl(path: string, info: Stats, privatePath: boolean): Promise<void> {
-  const entry = macAclGet!(path, 0x100)
+// 导出供原生夹具绑定真实 lstat/ACL 交错；普通调用仍经过目录/私有对象入口。
+export async function verifyMacAcl(path: string, info: Stats, privatePath: boolean): Promise<void> {
+  const sameObject = (current: Stats) => !current.isSymbolicLink()
+    && current.isDirectory() === info.isDirectory() && current.isFile() === info.isFile()
+    && current.dev === info.dev && current.ino === info.ino && current.uid === info.uid && current.mode === info.mode
+  let entry = macAclGet!(path, 0x100)
   if (!entry) {
     const error = koffi.decode(errnoAddress!(), 'int') as number
     const current = await lstat(path)
-    requireThat(error === 2 && !current.isSymbolicLink()
-      && current.isDirectory() === info.isDirectory() && current.isFile() === info.isFile()
-      && current.dev === info.dev && current.ino === info.ino && current.uid === info.uid && current.mode === info.mode
-      // 私有对象的 owner/mode 已核；其 ctime 可因同用户首次创建锁文件而改变。
-      && (privatePath || current.ctimeMs === info.ctimeMs), 'CONNECTOR_UNSAFE_ACL')
-    return
+    requireThat(error === 2 && sameObject(current), 'CONNECTOR_UNSAFE_ACL')
+    if (current.ctimeMs === info.ctimeMs) return
+    // 子项创建也改变祖先 ctime；对同一对象重读真实 ACL，而非放开时间检查或重试拒绝。
+    entry = macAclGet!(path, 0x100)
+    if (!entry) {
+      const secondError = koffi.decode(errnoAddress!(), 'int') as number
+      requireThat(secondError === 2 && sameObject(await lstat(path)), 'CONNECTOR_UNSAFE_ACL')
+      return
+    }
   }
   try {
     const text = macAclText!(entry, null)
@@ -73,6 +80,7 @@ async function verifyMacAcl(path: string, info: Stats, privatePath: boolean): Pr
       privatePath ? 'CONNECTOR_UNSAFE_ACL' : 'CONNECTOR_UNSAFE_ANCESTOR')
     } finally { macAclFree!(text) }
   } finally { macAclFree!(entry) }
+  requireThat(sameObject(await lstat(path)), 'CONNECTOR_UNSAFE_ACL')
 }
 
 async function verifyAncestor(path: string): Promise<void> {

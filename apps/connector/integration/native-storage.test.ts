@@ -1,11 +1,11 @@
 import { randomBytes, randomUUID } from 'node:crypto'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { mkdir, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { SystemSecretStore } from '../src/secret-store.js'
-import { withDirectoryLock, atomicWrite, verifyPrivate, prepareDirectory } from '../src/platform-security.js'
+import { withDirectoryLock, atomicWrite, verifyPrivate, prepareDirectory, verifyMacAcl } from '../src/platform-security.js'
 import { sha256 } from '../src/config.js'
 import { temporaryDirectory, cleanupDirectory } from '../test-support/resources.js'
 
@@ -98,12 +98,15 @@ try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase
     const dir = join(parent, 'connector'), unsafe = join(parent, 'unsafe'), victim = join(unsafe, 'connector')
     try {
       await withDirectoryLock(dir, () => atomicWrite(join(dir, 'pending.json'), '稳定身份非秘密探针'))
-      await prepareDirectory(victim)
+      await withDirectoryLock(victim, () => atomicWrite(join(victim, 'pending.json'), '原始私有非秘密探针'))
       if (process.platform === 'win32') {
         expect(Boolean(process.env.WM_CONNECTOR_OTHER_USER && process.env.WM_CONNECTOR_OTHER_PASSWORD && process.env.WM_CONNECTOR_PUBLIC_ROOT)).toBe(true)
-        // DC 授删除子项，WD 授 rename 的目标条目，AD 授同名替换目录创建。
-        // 均仅用于一次性不安全父夹具；受保护子项没有授该用户 DELETE。
+        // DC-only 先证明产品保守拒绝，受保护子项 DACL 不变。
         await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(RX,DC,AD,WD)'], { windowsHide: true })
+        await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
+        // 另证明授 DELETE 的祖先可连同私有子项被整体移动；安全父只授新增条目权限。
+        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:DE'], { windowsHide: true })
+        await execute('icacls.exe', [parent, '/grant', '*S-1-1-0:(WD,AD)'], { windowsHide: true })
         const fixtureAcl = await execute('icacls.exe', [unsafe], { windowsHide: true })
         console.log(JSON.stringify({ resource: 'aclFixture', path: unsafe, acl: fixtureAcl.stdout }))
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
@@ -111,14 +114,17 @@ try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase
 $p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(parent, 'utf8').toString('base64')}'))
 try { [IO.File]::ReadAllText([IO.Path]::Combine($p,'control.txt'))|Out-Null } catch {exit 24}
 foreach($target in @($p,[IO.Path]::Combine($p,'connector'))) { try { [IO.Directory]::Move($target,$target+'-moved'); exit 25 } catch {} }
-$v=[IO.Path]::Combine($p,'unsafe','connector')
+$v=[IO.Path]::Combine($p,'unsafe')
 try { [IO.Directory]::Move($v,$v+'-moved') } catch {exit (1000+($_.Exception.GetBaseException().HResult -band 65535))}
-try { [IO.Directory]::CreateDirectory($v)|Out-Null } catch {exit (2000+($_.Exception.GetBaseException().HResult -band 65535))}
+try { [IO.Directory]::CreateDirectory([IO.Path]::Combine($v,'connector'))|Out-Null } catch {exit (2000+($_.Exception.GetBaseException().HResult -band 65535))}
 # 必需攻击已完成；其他用户不需要拥有新目录的删除权限，由夹具 owner 收尾。
 exit 0
 `
         await writeFile(join(parent, 'control.txt'), '非秘密可读对照')
         await runWindowsProbe(parent, 'rename-probe.ps1', script, 0)
+        const moved = join(parent, 'unsafe-moved', 'connector')
+        await verifyPrivate(moved, true); await verifyPrivate(join(moved, 'pending.json'))
+        expect(await readFile(join(moved, 'pending.json'), 'utf8')).toBe('原始私有非秘密探针')
       } else {
         await execute('chmod', ['0755', parent]); await execute('chmod', ['0777', unsafe])
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
@@ -155,6 +161,19 @@ exit 0
       await execute('chmod', ['-N', parent])
       const results = await Promise.allSettled(Array.from({ length: 32 }, (_, i) => prepareDirectory(join(parent, `connector-${i}`))))
       expect(results.filter(result => result.status === 'rejected').map(result => String(result.reason))).toEqual([])
+    } finally { await cleanupDirectory(parent) }
+  })
+  if (process.platform === 'darwin') it('目录新增子项改变 ctime 后重读真实 ACL；安全属性变化仍拒绝', async () => {
+    const parent = await temporaryDirectory('mac-ctime', '/tmp')
+    try {
+      await execute('chmod', ['-N', parent]); await execute('chmod', ['0755', parent])
+      const before = await stat(parent)
+      await new Promise(resolve => setTimeout(resolve, 5))
+      await writeFile(join(parent, 'non-secret-child.txt'), '非秘密并发正对照')
+      expect((await stat(parent)).ctimeMs).not.toBe(before.ctimeMs)
+      await verifyMacAcl(parent, before, false)
+      await execute('chmod', ['0777', parent])
+      await expect(verifyMacAcl(parent, before, false)).rejects.toThrow('CONNECTOR_UNSAFE_ACL')
     } finally { await cleanupDirectory(parent) }
   })
   if (process.platform === 'darwin') it('没有扩展 ACL 的目录可用，修改型 allow ACL 仍拒绝', async () => {

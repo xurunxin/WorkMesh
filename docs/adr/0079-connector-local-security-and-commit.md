@@ -30,9 +30,9 @@ Windows 在 owner/ACL 核验前从根到叶打开 `READ_CONTROL|READ_ATTRIBUTES`
 
 第三轮独审修订：ANSI 可见字符匹配前后都增加独立的原始字节凭据检查，原始 `wmi_`/`wmp_` 前缀不能被控制结束字节分类吞掉。控制结束字节 `w` 也参与后续候选匹配，覆盖异常前导串再叠加色彩序列的情况。安全提示继续即时输出，管道/PTY/实际系统存储入口同时断言原始输出及显示规范化结果，stderr 重定向文件也检查原始日志。祖先权限与三流 TTY 模式选择不变。
 
-换机原生验收补充（2026-10-11）：Windows 私有路径按二进制安全描述符核当前 SID owner、受保护 DACL、唯一无继承 FullControl allow ACE；不把等价的 SDDL 别名或 AUTO_INHERITED 表示差异当作权限差异。macOS 无扩展 ACL 的 NULL/ENOENT 只有在重核同一目录的 dev/inode/owner/mode/ctime 后可接受，其他 ACL 读取失败仍拒绝；修改型 allow 规则保持。node-pty 1.1.0 的 Darwin helper 执行位由安装钩子准备，先复制为独立 inode 再替换，保原字节哈希，不 chmod 公共 CAS。完整原生验收仍须三系统真实运行。
+换机原生验收补充（2026-10-11）：Windows 私有路径按二进制安全描述符核当前 SID owner、受保护 DACL、唯一无继承 FullControl allow ACE；不把等价的 SDDL 别名或 AUTO_INHERITED 表示差异当作权限差异。macOS 无扩展 ACL 的 NULL/ENOENT 须重核同一对象的类型/dev/inode/owner/mode；若 ctime 已改变，重读真实 ACL 并再次核对象，不把子项创建引起的 ctime 变化当作权限变化。非 ENOENT 读取失败仍拒绝；读到 ACL 仍执行完整 allow 检查。node-pty 1.1.0 的 Darwin helper 执行位由安装钩子准备，先复制为独立 inode 再替换，保原字节哈希，不 chmod 公共 CAS。完整原生验收仍须三系统真实运行。
 
-macOS 私有目录与文件另外拒绝扩展 ACL 的任何 allow（包括继承专用 allow），不能仅靠0700/0600推断其他用户不可读。普通祖先仍只拒绝修改型 allow，不改变系统目录；私有对象无扩展 ACL 时重核类型、dev/inode/uid/mode，只有已证明当前 owner 且精确私有 mode 的对象允许同用户操作改变 ctime。祖先无 ACL 的完整 ctime 核验保持。此为敏感 pending 的既有隔离要求补全，不自动删除用户 ACL；含 allow 的私有路径明确失败。新增实际 nobody 读取正对照、拒绝及移除受控夹具 ACL 后恢复正例。
+macOS 私有目录与文件另外拒绝扩展 ACL 的任何 allow（包括继承专用 allow），不能仅靠0700/0600推断其他用户不可读。普通祖先仍只拒绝修改型 allow，不改变系统目录；私有对象与祖先无扩展 ACL 时均重核类型、dev/inode/uid/mode；ctime 改变触发实际 ACL 再读取，而不是忽略检查、扩大可信主体或重试一次拒绝。此为敏感 pending 的既有隔离要求补全，不自动删除用户 ACL；含 allow 的私有路径明确失败。新增实际 nobody 读取正对照、拒绝及移除受控夹具 ACL 后恢复正例。
 
 Alternatives
 

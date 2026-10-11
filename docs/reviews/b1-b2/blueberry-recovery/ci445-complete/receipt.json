@@ -1,0 +1,41 @@
+{
+  "capturedAt": "2026-10-11T13:28:40.555858+00:00",
+  "runId": 38141943330,
+  "head": "84c6fdd0af9244189dc0df2555b6f95974ee0a23",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38141943330",
+  "status": "completed",
+  "conclusion": "failure",
+  "logs": [
+    {
+      "jobId": 114477759333,
+      "name": "API integration",
+      "conclusion": "success",
+      "path": "job-114477759333-original.log",
+      "bytes": 2361393,
+      "sha256": "da92e97bdc3f21c2b2c2527a2cebb273facdfc311b21c32ee4626dc49e6bf1eb",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114477759370,
+      "name": "Source gates",
+      "conclusion": "success",
+      "path": "job-114477759370-original.log",
+      "bytes": 248022,
+      "sha256": "938e9607ca5b866d230e015f3ce53387582aa5d0ce4c8ebfb38545e743c4f24c",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114481049218,
+      "name": "Required CI",
+      "conclusion": "failure",
+      "path": "job-114481049218-original.log",
+      "bytes": 26482,
+      "sha256": "30b3ddcb3aa7747604b3dca23063885db62a0491331e27a2a466f736d97d0101",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

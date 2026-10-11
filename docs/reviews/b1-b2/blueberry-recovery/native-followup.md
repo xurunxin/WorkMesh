@@ -65,3 +65,21 @@ macOS 源码补查同时发现私有叶目录/文件仅核BSD mode，不能识�
 Windows本轮另保真实30秒读取用例超时；重命名精确1005（Move阶段＋HRESULT低位Access denied）。实际icacls输出显示不安全父只有Everyone(WD,AD,DC)及当前用户F，原产品prepareDirectory创建的该父没有继承公共夹具RX/SYNCHRONIZE。补全一次性不安全父的RX，保留DC/AD/WD和受保护子项原ACL；不是给私有对象增加其他用户权限。增加套件前的一次真实临时账户启动与SID核对，用短命令并隐藏窗口，使冷账户初始化在夹具准备阶段明确完成；测试仍为原30秒，不增加超时、不skip、不自动重试断言。任何失败仍进入原用户名/SID与准确根的清理回执。仅本机typecheck与PowerShell parser通过，后续原生结果另验。
 
 CI443完整结果已保存ci443-complete/：源码门禁、API/DB/Worker、两E2E、灾难恢复及agent smoke全部成功，Windows失败令Required CI正确失败。该结果不是当前head全绿。CI444查询时API仍运行；其他全仓作业已成功，最终状态以后续准确run为准。
+
+## CI445：并发首败实收与最小原生重命名探针
+
+[CI445](https://github.com/xurunxin/WorkMesh/actions/runs/38141943330) head `84c6fdd0af9244189dc0df2555b6f95974ee0a23`：Linux成功；Windows真实临时用户SID已核，读取正对照和私有 pending 拒绝均成功，平台4通过1失败，Move仍1005；补全父RX没有解决该攻击正对照，不冒成功。macOS平台8项通过，但73单元中第4轮双进程竞争收到明确 `CONNECTOR_UNSAFE_ACL`，72通过1失败，保留精确错误与原强断言。ci445-native/首次采集在Mac job logs命令exit1中断，已有Windows原字节不覆盖；ci445-native-complete/重新取得三系统完整日志和准确来源，不把网络采集失败当产品失败。此前CI444因新的PR提交被并发规则取消，API为cancelled，不能记完整通过。
+
+源码检查发现原无ACL核验用目录ctime作为不变条件，但同一目录的子项创建也会更新ctime，包括共享sticky祖先。此为此次错误的候选原因，原日志只有错误码、不提供失败路径，不能宣称已定位历史每次交错。修正保持类型/dev/inode/owner/mode逐值一致；ctime改变时再读取真实ACL并核对象，非ENOENT失败拒绝、出现allow继续按私有/普通祖先规则拒绝；不忽略ctime变化、不自动重试失败的操作、不扩大可信主体。新增macOS真实stat快照→新增非秘密子项→确认ctime变化→实际ACL核验正例，随后实际mode改变必须拒绝，结合原16轮双进程检查在下一Mac runner验证。
+
+Windows攻击正对照增加最小原生API：夹具owner编译无秘密DLL，真实第二用户加载后以DELETE-only CreateFileW目录handle调用SetFileInformationByHandle(FileRenameInfo)，不请求额外SYNCHRONIZE/读取权限，保持受保护子目录原始DACL、不授其他用户DELETE。原.NET安全路径拒绝断言保留，并新增原生安全路径两项准确Access denied（1005）断言；不安全父下仍须实际移动与同名目录创建均成功。依照[微软FILE_RENAME_INFO](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_rename_info)的绝对路径、NULL RootDirectory、长度/布局规则，handle/buffer均finally释放。不能以此源码存在冒第二用户通过，后续真实CI另验。本机windows-native-rename-probe.json已证明该准确C#源可编译、当前用户实际移动成功、仅声明DLL和空目录定向收尾；该证明不涉及第二用户。新源typecheck成功，产品边界、原拒绝及30秒超时保持。
+
+### CI445 后实际实验与最终夹具调整
+
+前述DELETE-only DLL仅为诊断候选，并未进入正式平台用例。本机普通FullControl子项移动成功后，收窄一次性子项到RC的实验先遇到SetAccessControl请求未具备的SeSecurityPrivilege（没有申请提权）；另以仅DACL的AccessControlSections实施新的独有夹具，原生打开仍返回1005。改用OVERLAPPED消除同步打开要求的新独有夹具也真实返回1005，不能把该路线冒修复或第二用户通过。原始源码快照、失败消息和对象清单保存于windows-rename-probe-experiment.txt、verify-native-rename-experiment.txt、windows-native-rename-failure.json、native-experiment-retained.json；首次普通FullControl成功的源码仅有当时SHA，不能把后续快照冒同一源码。该候选没有保留在产品或原生测试接线。
+
+一个实验的收尾首次rmdir在 `.tmp/rename-probe-1bc20940-3d2c-482c-9aeb-dfcee8fca580/source` 返回EPERM并掩盖其先前实验异常，未继续重试、改该目标ACL、父删或换法；另一实验在native1005后保留准确根与非秘密DLL/目录供复核，没有派发删除。两根绝对路径和当前对象/ACL可查native-experiment-retained.json。它们是本轮新增小型保全例外，不声称全部临时资源已清空。成功普通实验及此前SeSecurityPrivilege失败实验的根已按原空目录/普通DLL收尾，不冒磁盘净释放。
+
+正式Windows夹具回到实际.NET API，不给受保护子目录/文件增加任何其他用户权限。DC-only祖先仍单独断言产品拒绝；攻击正对照另外在一次性unsafe祖先授DELETE，安全父仅授新增条目WD/AD（不授DELETE/DC）。真实第二用户须移动**整个不安全祖先**（包含原始私有子目录），并在原路径创建替代祖先/连接器；安全父与安全连接器两项移动仍必须失败。移动后owner逐项验证原私有目录/文件DACL与原字节保持。该攻击证明私有叶权限不能代替祖先安全，不冒DC-only已成功移动私有叶，也不减少DELETE/DC产品拒绝断言。下一真实Windows runner验证此新UUID夹具，不再尝试历史失败目录。
+
+macOS最终改动不是前文拟议的ctime忽略例外：所有无ACL对象均先核同一对象与安全属性，ctime改变就第二次读取真实ACL；第二次出现ACL则完整验证，非ENOENT或身份/安全属性变化仍拒绝。真实ctime夹具与16轮原竞争断言保持，结果待新CI。不宣布候选原因已证明历史每一次首败。

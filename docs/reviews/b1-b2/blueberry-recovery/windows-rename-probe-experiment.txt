@@ -1,0 +1,36 @@
+// 最小 DELETE handle 验证父 DELETE_CHILD 的实际权限，不依赖 .NET Move 请求的额外权限。
+// 由夹具 owner 编译；第二用户只读取该无秘密 DLL，保留受保护子目录原始 DACL。
+export const windowsRenameProbe = `
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+public static class WorkMeshRenameProbe {
+  [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
+  static extern IntPtr CreateFileW(string path, uint access, uint share, IntPtr security, uint creation, uint flags, IntPtr template);
+  [DllImport("kernel32.dll", SetLastError=true)]
+  static extern bool SetFileInformationByHandle(IntPtr handle, int kind, IntPtr buffer, uint length);
+  [DllImport("kernel32.dll")]
+  static extern bool CloseHandle(IntPtr handle);
+  public static int Rename(string source, string target) {
+    // BACKUP_SEMANTICS 打开目录；OVERLAPPED 避免同步打开隐式要求 SYNCHRONIZE。
+    // 未启用备份权限，不请求子项读取或同步权限。
+    IntPtr handle = CreateFileW(source, 0x10000, 7, IntPtr.Zero, 3, 0x42000000, IntPtr.Zero);
+    if (handle == new IntPtr(-1)) return 1000 + Marshal.GetLastWin32Error();
+    IntPtr buffer = IntPtr.Zero;
+    try {
+      byte[] name = Encoding.Unicode.GetBytes(target);
+      int rootOffset = IntPtr.Size == 8 ? 8 : 4;
+      int lengthOffset = rootOffset + IntPtr.Size;
+      int nameOffset = lengthOffset + 4;
+      int size = nameOffset + name.Length + 2;
+      buffer = Marshal.AllocHGlobal(size);
+      Marshal.Copy(new byte[size], 0, buffer, size);
+      Marshal.WriteInt32(buffer, lengthOffset, name.Length);
+      Marshal.Copy(name, 0, IntPtr.Add(buffer, nameOffset), name.Length);
+      // FileRenameInfo=3，RootDirectory=NULL，ReplaceIfExists=FALSE，准确绝对目标路径。
+      if (!SetFileInformationByHandle(handle, 3, buffer, (uint)size)) return 2000 + Marshal.GetLastWin32Error();
+      return 0;
+    } finally { if (buffer != IntPtr.Zero) Marshal.FreeHGlobal(buffer); CloseHandle(handle); }
+  }
+}
+`

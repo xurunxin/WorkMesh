@@ -21,7 +21,7 @@ Windows 使用 Credential Manager，macOS 使用 Keychain，Linux 强制 Secret 
 
 默认配置目录是 Windows `%APPDATA%/WorkMesh/connector`、macOS `~/Library/Application Support/WorkMesh/connector`、Linux `$XDG_CONFIG_HOME/workmesh/connector`（未设置时 `~/.config/workmesh/connector`）。可用非秘密的 `WORKMESH_CONNECTOR_DIRECTORY` 显式选择专用目录；同样执行所有权限检查，不接受链接、重解析点或多硬链接。
 
-从文件系统根到配置目录逐级验证可信所有者和替换权限，缺失层级在创建时即受保护。POSIX 仅信任当前 uid/root，拒绝其他用户可写的非 sticky 祖先；sticky 目录下每个子目录也必须有可信 owner。macOS 另检查扩展 ACL 的修改授权。Windows 仅信任当前 SID、SYSTEM、Administrators 和 TrustedInstaller，拒绝其他 SID 对祖先的 DELETE、DELETE_CHILD、改 DACL/owner 等权限；无法解释的 ACL 保守失败，不修改现有祖先权限。系统管理员/root 属于系统秘密存储的既有信任边界。
+从文件系统根到配置目录逐级验证可信所有者和替换权限，缺失层级在创建时即受保护。POSIX 仅信任当前 uid/root，拒绝其他用户可写的非 sticky 祖先；sticky 目录下每个子目录也必须有可信 owner。macOS 普通祖先检查扩展 ACL 的修改授权，私有目录/文件拒绝任何 allow（包括继承读取授权）；无 ACL 时若 ctime 因子项变更而改变，在类型/dev/inode/owner/mode 不变的前提下重新读取实际 ACL。Windows 仅信任当前 SID、SYSTEM、Administrators 和 TrustedInstaller，拒绝其他 SID 对祖先的 DELETE、DELETE_CHILD、改 DACL/owner 等权限；无法解释的 ACL 保守失败，不修改现有祖先权限。系统管理员/root 属于系统秘密存储的既有信任边界。
 
 正式 `config.json` 只含秘密引用及已验证的公开事实。完整配对码仅存于受保护 pending；安装令牌唯一持久化落点为系统秘密存储。提交 journal 使用独有新引用，配置替换前失败补偿新增秘密、保留旧配置原字节；替换后崩溃按新配置摘要收尾。旧引用不覆盖、不删除。补偿失败保留 journal 并阻止新提交，需先恢复系统后端。
 
