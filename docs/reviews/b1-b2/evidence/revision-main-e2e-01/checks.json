@@ -1,0 +1,28 @@
+[
+  {
+    "name": "web-build",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/web",
+      "build"
+    ],
+    "startedAt": "2026-10-08T11:30:05.510Z",
+    "endedAt": "2026-10-08T11:32:07.490Z",
+    "exitCode": 0,
+    "log": "logs/web-build.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "e2e",
+    "command": [
+      "pnpm",
+      "test:e2e"
+    ],
+    "startedAt": "2026-10-08T11:32:08.212Z",
+    "endedAt": "2026-10-08T11:36:36.053Z",
+    "exitCode": 0,
+    "log": "logs/e2e.log",
+    "secretRedaction": true
+  }
+]

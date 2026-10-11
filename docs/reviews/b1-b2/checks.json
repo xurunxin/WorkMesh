@@ -1,0 +1,80 @@
+{
+  "scope": "仅文档前置交接，不是产品实现或独立方案审查",
+  "planReference": "doc:m7WeSHWZt1Bv3FZwYlnlv",
+  "version": null,
+  "checks": [
+    {
+      "command": "node docs/reviews/b1-b2/verify-plan.mjs --staged",
+      "exitCode": 0,
+      "result": {
+        "result": "交接材料静态校验通过；非功能验收、独审或Chief确认",
+        "currentPlanReference": "doc:m7WeSHWZt1Bv3FZwYlnlv",
+        "sourceBodySha256": "72e6fcb9d46a3f433291db4b1db3e351c243bc38202fdc884d463f5d50341230",
+        "readableFileSha256": "71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352",
+        "toolVisiblePrefix": "逐字符一致；工具尾部截断已记录",
+        "originalTests": "10/10完整保留并映射",
+        "categories": "9/9保留；7适用、2不适用",
+        "legacy": "B1/B2/B4条款与任务5/6/20来源完整保留",
+        "productChanges": "无",
+        "functionalChecks": "未运行",
+        "gitBytes": "已核验实际index blob",
+        "blobChecks": [
+          {
+            "path": "docs/plan/connector-recovery.md",
+            "blobId": "6260106d36633f4b950c37cf7f2bcdbddc317ad9",
+            "bytes": 9645,
+            "sha256": "71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352"
+          },
+          {
+            "path": "docs/reviews/b1-b2/source-snapshot.json",
+            "blobId": "d2f2a2c9075ad78a7e324c30a929393ebe8c25b6",
+            "bytes": 25740,
+            "sha256": "049a053a3d98a1edc011b80590c8ae1f44223d9f8aad83b01a4ebc47d884a370"
+          },
+          {
+            "path": "docs/reviews/b1-b2/todo-inputs.json",
+            "blobId": "7c6c5b2b25e29f2a3dc8e3cae29ce39a441f8250",
+            "bytes": 60545,
+            "sha256": "d39737ed9d6c3aa86210a89bb2d4da6394fd12e4e962360f01d66f7a00830365"
+          },
+          {
+            "path": "docs/reviews/b1-b2/test-coverage.json",
+            "blobId": "00e62daceff04064e2d264483c43483299112682",
+            "bytes": 67653,
+            "sha256": "c85191959eefcfa6ab51ce0b580e7166abc3126cef09745c4dfe603fe6a4fe77"
+          },
+          {
+            "path": "docs/reviews/b1-b2/review-guide.md",
+            "blobId": "62f8a31e7f2d32beeb745bb8b0ffdacb2034dece",
+            "bytes": 7441,
+            "sha256": "023bed2d1713f63b78a5b6ea4601292508ce5100bb23f922dea52c4a0f7ca76b"
+          },
+          {
+            "path": "docs/reviews/b1-b2/verify-plan.mjs",
+            "blobId": "d0c46204b22dc0e90f9d706266eb273b7ea1c563",
+            "bytes": 8888,
+            "sha256": "ec1a274fe142a5394d6c8d496ad16626791d671ae6725ff956fff23da0ca7d8c"
+          }
+        ]
+      }
+    },
+    {
+      "command": "git diff --cached --check",
+      "exitCode": 0,
+      "stdout": ""
+    }
+  ],
+  "gitByteEvidence": "上表 blobId、bytes、sha256 来自实际暂存 index；提交后的 HEAD 使用同一文件字节再次核验，结果由本轮交接回复报告。",
+  "productChanges": [],
+  "productChecks": {
+    "lint": "未运行",
+    "typecheck": "未运行",
+    "test": "未运行",
+    "test:integration": "未运行",
+    "test:e2e": "未运行",
+    "platform": "未运行"
+  },
+  "reason": "用户要求本轮先提交审查材料并停 review，无需运行后置全套产品检查。",
+  "independentPlanReview": "待审",
+  "chiefConfirmation": null
+}

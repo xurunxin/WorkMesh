@@ -1,0 +1,44 @@
+[
+  {
+    "name": "connector-build",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "build"
+    ],
+    "startedAt": "2026-10-08T11:23:10.516Z",
+    "endedAt": "2026-10-08T11:23:13.885Z",
+    "exitCode": 0,
+    "log": "logs/connector-build.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "connector-typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T11:23:14.410Z",
+    "endedAt": "2026-10-08T11:23:18.116Z",
+    "exitCode": 0,
+    "log": "logs/connector-typecheck.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "api-typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/api",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T11:23:18.722Z",
+    "endedAt": "2026-10-08T11:23:33.334Z",
+    "exitCode": 0,
+    "log": "logs/api-typecheck.log",
+    "secretRedaction": true
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "ci-validate",
+    "command": [
+      "pnpm",
+      "ci:validate"
+    ],
+    "startedAt": "2026-10-08T09:50:10.232Z",
+    "endedAt": "2026-10-08T09:50:12.125Z",
+    "exitCode": 0,
+    "log": "logs/ci-validate.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "ci-policy",
+    "command": [
+      "pnpm",
+      "ci:test"
+    ],
+    "startedAt": "2026-10-08T09:50:12.126Z",
+    "endedAt": "2026-10-08T09:50:12.781Z",
+    "exitCode": 0,
+    "log": "logs/ci-policy.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "route-policy",
+    "command": [
+      "pnpm",
+      "check:route-policy"
+    ],
+    "startedAt": "2026-10-08T09:50:12.782Z",
+    "endedAt": "2026-10-08T09:50:14.528Z",
+    "exitCode": 0,
+    "log": "logs/route-policy.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "skill-pin",
+    "command": [
+      "pnpm",
+      "check:workmesh-skill"
+    ],
+    "startedAt": "2026-10-08T09:50:14.528Z",
+    "endedAt": "2026-10-08T09:50:15.099Z",
+    "exitCode": 0,
+    "log": "logs/skill-pin.log",
+    "secretRedaction": true
+  }
+]

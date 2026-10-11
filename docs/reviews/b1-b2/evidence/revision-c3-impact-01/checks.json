@@ -1,0 +1,99 @@
+[
+  {
+    "name": "connector-typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T13:45:32.315Z",
+    "endedAt": "2026-10-08T13:45:40.250Z",
+    "exitCode": 0,
+    "log": "logs/connector-typecheck.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "contracts-typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/contracts",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T13:45:41.202Z",
+    "endedAt": "2026-10-08T13:45:46.961Z",
+    "exitCode": 0,
+    "log": "logs/contracts-typecheck.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "api-typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/api",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T13:45:47.725Z",
+    "endedAt": "2026-10-08T13:46:08.209Z",
+    "exitCode": 0,
+    "log": "logs/api-typecheck.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "contracts-unit",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/contracts",
+      "test"
+    ],
+    "startedAt": "2026-10-08T13:46:08.927Z",
+    "endedAt": "2026-10-08T13:46:17.255Z",
+    "exitCode": 0,
+    "log": "logs/contracts-unit.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "route-policy",
+    "command": [
+      "pnpm",
+      "check:route-policy"
+    ],
+    "startedAt": "2026-10-08T13:46:18.010Z",
+    "endedAt": "2026-10-08T13:46:20.809Z",
+    "exitCode": 0,
+    "log": "logs/route-policy.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "ci-validate",
+    "command": [
+      "pnpm",
+      "ci:validate"
+    ],
+    "startedAt": "2026-10-08T13:46:21.462Z",
+    "endedAt": "2026-10-08T13:46:24.186Z",
+    "exitCode": 0,
+    "log": "logs/ci-validate.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "model-presets-unit",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/api",
+      "exec",
+      "vitest",
+      "run",
+      "src/model-presets.test.ts"
+    ],
+    "startedAt": "2026-10-08T13:46:24.807Z",
+    "endedAt": "2026-10-08T13:46:28.923Z",
+    "exitCode": 0,
+    "log": "logs/model-presets-unit.log",
+    "secretRedaction": true
+  }
+]

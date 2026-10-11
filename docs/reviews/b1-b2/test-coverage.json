@@ -1,0 +1,1297 @@
+{
+  "todoId": "ti53hOGbvnBNrvjXXveGO",
+  "plan": "docs/plan/connector-recovery.md",
+  "currentPhase": "仅文档前置，待独立方案审查与Chief放行",
+  "functionalResult": "未运行",
+  "rule": "frozenSourceFeatures 和 legacySourceTasks 是完整历史对象；其文字及状态不得改写为本次功能通过。implementationMappings 只说明计划去向，文件待创建不等于实现。",
+  "nineCategories": [
+    "happy path",
+    "unauthorized actor",
+    "invalid state transition",
+    "duplicate idempotency key",
+    "stale revision",
+    "transaction failure",
+    "webhook/job replay",
+    "concurrent request",
+    "server restart/outbox recovery"
+  ],
+  "requires": [
+    1,
+    2,
+    18,
+    3
+  ],
+  "requiresTodoIds": [
+    "reEr9xXt9JXN26e5SbC7Z",
+    "qJKk_SAxN29AdBHERBl7u",
+    "Tws50k02Pi52R-RJEXP_N",
+    "q_1zKPuGsG-2ZRUwOwQx4"
+  ],
+  "acceptanceRequires": [],
+  "blocks": [
+    7,
+    20
+  ],
+  "blocksTodoIds": [
+    "6EzX6xCA-_m72aQU1BEHX",
+    "JfGwKk3prfIie6X2u2J51"
+  ],
+  "frozenSourceFeatures": [
+    {
+      "seqNum": 5,
+      "id": "ti53hOGbvnBNrvjXXveGO",
+      "owner": "B1/B2 执行者",
+      "originalTests": [
+        {
+          "id": "todo-5-T1",
+          "text": "发送前崩溃、发送后崩溃及服务端/客户端重启后，同 pending 身份在有效窗口可拿到同一凭据。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收1：发送前崩溃、发送后崩溃及服务端/客户端重启后，同 pending 身份在有效窗口可拿到同一凭据。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-2 陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交",
+            "R1-5-6 秘密写入/配置rename阶段失败补偿新增秘密与旧引用；既有兑换事务回滚不留半连接",
+            "R1-5-9 发送前/丢响应/发送后/client或server重启、15分钟窗口外及密文清除恢复均用原身份"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T2",
+          "text": "同 key 改 body 冲突；新 key 仍按既有规则拒绝；另一 claimant 仅持原配对码与公开 connection id 不得取令牌。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收2：同 key 改 body 冲突；新 key 仍按既有规则拒绝；另一 claimant 仅持原配对码与公开 connection id 不得取令牌。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-4 原key/body/context重放返回同body；同key异体冲突，pending保留原身份"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T3",
+          "text": "窗口外/过期密文擦除后拒绝；并发启动只产生同一 pending 身份；崩溃不留半份记录。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收3：窗口外/过期密文擦除后拒绝；并发启动只产生同一 pending 身份；崩溃不留半份记录。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-2 陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交",
+            "R1-5-3 已消费code新key、已撤销/过期/overlap凭据验证拒绝，旧配置仍完好",
+            "R1-5-6 秘密写入/配置rename阶段失败补偿新增秘密与旧引用；既有兑换事务回滚不留半连接",
+            "R1-5-8 两个connector同时启动只有同一pending请求身份，ACL与正式提交不交错"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T4",
+          "text": "既有 stage5-agent-connections.integration.test.ts 的重放同体断言不回归。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+          "caseName": "Stage5 replay.body === first.body 原断言保留，并扩展现有同体重放恢复场景",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-4 原key/body/context重放返回同body；同key异体冲突，pending保留原身份"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T5",
+          "text": "黄金路径完整端到端，两步流程可用且协议校验一步不减。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收5：黄金路径完整端到端，两步流程可用且协议校验一步不减。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T6",
+          "text": "指纹不符、签名错、Skill 字节篡改、错误 Team/principal/profile/capabilities/authenticated_credential、误用 overlap 凭据均拒绝且不写配置。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收6：指纹不符、签名错、Skill 字节篡改、错误 Team/principal/profile/capabilities/authenticated_credential、误用 overlap 凭据均拒绝且不写配置。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-2 陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T7",
+          "text": "已撤销/过期凭据的当前身份验证拒绝，绝不写入新配置。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收7：已撤销/过期凭据的当前身份验证拒绝，绝不写入新配置。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-2 陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交",
+            "R1-5-3 已消费code新key、已撤销/过期/overlap凭据验证拒绝，旧配置仍完好"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T8",
+          "text": "配置替换中途被杀或秘密存储/配置写入失败，既有配置及秘密引用完好。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收8：配置替换中途被杀或秘密存储/配置写入失败，既有配置及秘密引用完好。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T9",
+          "text": "明文令牌仅落秘密存储；配对码仅落受保护 pending；stdout/stderr/普通配置/工件无秘密；POSIX 权限和 Windows 实际 ACL 验证。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收9：明文令牌仅落秘密存储；配对码仅落受保护 pending；stdout/stderr/普通配置/工件无秘密；POSIX 权限和 Windows 实际 ACL 验证。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-2 陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        },
+        {
+          "id": "todo-5-T10",
+          "text": "同配对码再次运行复用 pending，合法重放幂等；直接输入/扫码不削弱熵。",
+          "originalChecked": false,
+          "target": 5,
+          "testFile": "apps/connector/src/connect.test.ts",
+          "caseName": "#5 原验收10：同配对码再次运行复用 pending，合法重放幂等；直接输入/扫码不削弱熵。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+            "R1-5-4 原key/body/context重放返回同body；同key异体冲突，pending保留原身份"
+          ],
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## DoD 与依赖\n上述断言全绿、零 schema 变更、pnpm lint/typecheck/test/test:integration/test:e2e 全绿，ADR 0043/0046 实质要求未削弱；规范、测试映射与证据提交仓库。原 B1/B2 的可执行收益在同一命令中验收。\n依赖：P0、G1、P1、R1；blocks #7 B3，进而 [#20](todo:JfGwKk3prfIie6X2u2J51)。\n\n",
+          "sha256": "40dfcd20570d1c1ed45854da9e813d57f732b3480bb825674902d652bd7da3c6",
+          "target": 5,
+          "owner": "B1/B2 执行者",
+          "targetTodoId": "ti53hOGbvnBNrvjXXveGO",
+          "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+          "owner": "B1/B2 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功",
+          "additionalFiles": [
+            {
+              "path": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+              "fileState": "现有文件，待本feature扩展具体用例",
+              "owner": "B1/B2 执行者",
+              "scope": "服务端重放/本地提交分别验收，不能用一面代替另一面"
+            }
+          ]
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交",
+          "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+          "caseName": "R1-5-2 陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交",
+          "owner": "B1/B2 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功",
+          "additionalFiles": [
+            {
+              "path": "apps/connector/src/connect.test.ts",
+              "fileState": "待创建；归本feature执行者",
+              "owner": "B1/B2 执行者",
+              "scope": "服务端重放/本地提交分别验收，不能用一面代替另一面"
+            }
+          ]
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "已消费code新key、已撤销/过期/overlap凭据验证拒绝，旧配置仍完好",
+          "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+          "caseName": "R1-5-3 已消费code新key、已撤销/过期/overlap凭据验证拒绝，旧配置仍完好",
+          "owner": "B1/B2 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功",
+          "additionalFiles": [
+            {
+              "path": "apps/connector/src/connect.test.ts",
+              "fileState": "待创建；归本feature执行者",
+              "owner": "B1/B2 执行者",
+              "scope": "服务端重放/本地提交分别验收，不能用一面代替另一面"
+            }
+          ]
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "原key/body/context重放返回同body；同key异体冲突，pending保留原身份",
+          "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+          "caseName": "R1-5-4 原key/body/context重放返回同body；同key异体冲突，pending保留原身份",
+          "owner": "B1/B2 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功",
+          "additionalFiles": [
+            {
+              "path": "apps/connector/src/connect.test.ts",
+              "fileState": "待创建；归本feature执行者",
+              "owner": "B1/B2 执行者",
+              "scope": "服务端重放/本地提交分别验收，不能用一面代替另一面"
+            }
+          ]
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "客户端connect及兑换输入不新增If-Match/revision资源；凭据有效性另列invalid state。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "B1/B2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "秘密写入/配置rename阶段失败补偿新增秘密与旧引用；既有兑换事务回滚不留半连接",
+          "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+          "caseName": "R1-5-6 秘密写入/配置rename阶段失败补偿新增秘密与旧引用；既有兑换事务回滚不留半连接",
+          "owner": "B1/B2 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功",
+          "additionalFiles": [
+            {
+              "path": "apps/connector/src/connect.test.ts",
+              "fileState": "待创建；归本feature执行者",
+              "owner": "B1/B2 执行者",
+              "scope": "服务端重放/本地提交分别验收，不能用一面代替另一面"
+            }
+          ]
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "connect不新增webhook或job消费者；服务端重放属于命令幂等，不冒充job测试。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "B1/B2 执行者",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "两个connector同时启动只有同一pending请求身份，ACL与正式提交不交错",
+          "file": "apps/connector/src/connect.test.ts",
+          "caseName": "R1-5-8 两个connector同时启动只有同一pending请求身份，ACL与正式提交不交错",
+          "owner": "B1/B2 执行者",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功",
+          "additionalFiles": [
+            {
+              "path": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+              "fileState": "现有文件，待本feature扩展具体用例",
+              "owner": "B1/B2 执行者",
+              "scope": "服务端重放/本地提交分别验收，不能用一面代替另一面"
+            }
+          ]
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "发送前/丢响应/发送后/client或server重启、15分钟窗口外及密文清除恢复均用原身份",
+          "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+          "caseName": "R1-5-9 发送前/丢响应/发送后/client或server重启、15分钟窗口外及密文清除恢复均用原身份",
+          "owner": "B1/B2 执行者",
+          "fileState": "现有文件，待本feature扩展具体用例",
+          "result": "待实现任务运行；本轮不预填功能成功",
+          "additionalFiles": [
+            {
+              "path": "apps/connector/src/connect.test.ts",
+              "fileState": "待创建；归本feature执行者",
+              "owner": "B1/B2 执行者",
+              "scope": "服务端重放/本地提交分别验收，不能用一面代替另一面"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "seqNum": 6,
+      "id": "xym1i0KcnxOLi0T-hxd1j",
+      "owner": "历史任务 owner",
+      "originalTests": [],
+      "originalDoD": [],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": false,
+          "reason": "已完成/关闭卡只保留历史输入；不重开行政/采集/证据任务。",
+          "file": null,
+          "caseName": null,
+          "fileState": null,
+          "result": "历史结果只见原证据，不冒称本轮新增功能测试",
+          "assertion": null,
+          "owner": "历史任务 owner"
+        }
+      ]
+    },
+    {
+      "seqNum": 20,
+      "id": "JfGwKk3prfIie6X2u2J51",
+      "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+      "originalTests": [
+        {
+          "id": "todo-20-T1",
+          "text": "带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收1：带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-20-1 在获批设备矩阵的干净无源码环境安装版本化产物，运行完整连接黄金路径"
+          ],
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "targetTodoId": "JfGwKk3prfIie6X2u2J51"
+        },
+        {
+          "id": "todo-20-T2",
+          "text": "用安装后的命令完成连接器既定黄金路径，完整校验一步不减。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收2：用安装后的命令完成连接器既定黄金路径，完整校验一步不减。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-20-1 在获批设备矩阵的干净无源码环境安装版本化产物，运行完整连接黄金路径"
+          ],
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "targetTodoId": "JfGwKk3prfIie6X2u2J51"
+        },
+        {
+          "id": "todo-20-T3",
+          "text": "既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收3：既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-20-1 在获批设备矩阵的干净无源码环境安装版本化产物，运行完整连接黄金路径",
+            "R1-20-9 设备重启后窗口内合法恢复，窗口外指引重新合法配对，不输出秘密"
+          ],
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "targetTodoId": "JfGwKk3prfIie6X2u2J51"
+        },
+        {
+          "id": "todo-20-T4",
+          "text": "版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收4：版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-20-1 在获批设备矩阵的干净无源码环境安装版本化产物，运行完整连接黄金路径"
+          ],
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "targetTodoId": "JfGwKk3prfIie6X2u2J51"
+        },
+        {
+          "id": "todo-20-T5",
+          "text": "所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。",
+          "originalChecked": false,
+          "target": 20,
+          "testFile": "apps/connector/test/install.integration.test.ts",
+          "caseName": "#20 原验收5：所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。",
+          "status": "待执行者新增/扩展断言，未实现",
+          "disposition": "完整迁移；契约修正见本任务明确接口及legacy-requirements",
+          "matrixCases": [
+            "R1-20-1 在获批设备矩阵的干净无源码环境安装版本化产物，运行完整连接黄金路径"
+          ],
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "targetTodoId": "JfGwKk3prfIie6X2u2J51"
+        }
+      ],
+      "originalDoD": [
+        {
+          "text": "## 验证清单与 DoD\n- [ ] 带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。\n- [ ] 用安装后的命令完成连接器既定黄金路径，完整校验一步不减。\n- [ ] 既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。\n- [ ] 版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。\n- [ ] 所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。\n\n依赖：G1、P1、R1、合并后的 B1/B2、B3；本任务吸收 B4 文档节点，无独立悬空 B4。\n\n",
+          "sha256": "e47bb41e1f33ce1b172c48b81f526ddaf34a7362a55db8b388b620c3edbfd957",
+          "target": 20,
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "targetTodoId": "JfGwKk3prfIie6X2u2J51",
+          "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+        }
+      ],
+      "matrix": [
+        {
+          "category": "happy path",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "在获批设备矩阵的干净无源码环境安装版本化产物，运行完整连接黄金路径",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "R1-20-1 在获批设备矩阵的干净无源码环境安装版本化产物，运行完整连接黄金路径",
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "unauthorized actor",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "安装场景仍验证Team/principal/凭据，秘密文件权限和Windows ACL不被打包削弱",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "R1-20-2 安装场景仍验证Team/principal/凭据，秘密文件权限和Windows ACL不被打包削弱",
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "invalid state transition",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "已消费code新key/过期/撤销凭据安装后仍拒绝，恢复文档给正确下一步",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "R1-20-3 已消费code新key/过期/撤销凭据安装后仍拒绝，恢复文档给正确下一步",
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "duplicate idempotency key",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "已安装命令从pending重放同key/body/context无第二令牌",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "R1-20-4 已安装命令从pending重放同key/body/context无第二令牌",
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "stale revision",
+          "applicable": false,
+          "reason": "产物版本不等于领域revision；不新增If-Match接口。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "transaction failure",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "安装/升级或配置提交失败保留旧命令/秘密引用，不留半份正式配置",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "R1-20-6 安装/升级或配置提交失败保留旧命令/秘密引用，不留半份正式配置",
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "webhook/job replay",
+          "applicable": false,
+          "reason": "安装包不新增job/webhook。",
+          "assertion": null,
+          "file": null,
+          "caseName": null,
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": null,
+          "result": "不适用"
+        },
+        {
+          "category": "concurrent request",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "两安装后connect进程共享同pending身份，版本切换不覆盖未决操作",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "R1-20-8 两安装后connect进程共享同pending身份，版本切换不覆盖未决操作",
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        },
+        {
+          "category": "server restart/outbox recovery",
+          "applicable": true,
+          "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+          "assertion": "设备重启后窗口内合法恢复，窗口外指引重新合法配对，不输出秘密",
+          "file": "apps/connector/test/install.integration.test.ts",
+          "caseName": "R1-20-9 设备重启后窗口内合法恢复，窗口外指引重新合法配对，不输出秘密",
+          "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+          "fileState": "待创建；归本feature执行者",
+          "result": "待实现任务运行；本轮不预填功能成功"
+        }
+      ]
+    }
+  ],
+  "legacySourceTasks": [
+    {
+      "task": "B1",
+      "originalSection": "### B1 — 客户端请求身份（零迁移，可独立先发）\n\n- **交付**：`apps/connector` 的持久化层：首次发送**前**原子写入\n  `0600` 文件，含 `Idempotency-Key`、精确规范化 body、origin、user-agent；\n  之后每次运行若存在 pending 记录则**原样重放**。\n- **约束**：服务端不改、不加列、不改凭据生命周期；窗口关闭时 connector 明确\n  告知并给出人的下一步。\n- **测试**：进程在发送前崩溃 → 恢复后同一凭据；发送后崩溃 → 同一凭据；改 body\n  继续冲突；**另一 claimant 只持原 code 与公开 connection id 不得取回令牌**；\n  窗口外拒绝；过期密文擦除后拒绝；服务端重启后仍可重放；客户端重启后仍可重放。\n- **可独立发布的判据**：以上断言全绿 + 现有集成测试仍绿（重放相同 body 的\n  `stage5-agent-connections.integration.test.ts:333-335` 不回归）。\n\n",
+      "sha256": "97c3475f8d09dd9699669ea0ee47ff0c77337586b5ff7dfef9723ae3891c768c",
+      "targets": [
+        5
+      ],
+      "clauses": [
+        {
+          "id": "legacy-B1-1",
+          "type": "交付",
+          "text": "- **交付**：`apps/connector` 的持久化层：首次发送**前**原子写入\n  `0600` 文件，含 `Idempotency-Key`、精确规范化 body、origin、user-agent；\n  之后每次运行若存在 pending 记录则**原样重放**。",
+          "sha256": "2de1a5cc27c7e119ec5283af09f1f8e3f36be76602ef4227bdb4347460ba5bfc",
+          "targets": [
+            5
+          ],
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        },
+        {
+          "id": "legacy-B1-2",
+          "type": "约束",
+          "text": "- **约束**：服务端不改、不加列、不改凭据生命周期；窗口关闭时 connector 明确\n  告知并给出人的下一步。",
+          "sha256": "af7982eee11fae4f33510c1966a0fffed0b40aea49da7ecf1eb63163a8c80d3a",
+          "targets": [
+            5
+          ],
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        },
+        {
+          "id": "legacy-B1-3",
+          "type": "测试",
+          "text": "- **测试**：进程在发送前崩溃 → 恢复后同一凭据；发送后崩溃 → 同一凭据；改 body\n  继续冲突；**另一 claimant 只持原 code 与公开 connection id 不得取回令牌**；\n  窗口外拒绝；过期密文擦除后拒绝；服务端重启后仍可重放；客户端重启后仍可重放。",
+          "sha256": "38ee57bb3f7962281f6114ef9a6e2b20ba5b934dc4e6dbb0d5ecdf3082a848ed",
+          "targets": [
+            5
+          ],
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        },
+        {
+          "id": "legacy-B1-4",
+          "type": "可独立发布的判据",
+          "text": "- **可独立发布的判据**：以上断言全绿 + 现有集成测试仍绿（重放相同 body 的\n  `stage5-agent-connections.integration.test.ts:333-335` 不回归）。",
+          "sha256": "d93dad2466b88b62775e76634808c320ff43183b3af434093fb38a575f304172",
+          "targets": [
+            5
+          ],
+          "disposition": "撤回可独立先发声明，全部验收合入#5纵向。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "撤回可独立先发声明，全部验收合入#5纵向。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "task": "B2",
+      "originalSection": "### B2 — 一步式 connector（七步 → 两步，且**不删**任何校验）\n\n- **交付**：`pnpm --filter @workmesh/connector connect --code <43 字符> --client\n  <type> --origin <url>`；QR 编码该 code；输出可直接粘贴的客户端配置。\n- **约束**：指纹前缀比对、Skill **原始字节/哈希/签名**校验、discovery 校验、\n  `verify_connection` 比对全部由 connector **执行**（ADR 0043/0046 的实质要求\n  保留）；配置**先写暂存文件**、4 与 6 都通过后才原子 rename；失败不覆盖既有\n  配置。禁止 pnpm-workspace 内部安装方式——Lite 设备无源码，必须走发布的\n  带版本二进制，这条是独立工作项。\n- **测试**：黄金路径；指纹不符/签名错/Skill 字节被篡改/错误 Team/错误\n  principal/旧 overlap 凭据误用 → 全部拒绝且不写配置；配置写一半被杀 → 既有\n  配置完好；stdout/stderr/恢复文件/配置**均无明文令牌**；同 code 连跑两次幂等。\n\n",
+      "sha256": "5059593369deb98b6ebe629794baff95cc7ef65539fd5a607b19a31398e08b58",
+      "targets": [
+        5,
+        20
+      ],
+      "clauses": [
+        {
+          "id": "legacy-B2-1",
+          "type": "交付",
+          "text": "- **交付**：`pnpm --filter @workmesh/connector connect --code <43 字符> --client\n  <type> --origin <url>`；QR 编码该 code；输出可直接粘贴的客户端配置。",
+          "sha256": "1e2b1c45a58c2d31c45fd316fc81de844148e93b1f670916102e9f626d2393d4",
+          "targets": [
+            5,
+            20
+          ],
+          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        },
+        {
+          "id": "legacy-B2-2",
+          "type": "约束",
+          "text": "- **约束**：指纹前缀比对、Skill **原始字节/哈希/签名**校验、discovery 校验、\n  `verify_connection` 比对全部由 connector **执行**（ADR 0043/0046 的实质要求\n  保留）；配置**先写暂存文件**、4 与 6 都通过后才原子 rename；失败不覆盖既有\n  配置。禁止 pnpm-workspace 内部安装方式——Lite 设备无源码，必须走发布的\n  带版本二进制，这条是独立工作项。",
+          "sha256": "325d8eec235f02d113fe4d319489668b78034d0d98334d0d3b1de88d93b295cf",
+          "targets": [
+            5,
+            20
+          ],
+          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        },
+        {
+          "id": "legacy-B2-3",
+          "type": "测试",
+          "text": "- **测试**：黄金路径；指纹不符/签名错/Skill 字节被篡改/错误 Team/错误\n  principal/旧 overlap 凭据误用 → 全部拒绝且不写配置；配置写一半被杀 → 既有\n  配置完好；stdout/stderr/恢复文件/配置**均无明文令牌**；同 code 连跑两次幂等。",
+          "sha256": "9cdc82ef21b19de1de169319dd343300cf824277b106a45c6ac838ec9b85c610",
+          "targets": [
+            5,
+            20
+          ],
+          "disposition": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 5,
+              "owner": "B1/B2 执行者",
+              "spec": "docs/plan/activation-task-specs/05.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            },
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "全校验后提交；pending含敏感配对码但无install token；无源码安装归#20。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "task": "B4",
+      "originalSection": "### B4 — 词汇收敛与文档\n\n- **交付**：`docs/agent-integration.md` 改为两步流程；`AGENT_PROTOCOL.md` 写明\n  重放保证是\"重放**同一**请求身份\"，**新 key 不是恢复路径**；`AGENTS.md` 补\n  connector 安装与命令（含 Lite 二进制路径）。\n- **不宣称**：`POST /agent-connections` 仍可建 Agent 这一事实**不被文档悄悄\n  改写**；收窄它是破坏性变更，另立 ADR。\n- **测试**：文档里每条命令在 CI 以 `--dry-run` 校验存在且参数名正确。\n\n",
+      "sha256": "e85944c396d39d7f8379e191d5cece4b20d63bb6297aa1da98fa8d1698877f7d",
+      "targets": [
+        20
+      ],
+      "clauses": [
+        {
+          "id": "legacy-B4-1",
+          "type": "交付",
+          "text": "- **交付**：`docs/agent-integration.md` 改为两步流程；`AGENT_PROTOCOL.md` 写明\n  重放保证是\"重放**同一**请求身份\"，**新 key 不是恢复路径**；`AGENTS.md` 补\n  connector 安装与命令（含 Lite 二进制路径）。",
+          "sha256": "5a13d85f9ea404e017b26d623ad4f3599a596fc5a8912fa7ea9c09378ab57dcd",
+          "targets": [
+            20
+          ],
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        },
+        {
+          "id": "legacy-B4-2",
+          "type": "测试",
+          "text": "- **测试**：文档里每条命令在 CI 以 `--dry-run` 校验存在且参数名正确。",
+          "sha256": "f504e20d7b1036339a5a871e41c2db8be504c9e516e65a5e215218c4085e860d",
+          "targets": [
+            20
+          ],
+          "disposition": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+          "acceptanceAssignments": [
+            {
+              "seqNum": 20,
+              "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+              "spec": "docs/plan/activation-task-specs/20.md",
+              "scope": "完整分配到targets；以最新规格契约纠正陈旧背景。",
+              "testMapping": "docs/reviews/r1/test-coverage.json",
+              "status": "待该任务实现验收；本轮仅映射"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "implementationMappings": [
+    {
+      "checkpoint": "持久化",
+      "modules": [
+        "apps/connector/src/config.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/src/pending.ts"
+      ],
+      "originalTestIds": [
+        "todo-5-T1",
+        "todo-5-T2",
+        "todo-5-T3",
+        "todo-5-T9",
+        "todo-5-T10"
+      ],
+      "scope": "发送前独占持久化随机请求身份及敏感配对码；ACL/跨用户边界，崩溃接手和精确重放。",
+      "result": "未运行"
+    },
+    {
+      "checkpoint": "完整协议验证",
+      "modules": [
+        "apps/connector/src/protocol.ts"
+      ],
+      "originalTestIds": [
+        "todo-5-T4",
+        "todo-5-T5",
+        "todo-5-T6",
+        "todo-5-T7"
+      ],
+      "scope": "复用公开 discovery/兑换/实时身份契约；Skill 原字节签名、七项校验和当前凭据验证先于正式写入。",
+      "result": "未运行"
+    },
+    {
+      "checkpoint": "本地提交与幂等完成",
+      "modules": [
+        "apps/connector/src/secret-store.ts",
+        "apps/connector/src/commit.ts",
+        "apps/connector/src/connect.ts",
+        "apps/connector/src/cli.ts"
+      ],
+      "originalTestIds": [
+        "todo-5-T5",
+        "todo-5-T7",
+        "todo-5-T8",
+        "todo-5-T9",
+        "todo-5-T10"
+      ],
+      "scope": "仅系统秘密存储、自有引用配置；阶段记录/补偿、完成识别和子进程环境注入。",
+      "result": "未运行"
+    },
+    {
+      "checkpoint": "验收与交接",
+      "modules": [
+        "apps/connector/src/connect.test.ts"
+      ],
+      "originalTestIds": [
+        "todo-5-T1",
+        "todo-5-T2",
+        "todo-5-T3",
+        "todo-5-T4",
+        "todo-5-T5",
+        "todo-5-T6",
+        "todo-5-T7",
+        "todo-5-T8",
+        "todo-5-T9",
+        "todo-5-T10"
+      ],
+      "scope": "保持冻结原测试与 DoD，新增平台门禁、既有服务端回归、全部适用必需检查和独立复核。",
+      "result": "未运行"
+    }
+  ],
+  "originalTestMappings": [
+    {
+      "sourceId": "todo-5-T1",
+      "sourceText": "发送前崩溃、发送后崩溃及服务端/客户端重启后，同 pending 身份在有效窗口可拿到同一凭据。",
+      "originalCaseName": "#5 原验收1：发送前崩溃、发送后崩溃及服务端/客户端重启后，同 pending 身份在有效窗口可拿到同一凭据。",
+      "modules": [
+        "apps/connector/src/pending.ts",
+        "apps/connector/src/connect.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "持久化后发送前/后强制终止、客户端及服务端重启、丢响应恢复同一 key/body/context 和同一凭据。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T2",
+      "sourceText": "同 key 改 body 冲突；新 key 仍按既有规则拒绝；另一 claimant 仅持原配对码与公开 connection id 不得取令牌。",
+      "originalCaseName": "#5 原验收2：同 key 改 body 冲突；新 key 仍按既有规则拒绝；另一 claimant 仅持原配对码与公开 connection id 不得取令牌。",
+      "modules": [
+        "apps/connector/src/pending.ts",
+        "apps/connector/src/protocol.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "同 key 异体冲突、新 key 对已消费 code 拒绝；仅持配对码和公开 Connection id 的陌生 claimant 取不到令牌。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T3",
+      "sourceText": "窗口外/过期密文擦除后拒绝；并发启动只产生同一 pending 身份；崩溃不留半份记录。",
+      "originalCaseName": "#5 原验收3：窗口外/过期密文擦除后拒绝；并发启动只产生同一 pending 身份；崩溃不留半份记录。",
+      "modules": [
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/src/pending.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/connector/integration/native-storage.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "窗口外/密文擦除拒绝，真实双进程竞争复用身份，临时文件及 pending 原子性。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T4",
+      "sourceText": "既有 stage5-agent-connections.integration.test.ts 的重放同体断言不回归。",
+      "originalCaseName": "Stage5 replay.body === first.body 原断言保留，并扩展现有同体重放恢复场景",
+      "modules": [
+        "apps/connector/src/protocol.ts"
+      ],
+      "tests": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "原有 replay.body === first.body 断言继续执行，不以新增客户端测试替代。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T5",
+      "sourceText": "黄金路径完整端到端，两步流程可用且协议校验一步不减。",
+      "originalCaseName": "#5 原验收5：黄金路径完整端到端，两步流程可用且协议校验一步不减。",
+      "modules": [
+        "apps/connector/src/protocol.ts",
+        "apps/connector/src/commit.ts",
+        "apps/connector/src/cli.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "同一 connect 命令完成两步流程及完整七项校验，真实 API/MCP 黄金路径。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T6",
+      "sourceText": "指纹不符、签名错、Skill 字节篡改、错误 Team/principal/profile/capabilities/authenticated_credential、误用 overlap 凭据均拒绝且不写配置。",
+      "originalCaseName": "#5 原验收6：指纹不符、签名错、Skill 字节篡改、错误 Team/principal/profile/capabilities/authenticated_credential、误用 overlap 凭据均拒绝且不写配置。",
+      "modules": [
+        "apps/connector/src/config.ts",
+        "apps/connector/src/protocol.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "逐个破坏指纹、原始 Skill 字节/哈希/签名、Team、principal、Agent/Connection、profile、Skill pin、能力及 authenticated_credential；每项独立拒绝且零正式写入。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T7",
+      "sourceText": "已撤销/过期凭据的当前身份验证拒绝，绝不写入新配置。",
+      "originalCaseName": "#5 原验收7：已撤销/过期凭据的当前身份验证拒绝，绝不写入新配置。",
+      "modules": [
+        "apps/connector/src/protocol.ts",
+        "apps/connector/src/commit.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "重放得到历史响应后仍实时验证，已撤销/过期/overlap 凭据不提交新配置。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T8",
+      "sourceText": "配置替换中途被杀或秘密存储/配置写入失败，既有配置及秘密引用完好。",
+      "originalCaseName": "#5 原验收8：配置替换中途被杀或秘密存储/配置写入失败，既有配置及秘密引用完好。",
+      "modules": [
+        "apps/connector/src/commit.ts",
+        "apps/connector/src/secret-store.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/connector/integration/native-storage.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "秘密写入、读回、删除、rename 与各提交阶段被杀；提交点前补偿、提交点后收尾；旧配置原字节和旧引用保持，删除失败阻止新提交。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T9",
+      "sourceText": "明文令牌仅落秘密存储；配对码仅落受保护 pending；stdout/stderr/普通配置/工件无秘密；POSIX 权限和 Windows 实际 ACL 验证。",
+      "originalCaseName": "#5 原验收9：明文令牌仅落秘密存储；配对码仅落受保护 pending；stdout/stderr/普通配置/工件无秘密；POSIX 权限和 Windows 实际 ACL 验证。",
+      "modules": [
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/src/secret-store.ts",
+        "apps/connector/src/cli.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/connector/integration/native-storage.test.ts"
+      ],
+      "focus": "三种 OS 真实秘密存储及禁止降级，POSIX 权限/Windows 实际 ACL 和普通不同用户读取拒绝；stdout/stderr/正式配置/提交记录/工件无明文秘密。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    },
+    {
+      "sourceId": "todo-5-T10",
+      "sourceText": "同配对码再次运行复用 pending，合法重放幂等；直接输入/扫码不削弱熵。",
+      "originalCaseName": "#5 原验收10：同配对码再次运行复用 pending，合法重放幂等；直接输入/扫码不削弱熵。",
+      "modules": [
+        "apps/connector/src/pending.ts",
+        "apps/connector/src/commit.ts",
+        "apps/connector/src/cli.ts"
+      ],
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/connector/integration/native-storage.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "focus": "未提交同码复用 pending；并发等待者识别已提交同次配对；成功后同码重跑重新验证并幂等返回；直接输入/扫码保留完整高熵配对码。",
+      "result": "未运行",
+      "fileState": "连接器文件待创建；Stage 5 文件现有，扩展待实施"
+    }
+  ],
+  "categoryMappings": [
+    {
+      "category": "happy path",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+      "originalCaseName": "R1-5-1 完整七项协议校验通过后才写秘密引用/正式配置；黄金路径两步可用",
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "result": "未运行"
+    },
+    {
+      "category": "unauthorized actor",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交",
+      "originalCaseName": "R1-5-2 陌生claimant仅持code/公开id不能取回令牌，错误Team/principal/current credential零配置提交",
+      "tests": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/connector/src/connect.test.ts"
+      ],
+      "result": "未运行"
+    },
+    {
+      "category": "invalid state transition",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "已消费code新key、已撤销/过期/overlap凭据验证拒绝，旧配置仍完好",
+      "originalCaseName": "R1-5-3 已消费code新key、已撤销/过期/overlap凭据验证拒绝，旧配置仍完好",
+      "tests": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/connector/src/connect.test.ts"
+      ],
+      "result": "未运行"
+    },
+    {
+      "category": "duplicate idempotency key",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "原key/body/context重放返回同body；同key异体冲突，pending保留原身份",
+      "originalCaseName": "R1-5-4 原key/body/context重放返回同body；同key异体冲突，pending保留原身份",
+      "tests": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/connector/src/connect.test.ts"
+      ],
+      "result": "未运行"
+    },
+    {
+      "category": "stale revision",
+      "applicable": false,
+      "reason": "客户端connect及兑换输入不新增If-Match/revision资源；凭据有效性另列invalid state。",
+      "assertion": null,
+      "originalCaseName": null,
+      "tests": [],
+      "result": "不适用"
+    },
+    {
+      "category": "transaction failure",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "秘密写入/配置rename阶段失败补偿新增秘密与旧引用；既有兑换事务回滚不留半连接",
+      "originalCaseName": "R1-5-6 秘密写入/配置rename阶段失败补偿新增秘密与旧引用；既有兑换事务回滚不留半连接",
+      "tests": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/connector/src/connect.test.ts"
+      ],
+      "result": "未运行"
+    },
+    {
+      "category": "webhook/job replay",
+      "applicable": false,
+      "reason": "connect不新增webhook或job消费者；服务端重放属于命令幂等，不冒充job测试。",
+      "assertion": null,
+      "originalCaseName": null,
+      "tests": [],
+      "result": "不适用"
+    },
+    {
+      "category": "concurrent request",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "两个connector同时启动只有同一pending请求身份，ACL与正式提交不交错",
+      "originalCaseName": "R1-5-8 两个connector同时启动只有同一pending请求身份，ACL与正式提交不交错",
+      "tests": [
+        "apps/connector/src/connect.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts"
+      ],
+      "result": "未运行"
+    },
+    {
+      "category": "server restart/outbox recovery",
+      "applicable": true,
+      "reason": "按当前feature具体接口验证，下列断言为待新增/扩展用例。",
+      "assertion": "发送前/丢响应/发送后/client或server重启、15分钟窗口外及密文清除恢复均用原身份",
+      "originalCaseName": "R1-5-9 发送前/丢响应/发送后/client或server重启、15分钟窗口外及密文清除恢复均用原身份",
+      "tests": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/connector/src/connect.test.ts"
+      ],
+      "result": "未运行"
+    }
+  ],
+  "dod": {
+    "source": [
+      {
+        "text": "## DoD 与依赖\n上述断言全绿、零 schema 变更、pnpm lint/typecheck/test/test:integration/test:e2e 全绿，ADR 0043/0046 实质要求未削弱；规范、测试映射与证据提交仓库。原 B1/B2 的可执行收益在同一命令中验收。\n依赖：P0、G1、P1、R1；blocks #7 B3，进而 [#20](todo:JfGwKk3prfIie6X2u2J51)。\n\n",
+        "sha256": "40dfcd20570d1c1ed45854da9e813d57f732b3480bb825674902d652bd7da3c6",
+        "target": 5,
+        "owner": "B1/B2 执行者",
+        "targetTodoId": "ti53hOGbvnBNrvjXXveGO",
+        "acceptance": "原DoD保留，所有合法测试迁移到originalTests；矛盾旧要求按legacy处置和本任务共同契约撤换，不以历史绿灯放行"
+      }
+    ],
+    "result": "未运行",
+    "checks": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm test",
+      "pnpm test:integration",
+      "pnpm test:e2e"
+    ],
+    "platformAcceptance": {
+      "Windows": "未运行",
+      "macOS": "未运行",
+      "Linux": "未运行"
+    },
+    "zeroMigration": "实施后验证；当前文档前置无迁移改动",
+    "independentReview": "待审",
+    "chiefConfirmation": null
+  },
+  "downstream": {
+    "seqNum": 20,
+    "todoId": "JfGwKk3prfIie6X2u2J51",
+    "owner": "B-ship 执行者／Chief 裁定发布矩阵",
+    "scope": "保留历史 B2 的版本化/无源码设备安装、B4 文档、升级/卸载及外部发布边界；本卡不执行设备安装或发布",
+    "result": "未运行"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "command": "node docs/reviews/b1-b2/verify-c3-main.mjs --capture",
+  "toolResponseChunk": "fa7313",
+  "exitCode": 1,
+  "message": "AssertionError [ERR_ASSERTION]: 历史材料：docs/reviews/b1-b2/collect-revision-cleanup.mjs",
+  "actual": "65ea3c412643e9ea32cdacc0dc0393dff23544b4",
+  "expected": "2f990984f4cbac1db4fa66b6e1595a4f0f059983",
+  "location": "docs/reviews/b1-b2/verify-c3-main.mjs:57:10",
+  "runtime": "Node.js v24.20.0",
+  "retention": "工具退出结果摘录；未另存完整 stdout/stderr 原始文件，不冒原件日志",
+  "cause": "新证据校验器误把已明确修改的清理脚本当作不可变历史报告；此前全部产品定向检查成功",
+  "correction": "将本轮新增 --c3 输出分支的清理脚本列入明确允许变化项；旧 cleanup/source/报告仍逐文件核验"
+}

@@ -1,0 +1,19 @@
+{
+  "source": "e2e-01 脱敏原日志与完成后只读 TCP 查询",
+  "apiPidFromRunLog": 54148,
+  "apiAddress": "http://127.0.0.1:3101",
+  "webAddress": "http://127.0.0.1:3100",
+  "webPid": null,
+  "listenersAfterRun": [
+    {
+      "LocalPort": 3100,
+      "OwningProcess": 61916
+    },
+    {
+      "LocalPort": 3101,
+      "OwningProcess": 45600
+    }
+  ],
+  "servicesClosed": false,
+  "browserStateRemoved": true
+}

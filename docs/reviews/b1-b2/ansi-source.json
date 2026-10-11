@@ -1,0 +1,2168 @@
+{
+  "capturedAt": "2026-10-08T12:12:01.382Z",
+  "historicalProductCommit": "375990f10d73679f3c0724d21e8d7c58b3d8bd9b",
+  "integratedMain": "96e724858e692d262107c34db50b40c3ae7c122c",
+  "unlandedCombination": {
+    "head": "76369131ef6de844813fe40a8df519c8fbbf29ed",
+    "owner": "#15 C1",
+    "mainProof": false,
+    "commonAncestor": "96e724858e692d262107c34db50b40c3ae7c122c",
+    "reason": "共享缓存 FETCH_HEAD 被误判为 main；Chief 已纠正，跨分支组合保全，不冒主线落地或 CI 成功"
+  },
+  "bytePolicy": "运行工作树与实际暂存 Git blob 分开；先 stage 再 capture；审查证据更新不引发产品重测",
+  "runtimeSourceId": "955115841e5524a74656b8991393c165b2e01f94cfe556b2cc74ed0f326bc236",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "worktreeBytes": 696,
+      "worktreeSha256": "e753dc60b5ef4f02c91b1119af58990ae6060e621f83e7258171545e3cf31cf2",
+      "gitBlobId": "3730fb5e1e6371ed3aae8c61d2ce4b3663a7255a",
+      "gitBlobBytes": 686,
+      "gitBlobSha256": "82c5385e66b772983cdb19c7a04be077b9c6c0123a0a588fb16a5855b9a3532c"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "worktreeBytes": 36133,
+      "worktreeSha256": "3869109df3b7463939ead7043fd07f4edad119fb0fe09ad79578bf5c07f306b6",
+      "gitBlobId": "38dfcbbb0a22c3a4d21fb1b63de128f27abc4ddd",
+      "gitBlobBytes": 35338,
+      "gitBlobSha256": "f681be81b1c837a1946312b9f46175e3cab203832a5205f1c61d66f8dd812eb9"
+    },
+    {
+      "path": ".node-version",
+      "worktreeBytes": 9,
+      "worktreeSha256": "751fc97484d12d7946b0ec9c74d94ecfa555de9daa35f040f037ae1fadc22958",
+      "gitBlobId": "e2228113dd09b59b7a0398d4e70af19b5d2aff4c",
+      "gitBlobBytes": 8,
+      "gitBlobSha256": "3151949a8b43e7df5385b69fbaeb5652bbdc7f7924e4278d550348f42b103f13"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "worktreeBytes": 73182,
+      "worktreeSha256": "b67e2973c7dcf49cf1bb459233c7d9255985d11da25deca43a6748feb623eb39",
+      "gitBlobId": "43b3161ed4a5aa3221181858433d883fa2d6e8f9",
+      "gitBlobBytes": 71389,
+      "gitBlobSha256": "ea2bbd556822f7760d9de37cfcdac659baed09154f24bcc590c198c7311aaddf"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "worktreeBytes": 510811,
+      "worktreeSha256": "dc1c0ac1fd86115047a1514f39fbbb41aaf7532693ba7330b2f480c83340841d",
+      "gitBlobId": "a9a6cf60b37cec7f9fc065dc6e0d0cca656b652a",
+      "gitBlobBytes": 503656,
+      "gitBlobSha256": "70fee33f88b0b6078b1116cac77793467ca58277c1628954d115a370aa389812"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "worktreeBytes": 1561,
+      "worktreeSha256": "4ba5c8a954907f2df8a75e0ec0ba6aacf24f0f5a4478d152baa5f30be7867a17",
+      "gitBlobId": "7184e1fa7f52bd33ee960d6a370dccbe7dbb504b",
+      "gitBlobBytes": 1531,
+      "gitBlobSha256": "9682e88fb26f7c82452ad383ea5618ad7e150d149c44f44d578fd665feab35d2"
+    },
+    {
+      "path": "apps/api/integration/configuration-readiness.integration.test.ts",
+      "worktreeBytes": 29607,
+      "worktreeSha256": "b295bc9d9776074678d479f8b9f5929bc53cddc81bdee595b16a6ec321fcfb91",
+      "gitBlobId": "b3399c00e38e1f0c68a13b925a55c2525bc186ad",
+      "gitBlobBytes": 29211,
+      "gitBlobSha256": "8a26d1567dc85cfa61c17f5332c81e33f283257f03c3e231672a1f767ecba42e"
+    },
+    {
+      "path": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+      "worktreeBytes": 174557,
+      "worktreeSha256": "8b868f4e8adb1c95737c9d0567c7eebc23c42ca598f470caf7c0468c090aae55",
+      "gitBlobId": "6be5d69437ec03ae7f24b3f9d0a7228ff9a9fa69",
+      "gitBlobBytes": 170830,
+      "gitBlobSha256": "bc3449fad52e70061004be751ae9305f62257f23966e948b4b720929e09f3d49"
+    },
+    {
+      "path": "apps/api/integration/stage5-connector.integration.test.ts",
+      "worktreeBytes": 14195,
+      "worktreeSha256": "f666e38a80640331ef97437ced74fa176680195cbc9835be7c054243bd667331",
+      "gitBlobId": "d012bab430c0d105a9f6923f76927dcfe73c57a8",
+      "gitBlobBytes": 14195,
+      "gitBlobSha256": "f666e38a80640331ef97437ced74fa176680195cbc9835be7c054243bd667331"
+    },
+    {
+      "path": "apps/api/package.json",
+      "worktreeBytes": 1284,
+      "worktreeSha256": "9137e3e80c20e43c03ff18c38089a893f8e3893af2f3db75355e1a604262fb9e",
+      "gitBlobId": "ff16128ff34c0a4e7cdefa3dd07d7db3a767dea7",
+      "gitBlobBytes": 1245,
+      "gitBlobSha256": "264ff30909481ae6c8081eacfb128a9d637ca118073ac6d13a967b396f8b16ef"
+    },
+    {
+      "path": "apps/api/src/agent-connections.ts",
+      "worktreeBytes": 67946,
+      "worktreeSha256": "01ef5e1b15275dce163a2d7f33dd33e41b48899552e905f489b830178cb635f7",
+      "gitBlobId": "485b47a9863b6daa06eb148ea685b6669e5c5fad",
+      "gitBlobBytes": 66608,
+      "gitBlobSha256": "b25b47045718a2be17d3e55cdd3338482a8905b769dbf2e4a6a37e15cf0789d7"
+    },
+    {
+      "path": "apps/api/src/auth-idempotency.ts",
+      "worktreeBytes": 12022,
+      "worktreeSha256": "f0bcf76629309d39a11371c289d266cbc0483af09558dd97f7edeaf7846920fb",
+      "gitBlobId": "66fd162536f20b68fbed198c0d4210ffd4f4cf44",
+      "gitBlobBytes": 11670,
+      "gitBlobSha256": "113092f60aa47dfcff8f115e2d2295003cb693f6583d89f14d219c45444f888b"
+    },
+    {
+      "path": "apps/api/src/authz/authorize.ts",
+      "worktreeBytes": 26032,
+      "worktreeSha256": "bbf32fe6ba530689b638e018d664f3c53c859126210f44f23a28741e9d6a2da5",
+      "gitBlobId": "f5ffbcb065854bc04b39ed0948ac45a5d8991ed4",
+      "gitBlobBytes": 25428,
+      "gitBlobSha256": "7b6f36eee65ed3a09494a5cbaef8edf9e8a7090aef1f8b32bc3619384d66957a"
+    },
+    {
+      "path": "apps/api/src/configuration-readiness.ts",
+      "worktreeBytes": 5731,
+      "worktreeSha256": "d3780191894fe301644fd3b943f1366e012d7e38327f3dfcca9a3dfec99fb483",
+      "gitBlobId": "f27feb8fd3289996870b82f00a3d61d2af9686a7",
+      "gitBlobBytes": 5623,
+      "gitBlobSha256": "60289833f1b1f9804bb638603a16ca79c9edb503ca4d9da6d8fd6f25abf15799"
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "worktreeBytes": 74592,
+      "worktreeSha256": "ef09837a96579d38908f17af824ae25c45f545cd66893bfdf5de888bfd679168",
+      "gitBlobId": "e1096b1ae66326d1d4214803c0573e9e5683e06b",
+      "gitBlobBytes": 72836,
+      "gitBlobSha256": "e7a649ab7a2422e4a998a3cff9708e141835ec94f4ad7ac67c340ecc3fa5bb22"
+    },
+    {
+      "path": "apps/connector/assets/workmesh-public-key.pem",
+      "worktreeBytes": 116,
+      "worktreeSha256": "3b9889f4ea4df118d52c77e2c2596599b7e61d86a136d0cc4e3d3c1d5b447087",
+      "gitBlobId": "f589548dc3532037c827fa6e7f266d48de7b67f5",
+      "gitBlobBytes": 113,
+      "gitBlobSha256": "7fd190b3b986d3536b731fa88fd847fd0c133ee1a3f2ea20381bfe6bba924fad"
+    },
+    {
+      "path": "apps/connector/integration/cli.test.ts",
+      "worktreeBytes": 6786,
+      "worktreeSha256": "89fbafab927292d2dd066ed7b4aa6e7e68da9a23e9d99b83a242f9f65cecd9be",
+      "gitBlobId": "b366f457739882e75e90036ccda2577b7a1f3a61",
+      "gitBlobBytes": 6786,
+      "gitBlobSha256": "89fbafab927292d2dd066ed7b4aa6e7e68da9a23e9d99b83a242f9f65cecd9be"
+    },
+    {
+      "path": "apps/connector/integration/native-storage.test.ts",
+      "worktreeBytes": 9854,
+      "worktreeSha256": "3f2d4e3d32e81d2adaf76df9e312cb27bfa01bf942cb727b981c82d2073b5eef",
+      "gitBlobId": "83c5e96a417827aaa00913553838519d6431b047",
+      "gitBlobBytes": 9854,
+      "gitBlobSha256": "3f2d4e3d32e81d2adaf76df9e312cb27bfa01bf942cb727b981c82d2073b5eef"
+    },
+    {
+      "path": "apps/connector/package.json",
+      "worktreeBytes": 731,
+      "worktreeSha256": "a58c83c0f67bb6a81af349928abc666d5b191519d2341304f96a5d053a66cf8b",
+      "gitBlobId": "a44e2363434cba35b846121f6ee3aa16659bffde",
+      "gitBlobBytes": 731,
+      "gitBlobSha256": "a58c83c0f67bb6a81af349928abc666d5b191519d2341304f96a5d053a66cf8b"
+    },
+    {
+      "path": "apps/connector/src/cli.ts",
+      "worktreeBytes": 4497,
+      "worktreeSha256": "fdbd23c8b5c230a5f3302c581e94cbd45db6489c5254cb9efb098335207a01e7",
+      "gitBlobId": "1a2b6f5a3b40fa0a39a2d0aa55ea5e554462af6a",
+      "gitBlobBytes": 4497,
+      "gitBlobSha256": "fdbd23c8b5c230a5f3302c581e94cbd45db6489c5254cb9efb098335207a01e7"
+    },
+    {
+      "path": "apps/connector/src/client-process.test.ts",
+      "worktreeBytes": 4636,
+      "worktreeSha256": "b213e242260baadaba57c247aebcaa76e4965d1c8c924f099b6a561ec60662eb",
+      "gitBlobId": "ab40ebc82fbb27d8eaf4f298e767c608b4a8b300",
+      "gitBlobBytes": 4636,
+      "gitBlobSha256": "b213e242260baadaba57c247aebcaa76e4965d1c8c924f099b6a561ec60662eb"
+    },
+    {
+      "path": "apps/connector/src/client-process.ts",
+      "worktreeBytes": 3113,
+      "worktreeSha256": "2aae1e4aaa9671ac0ba8e4e82f337b81ad286de81531534521e12e24bb5238ef",
+      "gitBlobId": "c7b7fc2d87ebe86c765b31f9b66290912674ddf1",
+      "gitBlobBytes": 3113,
+      "gitBlobSha256": "2aae1e4aaa9671ac0ba8e4e82f337b81ad286de81531534521e12e24bb5238ef"
+    },
+    {
+      "path": "apps/connector/src/commit.ts",
+      "worktreeBytes": 4599,
+      "worktreeSha256": "1dfbb63b349dbca819d4d4066e9020e151625faa57ff748cf76abb3f987c1f07",
+      "gitBlobId": "79d03d06a0235b6b6af1dc4ca503c54fcebe6ee4",
+      "gitBlobBytes": 4599,
+      "gitBlobSha256": "1dfbb63b349dbca819d4d4066e9020e151625faa57ff748cf76abb3f987c1f07"
+    },
+    {
+      "path": "apps/connector/src/config.ts",
+      "worktreeBytes": 4528,
+      "worktreeSha256": "19aadc36155ea03ebc9e16a083749c393c09119abd0157c298ecece5cd754f49",
+      "gitBlobId": "75bd252ad19ecec0a6027a84263091085860fa88",
+      "gitBlobBytes": 4528,
+      "gitBlobSha256": "19aadc36155ea03ebc9e16a083749c393c09119abd0157c298ecece5cd754f49"
+    },
+    {
+      "path": "apps/connector/src/connect.test.ts",
+      "worktreeBytes": 13346,
+      "worktreeSha256": "3f27974b70af19174a9c89ff9909e0a1393a8c4abe05ff428c67c3a2b4c180df",
+      "gitBlobId": "5c707a015acaa0ae0f907a2b2892d284179aa272",
+      "gitBlobBytes": 13346,
+      "gitBlobSha256": "3f27974b70af19174a9c89ff9909e0a1393a8c4abe05ff428c67c3a2b4c180df"
+    },
+    {
+      "path": "apps/connector/src/connect.ts",
+      "worktreeBytes": 3973,
+      "worktreeSha256": "37c232c1f14ed48b8f50ecb64859de1a4d25bc43e66a8827463e43982883bcdb",
+      "gitBlobId": "c70e8cdb60127876d177908ef04a156f576468ad",
+      "gitBlobBytes": 3973,
+      "gitBlobSha256": "37c232c1f14ed48b8f50ecb64859de1a4d25bc43e66a8827463e43982883bcdb"
+    },
+    {
+      "path": "apps/connector/src/errors.ts",
+      "worktreeBytes": 415,
+      "worktreeSha256": "6a8e3f210c07296e6d7e38bdcca8aa99fff81c1715bc67b423a1733303cd1803",
+      "gitBlobId": "04376a37cddf0fcbe11001b5ef8c8d7717c98d2c",
+      "gitBlobBytes": 415,
+      "gitBlobSha256": "6a8e3f210c07296e6d7e38bdcca8aa99fff81c1715bc67b423a1733303cd1803"
+    },
+    {
+      "path": "apps/connector/src/output-redaction.ts",
+      "worktreeBytes": 3590,
+      "worktreeSha256": "27c7011340953b77fc0a34a6eef2d477c3a1c8f49273155aeade5c69a23754b0",
+      "gitBlobId": "c7dd9dfe9d60fe7fb3c9a194446ceaedfcfe193c",
+      "gitBlobBytes": 3590,
+      "gitBlobSha256": "27c7011340953b77fc0a34a6eef2d477c3a1c8f49273155aeade5c69a23754b0"
+    },
+    {
+      "path": "apps/connector/src/path-policy.test.ts",
+      "worktreeBytes": 2416,
+      "worktreeSha256": "331cb45199535dba8fa976112efae2db982462dc9352351f026b8a68fa4467dd",
+      "gitBlobId": "34978889cdc7d81b87752d85a46028a3fe257a42",
+      "gitBlobBytes": 2416,
+      "gitBlobSha256": "331cb45199535dba8fa976112efae2db982462dc9352351f026b8a68fa4467dd"
+    },
+    {
+      "path": "apps/connector/src/path-policy.ts",
+      "worktreeBytes": 2673,
+      "worktreeSha256": "29bea920901f9d6d18a3b30a31997178ba937489fc74042b945bf9d22ee7038b",
+      "gitBlobId": "058e30208c9bbce55ef2a270fa98fd0d13464a0c",
+      "gitBlobBytes": 2673,
+      "gitBlobSha256": "29bea920901f9d6d18a3b30a31997178ba937489fc74042b945bf9d22ee7038b"
+    },
+    {
+      "path": "apps/connector/src/pending.ts",
+      "worktreeBytes": 1523,
+      "worktreeSha256": "4d8f9166bc7c8bcfa9f091069adaea9c03695708c722680425bc3ea6b27b205d",
+      "gitBlobId": "70e47ecfa5c1d5d8b306a76085af96a24ba81ba0",
+      "gitBlobBytes": 1523,
+      "gitBlobSha256": "4d8f9166bc7c8bcfa9f091069adaea9c03695708c722680425bc3ea6b27b205d"
+    },
+    {
+      "path": "apps/connector/src/platform-security.ts",
+      "worktreeBytes": 12288,
+      "worktreeSha256": "d1d74af7e031b719d70cb9cffa2a04ab45324e9fdbbab58b70ef374ff5c81ecc",
+      "gitBlobId": "8f954682cc589399e6a3961c06377a3d350a083e",
+      "gitBlobBytes": 12288,
+      "gitBlobSha256": "d1d74af7e031b719d70cb9cffa2a04ab45324e9fdbbab58b70ef374ff5c81ecc"
+    },
+    {
+      "path": "apps/connector/src/protocol.ts",
+      "worktreeBytes": 10616,
+      "worktreeSha256": "ba0bb1cb1d9ae905c549688baf70f2599064aebaa6efd9e19b5582372a132f5c",
+      "gitBlobId": "a4f04fc2d38a8d4ecf1aa72443dbaea45dab1487",
+      "gitBlobBytes": 10616,
+      "gitBlobSha256": "ba0bb1cb1d9ae905c549688baf70f2599064aebaa6efd9e19b5582372a132f5c"
+    },
+    {
+      "path": "apps/connector/src/secret-store.ts",
+      "worktreeBytes": 1073,
+      "worktreeSha256": "0576cd3c4d28416d9791a7bf2e81040d5012f1d0ac27b9c1a868f19f30698366",
+      "gitBlobId": "6e0bd961ec4ff5ede67c6f8b710bb3a5bc65eacb",
+      "gitBlobBytes": 1073,
+      "gitBlobSha256": "0576cd3c4d28416d9791a7bf2e81040d5012f1d0ac27b9c1a868f19f30698366"
+    },
+    {
+      "path": "apps/connector/test-support/client-worker.ts",
+      "worktreeBytes": 344,
+      "worktreeSha256": "cf586a900cfd05c3f884cae57115c447986eed3b4eb047bf238097927208cd10",
+      "gitBlobId": "86d3d127f9a5f6fb72a78979bf96efa75e379056",
+      "gitBlobBytes": 344,
+      "gitBlobSha256": "cf586a900cfd05c3f884cae57115c447986eed3b4eb047bf238097927208cd10"
+    },
+    {
+      "path": "apps/connector/test-support/fixture.ts",
+      "worktreeBytes": 5344,
+      "worktreeSha256": "2f972fc045d9e7669909083b0b111162c1c1e7558fab9c1fb80e6f7cad474af3",
+      "gitBlobId": "59d0dc59adb6d291f4eee4b4089a96857bd7c2bd",
+      "gitBlobBytes": 5344,
+      "gitBlobSha256": "2f972fc045d9e7669909083b0b111162c1c1e7558fab9c1fb80e6f7cad474af3"
+    },
+    {
+      "path": "apps/connector/test-support/process-worker.ts",
+      "worktreeBytes": 1763,
+      "worktreeSha256": "d31464926fbad53fb0b3cc4dc186d41e92e5652348d6e7172abfbd5072bedf6f",
+      "gitBlobId": "cab4e9ad6352c3ef478e7e9b662de86ffd932ae4",
+      "gitBlobBytes": 1763,
+      "gitBlobSha256": "d31464926fbad53fb0b3cc4dc186d41e92e5652348d6e7172abfbd5072bedf6f"
+    },
+    {
+      "path": "apps/connector/test-support/resources.ts",
+      "worktreeBytes": 1143,
+      "worktreeSha256": "81a710003aff7e75828314cf5ce52dad69c4a338f16fceee3fdb7dbda8e577e2",
+      "gitBlobId": "d47d2ff5783ff4c2c361f0e596162af7c172dc41",
+      "gitBlobBytes": 1143,
+      "gitBlobSha256": "81a710003aff7e75828314cf5ce52dad69c4a338f16fceee3fdb7dbda8e577e2"
+    },
+    {
+      "path": "apps/connector/test-support/stderr-driver.ts",
+      "worktreeBytes": 3011,
+      "worktreeSha256": "d5b5c861edce59a90eddc92deee2b768785561e20cd522a1b60932eabca5ba52",
+      "gitBlobId": "741ef3caabf0d5d37c56d123d493b9943969e2e8",
+      "gitBlobBytes": 3011,
+      "gitBlobSha256": "d5b5c861edce59a90eddc92deee2b768785561e20cd522a1b60932eabca5ba52"
+    },
+    {
+      "path": "apps/connector/test-support/terminal-driver.ts",
+      "worktreeBytes": 3478,
+      "worktreeSha256": "c47980ca86a4a85a913d0cac17da539e8201fb6eb6b78a466963ab9434aca626",
+      "gitBlobId": "ce665ab8bc9aa0cf5b683bb07374974e758f23e9",
+      "gitBlobBytes": 3478,
+      "gitBlobSha256": "c47980ca86a4a85a913d0cac17da539e8201fb6eb6b78a466963ab9434aca626"
+    },
+    {
+      "path": "apps/connector/tsconfig.build.json",
+      "worktreeBytes": 154,
+      "worktreeSha256": "71ae091c7cc31e603cb811b757484850cf52b6211d1c603c401208500c04207f",
+      "gitBlobId": "307fd9d6eb5b784dac0fede1d536cdceee73ff3f",
+      "gitBlobBytes": 154,
+      "gitBlobSha256": "71ae091c7cc31e603cb811b757484850cf52b6211d1c603c401208500c04207f"
+    },
+    {
+      "path": "apps/connector/tsconfig.json",
+      "worktreeBytes": 135,
+      "worktreeSha256": "1778bb6d15de37ca5f2731acc6c77eb118bd751a2092da7421d98cfeefc283eb",
+      "gitBlobId": "ea9fbfe404c025005b2e2be0fc05526e79d20176",
+      "gitBlobBytes": 135,
+      "gitBlobSha256": "1778bb6d15de37ca5f2731acc6c77eb118bd751a2092da7421d98cfeefc283eb"
+    },
+    {
+      "path": "apps/connector/vitest.platform.config.ts",
+      "worktreeBytes": 171,
+      "worktreeSha256": "c5a8f9e1b8de16a09bdd7ec1f0b5698fe42afe54c10606d4ca648b57966fb622",
+      "gitBlobId": "3b7d498455bacb08e282cd103c23037ff516609a",
+      "gitBlobBytes": 171,
+      "gitBlobSha256": "c5a8f9e1b8de16a09bdd7ec1f0b5698fe42afe54c10606d4ca648b57966fb622"
+    },
+    {
+      "path": "apps/mcp/src/coordination-product.ts",
+      "worktreeBytes": 29604,
+      "worktreeSha256": "2b9697085c1698092c3d6e9753fd9e1df2daca0db086279346f8f8ffefa22c78",
+      "gitBlobId": "95de5d3f760f8c267b57b6b01bb39434fb1675c9",
+      "gitBlobBytes": 28936,
+      "gitBlobSha256": "5e0152b20af49163d8081c8112302d05fa0de6e94ff722530418f56ec5d881d4"
+    },
+    {
+      "path": "apps/mcp/src/http.test.ts",
+      "worktreeBytes": 5343,
+      "worktreeSha256": "435b7b2b9066ab047ab42d833a217bbea3273b57910bebe8a1d603957f475e12",
+      "gitBlobId": "88fa0cdfc4ce27e3ea5eebb60744a83b87d19b6d",
+      "gitBlobBytes": 5215,
+      "gitBlobSha256": "14d4801b7e9d33a1abbc0023f4ca7f73ae2e858c9aa92e7c5337eae84bb48581"
+    },
+    {
+      "path": "apps/mcp/src/http.ts",
+      "worktreeBytes": 6646,
+      "worktreeSha256": "bbabd9f6eea2a97dc9c236f38c0fa2b08e7d2e74105addf31c6b29382513cea9",
+      "gitBlobId": "7bfc5722d8b98078c0bf46a5fb58f288f6c41390",
+      "gitBlobBytes": 6498,
+      "gitBlobSha256": "987460c6231841ae8f6c9c87bcb30ceaca142e4a5a6688a59c13d9f5dd8983d3"
+    },
+    {
+      "path": "apps/mcp/src/index.test.ts",
+      "worktreeBytes": 64346,
+      "worktreeSha256": "f7b0a1812ec9618748a480790e9eda19527aeb91363cd033ed753697942e2d07",
+      "gitBlobId": "c9891404b16fc51911b71db8f5d88fad42b069fe",
+      "gitBlobBytes": 63000,
+      "gitBlobSha256": "97921298da561d52ed8a132068ef8fc24d268a68b5dff04c6b303f42a355728c"
+    },
+    {
+      "path": "apps/mcp/src/index.ts",
+      "worktreeBytes": 67695,
+      "worktreeSha256": "8f62edbab1de5a2ad391f8ca66a7b46967c7e4968a8fb22074e2f05fcb3b29a2",
+      "gitBlobId": "a274343b5ca2523d0fab2ae714b94006c27a3f05",
+      "gitBlobBytes": 67309,
+      "gitBlobSha256": "84b202361884d00e9434a495b1b8fc6fc557795079b523a102eefc83e9a91ba2"
+    },
+    {
+      "path": "apps/mcp/src/smoke.ts",
+      "worktreeBytes": 407,
+      "worktreeSha256": "1750e5553cc1b5f0226236843873201713cf5abca8a0e6ee2da057b6a421d3e6",
+      "gitBlobId": "d8604d01e5324cce8ceae6152e6b2592642ed11a",
+      "gitBlobBytes": 401,
+      "gitBlobSha256": "0ad2f70ffeb73eb1d50c9dddf325fb52144aee12afc72de57714571cb6a70864"
+    },
+    {
+      "path": "apps/mcp/src/stdio.ts",
+      "worktreeBytes": 922,
+      "worktreeSha256": "c4566ba76f53483956f75da47d804ddd2aba444eae91f1d07a23ea3d6a599de0",
+      "gitBlobId": "137477aea9383483e9020a553181d8d6f58beff3",
+      "gitBlobBytes": 908,
+      "gitBlobSha256": "b5aa62df1ad9f2ed9f783b339555952bf0418d2c9e7b3007d5512b53fe8ee6ed"
+    },
+    {
+      "path": "apps/web/app/attention-center-approval.test.tsx",
+      "worktreeBytes": 9769,
+      "worktreeSha256": "d11338074c09dd30cd19bd205254a170d12533dab79cdd3f5f86344d425279a7",
+      "gitBlobId": "38bc8f8c4e6980829a39731701d60604c4dcd6f2",
+      "gitBlobBytes": 9617,
+      "gitBlobSha256": "faff0eebcec5c7492f44f69c2d00f3993ef0bf2908c9358ca9eea56382c92d4e"
+    },
+    {
+      "path": "apps/web/app/attention-center.tsx",
+      "worktreeBytes": 60068,
+      "worktreeSha256": "3676ada99af84f906a7795b373d2a87452b7a57d5af090e88f64e5a522f5cf34",
+      "gitBlobId": "94d24ea508dbc0c70e093616fbb2b85cf0abf9ba",
+      "gitBlobBytes": 58701,
+      "gitBlobSha256": "f2cbbe7bba9de3b039cbc8ca4c790dc7a418c2f86e9767116d580ddf103c1e72"
+    },
+    {
+      "path": "apps/web/public/skills/workmesh-1.1.0.md",
+      "worktreeBytes": 12114,
+      "worktreeSha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+      "gitBlobId": "628e12194276e6bd9279df3470f3187edc9a4697",
+      "gitBlobBytes": 12114,
+      "gitBlobSha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad"
+    },
+    {
+      "path": "docs/route-policy-matrix.md",
+      "worktreeBytes": 47426,
+      "worktreeSha256": "647a0979ae048683ff9149db2d19a658967c7d6e9bd1c75cd1ba5cf643bdb133",
+      "gitBlobId": "ecdee7e2b491c3bafe8d42d160692648d4e7a6ec",
+      "gitBlobBytes": 47144,
+      "gitBlobSha256": "048ad188353cd2b9bfd24523d9487009e6c1e1d4959aea5c765334a9d39c3091"
+    },
+    {
+      "path": "package.json",
+      "worktreeBytes": 4682,
+      "worktreeSha256": "2e06aa849c60f1db7f79c58a550781752570cce0ca68f53aadd3ca67138c62b2",
+      "gitBlobId": "d2afc75c7a1e7eb188ba3ae65f673e5a35e476e9",
+      "gitBlobBytes": 4611,
+      "gitBlobSha256": "318bf89f75395b4316cb7b7bf18ffeef46266bd32f7a76e938fd1c24e0cec2bc"
+    },
+    {
+      "path": "packages/contracts/src/active-executor-contract.test.ts",
+      "worktreeBytes": 2281,
+      "worktreeSha256": "32c8a53676067fea090b27b03b9763d82644d795db48c29f0947283aa845eea5",
+      "gitBlobId": "b880671e2f6fa662682a657b1b37cb3af4c5bfc9",
+      "gitBlobBytes": 2227,
+      "gitBlobSha256": "46541a1af0a2039c37498750bd27c22d5c584686b35657ef4f3d3d51b051b944"
+    },
+    {
+      "path": "packages/contracts/src/agent-response-contract.test.ts",
+      "worktreeBytes": 1436,
+      "worktreeSha256": "cc385b6817cb489a6b6871fd476d15bf9c2b77602d4c4ebfb3dcce43d74b2f75",
+      "gitBlobId": "64ce55f0fb5e4f046f1505b31b1324b7f93db210",
+      "gitBlobBytes": 1414,
+      "gitBlobSha256": "72714fed7e0155dc37a3fae5597366e6a7dffdea79a6ba8b25165b27caea9db9"
+    },
+    {
+      "path": "packages/contracts/src/agent-response.ts",
+      "worktreeBytes": 2800,
+      "worktreeSha256": "7692ce3fdefea77729bfbc4180dc557ce3c0f3f8a38eeb132a416ce7421c741f",
+      "gitBlobId": "1ec2c244af2add5604fd4865f4b25295f784323d",
+      "gitBlobBytes": 2735,
+      "gitBlobSha256": "05dada4cbcb4779990b4a2efb6d8be840be2331819d8a432fbe91f2222a55831"
+    },
+    {
+      "path": "packages/contracts/src/approval-contract.test.ts",
+      "worktreeBytes": 2302,
+      "worktreeSha256": "21e41b55bf9b864cf8897243b48411cb435f1cd0014e205aa52fae59d5ef393d",
+      "gitBlobId": "85e54064cbfb51d3cfe11637e7f6b4f01de03c5c",
+      "gitBlobBytes": 2232,
+      "gitBlobSha256": "bce53222e7f95964b5d6527f2ec5e15ce91cbf4e7bd1b105ce03c2abb0f03306"
+    },
+    {
+      "path": "packages/contracts/src/auth-idempotency.test.ts",
+      "worktreeBytes": 1925,
+      "worktreeSha256": "cee4d1a14ea0549fb2f6a7467edfc3faad63bf2076048dd9cd66278970194a61",
+      "gitBlobId": "bb76dc810aea9bef855cda501c7e942e3a077c31",
+      "gitBlobBytes": 1878,
+      "gitBlobSha256": "5d9a01e3bc15bb95b44feaf01df39caf596212a5ac2a33b8b6b4e9d1689071fe"
+    },
+    {
+      "path": "packages/contracts/src/autonomous-control-contracts.test.ts",
+      "worktreeBytes": 2612,
+      "worktreeSha256": "8b97cc488c068119520ee4ce0cd20ce7e5a9dfbd752ebb9647510ae1db0cdc09",
+      "gitBlobId": "68e3f353c95d1e3a64c68fee66b77965794df58d",
+      "gitBlobBytes": 2549,
+      "gitBlobSha256": "c16b1384f5ad77609fbef8f16dc59a74cede850f4ac8709d51e0445b1e5dda84"
+    },
+    {
+      "path": "packages/contracts/src/client-profile-contract.test.ts",
+      "worktreeBytes": 4234,
+      "worktreeSha256": "5f4b5b9df049d76ee979ab04f80fd7b7833578d5cc2776e2c36f503dd859d605",
+      "gitBlobId": "dee1a82ba0e1a956aa739cba894e073e80197d32",
+      "gitBlobBytes": 4148,
+      "gitBlobSha256": "12eebd779b078fe4c7875feddf9f4f289558f464c9d7d5445a27d3f60a587612"
+    },
+    {
+      "path": "packages/contracts/src/configuration-readiness-contracts.test.ts",
+      "worktreeBytes": 4227,
+      "worktreeSha256": "4537c63edb0d5ab59726b8d04f14d83dcd2625618fb6db4742574af87271958d",
+      "gitBlobId": "02c420f0589f97c8dabc66ca4906b4ee1c8b20d7",
+      "gitBlobBytes": 4168,
+      "gitBlobSha256": "a707949f68645701c40e3dc231b2cbe5d36c1923ca2102f6778324c8e785dfd8"
+    },
+    {
+      "path": "packages/contracts/src/configuration-readiness-contracts.ts",
+      "worktreeBytes": 1639,
+      "worktreeSha256": "463688074b1e798dd7f311df7e3e7c2330570a36acc6944dd661c09e4484b638",
+      "gitBlobId": "66abb9bde34071257f6ccaa3f1022d905f7201a3",
+      "gitBlobBytes": 1606,
+      "gitBlobSha256": "a0da8f69b998dc9bb70eaf01f61f0644013e9ef19db3db1ac0f9aba286c8a75a"
+    },
+    {
+      "path": "packages/contracts/src/control-plane-contracts.test.ts",
+      "worktreeBytes": 7115,
+      "worktreeSha256": "d074976af95e5382c5bf1c3049fdb8cba0fa01b2f7e1ce53409c2bbb1c8272c9",
+      "gitBlobId": "60a5de0656cd4ee02bff92ea0dad84c5925e670f",
+      "gitBlobBytes": 6969,
+      "gitBlobSha256": "7d0bd6801026396a3d202999d8435dd7946b2580fd6d9e29e758a3e7fcb4444f"
+    },
+    {
+      "path": "packages/contracts/src/guidance-contract.test.ts",
+      "worktreeBytes": 1913,
+      "worktreeSha256": "ffa4d1690554a73c26eb4540897fa97fdd46827c50e42ac5e59dc8a5690a9e62",
+      "gitBlobId": "4e7e2880afae68ebe322c46cc65e847ff5b14cb2",
+      "gitBlobBytes": 1870,
+      "gitBlobSha256": "91dd34e1facf5c8afa8dc9b924c06ef21c82e8bf5bf01436e103504a53ee34c6"
+    },
+    {
+      "path": "packages/contracts/src/human-attention-contract.test.ts",
+      "worktreeBytes": 3663,
+      "worktreeSha256": "0ed1c0f4e6535eebb189f791a6374027f0dace2f51eee4a46e1247bbdabadd7d",
+      "gitBlobId": "d7a5e727e57a02427093f7f32fe413cf97e277df",
+      "gitBlobBytes": 3543,
+      "gitBlobSha256": "130ffd451d3cc3fe3e05871f8c8fb3724c2ef32309878f7a035e3af308f01356"
+    },
+    {
+      "path": "packages/contracts/src/index.ts",
+      "worktreeBytes": 188589,
+      "worktreeSha256": "57a54fa5c43f8fe13da6e61fb0b61119e941bfbdb525ebf73fc9c57302e0a4f5",
+      "gitBlobId": "0b717d210c7b6d93d8c5daaaf02c0606f57c4188",
+      "gitBlobBytes": 185438,
+      "gitBlobSha256": "4e3e12aa53aacbb20206ab04bb2676c7312c5ced0873ec9847b7ca73ba0cd340"
+    },
+    {
+      "path": "packages/contracts/src/pagination-contract.test.ts",
+      "worktreeBytes": 5024,
+      "worktreeSha256": "191f36723e1f6d58e1db705b522961dd3873ac9010c2e6542eaf2525ffb9db96",
+      "gitBlobId": "ec520f8e5cdadc2dab57abb7533b594b1ab44d5b",
+      "gitBlobBytes": 4883,
+      "gitBlobSha256": "9723425c2e85dcbe1566df71c0297e5321e3870219750780110a8b0cc3082429"
+    },
+    {
+      "path": "packages/contracts/src/pi-workbench-contracts.test.ts",
+      "worktreeBytes": 17574,
+      "worktreeSha256": "5da2ac4f4c1e528cf989bfa6b97999cd8c1d816b7511d2b1db5cba7f71dd71d1",
+      "gitBlobId": "f4f5a67fdb4f718e75610cd5662a9721d1e1e17e",
+      "gitBlobBytes": 17183,
+      "gitBlobSha256": "53f772ce2d5a5612b7ca00d91954d32cf36140d3a5b8d00c3ee830ad518ab1fc"
+    },
+    {
+      "path": "packages/contracts/src/pi-workbench-contracts.ts",
+      "worktreeBytes": 26913,
+      "worktreeSha256": "6245245536e7a70f3258a7ca2f40f74824a760aca85a2cc1c955f290d275fc10",
+      "gitBlobId": "ff6bf59e24ef764c4e7e142eac7656cfd3d5317a",
+      "gitBlobBytes": 26303,
+      "gitBlobSha256": "fbce3cd45bfba07ce4b996aae34a54167852daa0848f4126c433aa4ab6ce81bd"
+    },
+    {
+      "path": "packages/contracts/src/planning-domain-parity-contract.test.ts",
+      "worktreeBytes": 7227,
+      "worktreeSha256": "1796e1ba0c99a32ec31a977a9581580939eece7dcbffccc8279d2d6173f530b6",
+      "gitBlobId": "1aef31886336401ae968ac1b4a44f94a1311f850",
+      "gitBlobBytes": 7091,
+      "gitBlobSha256": "60a05a5cf44b43d1f88133a61187b3437b69753aa4a2fc9a8f99aa4416a70528"
+    },
+    {
+      "path": "packages/contracts/src/recovery-contract.test.ts",
+      "worktreeBytes": 2078,
+      "worktreeSha256": "3c70e1d8be95c3d2b719995622ca3cf0fc560be3f462328d5bd34a1b88136b7a",
+      "gitBlobId": "3f2aadf4f448e035560989f9b54291763bbd7325",
+      "gitBlobBytes": 2044,
+      "gitBlobSha256": "e9d74a0930ce6f4f9b39a35562c9b29a758655b04fa2715daef649c1848ab6c2"
+    },
+    {
+      "path": "packages/contracts/src/release-contract.test.ts",
+      "worktreeBytes": 4494,
+      "worktreeSha256": "82778dbd8584803e6d18b14ec272298e0ecc3d4e94fe97ee21cc466450fa9588",
+      "gitBlobId": "b575fa7d7369486983e17a6fba468bcf72336b1c",
+      "gitBlobBytes": 4413,
+      "gitBlobSha256": "4bc59813dd60b338df08e0af8247c6781ebf8dc2ad64549417c416788f7b12fd"
+    },
+    {
+      "path": "packages/contracts/src/release-manifest.test.ts",
+      "worktreeBytes": 2909,
+      "worktreeSha256": "71e099b37091c69959c2d4a8236112fe1a6d475b7038499f95872d7a1e41143c",
+      "gitBlobId": "82d4b7bbdc75dcbe0fab48de6f1353e8797d777c",
+      "gitBlobBytes": 2841,
+      "gitBlobSha256": "8ab3269f19f76dd3274797328f2cab21492b5ac0d5123531fcccc8871d7fab67"
+    },
+    {
+      "path": "packages/contracts/src/route-policy-bindings.ts",
+      "worktreeBytes": 33174,
+      "worktreeSha256": "5d2ebff5cfa37211754b6f51fd03f58cb2f2c15dd3b296dba438cfcbd06fb2f3",
+      "gitBlobId": "afc6f2b0de72877e468585a5eeee91842bd88a72",
+      "gitBlobBytes": 31959,
+      "gitBlobSha256": "a0ce5855a39132e6559dcff25fe7f2c148a9612dc4be60cfcb2fdcbb9ecd2dd2"
+    },
+    {
+      "path": "packages/contracts/src/route-policy.test.ts",
+      "worktreeBytes": 15490,
+      "worktreeSha256": "143f29a020d0bf1db46b6d75a03b57ddd3d1809e41e833c6bde50f61e3d23af8",
+      "gitBlobId": "57ffcb7ab641638a102616226727e590fd187053",
+      "gitBlobBytes": 15093,
+      "gitBlobSha256": "b719807e45c67541c128b837089ddc4896b0ee099f52e1f2baf3e3e785038592"
+    },
+    {
+      "path": "packages/contracts/src/route-policy.ts",
+      "worktreeBytes": 24822,
+      "worktreeSha256": "65c8948545a575d9bea2b5c44bef1fb21ef36a1230d61b9590e9b753421cc47a",
+      "gitBlobId": "9db98ee17239c8a2f074f42869098028b7be2ea8",
+      "gitBlobBytes": 24167,
+      "gitBlobSha256": "a4d458a70e865fd6a95c80983f456883b7044ed15e0a88732ced2c1da97a8d78"
+    },
+    {
+      "path": "packages/contracts/src/runtime-reliability-openapi.test.ts",
+      "worktreeBytes": 5091,
+      "worktreeSha256": "53fae02e118224ca42e5124e0b7b8deebcb4a030d62864110b33ff3fa41adc6e",
+      "gitBlobId": "11c0a9dc280d5cccf8c919056603b3748c4b4dcf",
+      "gitBlobBytes": 4948,
+      "gitBlobSha256": "1b63ff4f7b47825d3ee222691438d8ab89b0bc393dbc8ef9c715bcb3fe1513c9"
+    },
+    {
+      "path": "packages/contracts/src/stage0-route-manifest.test.ts",
+      "worktreeBytes": 8833,
+      "worktreeSha256": "abfaf683964dcedf7cc31524dc87d9001ddb8c054a946c76b93a618f8e7e9c33",
+      "gitBlobId": "f0cfb7db15b5fab7c5ed38f5a24ea8953ca63c69",
+      "gitBlobBytes": 8583,
+      "gitBlobSha256": "3e0135ba5a7fa8208138d7aaa3476c9ac4567db75b865e9faa48d8c296c4fd8c"
+    },
+    {
+      "path": "packages/contracts/src/stage1-contracts.test.ts",
+      "worktreeBytes": 9162,
+      "worktreeSha256": "a7963931522a2677c2552d2b26651d2cbb75844534f6c79fe06680ad39dc8884",
+      "gitBlobId": "1cc8a876ce7bc753640acbf5ee2e581c77234ef9",
+      "gitBlobBytes": 9022,
+      "gitBlobSha256": "b806d188506783d33420763eb00cd235ee40676e57fa6a0c3467afda808af127"
+    },
+    {
+      "path": "packages/contracts/src/stage2-contracts.test.ts",
+      "worktreeBytes": 6086,
+      "worktreeSha256": "64b92f92582bfd7a073e3129fcc52147ef1a78a76558e27d271c79cb8c9668e0",
+      "gitBlobId": "9a428c9b344ada434b59b4a1df79e9e1cedceef3",
+      "gitBlobBytes": 5948,
+      "gitBlobSha256": "4ee0c0d33ce2d2fc023a8f287f80b0ef4241b3899e0c3cdfd686a019574a01ba"
+    },
+    {
+      "path": "packages/contracts/src/stage3-contracts.test.ts",
+      "worktreeBytes": 9468,
+      "worktreeSha256": "b635bb7439914c208f805cab4f7be783836a208f9079c67182ab5ba89735bca6",
+      "gitBlobId": "6ef3defb2f2c9f557b9534da536a4b1cf461afbb",
+      "gitBlobBytes": 9307,
+      "gitBlobSha256": "16ff4c17c6a2e3d13f9ebbebefc7798ce5936fd210ae98a3bf395dbf445e5d02"
+    },
+    {
+      "path": "packages/contracts/src/stage4-contracts.test.ts",
+      "worktreeBytes": 7924,
+      "worktreeSha256": "35ab79c9b9b0ae4e11911b0e097499642ccc871cdde7e7c720c9df698e2975a6",
+      "gitBlobId": "e908144bd95814a8b11e761e223a269cbe251af3",
+      "gitBlobBytes": 7726,
+      "gitBlobSha256": "ca6f8027a7750fa4620d2cab39d1cdf67c9c4931e35f337014ea5029be1c09f8"
+    },
+    {
+      "path": "packages/contracts/src/stage5-contracts.test.ts",
+      "worktreeBytes": 56404,
+      "worktreeSha256": "2afdd7236ae6df2f9482a75d5708a189c6e095aad8172b63dbbd9a7cfc5b5401",
+      "gitBlobId": "f00f0b53f802c63e188b3deef5898ca048b1e861",
+      "gitBlobBytes": 55232,
+      "gitBlobSha256": "b81ad11523095f6b90c5c540eec3dde90af21523668d69093f6eb61e96c819eb"
+    },
+    {
+      "path": "packages/contracts/src/workmesh-skill-manifest.ts",
+      "worktreeBytes": 372,
+      "worktreeSha256": "de7bce5926a40ecc424b7882ab02c77a2b935cda829016ef498689fc1834dce8",
+      "gitBlobId": "90547f3bf1ee859e4786f2e5e1f38adb76347409",
+      "gitBlobBytes": 365,
+      "gitBlobSha256": "968e1a2aadbf3cfb89421f5a186bdf5fa9302fe2fc39e608a6824b95249bbb1e"
+    },
+    {
+      "path": "playwright.config.ts",
+      "worktreeBytes": 5071,
+      "worktreeSha256": "20b3258f9e53e28becf66a4ae2fc4e9c0e98fe8fe4ebdeb4d512f5695c7109b4",
+      "gitBlobId": "d3b7cabe41a0b1db73c20232904041f1920a9ebe",
+      "gitBlobBytes": 4932,
+      "gitBlobSha256": "4a95e70f9305615580c55a281ac9bb2b1172c665fb47dc619386f13808c9b3e2"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "worktreeBytes": 238108,
+      "worktreeSha256": "9f38fc6e80d3ba3d5e4be7fcad4764f73f08ff164876bec498a27a24985a7b52",
+      "gitBlobId": "7a1937f843ef1767e1869b48b2fada49e45b291c",
+      "gitBlobBytes": 238108,
+      "gitBlobSha256": "9f38fc6e80d3ba3d5e4be7fcad4764f73f08ff164876bec498a27a24985a7b52"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "worktreeBytes": 39,
+      "worktreeSha256": "497fb79b584e1cb676861802b4826b02abe1875b981eb5ee329793d635b90706",
+      "gitBlobId": "286cf7f5643db97142c425abe7c8e5d5663f5d65",
+      "gitBlobBytes": 36,
+      "gitBlobSha256": "253208fa7c1b64372c219b9e19cef15ed70ca93b66a4d5c4c4d2297a5aff8880"
+    },
+    {
+      "path": "scripts/ci-policy.mjs",
+      "worktreeBytes": 7257,
+      "worktreeSha256": "89f8b671d65449f26e4acb05db6ef80bbfe043bb86c99e6644ceddabde7a6e2e",
+      "gitBlobId": "2c0454b4c6925dd037eae9c7759800dc6f27d7e3",
+      "gitBlobBytes": 7137,
+      "gitBlobSha256": "f1d3fecb15d0db78336785fffdc7089e8a436606180673f5b69af92bc5bb5bbb"
+    },
+    {
+      "path": "scripts/ci-policy.test.mjs",
+      "worktreeBytes": 8053,
+      "worktreeSha256": "46274f7ac99bf5331f6bfa50eb25728c5633abc6372507a3ddec98c787a605d1",
+      "gitBlobId": "53020914b34c244a9477cc9230e635a64614ec74",
+      "gitBlobBytes": 7918,
+      "gitBlobSha256": "2778fb4318af934118f33f49f18a825b701072a55cb4fb90af8cc248c7bcdc7e"
+    },
+    {
+      "path": "scripts/ci-test-inputs.mjs",
+      "worktreeBytes": 1358,
+      "worktreeSha256": "51d7e4bc1f16254daa1e38117d8ea89a39f5d8746179679df4630c52dad0815c",
+      "gitBlobId": "19dfe423650090297929a9d91d294d4f67eaef2c",
+      "gitBlobBytes": 1337,
+      "gitBlobSha256": "7649baca161f4e8a0caff43978d79b29a3efb12c9584d9e57baa5fa749942cdb"
+    },
+    {
+      "path": "scripts/connector-secret-probe.mts",
+      "worktreeBytes": 689,
+      "worktreeSha256": "9a2c2bb402dcc4e72e0a5778a715ed94a70f53fa2127b82d06199665b8a64336",
+      "gitBlobId": "b483462338c645d65b28a5a7ad9f04ce6e8f06df",
+      "gitBlobBytes": 689,
+      "gitBlobSha256": "9a2c2bb402dcc4e72e0a5778a715ed94a70f53fa2127b82d06199665b8a64336"
+    },
+    {
+      "path": "scripts/test-connector-linux.sh",
+      "worktreeBytes": 1177,
+      "worktreeSha256": "fb30a9ea856c13882e0a4b18cdf6ce0d3ee1eb5b0fb0187f3233d8e3908984aa",
+      "gitBlobId": "1f216a6e0020712c2c062f1ad587ef1d6ccd3637",
+      "gitBlobBytes": 1177,
+      "gitBlobSha256": "fb30a9ea856c13882e0a4b18cdf6ce0d3ee1eb5b0fb0187f3233d8e3908984aa"
+    },
+    {
+      "path": "scripts/test-connector-windows.ps1",
+      "worktreeBytes": 3513,
+      "worktreeSha256": "0c7a08add15d80617ed0cd992631eb06216764a81fd2de60e2f2cc2f1babe73d",
+      "gitBlobId": "a6f91e2b6e4a2943a52396d8d77e029f514be8fc",
+      "gitBlobBytes": 3513,
+      "gitBlobSha256": "0c7a08add15d80617ed0cd992631eb06216764a81fd2de60e2f2cc2f1babe73d"
+    },
+    {
+      "path": "scripts/validate-ci.mjs",
+      "worktreeBytes": 33206,
+      "worktreeSha256": "8c5099a3289f6a7b2cf9c79d6d11bddf069e21c9259820bc19da452faa16b118",
+      "gitBlobId": "91781887115d0aa8420417f8bba7a9c403ab521d",
+      "gitBlobBytes": 32652,
+      "gitBlobSha256": "6e9bc321aab843b23ec50dfc2c2a4a62aedbe1b2b9fa80023885ec27b8304059"
+    },
+    {
+      "path": "skills/workmesh/public-key.pem",
+      "worktreeBytes": 116,
+      "worktreeSha256": "3b9889f4ea4df118d52c77e2c2596599b7e61d86a136d0cc4e3d3c1d5b447087",
+      "gitBlobId": "f589548dc3532037c827fa6e7f266d48de7b67f5",
+      "gitBlobBytes": 113,
+      "gitBlobSha256": "7fd190b3b986d3536b731fa88fd847fd0c133ee1a3f2ea20381bfe6bba924fad"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "worktreeBytes": 250,
+      "worktreeSha256": "3d8d67842ffbdddffc52e1ae99eeedd951eb1f28a5dd8d06163a526782d1355f",
+      "gitBlobId": "c119a7416ea19e9468b6884c5ad1945bd0e25f39",
+      "gitBlobBytes": 247,
+      "gitBlobSha256": "97a13fa56b7f47e4018b6cb2d7839fd33392089ba047aa8cddaf60b395cc2fea"
+    },
+    {
+      "path": "turbo.json",
+      "worktreeBytes": 10930,
+      "worktreeSha256": "98870eb728f83c41ba38d4af4cba6bb83b0b6a2cd83788d3319a93bcafdfc7ef",
+      "gitBlobId": "bd9b113ed59269fbd981e9d40bfcc7be75bceff7",
+      "gitBlobBytes": 10580,
+      "gitBlobSha256": "81eb0e43d33f7c7d09b55f7f8fc4f9d0b69fb11a9194105558767339e5469520"
+    },
+    {
+      "path": "vitest.config.ts",
+      "worktreeBytes": 1491,
+      "worktreeSha256": "de6eafb8f3cb9b0134c39ed38da801b0d427e6956e893fb00f4e21c4d3003d33",
+      "gitBlobId": "22eb710f02612fa3fcf272b9867046726376eef6",
+      "gitBlobBytes": 1460,
+      "gitBlobSha256": "9255e891735d5c421b1084f2f187cbe9b31a3880ede10d8def0da2558e6147e7"
+    },
+    {
+      "path": "vitest.integration.config.ts",
+      "worktreeBytes": 752,
+      "worktreeSha256": "ca9031eca23a729d89184c49246b8f1891c784382293cc91ac7ad25b58b3ccfe",
+      "gitBlobId": "e6a813d2cecd039ad9be481a26e6b4129caefba3",
+      "gitBlobBytes": 733,
+      "gitBlobSha256": "472847e308368450c040b27e9ddc4f6f694f8af4eaadecc63fb7cf06f433425b"
+    }
+  ],
+  "bindings": [
+    {
+      "run": "revision-affected-final-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-affected-final-01/source-before.json",
+      "checks": [
+        {
+          "name": "connector-lint",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "lint"
+          ],
+          "startedAt": "2026-10-08T11:38:55.832Z",
+          "endedAt": "2026-10-08T11:38:59.623Z",
+          "exitCode": 0,
+          "log": "logs/connector-lint.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "contracts-lint",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/contracts",
+            "lint"
+          ],
+          "startedAt": "2026-10-08T11:39:00.200Z",
+          "endedAt": "2026-10-08T11:39:04.060Z",
+          "exitCode": 0,
+          "log": "logs/contracts-lint.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "api-lint",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/api",
+            "lint"
+          ],
+          "startedAt": "2026-10-08T11:39:04.684Z",
+          "endedAt": "2026-10-08T11:39:19.383Z",
+          "exitCode": 0,
+          "log": "logs/api-lint.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "api-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/api",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:39:20.033Z",
+          "endedAt": "2026-10-08T11:39:48.434Z",
+          "exitCode": 0,
+          "log": "logs/api-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 87,
+      "differences": [
+        "OPENAPI.yaml",
+        "apps/api/src/server.ts",
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "docs/route-policy-matrix.md",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-ansi-build-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-build-01/source-before.json",
+      "checks": [
+        {
+          "name": "connector-build",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "build"
+          ],
+          "startedAt": "2026-10-08T12:05:19.059Z",
+          "endedAt": "2026-10-08T12:05:22.970Z",
+          "exitCode": 0,
+          "log": "logs/connector-build.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-lint",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "lint"
+          ],
+          "startedAt": "2026-10-08T12:05:23.622Z",
+          "endedAt": "2026-10-08T12:05:27.726Z",
+          "exitCode": 0,
+          "log": "logs/connector-lint.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 89,
+      "differences": [
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/output-redaction.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-ansi-build-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-build-02/source-before.json",
+      "checks": [
+        {
+          "name": "connector-build",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "build"
+          ],
+          "startedAt": "2026-10-08T12:07:12.092Z",
+          "endedAt": "2026-10-08T12:07:16.773Z",
+          "exitCode": 0,
+          "log": "logs/connector-build.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-lint",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "lint"
+          ],
+          "startedAt": "2026-10-08T12:07:17.625Z",
+          "endedAt": "2026-10-08T12:07:22.438Z",
+          "exitCode": 0,
+          "log": "logs/connector-lint.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 89,
+      "differences": [],
+      "changedDuringRun": [],
+      "finalSource": true,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-ansi-linux-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-linux-01/resources.json",
+      "exitCode": 0,
+      "comparedFiles": 68,
+      "differences": [
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/output-redaction.ts"
+      ],
+      "finalSource": false,
+      "scope": "容器中实际复制源；不把非连接器 main 文件当作平台测试执行范围"
+    },
+    {
+      "run": "revision-ansi-linux-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-linux-02/resources.json",
+      "exitCode": 0,
+      "comparedFiles": 68,
+      "differences": [],
+      "finalSource": true,
+      "scope": "容器中实际复制源；不把非连接器 main 文件当作平台测试执行范围"
+    },
+    {
+      "run": "revision-ansi-unit-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-unit-01/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:58:21.988Z",
+          "endedAt": "2026-10-08T11:58:25.984Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:58:26.622Z",
+          "endedAt": "2026-10-08T11:58:49.252Z",
+          "exitCode": 1,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 62,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/output-redaction.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-ansi-unit-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-unit-02/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T12:01:09.136Z",
+          "endedAt": "2026-10-08T12:01:13.238Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T12:01:13.893Z",
+          "endedAt": "2026-10-08T12:01:35.324Z",
+          "exitCode": 0,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 63,
+      "differences": [
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/output-redaction.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-ansi-unit-03",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-unit-03/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T12:06:06.098Z",
+          "endedAt": "2026-10-08T12:06:10.095Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T12:06:10.705Z",
+          "endedAt": "2026-10-08T12:06:35.557Z",
+          "exitCode": 0,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 63,
+      "differences": [],
+      "changedDuringRun": [],
+      "finalSource": true,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-ansi-windows-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-windows-01/source-before.json",
+      "checks": [
+        {
+          "name": "windows-platform",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test:platform"
+          ],
+          "startedAt": "2026-10-08T12:02:15.266Z",
+          "endedAt": "2026-10-08T12:02:26.531Z",
+          "exitCode": 1,
+          "log": "logs/windows-platform.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 63,
+      "differences": [
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/output-redaction.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-ansi-windows-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-ansi-windows-02/source-before.json",
+      "checks": [
+        {
+          "name": "windows-platform",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test:platform"
+          ],
+          "startedAt": "2026-10-08T12:07:05.192Z",
+          "endedAt": "2026-10-08T12:07:21.636Z",
+          "exitCode": 1,
+          "log": "logs/windows-platform.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 63,
+      "differences": [],
+      "changedDuringRun": [],
+      "finalSource": true,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-final-types-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-final-types-01/source-before.json",
+      "checks": [
+        {
+          "name": "connector-build",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "build"
+          ],
+          "startedAt": "2026-10-08T11:23:10.516Z",
+          "endedAt": "2026-10-08T11:23:13.885Z",
+          "exitCode": 0,
+          "log": "logs/connector-build.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:23:14.410Z",
+          "endedAt": "2026-10-08T11:23:18.116Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "api-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/api",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:23:18.722Z",
+          "endedAt": "2026-10-08T11:23:33.334Z",
+          "exitCode": 0,
+          "log": "logs/api-typecheck.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 87,
+      "differences": [
+        "OPENAPI.yaml",
+        "apps/api/src/server.ts",
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "docs/route-policy-matrix.md",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-linux-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-linux-01/resources.json",
+      "exitCode": 1,
+      "comparedFiles": 63,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/cli.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/client-worker.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "finalSource": false,
+      "scope": "容器中实际复制源；不把非连接器 main 文件当作平台测试执行范围"
+    },
+    {
+      "run": "revision-linux-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-linux-02/resources.json",
+      "exitCode": 0,
+      "comparedFiles": 64,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "finalSource": false,
+      "scope": "容器中实际复制源；不把非连接器 main 文件当作平台测试执行范围"
+    },
+    {
+      "run": "revision-linux-03",
+      "source": "docs/reviews/b1-b2/evidence/revision-linux-03/resources.json",
+      "exitCode": 0,
+      "comparedFiles": 66,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "finalSource": false,
+      "scope": "容器中实际复制源；不把非连接器 main 文件当作平台测试执行范围"
+    },
+    {
+      "run": "revision-main-e2e-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-main-e2e-01/source-before.json",
+      "checks": [
+        {
+          "name": "web-build",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/web",
+            "build"
+          ],
+          "startedAt": "2026-10-08T11:30:05.510Z",
+          "endedAt": "2026-10-08T11:32:07.490Z",
+          "exitCode": 0,
+          "log": "logs/web-build.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "e2e",
+          "command": [
+            "pnpm",
+            "test:e2e"
+          ],
+          "startedAt": "2026-10-08T11:32:08.212Z",
+          "endedAt": "2026-10-08T11:36:36.053Z",
+          "exitCode": 0,
+          "log": "logs/e2e.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 87,
+      "differences": [
+        "OPENAPI.yaml",
+        "apps/api/src/server.ts",
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "docs/route-policy-matrix.md",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-main-impact-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-main-impact-01/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:15:46.813Z",
+          "endedAt": "2026-10-08T11:15:50.547Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "contracts-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/contracts",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:15:51.133Z",
+          "endedAt": "2026-10-08T11:15:54.959Z",
+          "exitCode": 0,
+          "log": "logs/contracts-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "api-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/api",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:15:55.498Z",
+          "endedAt": "2026-10-08T11:16:09.243Z",
+          "exitCode": 0,
+          "log": "logs/api-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "contracts-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/contracts",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:16:09.777Z",
+          "endedAt": "2026-10-08T11:16:14.913Z",
+          "exitCode": 0,
+          "log": "logs/contracts-unit.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "route-policy",
+          "command": [
+            "pnpm",
+            "check:route-policy"
+          ],
+          "startedAt": "2026-10-08T11:16:15.444Z",
+          "endedAt": "2026-10-08T11:16:17.787Z",
+          "exitCode": 0,
+          "log": "logs/route-policy.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "ci-validate",
+          "command": [
+            "pnpm",
+            "ci:validate"
+          ],
+          "startedAt": "2026-10-08T11:16:18.334Z",
+          "endedAt": "2026-10-08T11:16:20.723Z",
+          "exitCode": 0,
+          "log": "logs/ci-validate.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 87,
+      "differences": [
+        "OPENAPI.yaml",
+        "apps/api/integration/stage5-connector.integration.test.ts",
+        "apps/api/src/server.ts",
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "docs/route-policy-matrix.md",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-main-integration-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-main-integration-01/source-before.json",
+      "checks": [
+        {
+          "name": "integration",
+          "command": [
+            "pnpm",
+            "test:integration"
+          ],
+          "startedAt": "2026-10-08T11:15:45.595Z",
+          "endedAt": "2026-10-08T11:21:13.865Z",
+          "exitCode": 1,
+          "log": "logs/integration.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 87,
+      "differences": [
+        "OPENAPI.yaml",
+        "apps/api/integration/stage5-connector.integration.test.ts",
+        "apps/api/src/server.ts",
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "docs/route-policy-matrix.md",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-main-integration-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-main-integration-02/source-before.json",
+      "checks": [
+        {
+          "name": "integration",
+          "command": [
+            "pnpm",
+            "test:integration"
+          ],
+          "startedAt": "2026-10-08T11:22:03.783Z",
+          "endedAt": "2026-10-08T11:28:50.659Z",
+          "exitCode": 0,
+          "log": "logs/integration.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 87,
+      "differences": [
+        "OPENAPI.yaml",
+        "apps/api/src/server.ts",
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "docs/route-policy-matrix.md",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-static-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-static-01/source-before.json",
+      "checks": [
+        {
+          "name": "connector-build",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "build"
+          ],
+          "startedAt": "2026-10-08T11:08:55.520Z",
+          "endedAt": "2026-10-08T11:08:58.822Z",
+          "exitCode": 0,
+          "log": "logs/connector-build.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "lint",
+          "command": [
+            "pnpm",
+            "lint"
+          ],
+          "startedAt": "2026-10-08T11:08:58.823Z",
+          "endedAt": "2026-10-08T11:09:43.540Z",
+          "exitCode": 0,
+          "log": "logs/lint.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "typecheck",
+          "command": [
+            "pnpm",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:09:43.540Z",
+          "endedAt": "2026-10-08T11:11:28.869Z",
+          "exitCode": 0,
+          "log": "logs/typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "unit",
+          "command": [
+            "pnpm",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:11:28.870Z",
+          "endedAt": "2026-10-08T11:14:02.302Z",
+          "exitCode": 0,
+          "log": "logs/unit.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "ci-validate",
+          "command": [
+            "pnpm",
+            "ci:validate"
+          ],
+          "startedAt": "2026-10-08T11:14:02.302Z",
+          "endedAt": "2026-10-08T11:14:04.189Z",
+          "exitCode": 0,
+          "log": "logs/ci-validate.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "route-policy",
+          "command": [
+            "pnpm",
+            "check:route-policy"
+          ],
+          "startedAt": "2026-10-08T11:14:04.189Z",
+          "endedAt": "2026-10-08T11:14:05.844Z",
+          "exitCode": 0,
+          "log": "logs/route-policy.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "skill-pin",
+          "command": [
+            "pnpm",
+            "check:workmesh-skill"
+          ],
+          "startedAt": "2026-10-08T11:14:05.844Z",
+          "endedAt": "2026-10-08T11:14:06.398Z",
+          "exitCode": 0,
+          "log": "logs/skill-pin.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 80,
+      "differences": [
+        "AGENT_PROTOCOL.md",
+        "OPENAPI.yaml",
+        "apps/api/integration/stage5-connector.integration.test.ts",
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/terminal-driver.ts"
+      ],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-01/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T10:57:21.855Z",
+          "endedAt": "2026-10-08T10:57:26.480Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T10:57:26.481Z",
+          "endedAt": "2026-10-08T10:57:46.545Z",
+          "exitCode": 1,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 58,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/cli.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/client-worker.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-02/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T10:58:25.032Z",
+          "endedAt": "2026-10-08T10:58:28.174Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T10:58:28.175Z",
+          "endedAt": "2026-10-08T10:58:47.303Z",
+          "exitCode": 1,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 58,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/cli.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/client-worker.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-03",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-03/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T10:59:51.802Z",
+          "endedAt": "2026-10-08T11:00:01.794Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:00:01.795Z",
+          "endedAt": "2026-10-08T11:00:20.147Z",
+          "exitCode": 1,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 58,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/cli.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/client-worker.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-04",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-04/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:01:10.791Z",
+          "endedAt": "2026-10-08T11:01:13.905Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:01:13.906Z",
+          "endedAt": "2026-10-08T11:01:32.462Z",
+          "exitCode": 1,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 58,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/cli.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/client-worker.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-05",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-05/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:03:02.453Z",
+          "endedAt": "2026-10-08T11:03:08.769Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:03:08.770Z",
+          "endedAt": "2026-10-08T11:03:51.313Z",
+          "exitCode": 1,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 58,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/cli.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/client-worker.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [
+        "apps/connector/src/client-process.ts"
+      ],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-06",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-06/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:03:49.265Z",
+          "endedAt": "2026-10-08T11:03:53.373Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:03:53.375Z",
+          "endedAt": "2026-10-08T11:04:27.488Z",
+          "exitCode": 1,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 58,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/cli.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/client-worker.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-07",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-07/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:05:16.653Z",
+          "endedAt": "2026-10-08T11:05:19.820Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:05:19.821Z",
+          "endedAt": "2026-10-08T11:05:38.533Z",
+          "exitCode": 0,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 58,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-08",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-08/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:06:34.922Z",
+          "endedAt": "2026-10-08T11:06:37.977Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:06:37.978Z",
+          "endedAt": "2026-10-08T11:06:56.709Z",
+          "exitCode": 0,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 59,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-unit-09",
+      "source": "docs/reviews/b1-b2/evidence/revision-unit-09/source-before.json",
+      "checks": [
+        {
+          "name": "connector-typecheck",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "typecheck"
+          ],
+          "startedAt": "2026-10-08T11:12:36.486Z",
+          "endedAt": "2026-10-08T11:12:46.339Z",
+          "exitCode": 0,
+          "log": "logs/connector-typecheck.log",
+          "secretRedaction": true
+        },
+        {
+          "name": "connector-unit",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test"
+          ],
+          "startedAt": "2026-10-08T11:12:46.342Z",
+          "endedAt": "2026-10-08T11:13:26.835Z",
+          "exitCode": 0,
+          "log": "logs/connector-unit.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 59,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-windows-01",
+      "source": "docs/reviews/b1-b2/evidence/revision-windows-01/source-before.json",
+      "checks": [
+        {
+          "name": "windows-platform",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test:platform"
+          ],
+          "startedAt": "2026-10-08T11:09:43.710Z",
+          "endedAt": "2026-10-08T11:10:01.968Z",
+          "exitCode": 1,
+          "log": "logs/windows-platform.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 59,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/src/platform-security.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    },
+    {
+      "run": "revision-windows-02",
+      "source": "docs/reviews/b1-b2/evidence/revision-windows-02/source-before.json",
+      "checks": [
+        {
+          "name": "windows-platform",
+          "command": [
+            "pnpm",
+            "--filter",
+            "@workmesh/connector",
+            "test:platform"
+          ],
+          "startedAt": "2026-10-08T11:21:02.569Z",
+          "endedAt": "2026-10-08T11:21:17.019Z",
+          "exitCode": 1,
+          "log": "logs/windows-platform.log",
+          "secretRedaction": true
+        }
+      ],
+      "comparedFiles": 61,
+      "differences": [
+        "apps/connector/integration/cli.test.ts",
+        "apps/connector/src/client-process.test.ts",
+        "apps/connector/src/client-process.ts",
+        "apps/connector/test-support/terminal-driver.ts",
+        "packages/contracts/src/index.ts",
+        "packages/contracts/src/route-policy-bindings.ts",
+        "packages/contracts/src/route-policy.test.ts",
+        "packages/contracts/src/route-policy.ts"
+      ],
+      "changedDuringRun": [],
+      "finalSource": false,
+      "scope": "历史源不同或运行期间变动如实列出，不作为最终组合通过；适用补查见报告"
+    }
+  ],
+  "gates": {
+    "threeOSCI": "未闭合",
+    "windowsSecondUser": "本机缺夹具，失败",
+    "macOS": "未运行",
+    "requiredCI": "未取得修订提交成功结果",
+    "resultReview": "待本轮复审",
+    "actualMain": "连接器尚未合入"
+  }
+}

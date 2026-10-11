@@ -13,3 +13,8 @@ infra/lite/*.sh text eol=lf
 # 本轮压缩字节映射和归档保持原字节，禁止换行转换。
 docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/*.zip -text
 docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/*.gz -text
+scripts/test-connector-linux.sh text eol=lf
+
+# Exact connector plan/spec snapshots keep their approved UTF-8/LF bytes.
+docs/plan/connector-recovery.md text eol=lf
+docs/reviews/b1-b2/current-spec.md text eol=lf
