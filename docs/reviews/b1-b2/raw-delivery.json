@@ -1,0 +1,42 @@
+{
+  "capturedAt": "2026-10-08T12:44:24.733Z",
+  "checkedHead": "1a88137db9a7b28d207c085fd62e20cb8f074e81",
+  "parents": [
+    "4495dbcde8c5b8689c94708e0eb19a63cdad4947",
+    "5b9c76b5f79917697906520edcd6947bfbfa925f"
+  ],
+  "actualMain": "5b9c76b5f79917697906520edcd6947bfbfa925f",
+  "actualMainIsAncestor": true,
+  "fullPrDiffCheck": {
+    "command": [
+      "git",
+      "diff",
+      "5b9c76b5f79917697906520edcd6947bfbfa925f",
+      "1a88137db9a7b28d207c085fd62e20cb8f074e81",
+      "--check"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "runtimeSourceId": "172bba31df88c326df0ab19264d5ec7a44d7dd31c197c04efa6f1a8d50b0a757",
+  "committedSourceFiles": 102,
+  "committedSourceMismatches": [],
+  "ownSchemaServerContractsDiff": "",
+  "scope": "精确修订提交与真正 main 的完整 PR 差异；不沿用历史 EOF 失败或 skip；后续纯证据提交不冒新产品测试",
+  "gates": {
+    "resultReview": "待第三轮成果复审",
+    "threeOSCI": "待修订 head 的 PR 必需 CI",
+    "windowsSecondUser": "本机两项缺夹具失败",
+    "macOS": "未运行",
+    "connectorActualMain": "未合入"
+  },
+  "workflowObservation": {
+    "capturedAt": "2026-10-08T12:44:46.777Z",
+    "branch": "tds/conv-01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+    "tool": "workflow_runs",
+    "limit": 3,
+    "result": "No workflow runs",
+    "connectorCIProven": false
+  }
+}

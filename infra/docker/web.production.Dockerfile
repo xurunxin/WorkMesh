@@ -6,6 +6,8 @@ RUN test -n "$NEXT_PUBLIC_API_URL" \
     && node -e "new URL(process.env.NEXT_PUBLIC_API_URL)" \
     && corepack enable \
     && corepack prepare pnpm@9.15.4 --activate
+# 连接器的 node-pty 在 Alpine 构建阶段需要原生编译；工具不进入 runtime。
+RUN apk add --no-cache python3 make g++
 WORKDIR /workspace
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
 COPY apps ./apps

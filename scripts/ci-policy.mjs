@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { testConsumers } from './ci-test-inputs.mjs'
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke']
+export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'e2e', 'recovery-integration', 'agent-smoke', 'connector-platform']
 
 export function validateCiBootstrap({ job, manifest, lock, yamlVersion }) {
   const failures = []
@@ -94,6 +94,7 @@ export function classifyChanges(paths, workspaces, { forceFull = false, mainPush
   const has = name => affected.has(`@workmesh/${name}`)
   const checks = {
     'source-gates': full || runtime.length > 0,
+    'connector-platform': full || has('connector'),
     'db-integration': full || has('db'),
     // API integration imports worker implementations directly in its fixtures.
     'api-integration': full || ['api', 'worker', 'mcp', 'agent-sdk', 'agent-runner', 'conformance'].some(has),
@@ -145,6 +146,14 @@ export function planForEvent(eventName, event, workspaces, git = args => execFil
   // A formatting failure is a failed gate, never a reason to fall back to full.
   git(['diff', '--check', comparisonBase, head])
   return classifyChanges(paths, workspaces, { mainPush })
+}
+
+export function validateDevelopmentImageEntrypoint(job) {
+  const command = 'python3 scripts/validate-development-images.py'
+  const steps = job?.steps?.filter(step => step.run?.trim() === command) ?? []
+  if (steps.length !== 1 || steps[0].if !== undefined || steps[0]['continue-on-error'])
+    return ['source-gates必须实际构建四个开发镜像，不得省略、条件跳过或忽略失败']
+  return []
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

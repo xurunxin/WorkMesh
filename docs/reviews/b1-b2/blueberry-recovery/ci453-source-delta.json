@@ -1,0 +1,18 @@
+{
+  "reviewedHead": "eb67b765bf30639000b2c002cbfeaf78b6ca8bec",
+  "validationSourceHead": "afffde68fe257b86a5a4a9338091552e801b7e13",
+  "changedSourcePaths": [
+    ".gitattributes",
+    ".github/workflows/ci.yml",
+    "infra/docker/api.Dockerfile",
+    "infra/docker/mcp.Dockerfile",
+    "infra/docker/web.Dockerfile",
+    "infra/docker/worker.Dockerfile",
+    "scripts/ci-policy.mjs",
+    "scripts/ci-policy.test.mjs",
+    "scripts/validate-ci.mjs",
+    "scripts/validate-development-images.py"
+  ],
+  "schemaMigrationApiEventsChanged": false,
+  "note": "独审后的受测源码仅变开发Docker安装前输入、CI验证接线和精确原件属性；未重编码已审连接器"
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "connector-build",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "build"
+    ],
+    "startedAt": "2026-10-08T12:07:12.092Z",
+    "endedAt": "2026-10-08T12:07:16.773Z",
+    "exitCode": 0,
+    "log": "logs/connector-build.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "connector-lint",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "lint"
+    ],
+    "startedAt": "2026-10-08T12:07:17.625Z",
+    "endedAt": "2026-10-08T12:07:22.438Z",
+    "exitCode": 0,
+    "log": "logs/connector-lint.log",
+    "secretRedaction": true
+  }
+]

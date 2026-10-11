@@ -1,0 +1,296 @@
+{
+  "artifactId": 11705456513,
+  "artifactZipSha256": "b731df7d62df2d05ef6611962d93ebabee2f50b2a1cadad896ef288405e3ee66",
+  "traceZipSha256": "0b9dbe96530546ce038ebb6bb032576d1b206031d87811dcb67d80a7c15b54e3",
+  "note": "仅保存准确三个动作与四个快照的URL/Current team选择器；不保存network、cookie、完整trace或页面正文。初始化内部React时序未由此确定。",
+  "actions": [
+    {
+      "type": "before",
+      "callId": "call@349",
+      "startTime": 77521.925,
+      "method": "click",
+      "beforeSnapshot": "before@call@349"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "waiting for getByRole('link', { name: 'Settings', exact: true })"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  locator resolved to <a href=\"/settings\" class=\"app-navigation-link\" data-testid=\"view-settings\">…</a>"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "attempting click action"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  waiting for element to be visible, enabled and stable"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  element is visible, enabled and stable"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  scrolling into view if needed"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  done scrolling"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  performing click action"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  click action done"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  waiting for scheduled navigations to finish"
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  navigated to \"http://127.0.0.1:3100/settings\""
+    },
+    {
+      "type": "log",
+      "callId": "call@349",
+      "message": "  navigations have finished"
+    },
+    {
+      "type": "after",
+      "callId": "call@349",
+      "endTime": 77676.17,
+      "afterSnapshot": "after@call@349"
+    },
+    {
+      "type": "before",
+      "callId": "call@351",
+      "startTime": 77684.368,
+      "method": "selectOption",
+      "beforeSnapshot": "before@call@351"
+    },
+    {
+      "type": "log",
+      "callId": "call@351",
+      "message": "waiting for getByLabel('Current team').first()"
+    },
+    {
+      "type": "log",
+      "callId": "call@351",
+      "message": "  locator resolved to <select disabled aria-label=\"Current team\">…</select>"
+    },
+    {
+      "type": "log",
+      "callId": "call@351",
+      "message": "attempting select option action"
+    },
+    {
+      "type": "log",
+      "callId": "call@351",
+      "message": "  waiting for element to be visible and enabled"
+    },
+    {
+      "type": "log",
+      "callId": "call@351",
+      "message": "  selected specified option(s)"
+    },
+    {
+      "type": "after",
+      "callId": "call@351",
+      "endTime": 79966.386,
+      "result": {
+        "values": [
+          "b22e318d-e0cc-4b17-9331-d893d8c69102"
+        ]
+      },
+      "afterSnapshot": "after@call@351"
+    },
+    {
+      "type": "before",
+      "callId": "call@353",
+      "startTime": 79994.268,
+      "method": "expect",
+      "beforeSnapshot": "before@call@353"
+    },
+    {
+      "type": "after",
+      "callId": "call@353",
+      "endTime": 90077.628,
+      "afterSnapshot": "after@call@353"
+    }
+  ],
+  "snapshots": [
+    {
+      "snapshotName": "after@call@349",
+      "timestamp": 77681.853,
+      "frameUrl": "http://127.0.0.1:3100/settings",
+      "currentTeamSelectors": []
+    },
+    {
+      "snapshotName": "input@call@351",
+      "timestamp": 79851.543,
+      "frameUrl": "http://127.0.0.1:3100/settings",
+      "currentTeamSelectors": [
+        [
+          "SELECT",
+          {
+            "__playwright_target__": "",
+            "aria-label": "Current team",
+            "disabled": ""
+          },
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "true",
+              "value": ""
+            },
+            "Loading Settings…"
+          ]
+        ],
+        [
+          "SELECT",
+          {
+            "aria-label": "Current team",
+            "disabled": ""
+          },
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "true",
+              "value": ""
+            },
+            "Loading Settings…"
+          ]
+        ]
+      ]
+    },
+    {
+      "snapshotName": "after@call@351",
+      "timestamp": 79985.705,
+      "frameUrl": "http://127.0.0.1:3100/settings?team=44a4b4d2-df2b-4c87-b1ed-e8a14735155c",
+      "currentTeamSelectors": [
+        [
+          "SELECT",
+          {
+            "__playwright_target__": "",
+            "aria-label": "Current team"
+          },
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "false",
+              "value": "",
+              "disabled": ""
+            },
+            "No team"
+          ],
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "true",
+              "value": "44a4b4d2-df2b-4c87-b1ed-e8a14735155c"
+            },
+            "General",
+            " (",
+            "GEN",
+            ")"
+          ],
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "false",
+              "value": "b22e318d-e0cc-4b17-9331-d893d8c69102"
+            },
+            "Stage 0 delivery edited",
+            " (",
+            "ACC",
+            ")"
+          ]
+        ],
+        [
+          "SELECT",
+          {
+            "aria-label": "Current team"
+          },
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "false",
+              "value": "",
+              "disabled": ""
+            },
+            "No team"
+          ],
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "true",
+              "value": "44a4b4d2-df2b-4c87-b1ed-e8a14735155c"
+            },
+            "General",
+            " (",
+            "GEN",
+            ")"
+          ],
+          [
+            "OPTION",
+            {
+              "__playwright_selected_": "false",
+              "value": "b22e318d-e0cc-4b17-9331-d893d8c69102"
+            },
+            "Stage 0 delivery edited",
+            " (",
+            "ACC",
+            ")"
+          ]
+        ]
+      ]
+    },
+    {
+      "snapshotName": "before@call@353",
+      "timestamp": 80076.871,
+      "frameUrl": "http://127.0.0.1:3100/settings?team=44a4b4d2-df2b-4c87-b1ed-e8a14735155c",
+      "currentTeamSelectors": [
+        [
+          "SELECT",
+          {
+            "aria-label": "Current team"
+          },
+          [
+            [
+              1,
+              1
+            ]
+          ],
+          [
+            [
+              1,
+              6
+            ]
+          ],
+          [
+            [
+              1,
+              11
+            ]
+          ]
+        ]
+      ]
+    }
+  ]
+}

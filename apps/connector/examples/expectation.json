@@ -1,0 +1,24 @@
+{
+  "deploymentUrl": "https://workmesh.example",
+  "discoveryUrl": "https://workmesh.example/.well-known/workmesh-agent",
+  "redeemUrl": "https://workmesh.example/api/v1/agent-connections/redeem",
+  "mcpUrl": "https://workmesh.example/mcp",
+  "skillUrl": "https://workmesh.example/skills/workmesh-1.1.0.md",
+  "workspaceId": "00000000-0000-4000-8000-000000000001",
+  "connectionId": "00000000-0000-4000-8000-000000000002",
+  "agentActorId": "00000000-0000-4000-8000-000000000003",
+  "teamId": "00000000-0000-4000-8000-000000000004",
+  "principalHumanActorId": "00000000-0000-4000-8000-000000000005",
+  "agentSlug": "example-agent",
+  "client": { "type": "codex", "version": "1.1.0" },
+  "profileVersion": "1.0",
+  "requestedCapabilities": ["work:read", "work:write"],
+  "capabilities": ["work:read", "work:write"],
+  "grantAgentDelegate": false,
+  "skill": {
+    "name": "workmesh",
+    "version": "1.1.0",
+    "sha256": "sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+    "signature": "ed25519:dsfCsrVDcJ/+gvsTd7gRG4M4qWwUpfFhTVXBcBx7+U1fVzovGcE6vqBfYsGPa5rr655S2vBeVw7L3ruNcV8tCg=="
+  }
+}

@@ -89,7 +89,21 @@ describe('Human Attention inline approval', () => {
       status: 'approved',
     })
   })
-  afterEach(() => { cleanup(); vi.clearAllMocks() })
+  afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.clearAllMocks() })
+
+  it('卸载时取消审批成功后的延迟刷新', async () => {
+    const scheduled = vi.spyOn(window, 'setTimeout')
+    const cancelled = vi.spyOn(window, 'clearTimeout')
+    const view = render(<LocaleProvider><AttentionCenter actor={{ id: uuid(8), workspace_id: uuid(2), workspace_role: 'member' }} /></LocaleProvider>)
+    fireEvent.click(await screen.findByRole('button', { name: /Review and respond|查看与处理/ }))
+    fireEvent.click(await screen.findByRole('button', { name: /Approve$|^通过$/ }))
+    expect(await screen.findByText(/Approval decision recorded|已记录通过决定/)).toBeVisible()
+    const index = scheduled.mock.calls.findIndex(call => call[1] === 1200)
+    expect(index).toBeGreaterThanOrEqual(0)
+    const timer = scheduled.mock.results[index]?.value as number
+    view.unmount()
+    expect(cancelled).toHaveBeenCalledWith(timer)
+  })
 
   it('offers direct decisions without a required text field', async () => {
     render(<LocaleProvider><AttentionCenter actor={{ id: uuid(8), workspace_id: uuid(2), workspace_role: 'member' }} /></LocaleProvider>)

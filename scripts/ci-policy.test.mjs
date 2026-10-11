@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
+import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint } from './ci-policy.mjs'
 import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
@@ -10,6 +10,23 @@ import { parse } from './ci-bootstrap/yaml.mjs'
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('开发镜像构建接线不能被删除、跳过或吞掉失败', () => {
+  const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['source-gates']
+  assert.deepEqual(validateDevelopmentImageEntrypoint(job), [])
+  for (const mutate of [
+    value => { value.steps = value.steps.filter(step => step.name !== 'Build all development images with normal lifecycle hooks') },
+    value => { value.steps.find(step => step.name === 'Build all development images with normal lifecycle hooks').if = 'false' },
+    value => { value.steps.find(step => step.name === 'Build all development images with normal lifecycle hooks')['continue-on-error'] = true },
+    value => { value.steps.find(step => step.name === 'Build all development images with normal lifecycle hooks').run += ' --help' },
+  ]) {
+    const candidate = structuredClone(job)
+    mutate(candidate)
+    assert.ok(validateDevelopmentImageEntrypoint(candidate).length > 0)
+  }
+  for (const path of ['infra/docker/api.Dockerfile', 'infra/docker/web.Dockerfile', 'infra/docker/worker.Dockerfile', 'infra/docker/mcp.Dockerfile', 'apps/connector/scripts/prepare-native.mjs', 'scripts/validate-development-images.py'])
+    assert.equal(classify([path]).checks['source-gates'], true)
+})
 
 test('classification bootstrap locks only YAML and cannot bypass policy or evidence', () => {
   const input = {
@@ -42,6 +59,17 @@ test('YAML semantics preserve flow maps, aliases and literal command bodies', ()
   assert.equal(document.steps[0].run, 'set -o pipefail\necho "# literal: yes"\n')
   assert.equal(document.steps[0]['continue-on-error'], false)
   assert.throws(() => parse('steps: []\nsteps: []\n'), /unique/)
+})
+
+test('连接器改动必须实际运行平台矩阵，失败/跳过不能放行', () => {
+  const plan = classify(['apps/connector/src/connect.ts'])
+  assert.equal(plan.checks['connector-platform'], true)
+  assert.equal(plan.checks['api-integration'], true)
+  for (const result of ['skipped', 'failure', 'cancelled']) {
+    const needs = results(plan)
+    needs['connector-platform'].result = result
+    assert.ok(evaluateResults(plan, needs).length > 0)
+  }
 })
 
 test('known prose on PR and main avoids every install/service/test job', () => {

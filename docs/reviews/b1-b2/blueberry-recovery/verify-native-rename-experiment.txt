@@ -1,0 +1,55 @@
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { mkdir, writeFile, readdir, lstat, unlink, rmdir } from 'node:fs/promises'
+import { join, resolve } from 'node:path'
+import { randomUUID, createHash } from 'node:crypto'
+import { windowsRenameProbe } from '../../../../apps/connector/test-support/windows-rename-probe.js'
+
+const execute = promisify(execFile)
+const root = resolve('.tmp', `rename-probe-${randomUUID()}`)
+if (!root.startsWith(resolve('.tmp') + '\\')) throw new Error('错误临时边界')
+await mkdir(root)
+const assembly = join(root, 'probe.dll'), source = join(root, 'source'), target = join(root, 'target')
+let result: unknown
+let failure: unknown
+try {
+  await mkdir(source)
+  const script = `
+$ErrorActionPreference='Stop'
+$env:PSModulePath=[IO.Path]::Combine($PSHOME,'Modules')
+Add-Type -TypeDefinition ([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(windowsRenameProbe).toString('base64')}'))) -OutputAssembly $env:WM_TEST_ASSEMBLY -OutputType Library
+[Reflection.Assembly]::LoadFile($env:WM_TEST_ASSEMBLY)|Out-Null
+$sid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+$restricted=New-Object Security.AccessControl.DirectorySecurity
+$restricted.SetSecurityDescriptorSddlForm(('D:P(A;;RC;;;'+ $sid +')'),[Security.AccessControl.AccessControlSections]::Access)
+[IO.Directory]::SetAccessControl($env:WM_TEST_SOURCE,$restricted)
+$result=[WorkMeshRenameProbe]::Rename($env:WM_TEST_SOURCE,$env:WM_TEST_TARGET)
+if($result -ne 0){throw ('native rename failed: '+$result)}
+$restored=New-Object Security.AccessControl.DirectorySecurity
+$restored.SetSecurityDescriptorSddlForm(('D:P(A;;FA;;;'+ $sid +')'),[Security.AccessControl.AccessControlSections]::Access)
+[IO.Directory]::SetAccessControl($env:WM_TEST_TARGET,$restored)
+`
+  const env = { ...process.env, WM_TEST_ASSEMBLY: assembly, WM_TEST_SOURCE: source, WM_TEST_TARGET: target }
+  for (const key of Object.keys(env)) if (key.toLowerCase() === 'psmodulepath') delete env[key]
+  await execute('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], { env, windowsHide: true })
+  if (!(await lstat(target)).isDirectory()) throw new Error('目标目录未实际建立')
+  result = { command: 'PowerShell 5.1 Add-Type / CreateFileW DELETE / SetFileInformationByHandle FileRenameInfo', exitCode: 0,
+    sourceSha256: createHash('sha256').update(windowsRenameProbe).digest('hex'), path: root, scope: '当前用户 API 编译/真实移动验证；子项仅RC、DELETE来自父DC，无读取/同步权限；不冒第二用户权限验收' }
+} catch (error) {
+  failure = error
+  await writeFile('docs/reviews/b1-b2/blueberry-recovery/windows-native-rename-failure.json', JSON.stringify({ path: root,
+    error: String(error), stderr: (error as { stderr?: string }).stderr ?? null, retained: true }, null, 2) + '\n', { flag: 'wx' })
+} finally {
+  if (!failure) {
+  // 本次新建目录没有递归删除；只接受已声明普通 DLL 与空目录。
+  for (const name of await readdir(root)) {
+    const path = join(root, name), info = await lstat(path)
+    if (info.isSymbolicLink() || !['probe.dll', 'source', 'target'].includes(name)) throw new Error('未知收尾对象')
+    if (info.isDirectory()) await rmdir(path); else await unlink(path)
+  }
+  await rmdir(root)
+  }
+}
+if (failure) throw failure
+await writeFile('docs/reviews/b1-b2/blueberry-recovery/windows-native-rename-delete-only.json', JSON.stringify({ ...result as object, cleanup: '已逐对象删除普通 DLL/空目录及准确空根' }, null, 2) + '\n', { flag: 'wx' })
+console.log('真实 native rename 编译、移动及定向收尾通过；非第二用户证明')

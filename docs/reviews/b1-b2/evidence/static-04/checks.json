@@ -1,0 +1,88 @@
+[
+  {
+    "name": "connector-build",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "build"
+    ],
+    "startedAt": "2026-10-08T10:21:00.636Z",
+    "endedAt": "2026-10-08T10:21:04.161Z",
+    "exitCode": 0,
+    "log": "logs/connector-build.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "lint",
+    "command": [
+      "pnpm",
+      "lint"
+    ],
+    "startedAt": "2026-10-08T10:21:04.162Z",
+    "endedAt": "2026-10-08T10:22:03.431Z",
+    "exitCode": 0,
+    "log": "logs/lint.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "typecheck",
+    "command": [
+      "pnpm",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T10:22:03.432Z",
+    "endedAt": "2026-10-08T10:22:54.618Z",
+    "exitCode": 0,
+    "log": "logs/typecheck.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "unit",
+    "command": [
+      "pnpm",
+      "test"
+    ],
+    "startedAt": "2026-10-08T10:22:54.618Z",
+    "endedAt": "2026-10-08T10:26:43.795Z",
+    "exitCode": 0,
+    "log": "logs/unit.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "ci-validate",
+    "command": [
+      "pnpm",
+      "ci:validate"
+    ],
+    "startedAt": "2026-10-08T10:26:43.796Z",
+    "endedAt": "2026-10-08T10:26:46.193Z",
+    "exitCode": 0,
+    "log": "logs/ci-validate.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "route-policy",
+    "command": [
+      "pnpm",
+      "check:route-policy"
+    ],
+    "startedAt": "2026-10-08T10:26:46.194Z",
+    "endedAt": "2026-10-08T10:26:51.605Z",
+    "exitCode": 0,
+    "log": "logs/route-policy.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "skill-pin",
+    "command": [
+      "pnpm",
+      "check:workmesh-skill"
+    ],
+    "startedAt": "2026-10-08T10:26:51.606Z",
+    "endedAt": "2026-10-08T10:26:52.305Z",
+    "exitCode": 0,
+    "log": "logs/skill-pin.log",
+    "secretRedaction": true
+  }
+]

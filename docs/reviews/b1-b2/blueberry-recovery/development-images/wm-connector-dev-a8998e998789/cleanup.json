@@ -1,0 +1,39 @@
+{
+  "owner": "wm-connector-dev-a8998e998789",
+  "results": [
+    {
+      "tag": "wm-connector-dev-a8998e998789:api",
+      "state": "absent"
+    },
+    {
+      "tag": "wm-connector-dev-a8998e998789:web",
+      "state": "absent"
+    },
+    {
+      "tag": "wm-connector-dev-a8998e998789:worker",
+      "state": "absent"
+    },
+    {
+      "tag": "wm-connector-dev-a8998e998789:mcp",
+      "state": "absent"
+    },
+    {
+      "builder": "wm-connector-dev-a8998e998789",
+      "exit": 0,
+      "output": "wm-connector-dev-a8998e998789 removed\n"
+    },
+    {
+      "kind": "container",
+      "name": "buildx_buildkit_wm-connector-dev-a8998e9987890",
+      "absent": true,
+      "output": "Error response from daemon: No such container: buildx_buildkit_wm-connector-dev-a8998e9987890\n"
+    },
+    {
+      "kind": "volume",
+      "name": "buildx_buildkit_wm-connector-dev-a8998e9987890_state",
+      "absent": true,
+      "output": "Error response from daemon: get buildx_buildkit_wm-connector-dev-a8998e9987890_state: no such volume\n"
+    }
+  ],
+  "retained": "已有资源与共享node/buildkit基础镜像不删除；只移除准确本任务标签与builder自有缓存/卷，不做全局prune"
+}

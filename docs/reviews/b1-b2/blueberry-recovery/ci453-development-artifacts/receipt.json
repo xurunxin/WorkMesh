@@ -1,0 +1,69 @@
+{
+  "runId": 38154334929,
+  "sourceHead": "afffde68fe257b86a5a4a9338091552e801b7e13",
+  "checkout": "168b4760a801f472b6f38d16f726a80444a7670a",
+  "tree": "cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e",
+  "artifactId": 11707964203,
+  "artifactName": "source-gates-raw-38154334929-1",
+  "archiveBytes": 2383016,
+  "archiveSha256": "7f72464bed4d6625c9e1ca5cd6511742a10569b386eb14ac3ac2a3b1df100707",
+  "owner": "wm-connector-dev-bb1b4f2ea4e1",
+  "files": [
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/registration.json",
+      "path": "registration.json",
+      "bytes": 3893,
+      "sha256": "9fda8415a5c10d336c84d5ff59e5760863687a87b0cfffd5aeb1f10521c87336"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/builds.json",
+      "path": "builds.json",
+      "bytes": 5101,
+      "sha256": "e77b1ef66a629b96c3c049fd5f6448fa73b694e82a766f631f66b054f6c7cbf0"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/builder-before-cleanup.json",
+      "path": "builder-before-cleanup.json",
+      "bytes": 7289,
+      "sha256": "cb2aaa182982d2fc6c52a8aaa4b7bc05fd2e6c080f256cafabd244a67b429333"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/cleanup.json",
+      "path": "cleanup.json",
+      "bytes": 10242,
+      "sha256": "8630f863cb4b97849a8af6c663c3c7054ccfe3d2c03887478cda999de31de9df"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/result.json",
+      "path": "result.json",
+      "bytes": 197,
+      "sha256": "e07a4330fa83a9a4e2f6a1f3177b96a17e0275e6f7b0c5a26eb27ed44aeab620"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/api.log",
+      "path": "api.log",
+      "bytes": 20603,
+      "sha256": "b47604b4718c88a3b8dbb52f25ac7efefc7083336508748bb38ae872a5d246de"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/web.log",
+      "path": "web.log",
+      "bytes": 17202,
+      "sha256": "b9b11d28b3c6193590c062f49757ecbc304f26f958357b0751cbc006307305aa"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/worker.log",
+      "path": "worker.log",
+      "bytes": 17281,
+      "sha256": "1f76ed5a2e9a139a92e436a94d7d41c76c222741ba5335cfa3772119409ab4d6"
+    },
+    {
+      "member": "development-images/wm-connector-dev-bb1b4f2ea4e1/mcp.log",
+      "path": "mcp.log",
+      "bytes": 17203,
+      "sha256": "5429101c399849ae232b2fd58e9ec06e87445286890cd4f6d5dfaf30e7973cb7"
+    }
+  ],
+  "verified": true,
+  "source": "完整ZIP仅在内存读取并保摘要；选定四镜像日志及登记/结果/清理JSON保存原字节，不保存其他上下文或凭据"
+}

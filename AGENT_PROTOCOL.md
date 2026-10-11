@@ -170,7 +170,7 @@ GET /.well-known/workmesh-agent HTTP/1.1
 Connection 生命周期：
 
 1. `POST /api/v1/agent-connections`（Workspace Admin）创建预授权信封，固定 `name`、`agentSlug`、`teamId`、`principalHumanActorId`、`clientType`、`requestedCapabilities`、可选 `grantAgentDelegate`（默认 `false`）。响应包含 `id`、把配对码放在 fragment 里的 `connectUrl`、`pairingCodeExpiresAt`（10 分钟）、`skillVersion` 与 `skillSha256`，以及 `redactedToken: true`（连接响应永远不返明文 Token）。配对码只存 hash。
-2. `POST /api/v1/agent-connections/redeem`（Agent，**未鉴权**）用明文 `wmp_` 配对码 + `agentSlug` + 必需 `Idempotency-Key` 头兑换。服务端在**一个 PostgreSQL 事务**里写 `credential_fingerprints`、标记配对码已用、发出 `agent.connection.pairing_redeemed` 事件与 outbox 行；响应**只返回一次**以 `wmi_` 开头的明文 Installation Token、绑定的 Skill bundle、MCP 配置 blob、`principalHumanActorId`、绑定的 `teamId`。Agent 在持久化前必须校验 `SHA-256(installation_token)` 的前 12 位等于响应的 `connection.credential_fingerprint_prefix`。**成功响应以 `Idempotency-Key` 为键保留整个配对码生命周期**：Agent 因网络丢包重放同一 key 拿回完全相同的响应；同 key 不同 code → 拒绝；同 code 不同 key → `AGENT_CONNECTION_PAIRING_CONSUMED`；超阈值暴力猜测 → `AGENT_CONNECTION_PAIRING_LOCKED`。
+2. `POST /api/v1/agent-connections/redeem`（Agent，**未鉴权**）用明文 `wmp_` 配对码 + `agentSlug` + 必需 `Idempotency-Key` 头兑换。服务端在**一个 PostgreSQL 事务**里写 `credential_fingerprints`、标记配对码已用、发出 `agent.connection.pairing_redeemed` 事件与 outbox 行；首次成功响应返回以 `wmi_` 开头的明文 Installation Token、绑定的 Skill bundle、MCP 配置 blob、`principalHumanActorId`、绑定的 `teamId`。Agent 在持久化前必须校验 `SHA-256(installation_token)` 的前 12 位等于响应的 `connection.credential_fingerprint_prefix`。**成功响应由现有加密认证幂等机制保留十五分钟**（以响应 `idempotency_replay.replayable_until` 为准，冲突身份保留二十四小时）：原 key、body、subject、operation、origin 与 user-agent 必须相同，Agent 因网络丢包重放同一身份拿回完全相同的响应；同 key 异体或上下文改变 → 拒绝；同 code 不同 key → `AGENT_CONNECTION_PAIRING_CONSUMED`；超阈值暴力猜测 → `AGENT_CONNECTION_PAIRING_LOCKED`。
 3. `GET /api/v1/agent-connections/{id}` 返回当前状态、`lastUsedAt`、MCP/Skill 版本、凭据 fingerprint 前缀，明文 Token 永远不返。响应带 `ETag` 头，值等于 `revision`；客户端在 `If-Match` 里回传。
 4. `PATCH /api/v1/agent-connections/{id}` 允许 Workspace Admin 修改 `name`、`principalHumanActorId`（须仍在绑定 Team）、显示备注；**不能**改 `teamId`、`clientType`、`requestedCapabilities`、`grantAgentDelegate`。**扩权必须创建新 Connection**（包含新的 `grantAgentDelegate` 与 `requestedCapabilities`），同时 DELETE 旧 Connection。Rotate 不承载扩权——它的 request body 为空。`PATCH` 必须带 `If-Match`。
 5. `DELETE /api/v1/agent-connections/{id}` **硬撤销**：标记 Connection 为 `revoked`、清空**所有**该 Connection 的活跃 Coordination Session、发出 `agent.connection.revoked` 与 outbox 事件；Connection 行保留为不可变审计记录。`DELETE` 必须带 `If-Match`。**与 `/rotate-confirm` 不同**：`DELETE` 撤销的是整个 Connection + 全部活跃 Session + 当前 Installation Token；`/rotate-confirm` 只撤销当前 Rotation 引入的旧 fingerprint、保留新凭据、保留活跃 Session。重叠期内想只撤销旧凭据 → 调 `/rotate-confirm`；想完整下线整个 Connection → 调 `DELETE`。
@@ -186,7 +186,13 @@ UI 生成给 Human 复制给 Agent 的 handoff 必须是可执行的完整步骤
 5. 使用响应的精确 MCP URL、`X-WorkMesh-Installation-Token` header 与固定 Skill；
 6. `verify_connection` 和 `get_workmesh_context` 的验证顺序，以及任一步失败时停止而不是静默换用旧 token。
 
-fragment 携带配对码，绝不进入代理访问日志；`connectUrl` 的 schema 强制要求 fragment 存在。
+既有 handoff 的 `connectUrl` schema 保留 fragment。连接器接收完整原始配对码的隐藏输入或扫码设备文本，不接收 URL 或命令行秘密参数，不降低 32 字节 bearer 熵。
+
+连接器首次联网前在当前用户专用配置目录独占建立敏感 pending，保存随机 key、精确请求字符串、origin 和 user-agent。pending 允许完整配对码，禁止安装令牌；POSIX 目录/文件分别验证 `0700`/`0600`，Windows 在创建时设置当前用户 SID 专用 owner/DACL 并读回验证。后续失败重放原身份，损坏记录不得自动重建。窗口外须管理员重新配对，不能换 key 重试原码。
+
+`apps/connector` 在任何秘密存储或正式配置写入前，完成 discovery、兑换指纹、固定 Skill 原始 UTF-8/LF 字节、SHA-256 和可信公钥 Ed25519 签名验证，再执行 `initialize → verify_connection → get_workmesh_context`。Team、principal、Agent、Connection、profile、Skill、能力集合和 Coordination Session 均须与管理员本地无秘密预期清单精确一致；`authenticated_credential` 必须是匹配当前指纹的 `active`，旧 overlap、撤销和过期凭据均拒绝。重放本身不承诺重新检查撤权。
+
+正式配置归连接器所有，只保存系统秘密引用。Windows Credential Manager、macOS Keychain、Linux Secret Service 为唯一安装令牌持久化落点，后端不可用不降级。新增独有秘密引用并读回核对后，原子替换正式配置作为提交点：替换前失败/重启删除新增秘密，旧配置和旧引用保持完整；替换后重启校验新配置摘要及新引用再收尾。补偿失败保留提交记录并阻止新提交。启动入口只向子进程环境注入令牌，客户端片段无秘密。零数据库迁移、零凭据生命周期变更；发布与无源码安装另由 B-ship 验收。
 
 ## 3.5 Coordination Session（v1.1）
 

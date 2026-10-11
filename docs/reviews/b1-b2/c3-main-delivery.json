@@ -1,0 +1,44 @@
+{
+  "capturedAt": "2026-10-08T13:52:20.412Z",
+  "checkedHead": "c1c7bca6b3231144c7bcfadff390c479ab116c22",
+  "parents": [
+    "7ea518a8aed920b53bd2c0e16b6a4e8b2a209e47",
+    "18252ba8761aa810c3fd12d31ecae83e8b24d985"
+  ],
+  "actualMain": "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+  "mainIsAncestor": true,
+  "sourceId": "75d6837abc434b1c6faa19b6789422235a753fe53790f460889eb5967ada1d73",
+  "sourceFiles": 129,
+  "committedSourceMismatches": [],
+  "fullPrDiffCheck": {
+    "command": [
+      "git",
+      "diff",
+      "18252ba8761aa810c3fd12d31ecae83e8b24d985",
+      "c1c7bca6b3231144c7bcfadff390c479ab116c22",
+      "--check"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "c3Proof": {
+    "reviewedHead": "3fcfdb5c99be5de8c0f3e07f4ad0b2d29b76a0c7",
+    "ciRun": 37784401511,
+    "ciNumber": 393,
+    "ciJobs": 10,
+    "conclusion": "success",
+    "pr": 207
+  },
+  "ownConnectorChanges": "",
+  "ownSchemaServerContractsConfigDiff": "",
+  "gates": {
+    "combinationReview": "待本轮增量定向读回，保留7ea518源码独审",
+    "threeOSCI": "等待页面提交当前分支 PR",
+    "windowsSecondUser": "历史两项缺夹具失败，不冒本轮通过",
+    "macOS": "历史未测，不冒本轮通过",
+    "requiredCI": "等待修订 head 的自身成功结果",
+    "connectorActualMain": "未合入"
+  },
+  "resources": "evidence/c3-cleanup.json；仅本轮登记资源，未触碰 C3 被拒目标或旧工作区"
+}

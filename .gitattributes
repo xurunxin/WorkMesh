@@ -13,3 +13,16 @@ infra/lite/*.sh text eol=lf
 # 本轮压缩字节映射和归档保持原字节，禁止换行转换。
 docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/*.zip -text
 docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/*.gz -text
+scripts/test-connector-linux.sh text eol=lf
+
+# Exact connector plan/spec snapshots keep their approved UTF-8/LF bytes.
+docs/plan/connector-recovery.md text eol=lf
+docs/reviews/b1-b2/current-spec.md text eol=lf
+
+# 新机验收原件无损归档；源码格式门禁不因日志空白而放宽。
+docs/reviews/b1-b2/blueberry-recovery/*.zip -text
+docs/reviews/b1-b2/blueberry-recovery/ci*-artifacts/*/connector-source-*.json -text
+docs/reviews/b1-b2/blueberry-recovery/ci*-artifacts/*/connector-cleanup.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# 开发镜像构建登记/清理原件同样保持原字节，仅允许真实CR行尾。
+docs/reviews/b1-b2/blueberry-recovery/development-images/wm-connector-dev-*/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/reviews/b1-b2/blueberry-recovery/ci*-development-artifacts/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -1,0 +1,20 @@
+{
+  "owner": "wm-connector-dev-bb1b4f2ea4e1",
+  "registeredAt": "2026-10-11T16:19:45.620869+00:00",
+  "head": "168b4760a801f472b6f38d16f726a80444a7670a",
+  "indexTree": "cfeb5e9aaadc4f3dee48dfc38816614e4e46b75e",
+  "builder": "wm-connector-dev-bb1b4f2ea4e1",
+  "tags": {
+    "api": "wm-connector-dev-bb1b4f2ea4e1:api",
+    "web": "wm-connector-dev-bb1b4f2ea4e1:web",
+    "worker": "wm-connector-dev-bb1b4f2ea4e1:worker",
+    "mcp": "wm-connector-dev-bb1b4f2ea4e1:mcp"
+  },
+  "context": "git archive准确index tree，二进制管道传入Docker；全部已跟踪文件，排除未跟踪本机环境/秘密，不创建额外工作树或上下文目录",
+  "dockerVersion": "Client: Docker Engine - Community\n Version:           28.0.4\n API version:       1.48\n Go version:        go1.23.7\n Git commit:        b8034c0\n Built:             Tue Mar 25 15:07:16 2025\n OS/Arch:           linux/amd64\n Context:           default\n\nServer: Docker Engine - Community\n Engine:\n  Version:          28.0.4\n  API version:      1.48 (minimum version 1.24)\n  Go version:       go1.23.7\n  Git commit:       6430e49\n  Built:            Tue Mar 25 15:07:16 2025\n  OS/Arch:          linux/amd64\n  Experimental:     false\n containerd:\n  Version:          v2.3.6\n  GitCommit:        ee2735368117d2eb259779949d5e75cdafec9761\n runc:\n  Version:          1.5.1\n  GitCommit:        v1.5.1-0-g8f2685a4\n docker-init:\n  Version:          0.19.0\n  GitCommit:        de40ad0\n",
+  "baseline": {
+    "images": "{\"Containers\":\"N/A\",\"CreatedAt\":\"2026-10-02 17:00:40 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"\\u003cnone\\u003e\",\"ID\":\"sha256:70d716031cd8fbdb03ea648b706ea4ac706b6d33b8f420bac7479c2f441c4261\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"47.1MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\",\"VirtualSize\":\"47.13MB\"}\n{\"Containers\":\"N/A\",\"CreatedAt\":\"2026-10-02 12:49:24 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"\\u003cnone\\u003e\",\"ID\":\"sha256:226ed17086e98ddeee3160baabfb3f78a829d92364d4133509d18d2418c9962e\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"835MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\",\"VirtualSize\":\"834.9MB\"}\n{\"Containers\":\"N/A\",\"CreatedAt\":\"2026-10-02 05:05:59 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"\\u003cnone\\u003e\",\"ID\":\"sha256:a589ff70a2020d1b1c5e77be8a997173f4eed8fe2230ae03893c330994c27440\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"181MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\",\"VirtualSize\":\"181.1MB\"}\n{\"Containers\":\"N/A\",\"CreatedAt\":\"2026-10-02 04:58:03 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"\\u003cnone\\u003e\",\"ID\":\"sha256:d1d510080c4d6741ea6a805d8f522bb83040186cef3474cc665932a84f6f9a3b\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"547MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\",\"VirtualSize\":\"546.5MB\"}\n{\"Containers\":\"N/A\",\"CreatedAt\":\"2026-10-02 04:56:18 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"\\u003cnone\\u003e\",\"ID\":\"sha256:6b335d6fe22a4651a1f265fea4267b837129d7dfe5279c12f46e6d080182ee44\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"207MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\",\"VirtualSize\":\"207.3MB\"}\n{\"Containers\":\"N/A\",\"CreatedAt\":\"2026-09-22 02:34:14 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"\\u003cnone\\u003e\",\"ID\":\"sha256:22967111f2812e3549c638bafb97d3d5de396bb09e7a6b84173d58b979433abb\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"43.1MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\",\"VirtualSize\":\"43.13MB\"}\n",
+    "containers": "",
+    "volumes": ""
+  }
+}

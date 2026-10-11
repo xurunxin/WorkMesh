@@ -5,18 +5,26 @@ RUN corepack enable \
   && chmod -R a+rX "$COREPACK_HOME" \
   && addgroup -S workmesh \
   && adduser -S workmesh -G workmesh
+# 安装同一 workspace 的连接器原生依赖需要编译工具。
+RUN apk add --no-cache python3 make g++
 WORKDIR /app
 COPY --chown=workmesh:workmesh package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
 COPY --chown=workmesh:workmesh apps/api/package.json apps/api/package.json
+COPY --chown=workmesh:workmesh apps/connector/package.json apps/connector/package.json
+COPY --chown=workmesh:workmesh apps/connector/scripts/prepare-native.mjs apps/connector/scripts/prepare-native.mjs
 COPY --chown=workmesh:workmesh apps/web/package.json apps/web/package.json
 COPY --chown=workmesh:workmesh apps/worker/package.json apps/worker/package.json
 COPY --chown=workmesh:workmesh apps/mcp/package.json apps/mcp/package.json
 COPY --chown=workmesh:workmesh apps/fake-agent/package.json apps/fake-agent/package.json
+COPY --chown=workmesh:workmesh packages/a2a-adapter/package.json packages/a2a-adapter/package.json
+COPY --chown=workmesh:workmesh packages/artifact-storage/package.json packages/artifact-storage/package.json
 COPY --chown=workmesh:workmesh packages/config/package.json packages/config/package.json
 COPY --chown=workmesh:workmesh packages/contracts/package.json packages/contracts/package.json
 COPY --chown=workmesh:workmesh packages/db/package.json packages/db/package.json
 COPY --chown=workmesh:workmesh packages/domain/package.json packages/domain/package.json
+COPY --chown=workmesh:workmesh packages/git-provider/package.json packages/git-provider/package.json
 COPY --chown=workmesh:workmesh packages/observability/package.json packages/observability/package.json
+COPY --chown=workmesh:workmesh packages/recovery/package.json packages/recovery/package.json
 COPY --chown=workmesh:workmesh packages/ui/package.json packages/ui/package.json
 COPY --chown=workmesh:workmesh packages/agent-sdk/package.json packages/agent-sdk/package.json
 RUN --mount=type=cache,id=workmesh-web-pnpm-store,target=/pnpm/store,sharing=locked \

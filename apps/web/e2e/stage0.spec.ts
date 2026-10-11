@@ -462,8 +462,11 @@ test.describe("Stage 0 browser acceptance", () => {
     }
 
     await page.getByRole("link", { name: "Settings", exact: true }).click();
-    await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
     const deleteTeamDetails = page.getByRole("region", { name: "Team details" });
+    // Settings initializes its team route after navigation; wait for the form
+    // before selecting the team this deletion scenario is about.
+    await expect(deleteTeamDetails).toBeVisible();
+    await page.getByLabel("Current team").first().selectOption({ label: `${editedTeamName} (ACC)` });
     await expect(deleteTeamDetails.getByRole("textbox", { name: "Team name" })).toHaveValue(editedTeamName);
     await deleteTeamDetails.getByRole("button", { name: "Delete team" }).click();
     const deleteDialog = page.getByRole("dialog", { name: "Delete Team" });

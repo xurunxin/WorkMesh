@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from './ci-bootstrap/yaml.mjs'
 import { externalTestInputs, externalTypecheckInputs } from './ci-test-inputs.mjs'
-import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints } from './ci-policy.mjs'
+import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -20,6 +20,7 @@ const occurrences = (pattern, value = workflow) => [...value.matchAll(pattern)].
 const workflowDocument = parseDocument(workflow, { prettyErrors: true })
 requireCondition(workflowDocument.errors.length === 0, 'workflow must be valid YAML')
 const parsedWorkflow = workflowDocument.toJS()
+failures.push(...validateDevelopmentImageEntrypoint(parsedWorkflow.jobs?.['source-gates']))
 failures.push(...validateCiBootstrap({
   job: parsedWorkflow.jobs?.changes,
   manifest: JSON.parse(readFileSync(resolve(root, 'scripts/ci-bootstrap/package.json'), 'utf8')),
@@ -137,6 +138,7 @@ const requiredJobs = [
   'e2e',
   'recovery-integration',
   'agent-smoke',
+  'connector-platform',
   'required-ci',
 ]
 requireCondition(
@@ -153,6 +155,7 @@ const rawArtifacts = new Map([
   ['e2e', 'e2e-raw-shard-${{ matrix.shard }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['recovery-integration', 'recovery-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['connector-platform', 'connector-platform-raw-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['required-ci', 'required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
 ])
 for (const jobId of requiredJobs) {
@@ -296,6 +299,7 @@ for (const command of [
   'pnpm ci:source build',
   'pnpm ci:source test',
   'docker compose config',
+  'python3 scripts/validate-development-images.py',
   'git diff --exit-code',
   'git diff --cached --exit-code',
 ])

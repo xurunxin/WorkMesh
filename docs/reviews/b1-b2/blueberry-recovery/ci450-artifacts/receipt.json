@@ -1,0 +1,72 @@
+{
+  "runId": 38148009266,
+  "artifacts": [
+    {
+      "id": 11706190081,
+      "name": "connector-platform-raw-windows-latest-38148009266-1",
+      "archiveBytes": 2528294,
+      "archiveSha256": "10a8af116db719649954d47d0efd207018b76be4d0f770b285d6cf41e231ec2e",
+      "files": [
+        {
+          "member": "connector-source-before.json",
+          "path": "connector-platform-raw-windows-latest-38148009266-1\\connector-source-before.json",
+          "bytes": 424181,
+          "sha256": "41f8b5cc04c2113183a85bcc05015e7ed3e330e12b60293a4f5aeea7adb3a404"
+        },
+        {
+          "member": "connector-source-after.json",
+          "path": "connector-platform-raw-windows-latest-38148009266-1\\connector-source-after.json",
+          "bytes": 424180,
+          "sha256": "fe6b6157e994b16ef3430dc7070a6baf05dd4504cfbbaccb1bc1c0c9bf6ff923"
+        },
+        {
+          "member": "connector-cleanup.json",
+          "path": "connector-platform-raw-windows-latest-38148009266-1\\connector-cleanup.json",
+          "bytes": 260,
+          "sha256": "cf01c7f560910754bf9671cd14eb15ea97fefd0fc8f7fc6b06dbbeda8bfca428"
+        }
+      ]
+    },
+    {
+      "id": 11705364503,
+      "name": "connector-platform-raw-macos-latest-38148009266-1",
+      "archiveBytes": 2525129,
+      "archiveSha256": "71ef1931f2f5d8b0326a104c85711996382bf7868a75cbe1e9615cab0fbefee7",
+      "files": [
+        {
+          "member": "connector-source-before.json",
+          "path": "connector-platform-raw-macos-latest-38148009266-1\\connector-source-before.json",
+          "bytes": 424158,
+          "sha256": "c0d02a6ae906f6ca44f339ad19b4e61d6ca0ed5019ca584d1b6890515fb4f332"
+        },
+        {
+          "member": "connector-source-after.json",
+          "path": "connector-platform-raw-macos-latest-38148009266-1\\connector-source-after.json",
+          "bytes": 424157,
+          "sha256": "e2ab1fb9db9c63f760f283a13f49ce80404b4f5ead492496c8b45803eed9afa5"
+        }
+      ]
+    },
+    {
+      "id": 11704984911,
+      "name": "connector-platform-raw-ubuntu-latest-38148009266-1",
+      "archiveBytes": 2524160,
+      "archiveSha256": "27ceb6d5cc876894b79de30b28ef5c891ade5ae1f05551e94edb883d7e687c91",
+      "files": [
+        {
+          "member": "connector-source-before.json",
+          "path": "connector-platform-raw-ubuntu-latest-38148009266-1\\connector-source-before.json",
+          "bytes": 424144,
+          "sha256": "77991e72dde3aeceef5ac5ea828fe4939ddd1c8b373aed2922c9a8e3ec27e3db"
+        },
+        {
+          "member": "connector-source-after.json",
+          "path": "connector-platform-raw-ubuntu-latest-38148009266-1\\connector-source-after.json",
+          "bytes": 424143,
+          "sha256": "2831f4561e02e00d716fa2795bc542aa6d3c3ef100c8583109032288903758ab"
+        }
+      ]
+    }
+  ],
+  "source": "gh api artifacts/id/zip原始stdout；选定JSON原字节保存，完整ZIP仅保hash/长度，不冒已保全全工件"
+}

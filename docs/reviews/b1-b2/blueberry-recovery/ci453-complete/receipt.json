@@ -1,0 +1,31 @@
+{
+  "capturedAt": "2026-10-11T16:35:42.409878+00:00",
+  "runId": 38154334929,
+  "head": "afffde68fe257b86a5a4a9338091552e801b7e13",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38154334929",
+  "status": "completed",
+  "conclusion": "success",
+  "logs": [
+    {
+      "jobId": 114514305110,
+      "name": "Source gates",
+      "conclusion": "success",
+      "path": "job-114514305110-original.log",
+      "bytes": 251754,
+      "sha256": "d0aa706058ae49405a5b66841b064133e4c0c75c6bfb49a82a707a3285ea40ed",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114518992705,
+      "name": "Required CI",
+      "conclusion": "success",
+      "path": "job-114518992705-original.log",
+      "bytes": 25738,
+      "sha256": "1532d7a4647d43916c5e9941e80ed11262d30a408d07a78496e2b5cdb53ef487",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

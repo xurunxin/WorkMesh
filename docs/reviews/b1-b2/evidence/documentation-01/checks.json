@@ -1,0 +1,19 @@
+[
+  {
+    "name": "expectation-example",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "exec",
+      "tsx",
+      "--eval",
+      "import fs from \"node:fs\"; import assert from \"node:assert/strict\"; import {expectationSchema} from \"./src/config.ts\"; import {workmeshSkillManifest} from \"@workmesh/contracts\"; const e=expectationSchema.parse(JSON.parse(fs.readFileSync(\"examples/expectation.json\",\"utf8\"))); assert.deepEqual(e.skill, workmeshSkillManifest); console.log(\"清单样例 schema 与真实 Skill pin 一致\");"
+    ],
+    "startedAt": "2026-10-08T10:13:26.280Z",
+    "endedAt": "2026-10-08T10:13:27.407Z",
+    "exitCode": 0,
+    "log": "logs/expectation-example.log",
+    "secretRedaction": true
+  }
+]

@@ -1,0 +1,157 @@
+{
+  "capturedAt": "2026-10-11T11:19:25.279336+00:00",
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c",
+  "gitExecutable": "C:\\Program Files\\Git\\cmd\\git.EXE",
+  "nodeExecutable": "C:\\nvm4w\\nodejs\\node.EXE",
+  "gitVersion": {
+    "command": [
+      "git",
+      "--version"
+    ],
+    "exitCode": 0,
+    "stdout": "git version 2.52.0.windows.1\n",
+    "stderr": ""
+  },
+  "longpaths": {
+    "command": [
+      "git",
+      "config",
+      "--show-origin",
+      "--get",
+      "core.longpaths"
+    ],
+    "exitCode": 0,
+    "stdout": "file:C:/Users/xurx/.gitconfig\ttrue\n",
+    "stderr": ""
+  },
+  "worktrees": {
+    "command": [
+      "git",
+      "worktree",
+      "list",
+      "--porcelain"
+    ],
+    "exitCode": 0,
+    "stdout": "worktree I:/tds_workspace/workspaces/DzkLDn6UW-IbfoTJzN9Ro/repo\nHEAD 20fb7358f6c6818a452e78c1fd3da096cdc31286\nbranch refs/heads/main\n\nworktree I:/tds_workspace/workspaces/01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\nHEAD 20fb7358f6c6818a452e78c1fd3da096cdc31286\nbranch refs/heads/tds/conv-01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\n\n",
+    "stderr": ""
+  },
+  "currentBranch": {
+    "command": [
+      "git",
+      "branch",
+      "--show-current"
+    ],
+    "exitCode": 0,
+    "stdout": "tds/conv-01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\n",
+    "stderr": ""
+  },
+  "head": {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "exitCode": 0,
+    "stdout": "20fb7358f6c6818a452e78c1fd3da096cdc31286\n",
+    "stderr": ""
+  },
+  "mergeHead": {
+    "command": [
+      "git",
+      "rev-parse",
+      "MERGE_HEAD"
+    ],
+    "exitCode": 0,
+    "stdout": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\n",
+    "stderr": ""
+  },
+  "main": {
+    "command": [
+      "git",
+      "rev-parse",
+      "origin/main"
+    ],
+    "exitCode": 0,
+    "stdout": "20fb7358f6c6818a452e78c1fd3da096cdc31286\n",
+    "stderr": ""
+  },
+  "oldProduct": {
+    "command": [
+      "git",
+      "rev-parse",
+      "origin/tds/conv-01a11ac2-a0a9-7ef6-bd48-3bb37c21a301"
+    ],
+    "exitCode": 0,
+    "stdout": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\n",
+    "stderr": ""
+  },
+  "commonIndexLock": {
+    "path": "I:\\tds_workspace\\workspaces\\DzkLDn6UW-IbfoTJzN9Ro\\repo\\.git\\index.lock",
+    "exists": true,
+    "bytes": 0,
+    "mtimeNs": 1791715275688556600
+  },
+  "volumes": {
+    "C": {
+      "total": 254976868352,
+      "used": 222371430400,
+      "free": 32605437952
+    },
+    "I": {
+      "total": 8001427599360,
+      "used": 4745521995776,
+      "free": 3255905603584
+    },
+    "X": {
+      "total": 549688705024,
+      "used": 508261003264,
+      "free": 41427701760
+    }
+  },
+  "currentIndexLockExists": false,
+  "remoteMain": {
+    "command": [
+      "gh",
+      "api",
+      "repos/xurunxin/WorkMesh/git/ref/heads/main",
+      "--jq",
+      ".object.sha"
+    ],
+    "exitCode": 0,
+    "stdout": "20fb7358f6c6818a452e78c1fd3da096cdc31286\n",
+    "stderr": ""
+  },
+  "remoteOldProduct": {
+    "command": [
+      "gh",
+      "api",
+      "repos/xurunxin/WorkMesh/git/ref/heads/tds/conv-01a11ac2-a0a9-7ef6-bd48-3bb37c21a301",
+      "--jq",
+      ".object.sha"
+    ],
+    "exitCode": 0,
+    "stdout": "5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19\n",
+    "stderr": ""
+  },
+  "localNode": {
+    "command": [
+      "node",
+      "--version"
+    ],
+    "exitCode": 0,
+    "stdout": "v25.4.0\n",
+    "stderr": ""
+  },
+  "elevated": {
+    "command": [
+      "powershell.exe",
+      "-NoProfile",
+      "-Command",
+      "([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)"
+    ],
+    "exitCode": 0,
+    "stdout": "False\n",
+    "stderr": ""
+  },
+  "limitation": "平台 conversation 的历史错误正文被截断；本地 daemon 没有历史失败尾部。现有采样不冒完整准备错误日志。共享主仓库 index.lock 只登记，未删除。"
+}

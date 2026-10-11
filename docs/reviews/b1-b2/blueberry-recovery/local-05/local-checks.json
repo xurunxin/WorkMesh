@@ -1,0 +1,92 @@
+[
+  {
+    "name": "lint",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\\.tmp\\blueberry-runtime\\node-v22.19.0-win-x64\\node.exe",
+      "X:/packages/npm/_npx/32b21065a482fe57/node_modules/pnpm/bin/pnpm.cjs",
+      "--filter",
+      "@workmesh/connector",
+      "lint"
+    ],
+    "node": "v22.19.0",
+    "startedAt": "2026-10-11T12:24:42.969Z",
+    "endedAt": "2026-10-11T12:24:52.926Z",
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "changedBefore": [],
+    "changedAfter": []
+  },
+  {
+    "name": "typecheck",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\\.tmp\\blueberry-runtime\\node-v22.19.0-win-x64\\node.exe",
+      "X:/packages/npm/_npx/32b21065a482fe57/node_modules/pnpm/bin/pnpm.cjs",
+      "--filter",
+      "@workmesh/connector",
+      "typecheck"
+    ],
+    "node": "v22.19.0",
+    "startedAt": "2026-10-11T12:24:53.629Z",
+    "endedAt": "2026-10-11T12:25:03.955Z",
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "changedBefore": [],
+    "changedAfter": []
+  },
+  {
+    "name": "test",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\\.tmp\\blueberry-runtime\\node-v22.19.0-win-x64\\node.exe",
+      "X:/packages/npm/_npx/32b21065a482fe57/node_modules/pnpm/bin/pnpm.cjs",
+      "--filter",
+      "@workmesh/connector",
+      "test"
+    ],
+    "node": "v22.19.0",
+    "startedAt": "2026-10-11T12:25:04.499Z",
+    "endedAt": "2026-10-11T12:26:07.370Z",
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "changedBefore": [],
+    "changedAfter": []
+  },
+  {
+    "name": "build",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\\.tmp\\blueberry-runtime\\node-v22.19.0-win-x64\\node.exe",
+      "X:/packages/npm/_npx/32b21065a482fe57/node_modules/pnpm/bin/pnpm.cjs",
+      "--filter",
+      "@workmesh/connector",
+      "build"
+    ],
+    "node": "v22.19.0",
+    "startedAt": "2026-10-11T12:26:07.918Z",
+    "endedAt": "2026-10-11T12:26:17.571Z",
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "changedBefore": [],
+    "changedAfter": []
+  },
+  {
+    "name": "test:platform",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\\.tmp\\blueberry-runtime\\node-v22.19.0-win-x64\\node.exe",
+      "X:/packages/npm/_npx/32b21065a482fe57/node_modules/pnpm/bin/pnpm.cjs",
+      "--filter",
+      "@workmesh/connector",
+      "test:platform"
+    ],
+    "node": "v22.19.0",
+    "startedAt": "2026-10-11T12:26:18.086Z",
+    "endedAt": "2026-10-11T12:26:40.090Z",
+    "exitCode": 1,
+    "signal": null,
+    "error": null,
+    "changedBefore": [],
+    "changedAfter": []
+  }
+]

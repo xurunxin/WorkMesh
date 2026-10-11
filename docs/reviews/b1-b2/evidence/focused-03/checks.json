@@ -1,0 +1,22 @@
+[
+  {
+    "name": "focused-api",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/api",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "../../vitest.integration.config.ts",
+      "integration/stage5-agent-connections.integration.test.ts",
+      "integration/stage5-connector.integration.test.ts"
+    ],
+    "startedAt": "2026-10-08T09:34:04.205Z",
+    "endedAt": "2026-10-08T09:34:40.387Z",
+    "exitCode": 1,
+    "log": "logs/focused-api.log",
+    "secretRedaction": true
+  }
+]

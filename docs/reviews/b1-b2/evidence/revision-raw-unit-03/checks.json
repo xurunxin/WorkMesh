@@ -1,0 +1,30 @@
+[
+  {
+    "name": "connector-typecheck",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "typecheck"
+    ],
+    "startedAt": "2026-10-08T12:33:53.424Z",
+    "endedAt": "2026-10-08T12:33:57.177Z",
+    "exitCode": 0,
+    "log": "logs/connector-typecheck.log",
+    "secretRedaction": true
+  },
+  {
+    "name": "connector-unit",
+    "command": [
+      "pnpm",
+      "--filter",
+      "@workmesh/connector",
+      "test"
+    ],
+    "startedAt": "2026-10-08T12:33:57.843Z",
+    "endedAt": "2026-10-08T12:34:19.822Z",
+    "exitCode": 0,
+    "log": "logs/connector-unit.log",
+    "secretRedaction": true
+  }
+]

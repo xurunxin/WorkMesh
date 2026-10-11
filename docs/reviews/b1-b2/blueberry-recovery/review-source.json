@@ -1,0 +1,26 @@
+{
+  "reviewSourceHead": "afffde68fe257b86a5a4a9338091552e801b7e13",
+  "main": "20fb7358f6c6818a452e78c1fd3da096cdc31286",
+  "branch": "tds/conv-01a12a8e-cadc-7c05-a07a-1d6a77c8f64c",
+  "plan": {
+    "reference": "doc:m7WeSHWZt1Bv3FZwYlnlv",
+    "version": null,
+    "sourceBodySha256": "72e6fcb9d46a3f433291db4b1db3e351c243bc38202fdc884d463f5d50341230",
+    "readableFile": "docs/plan/connector-recovery.md",
+    "readableFileSha256": "71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352",
+    "currentToolIndependentFullReadback": false,
+    "source": "原平台完整注入已保全；本轮实核两份正文原SHA，未重建计划或推断平台版本"
+  },
+  "noSchemaMigrationApiImplementationDelta": true,
+  "previousVerifiedSourceHead": "76be94a28e5bad5a68c0c91c427ca6914af83aba",
+  "reviewFeedbackSourceHead": "eb67b765bf30639000b2c002cbfeaf78b6ca8bec",
+  "reviewFeedbackBlocking": "四个开发镜像在pnpm install前缺prepare-native.mjs；修正及CI453实证见development-images/review-fix.md，正式复审待闭合",
+  "validationRun": {
+    "id": 38154334929,
+    "number": 453,
+    "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38154334929",
+    "nativeSourceProof": "ci453-source-equivalence.json",
+    "developmentImagesProof": "ci453-development-artifacts/receipt.json",
+    "note": "本轮正式成果独审源；后续只收齐报告和证据，最终证据提交自身CI由PR最新head/最终回复核实，不在本文件写自引用SHA"
+  }
+}
