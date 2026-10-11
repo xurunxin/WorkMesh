@@ -18,7 +18,7 @@ import { createWorkMeshMcpHttpServer } from '../../../apps/mcp/src/http.js'
 import { createWorkMeshMcpServer } from '../../../apps/mcp/src/index.js'
 
 const execFileAsync = promisify(execFile)
-export const evidenceRoot = resolve(import.meta.dirname, '../../../ci-logs/mcp-coverage')
+export const evidenceRoot = resolve(process.env.WORKMESH_M4_EVIDENCE_ROOT ?? resolve(import.meta.dirname, '../../../ci-logs/mcp-coverage'))
 export const saveEvidence = (name: string, value: unknown): void => {
   mkdirSync(evidenceRoot, { recursive: true })
   writeFileSync(resolve(evidenceRoot, name), JSON.stringify(value, null, 2) + '\n')
@@ -35,7 +35,7 @@ export async function createMcpCoverageFixture(options:{capabilities?:Capability
     throw new Error('MCP/Pi conformance credentials are required; no skip fallback')
   const db = createDb(databaseUrl)
   const features = loadFeatureConfig({ ...options.features, WORKMESH_BETA_COORDINATION_MCP: 'true' })
-  let app = buildApp({ features, logger: { level: options.capabilities?.includes('repo:read')?'error':'silent' } })
+  let app = buildApp({ features, logger: { level: options.capabilities?.some(capability=>['repo:read','automation:manage'].includes(capability))?'error':'silent' } })
   const servers: Server[] = []
   const clients: Client[] = []
   const embedded: Array<ReturnType<typeof createWorkMeshMcpServer>> = []

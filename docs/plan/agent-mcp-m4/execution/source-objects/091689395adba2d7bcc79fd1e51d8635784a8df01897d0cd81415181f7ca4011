@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-07T10:58:52.149Z",
+  "baseCommit": "da7ddf9c44707e2619cef91b07afbb0303ee5ebe",
+  "scope": "仅修订计划与基线证据，未改产品、token、测试配置或原始 PNG；复核既有结果，没有重跑五项必需检查",
+  "batchApproval": {
+    "approvedAt": "2026-10-07T18:38:00+08:00",
+    "scope": "仅本批使用 Todos 编排和执行记录、仓库存放规格及证据，替代真实 WorkMesh 双轨记录；其余领域、安全、测试约束保持",
+    "source": "用户本轮完整 D0 规格与反馈，已与 Todos #10 当前规格核对",
+    "sourceTodo": "MPhtZiff23B33m9i2equq",
+    "recordedIn": "docs/plan/2026-10-07-activation-onboarding-and-china-ecosystem.md",
+    "futureDesignCredentialPermissionAndExternalReleaseRequireSeparateApproval": true
+  },
+  "originalSourceFilesVerified": 9,
+  "originalBaselinesVerified": 14,
+  "rawPngPairVerification": {
+    "equality": "sha256",
+    "toleranceUsed": false,
+    "independentCaptureCount": 56,
+    "runs": [
+      {
+        "kind": "capture",
+        "originalPngAttachmentsVerified": true,
+        "recordCount": 14,
+        "captureCount": 28,
+        "entries": [
+          {
+            "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/board.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/issues-list.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/project.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/settings.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/workbench.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/agent-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/board.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/issue-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/issues-list.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/project.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/settings.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/workbench.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          }
+        ]
+      },
+      {
+        "kind": "restartReplay",
+        "originalPngAttachmentsVerified": true,
+        "recordCount": 14,
+        "captureCount": 28,
+        "entries": [
+          {
+            "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/board.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/issues-list.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/project.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/settings.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/desktop-1440x1000/workbench.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/agent-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/board.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/issue-detail.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/issues-list.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/project.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/settings.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          },
+          {
+            "snapshot": "win32/mobile-390x844/workbench.png",
+            "originalPngAttachmentVerified": true,
+            "pairSha256Equal": true,
+            "matchesBaselineBytes": true
+          }
+        ]
+      }
+    ]
+  },
+  "restartVisualComparison": {
+    "result": "passed",
+    "passedCases": 14,
+    "threshold": 0.005,
+    "maxDiffPixels": 0,
+    "evidence": "checks.json",
+    "sha256EqualityImpliedByComparator": false,
+    "productVisualApproval": false
+  },
+  "toleranceEvidence": {
+    "evaluator": "Playwright 1.61.1 自带的 image/png 比较器，默认 pixelmatch 与抗锯齿处理",
+    "expected": "failures/pre-stabilization/mobile-390x844/issue-detail.png",
+    "actual": "failures/strict-mobile-issue-detail-actual.png",
+    "expectedSha256": "f9bacad2bef6b5927a04414e3a515b0344112c13d4a4ef94013f3d48f5966b6a",
+    "actualSha256": "c65f1e8467be0e81cae76a1de1e6ffc0a6829504c4d95b29b15375b715c62002",
+    "rawBytesEqual": false,
+    "zeroTolerance": {
+      "threshold": 0,
+      "maxDiffPixels": 0,
+      "passed": false,
+      "errorMessage": "1 pixels (ratio 0.01 of all image pixels) are different."
+    },
+    "configuredTolerance": {
+      "threshold": 0.005,
+      "maxDiffPixels": 0,
+      "passed": true
+    },
+    "productVisualApproval": false,
+    "historicalExpected": "win32/mobile-390x844/issue-detail.png"
+  },
+  "originalCheckLogsVerified": [
+    {
+      "command": "pnpm lint",
+      "rawLogSha256": "4f0e2b099944e17358de1b07250a73a17fd3454c3e8962feac22cb69358aeb4a",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm typecheck",
+      "rawLogSha256": "788df6fc1c804edc4ef4dd07b560c9ea952c677206569e633f7dd43c07b9c1ee",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test",
+      "rawLogSha256": "70e82eb8558d847eb2f6d939563054dbd8a8110694d81da0e0ce12db52801773",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test:integration",
+      "rawLogSha256": "810213fe3285d204bd3f0137634d9cc3e5ebdc9b6b111eb07504c172aac79940",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test:e2e",
+      "rawLogSha256": "e32198351125c558b4726e5348b2b3400909e88b05d3fc76db14ca9ea34c79b7",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm test:integration:recovery",
+      "rawLogSha256": "47169ca1b335e94b4565109dcaff0d5c034dd4757e5553470dc96953242d76bb",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --filter @workmesh/worker test:integration -- integration/retention-upgrade-barrier.integration.test.ts",
+      "rawLogSha256": "40d4bc5dca9d59cac8a3ef885a34df3d4f46336d2fae7494e40eb1beebf58446",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=all",
+      "rawLogSha256": "c8858b548d6ab2829f6360f7db15cb56d51f3256c61fc6c200a047711201d8de",
+      "exitCode": 0
+    },
+    {
+      "command": "pnpm --dir apps/web exec playwright test --config playwright.d0.config.ts --update-snapshots=none",
+      "rawLogSha256": "26112b1ad4740c0b604285a566e45415270a2e6b8ad4fd28771c1c8a4b5a0d52",
+      "exitCode": 0
+    }
+  ],
+  "remainingConditionalSkips": 3,
+  "retiredPrd": {
+    "deletionCommit": "dae4620366f33136d65e533d85823db49b9a3fe1",
+    "deletionEvidence": "D\tWORKMESH_PRD.md",
+    "isAncestorOfBaseCommit": true,
+    "authoritySources": [
+      {
+        "path": "docs/plan/2026-08-22-agent-connection-runtime-reliability.md",
+        "line": 34,
+        "sha256": "9bbf77485b23c75b8576868e2cbfb8515d7ea5811a2282263e5eab4c4eb87299",
+        "excerpt": "- No database migration. `WORKMESH_PRD.md` is absent; use the Issues, `AGENT_PROTOCOL.md`, `OPENAPI.yaml`, `SCHEMA.sql`, and accepted ADRs."
+      },
+      {
+        "path": "docs/plan/2026-09-24-prototype-pi-agent-workbench.baseline.md",
+        "line": 62,
+        "sha256": "e873a7f1cf55a75eb7db5cf93e07a2ec863f5fb01f09871d85bf31f01a2d7ec4",
+        "excerpt": "- `WORKMESH_PRD.md`：**确认缺失**。仍被 `AGENTS.md:7` 与 `MANIFEST.json:12` 引用；`docs/plan/2026-08-22-agent-connection-runtime-reliability.md:34` 已有先例说明其缺失并以 Issues/AGENT_PROTOCOL/OPENAPI/SCHEMA/ADR 替代。恢复方案：修正 `AGENTS.md` 与 `MANIFEST.json` 的引用（指向现行权威文档集合），不凭记忆重造 PRD 正文。"
+      }
+    ],
+    "staleReferencesOwner": "G1",
+    "blocksD0CaptureOrChecks": false
+  },
+  "gates": {
+    "d0Evidence": "passed",
+    "independentReview": "awaiting_review",
+    "d1a": "closed",
+    "reason": "D0 基线清单、DoD 与必需检查已满足；D1a 还依赖 G1/P1/R1，未由本交付验收，不放行其他前置。PRD 陈旧引用不是 D0 采集/检查阻塞。"
+  },
+  "resourcePointerNote": "当前基线采集条件修订后，将旧比较 expected 指向已保留历史原图；原始 PNG/哈希/差异指标/失败结论均未改变"
+}

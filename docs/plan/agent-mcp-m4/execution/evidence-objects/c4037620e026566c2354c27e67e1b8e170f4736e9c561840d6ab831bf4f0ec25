@@ -1,0 +1,82 @@
+[
+  {
+    "type": "document",
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-bc26de10-e03b-4b8a-ae1f-6b857008f4fd\\config\\opencode\\opencode.json",
+    "info": {
+      "model": {
+        "providerID": "m5-local",
+        "model": "controlled"
+      },
+      "update": "disable",
+      "permissions": [
+        {
+          "action": "*",
+          "resource": "*",
+          "effect": "deny"
+        },
+        {
+          "action": "workmesh_get_initiative_rollup",
+          "resource": "*",
+          "effect": "allow"
+        },
+        {
+          "action": "workmesh_get_usage_summary",
+          "resource": "*",
+          "effect": "allow"
+        }
+      ],
+      "snapshots": false,
+      "tool_output": {
+        "max_lines": 2000,
+        "max_bytes": 2000000
+      },
+      "mcp": {
+        "servers": {
+          "workmesh": {
+            "type": "remote",
+            "url": "http://127.0.0.1:64866/mcp",
+            "headers": {
+              "Authorization": "[REDACTED]"
+            },
+            "oauth": false,
+            "codemode": false
+          }
+        }
+      },
+      "plugins": [
+        "-opencode.config.compatibility"
+      ],
+      "providers": {
+        "m5-local": {
+          "package": "@opencode/ai/providers/openai-compatible",
+          "settings": {
+            "baseURL": "https://127.0.0.1:64867/v1",
+            "apiKey": "[REDACTED]"
+          },
+          "models": {
+            "controlled": {
+              "name": "M5 controlled local model",
+              "capabilities": {
+                "tools": true,
+                "input": [
+                  "text"
+                ],
+                "output": [
+                  "text"
+                ]
+              },
+              "limit": {
+                "context": 131072,
+                "output": 8192
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "directory",
+    "path": "C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\\.tmp\\m4-4adc5e39\\native-evidence\\opencode-bc26de10-e03b-4b8a-ae1f-6b857008f4fd\\config\\opencode"
+  }
+]

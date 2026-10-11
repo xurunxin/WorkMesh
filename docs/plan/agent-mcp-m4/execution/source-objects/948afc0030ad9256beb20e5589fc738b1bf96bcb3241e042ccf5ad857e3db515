@@ -1,0 +1,1849 @@
+# WorkMesh Agent Protocol 1.0
+
+> 本文定义 WorkMesh 平台与外部 Agent、Agent Runner、MCP Client 以及后续 A2A Adapter 的交互契约。  
+> 日期：2026-07-22
+
+WorkMesh server `1.0.0` implements Agent Protocol `1.0` and MCP server `1.0.0`.
+The version-isolated upstream A2A adapter remains pinned to A2A `0.3`; that
+upstream version is not the WorkMesh Agent Protocol version. Deployments expose
+safe release metadata at public `GET /api/v1/info` and disclose feature support
+tiers and enabled state only after authentication at `GET /api/v1/features`.
+Beta and Experimental capabilities default disabled and never replace normal
+identity, delegation, capability, scope, approval, lease, revision, or
+idempotency checks when enabled.
+
+---
+
+## 1. 目标
+
+协议必须确保：
+
+- Agent 是有身份、有作用域的 Actor；
+- 一次执行有明确 Session；
+- 人和其他 Agent 能看到计划、状态、动作、证据和结果；
+- 所有写操作可追踪、幂等、可停止；
+- Agent 可以在不暴露内部模型状态或隐藏思维链的前提下协作；
+- Agent 供应商可替换，历史仍保存在 WorkMesh；
+- 多 Agent 可以可靠分工、交接和避免重复执行。
+
+## 2. 非目标
+
+- 不规定 Agent 内部使用哪种模型或框架；
+- 不要求 Agent 上传原始 Chain of Thought；
+- 不负责在 WorkMesh API 容器中运行不可信代码；
+- 不把自然语言消息当作唯一机器协议；
+- 不把 Lease 当成权限系统；
+- 不保证外部副作用可自动回滚。
+
+---
+
+# 3. 身份与认证
+
+## 3.1 Agent Definition
+
+Agent 首次注册提交 Manifest：
+
+```json
+{
+  "name": "Backend Coder",
+  "slug": "backend-coder",
+  "provider": "internal",
+  "version": "1.3.0",
+  "endpointUrl": "https://agent.internal.example/workmesh/events",
+  "supportedProtocols": ["native_http", "mcp"],
+  "skills": ["code.investigate", "code.implement", "test.run"],
+  "requestedCapabilities": [
+    "work:read",
+    "work:write",
+    "plan:write",
+    "message:write",
+    "artifact:write",
+    "repo:read",
+    "repo:write_branch",
+    "repo:open_pr",
+    "ci:run"
+  ],
+  "outputArtifactTypes": ["commit", "pull_request", "test_report"],
+  "maxConcurrency": 3,
+  "heartbeatIntervalSeconds": 30,
+  "metadata": {
+    "runtime": "cloud-runner"
+  }
+}
+```
+
+Admin 审核后产生：
+
+- Agent Actor ID；
+- 安装级凭据；
+- 批准 Capability；
+- Team/Project/Repository 范围；
+- Webhook Secret 或公钥；
+- 并发和预算上限。
+
+## 3.2 Token 层级
+
+### Installation Token
+
+用途：
+
+- Agent 自身元数据；
+- 接收安装/权限变更；
+- 请求创建合法 Session；
+- 不直接授予任意工作区写权限。
+
+### Session Token
+
+Session 创建时签发，至少包含：
+
+- actor ID；
+- session ID；
+- delegation ID；
+- workspace/team/project/work item scope；
+- capability intersection；
+- expiry；
+- token ID / nonce；
+- policy version。
+
+Session Stop、Delegation Revocation、权限变更或到期后，服务端立即拒绝 Token。
+
+## 3.3 请求头
+
+所有写请求：
+
+```http
+Authorization: Bearer <session-token>
+Idempotency-Key: <uuid-or-stable-operation-id>
+X-Correlation-Id: <trace-id>
+Content-Type: application/json
+```
+
+Coordination MCP 请求使用 Connection 安装凭据，不使用通用 Bearer：
+
+```http
+X-WorkMesh-Installation-Token: <installation-token>
+```
+
+该 header 只在 Coordination MCP / current-identity 边界使用；普通执行写入仍
+使用目标 Session 的 Bearer Token。
+
+`X-Correlation-Id` 是可选的调用方追踪值，最长 200 个字符，只允许 ASCII
+字母、数字、点、下划线、冒号、斜杠和连字符；凭证样式的前缀会被拒绝。
+授权拒绝审计始终使用服务端生成的 request id，不把调用方值写入不可变账本。
+
+高冲突资源还要：
+
+```http
+If-Match: "revision-4"
+```
+
+## 3.4 Agent Connection（v1.1）
+
+Agent 接入走 **Connection 生命周期**，与单 Work Item 的 executor Session 解耦。
+
+发现：
+
+```http
+GET /.well-known/workmesh-agent HTTP/1.1
+```
+
+公开、不可缓存于代理私有缓存之外，返回：
+
+```json
+{
+  "protocolVersion": "v1",
+  "mcpUrl": "https://workmesh.example.com/mcp/coordination",
+  "wellKnownUrl": "https://workmesh.example.com/.well-known/workmesh-agent",
+  "apiVersion": "v1",
+  "supportedClients": ["codex", "opencode", "pi"],
+  "skill": {
+    "name": "workmesh",
+    "version": "1.1.0",
+    "sha256": "sha256:<hex>",
+    "signature": "ed25519:<base64>"
+  }
+}
+```
+
+发现端点**永远不返回任何 secret、配对码或安装凭据**。
+
+Connection 生命周期：
+
+1. `POST /api/v1/agent-connections`（Workspace Admin）创建预授权信封，固定 `name`、`agentSlug`、`teamId`、`principalHumanActorId`、`clientType`、`requestedCapabilities`、可选 `grantAgentDelegate`（默认 `false`）。响应包含 `id`、把配对码放在 fragment 里的 `connectUrl`、`pairingCodeExpiresAt`（10 分钟）、`skillVersion` 与 `skillSha256`，以及 `redactedToken: true`（连接响应永远不返明文 Token）。配对码只存 hash。
+2. `POST /api/v1/agent-connections/redeem`（Agent，**未鉴权**）用明文 `wmp_` 配对码 + `agentSlug` + 必需 `Idempotency-Key` 头兑换。服务端在**一个 PostgreSQL 事务**里写 `credential_fingerprints`、标记配对码已用、发出 `agent.connection.pairing_redeemed` 事件与 outbox 行；响应**只返回一次**以 `wmi_` 开头的明文 Installation Token、绑定的 Skill bundle、MCP 配置 blob、`principalHumanActorId`、绑定的 `teamId`。Agent 在持久化前必须校验 `SHA-256(installation_token)` 的前 12 位等于响应的 `connection.credential_fingerprint_prefix`。**成功响应以 `Idempotency-Key` 为键保留整个配对码生命周期**：Agent 因网络丢包重放同一 key 拿回完全相同的响应；同 key 不同 code → 拒绝；同 code 不同 key → `AGENT_CONNECTION_PAIRING_CONSUMED`；超阈值暴力猜测 → `AGENT_CONNECTION_PAIRING_LOCKED`。
+3. `GET /api/v1/agent-connections/{id}` 返回当前状态、`lastUsedAt`、MCP/Skill 版本、凭据 fingerprint 前缀，明文 Token 永远不返。响应带 `ETag` 头，值等于 `revision`；客户端在 `If-Match` 里回传。
+4. `PATCH /api/v1/agent-connections/{id}` 允许 Workspace Admin 修改 `name`、`principalHumanActorId`（须仍在绑定 Team）、显示备注；**不能**改 `teamId`、`clientType`、`requestedCapabilities`、`grantAgentDelegate`。**扩权必须创建新 Connection**（包含新的 `grantAgentDelegate` 与 `requestedCapabilities`），同时 DELETE 旧 Connection。Rotate 不承载扩权——它的 request body 为空。`PATCH` 必须带 `If-Match`。
+5. `DELETE /api/v1/agent-connections/{id}` **硬撤销**：标记 Connection 为 `revoked`、清空**所有**该 Connection 的活跃 Coordination Session、发出 `agent.connection.revoked` 与 outbox 事件；Connection 行保留为不可变审计记录。`DELETE` 必须带 `If-Match`。**与 `/rotate-confirm` 不同**：`DELETE` 撤销的是整个 Connection + 全部活跃 Session + 当前 Installation Token；`/rotate-confirm` 只撤销当前 Rotation 引入的旧 fingerprint、保留新凭据、保留活跃 Session。重叠期内想只撤销旧凭据 → 调 `/rotate-confirm`；想完整下线整个 Connection → 调 `DELETE`。
+6. `POST /api/v1/agent-connections/{id}/rotate` 颁发新配对码和新的 pending 凭据。**响应中 `overlap_until` 是真实的截止时间——旧凭据在该时间之前一直可用**。请求 body 为空；Rotate 不改变 `teamId` / `clientType` / `requestedCapabilities` / `grantAgentDelegate`，也不充当 `/rotate-confirm` 端点。Admin 在 15 分钟内可以显式 confirm。
+7. `POST /api/v1/agent-connections/{id}/rotate-confirm` **仅撤销当前 Rotation 引入的旧 fingerprint**——Connection 状态回到 `active`、新凭据保留、活跃 Session 不废。必须带 `If-Match`（Connection 当前 revision）。这是"确认成功后撤销旧凭据"的显式实现；如果 Admin 不调用，15 分钟到期后 worker 走相同结果（worker fallback 是 plan v0.4 明确批准的兜底防线，不是隐式行为）。`agent.connection.rotated` 事件记录。
+
+UI 生成给 Human 复制给 Agent 的 handoff 必须是可执行的完整步骤，而不是只说“打开链接”。它至少包含：
+
+1. 精确的 `connect_url`、`agentSlug` 与 `clientType`；
+2. 明确说明 fragment 中的 `wmp_` 值只是一次性 pairing code，绝不能作为 MCP header；
+3. discovery 与 redeem 的精确端点、请求体、fresh `Idempotency-Key` 和 exact-retry 规则；
+4. 只保存响应中的 `wmi_` Installation Token，并在保存前核对 fingerprint；
+5. 使用响应的精确 MCP URL、`X-WorkMesh-Installation-Token` header 与固定 Skill；
+6. `verify_connection` 和 `get_workmesh_context` 的验证顺序，以及任一步失败时停止而不是静默换用旧 token。
+
+fragment 携带配对码，绝不进入代理访问日志；`connectUrl` 的 schema 强制要求 fragment 存在。
+
+## 3.5 Coordination Session（v1.1）
+
+Installation Token 长期有效至撤销，但**不能**直接执行普通 mutation；它的全部工作流是**派生 Coordination Session**。
+
+每次 Coordination MCP 请求：
+
+1. 解析 Installation Token（原始字节，非 `Bearer` 头），定位到唯一 Connection。
+2. 在一个 PostgreSQL 事务里重新校验 Agent、Team grant、Delegation、能力集、撤销状态，以及 active coordination 对应 backing Agent Session 的 kind、authority-active state 与全部身份绑定；通过则复用、开启或刷新一条 1 小时（最长 2 小时）的 **Coordination Session**。
+3. 该 Session 复用既有 `agent_sessions` 表，新增枚举值 `session_kind = 'coordination'`、`connection_id` 外键、`role = 'coordinator'`、`delegation_scope = 'team'`。
+4. Session 到期前自动续期；Connection 撤销后下一次请求即失败关闭，错误码 `COORDINATION_SESSION_CONNECTION_REVOKED`。
+
+Coordination Session 不复用 executor Session 的预算 / 并发 / 单 Delegation 约束；它走的是 Connection × Team 的整组授权。
+
+`max_concurrency` 只统计 `session_kind='execution'` 且状态非终态的 Session。占位状态固定为 `queued`、`acknowledged`、`planning`、`executing`、`awaiting_input`、`awaiting_approval`、`blocked`、`paused`、`stopping`、`stale`；`completed`、`failed`、`canceled` 释放槽位。所有 execution admission 在持有目标 Agent definition 行锁后复用同一断言，包括普通 delegation/start/retry、child/review/handoff、Loop、Automation 和 A2A 新非终态任务。
+
+active coordination 指向终态或无效 backing Session 时，服务端必须在同一事务关闭旧 coordination；终态 backing 保持不可变，其他无效非终态 backing 先取消，再创建替代 Coordination Session。并发重连必须收敛到唯一 active coordination 与唯一非终态 backing Session。
+
+## 3.6 Task admission、强制委派与自主领取（v1.2）
+
+人类的手动委派是**强制任务分配**，通过一次调用完成 delegation 与 executor
+Session 创建：
+
+```http
+POST /api/v1/work-items/{id}/agent-session
+If-Match: "revision-4"
+Idempotency-Key: <stable-operation-key>
+```
+
+请求的 `role` 只能是 `executor`。同一 assignment 与 active Session 的重放收敛为
+同一结果；人类可以明确替换旧的非终态 executor，但不能依靠隐式重试覆盖新结果。
+该端点不返回 exchange token 或其它 secret。旧的公开两步
+`POST /work-items/{id}/delegations` 与 `POST /agent-sessions` 路径已移除；创建
+executor delegation 必须使用上述一次性端点。
+
+未被明确委派的、可领取 Work Item 可以由 Coordination Agent 自主领取：
+
+```http
+GET /api/v1/work-items?claimable=true
+POST /api/v1/work-items/{id}/claim
+X-WorkMesh-Installation-Token: <installation-token>
+If-Match: "revision-4"
+Idempotency-Key: <stable-claim-key>
+```
+
+服务端在短事务中校验并锁定同一 Connection、Team、principal Human、Agent、
+Coordination Session、delegation、capability 与 Work Item。只有这些身份和授权全部
+匹配，且 requested capabilities 是 Team grant 的子集时才能领取；省略请求能力时由
+服务端计算 Connection、Agent definition、Team grant 与 Coordination delegation 的
+实时交集，排除 `agent:delegate`，且 `work:read` 与 `work:write` 必须同时保留。并发
+请求对同一未分配 Item 恰好一个成功，其余返回冲突。若当前 active executor
+Delegation 与该 Connection 的 Team、Agent、principal、Work Item scope 和 live
+capabilities 完全兼容，且至少存在一个非终态 execution Session、这些 Session 全部为
+`stale`，该 Item 也可被同一 Agent 重新领取：服务端保留 Delegation，在同一短事务中
+取消旧 stale Session、撤销其 Token、释放 active Lease、关闭 stale Inbox，并创建一条
+retry-linked `queued` Session。任一非 stale 非终态 Session、不同 Agent 或不兼容绑定仍
+返回 `WORK_ITEM_ALREADY_ASSIGNED`。成功重放返回同一 delegation、Session 与交换凭据；
+状态、事件和 outbox 原子提交。
+
+Claim 响应中的 exchange token 仅供已认证的 MCP/SDK 适配器立即兑换。MCP 在适配器
+内部完成 exchange，并对每一个实际执行请求刷新该请求目标的 exact Session；token
+不进入 MCP tool output、模型上下文、普通 idempotency 响应、持久化日志或 webhook
+payload。长生命周期客户端不保存该 request-local bridge token。
+
+执行容量只计算 `session_kind=execution` 且处于非终态的 Session：
+`queued`、`acknowledged`、`planning`、`executing`、`awaiting_input`、
+`awaiting_approval`、`blocked`、`paused`、`stopping`、`stale`。Coordination Session
+不占用该槽位；`completed`、`failed`、`canceled` 释放槽位。所有入口使用同一个
+最终 admission 断言，领取失败不得留下半成品 delegation、Session、event 或 outbox。
+
+---
+
+# 4. 事件信封
+
+## 4.1 平台事件
+
+```json
+{
+  "id": "evt_01J...",
+  "type": "agent.session.created",
+  "version": 1,
+  "workspaceId": "ws_...",
+  "aggregate": {
+    "type": "agent_session",
+    "id": "ses_...",
+    "revision": 1
+  },
+  "actor": {
+    "id": "alice_actor_id",
+    "kind": "human",
+    "displayName": "Alice"
+  },
+  "subject": {
+    "type": "work_item",
+    "id": "wi_..."
+  },
+  "correlationId": "cor_...",
+  "causationId": "evt_parent",
+  "sessionId": "ses_...",
+  "sequence": 1,
+  "occurredAt": "2026-07-22T18:30:00Z",
+  "visibility": "team",
+  "payload": {}
+}
+```
+
+## 4.2 事件约束
+
+- `id` 全局唯一；
+- `type` 使用 dot-separated 命名；
+- `version` 为该事件 schema 版本；
+- `sequence` 在同一 Session 内单调递增；
+- `correlationId` 贯穿一次用户意图；
+- `causationId` 指向直接触发事件；
+- `payload` 只放事件特有数据；
+- Agent 不得覆盖 envelope 中的 Actor 和 Session；
+- Event Consumer 必须按 `id` 幂等；
+- 系统保证至少一次，不保证恰好一次投递。
+
+## 4.3 核心事件类型
+
+### Work
+
+- `work_item.created`
+- `work_item.updated`
+- `work_item.status_changed`
+- `work_item.relation_added`
+- `work_item.relation_removed`
+- `work_item.deleted`
+- `project.updated`
+- `project.milestone.created`
+- `project.milestone.updated`
+- `project.milestone.deleted`
+
+### Delegation / Session
+
+- `agent.delegation.created`
+- `agent.delegation.revoked`
+- `agent.session.created`
+- `agent.session.prompted`
+- `agent.session.acknowledged`
+- `agent.session.state_changed`
+- `agent.session.stale`
+- `agent.session.signal.stop`
+- `agent.session.signal.pause`
+- `agent.session.signal.resume`
+- `agent.session.completed`
+- `agent.session.failed`
+- `agent.session.canceled`
+- `agent.coordination_session.opened`
+- `agent.coordination_session.refreshed`
+- `agent.coordination_session.closed`
+
+### Plan / Activity
+
+- `agent.plan.published`
+- `agent.plan.changed`
+- `agent.plan.step.claimed`
+- `agent.plan.step.started`
+- `agent.plan.step.blocked`
+- `agent.plan.step.completed`
+- `agent.activity.appended`
+- `agent.tool.started`
+- `agent.tool.completed`
+- `agent.tool.failed`
+
+### Collaboration
+
+- `message.created`
+- `message.response_required`
+- `inbox.item.created`
+- `inbox.item.claimed`
+- `inbox.item.acknowledged`
+- `inbox.item.replied`
+- `decision.recorded`
+- `lease.acquired`
+- `lease.renewed`
+- `lease.expired`
+- `lease.revoked`
+- `handoff.requested`
+- `handoff.accepted`
+- `handoff.rejected`
+- `approval.requested`
+- `approval.approved`
+- `approval.rejected`
+- `approval.expired`
+- `artifact.published`
+- `artifact.reviewed`
+
+---
+
+# 5. Webhook 投递
+
+## 5.1 请求
+
+```http
+POST /workmesh/events HTTP/1.1
+Content-Type: application/json
+WorkMesh-Delivery-Id: del_...
+WorkMesh-Event-Id: evt_...
+WorkMesh-Timestamp: 1784745000
+WorkMesh-Signature: v1=<hex-hmac>
+```
+
+Body 为单个事件或批次：
+
+```json
+{
+  "events": [
+    {
+      "id": "evt_...",
+      "type": "agent.session.created",
+      "version": 1,
+      "payload": {}
+    }
+  ]
+}
+```
+
+## 5.2 签名
+
+建议：
+
+```text
+signed_payload = timestamp + "." + raw_body
+signature = HMAC_SHA256(secret, signed_payload)
+```
+
+Receiver：
+
+- 使用原始 Body；
+- 常量时间比较；
+- 时间戳允许窗口默认 5 分钟；
+- Delivery ID 去重；
+- Secret 可轮换，过渡期支持两个版本。
+
+## 5.3 响应
+
+Agent Endpoint 应在 5 秒内返回：
+
+- `2xx`：已接收；
+- `409`：已处理同一 Delivery，也视为成功；
+- `429`：限流，平台重试；
+- `5xx`：临时失败，平台重试；
+- 其他 `4xx`：配置错误，有限重试后 Dead Letter。
+
+Webhook 响应不应等待 Agent 完成工作，只负责入队。
+
+## 5.4 重试
+
+建议：
+
+- 第 1 次立即；
+- 30 秒；
+- 2 分钟；
+- 10 分钟；
+- 30 分钟；
+- 2 小时；
+- 进入 Dead Letter。
+
+每次加随机抖动。Admin 可手动重放。
+
+---
+
+# 6. Session 生命周期协议
+
+## 6.1 创建
+
+平台创建 Session 后发送：
+
+```json
+{
+  "type": "agent.session.created",
+  "sessionId": "ses_123",
+  "payload": {
+    "sessionToken": "<one-time-exchange-token>",
+    "delegation": {
+      "role": "executor",
+      "principalHumanActorId": "act_human",
+      "capabilities": ["work:read", "plan:write", "repo:write_branch"]
+    },
+    "workItem": {
+      "id": "wi_123",
+      "identifier": "ENG-42",
+      "title": "Fix session stop race",
+      "revision": 8
+    },
+    "contextSnapshotId": "ctx_123",
+    "initialPrompt": "Investigate and propose a safe fix.",
+    "budget": {
+      "maxRuntimeSeconds": 3600,
+      "maxChildSessions": 2
+    }
+  }
+}
+```
+
+生产实现不应长期把 Bearer Token 放在持久化 Webhook 事件中。推荐发送一次性交换码，Agent 再通过安全端点换取短期 Session Token。
+
+## 6.2 ACK
+
+Agent 应在 10 秒内：
+
+```http
+POST /api/v1/agent-sessions/{id}/ack
+Idempotency-Key: ses_123:ack:v1
+```
+
+```json
+{
+  "summary": "已接收任务，正在读取上下文并准备计划。",
+  "externalUrls": [
+    {
+      "label": "Runner trace",
+      "url": "https://runner.example/sessions/123"
+    }
+  ]
+}
+```
+
+ACK 只表示接收，不表示完成计划。
+
+## 6.3 Heartbeat
+
+活跃状态每 30 秒左右：
+
+```json
+{
+  "currentStepId": "step_...",
+  "usage": {
+    "runtimeSeconds": 120,
+    "inputTokens": 12000,
+    "outputTokens": 2300,
+    "toolCalls": 6
+  }
+}
+```
+
+平台：
+
+- 更新 `lastHeartbeatAt`；
+- Worker 在首次 Heartbeat 前使用 `acknowledgedAt` 作为存活基线，旧数据缺少 ACK
+  时间时才回退 `createdAt`；顺序固定为
+  `lastHeartbeatAt -> acknowledgedAt -> createdAt`。ACK 与 lifecycle tick 在同一
+  Session 行锁上串行化，因此 ACK 后必须先经过配置的 heartbeat threshold 才可 stale；
+- 不把每个 Heartbeat 都显示为普通 Activity；
+- 稳态 Heartbeat 不增加 Session revision/sequence，也不创建 Activity、
+  Domain Event 或 Outbox；平台只维护一个有界的 current heartbeat
+  projection；
+- Session 和 Lease Heartbeat 各自保留固定大小的最近 idempotency key
+  窗口。K1、K2、重试 K1 必须返回当前 projection，不能用 K1 回退 K2；
+  同 key 不同 body 返回 `IDEMPOTENCY_KEY_REUSED`。usage counter 只允许
+  单调增加；
+- `healthy` / `degraded` / `stale` 转换在 Session 行锁下只发布一次；
+- 超过 stale 阈值产生 `agent.session.stale`；
+- stale 不自动终止外部进程，但撤销或暂停权限可由策略决定。
+- stale、stopping 或 terminal Session 的 Heartbeat 只作诊断，不能恢复
+  workflow state、Delegation、Capability、Scope、Lease 或普通写权限。
+
+## 6.4 Prompt
+
+人或 Agent 给 Session 追加消息后发送：
+
+```json
+{
+  "type": "agent.session.prompted",
+  "sessionId": "ses_123",
+  "payload": {
+    "messageId": "msg_...",
+    "sender": {
+      "id": "act_human",
+      "kind": "human"
+    },
+    "bodyMarkdown": "先不要改数据库 schema，尝试兼容修复。",
+    "planRevision": 4,
+    "workItemRevision": 8
+  }
+}
+```
+
+Agent 应：
+
+- 将 Prompt 视为新输入；
+- 重新检查 Plan/Work Item revision；
+- 必要时发布新 Plan Version；
+- 不覆盖历史。
+
+## 6.5 完成
+
+```json
+{
+  "summary": "已修复停止与 Activity 写入之间的竞态，并增加并发测试。",
+  "artifactIds": ["art_commit", "art_pr", "art_test"],
+  "checks": [
+    {
+      "name": "unit",
+      "command": "pnpm test session-stop",
+      "status": "passed",
+      "summary": "18 tests passed"
+    }
+  ],
+  "limitations": [
+    "尚未在多节点部署下做压力测试"
+  ]
+}
+```
+
+平台校验：
+
+- 必需 Step 已完成或取消有理由；
+- 必需 Artifact/Check 存在；
+- Session 未处于不可完成状态；
+- 子 Session 满足父任务规则；
+- Token 有效。
+
+---
+
+# 7. Session 状态转换
+
+允许转换：
+
+| 当前 | 可到达 |
+|---|---|
+| queued | acknowledged, stale, stopping, canceled |
+| acknowledged | planning, executing, stopping, failed |
+| planning | executing, awaiting_approval, awaiting_input, blocked, paused, stopping, failed |
+| executing | awaiting_input, awaiting_approval, blocked, paused, stopping, completed, failed |
+| awaiting_input | executing, paused, stopping, failed |
+| awaiting_approval | executing, canceled, paused, stopping, failed |
+| blocked | executing, paused, stopping, failed |
+| paused | executing, stopping, canceled |
+| stopping | canceled |
+| stale | acknowledged（仅 ACK command）, canceled, stopping |
+| completed | 终态 |
+| failed | 终态；Retry 创建新 Session 或显式 transition policy |
+| canceled | 终态 |
+
+每次转换需要：
+
+- Actor；
+- reason；
+- expected current state；
+- revision；
+- event；
+- optional Activity。
+
+非法转换返回：
+
+```json
+{
+  "error": {
+    "code": "INVALID_SESSION_TRANSITION",
+    "message": "Cannot complete a paused session",
+    "details": {
+      "currentState": "paused",
+      "requestedState": "completed"
+    },
+    "correlationId": "cor_..."
+  }
+}
+```
+
+---
+
+# 8. Plan 协议
+
+## 8.1 发布
+
+```http
+PUT /api/v1/agent-sessions/ses_123/plan
+If-Match: "revision-3"
+Idempotency-Key: ses_123:plan:4
+```
+
+```json
+{
+  "changeSummary": "加入并发回归测试，并把 PR 创建拆为独立步骤。",
+  "steps": [
+    {
+      "id": "9bd5700e-7b3b-4a4e-9fe5-64568b134c5b",
+      "title": "复现竞态",
+      "status": "completed",
+      "ordinal": 0,
+      "dependsOn": [],
+      "acceptanceCriteria": ["测试在修复前稳定失败"],
+      "expectedArtifacts": ["test_report"]
+    },
+    {
+      "id": "30172c28-c5fe-488a-8261-f6940f1d1463",
+      "title": "实现服务端停止闸门",
+      "status": "in_progress",
+      "ordinal": 1,
+      "ownerActorId": "agent_backend",
+      "dependsOn": [
+        "9bd5700e-7b3b-4a4e-9fe5-64568b134c5b"
+      ],
+      "acceptanceCriteria": [
+        "Stop 后所有普通写 API 返回拒绝",
+        "允许一次 stopped 清理确认"
+      ],
+      "expectedArtifacts": ["commit"]
+    }
+  ]
+}
+```
+
+## 8.2 稳定 Step ID
+
+- Step ID 在 Plan Version 间保持；
+- 文案变化不生成新 ID；
+- 真正拆分为不同工作时生成新 ID；
+- 删除未开始 Step 可以省略，但系统仍从旧版本保留历史；
+- 删除已开始/已完成 Step 应在新版本中标记 canceled/completed。
+
+## 8.3 并发
+
+旧 ETag 返回 409：
+
+```json
+{
+  "error": {
+    "code": "PLAN_REVISION_CONFLICT",
+    "message": "Plan has changed",
+    "details": {
+      "expectedRevision": 3,
+      "currentRevision": 4,
+      "currentPlanUrl": "/api/v1/agent-sessions/ses_123/plan"
+    },
+    "correlationId": "cor_..."
+  }
+}
+```
+
+Agent 必须重新读取、合并并发布，不能盲重试覆盖。
+
+## 8.4 Plan 内容边界
+
+可记录：
+
+- 计划步骤；
+- 外部可验证目标；
+- 风险；
+- 依赖；
+- 简洁理由；
+- 验收条件。
+
+不应记录：
+
+- 模型逐 Token 思考；
+- 私有系统 Prompt；
+- Secret；
+- 不必要个人数据；
+- 大量无法验证的自言自语。
+
+---
+
+# 9. Activity 协议
+
+## 9.1 通用结构
+
+```json
+{
+  "kind": "action_completed",
+  "summary": "已运行并发回归测试：18 项通过",
+  "detailsMarkdown": "命令：`pnpm test session-stop`",
+  "toolInvocation": {
+    "toolName": "shell",
+    "inputSanitized": {
+      "command": "pnpm test session-stop"
+    },
+    "status": "succeeded",
+    "resultSummary": "18 tests passed"
+  },
+  "artifactIds": ["art_test_report"],
+  "references": [
+    {
+      "type": "plan_step",
+      "id": "30172c28-c5fe-488a-8261-f6940f1d1463"
+    }
+  ],
+  "visibility": "team",
+  "ephemeral": false
+}
+```
+
+## 9.2 建议粒度
+
+应发送：
+
+- ACK；
+- 计划发布/重大调整；
+- 关键工具动作开始和结束；
+- 发现的重要证据；
+- 需要输入/审批；
+- Blocker；
+- Artifact；
+- 最终结果和错误。
+
+不应发送：
+
+- 每次 Token 生成；
+- 每次读取小文件；
+- 高频 Heartbeat；
+- 重复“仍在工作”；
+- 原始超长日志。
+
+## 9.3 Tool Invocation
+
+输入必须先脱敏：
+
+```json
+{
+  "toolName": "database.query",
+  "inputSanitized": {
+    "query": "SELECT ...",
+    "connection": "[REDACTED]"
+  },
+  "status": "succeeded",
+  "resultSummary": "Returned 14 rows"
+}
+```
+
+大结果存 Artifact，只在 Activity 放摘要和链接。
+
+---
+
+# 10. Typed Message
+
+## 10.1 请求
+
+```json
+{
+  "channelId": "channel_eng_42",
+  "intent": "ask",
+  "bodyMarkdown": "API schema 将 `status` 改为枚举了吗？我需要确认前端兼容策略。",
+  "recipientActorIds": ["agent_backend"],
+  "references": [
+    {
+      "type": "plan_step",
+      "id": "step_ui"
+    },
+    {
+      "type": "artifact",
+      "id": "art_schema"
+    }
+  ],
+  "requiresResponse": true,
+  "dueAt": "2026-07-22T20:00:00Z"
+}
+```
+
+## 10.2 响应
+
+```json
+{
+  "channelId": "channel_eng_42",
+  "intent": "answer",
+  "bodyMarkdown": "没有删除旧字符串字段；新增枚举字段并保持一版兼容。",
+  "recipientActorIds": ["agent_frontend"],
+  "replyToMessageId": "msg_question",
+  "structuredPayload": {
+    "compatibilityWindow": "one_release"
+  }
+}
+```
+
+## 10.3 公开性
+
+- Work Room 消息对有资源权限的人可见；
+- Agent 不得用外部不可审计渠道作为唯一工作沟通；
+- 外部渠道沟通若影响计划，应回写 Decision/Message；
+- Secret 不能放消息正文。
+
+## 10.4 Connection-anchored identity（v1.1）
+
+Coordinator 发出的所有事实（事件、Work Room 消息、Activity、Artifact、Lease、Handoff）都额外带两个**强约束字段**：
+
+- `connectionId`：发起的 Connection。
+- `principalHumanActorId`：该 Connection 的责任人 Human。
+
+- `actor.kind` 仍是 `agent`，`actor.id` 仍是 Agent actor；`actor` 不可被 Agent 改写。
+- `on_behalf_of_human_actor_id` 字段记录 principal Human。UI 列表、Work Room、SSE 投影、Inbox 全部按"Agent 操作 on behalf of Human"展示。
+- Stop / Revoke 永远以 Connection 为单位触发；Coordination Session 不暴露独立的 Stop 入口。
+- Agent 不得假装 principal Human，server 在写入前校验；事件 envelope 与 MCP 工具调用均拒绝覆盖这两个字段。
+
+## 10.5 Agent Inbox recipient 模型
+
+Agent Inbox 是 Work Room 的授权投影，不是私有聊天或新的授权来源。服务端支持两种
+recipient：
+
+- exact Session recipient：消息创建时固定 `recipient_session_id`，只有该 Session
+  可以读取正文、ack 或 reply；同一 Agent 的其他 Session 也不得读取；
+- Agent actor recipient：创建时只固定 `recipient_actor_id`。任一仍然有效且具备同一
+  Team/Project/Work Item scope 的 Session 可以在列表中看到有界摘要，但必须先原子
+  claim；claim 成功后只有 `claimed_by_session_id` 对应的 Session 可以读取正文和后续
+  mutation。
+
+`claim` 只用于并发协调，不能授予 Delegation、Capability、Resource Scope 或 Lease。
+Human recipient 继续使用 Human Inbox；Agent 不得 claim Human 项。
+
+## 10.6 REST 与分页
+
+- `GET /api/v1/inbox?status=open&limit=...&cursor=...`：返回
+  `{items,nextCursor}`。actor-targeted 且未 claim 的项只含摘要并返回
+  `detail_available=false`；
+- `GET /api/v1/inbox/{id}`：只向 Human recipient 或 exact Agent Session
+  recipient/claimant返回完整正文、来源 Work Room、thread 和 append-only receipts；
+- `POST /api/v1/inbox/{id}/claim`：原子绑定当前 exact Session；
+- `POST /api/v1/inbox/{id}/acknowledge`：追加 acknowledgement receipt；
+- `POST /api/v1/inbox/{id}/reply`：要求 `If-Match`，由服务端固定 source message、thread
+  和 reply recipient，并返回新 `replyMessageId`。
+
+cursor 使用签名 keyset token，绑定 route、Workspace、Actor、当前 Session、status
+filter 与排序。每一页重新验证 Session token、Session 状态、Delegation、Agent/Team
+grant、Capability 和 live Team/Project/Work Item scope；cursor 不能恢复已经撤销的读取权。
+
+## 10.7 claim、ack 与 reply 语义
+
+所有 mutation 都要求 `Idempotency-Key`。相同 key 和相同请求重放原响应；相同 key
+配不同请求返回 `IDEMPOTENCY_KEY_REUSED`。并发 claim 只有一个 Session 成功，失败者
+得到不泄露正文的 `NOT_FOUND`。
+
+ack 是 append-only、幂等且可审计的 receipt；它不 resolve Inbox，不改变 Handoff、
+Approval、Lease、Work Item 或 Session 状态。reply 要求 open Inbox 和当前 revision，
+在一个 PostgreSQL transaction 中创建 Work Room message、resolution、receipt、Domain
+Event 与 outbox。并发 reciprocal reply 按参与 Session 的稳定全序加锁，避免反向锁序。
+`review_request` reply 还要求 reviewer Delegation 和 `artifact:write`。
+
+## 10.8 重连、撤权与停止
+
+Webhook 只携带 Inbox/message ID、intent、channel 和目标 Session 等有界元数据；Agent
+必须通过 Inbox REST、SDK 或 MCP 重新读取授权内容。断线后使用最近保存的 Inbox
+`nextCursor` 继续分页；cursor 失效或 scope 改变时从新的首屏重新同步，不缓存正文作为
+授权证据。
+
+expired token 返回 `401`。stopped、stopping、terminal 或 stale Session，以及已撤销
+Delegation、Agent/Team grant、Team membership、已删除 Project/Work Item 或不再匹配的
+resource scope，都必须在 list/get/claim/ack/reply 时 fail closed。停止或撤权后不得继续
+普通读取或写入，Lease 不能绕过这些检查。
+
+## 10.9 MCP 与 Native SDK 一致性
+
+MCP 工具 `list_inbox_items`、`get_inbox_item`、`claim_inbox_item`、
+`acknowledge_inbox_item`、`reply_inbox_item` 和 Native Agent SDK 的同名语义必须调用同一
+REST contract，使用同一 route-policy、authorization 和 idempotency gate。Adapter 不得
+在客户端复制或放宽授权规则。
+
+## 10.10 retention 与日志
+
+Inbox current rows 和 receipts 是 PostgreSQL durable facts。事件归档或 realtime cursor
+裁剪不能删除仍需处理的 Inbox 或 receipt；清理必须遵守 retention policy 和未解决项保护。
+消息正文、payload 和 receipt 不写入运行日志；已知 secret、token、cookie 或签名材料
+不得写入 Work Room/Inbox 正文。
+
+---
+
+# 11. Lease 协议
+
+## 11.1 Claim
+
+```json
+{
+  "resourceType": "plan_step",
+  "resourceId": "30172c28-c5fe-488a-8261-f6940f1d1463",
+  "sessionId": "ses_backend",
+  "mode": "exclusive",
+  "ttlSeconds": 120,
+  "metadata": {
+    "repository": "acme/workmesh",
+    "paths": ["apps/api/src/session/**"]
+  }
+}
+```
+
+## 11.2 冲突
+
+```json
+{
+  "error": {
+    "code": "LEASE_CONFLICT",
+    "message": "Resource is already leased",
+    "details": {
+      "leaseId": "lease_123",
+      "holderSessionId": "ses_other",
+      "holderActorId": "agent_other",
+      "expiresAt": "2026-07-22T18:40:00Z"
+    },
+    "correlationId": "cor_..."
+  }
+}
+```
+
+## 11.3 Renew
+
+- 使用 Lease revision；
+- 最大 TTL 受策略限制；
+- Session 非活跃状态不能续租；
+- Stop/Cancel 自动失效；
+- Worker 定期标记过期并发事件。
+
+## 11.4 Work Item Assignment 与 Active Executor 投影
+
+`GET /api/v1/work-items`、`GET /api/v1/work-items/{id}`、Session Context、
+Native SDK 与 MCP Work Item resource/tool 使用同一响应：
+
+- `responsible_human` 是负责人的 Human Actor；它与 Agent 执行互不覆盖；
+- `active_assignment` 来自 active executor Delegation，包含被分配的 Agent、
+  Delegation、最新 execution Session 及其状态；queued Session 尚未取得 Lease 时也必须
+  立即可见；
+- `active_executor` 是唯一 primary exclusive executor，包含 Agent definition/
+  actor、Session、代表 Lease、execution state、heartbeat health/时间与 expiry；
+- `shared_reviewers` 是 `review_shared` Lease 的稳定集合，不替换 primary；
+- 非 active Delegation 不可出现在 `active_assignment`；已过期 Lease、stale/terminal
+  Session 或非 active Delegation 不可继续出现在 `active_executor`；
+- release、renew、heartbeat、Worker expiry、Session stop/failure 和 handoff 的
+  权威事实与投影在同一 PostgreSQL 事务提交；
+- Work Item 级 exclusive Lease 只能有一个有效持有 Session；不同 Plan Step
+  的 exclusive Lease 可并行，未持有 Work Item Lease 时由最早有效 Lease
+  稳定代表 primary；
+- 投影字段为只读，Work Item PATCH 携带未知或投影字段返回
+  `VALIDATION_ERROR`；Lease 仍只负责协调，不授予任何读取或写入权限。
+
+## 11.5 Repository Path Lease
+
+后期可把 `resourceId` 规范化为：
+
+```text
+repo:<provider>:<owner>/<repo>@<base-sha>:path:<glob>
+```
+
+首版只做 Work Item 和 Plan Step Lease，避免过早实现复杂路径重叠算法。
+
+---
+
+# 12. Handoff 协议
+
+## 12.1 创建
+
+```json
+{
+  "sourceSessionId": "ses_research",
+  "targetAgentActorId": "agent_backend",
+  "scopeType": "plan_step",
+  "scopeId": "step_implement",
+  "summary": "根因是 Stop 与 Activity append 缺少服务端统一闸门。",
+  "completedWork": [
+    "复现竞态",
+    "确认数据库事务本身无丢失",
+    "定位到授权检查仅发生在客户端"
+  ],
+  "remainingWork": [
+    "增加 session write gate",
+    "补并发测试",
+    "创建 PR"
+  ],
+  "contextSnapshotId": "ctx_handoff_4",
+  "artifactIds": ["art_repro", "art_trace"],
+  "openQuestions": [
+    "是否允许停止后的单次 cleanup activity"
+  ],
+  "risks": [
+    "旧 Agent SDK 可能不识别新错误码"
+  ],
+  "acceptanceCriteria": [
+    "Stop 后普通写入被服务端拒绝",
+    "旧 SDK 获得可诊断错误"
+  ],
+  "requestedAction": "实现修复并提交 PR",
+  "leaseTransferPolicy": "transfer"
+}
+```
+
+## 12.2 接受事务
+
+服务端在单一事务中：
+
+- 锁定 Handoff；
+- 校验状态 requested；
+- 校验目标 Agent；
+- 校验 principal human；
+- 计算 Capability 交集；
+- 创建 Delegation；
+- 创建 Session；
+- 处理 Lease；
+- 写 Domain Event + Outbox；
+- 标记 accepted。
+
+外部 Webhook 在事务提交后发送。
+
+## 12.3 拒绝
+
+拒绝需 reason：
+
+- capability_missing；
+- budget_insufficient；
+- concurrency_limit；
+- context_incomplete；
+- conflict；
+- manual_reject。
+
+Coordinator 或 Human 可选择其他 Agent。
+
+---
+
+# 13. Approval 协议
+
+## 13.1 请求
+
+```json
+{
+  "sessionId": "ses_backend",
+  "approvalType": "merge_pr",
+  "actionName": "github.pull_request.merge",
+  "actionPayloadSanitized": {
+    "repository": "acme/workmesh",
+    "pullRequest": 128,
+    "method": "squash",
+    "headSha": "abc123"
+  },
+  "actionPayloadHash": "sha256:...",
+  "riskLevel": "high",
+  "rationaleSummary": "测试与 Reviewer 检查通过，需要合并以完成 ENG-42。",
+  "requiredApprovals": 1,
+  "expiresAt": "2026-07-22T22:00:00Z"
+}
+```
+
+## 13.2 Human 决策与可操作性
+
+Approval 列表和详情对 Human viewer 返回 `viewer_actionability`。它是便于 UI
+解释当前状态的即时投影，不是授权票据：
+
+- `actionable` 固定允许 `approved`、`rejected`；
+- `viewer_already_decided` 表示当前 Human 已投票但 quorum 尚未结束；
+- `expired`、`session_inactive`、`authority_revoked` 与 `already_decided`
+  必须替代无效操作控件，并给出恢复或刷新路径；
+- Agent 仍可读取自己 Session 的 Approval 上下文，但响应可以省略
+  `viewer_actionability`，因为 Agent 不能代替 Human 决策。
+
+该投影与决定命令复用相同的 domain evaluator。决定命令仍必须在持锁状态下
+重新校验 Human Team membership、Agent definition、Team grant、Delegation、
+Session、资源 Scope、过期时间、quorum、revision 与 idempotency；客户端不得把
+先前读取到的 `actionable` 当作继续写入的权限。
+
+`reason` 始终是非空、不可变审计事实。Human 可直接通过或驳回，由客户端提交
+稳定的默认 reason；也可在相同 `approved` / `rejected` 决策上附加意见。通过时
+附加的要求进入 Approval decision、事件和 Agent 可见上下文，但不会创建第三种
+Approval 状态或第二次隐式审批。
+
+## 13.3 消费
+
+批准后执行前必须再次校验：
+
+- status approved；
+- 未过期；
+- payload hash 完全一致；
+- Actor/Session/Repository Scope 仍有效；
+- 审批次数满足；
+- 未被 consumed。
+
+执行成功后标记 consumed。失败可以按策略保留 approved 供同参数重试，或要求重新审批；此行为必须明确。
+
+---
+
+# 14. Artifact 协议
+
+## 14.1 元数据 Artifact
+
+```json
+{
+  "sessionId": "ses_backend",
+  "workItemId": "wi_eng_42",
+  "type": "pull_request",
+  "title": "Fix server-side session stop gate",
+  "uri": "https://github.example/acme/workmesh/pull/128",
+  "checksum": "sha256:...",
+  "repository": {
+    "provider": "github",
+    "fullName": "acme/workmesh",
+    "baseRef": "main",
+    "headRef": "eng-42/fix-session-stop-race",
+    "headSha": "abc123"
+  },
+  "sourceTool": "github",
+  "metadata": {
+    "number": 128,
+    "draft": true
+  }
+}
+```
+
+## 14.2 上传 Artifact
+
+大文件流程：
+
+1. 请求 Upload Intent；
+2. 平台返回短期签名上传 URL；
+3. Agent 上传到 S3/MinIO；
+4. Agent 发布 Artifact metadata；
+5. Worker 校验 checksum、大小和 MIME；
+6. Artifact 可见。
+
+## 14.3 Provenance
+
+Artifact 必须可追溯到：
+
+- producer Actor；
+- Session；
+- Tool；
+- Repository/ref/sha；
+- created_at；
+- checksum。
+
+---
+
+# 15. Stop / Pause 的服务端闸门
+
+所有 Agent Mutation 进入 Domain Command Handler 时执行：
+
+```text
+authenticate token
+load session FOR SHARE
+assert token session == target session
+assert session state allows command
+assert delegation active
+assert actor capability
+assert resource scope
+assert approval if required
+assert lease if required
+assert revision
+assert idempotency
+execute transaction
+```
+
+当 Session 为 `stopping`、`canceled`、`completed`、`failed`：
+
+- 拒绝 Plan、Message、Artifact、Work Item 修改；
+- `stopping` 可允许一次 `stop_ack` 或清理摘要；
+- Heartbeat 可接受但不恢复权限；
+- Resume 必须由有权限人发出并走状态机。
+
+---
+
+# 16. MCP 映射
+
+## 16.1 设计原则
+
+MCP 用于让现有 Coding Agent 以标准方式读取 WorkMesh Context 和调用工具。WorkMesh 领域模型不应被 MCP transport 细节绑定。
+
+建议提供两个端点：
+
+- Read/Write；
+- Read-only。
+
+Authorization 使用标准 HTTP 授权，Session-scoped token 优先。
+
+## 16.2 Resources
+
+### Work Item
+
+URI：
+
+```text
+workmesh://work-item/{id}
+```
+
+返回：
+
+- 当前字段；
+- relation；
+- acceptance criteria；
+- project/milestone；
+- active session 摘要；
+- revision；
+- links。
+
+### Session Context
+
+```text
+workmesh://session/{id}/context
+```
+
+返回 Context Manifest，而非把所有内容拼成无边界长文本。
+
+### Plan
+
+```text
+workmesh://session/{id}/plan
+```
+
+带 revision、Step、依赖、owner 和验收条件。
+
+### Guidance
+
+```text
+workmesh://workspace/{id}/guidance
+workmesh://team/{id}/guidance
+workmesh://project/{id}/guidance
+```
+
+每个 URI 返回独立的版本化文档，而不是 Project `description` 的别名。响应包含
+document revision、当前不可变 Guidance revision、作者、发布时间、SHA-256 和状态；
+未发布或已归档的文档不向 Agent 返回正文。Agent SDK 和 MCP 仅提供已授权的当前
+Guidance 读取，发布、归档、历史、diff 与 rollback 均属于 Human control plane。
+
+Session 创建时按以下顺序解析当时有效的正文，并把每个实际使用的 revision ID、
+revision number、URI 和 SHA-256 固定到不可变 Context Snapshot：
+
+```text
+Workspace -> Team -> Project -> Repository -> Work Item -> Session/Human prompt
+```
+
+后续 Guidance 发布不会改变已有 Session 的 pin；新 Context Delta 也必须由服务端按
+URI 和 hash 验证。任何 Guidance 都不能扩展 identity、delegation、capability、resource
+scope、approval、Lease、revision 或 idempotency 权限，也不能覆盖平台安全规则。
+
+## 16.3 Tools
+
+每个 Tool：
+
+- 有 JSON Schema；
+- 返回结构化 data；
+- mutation 接受 idempotency key；
+- 冲突返回 machine-readable code；
+- Tool description 明确权限和副作用；
+- High-risk tool 不应只靠自然语言提醒。
+
+Coordination MCP 还提供 `list_claimable_work_items` 与 `claim_work_item`。前者只返回
+当前 Connection 的 Team、principal、Agent 与 capability 范围内、经实时授权确认
+同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用或仅保留同身份可恢复
+assignment 的摘要；可恢复 assignment 的每个非终态 execution 都必须为 stale，空的非终态
+集合（仅有终态历史或尚无 execution）同样可恢复。后者执行原子自主领取或 replacement，并启动
+executor Session。两者都不要求 Agent 先通过人类创建
+delegation。人类明确分配时使用一次性的
+`delegate_work_item`（对应 forced assignment），而不是拆开的 delegation/start
+调用；`start_agent_session` 不再作为公开工具。
+
+集合读取使用 `list_work_items` 和 `list_session_activities`。两者返回完整
+`{items,nextCursor}`；调用方必须将 `nextCursor` 原样作为下一次调用的
+`cursor`，不得解析或跨 Session、Actor、Route 复用。
+
+示例 `append_activity`：
+
+```json
+{
+  "name": "append_activity",
+  "description": "Append an immutable operational activity to the current session.",
+  "inputSchema": {
+    "type": "object",
+    "required": ["sessionId", "kind", "summary", "idempotencyKey"],
+    "properties": {
+      "sessionId": {"type": "string"},
+      "kind": {"type": "string"},
+      "summary": {"type": "string"},
+      "detailsMarkdown": {"type": "string"},
+      "idempotencyKey": {"type": "string"}
+    }
+  }
+}
+```
+
+## 16.4 MCP Prompt Templates
+
+可提供：
+
+- `implement_work_item`
+- `investigate_bug`
+- `review_pull_request`
+- `triage_issue`
+- `draft_project_update`
+- `handoff_work`
+
+Prompt Template 只是建议，不应含 Secret 或不可见平台策略。
+
+---
+
+# 17. A2A Adapter
+
+## 17.1 映射
+
+| A2A | WorkMesh |
+|---|---|
+| Agent Card | Agent Manifest |
+| Task | Agent Session |
+| Task status | Session State |
+| Message | Typed Message / Prompt |
+| Artifact | Artifact |
+| Streaming update | Domain Event / SSE |
+| Context | Context Snapshot reference |
+
+## 17.2 互操作原则
+
+- Remote Agent 可以保持内部实现不透明；
+- WorkMesh 仍要求操作状态、结果和 Artifact；
+- Adapter 负责状态名称转换；
+- 未知字段保存在 namespaced metadata；
+- A2A 版本升级不改变内部 Domain Event；
+- 外部 Agent Card 的能力必须映射到平台 Capability 并由 Admin 批准。
+
+## 17.3 WorkMesh 1.0 A2A 实验性适配边界
+
+- 首个适配包固定处理 A2A `0.3`；Binding 持久化精确协议版本，后续版本通过新的映射层接入；
+- Adapter 在任何 Task 映射、Session 创建或 Context 构造前调用授权回调；
+- API 必须实时证明 Binding、Agent、发起人 Team Membership、Agent Team Access、Capability 与 Work Item Resource Scope；
+- 授权成功后，Task 才映射为真实 `Agent Session`，不会创建虚构 Work Item；
+- Task Envelope、State、Message、Part、File URI 与 Artifact 必须经过严格、限长的 typed validation；Task ID 在 Envelope 与 Event 路径中统一上限为 500 字符；错误返回稳定 `A2A_*` code；
+- `deliveryId` 在 Binding 内幂等，并绑定 Binding/协议版本、Team、Work Item、Capability 集合、inbound `sequence` 与 typed Task payload 的完整授权包络；重放必须先根据持久化 Binding、Session、Delegation 与 Task Binding 重新核对，冲突稳定返回 `A2A_DELIVERY_CONFLICT` 且不得泄露跨 Team Session；
+- 后续 delivery 在同一事务内锁定并更新既有 Session，状态变化受 WorkMesh Session transition table 约束，重复历史 Message/Artifact 不得重复追加；
+- inbound sequence 与 outbound Domain Event cursor 是独立单调域；相同数值不得冲突。Cursor 以十进制字符串传输，避免 JavaScript number 精度损失；
+- Message/Prompt、Artifact 与 Task/Session 对应关系写入标准持久表；Streaming 按原始 durable Domain Event 页推进 cursor，即使当前页没有可映射事件；授权撤销后不得继续读取；
+- Message、Artifact、Task Status 与 Streaming Update 仅映射为稳定的 WorkMesh Command/Event，不把 A2A Envelope 写入内部领域模型；
+- 未知协议版本、状态或能力返回 typed unsupported error，不做静默降级；
+- Fake A2A Agent 是确定性验收实现，覆盖 Card、Task、Status、Message、Artifact 与 Streaming 映射。
+
+---
+
+# 18. TypeScript Agent SDK 草案
+
+```ts
+import { WorkMeshAgentClient } from '@workmesh/agent-sdk'
+
+const client = new WorkMeshAgentClient({
+  baseUrl: process.env.WORKMESH_URL!,
+  sessionToken: process.env.WORKMESH_SESSION_TOKEN!,
+})
+
+await client.sessions.ack(sessionId, {
+  idempotencyKey: `${sessionId}:ack`,
+  summary: '已接收，正在准备计划。',
+})
+
+const context = await client.sessions.getContext(sessionId)
+
+const plan = await client.plans.publish(sessionId, {
+  ifMatch: context.planEtag,
+  idempotencyKey: `${sessionId}:plan:1`,
+  changeSummary: '初始计划',
+  steps: [
+    {
+      id: crypto.randomUUID(),
+      title: '复现问题',
+      status: 'in_progress',
+      ordinal: 0,
+      dependsOn: [],
+      acceptanceCriteria: ['获得稳定失败用例'],
+      expectedArtifacts: ['test_report'],
+    },
+  ],
+})
+
+const lease = await client.leases.claim({
+  idempotencyKey: `${sessionId}:claim:${plan.steps[0].id}`,
+  sessionId,
+  resourceType: 'plan_step',
+  resourceId: plan.steps[0].id,
+  mode: 'exclusive',
+  ttlSeconds: 120,
+})
+
+await client.activities.append(sessionId, {
+  idempotencyKey: `${sessionId}:activity:repro-start`,
+  kind: 'action_started',
+  summary: '开始构造并发复现测试',
+})
+
+try {
+  // Run work in an external sandbox.
+} finally {
+  await client.leases.release(lease.id, {
+    idempotencyKey: `${sessionId}:release:${lease.id}`,
+  })
+}
+```
+
+SDK 要求：
+
+- 自动重试只用于网络错误、429、可重试 5xx；
+- 不自动重试 409；
+- 生成 Idempotency-Key helper；
+- 暴露 Error Code；
+- 支持 AbortSignal；
+- 自动刷新 Session Token 但不绕过 Stop；
+- 日志默认脱敏。
+
+---
+
+# 19. 协议一致性测试
+
+平台发布一个 Agent Conformance Suite。
+
+## 19.1 必测
+
+- Manifest 注册；
+- Webhook HMAC；
+- Delivery 重放；
+- ACK；
+- Heartbeat；
+- Activity；
+- Plan ETag 冲突；
+- Prompt；
+- Awaiting Input；
+- Approval；
+- Stop；
+- Stop 后拒写；
+- Lease 冲突；
+- Handoff；
+- Artifact；
+- Completion；
+- Token 过期；
+- Capability denial；
+- Connection 配对（单用 / 过期 / 限流 / 同一 Idempotency-Key 重放拿回原响应）；
+- Connection 撤销后 Coordination Session 立即失败关闭；
+- Team scope delegation 跨 Team 拒绝；
+- `agent:delegate` 缺失时拒绝 `delegate_work_item`；**不**作用于 `claim_work_item` 或 `create_child_session`；并验证已移除的 `start_agent_session` 不在工具清单中；
+- Coordinator 阻断破坏性操作（删除 / 归档 / 批量 / 健康发布）；
+- Coordination MCP 多 Connection 并发隔离；
+- Work Item 创建时 `responsible_human_actor_id` 默认填充 principal Human；
+- `If-Match` 缺失或 revision 失配时 PATCH / DELETE 拒绝。
+
+## 19.2 Fake Agent
+
+仓库内提供 `apps/fake-agent`：
+
+- 可配置 ACK 延迟；
+- 可模拟 stale；
+- 可发布计划；
+- 可请求输入/审批；
+- 可模拟错误；
+- 可违反协议，验证服务端闸门；
+- 用于 Playwright 和集成测试。
+
+---
+
+# 20. 协议版本
+
+- REST 路径版本 `/api/v1`；
+- Event 有独立 `version`；
+- Agent Manifest 声明协议版本；
+- MCP 遵循协商版本；
+- Breaking Change 先并行支持；
+- 事件消费者必须忽略未知字段；
+- 删除字段需要至少一个兼容周期；
+- Capability 名称稳定，不复用旧语义。
+
+---
+
+# 21. 最低接入标准
+
+一个 Agent 被认为“WorkMesh Compatible”，至少必须：
+
+- 有明确 Agent 身份；
+- 接收 Session Created；
+- 10 秒内 ACK 或给出可配置确认；
+- 使用 Session Token；
+- 发布至少一种 Activity；
+- 发布或明确声明不需要多步 Plan；
+- 支持 Prompt；
+- 支持 Stop；
+- 完成或失败时提供结构化结果；
+- 所有写操作幂等；
+- 不伪造 Actor；
+- 不要求平台存储隐藏思维链；
+- 通过 Conformance Suite。
+
+## 集合读取与分页
+
+Agent SDK、MCP 与 Native HTTP 的集合读取统一消费 `{items,nextCursor}`。调用方只能原样回传 `nextCursor`，不得解析、改写或跨 Route、Workspace、Actor、过滤条件复用。页大小默认 50，允许 1 到 200。授权在每一页重新验证；Team Access、Delegation、Capability、Resource Scope 或 Session 撤销后，后续页必须立即缩短或拒绝，Lease 不构成授权。
+
+此不透明游标只用于 REST 资源集合。Domain Event、SSE `Last-Event-ID` 和 A2A Task Event 的十进制 durable cursor 语义保持不变。
+
+## Realtime Event 读取
+
+Domain Event cursor 是 PostgreSQL `domain_events.cursor` 的 canonical decimal
+string，即使超过 `2^53` 也必须逐位保真；它不能与集合分页 token、Session
+sequence 或 A2A Task Event cursor 混用。Agent SDK 的 `listEvents` 和
+`streamEvents` 要求调用方显式提供 checkpoint，只有瞬时网络/5xx/429 才自动
+重试。`CURSOR_EXPIRED` 必须作为 typed error 交给调用方重建 durable snapshot，
+不得静默跳过历史。
+
+Redis Stream 只是可丢失、可重复的 wake hint，且只允许 `workspaceId` 与
+decimal `cursor` 两个字段；不得写入 topic、payload、audience 或 resource
+metadata，并以有界 `WORKMESH_REALTIME_REDIS_MAXLEN` approximate `MAXLEN`
+裁剪。授权和 replay 始终来自
+PostgreSQL；每一批投递都重新验证 Agent token、active Session、Delegation、
+Capability 和 normalized Resource Scope。授权撤销或 Session stop 后不得继续
+投递，Lease 不构成读取授权。v2 envelope 的 `audience`、`scopes` 和
+`invalidates` 使用固定资源词汇；任何资源 metadata 与 Domain Event 必须在同一
+事务写入。Human 读取也必须在最终 SQL 中使用 normalized Team resource：
+显式 recipient 只对目标 Actor 可见；非 Admin 的 undirected multi-Team Event
+要求当前 Actor 至少属于其中一个精确 Team，Initiative Owner 通过持久化 Owner
+关系单独验证。只有不含任何非 Workspace resource 的 Event 才能按 Workspace
+范围读取；`team_id IS NULL` 本身不能扩大 audience，无法证明资源的历史
+Initiative/Project Dependency Event 对普通成员 fail closed。
+
+Human Session、个人 saved view（包括带可选 Team 关联的 form）、private
+advanced view、notification 与 notification preference 的 producer 必须提供
+精确 recipient，并由持久化 owner/recipient 关系复核。无法证明的 private
+form 不得 fallback 到 Workspace；Workspace Admin 也不能绕过 direct-recipient
+privacy。`team_id` 为空但具有非 Workspace normalized scopes 的 Event 必须使用
+`audience.visibility=resource`，不得声明为 Workspace audience。
+
+SSE 容量耗尽返回 structured `REALTIME_CAPACITY_EXCEEDED` 503 与
+`Retry-After`。SDK/Web 对 clean EOF、post-header transient error、429/5xx 和
+该 503 使用可取消、有界指数退避（含 jitter）；401/403 授权或撤权拒绝是
+terminal，`CURSOR_EXPIRED` 走显式 resync。
+
+---
+
+# 22. Agent Collaboration Client Profile 1.0
+
+外部编码 Agent 必须先读取公开 `/api/v1/info` 的
+`supportedClientProfileVersions`，再用精确 Agent Session Token 读取
+`/api/v1/agent-capabilities` 或 MCP `workmesh://agent/capabilities`。请求头
+`WorkMesh-Client-Profile: 1.0` 进行显式协商；未知版本返回
+`PROFILE_VERSION_UNSUPPORTED`，不得静默降级。
+
+Capability Manifest 只能由 route-policy manifest、feature registry、MCP
+policy binding 与当前 Session 的 live capability intersection 生成。
+`supported` 表示部署支持，`eligibleByCapability` 只是当前能力提示；
+`authorizationEvaluatedPerRequest` 永远为 true。客户端不得把发现结果、Lease
+或 feature enabled 当作授权，服务端仍在每次读取和 mutation 上复核 identity、
+Session、Delegation、Team grant、resource scope、approval、Lease、revision 与
+idempotency。
+
+Push、pull 与 hybrid 客户端共享同一恢复规则：push 只是 at-least-once wakeup；
+断线后必须从最后提交的 decimal Domain Event cursor replay，再重新读取 Session、
+Context/Guidance revision、Inbox、Approval、Handoff 与 Lease。Delivery 重复必须
+durable dedupe，mutation 重试必须复用同一逻辑 intent 的 Idempotency-Key。
+`CURSOR_EXPIRED` 必须 snapshot resync；撤权、expired、stopped、out-of-scope、
+stale revision、lost Lease、approval required 与 feature disabled 按
+`docs/AGENT_COLLABORATION_CLIENT_PROFILE.md` 的 canonical fail-closed reaction
+处理。
+
+`@workmesh/conformance` 使用同一 adapter-neutral driver 验证 Native HTTP 与 MCP，
+并执行 Codex-style push、OpenCode-style pull、pi-style hybrid 三类公开行为 fixture。
+这些 fixture 不依赖供应商私有实现。生命周期必须在 ACK 后使用返回的 revision
+转入 `executing`，并在 completion 前重新读取当前 Session revision；hostile matrix
+必须先准备失败状态，再通过对应 Native/MCP 操作观察真实机器错误，禁止直接回显
+期望 error code。`pnpm test:conformance` 必须生成 JSON、JUnit 与完整 transcript；
+Stable GA 只接受所有六个 adapter/fixture run 通过的证据。
+
+---
+
+# 23. Coordination MCP（v1.1）
+
+Coordination MCP 是常驻 Streamable HTTP MCP 服务，按 Connection 鉴权，按请求派生 Coordination Session。它是 v1.0 既有 session-scoped MCP（`apps/mcp/src/http.ts`、`stdio.ts`）的**并列入口**，不替换它们；v1.0 的 Native HTTP、Webhook、A2A 适配器也都不动。
+
+## 23.1 鉴权与生命周期
+
+- 客户端把 Installation Token 放在 `X-WorkMesh-Installation-Token` 头中调用 `POST {mcpUrl}`，不得使用通用 `Authorization: Bearer`；
+- 服务端解析 → 校验 Connection、Agent、Team grant、Delegation、能力、撤销状态；
+- 通过则开/续一条 1 小时（最长 2 小时）的 Coordination Session；
+- Connection 撤销后下一次请求立即失败关闭（`COORDINATION_SESSION_CONNECTION_REVOKED`）。
+- `claim_work_item` 成功后，MCP 适配器在内部立即 exchange 返回的 one-time
+  exchange token；每个实际执行请求都按目标 `sessionId` 刷新 exact Session token，
+ 只在该请求的内存桥接上下文中使用。token 不返回给模型、不写入工具结果或长生命
+  客户端状态；Coordination 请求仍继续带 `X-WorkMesh-Installation-Token`。
+
+## 23.2 基础工具（永远允许）
+
+只要 Coordination Session 对应的 Connection 是 `active` 且未撤销，基础工具可调用：
+
+- `verify_connection` — 回传 Connection 身份与当前 pinned Skill 版本。
+- `get_current_identity` — 返回 Agent actor、Connection、principal Human、Team、授予的能力集。
+- 三个 bootstrap 工具保留旧字段并返回 `connectionIdentity`；其中 `authenticated_credential.fingerprint_prefix/status/overlap_until` 证明本次请求实际使用的 active 或 overlap credential。`connection.credential_fingerprint_prefix` 仍表示 Connection 当前 active credential。
+- `GET /api/v1/agent-connections/current-identity` 只接受 `X-WorkMesh-Installation-Token`，不接受普通 Session Bearer；不得返回 credential ID、Token、完整 hash 或请求头。
+- `list_teams`、`list_workflow_states` — Team 与状态只读发现。
+- `list_projects`、`get_project`、`create_project`、`update_project` — 限定在绑定 Team；`update_project` 仅允许安全字段。
+- `list_work_items`、`get_work_item`、`create_work_item`、`update_work_item` — 限定在绑定 Team；`update_work_item` 仅允许安全字段；Agent 未传 `responsible_human_actor_id` 时由服务端填充 principal Human。
+- `list_claimable_work_items`、`claim_work_item` — 发现并原子领取当前 Connection 可见、实时授权仍同时具备 `work:read` 与 `work:write`、且尚未被 executor 占用或仅存在同身份可恢复 assignment 的 Work Item；每个非终态 execution 必须为 stale，空的非终态集合也允许恢复。新领取创建 executor Delegation 与 execution Session；recovery 保留兼容 Delegation，终结旧 stale execution、保持 terminal history 不变，并创建新的 queued Session。
+- `list_work_room_messages`、`post_work_room_message`、`list_inbox_items`、`claim_inbox_item`、`reply_inbox_item`。
+- `draft_project_update`（发布仍为 Human-only transition）。
+
+## 23.3 显式授权工具（需要匹配能力）
+
+- `delegate_work_item` — 人类或具备 `agent:delegate` 的 Coordination Agent 发起一次性的 forced executor assignment；不再拆分为 delegation 与 start 两个公开步骤，仍受并发、Team access、principal 与 capability 约束。
+- `claim_work_item` — Coordination Agent 的自主领取与兼容 inactive assignment 恢复入口；只匹配当前 Connection 的 Team、principal、Agent 与能力，且所有非终态 execution 必须为 stale。没有非终态 execution 时从最新 terminal history 创建 distinct retry，终态 Session 不得重开。竞争同一 Work Item 时恰好一个成功。旧 stale Session 的原地恢复必须使用 `ack_agent_session`，不得用 generic state transition 代替 ACK metadata。
+- `create_child_session` — 需要现有 `work:write`、父 Session/Plan Step scope 与 Team access；**不**需要 `agent:delegate`。父 Coordinator 是否携带 `agent:delegate` 与能否 `create_child_session` 无关；后者是 plan-step 子 Session，与跨 Work Item 启动其他 Agent 是两件不同的事。
+- `offer_handoff` — 需要 Team 写权限。
+- `request_approval` — 记录与 Work Item 或 Plan Step 绑定的结构化审批请求；审批由 Human actor 决定。
+
+## 23.4 MCP 层便利（不是授权）
+
+- 工具调用若未传 `Idempotency-Key`，MCP 层用 `sha256(connection_id, tool_name, payload)` 派生稳定 key；显式传入则尊重显式值。
+- MCP 层把活跃 Coordination Session 注入每个工具调用，Agent 无需传 `sessionId`。
+- Name → UUID 解析：Team slug、project slug、Work Item identifier 在 Session 生命周期内解析一次并缓存；下游 domain 永远只收到 UUID。
+- 安全字段 `update_*`：MCP 层在请求事务内做一次 read/merge/write，让 Agent 不必先 GET revision 就能改 `description` 这种不冲突字段；返回最新 revision，Agent 想串联时仍可用 `If-Match`。
+
+## 23.5 与 v1.0 MCP 的边界
+
+- v1.0 session-scoped MCP：每个请求带 `sessionId` Bearer；只覆盖已建立 Session 的子集能力。旧的公开两步 delegation/start 组合不再提供。
+- v1.1 Coordination MCP：每请求动态派生 Session；范围绑定 Team 与 Connection；涵盖基础 CRUD + 显式授权工具。
+- 两者都**不**是授权层：revision、授权、状态、事务全部由 domain 裁决；MCP 工具描述描述策略，server 强制执行。
+
+## 23.6 协议可观测性
+
+- `agent.connection.created` / `pairing_redeemed` / `rotated` / `revoked`。
+- `agent.coordination_session.opened` / `refreshed` / `closed`。
+- `opened` reason 为 `initial | expired | recovered_terminal_backing | recovered_invalid_backing`；`closed` reason 为 `expired | terminal_backing | invalid_binding | invalid_backing | connection_revoked`。恢复顺序固定为 closed → 旧 Session state_changed（仅实际取消）→ 新 Session created → opened，全部与 outbox 同事务。
+- `closed` 以 Connection 资源域为可信归档边界。正常绑定携带 `sessionId`；若 backing Session 的 workspace 或 Team 已与 Connection 不一致，则不得把跨域 Session 引用加入 Connection 事件，改为固定的 `sessionReferenceOmitted: resource_scope_mismatch`。旧 Session 的 `state_changed` 只在其自身资源域归档，且不携带 Connection ID 或 Connection correlation metadata。
+- 对外认证失败保持统一 `UNAUTHENTICATED`；内部 reason 只进入服务端审计并绑定服务端生成的 diagnostic ID，不能放入公开 error details。recognized credential 最多记录安全 fingerprint prefix，unknown credential 只允许审计密钥 HMAC 标识。
+- 错误码（加入 `apiErrorCodeSchema`）：
+  - `AGENT_CONNECTION_PAIRING_INVALID | PAIRING_EXPIRED | PAIRING_CONSUMED | PAIRING_LOCKED`
+  - `AGENT_CONNECTION_REVOKED | AGENT_CONNECTION_PRIVILEGE_ESCALATION`
+  - `AGENT_CONNECTION_NOT_FOUND | AGENT_CONNECTION_CLIENT_TYPE_MISMATCH | AGENT_CONNECTION_TEAM_MISMATCH | AGENT_CONNECTION_INSTALLATION_MISMATCH`
+  - `COORDINATION_SESSION_CONNECTION_REVOKED | COORDINATION_SESSION_REFRESH_FAILED | COORDINATION_SESSION_TEAM_SCOPE_DENIED`
+  - `AGENT_DELEGATE_NOT_GRANTED | COORDINATOR_DESTRUCTIVE_OPERATION_FORBIDDEN | COORDINATOR_AGENT_DELEGATE_NOT_TRANSITIVE | COORDINATOR_PRINCIPAL_HUMAN_INVALID`
+- `AGENT_SKILL_VERSION_MISMATCH | AGENT_SKILL_SIGNATURE_INVALID`
+
+---
+
+# 24. Human Attention projection (v1)
+
+Human Attention is an authorized read projection over Decision, Approval,
+Inbox, Agent Session, and Completion Suggestion records. It is not a second
+workflow state machine and does not grant permission to execute an option.
+Source mapping and lifecycle rules are normative in
+`docs/adr/0050-human-attention-authorized-projection.md`.
+
+Native clients use:
+
+- `GET /api/v1/human-attention` with typed kind/status and resource filters;
+- `GET /api/v1/human-attention/{id}` with stable identity
+  `v1:<source-type>:<source-id>`.
+
+MCP clients use the equivalent read-only `list_human_attention` and
+`get_human_attention` tools. REST, Agent SDK, and MCP preserve the same fields;
+adapters must not reclassify intent names, Session state strings, error text, or
+message content. `options` only describes an existing command path. The client
+must submit that command normally so the server can re-evaluate live identity,
+scope, capability, revision, lease, approval, and idempotency requirements.
+
+`audience` describes the current viewer relationship, `response` describes the
+source-specific form, and `bulk` declares only compatibility for client
+orchestration. None grants write authority. Bulk responses submit each source
+command independently with its current revision and idempotency key; partial
+failure retains failed items and does not replay successful items as a new
+logical attempt. Human clarification and completion-review replies use the
+revisioned Inbox reply command for the exact Human recipient and preserve Work
+Room provenance.
+
+Consumers refresh on the existing committed source invalidations and perform a
+snapshot read after `CURSOR_EXPIRED` or realtime resync. An item absent from an
+authorized response is not inferable through detail errors, counts, timing, or
+debug metadata. Projection payloads contain bounded operational summaries and
+references only; hidden model reasoning, private prompts, secrets, and
+unsanitized tool input are prohibited.
+
+# 25. Workbench conversation 与 Pi Runner（纵向接入中）
+
+WM-WEBPI-20260924 W01 冻结了工作台对话层的传输契约：Conversation、Turn、
+RunnerAttempt（单 writer/fencing）、用户配置的 LlmConnection/LlmModel 以及
+runner 工具调用账本。DTO 与 `workbench.*` 事件 schema 位于
+`packages/contracts/src/pi-workbench-contracts.ts`；对应 REST 端点、事件接入
+与 Runner 进程协议由后续路线图任务（W06/W07/W09/W10）以带编号的变更引入。
+
+W09/W10 当前纵向路径：Human 以 `POST /api/v1/workbench/conversations` 建立
+对话并绑定有效 Agent Session、模型；`POST /api/v1/workbench/conversations/{id}/turns`
+带 `If-Match` 与 `Idempotency-Key`，在一笔事务中追加公开用户消息、排队 Turn、
+`workbench.message.appended` / `workbench.turn.queued` 事件与 outbox。消息、Turn
+按序分页读取；只读该对话有权限的 Human 可见。当前上下文 pin 尚不可提交。
+
+Human 可用 `GET /api/v1/workbench/configuration-readiness` 查询配置投影，必填
+`teamId` 与 `workKind=repository|non_repository`，可传 `projectId`、`workItemId`。
+指定资源时仓库检查只用该资源及 WorkItem 所属 Project 的上下文；未指定时才检查
+所选 Team 的 Project。非仓库意图只影响本次查询，仓库返回
+`applicability=not_applicable`、`state=null`。其他适用检查使用
+`ready|blocked|unknown`；模型要求当前调用者可见的 active connection 与 enabled
+model，Agent 要求 active definition 与当前 Team 未撤销的授权。Runner 恒为
+`unknown`，包括尚无 assignment 的空闲进程和已有 Session heartbeat 的情况。
+查询响应禁用缓存、重读当前 Human 会话与 Team 权限，不透露隐藏配置的存在性。
+投影不产生 Session、receipt、event 或 outbox，不授予激活或执行许可；鉴权拒绝
+保留既有 `authorization_denials` 安全审计。后续命令仍独立执行全部既有授权校验。
+
+独立 Pi Runner 用 Agent installation bearer 加部署级 Runner token 读取
+`/api/v1/workbench/runner/assignments`。新委派的 queued Session 仍须经现有
+`ack` 与带 revision 的 `state` 命令进入 executing，并定期发送诊断 heartbeat；
+Runner 不借用 Human cookie。Turn 领取、凭据读取、开始和结算还要求精确
+Agent Session bearer。API 对模型密钥响应设置 `Cache-Control: no-store`；
+密钥只交给受控 Runner 进程，不能进入模型提示、事件、活动或浏览器。
+Runner Attempt 的 fence token 仅用于该 Turn 的当前写入。Human 停止 Turn 时，
+服务端先废除 Attempt 栅栏；旧结算返回 `RUNNER_FENCE_STALE`。
+
+Session 失去权威或 Attempt 超过五分钟仍未结算时，Worker 在单一事务中将当前
+Attempt 和 Turn 标为 failed、推进 Conversation revision，并追加事件/outbox。
+`external_effects_reconciled=false` 表示外部效果未知；旧 Runner 写入仍被栅栏
+拒绝，系统不会自动重做 Turn。Human 可查看错误并在核对效果后发送新 Turn。
+
+W11 的 Pi 工具按当前 Session 的 live capability manifest 暴露，调用时由 API 再次
+检查授权。`workmesh_complete_session` 仅记录带 exact revision 与证据的完成意图；
+Runner 将公开回答、Turn 结算和可选 Session 完成在同一 PostgreSQL 事务提交，
+沿用现有完成命令的权限、状态与证据规则。完成被明确拒绝时，Runner 用独立幂等键
+只结算 Turn，并尽可能写入可见 warning；不冒充 Session 已完成。Runner 在提交前
+崩溃仍由 stale Attempt 机制处理，已发生的外部工具效果须另行对账。工具调用账本、
+预算、完整外部效果安全重试、固定 DNS/IP 出站策略、pause/steer 映射尚未完成；
+不得把上述纵向路径解释为 W10/W11 或整项路线图验收通过。现有 Session 控制面
+（创建、ACK、Prompt、Stop/Pause/Resume、完成）继续保持权威，对话层不隐式
+获得 Team 写权，写权仍只经由绑定 Agent Session 的委派授予。
+
+## 精确身份资格与 MCP 发现
+
+`GET /api/v1/agent-capabilities?discovery=qualified` 显式返回增强 `discovery`；省略参数仍返回原 manifest，未知协商失败。API 的身份、role、scope type、state、live capabilities 与 operation/variant 资格独立于 MCP 配置；只有 adapter 知道真实注册、只读模式、coordination 和 installation bridge。`eligible` 只说明已知前提通过，`requires_target_check` 的 scope/owner/批准/Lease/revision/幂等前提仍待调用验证，不能当授权成功。未知条件分支（如 Inbox reply kind）保留条件，不直接施加 reviewer 限制。
+
+MCP 的 `get_agent_discovery` 返回本次 API manifest 和 adapter 投影；`tools/list`、`resources/list`、`resources/templates/list` 与 `get_workmesh_context.allowedOperations` 共享同次派生规则。只有可发现且 `eligible` 的当前身份操作计入 allowedOperations；目标 E bridge 条件入口不计入。`registered` 是兼容 callback 是否存在，`deploymentSupported` 还检查 mode、coordination 和 bridge 配置，`discoverable` 再检查已知资格；数量不是产品验收率。
+
+Human-only 旧工具保持名称与输入 schema，发现时隐藏，缓存调用返回结构化 `FORBIDDEN`；只读缓存写调用同样拒绝。旧 resource URI 与 capabilities resource 的原响应保持。仅 tool 客户端可使用 `get_server_info`、`get_server_features`、`get_agent_capabilities`、`get_agent_session`、`get_session_context`、`get_session_plan`、三种 `get_*_guidance` 和 `get_repository_context`。三个 Session 读取 alias 输入字段为准确 `id`；guidance 为 `id`，repository 为 `repositoryId`。所有现有读取继续遵守 pagination 与 durable cursor 合同。
+
+`verify_connection` 无输入目标，manifest/current identity/listTeams 全部使用当前 C。`claim_work_item` 用当前 C claim，再用返回的 exchangeToken 兑换新 E；输出 sessionId 不构成输入 bridge。直接 E 只需 Session Token 读取自身 Session resource/tool，不要求 installation bridge；异 Session 失败关闭，不切换身份。C 的精确目标 E 变体获取一次局部 Token，以该 Token 读取目标资格并执行，核 actorId/sessionId/kind；两层 manifest actorId 必须一致，目标 actor 必须等于当前 C actor，禁止写共享 client 身份。省略 Work Room 的可选 sessionId 使用当前 C；其 Team scope不能替代 Room exact owner，当前 C 读取不归属自己的 Work Item/Project Room仍拒绝，不扩张领域权限。
+
+错误保留 `code/message/details/correlationId` 以及可用的 `currentRevision`。受保护 401/403、撤权、Stop、角色拒绝和冲突不刷新、不重发、不盲写。请求前已知到期刷新仍经 live 授权；显式 stale ACK 保留既有 refresh→ACK 恢复，不先读取拒 stale 的 qualified manifest。Stop ACK 以仍有效的准确 E Token、当前 If-Match 和稳定 key 调用；Stop 后禁止 installation refresh，M0 不新增 MCP 清理 bridge。manifest不可读时保留原拒绝，不使用缓存降级。
+
+调用前持久化显式 Idempotency-Key；丢响应、重连和传输重试保持同 key/body。异正文或另一个逻辑新动作使用新 key。复合 import 保持内容 hash、逐命令部分提交及各命令 key；相同内容再次导入仍受原 hash 身份限制，不能冒作另一个新动作。发现/resource读取不新增业务 receipt/outbox。后续 M1–M5 的缺入口仅披露归属。
+
+真实本机 conformance 使用现有安全配对、真实 API/MCP、两种 mode 与直接 E；Pi 连接本机 HTTPS 假模型，核模型实收工具、真实调用和持久 Turn/Document/工具活动。根 `pnpm test:conformance:integration` 与现有 Required `api-integration` 执行该套件；内存 conformance 独立报告。上述语义决策见 `docs/adr/0079-qualified-agent-discovery-and-recovery.md`，状态保持 Proposed，最终成果须独立审查与最新 Required CI。
+
+### MCP 既有恢复与安装交接兼容入口
+
+`ack_agent_session` 与 `heartbeat` 保留既有凭据调用路径，不先读取普通 qualified manifest；服务端仍校验准确 Session、有效 Token、live grant 和 capability。ACK 在 `acknowledged` 是 `ackReceiptReplayOnly` 条件入口，同 key/body 重放返回原回执，新 key 仍被命令拒绝。stale ACK 可恢复；stopping/terminal heartbeat 仅诊断，不恢复执行、读取权限或授权。readonly 仍拒缓存写调用；其他 binding 不使用该例外，受保护 401/403 不刷新或重发。
+
+安装交接 `inspect_pending_handoff`、`reject_handoff` 按 binding 的安装用途槽使用 null Session/Delegation/manifest 身份和安装 Bearer，不借 C/E manifest 判安装资格。准确 handoff 目标与 live 授权仍由 REST 核验，缺安装凭据明确拒绝。SDK 原 `rejectHandoff` 保留 Session 兼容分支，MCP 安装 binding 使用显式 `rejectPendingHandoff`。
+
+
+## 执行结果确认、等待与停止恢复
+
+直接 complete 或 stopAck 已提交却失去响应时，使用具名 `getSessionExecutionResult` /
+`get_session_execution_result`，携准确 Session、原 action 和 operationKey。此入口只接受
+当前合法原 Connection 的安装身份、原生安装身份或原 Human 合法读取；重新核实时授权与
+原事务保存的来源快照，返回当前状态、原 revision/结果引用和对应清理概要。它不签 Token、
+续 Session、更新 usage 或追加业务事实；普通终态 E 门禁保持。未知来源与旧 null 回执对
+Agent 隐藏拒绝，unavailable 不证明未提交。Pi 内部 completion 无独立 complete 回执，
+继续使用原外层 settle key/body 的既有原子重放协议。
+
+Runner 等待工具仅形成意图；模型及在途工具静止、外部效果已核实后，公开回复与
+Session 等待态、Turn/Attempt 结算、持久等待条件在同一事务提交。部署开关
+`WORKMESH_EXECUTION_WAITS_ENABLED=true` 且持久 claim 的 `executionWaits=true` 才启用。
+Worker 对准确批准 ID 和完整 `sha256:` hash 或等待边界后的合法输入核实时权限，
+唯一生成/复用后续 Turn。新 Attempt 经普通 claim/start 准入，重新取得 Lease；旧消费者
+默认不接续 Turn。等待不长占模型 Attempt 或续租；Human pause 保持暂停，只有 Human
+resume 后再重验。Stop、撤权、无效触发不会启动模型。
+
+Stop 后关闭所有模型工具与 steering，受控 finally 持原 E Token，以独立有界 signal
+提交 stopAck 的 cleanupSummary/residualRisks；不先写 Activity，不刷新停止 Token，
+不拿普通 Lease release 替代 Stop。强杀或未知清理失败保留残留，不能复活执行。
+
+## 有界父子协作与独立 reviewer
+
+父 execution Session 使用自身 live E Token 调用 `GET /api/v1/agent-sessions/{id}/children`，只能读取有真实父、Delegation、原 Plan/version/stable step 绑定的直接子最小状态。签名 cursor 每页重新核授权；子终态可确认，父终态、pause、Stop 或撤权拒绝。响应不包含子 Token、prompt 或正文，不产生业务写入，也不扩大普通 Session get/list 权限。
+
+`ReviewDelegationInput.budget` 可显式缩减继承预算；省略参数或某维仍继承父值，不自动取剩余额度。有效预算同时用于执行和 reservation，旧 reservation 不自动释放。两种创建共享父累计总量、活跃及 stable step 跨版本限额、目标并发和真实三方能力交集；客户端不配置父/step 上限，现有数据库默认值为 8。
+
+创建响应保留 `parent_session_id`、`plan_step_version_id`、`required_for_parent`、`inherited_budget`、`max_child_sessions` 和既有额外字段。reviewer 没有 `plan:write`，Runner 不自动发布 Plan；完成必须由本人提交 Room `review_result` 和本人 `code_review` Artifact，structured review 和 `noArtifactReason` 均不豁免。所有非 `completed` 的 required child 继续以准确 child IDs 阻止父完成。
+# 精确 Git 动作与审查交付
+
+Agent 通过 `GET /api/v1/provider-actions/{id}` 只读确认本人准确 Session 的原动作。返回安全目标、状态、结果引用与恢复分类；不返回 payload、文件正文、存储密钥或 provider 原始错误。每次查询重验当前授权、仓库 context 和 feature；普通终态 E 不放宽。原 principal Human 在仍有合法权限时可诊断终态动作。`unknown` 只允许人工对账，不能以新 key 重发。
+
+`ReviewDelegationInput.repositoryIds` 显式给出非空唯一仓库清单时，父 Delegation、目标 definition、Team grant 必须共同具有 `repo:read`，且仓库属于父当前范围并使用共同 WorkItem／Project context。省略保持原三项 reviewer 能力。创建、旧 key/body 重放和后续读取均重验；reviewer 不获得仓库写权或 `plan:write`。有效 E 先发布本人 Room `review_result`、当前 head 的 `code_review` delivery Artifact，再发布 structured review；完成后父确认 required child completed，Human 对准确 head/checks 批准。上传 file 不替代审查证据。
+
+Worker 每次仓库写 HTTP 前在完整 authority/resource/PR/check/approval/action 锁内重读，最后检查数据库真实租期与 generation。Stop／撤权先提交则零外发；发送许可先提交的在途请求不能召回，后续写重新授权。五类写 action 有领取历史而无合法 checkpoint 保守停发 `dead`／`PROVIDER_ACTION_OUTCOME_UNKNOWN`；合法 checkpoint 仅本地完成，纯 context GET 有界重试。既有 `attempt_count` 上限保持饱和，CAS 额外绑定精确 `claimed_at`，不新增状态、字段、迁移或事件。
+
+发送事务从已锁仓库读取当前 `default_branch`，禁止 branch／commit／openPR／merge／CI 的目标 head 写入当前默认分支。principal 必须仍为活跃 Human，且为 workspace admin 或准确 Team 的现成员；Worker、精确 action 查询、显式 reviewer 创建／重放及父授权读取共同消费这条既有规则。context 的最后一次新领取仍可执行纯读；第八次领取崩溃后过期重领无 checkpoint 则 CAS 终止为 `dead`／`PROVIDER_ACTION_RETRY_EXHAUSTED`，不访问 provider，查询 `scheduled=false`。合法 checkpoint 优先仅本地完成。

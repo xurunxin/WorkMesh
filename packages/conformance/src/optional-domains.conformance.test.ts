@@ -1,0 +1,354 @@
+import {randomUUID,createHash} from 'node:crypto'
+import {beforeAll,afterAll,describe,it,expect} from 'vitest'
+import type {Client} from '@modelcontextprotocol/sdk/client/index.js'
+import { loadFeatureConfig } from '@workmesh/config'
+import { FakeA2AAgent } from '../../../packages/a2a-adapter/src/index.js'
+import { buildApp } from '../../../apps/api/src/server.js'
+import { createOptionalDomainsFixture,saveOptionalEvidence } from './optional-domains.fixture.js'
+import { createExternalConsumer } from './joint-clients.external.js'
+import type {Execution} from './mcp-coverage.fixture.js'
+import {WorkMeshClient} from '@workmesh/agent-sdk'
+import {canonicalActionApprovalPayload} from '@workmesh/domain'
+import {tokenHash} from '@workmesh/db'
+import type {ApiActor} from '../../../apps/api/src/agent/types.js'
+import {readInitiativeRollup,readAutomationRun,readUsageSummary} from '../../../apps/api/src/operations/read-projections.js'
+import {readSnapshotBarrier} from '../../../apps/api/integration/optional-domain-barriers.js'
+const approvalPayloadHash=(value:unknown)=>`sha256:${createHash('sha256').update(canonicalActionApprovalPayload(value)).digest('hex')}`
+
+const tool=async<T>(client:Client,name:string,args:Record<string,unknown>={})=>{
+  const result=await client.callTool({name,arguments:args})
+  expect(result.isError,JSON.stringify(result.content)).not.toBe(true)
+  return (result.structuredContent as {data:T}).data
+}
+describe('M4 独立六域实际消费者',()=>{
+  let f:Awaited<ReturnType<typeof createOptionalDomainsFixture>>
+  let origin:Execution,target:Execution
+  let targetInstallation:string
+  let projectId:string,initiativeId:string,viewId:string,privateViewId:string,loopId:string,runId:string,templateId:string,bindingId:string,taskId:string,targetAgentId:string
+  const pinnedMarkdown='M4 中文完整执行指引\n'.repeat(6000)
+  beforeAll(async()=>{
+    f=await createOptionalDomainsFixture()
+    projectId=(await f.human<{id:string}>('POST','/api/v1/projects',{teamId:f.teamId,name:'M4 authorized project'})).id
+    origin=await f.createExecution('M4 exact origin',false,undefined,projectId)
+    const other=(await f.human<{id:string}>('POST','/api/v1/projects',{teamId:f.teamId,name:'M4 excluded linked project'})).id
+    initiativeId=(await f.human<{id:string}>('POST','/api/v1/initiatives',{name:'M4 nonempty rollup',ownerActorId:f.humanActorId,status:'active',projectIds:[projectId,other]})).id
+    await f.human('POST','/api/v1/cycles',{teamId:f.teamId,name:'M4 Cycle',startsAt:'2020-01-01T00:00:00Z',durationWeeks:1})
+    viewId=(await f.human<{id:string}>('POST','/api/v1/advanced-views',{name:'M4 visible View',entityType:'issue',layout:'list',scope:'team',teamId:f.teamId})).id
+    privateViewId=(await f.human<{id:string}>('POST','/api/v1/advanced-views',{name:'M4 Human private',entityType:'issue',layout:'list',scope:'private'})).id
+    await f.human('POST','/api/v1/automation-rules',{teamId:f.teamId,name:'M4 existing Rule',trigger:{type:'event',eventTypes:['m4.controlled.never']},actions:[{type:'notify',parameters:{recipientActorId:f.humanActorId,title:'M4 controlled'}}]})
+    const recipient=await f.registerTarget(['work:read','work:write','artifact:write','plan:write','message:write'])
+    targetInstallation=recipient.token
+    targetAgentId=recipient.agentId
+    const template=await f.human<{id:string;versionId:string;revision:number}>('POST','/api/v1/templates',{teamId:f.teamId,kind:'agent_run',name:'M4 pinned Template',body:{instructions:pinnedMarkdown,requiredCapabilities:['work:read','work:write','artifact:write','plan:write','message:write']}})
+    templateId=template.id
+    await f.human('POST',`/api/v1/templates/${template.id}/state`,{status:'active'},template.revision)
+    loopId=(await f.human<{id:string}>('POST','/api/v1/loops',{name:'M4 bounded Loop',ownerActorId:f.humanActorId,teamId:f.teamId,projectId,agentId:recipient.agentId,runTemplateVersionId:template.versionId,trigger:{type:'event',eventTypes:['m4.controlled.never']},budget:{maxTokens:100,maxCostMinor:'100',currency:'USD'},noOverlap:true})).id
+    const admitted=await f.coordination.runLoopNow(loopId,{occurrenceKey:'m4-first',scheduledFor:'2020-01-01T00:00:00Z'},{idempotencyKey:'m4-first'})
+    expect(admitted.sessionId).not.toBeNull();runId=admitted.runId
+    // Loop admission currently records a queued Session without issuing a
+    // webhook bootstrap. Use its existing, authority-checked installation
+    // refresh endpoint; the origin client and its credential stay untouched.
+    const targetClient=new WorkMeshClient({baseUrl:f.baseUrl,installationToken:recipient.token})
+    await expect(new WorkMeshClient({baseUrl:f.baseUrl,installationToken:f.connectionToken}).refreshSessionToken(admitted.sessionId!)).rejects.toThrow()
+    const accepted=await targetClient.refreshSessionToken(admitted.sessionId!,recipient.token,{idempotencyKey:'m4-target-bootstrap'})
+    await targetClient.acknowledge(admitted.sessionId!,{summary:'M4 exact Loop target accepted',externalUrls:[]})
+    const queued=await targetClient.getSession<{revision:number}>(admitted.sessionId!)
+    await targetClient.transitionState(admitted.sessionId!,'executing','M4 exact target lifecycle',{ifMatch:queued.revision})
+    target={sessionId:admitted.sessionId!,workItemId:'',token:accepted.sessionToken,client:targetClient}
+    const fake=new FakeA2AAgent()
+    const definition=await f.human<{revision:number}>('GET',`/api/v1/agents/${recipient.agentId}`)
+    await f.human('PATCH',`/api/v1/agents/${recipient.agentId}`,{supportedProtocols:['native_http','a2a']},definition.revision)
+    bindingId=(await f.human<{id:string}>('POST','/api/v1/a2a-bindings',{agentId:recipient.agentId,protocolVersion:'0.3',agentCard:{...fake.card,url:'https://example.com/a2a'}})).id
+    taskId='m4-loop-task'
+    // Privileged adapter mapping fixture. No imported task or external call;
+    // the target Session itself was genuinely admitted/refreshed/acknowledged.
+    await f.db.query('INSERT INTO a2a_task_bindings(binding_id,external_task_id,session_id) VALUES($1,$2,$3)',[bindingId,taskId,target.sessionId])
+    saveOptionalEvidence('six-domain-fixture.json',{projectId,initiativeId,viewId,privateViewId,loopId,runId,templateId,bindingId,taskId,originSession:origin.sessionId,targetSession:target.sessionId,targetInstallationRefresh:true,foreignInstallationRefused:true,signedTargetDelivery:false,loopWebhookBootstrapUnsupported:true,privilegedA2ATaskMapping:true,productionChanged:false})
+  })
+  afterAll(async()=>{if(f) await f.close()})
+
+  it('真实SDK/MCP C/E分页与四读正反例，origin与target准确分离',async()=>{
+    const c=await f.connect('read-write')
+    const e=await f.connect('read-write',origin)
+    const t=await f.connect('read-write',target)
+    expect((await tool<{items:Array<{id:string}>}>(c,'list_cycles',{limit:1})).items).toHaveLength(1)
+    expect((await tool<{items:Array<{id:string}>}>(c,'list_automation_rules')).items.length).toBeGreaterThan(0)
+    expect((await tool<{items:Array<{id:string}>}>(c,'list_loops')).items.some(item=>item.id===loopId)).toBe(true)
+    expect((await tool<{items:Array<{id:string}>}>(e,'list_initiatives')).items.some(item=>item.id===initiativeId)).toBe(true)
+    expect(await tool(e,'get_initiative_rollup',{initiativeId})).toMatchObject({projectCount:1,totalItems:1})
+    await expect(f.coordination.getInitiativeRollup(initiativeId)).rejects.toMatchObject({code:'NOT_FOUND'})
+    await expect(origin.client.getAutomationRun(runId)).rejects.toMatchObject({code:'NOT_FOUND'})
+    expect(await tool(t,'get_automation_run',{runId})).toMatchObject({id:runId,session_id:target.sessionId,effects:[]})
+    expect((await tool<{items:Array<{id:string}>}>(t,'list_automation_runs',{loopId,limit:1})).items.some(item=>item.id===runId)).toBe(true)
+    const pins=await tool<{items:Array<{id:string;version:number;body:{instructions:string}}>}>(t,'list_templates',{limit:1})
+    expect(pins.items[0]).toMatchObject({id:templateId,version:1,body:{instructions:pinnedMarkdown}})
+    expect((await origin.client.listTemplates()).items).toEqual([])
+    expect((await tool<{items:Array<{id:string}>}>(e,'list_advanced_views')).items.map(item=>item.id)).not.toContain(privateViewId)
+    expect((await tool<{items:Array<{id:string}>}>(e,'get_advanced_view_results',{viewId})).items.some(item=>item.id===origin.workItemId)).toBe(true)
+    await expect(origin.client.getAdvancedViewResults(privateViewId)).rejects.toMatchObject({code:'NOT_FOUND'})
+    const page=await tool<{events:unknown[];cursor:string}>(t,'get_a2a_task_events',{bindingId,taskId})
+    expect(page.events.length).toBeGreaterThan(0)
+    await expect(origin.client.getA2ATaskEvents(bindingId,taskId)).rejects.toMatchObject({code:'NOT_FOUND'})
+    saveOptionalEvidence('sdk-mcp-positive-negative.json',{pins,page,identitySeparated:true,hiddenPrivateView:true})
+  })
+
+  it('普通saved view保owner、分页cursor；同key/body回执与异体冲突',async()=>{
+    const first=await tool<{id:string;revision:number}>(await f.connect('read-write',origin),'create_saved_view',{name:'M4 own ordinary view',teamId:f.teamId,idempotencyKey:'m4-view'})
+    expect(await origin.client.createSavedView({name:'M4 own ordinary view',teamId:f.teamId},{idempotencyKey:'m4-view'})).toEqual(first)
+    await expect(origin.client.createSavedView({name:'M4 conflict',teamId:f.teamId},{idempotencyKey:'m4-view'})).rejects.toMatchObject({code:'IDEMPOTENCY_KEY_REUSED'})
+    const own=await origin.client.listSavedViews({}, {limit:1})
+    const all=[];let page=own
+    for(let i=0;i<20;i++) {all.push(...page.items);if(!page.nextCursor)break;page=await origin.client.listSavedViews({}, {limit:1,cursor:page.nextCursor})}
+    expect(all.some(item=>item.id===first.id)).toBe(true)
+    expect((await target.client.listSavedViews()).items.some(item=>item.id===first.id)).toBe(false)
+    const readonly=await f.connect('read-only',origin)
+    expect((await readonly.listTools()).tools.some(item=>['create_saved_view','record_usage','run_loop_now'].includes(item.name))).toBe(false)
+    const refused=await readonly.callTool({name:'record_usage',arguments:{}})
+    expect(refused.isError).toBe(true)
+    saveOptionalEvidence('saved-view-owner-pagination.json',{first,own,all,readOnlyWriteRefused:true})
+  })
+
+  it('usage本人/projectless与币种unknown，dedupe及异体冲突',async()=>{
+    const body={dedupeKey:'m4-usage',agentId:targetAgentId,sessionId:target.sessionId,occurredAt:'2020-01-01T00:00:00Z',inputTokens:17,currency:'USD',costSource:'manual' as const,costMinor:'9007199254740993'}
+    const record=await tool<{id:string;duplicate:boolean}>(await f.connect('read-write',target),'record_usage',{...body,idempotencyKey:'m4-usage'})
+    expect(await target.client.recordUsage(body,{idempotencyKey:'m4-usage'})).toEqual(record)
+    await expect(target.client.recordUsage({...body,inputTokens:18},{idempotencyKey:'m4-usage'})).rejects.toMatchObject({code:'IDEMPOTENCY_KEY_REUSED'})
+    await target.client.recordUsage({...body,dedupeKey:'m4-unknown',currency:'EUR',costSource:'unknown',costMinor:undefined},{idempotencyKey:'m4-unknown'})
+    const summary=await target.client.getUsageSummary()
+    expect(summary).toMatchObject({input_tokens:'34',unknown_cost_records:1,currency_buckets:expect.arrayContaining([{currency:'USD',known_cost_minor:'9007199254740993',unknown_cost_records:0}])})
+    await expect(target.client.recordUsage({...body,dedupeKey:'project-forbidden',projectId},{idempotencyKey:'m4-wrong-project'})).rejects.toMatchObject({code:'RESOURCE_SCOPE_DENIED'})
+    await expect(target.client.getUsageSummary({projectId})).rejects.toMatchObject({code:'RESOURCE_SCOPE_DENIED'})
+    await expect(origin.client.getUsageSummary({sessionId:target.sessionId})).rejects.toMatchObject({code:'RESOURCE_SCOPE_DENIED'})
+    saveOptionalEvidence('usage-current-session.json',{record,summary,projectless:true})
+  })
+
+  it('Loop同occurrence回执、两请求no-overlap竞争及Human暂停拒绝',async()=>{
+    const body={occurrenceKey:'m4-first',scheduledFor:'2020-01-01T00:00:00Z'}
+    expect(await tool(await f.connect('read-write'),'run_loop_now',{loopId,...body,idempotencyKey:'m4-first'})).toMatchObject({runId,sessionId:target.sessionId})
+    const same=await f.coordination.runLoopNow(loopId,body,{idempotencyKey:'m4-first'})
+    expect(same).toMatchObject({runId,sessionId:target.sessionId})
+    await expect(f.coordination.runLoopNow(loopId,{...body,occurrenceKey:'different'},{idempotencyKey:'m4-first'})).rejects.toMatchObject({code:'IDEMPOTENCY_KEY_REUSED'})
+    const outcomes=await Promise.allSettled([0,1].map(index=>f.coordination.runLoopNow(loopId,{...body,occurrenceKey:`compete-${index}`},{idempotencyKey:`m4-compete-${index}`})))
+    expect(outcomes.every(item=>item.status==='rejected')).toBe(true)
+    expect((await f.db.query<{count:number}>('SELECT count(*)::int AS count FROM automation_runs WHERE loop_id=$1',[loopId])).rows[0]!.count).toBe(1)
+    const loop=(await f.db.query<{revision:number}>('SELECT revision FROM loops WHERE id=$1',[loopId])).rows[0]!
+    await f.human('POST',`/api/v1/loops/${loopId}/state`,{state:'paused'},loop.revision)
+    await expect(f.coordination.runLoopNow(loopId,{...body,occurrenceKey:'paused'},{idempotencyKey:'m4-paused'})).rejects.toMatchObject({code:'INVALID_STATE'})
+    saveOptionalEvidence('loop-idempotency-overlap.json',{same,outcomes:outcomes.map(item=>item.status==='rejected'?{status:item.status,message:String(item.reason)}:item),runCount:1})
+  })
+
+  it('usage事务真实触发器故障：usage/event/outbox零新增，恢复后一次提交',async()=>{
+    const suffix=randomUUID().replaceAll('-',''),name=`m4_usage_fault_${suffix}`
+    const dedupe=`m4-fault-${suffix}`
+    const count=async()=> (await f.db.query('SELECT (SELECT count(*)::int FROM usage_records) AS usage,(SELECT count(*)::int FROM domain_events) AS events,(SELECT count(*)::int FROM outbox_events) AS outbox')).rows[0]
+    const input={dedupeKey:dedupe,agentId:targetAgentId,sessionId:target.sessionId,occurredAt:'2020-01-01T00:00:00Z',currency:'USD',costSource:'unknown' as const}
+    const before=await count()
+    await f.db.query(`CREATE FUNCTION ${name}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.dedupe_key='${dedupe}' THEN RAISE EXCEPTION 'M4_USAGE_FAILURE'; END IF; RETURN NEW; END $$`)
+    await f.db.query(`CREATE TRIGGER ${name} BEFORE INSERT ON usage_records FOR EACH ROW EXECUTE FUNCTION ${name}()`)
+    try {await expect(target.client.recordUsage(input,{idempotencyKey:dedupe})).rejects.toThrow();expect(await count()).toEqual(before)}
+    finally {await f.db.query(`DROP TRIGGER ${name} ON usage_records`);await f.db.query(`DROP FUNCTION ${name}()`)}
+    await target.client.recordUsage(input,{idempotencyKey:dedupe})
+    const after=await count()
+    expect(after.usage).toBe(before.usage+1);expect(after.events).toBe(before.events+1);expect(after.outbox).toBe(before.outbox+1)
+    saveOptionalEvidence('usage-rollback.json',{before,after,triggerRemoved:true})
+  })
+
+  it('两合法新run竞争no-overlap及同币种成本/Token预留，故障admission全回滚',async()=>{
+    const recipient=await f.pairTarget(['work:read','work:write','artifact:write','plan:write','message:write'])
+    const definition=await f.human<{revision:number}>('GET',`/api/v1/agents/${recipient.agentId}`)
+    await f.human('PATCH',`/api/v1/agents/${recipient.agentId}`,{maxConcurrency:8},definition.revision)
+    const pin=(await f.db.query<{run_template_version_id:string}>('SELECT run_template_version_id FROM loops WHERE id=$1',[loopId])).rows[0]!.run_template_version_id
+    const make=async(name:string,noOverlap:boolean)=>(await f.human<{id:string}>('POST','/api/v1/loops',{name,ownerActorId:f.humanActorId,teamId:f.teamId,agentId:recipient.agentId,runTemplateVersionId:pin,trigger:{type:'event',eventTypes:['m4.controlled.never']},budget:{maxTokens:100,maxCostMinor:'100',currency:'USD'},noOverlap})).id
+    const compete=async(id:string)=>Promise.allSettled([0,1].map(index=>f.coordination.runLoopNow(id,{occurrenceKey:`m4-${id}-${index}`,scheduledFor:'2020-01-01T00:00:00Z'},{idempotencyKey:`m4-${id}-${index}`})))
+    const overlap=await make('M4 fresh overlap race',true)
+    const overlapResults=await compete(overlap)
+    expect(overlapResults.filter(item=>item.status==='fulfilled')).toHaveLength(1)
+    expect(overlapResults.find(item=>item.status==='rejected')).toMatchObject({reason:{code:'LOOP_OVERLAP'}})
+    const budgetResults=[]
+    for(const kind of ['cost','tokens'] as const) {
+      const id=await make(`M4 fresh ${kind} reservation race`,false)
+      await f.human('POST','/api/v1/budget-policies',{scopeType:'loop',scopeId:id,currency:'USD',...(kind==='cost'?{hardCostMinor:'150'}:{hardTokens:150})})
+      const outcomes=await compete(id)
+      expect(outcomes.filter(item=>item.status==='fulfilled')).toHaveLength(1)
+      expect(outcomes.find(item=>item.status==='rejected')).toMatchObject({reason:{code:'BUDGET_HARD_LIMIT'}})
+      budgetResults.push({kind,id,outcomes:outcomes.map(item=>item.status==='fulfilled'?{status:item.status,value:item.value}:{status:item.status,code:(item.reason as {code:string}).code})})
+    }
+    const faultLoop=await make('M4 admission transaction fault',false)
+    const suffix=randomUUID().replaceAll('-',''),name=`m4_admit_fault_${suffix}`
+    const count=async()=>(await f.db.query('SELECT (SELECT count(*)::int FROM automation_runs) AS runs,(SELECT count(*)::int FROM agent_sessions) AS sessions,(SELECT count(*)::int FROM delegations) AS delegations,(SELECT count(*)::int FROM loop_budget_reservations) AS reservations,(SELECT count(*)::int FROM domain_events) AS events,(SELECT count(*)::int FROM outbox_events) AS outbox')).rows[0]
+    await f.db.query(`CREATE FUNCTION ${name}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.agent_id='${recipient.agentId}'::uuid AND NEW.automation_run_id IS NOT NULL THEN RAISE EXCEPTION 'M4_ADMISSION_FAILURE'; END IF; RETURN NEW; END $$`)
+    await f.db.query(`CREATE TRIGGER ${name} BEFORE INSERT ON agent_sessions FOR EACH ROW EXECUTE FUNCTION ${name}()`)
+    const body={occurrenceKey:'m4-fault',scheduledFor:'2020-01-01T00:00:00Z'},before=await count()
+    try {await expect(f.coordination.runLoopNow(faultLoop,body,{idempotencyKey:'m4-admit-fault'})).rejects.toThrow();expect(await count()).toEqual(before)}
+    finally {await f.db.query(`DROP TRIGGER ${name} ON agent_sessions`);await f.db.query(`DROP FUNCTION ${name}()`)}
+    await f.coordination.runLoopNow(faultLoop,body,{idempotencyKey:'m4-admit-fault'})
+    const after=await count()
+    for(const key of ['runs','sessions','delegations','reservations'])expect(after[key]).toBe(before[key]+1)
+    expect(after.events).toBe(before.events+2);expect(after.outbox).toBe(before.outbox+2)
+    saveOptionalEvidence('fresh-loop-races-rollback.json',{overlapResults:overlapResults.map(item=>item.status),budgetResults,before,after,triggerRemoved:true})
+  })
+
+  it('health准确批准与旧revision；completion仅建议不变WorkItem状态',async()=>{
+    const input={source:'agent' as const,health:'on_track' as const,summary:'M4 authorized health',confidence:0.8,uncertainty:'Controlled fixture only',sources:[{kind:'work_item' as const,id:origin.workItemId,observedAt:'2020-01-01T00:00:00Z',value:{verified:true}}]}
+    const initial=await f.human<{revision:number}>('GET',`/api/v1/projects/${projectId}`)
+    const draft=await origin.client.createProjectHealthUpdate(projectId,input,{sessionId:origin.sessionId,ifMatch:initial.revision,idempotencyKey:'m4-health-draft'})
+    await expect(origin.client.createProjectHealthUpdate(projectId,input,{sessionId:origin.sessionId,ifMatch:initial.revision,idempotencyKey:'m4-health-stale'})).rejects.toMatchObject({code:'REVISION_CONFLICT'})
+    const payload={projectId,health:input.health,summary:input.summary,forecastAt:null,confidence:input.confidence,uncertainty:input.uncertainty,sources:input.sources}
+    const approval=await origin.client.requestApproval({sessionId:origin.sessionId,approvalType:'project_health',actionName:'project.health.publish',actionPayloadHash:approvalPayloadHash(payload),actionPayloadSanitized:payload,riskLevel:'low',rationaleSummary:'M4 exact health publication',expiresAt:new Date(Date.now()+600000).toISOString()},{idempotencyKey:'m4-health-approval'})
+    await expect(origin.client.createProjectHealthUpdate(projectId,{...input,publish:true,approvalId:approval.id},{sessionId:origin.sessionId,ifMatch:draft.projectRevision,idempotencyKey:'m4-pending-health'})).rejects.toThrow()
+    const pending=await f.human<{revision:number}>('GET',`/api/v1/approvals/${approval.id}`)
+    await f.human('POST',`/api/v1/approvals/${approval.id}/decide`,{decision:'approved',reason:'M4 exact reviewed payload'},pending.revision)
+    await expect(origin.client.createProjectHealthUpdate(projectId,{...input,summary:'changed',publish:true,approvalId:approval.id},{sessionId:origin.sessionId,ifMatch:draft.projectRevision,idempotencyKey:'m4-mismatch-health'})).rejects.toMatchObject({code:'APPROVAL_PAYLOAD_MISMATCH'})
+    const published=await origin.client.createProjectHealthUpdate(projectId,{...input,publish:true,approvalId:approval.id},{sessionId:origin.sessionId,ifMatch:draft.projectRevision,idempotencyKey:'m4-publish-health'})
+    expect((await origin.client.getProjectHealthHistory(projectId)).items.some(item=>item.id===published.id&&item.status==='published')).toBe(true)
+    const before=await origin.client.getWorkItem<{status_id:string}>(origin.workItemId)
+    const suggestion=await origin.client.suggestCompletion(projectId,{workItemId:origin.workItemId,rationale:'M4 Human decides'},{sessionId:origin.sessionId,idempotencyKey:'m4-completion'})
+    expect((await origin.client.getWorkItem<{status_id:string}>(origin.workItemId)).status_id).toBe(before.status_id)
+    saveOptionalEvidence('health-completion.json',{draft,published,suggestion,exactApprovalConsumed:true,staleRevisionRefused:true,statusUnchanged:true})
+  })
+
+  it('saved view/health/completion在outbox真实SQL故障后全部回滚，同key重试及异体拒绝',async()=>{
+    const evidence=[]
+    const mcp=await f.connect('read-write',origin)
+    for(const operation of ['view','health','completion'] as const){
+      const table={view:'saved_views',health:'project_health_updates',completion:'completion_suggestions'}[operation]
+      const key=`m4-${operation}-outbox-fault`,suffix=randomUUID().replaceAll('-',''),name=`m4_outbox_fault_${suffix}`
+      const project=await f.human<{revision:number}>('GET',`/api/v1/projects/${projectId}`)
+      const input=operation==='view'?{name:'M4 fault ordinary view',teamId:f.teamId,idempotencyKey:key}:operation==='health'?{projectId,sessionId:origin.sessionId,revision:project.revision,source:'agent',health:'on_track',summary:'M4 outbox health',confidence:0.8,uncertainty:'Controlled',sources:[{kind:'work_item',id:origin.workItemId,observedAt:'2020-01-01T00:00:00Z',value:{verified:true}}],idempotencyKey:key}:{projectId,sessionId:origin.sessionId,workItemId:origin.workItemId,rationale:'M4 outbox suggestion',idempotencyKey:key}
+      const toolName={view:'create_saved_view',health:'create_project_health_update',completion:'suggest_work_item_completion'}[operation]
+      const count=async()=>(await f.db.query(`SELECT (SELECT count(*)::int FROM ${table}) AS facts,(SELECT count(*)::int FROM domain_events) AS events,(SELECT count(*)::int FROM outbox_events) AS outbox,(SELECT count(*)::int FROM api_idempotency_keys) AS receipts,(SELECT revision FROM projects WHERE id=$1) AS project_revision`,[projectId])).rows[0]!
+      await f.db.query(`CREATE FUNCTION ${name}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'M4_OUTBOX_FAILURE'; END $$`)
+      await f.db.query(`CREATE TRIGGER ${name} AFTER INSERT ON outbox_events FOR EACH ROW EXECUTE FUNCTION ${name}()`)
+      const before=await count()
+      try{
+        expect((await mcp.callTool({name:toolName,arguments:input})).isError).toBe(true)
+        expect(await count()).toEqual(before)
+      }finally{await f.db.query(`DROP TRIGGER ${name} ON outbox_events`);await f.db.query(`DROP FUNCTION ${name}()`)}
+      const result=await tool(mcp,toolName,input)
+      expect(await tool(mcp,toolName,input)).toEqual(result)
+      const after=await count()
+      for(const field of ['facts','events','outbox','receipts'])expect(after[field]).toBe(before[field]+1)
+      expect(after.project_revision).toBe(before.project_revision+(operation==='health'?1:0))
+      const changed={...input,...(operation==='view'?{name:'changed'}:operation==='health'?{summary:'changed'}:{rationale:'changed'})}
+      const refused=await mcp.callTool({name:toolName,arguments:changed})
+      expect(refused.isError).toBe(true);expect(JSON.stringify(refused.content)).toContain('IDEMPOTENCY_KEY_REUSED')
+      expect(await count()).toEqual(after)
+      evidence.push({operation,before,after,result,triggerRemoved:true})
+    }
+    saveOptionalEvidence('finite-write-outbox-rollback.json',{evidence,realSqlFault:true,exactKeyRetry:true})
+  })
+
+  it('rollup/run/usage真实PG撤权在语句前拒绝，语句后仅原快照及下一次拒绝',async()=>{
+    const evidence=[]
+    for(const operation of ['rollup','run','usage'] as const)for(const phase of ['before','after'] as const){
+      const execution=operation==='rollup'?origin:target
+      const identity=(await f.db.query<{id:string;workspace_id:string;agent_id:string}>('SELECT agent_actor_id AS id,workspace_id,agent_id FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!
+      const current:ApiActor={id:identity.id,workspaceId:identity.workspace_id,displayName:'M4 exact fixture',workspaceRole:'member',csrfToken:'',kind:'agent',agentSessionId:execution.sessionId,authentication:'agent_session',credentialHash:tokenHash(execution.token)}
+      const barrier=readSnapshotBarrier(process.env.DATABASE_URL!,phase)
+      const snapshotClient=await barrier.pool.connect()
+      const read=(db:typeof f.db)=>operation==='rollup'?readInitiativeRollup(db,current,initiativeId,true):operation==='run'?readAutomationRun(db,current,runId):readUsageSummary(db,current,{})
+      const running=operation==='rollup'?readInitiativeRollup(snapshotClient,current,initiativeId,true):operation==='run'?readAutomationRun(snapshotClient,current,runId):readUsageSummary(snapshotClient,current,{})
+      const outcome=running.then(body=>({body,error:undefined}),error=>({body:undefined,error:error as {code:string}}))
+      try{
+        await barrier.reached
+        await f.db.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1 AND team_id=$2',[identity.agent_id,f.teamId])
+        barrier.release()
+        const result=await outcome
+        if(phase==='before')expect(result.error).toMatchObject({code:'SESSION_SCOPE_DENIED'})
+        else{
+          expect(result.error).toBeUndefined()
+          expect(result.body).toMatchObject(operation==='rollup'?{projectCount:1,totalItems:1}:operation==='run'?{id:runId,session_id:target.sessionId}:{input_tokens:'34'})
+        }
+        await expect(read(f.db)).rejects.toMatchObject({code:'SESSION_SCOPE_DENIED'})
+        evidence.push({operation,phase,revocationCommitted:true,firstRefused:phase==='before',nextReadRefused:true})
+      }finally{
+        barrier.release();await outcome;snapshotClient.release();await barrier.pool.end()
+        await f.db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[identity.agent_id,f.teamId])
+      }
+    }
+    saveOptionalEvidence('pure-read-snapshot-barriers.json',{evidence,queryResultsMocked:false,grantRestored:true})
+  })
+
+  it('六feature默认关闭明确拒绝，合法身份不变管理权限',async()=>{
+    const disabled=buildApp({features:loadFeatureConfig({}),logger:false})
+    try {
+      const enabled=await target.client.getQualifiedAgentCapabilities()
+      for(const [operation,pending] of [['getInitiativeRollup',['initiativeLinkedProjectScope']],['getAutomationRun',['routeResolvedScope','automationRunSessionMatches']],['getUsageSummary',['usageSessionMatches','usageAgentMatches','usageProjectMatches','usageFiltersMatchCurrentSession']],['streamA2ATaskEvents',['a2aBindingActive','a2aTaskSessionMatches']]] as const){
+        expect(enabled.discovery.operations.find(item=>item.operationId===operation&&item.variant===null)?.eligibility).toMatchObject({status:'requires_target_check',pendingChecks:expect.arrayContaining([...pending])})
+      }
+      const disabledAddress=await disabled.listen({port:0,host:'127.0.0.1'})
+      const disabledSdk=new WorkMeshClient({baseUrl:disabledAddress,sessionToken:target.token})
+      const disabledMcp=await f.connectSdk(disabledSdk)
+      for(const operation of ['getInitiativeRollup','getAutomationRun','getUsageSummary','streamA2ATaskEvents'])
+        expect((await disabledSdk.getQualifiedAgentCapabilities()).discovery.operations.find(item=>item.operationId===operation&&item.variant===null)?.eligibility).toMatchObject({status:'blocked',reasons:expect.arrayContaining(['FEATURE_DISABLED'])})
+      expect((await disabledMcp.listTools()).tools.some(item=>['get_initiative_rollup','get_automation_run','get_usage_summary','get_a2a_task_events'].includes(item.name))).toBe(false)
+      for(const path of ['/api/v1/cycles','/api/v1/templates','/api/v1/automation-rules','/api/v1/loops','/api/v1/usage-summary',`/api/v1/a2a-bindings/${bindingId}/tasks/${taskId}/events`]) {
+        const response=await disabled.inject({method:'GET',url:path,headers:{authorization:`Bearer ${target.token}`}})
+        expect(response.statusCode,response.body).toBe(403);expect(response.json()).toMatchObject({error:{code:'FEATURE_DISABLED'}})
+      }
+      const denied=await fetch(f.baseUrl+'/api/v1/advanced-views',{method:'POST',headers:{authorization:`Bearer ${origin.token}`,'idempotency-key':randomUUID(),'content-type':'application/json'},body:JSON.stringify({name:'Forbidden manager',scope:'workspace',entityType:'issue',layout:'list'})})
+      expect(denied.status).toBe(403)
+      const management=[['POST','/api/v1/cycles'],['POST','/api/v1/cycles/generate'],['POST',`/api/v1/cycles/${randomUUID()}/carry-over`],['POST','/api/v1/initiatives'],['POST','/api/v1/advanced-views'],['POST','/api/v1/automation-rules'],['POST',`/api/v1/automation-rules/${randomUUID()}/versions`],['POST',`/api/v1/automation-rules/${randomUUID()}/dry-run`],['POST',`/api/v1/automation-rules/${randomUUID()}/trigger`],['POST',`/api/v1/automation-rules/${randomUUID()}/state`],['POST','/api/v1/loops'],['POST',`/api/v1/loops/${loopId}/state`],['POST','/api/v1/budget-policies'],['POST','/api/v1/templates'],['POST',`/api/v1/templates/${templateId}/versions`],['POST',`/api/v1/templates/${templateId}/state`],['POST','/api/v1/templates/import'],['POST','/api/v1/a2a-bindings'],['POST',`/api/v1/a2a-bindings/${bindingId}/tasks`]] as const
+      for(const [method,path] of management){
+        const response=await fetch(f.baseUrl+path,{method,headers:{authorization:`Bearer ${origin.token}`,'idempotency-key':randomUUID(),'content-type':'application/json','if-match':'1'},body:'{}'})
+        expect(response.status,`${method} ${path}: ${await response.text()}`).toBe(403)
+      }
+      expect((await fetch(f.baseUrl+'/api/v1/templates/export',{headers:{authorization:`Bearer ${origin.token}`}})).status).toBe(403)
+      saveOptionalEvidence('management-feature-discovery.json',{humanManagementAgentRefusals:20,sixFeatureRestRefusals:6,fourReadActualManifestFeatureBlocked:true,exactTargetPending:true,mode:'real HTTP MCP',humanCookiesUsedByAgent:false})
+    } finally {await disabled.close()}
+  })
+
+  it('真实Pi准确project/item E实收rollup、usage、规则/Loop及跨Session拒绝',async()=>{
+    const calls=[
+      {name:'workmesh_list_templates',arguments:{limit:1}},
+      {name:'workmesh_get_automation_run',arguments:{runId}},
+      {name:'workmesh_get_usage_summary',arguments:{}},
+      {name:'workmesh_list_automation_rules',arguments:{}},
+      {name:'workmesh_list_loops',arguments:{}},
+      {name:'workmesh_get_a2a_task_events',arguments:{bindingId,taskId}},
+      {name:'workmesh_get_initiative_rollup',arguments:{initiativeId}},
+    ]
+    // Workbench intentionally requires a responsible Human's bound project
+    // or WorkItem. A projectless Loop target is not given a synthetic context.
+    const captures=await f.pi(origin,f.connectionToken,calls.map(call=>async()=>call))
+    const results=captures.at(-1)!.results.map(text=>{const value:unknown=JSON.parse(text);return typeof value==='string'?JSON.parse(value) as unknown:value})
+    expect(results[0]).toMatchObject({items:[]})
+    expect(JSON.stringify(results[1])).toContain('NOT_FOUND')
+    expect(results[2]).toMatchObject({unknown_cost_records:expect.any(Number)})
+    expect(results.at(-1)).toMatchObject({projectCount:1,totalItems:1})
+    expect(JSON.stringify(results[5])).toContain('NOT_FOUND')
+    saveOptionalEvidence('pi-model-received.json',{captures,exactOriginSession:origin.sessionId,foreignTargetDenied:true,workbenchProjectlessLoopUnsupported:true})
+  })
+
+  it('现有native OpenCode实收准确E的rollup/usage，未使用Human cookie',async()=>{
+    if(!process.env.M5_CLIENT_EXECUTABLE) throw new Error('M4既有native OpenCode路径缺失，不能以skip代验收')
+    const native=await createExternalConsumer({baseUrl:f.baseUrl,sessionToken:origin.token,allowedTools:['get_initiative_rollup','get_usage_summary']})
+    try {
+      expect(await native.invoke('get_initiative_rollup',{initiativeId})).toMatchObject({projectCount:1,totalItems:1})
+      expect(await native.invoke('get_usage_summary',{})).toMatchObject({currency_buckets:[]})
+      saveOptionalEvidence('native-opencode-model-received.json',{actualClient:'native OpenCode',exactExecution:origin.sessionId,modelReceivedRollup:true,modelReceivedUsage:true})
+    } finally {await native.close()}
+    const targetNative=await createExternalConsumer({baseUrl:f.baseUrl,sessionToken:target.token,allowedTools:['list_templates','get_automation_run','get_usage_summary','get_a2a_task_events']})
+    try {
+      expect(await targetNative.invoke('list_templates',{limit:1})).toMatchObject({items:[{id:templateId,body:{instructions:pinnedMarkdown}}]})
+      expect(await targetNative.invoke('get_automation_run',{runId})).toMatchObject({id:runId,session_id:target.sessionId})
+      expect(await targetNative.invoke('get_usage_summary',{})).toMatchObject({unknown_cost_records:expect.any(Number)})
+      expect(await targetNative.invoke('get_a2a_task_events',{bindingId,taskId})).toMatchObject({cursor:expect.any(String),events:expect.any(Array)})
+      saveOptionalEvidence('native-target-model-received.json',{exactTargetSession:target.sessionId,fullTemplateReceived:true,runUsageAndA2AReceived:true})
+    } finally {await targetNative.close()}
+  })
+
+  it('API重启从A2A独立cursor恢复，Stop后旧E不能读run或写usage',async()=>{
+    const before=await target.client.getA2ATaskEvents(bindingId,taskId)
+    await f.restart()
+    expect(await target.client.getA2ATaskEvents(bindingId,taskId,before.cursor)).toMatchObject({events:[]})
+    const session=await target.client.getSession<{revision:number}>(target.sessionId)
+    await f.human('POST',`/api/v1/agent-sessions/${target.sessionId}/signals`,{signal:'stop',reason:'M4 authorized Stop',stopMode:'immediate'},session.revision)
+    await expect(target.client.getAutomationRun(runId)).rejects.toThrow()
+    const stoppedManifest=await target.client.getQualifiedAgentCapabilities().catch(()=>null)
+    if(stoppedManifest)for(const operation of ['getInitiativeRollup','getAutomationRun','getUsageSummary','streamA2ATaskEvents'])
+      expect(stoppedManifest.discovery.operations.find(item=>item.operationId===operation&&item.variant===null)?.eligibility.status).toBe('blocked')
+    await expect(target.client.recordUsage({dedupeKey:'stopped',agentId:targetAgentId,sessionId:target.sessionId,occurredAt:'2020-01-01T00:00:00Z',currency:'USD',costSource:'unknown'})).rejects.toThrow()
+    saveOptionalEvidence('restart-stop.json',{before,apiRestarted:true,oldExecutionRefused:true})
+  })
+})

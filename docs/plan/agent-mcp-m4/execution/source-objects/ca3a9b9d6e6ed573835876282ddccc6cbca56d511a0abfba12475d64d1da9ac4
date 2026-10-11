@@ -1,0 +1,712 @@
+{
+  "activeElement": "<section class=\"work-item-full-page\" aria-labelledby=\"_r_6_\" tabindex=\"-1\"><div class=\"work-item-detail\" data-mode=\"full_page\" data-testid=\"work-item-detail\"><header class=\"work-item-detail-toolbar\"><div><span class=\"eyebrow\">完整 Issue</span><h1 class=\"wm-visually-hidden\" id=\"_r_6_\">Final visual tour Issue</h1><strong>FT-101</strong><small>版本 4</small></div><div class=\"work-item-detail-toolbar-actions\"><div class=\"work-item-detail-agent-action\"><button class=\"wm-button wm-button-primary ui-button ui-button-primary\" aria-describedby=\"_r_7_\" title=\"当前任务已分配给 Codex；强制委派会结束其仍在运行的执行，并由你选择的智能体接手。\" type=\"button\"><span class=\"wm-button-label\">一键强制委派</span></button><small id=\"_r_7_\">当前任务已分配给 Codex；强制委派会结束其仍在运行的执行，并由你选择的智能体接手。</small></div><button class=\"wm-button wm-button-ghost ui-button ui-button-ghost\" type=\"button\"><span aria-hidden=\"true\" class=\"wm-button-icon\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"><path d=\"M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z\"></path></svg></span><span class=\"wm-button-label\">关闭</span></button></div></header><div class=\"work-item-detail-layout\"><div class=\"wm-tabs\"><div aria-label=\"Issue 区块\" class=\"wm-tab-list\" role=\"tablist\"><button aria-controls=\"_r_8_-panel-overview\" aria-selected=\"true\" class=\"wm-tab is-active\" id=\"_r_8_-tab-overview\" role=\"tab\" tabindex=\"0\" type=\"button\"><span>概览</span></button><button aria-controls=\"_r_8_-panel-details\" aria-selected=\"false\" class=\"wm-tab\" id=\"_r_8_-tab-details\" role=\"tab\" tabindex=\"-1\" type=\"button\"><span>详情</span></button><button aria-controls=\"_r_8_-panel-agent\" aria-selected=\"false\" class=\"wm-tab\" id=\"_r_8_-tab-agent\" role=\"tab\" tabindex=\"-1\" type=\"button\"><span>智能体执行</span></button><button aria-controls=\"_r_8_-panel-discussion\" aria-selected=\"false\" class=\"wm-tab\" id=\"_r_8_-tab-discussion\" role=\"tab\" tabindex=\"-1\" type=\"button\"><span>讨论</span></button></div><div aria-labelledby=\"_r_8_-tab-overview\" class=\"wm-tab-panel\" id=\"_r_8_-panel-overview\" role=\"tabpanel\"><section class=\"work-item-execution-workspace\" data-testid=\"work-item-execution-workspace\"><header class=\"work-item-execution-header\"><div><p class=\"eyebrow\">当前状态</p><h3>Final visual tour Issue</h3><p>Collecting deterministic final-tour evidence.</p></div><span class=\"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-fresh\" aria-label=\"数据新鲜度: current\" data-semantic-value=\"fresh\">current</span></header><dl class=\"work-item-execution-facts\"><div><dt>工作流状态</dt><dd>Final tour active</dd></div><div><dt>负责人类</dt><dd data-testid=\"responsible-human\">Alex Morgan</dd></div><div><dt>当前智能体执行者</dt><dd>Codex</dd></div><div><dt>验收与证据</dt><dd><span class=\"verification verification-missing\">缺少证据</span></dd></div></dl><section class=\"work-item-overview-description\" aria-labelledby=\"work-item-overview-description-title\"><h3 id=\"work-item-overview-description-title\">工作说明</h3><div class=\"rich-markdown markdown_root___Kisq markdown_document__VnE9W\" data-density=\"document\" data-testid=\"rich-markdown\"><div class=\"markdown_content__aR_Ir\" id=\"_r_a_\"><p>Exercise the accepted responsive WorkMesh interaction model.</p></div></div></section><section class=\"work-item-needs-you\" aria-labelledby=\"work-item-needs-you-title\"><header><h3 id=\"work-item-needs-you-title\">需要你处理</h3></header><p class=\"empty\">当前没有需要 Human 响应的事项。</p></section><section class=\"work-item-current-execution\" aria-labelledby=\"work-item-current-execution-title\"><header><h3 id=\"work-item-current-execution-title\">当前执行</h3><button class=\"wm-button wm-button-secondary ui-button ui-button-secondary\" type=\"button\"><span class=\"wm-button-label\">打开智能体控制</span></button></header><article><div class=\"work-item-current-run-heading\"><div><strong>Codex</strong><span>Collecting deterministic final-tour evidence.</span></div><span class=\"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-healthy\" aria-label=\"执行健康: healthy\" data-semantic-value=\"healthy\">healthy</span></div><dl><div><dt>Session 状态</dt><dd>executing</dd></div><div><dt>当前步骤</dt><dd>—</dd></div><div><dt>最近有效活动</dt><dd>—</dd></div><div><dt>待处理 Human 事项</dt><dd>0</dd></div></dl><div class=\"work-item-current-run-actions\"><a href=\"/agent-sessions/session-1\">打开 Run</a></div><details class=\"work-item-run-timeline\"><summary>展开因果 Run 时间线</summary><section class=\"agent-run-timeline compact\" data-testid=\"run-timeline\"><header class=\"run-timeline-header\"><div><p class=\"wm-eyebrow\">因果执行时间线</p><h2>Final visual tour Issue</h2><p>Collecting deterministic final-tour evidence.</p></div><div class=\"run-timeline-badges\"><span class=\"verification verification-pending\">待验证</span><span class=\"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-healthy\" aria-label=\"执行健康: healthy\" data-semantic-value=\"healthy\">healthy</span><span class=\"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-fresh\" aria-label=\"数据新鲜度: current\" data-semantic-value=\"fresh\">current</span><div class=\"wm-session-budget\" data-testid=\"session-budget-meter\"><span class=\"wm-session-budget-label\">预算 / 限制</span><span class=\"wm-budget-meter wm-budget-ok\"><span aria-hidden=\"true\" class=\"wm-budget-track\"><span class=\"wm-budget-fill\" style=\"width: 50%;\"></span></span><span aria-label=\"运行时长: 1800s / 3600s\" aria-valuemax=\"1\" aria-valuemin=\"0\" aria-valuenow=\"0.5\" aria-valuetext=\"50%\" role=\"meter\">50%</span></span></div></div></header><dl class=\"run-timeline-facts\"><div><dt>项目</dt><dd>Runtime Reliability</dd></div><div><dt>工作项</dt><dd>Final visual tour Issue</dd></div><div><dt>Session</dt><dd><code>session-1</code></dd></div><div><dt>修订</dt><dd>3</dd></div><div><dt>当前计划</dt><dd>—</dd></div><div><dt>当前步骤</dt><dd>—</dd></div><div><dt>预算 / 限制</dt><dd>maxRuntimeSeconds: 3600</dd></div><div><dt>待处理的人类事项</dt><dd>0</dd></div></dl><dl class=\"wm-actor-attribution\"><div class=\"wm-actor-human\"><dt><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"><path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM74.08,197.5a64,64,0,0,1,107.84,0,87.83,87.83,0,0,1-107.84,0ZM96,120a32,32,0,1,1,32,32A32,32,0,0,1,96,120Zm97.76,66.41a79.66,79.66,0,0,0-36.06-28.75,48,48,0,1,0-59.4,0,79.66,79.66,0,0,0-36.06,28.75,88,88,0,1,1,131.52,0Z\"></path></svg>负责人类</dt><dd>Alex Morgan</dd></div><div class=\"wm-actor-agent\"><dt><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"><path d=\"M200,48H136V16a8,8,0,0,0-16,0V48H56A32,32,0,0,0,24,80V192a32,32,0,0,0,32,32H200a32,32,0,0,0,32-32V80A32,32,0,0,0,200,48Zm16,144a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V80A16,16,0,0,1,56,64H200a16,16,0,0,1,16,16Zm-52-56H92a28,28,0,0,0,0,56h72a28,28,0,0,0,0-56Zm-24,16v24H116V152ZM80,164a12,12,0,0,1,12-12h8v24H92A12,12,0,0,1,80,164Zm84,12h-8V152h8a12,12,0,0,1,0,24ZM72,108a12,12,0,1,1,12,12A12,12,0,0,1,72,108Zm88,0a12,12,0,1,1,12,12A12,12,0,0,1,160,108Z\"></path></svg>执行智能体</dt><dd>Codex</dd></div><div class=\"wm-actor-relationship\"><dt>智能体代表人类执行</dt><dd>Codex / Alex Morgan</dd></div></dl><section aria-label=\"计划步骤\" class=\"run-plan-section\"><header><h3>计划步骤</h3><label>计划版本<select></select></label></header></section><fieldset class=\"run-timeline-filters\"><legend>时间线筛选</legend><label>阶段<select><option value=\"all\">全部阶段</option><option value=\"intake\">接收</option><option value=\"investigation\">调查</option><option value=\"planning\">计划 / 重计划</option><option value=\"implementation\">实现 / 变更</option><option value=\"validation\">验证 / 评审</option><option value=\"human_input\">人类输入</option><option value=\"recovery\">恢复 / 移交</option><option value=\"completion\">完成 / 失败</option></select></label><label>参与者<select><option value=\"\">全部</option></select></label><label>动作类型<select><option value=\"all\">全部</option><option value=\"acknowledgement\">acknowledgement</option><option value=\"read\">read</option><option value=\"write\">write</option><option value=\"tool\">tool</option><option value=\"state_transition\">state_transition</option><option value=\"plan\">plan</option><option value=\"message\">message</option><option value=\"approval\">approval</option><option value=\"decision\">decision</option><option value=\"evidence\">evidence</option><option value=\"validation\">validation</option><option value=\"handoff\">handoff</option><option value=\"heartbeat\">heartbeat</option><option value=\"other\">other</option></select></label><label>风险<select><option value=\"all\">全部</option><option>low</option><option>medium</option><option>high</option><option>critical</option></select></label><label>证据<select><option value=\"all\">全部</option><option value=\"present\">有证据</option><option value=\"missing\">缺少证据</option></select></label><label>时间<select><option value=\"all\">全部时间</option><option value=\"24h\">最近 24 小时</option><option value=\"7d\">最近 7 天</option><option value=\"30d\">最近 30 天</option></select></label><label class=\"run-check\"><input type=\"checkbox\" style=\"\">仅失败</label><label class=\"run-check\"><input type=\"checkbox\" style=\"\">仅需人类处理</label><label class=\"run-check\"><input type=\"checkbox\" style=\"\">显示技术记录</label></fieldset><section aria-label=\"因果事件组\" class=\"run-causal-groups\"><h3>因果事件组</h3><p class=\"empty\">当前筛选没有匹配的事件。</p></section><section aria-label=\"证据与变更\" class=\"run-evidence-section\"><h3>证据与变更</h3><p class=\"empty\">未验证</p></section></section></details></article></section><section class=\"work-item-evidence-summary\" aria-labelledby=\"work-item-evidence-title\"><h3 id=\"work-item-evidence-title\">验收与证据</h3><p class=\"empty\">尚未发布证据。</p></section><section class=\"work-item-overview-relationships\" aria-labelledby=\"work-item-overview-relationships-title\"><h3 id=\"work-item-overview-relationships-title\">依赖与关系</h3><section class=\"relationship-panel\" aria-labelledby=\"relationships-heading\"><header><div><span class=\"wm-eyebrow\">依赖</span><h3 id=\"relationships-heading\">阻塞与关联工作</h3></div></header><div class=\"relation-list\"><p class=\"empty\">暂无阻塞或关联 Work Item。</p></div><form class=\"relation-create\"><label>关系<select name=\"kind\"><option value=\"blocks\">阻塞</option><option value=\"related\">关联</option></select></label><label>Work Item<select name=\"targetWorkItemId\" required=\"\"><option value=\"\" disabled=\"\" selected=\"\">选择 Work Item</option><option value=\"work-102\">FT-102 · Final visual tour follow-up</option></select></label><button type=\"submit\">添加关系</button></form></section></section></section></div><div aria-labelledby=\"_r_8_-tab-details\" class=\"wm-tab-panel\" hidden=\"\" id=\"_r_8_-panel-details\" role=\"tabpanel\"></div><div aria-labelledby=\"_r_8_-tab-agent\" class=\"wm-tab-panel\" hidden=\"\" id=\"_r_8_-panel-agent\" role=\"tabpanel\"></div><div aria-labelledby=\"_r_8_-tab-discussion\" class=\"wm-tab-panel\" hidden=\"\" id=\"_r_8_-panel-discussion\" role=\"tabpanel\"></div></div></div></div></section>",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "elements": [
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 16,
+        "y": 149.5625,
+        "width": 215,
+        "height": 40,
+        "top": 149.5625,
+        "right": 231,
+        "bottom": 189.5625,
+        "left": 16
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 499.875,
+        "y": 109.59375,
+        "width": 140.921875,
+        "height": 38,
+        "top": 109.59375,
+        "right": 640.796875,
+        "bottom": 147.59375,
+        "left": 499.875
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 648.796875,
+        "y": 109.59375,
+        "width": 140.921875,
+        "height": 38,
+        "top": 109.59375,
+        "right": 789.71875,
+        "bottom": 147.59375,
+        "left": 648.796875
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 797.71875,
+        "y": 109.59375,
+        "width": 140.921875,
+        "height": 38,
+        "top": 109.59375,
+        "right": 938.640625,
+        "bottom": 147.59375,
+        "left": 797.71875
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 946.640625,
+        "y": 109.59375,
+        "width": 140.921875,
+        "height": 38,
+        "top": 109.59375,
+        "right": 1087.5625,
+        "bottom": 147.59375,
+        "left": 946.640625
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 297.796875,
+        "y": 503.703125,
+        "width": 1090.015625,
+        "height": 40,
+        "top": 503.703125,
+        "right": 1387.8125,
+        "bottom": 543.703125,
+        "left": 297.796875
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 297.796875,
+        "y": 795.84375,
+        "width": 1090.015625,
+        "height": 40,
+        "top": 795.84375,
+        "right": 1387.8125,
+        "bottom": 835.84375,
+        "left": 297.796875
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "work-item-full-page",
+      "tag": "SECTION",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1000,
+        "top": 0,
+        "right": 1440,
+        "bottom": 1000,
+        "left": 0
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(247, 247, 245)",
+        "background-image": "none",
+        "border-color": "rgb(37, 37, 34)",
+        "border-radius": "0px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "fixed"
+      }
+    },
+    {
+      "selector": "work-item-detail",
+      "tag": "DIV",
+      "rect": {
+        "x": 130,
+        "y": 8,
+        "width": 1180,
+        "height": 1272.984375,
+        "top": 8,
+        "right": 1310,
+        "bottom": 1280.984375,
+        "left": 130
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgba(0, 0, 0, 0)",
+        "background-image": "none",
+        "border-color": "rgb(37, 37, 34)",
+        "border-radius": "0px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "work-item-detail-toolbar",
+      "tag": "HEADER",
+      "rect": {
+        "x": 118,
+        "y": 20,
+        "width": 1204,
+        "height": 92.5625,
+        "top": 20,
+        "right": 1322,
+        "bottom": 112.5625,
+        "left": 118
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "color(srgb 1 1 1 / 0.94)",
+        "background-image": "none",
+        "border-color": "rgb(37, 37, 34) rgb(37, 37, 34) rgb(227, 227, 223)",
+        "border-radius": "0px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "blur(10px)",
+        "position": "sticky"
+      }
+    },
+    {
+      "selector": "work-item-execution-header",
+      "tag": "HEADER",
+      "rect": {
+        "x": 130,
+        "y": 172.5625,
+        "width": 1180,
+        "height": 102.59375,
+        "top": 172.5625,
+        "right": 1310,
+        "bottom": 275.15625,
+        "left": 130
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(227, 227, 223)",
+        "border-radius": "18px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "work-item-overview-description",
+      "tag": "SECTION",
+      "rect": {
+        "x": 130,
+        "y": 369.5,
+        "width": 1180,
+        "height": 80.75,
+        "top": 369.5,
+        "right": 1310,
+        "bottom": 450.25,
+        "left": 130
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(227, 227, 223)",
+        "border-radius": "18px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "work-item-needs-you",
+      "tag": "SECTION",
+      "rect": {
+        "x": 130,
+        "y": 466.25,
+        "width": 1180,
+        "height": 122,
+        "top": 466.25,
+        "right": 1310,
+        "bottom": 588.25,
+        "left": 130
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(227, 227, 223)",
+        "border-radius": "18px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "work-item-current-execution",
+      "tag": "SECTION",
+      "rect": {
+        "x": 130,
+        "y": 604.25,
+        "width": 1180,
+        "height": 269.15625,
+        "top": 604.25,
+        "right": 1310,
+        "bottom": 873.40625,
+        "left": 130
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(227, 227, 223)",
+        "border-radius": "18px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 1110.40625,
+        "y": 1346.625,
+        "width": 160,
+        "height": 38,
+        "top": 1346.625,
+        "right": 1270.40625,
+        "bottom": 1384.625,
+        "left": 1110.40625
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 184.59375,
+        "y": 1450.8125,
+        "width": 137.1875,
+        "height": 38,
+        "top": 1450.8125,
+        "right": 321.78125,
+        "bottom": 1488.8125,
+        "left": 184.59375
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 332.171875,
+        "y": 1450.8125,
+        "width": 128,
+        "height": 38,
+        "top": 1450.8125,
+        "right": 460.171875,
+        "bottom": 1488.8125,
+        "left": 332.171875
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 470.5625,
+        "y": 1450.8125,
+        "width": 170.1875,
+        "height": 38,
+        "top": 1450.8125,
+        "right": 640.75,
+        "bottom": 1488.8125,
+        "left": 470.5625
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "work-item-evidence-summary",
+      "tag": "SECTION",
+      "rect": {
+        "x": 130,
+        "y": 889.40625,
+        "width": 1180,
+        "height": 110,
+        "top": 889.40625,
+        "right": 1310,
+        "bottom": 999.40625,
+        "left": 130
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(227, 227, 223)",
+        "border-radius": "18px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "work-item-overview-relationships",
+      "tag": "SECTION",
+      "rect": {
+        "x": 130,
+        "y": 1015.40625,
+        "width": 1180,
+        "height": 265.578125,
+        "top": 1015.40625,
+        "right": 1310,
+        "bottom": 1280.984375,
+        "left": 130
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(227, 227, 223)",
+        "border-radius": "18px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 161.59375,
+        "y": 1209.390625,
+        "width": 150,
+        "height": 40,
+        "top": 1209.390625,
+        "right": 311.59375,
+        "bottom": 1249.390625,
+        "left": 161.59375
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    },
+    {
+      "selector": "",
+      "tag": "SELECT",
+      "rect": {
+        "x": 320.390625,
+        "y": 1209.390625,
+        "width": 871.21875,
+        "height": 40,
+        "top": 1209.390625,
+        "right": 1191.609375,
+        "bottom": 1249.390625,
+        "left": 320.390625
+      },
+      "scrollTop": 0,
+      "styles": {
+        "color": "rgb(37, 37, 34)",
+        "background-color": "rgb(255, 255, 255)",
+        "background-image": "none",
+        "border-color": "rgb(201, 201, 195)",
+        "border-radius": "7px",
+        "transform": "none",
+        "opacity": "1",
+        "filter": "none",
+        "backdrop-filter": "none",
+        "position": "static"
+      }
+    }
+  ],
+  "animations": []
+}

@@ -34,3 +34,22 @@ export function a2aScanBarrier(connectionString: string) {
   })
   return { pool, reached, release, evidence, injectTransactionFailure: () => { faultAfterInsert = true } }
 }
+
+/** A pure projection has one statement snapshot and no final write. Hold the
+ * real statement before execution or after it returns, never substitute rows. */
+export function readSnapshotBarrier(connectionString:string,phase:'before'|'after') {
+  const pool=new Pool({connectionString,max:1})
+  let reach!:()=>void,release!:()=>void
+  const reached=new Promise<void>(resolve=>{reach=resolve})
+  const resume=new Promise<void>(resolve=>{release=resolve})
+  pool.on('connect',(client:PoolClient)=>{
+    const original=client.query.bind(client) as (text:string,values?:unknown[])=>Promise<QueryResult>
+    vi.spyOn(client,'query').mockImplementation((async(text:string,values?:unknown[])=>{
+      if(phase==='before'){reach();await resume}
+      const result=await original(text,values)
+      if(phase==='after'){reach();await resume}
+      return result
+    }) as typeof client.query)
+  })
+  return {pool,reached,release}
+}

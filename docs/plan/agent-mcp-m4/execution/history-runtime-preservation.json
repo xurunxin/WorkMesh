@@ -1,0 +1,188 @@
+{
+  "commandReceipt": "docs/plan/agent-mcp-m4/execution/checks/final-integration-correct-environment/receipt.json",
+  "suiteExitCode": 0,
+  "records": [
+    {
+      "source": "ci-logs/delivery-recovery/explicit-review-budget-replay.json",
+      "runtimeBytes": 591,
+      "runtimeSha256": "d20bc3fe2c8bc16958cca46680b1f7c8eb73447a3ea4f7e437be37edae1bdb0a",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/d20bc3fe2c8bc16958cca46680b1f7c8eb73447a3ea4f7e437be37edae1bdb0a",
+      "restoredGitBlob": "debd926ebd2c226dca60fb216086d0e62815cd57",
+      "restoredBytes": 591,
+      "restoredSha256": "1ab98d01c2a677882c2679ec86b8d028660dcaae6cbf9d450cf8e14530719331"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/mcp-chain.json",
+      "runtimeBytes": 3457,
+      "runtimeSha256": "7129c0c25a05538b30e6d6bc12c88a52240a9538f4cef63df3dbe2a0ac1d786a",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/7129c0c25a05538b30e6d6bc12c88a52240a9538f4cef63df3dbe2a0ac1d786a",
+      "restoredGitBlob": "8cdb2ed92ffd094d26d92e265809343d2996b09d",
+      "restoredBytes": 3457,
+      "restoredSha256": "edb8245a01091c888b80256a0035f73c4c8a0a2dcabab186dac85e40e0749625"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/mcp-principal-membership.json",
+      "runtimeBytes": 299,
+      "runtimeSha256": "f64675de89feaed902a3d2f42afaf4203cb4f64b5d02787f3fa50ff11ccfdb87",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/f64675de89feaed902a3d2f42afaf4203cb4f64b5d02787f3fa50ff11ccfdb87",
+      "restoredGitBlob": "951ede6a98065f727e82377d39912500e279dd02",
+      "restoredBytes": 299,
+      "restoredSha256": "62eac80aff19f8e31efa6b2e59020651433665b1f284d3510ba88c2f66f32d26"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/mcp-query-boundaries.json",
+      "runtimeBytes": 452,
+      "runtimeSha256": "b502914e9e08b15a1ea69bb999f248e9825c772a797b965929aa5a0924607e13",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/b502914e9e08b15a1ea69bb999f248e9825c772a797b965929aa5a0924607e13",
+      "restoredGitBlob": "a58b40590bea41d880a053ecc2c5fa063adc8019",
+      "restoredBytes": 452,
+      "restoredSha256": "8bf233c5e9a884cfe6234fb78a5eea13d031e042f4928a78aea9d29b297e0c28"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/mcp-transfer-health.json",
+      "runtimeBytes": 2947,
+      "runtimeSha256": "6b5439f1be4f97c761a1b6cf1b493c16f2446b79dc760fefc7628f9ecc418e7a",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/6b5439f1be4f97c761a1b6cf1b493c16f2446b79dc760fefc7628f9ecc418e7a",
+      "restoredGitBlob": "2dc75116fa7026350addda6d145e5267d24c781c",
+      "restoredBytes": 2947,
+      "restoredSha256": "3e102c0e14b34fca8889b366da8efca4ced0641318417a75b92e1c8fff413b89"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/native-chain.json",
+      "runtimeBytes": 3457,
+      "runtimeSha256": "fbdc5c84dd5bdde47202eaed32bfc0b2afe18a2a83e9d131b07ddaf935ec0214",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/fbdc5c84dd5bdde47202eaed32bfc0b2afe18a2a83e9d131b07ddaf935ec0214",
+      "restoredGitBlob": "d918762b4222c6a2be2d7f01620088d0d657815f",
+      "restoredBytes": 3457,
+      "restoredSha256": "85283ef84118e83b3bc1ac0b18b7289b17d6176e7fa565fde4735b337882efa3"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/native-principal-membership.json",
+      "runtimeBytes": 299,
+      "runtimeSha256": "f885bfc02e31374fdeeb5e2b0e121bd4382f0b09841574c544e002b119368ae2",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/f885bfc02e31374fdeeb5e2b0e121bd4382f0b09841574c544e002b119368ae2",
+      "restoredGitBlob": "8677d0e5fc928997dd48984adfe03b30de34eeb4",
+      "restoredBytes": 299,
+      "restoredSha256": "222fa5764372ce5605067c226a7216ea191baf14d664aaf78818e33da13d21ff"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/native-query-boundaries.json",
+      "runtimeBytes": 452,
+      "runtimeSha256": "eb809029629f47e8414c2da8804da0e0f92cffa2905749110813b3c4e3bb631c",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/eb809029629f47e8414c2da8804da0e0f92cffa2905749110813b3c4e3bb631c",
+      "restoredGitBlob": "ea243f83f541182e41230e23f640aa2931988c00",
+      "restoredBytes": 452,
+      "restoredSha256": "788594922bcac8aa92667d03d0eab57f1cac9d5a15cb6308bb3bac39c13b84a0"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/native-transfer-health.json",
+      "runtimeBytes": 2947,
+      "runtimeSha256": "db39f76841fdc17d2be81bbc5dfb11205a4d9b1456e9df3f1e1890bf096a2e54",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/db39f76841fdc17d2be81bbc5dfb11205a4d9b1456e9df3f1e1890bf096a2e54",
+      "restoredGitBlob": "cc19c85c4c45d6348ec15338133e991108436ff5",
+      "restoredBytes": 2947,
+      "restoredSha256": "aee530b29110a45c85597463da954314db0f3dd88c3ceb91dfa0cdc109c8a92a"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/pi-chain.json",
+      "runtimeBytes": 3461,
+      "runtimeSha256": "18f62e6111eeeef3195512adbe28950d0063aaecef36ce145be68932c2ce2e65",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/18f62e6111eeeef3195512adbe28950d0063aaecef36ce145be68932c2ce2e65",
+      "restoredGitBlob": "ca01e7fc77f6227331f5c4bccdd9a25fa7ee84d7",
+      "restoredBytes": 3461,
+      "restoredSha256": "5059bea1621e8317b9028a020eb082e8a23d5f771cac395f45a424fd0d90c9ae"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/pi-principal-membership.json",
+      "runtimeBytes": 657,
+      "runtimeSha256": "cfcf19ad6b1767d629501aca50ba31d83e2d9f35f5e7583eb24d8cc770353d22",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/cfcf19ad6b1767d629501aca50ba31d83e2d9f35f5e7583eb24d8cc770353d22",
+      "restoredGitBlob": "6aeec493ee2e7e781579f55c3ff0644f61d87a8f",
+      "restoredBytes": 657,
+      "restoredSha256": "2ddf0a64558199cbb8346e273c3786a4475c096b1abffcdfb59da5bd47886fe9"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/pi-query-boundaries.json",
+      "runtimeBytes": 481,
+      "runtimeSha256": "a78388389ce08d6cd2eec19eb4feb84cc08bad24fcf00636765928aba5061227",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/a78388389ce08d6cd2eec19eb4feb84cc08bad24fcf00636765928aba5061227",
+      "restoredGitBlob": "d605369e8305be5fc6c816dea8a086ec36d82574",
+      "restoredBytes": 481,
+      "restoredSha256": "4d17c719e11117a1fc99277cc384984de421021f1ab0a85f31d47d800a0832a3"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/pi-transfer-health.json",
+      "runtimeBytes": 2946,
+      "runtimeSha256": "41d5ebd1cf5b4138b71c427daedb7e57299d828130322ce4e9499be95547ca11",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/41d5ebd1cf5b4138b71c427daedb7e57299d828130322ce4e9499be95547ca11",
+      "restoredGitBlob": "c88115da4de17b9527bb50fa31206691ab525ae4",
+      "restoredBytes": 2946,
+      "restoredSha256": "61fd04851cfb4439a13b6381f1b587cc9a8ae48e3252e917909d42acce5cf223"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/review-initial-authorization.json",
+      "runtimeBytes": 305,
+      "runtimeSha256": "97505a6679f98388444b0a3b92f46651f71752093b4f5f81d909ec97ee63f316",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/97505a6679f98388444b0a3b92f46651f71752093b4f5f81d909ec97ee63f316",
+      "restoredGitBlob": "2cfa91934413c0faa0103409c1c13fa75ab487b1",
+      "restoredBytes": 305,
+      "restoredSha256": "c19434a38ae3a32fd23a266e3976d487111212f2d33a009cc8517d4485b09846"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/review-replay-child.json",
+      "runtimeBytes": 516,
+      "runtimeSha256": "f8416c023bdf871247185ccde2bd79d68d64fe7110b74933bc70758c0e1a7547",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/f8416c023bdf871247185ccde2bd79d68d64fe7110b74933bc70758c0e1a7547",
+      "restoredGitBlob": "3c8c90244b519e2a5cdd85234b5d9429e373444b",
+      "restoredBytes": 516,
+      "restoredSha256": "9f0192c8c24052a85d5b03e6684f91e29c0dbe112df64c0c52bef418eec225a5"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/review-replay-context.json",
+      "runtimeBytes": 516,
+      "runtimeSha256": "8c9dbf745997ca8a354d715e0fd7f92e11914dcd4c2d2cc4e669595e12967548",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/8c9dbf745997ca8a354d715e0fd7f92e11914dcd4c2d2cc4e669595e12967548",
+      "restoredGitBlob": "a34c9b80dabcc36bf41b4dae8b620d2a44e16312",
+      "restoredBytes": 516,
+      "restoredSha256": "0816562eca69afef9779c0b8b53a6d72bc1bbe49cd36ba243bdedcc73a9ac132"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/review-replay-definition.json",
+      "runtimeBytes": 516,
+      "runtimeSha256": "4727c4986412da4f771bfc3c1195ef6eb7daa9abc644f2e093c5715342ee81bd",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/4727c4986412da4f771bfc3c1195ef6eb7daa9abc644f2e093c5715342ee81bd",
+      "restoredGitBlob": "f50c34ea37c309069f363f4bd822d8f8bece67ff",
+      "restoredBytes": 516,
+      "restoredSha256": "cd023976d3433dc88ce10a07323eec24ec985061101670039ee4038037b79f61"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/review-replay-gitea.json",
+      "runtimeBytes": 516,
+      "runtimeSha256": "a6632658bec74d3244a52cac3eb3a1baa17bff20472e3884b5a808042984662c",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/a6632658bec74d3244a52cac3eb3a1baa17bff20472e3884b5a808042984662c",
+      "restoredGitBlob": "7b6a6018b8d2b4a916cb1f6d14ff2b0c4d44f636",
+      "restoredBytes": 516,
+      "restoredSha256": "710e5aa307b813d61813582b4fa7c3ac67bf32cdb7dae5fa970c3ad4f2f3688c"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/review-replay-grant.json",
+      "runtimeBytes": 516,
+      "runtimeSha256": "4245b473eae813c144f470776a549513a8cd8280e23e58caf220d3a200ef514f",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/4245b473eae813c144f470776a549513a8cd8280e23e58caf220d3a200ef514f",
+      "restoredGitBlob": "38c3142373644ec62ce4ff5f80293955f0393e51",
+      "restoredBytes": 516,
+      "restoredSha256": "5d9b1003a5d1344035b9b27bc94b3b6965c94f7e470da80fe0239d1e40ed5356"
+    },
+    {
+      "source": "ci-logs/delivery-recovery/review-replay-parent.json",
+      "runtimeBytes": 516,
+      "runtimeSha256": "3abafa102f9a705aacee5c9cfd998c82e0e27505e35b1ae0043c69d18a64ef72",
+      "preservedPath": "docs/plan/agent-mcp-m4/execution/evidence-objects/3abafa102f9a705aacee5c9cfd998c82e0e27505e35b1ae0043c69d18a64ef72",
+      "restoredGitBlob": "8a24b04231468a7437f7c12a5b0366592496e45a",
+      "restoredBytes": 516,
+      "restoredSha256": "0cfcf29e2d896d2e6ef53da0f989d9639b0310cff83fe52b08845bcd22bc4833"
+    }
+  ],
+  "originalHistoryRestored": true,
+  "limitation": "早期未保全的同名 alias 不补造；此处仅保全本次完整集成运行输出，旧 Git 历史不是新运行证据。"
+}

@@ -1,0 +1,27 @@
+{
+  "actionId": "f0c0c32e-baa9-4de6-843f-80939fe75451",
+  "childId": "dc8259fe-3b0a-4bd6-8587-d2d1dc500cfb",
+  "deniedAfterRemoval": true,
+  "restored": true,
+  "before": {
+    "children": 1
+  },
+  "after": {
+    "children": 1
+  },
+  "deniedResponses": [
+    {
+      "path": "/api/v1/provider-actions/f0c0c32e-baa9-4de6-843f-80939fe75451",
+      "status": 404
+    },
+    {
+      "path": "/api/v1/repositories/1f876b32-2e5f-491e-a403-1a37154d671f/context",
+      "status": 403
+    },
+    {
+      "path": "/api/v1/agent-sessions/10e44927-3bc4-400c-86a8-16af06e2e494/review-delegations",
+      "status": 403
+    }
+  ],
+  "piReplayViaExactPersistedKey": true
+}

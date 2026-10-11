@@ -1,0 +1,45 @@
+(node:17356) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts > Stage 4 planning and operations API > M4 A2A C 扫描后原凭据到期：非空页最终拒且无delivery/cursor
+AssertionError: {"error":{"code":"FORBIDDEN","message":"Installation credentials are not allowed for this route","details":{"authorizationStage":"identity","policyId":"route.getAgentConnection"},"correlationId":"8b0f2983-3888-4e4f-b5d6-f823818faafa"}}: expected 403 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 403
+
+ ❯ a2aReadFixture integration/stage4-operations.integration.test.ts:2230:59
+    2228|       const token=redeemed.json<{installation_token:string}>().install…
+    2229|       const authenticated=await app.inject({method:'GET',url:'/api/v1/…
+    2230|       expect(authenticated.statusCode,authenticated.body).toBe(200)
+       |                                                           ^
+    2231|       const session=(await db.query<{agent_id:string;agent_actor_id:st…
+    2232|         'SELECT agent_id,agent_actor_id,agent_session_id FROM agent_co…
+ ❯ integration/stage4-operations.integration.test.ts:2263:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts > Stage 4 planning and operations API > M4 A2A C 扫描后原凭据到期：空映射页最终拒且无delivery/cursor
+AssertionError: {"error":{"code":"FORBIDDEN","message":"Installation credentials are not allowed for this route","details":{"authorizationStage":"identity","policyId":"route.getAgentConnection"},"correlationId":"3f6e1dbc-33ce-42a8-8c46-abf285b51a4d"}}: expected 403 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 403
+
+ ❯ a2aReadFixture integration/stage4-operations.integration.test.ts:2230:59
+    2228|       const token=redeemed.json<{installation_token:string}>().install…
+    2229|       const authenticated=await app.inject({method:'GET',url:'/api/v1/…
+    2230|       expect(authenticated.statusCode,authenticated.body).toBe(200)
+       |                                                           ^
+    2231|       const session=(await db.query<{agent_id:string;agent_actor_id:st…
+    2232|         'SELECT agent_id,agent_actor_id,agent_session_id FROM agent_co…
+ ❯ integration/stage4-operations.integration.test.ts:2263:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

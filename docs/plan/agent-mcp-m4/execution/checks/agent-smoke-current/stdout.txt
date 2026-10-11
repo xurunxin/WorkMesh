@@ -1,0 +1,31 @@
+
+> workmesh@ smoke:agents C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> pnpm --filter @workmesh/agent-sdk test && pnpm --filter @workmesh/mcp smoke && pnpm --filter @workmesh/fake-agent smoke
+
+
+> @workmesh/agent-sdk@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+> vitest run
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/agent-sdk
+
+ ✓ src/optional-domains.test.ts (3 tests) 16ms
+ ✓ src/execution-adapters.test.ts (10 tests) 20ms
+ ✓ src/discovery.test.ts (8 tests) 184ms
+ ✓ src/index.test.ts (35 tests) 245ms
+
+ Test Files  4 passed (4)
+      Tests  56 passed (56)
+   Start at  12:32:35
+   Duration  1.63s (transform 372ms, setup 0ms, collect 1.53s, tests 465ms, environment 0ms, prepare 1.18s)
+
+
+> @workmesh/mcp@ smoke C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\mcp
+> tsx src/smoke.ts
+
+MCP smoke: server constructed in read-only mode
+
+> @workmesh/fake-agent@ smoke C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\fake-agent
+> tsx src/smoke.ts
+
+Fake Agent smoke: signed delivery and deduplication passed

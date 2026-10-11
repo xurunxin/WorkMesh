@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "startedAt": "2026-10-07T10:39:55.670Z",
+  "endedAt": "2026-10-07T10:39:57.097Z",
+  "manifestSha256": "4c8c4a2c3624ac3b3128279e7e0f8bb6a6e85851187c61c18cf0633cf78519cb",
+  "sourceBuildSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "targetDatabaseCounts": [
+    {
+      "name": "workspaces",
+      "count": 1
+    },
+    {
+      "name": "artifacts",
+      "count": 1
+    },
+    {
+      "name": "artifact_upload_intents",
+      "count": 0
+    },
+    {
+      "name": "event_archive_segments",
+      "count": 1
+    },
+    {
+      "name": "provider_connections",
+      "count": 1
+    },
+    {
+      "name": "agent_webhook_secrets",
+      "count": 1
+    },
+    {
+      "name": "domain_events",
+      "count": 1
+    }
+  ],
+  "restoredObjectVersions": 3,
+  "restoredDeleteMarkers": 1,
+  "artifactObjectsVerified": 1,
+  "archiveObjectsVerified": 1,
+  "providerSecretsVerified": 1,
+  "webhookSecretsVerified": 1
+}

@@ -1,0 +1,759 @@
+{
+  "ownerAgent": "f4fb3339-4e83-44a2-a2fa-c45973a2c4b7",
+  "reviewerAgent": "de99d32f-ed1c-4051-beca-c7f03591306b",
+  "parentSession": "4fb6a2f4-b802-4a29-81d7-8a086d296732",
+  "reviewerSession": "3ed03bc2-04ec-48ad-b351-a807a10b98ec",
+  "repositoryId": "e619f1d3-7212-42cf-a796-841372443d06",
+  "head": "b41fa9ce3a0ec26faebc4426b35492ec92b5e2305a4f0b2bd275f60e152f6a11",
+  "actions": [
+    "f508eda4-7a83-4b22-92b2-2a3cdce21fb6",
+    "23642f51-849a-4952-bf86-4eff7868b364",
+    "4e746b63-a232-46ba-9e34-bc2bf94db0d7",
+    "2551e887-68cf-4697-8f97-8defc94d1e2d"
+  ],
+  "artifacts": [
+    "3d1938f8-9070-46a9-b991-17c8c1027ff7",
+    "23fb4685-7475-479e-ba99-359b94fb691e"
+  ],
+  "approvalId": "fa20fab8-a009-4eac-8da8-5dac5b46d3d7",
+  "h2": "21d4a6b3-db6c-4a80-9b07-e6860b64cb02",
+  "context": [
+    {
+      "id": "cfcff0fc-bdf3-4eaf-88ee-beb95b8ff24c",
+      "workspace_id": "b69db9b4-b92b-481b-aacf-6d34a1d7680d",
+      "repository_id": "e619f1d3-7212-42cf-a796-841372443d06",
+      "project_id": null,
+      "work_item_id": "726fa0f0-0c7f-4cb8-ad19-edc33806edc3",
+      "session_id": null,
+      "base_branch": "main",
+      "base_sha": "base",
+      "branch_pattern": "workmesh/{workItemKey}-{slug}",
+      "allowed_paths": [
+        "src/**"
+      ],
+      "permissions": [
+        "read",
+        "write_branch",
+        "open_pr",
+        "review",
+        "merge",
+        "ci"
+      ],
+      "guidance_manifest_hash": "sha256:35794a62e6695ed29ad39f517e12409eb8c4aa340e277cb96cf45a198de16028",
+      "created_by_actor_id": "88ed0a3d-d297-4a32-8959-da7480600b9d",
+      "created_at": "2026-10-11T04:48:12.705Z",
+      "provider_action_id": "7912e64f-47a9-44a3-81d1-6887feb0f503",
+      "guidance": [
+        {
+          "path": "AGENTS.md",
+          "blobSha": "9e6e3e8d83207a6d487a50ea1d362ce9a9a53a5c78dde6b96050ee0f6bac34f3",
+          "content": "# M3 local guidance\n",
+          "contentHash": "sha256:9e6e3e8d83207a6d487a50ea1d362ce9a9a53a5c78dde6b96050ee0f6bac34f3"
+        },
+        {
+          "path": "src/AGENTS.md",
+          "blobSha": "78b502644d1a0d2cacdfcc8a2ef8d4ad8faac121872f40685949890a16d1d865",
+          "content": "# Allowed source\n",
+          "contentHash": "sha256:78b502644d1a0d2cacdfcc8a2ef8d4ad8faac121872f40685949890a16d1d865"
+        }
+      ]
+    }
+  ],
+  "children": {
+    "items": [
+      {
+        "id": "3ed03bc2-04ec-48ad-b351-a807a10b98ec",
+        "parentSessionId": "4fb6a2f4-b802-4a29-81d7-8a086d296732",
+        "requiredForParent": true,
+        "state": "completed",
+        "revision": 10,
+        "planStepId": "6ef4981b-a3c7-4dbd-8d4b-cb0202e2a544",
+        "planVersionId": "8928d077-13c6-4916-9451-18977f90e7ad",
+        "resultArtifactIds": [
+          "23fb4685-7475-479e-ba99-359b94fb691e"
+        ]
+      }
+    ],
+    "nextCursor": null
+  },
+  "events": [
+    {
+      "event_type": "agent.session.created",
+      "id": "cd0e70d5-8b5d-4f2c-ae75-ffe807f669b0",
+      "outbox_id": "f6199972-dc61-4e03-8c3a-08b494253304"
+    },
+    {
+      "event_type": "agent.session.acknowledged",
+      "id": "64537b80-e2e5-46d2-b6b6-c22882c0f73d",
+      "outbox_id": "a6b3e025-b2b4-4d42-b1e7-666474647a25"
+    },
+    {
+      "event_type": "agent.session.state_changed",
+      "id": "65c89a87-7bd5-478c-b961-1c610a1e302a",
+      "outbox_id": "b5bfd3b5-6ed2-4f52-ba40-7a1409e51eaf"
+    },
+    {
+      "event_type": "agent.plan.published",
+      "id": "aba7b14e-223e-4dae-bd25-422b678d0155",
+      "outbox_id": "cb593c1b-5689-47a6-a8db-21acdda5ab03"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "ab7ef835-6401-46de-8f83-759e3c769d4c",
+      "outbox_id": "863ac812-d172-4f81-b8d4-b23afd0c06cc"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "227074ec-6b47-4d26-9f06-1f17b3096ce8",
+      "outbox_id": "6a5dcd59-6cfe-4338-ae68-d785dd9c3aa0"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "ae70e1bf-88c3-4bdf-bed0-aeb7c22f9fbf",
+      "outbox_id": "83aaa3b4-3fe5-48cf-8d63-25ce33da9da5"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "9e737ef1-483a-471f-b353-1d9b379e76ee",
+      "outbox_id": "9d67eb29-a0eb-419a-aabf-678fc273144f"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "1bd6599f-0278-430b-8482-7279b652c1b5",
+      "outbox_id": "9013d424-ee13-4c4c-9473-6414650e56e5"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "b235eeeb-53e8-4174-9231-638a31502f90",
+      "outbox_id": "0fd8ce24-be81-41e1-862b-2f914955e35f"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "cef000e3-6480-44e0-ac0b-91bd546be3da",
+      "outbox_id": "49d106c9-ded4-414e-b263-4d2f348b3a5e"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "b073dac5-d673-4fdd-9a56-a01f388eb867",
+      "outbox_id": "7a5ca476-4edf-4035-9ad5-13fbfe4d7797"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "4570c86c-0d44-4b09-bb3d-8514a3886d1d",
+      "outbox_id": "c86e56b7-34f5-4093-aa6d-98e3aaf22729"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "6330fb72-514d-4fec-ab95-c51da99617af",
+      "outbox_id": "0839d229-3266-4bff-bef7-1f5b74fd4528"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "cb48448a-ffd1-4173-82d6-2d1d4f6785a5",
+      "outbox_id": "4750827e-d904-4222-b8ec-cf41ba259f19"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "95b82fbd-c3c5-40d6-a5d6-f1aed32c810c",
+      "outbox_id": "df2c6f90-1458-4abb-8d68-ddd883e857d1"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "a99a1ca3-2d81-429c-a5d1-f4a1eb893302",
+      "outbox_id": "3d3525ea-5286-4fff-b454-2465ed4783d5"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "af6fcf47-eb97-4e6c-ad15-2a3ff4bfdde8",
+      "outbox_id": "a2ea3e18-3124-4ecf-aba6-2ea57dbe8a41"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "89309638-6d1c-4256-b27e-26448579b353",
+      "outbox_id": "dcbce8ce-de56-48e8-b65d-4aa07b2e0fb9"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "5606b366-cee6-4102-8fcf-a028bf9a4a5e",
+      "outbox_id": "1cb3789a-70a2-4e95-9729-a41753d7932a"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "b60b6404-3314-4c7b-ad5b-8870f96a81cf",
+      "outbox_id": "4ad497e6-ab93-4e1c-ac9a-d9a82c5009c8"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "a791aa24-3696-4054-929c-a18e69638592",
+      "outbox_id": "d3229720-a200-4db1-9ca1-9523c60cbad0"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "9c3af3ef-2f42-48a9-b23d-4bc5743f9826",
+      "outbox_id": "2391ff28-6082-4294-a969-b90bf6c0a420"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "02d4e96f-7633-4dc9-a6d6-12c498115353",
+      "outbox_id": "84e2ab3c-72bc-42c3-8900-6f931e7481fd"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "4089de9e-504e-4de2-b176-c44e43b9bdc7",
+      "outbox_id": "4adbeb5d-3f53-4899-940b-5cc1f1a6e33e"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "7c313a4f-8819-4682-a5c2-e27defb3a2d1",
+      "outbox_id": "6e384d20-747b-4d56-a2ec-8a83ac5c64dc"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "0c6f1674-f2b5-4f5c-99da-a8205ed0870f",
+      "outbox_id": "34992bef-df48-49de-8705-0aa6afa8fbb1"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "6c316988-470c-4b16-99e4-85eefe60e441",
+      "outbox_id": "7b40c060-df6c-42fb-ab28-a02c1487d2f5"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "e553a90f-3d05-4ae4-a0b2-afd21af25139",
+      "outbox_id": "64bcc9aa-0a1d-4ed1-b307-d5da3c617293"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "cf656533-82d9-46d4-9f30-61c4fece31c8",
+      "outbox_id": "28eabffc-769b-4894-8378-3147f64d16b9"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "980163c8-76a2-4d32-9d81-4d62d7fb5da9",
+      "outbox_id": "e5f27ca8-b262-48c8-8ea3-74f8376fdb89"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "a5f6e4be-457c-455d-859f-1be84f6952cb",
+      "outbox_id": "6f585676-8e44-4310-8bd3-e357d8bdb2d5"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "77287ae2-c2c6-4675-87e6-4bcd81dda263",
+      "outbox_id": "c27fc004-1cf5-4c8b-b705-b61bff00fd99"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "ac661259-dd2f-4264-90a0-087561a96446",
+      "outbox_id": "c6edbcda-d83a-4253-b958-643869f88bf0"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "451043dd-5ed3-4036-a63d-d63276f35801",
+      "outbox_id": "4c55ceca-c99c-439e-86d2-9f030a2a601e"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "e5872e11-c627-4482-a1dc-792396f82f4c",
+      "outbox_id": "b95c7f61-0c9e-44cd-ba40-1780fb0db10f"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "c1abb1dc-e254-4e96-a50b-20b3a16e5778",
+      "outbox_id": "0bbafdf6-3f1a-4972-973d-773edc5355b7"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "2b64b5b4-3661-4c45-9ac3-85ddee42f1e3",
+      "outbox_id": "8352663a-e768-4e5a-bce5-490e142d5a48"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "0a69b7dd-2a4d-4694-b000-453c10c5684a",
+      "outbox_id": "3c51c932-9708-43e8-a05c-c289e3a7aeb7"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "06f56a5d-753e-4dff-bafc-67f76e9f86e4",
+      "outbox_id": "796f5f56-948d-459d-86df-c7de7f7b1d8e"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "8200d456-420c-4511-b0a3-3462819172b0",
+      "outbox_id": "2ee44414-bdcc-4f62-8ae5-60e4fe0a942e"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "c5510c7e-322c-4da8-85f7-7a06137e4e26",
+      "outbox_id": "556ca655-f1de-46b1-87cc-9f5f5cd50061"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "086f5f03-9122-4009-96cd-b9fff3404f15",
+      "outbox_id": "80266297-de57-4b97-9265-cdcbe115feac"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "0d32848b-0b0e-4518-8f13-b3e74115e0c4",
+      "outbox_id": "af9445ac-d0b5-4c3f-bab1-0c52ede64b9b"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "8b5ec80c-7eb8-4e52-a80b-243125c7fa73",
+      "outbox_id": "4275a665-dd9a-403f-9b5f-575d4b6e061e"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "f097294f-0a47-4df9-aac5-7fe38affae04",
+      "outbox_id": "380a621c-5c3b-4e4c-ab94-879feac0ab5a"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "8ff09717-74b5-4179-b401-4be77806a90e",
+      "outbox_id": "f3abe99c-f072-4f46-97dd-aede920664fc"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "426cd40f-6afb-49c1-bf8e-f6f7e80d0291",
+      "outbox_id": "70699a67-1b5c-475a-aa8a-967d7a2c9bd5"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "2901974d-1dea-4a7c-a586-77d1a25d8dc5",
+      "outbox_id": "aaa80b88-3d60-4a84-8632-f2327e12a271"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "22ddc044-4ec7-49b1-9b1b-e450587b4401",
+      "outbox_id": "9303e4c6-4918-40d9-846b-a9e4adc59283"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "5b903ee6-bd65-4065-8612-89a54ea0c472",
+      "outbox_id": "6905782c-b24a-4b23-b4cc-c59f276f3138"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "7c01d447-8eb5-453c-ae8d-a02d7dc9cb94",
+      "outbox_id": "ba36731f-a798-44cc-8dd1-5934fa289f73"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "75aa1bb3-b246-4782-875d-76469ca8f75c",
+      "outbox_id": "288188a4-4ba7-49b9-bd8f-775a20f276a2"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "6253d5d8-2bbb-4f88-ad6f-9628334b9e40",
+      "outbox_id": "a8c3e738-2658-499d-b7f8-76bf55e2d7eb"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "d48735e2-a41d-4d60-b747-43440649c981",
+      "outbox_id": "8001e323-25b2-4de8-9c77-b31bf7f54edb"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "9b566fee-a2d3-47d0-8614-f4c16fc3a178",
+      "outbox_id": "448d626f-9eae-4220-b793-081495716a28"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "5e591dba-0024-465f-aa83-a4562ca3e53c",
+      "outbox_id": "dafa417f-742c-4a03-8e3f-71172643cee1"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "6d9811c2-9267-4a47-8662-2430f900c45e",
+      "outbox_id": "f6ebcb08-d8e1-4cba-afd3-b82043d688b9"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "97683a90-d2e2-48a2-9b85-de38d09c5d7e",
+      "outbox_id": "bf3297a0-6730-47d2-b237-e9301d31558f"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "2b4dddf3-7bb6-4048-8965-136e20f8c6bd",
+      "outbox_id": "8a931be9-b257-4a33-a0fa-b31d5f5a69c6"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "ec81f1c3-5af4-4bd3-9648-c1075c5fdded",
+      "outbox_id": "06dbcf3c-4962-47e1-85bf-8aa461d3a58e"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "108a496d-0a0f-4018-802d-d7941b618e40",
+      "outbox_id": "4d51e179-d13d-4451-9209-58a3d2571f34"
+    },
+    {
+      "event_type": "agent.session.created",
+      "id": "e652986e-20c1-42a1-971c-f9e3541f974d",
+      "outbox_id": "2247a1c6-293a-469b-b97c-804e31cb67f5"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "bf074bea-4f7c-405b-984b-1618cb68985e",
+      "outbox_id": "62812a7f-1425-48c8-ba1d-0150c57daee3"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "1cddaefb-45f6-4147-8603-82654d11563e",
+      "outbox_id": "c38caaf8-8145-4c60-83f5-6d6949870ead"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "4a158a61-2630-4710-ad08-8c14a1722000",
+      "outbox_id": "23d258f5-8953-4cf0-9826-6eb1b7cedb9d"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "d6df30dc-9355-40f9-9145-36e5b3456f52",
+      "outbox_id": "709cd007-fe3f-4d30-bc1e-92f03527cbcf"
+    },
+    {
+      "event_type": "agent.session.acknowledged",
+      "id": "cad38113-471e-44be-94b2-373a3472ad5f",
+      "outbox_id": "2c3b35bc-7545-4098-bc8e-3470e02cbe78"
+    },
+    {
+      "event_type": "agent.session.state_changed",
+      "id": "01cec12f-00a6-4b61-9294-4c6a87dd3789",
+      "outbox_id": "1aa97ca5-e6bb-4c63-b83e-b28105c873c9"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "b00ae4e8-4d38-42e9-9893-e6b63e7d3a9d",
+      "outbox_id": "5a1762ce-468b-47df-899b-14eaae6753d1"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "aad16c36-7670-4fc2-96f0-421950709eed",
+      "outbox_id": "36e777e7-5c01-44aa-bc9c-888a6cd5dc63"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "a4ee9938-9c25-47ef-87ad-066d7a88c5d0",
+      "outbox_id": "416f2aa4-74d7-4b19-97d1-df29768f9a83"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "60905e84-fb30-432e-bd24-c316a7564165",
+      "outbox_id": "3a04cacd-469b-4fcb-84f5-b8788622db2a"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "d3cf5108-6e83-4c6e-8bd3-73178eb76d1c",
+      "outbox_id": "eb488dce-f04f-4c36-b2ce-6de8a9498dac"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "eab89ea8-c0f2-4516-ae56-ae1ec1bec6ac",
+      "outbox_id": "fd85c952-89bf-4130-b697-6211f5f2e4ad"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "ce36c2e1-3852-45dd-a1d9-84975b81fabd",
+      "outbox_id": "25d6d15a-8142-4fde-ae5d-471951392877"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "c299da35-e8bd-4c5b-8ef9-deb7e1741853",
+      "outbox_id": "c486ef3f-d8b7-403a-b268-08d9ed5b10e9"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "66eac14e-bd7d-4d62-ac45-30e144d9cb60",
+      "outbox_id": "06bc6efa-841e-488d-969a-2f318840a714"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "c46ef62f-50a9-4ccc-abfd-d2f9c407fc0b",
+      "outbox_id": "0e6aa4f0-5c34-4769-98e5-644029e8b1a9"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "5c4d946a-9988-4ab6-84a0-7596cdfccf86",
+      "outbox_id": "5b4cec22-1df7-4cdc-ba68-018ff5c6e19a"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "2b662ffd-5e0e-41d4-8519-c153a6a7e106",
+      "outbox_id": "d42b9537-0768-4bfc-a039-bd8962997729"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "60d37f26-e123-4103-9181-014ce4fada31",
+      "outbox_id": "92f01fcb-422b-415c-a488-dab94b0dfe43"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "f16b01b6-f1ee-442c-af4a-97143160196f",
+      "outbox_id": "c77a2e52-e0ec-4585-9d7b-9c87904b2e09"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "d2842c76-6880-48d0-91d1-52725c7dacaa",
+      "outbox_id": "c053aa88-0555-4ddf-a4de-454a2bddbc50"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "7349ea70-737f-4931-9418-9e1fce9627b7",
+      "outbox_id": "4084fc55-00f8-446f-9a3d-74ff35bc1ed7"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "6741b97f-a97c-4066-93d6-c8ed344556a1",
+      "outbox_id": "80c3c2d5-2bc9-4aa2-a5a9-693642dcfccd"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "a98418fa-6bbe-4aae-bc34-4e99ac81af12",
+      "outbox_id": "bf1d978d-da42-49ac-b22d-7d5a8e058a76"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "422a8aed-fe56-4308-a91f-c11490f4c3e0",
+      "outbox_id": "2ba8a7eb-13e2-4d93-ba6d-f5892f450f91"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "fbbac29c-0192-4de9-8a1f-2639112d1ee4",
+      "outbox_id": "2e48f216-b0ba-4b6e-80bc-7cf69f414717"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "aa857aad-c3c0-4d91-a1f0-0fec681d90f8",
+      "outbox_id": "d3c84ab6-6104-40f1-9c52-9267fc1c5b68"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "9c073e24-a3bc-4cd2-a5bf-757395c7fc65",
+      "outbox_id": "35580cf6-5a4c-49ae-8d74-0f2511af4400"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "ef59e220-a611-4bfe-be88-bdc00a2e115e",
+      "outbox_id": "d5abaa5c-5168-4024-97f2-9d4b8fe599d1"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "45f93fee-86b0-4a25-af15-47adfdd2c9ff",
+      "outbox_id": "4fee292c-56e8-4e73-b534-87120ebb98b8"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "f1664905-7062-4e1a-8aa3-f7f6f0c94aab",
+      "outbox_id": "8806f4e1-98ac-4be6-aa5d-c62b33aabac3"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "fe4d72db-f451-4ab7-a254-f06872d0f8e2",
+      "outbox_id": "44b890c7-d77e-4743-8065-703c11b819a9"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "f921fa54-9835-48cf-9da6-c1d458e63dca",
+      "outbox_id": "8cebcbe7-7646-428a-be23-7da9344835fc"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "c0cdf63f-4ec0-4bba-aa56-7c2a39326982",
+      "outbox_id": "7d751df1-aabb-4fd7-b519-453ebdb77ddd"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "7755f964-625d-40da-8096-5aa2603b95c1",
+      "outbox_id": "51892843-0bb1-4fbe-840a-bf20a4d78292"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "b6c148d8-8d26-4a79-befa-ad6ac27ae4e0",
+      "outbox_id": "d77b697c-b2b7-40f0-8882-8502a427fcdd"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "8cc61a7e-57ac-4837-9283-a1142caa8a6a",
+      "outbox_id": "4be78b01-fefe-4a97-87b0-d5a3ca5c7f1f"
+    },
+    {
+      "event_type": "agent.session.completed",
+      "id": "bf389dcc-22d3-4d74-bc43-789bc484f30c",
+      "outbox_id": "89ec59dc-0e07-460b-891a-df1300dc460e"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "9c2930bd-2f06-4d6d-b562-93bfba4466b5",
+      "outbox_id": "5be6312a-5442-4447-8522-90ff86088d3d"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "5bfe2586-6749-4474-aafa-956d084ac525",
+      "outbox_id": "106994ac-b12a-4a67-8ad5-985b3fbd0e2e"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "05a5f8da-4fac-4538-a79f-1eb0798044b6",
+      "outbox_id": "a70ef8bf-a2da-4818-9a81-02676a87617d"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "b499bf38-f9f5-4631-adce-192001dbbdb2",
+      "outbox_id": "052f467f-87e4-4083-aa82-ff798c58c83c"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "c3f64ff3-28e3-48a8-8768-5562e80593e0",
+      "outbox_id": "9f6eaae2-65a1-4c79-89fd-68ae86cedd97"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "9d727754-e472-4dd0-8207-678dd0bd832c",
+      "outbox_id": "4cc61e15-38be-4c99-87c4-9c813f739c7d"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "0757c5c9-0f73-4743-8081-baae0f089d32",
+      "outbox_id": "be76e3b0-0915-4b1a-b41a-6717f1e57ce2"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "d5bb6099-3b11-47f5-a7ea-278cecf4a55f",
+      "outbox_id": "328128b1-4126-4991-9922-b68c5e7e02a1"
+    },
+    {
+      "event_type": "approval.requested",
+      "id": "8f37430f-b0c0-487a-8037-3a83a8cd52ec",
+      "outbox_id": "7d7af1e7-39eb-4a9e-b9bb-7a3b5cfb6856"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "15da12d8-ce84-4636-b02b-232990d90b77",
+      "outbox_id": "4b9d24b1-c5d6-4c33-a431-14eca5bcd605"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "86637bcc-7a2a-4e3e-a5e4-e2b8b0a95d19",
+      "outbox_id": "03fc7766-25ee-4967-824d-d38344039cd3"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "f5c78a72-f4b1-4c3e-a7f4-ec3eb990ef19",
+      "outbox_id": "b44a5597-105b-4659-9ea5-cf03af4abf04"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "94f2b062-4a1b-4048-981b-840cd36e4a39",
+      "outbox_id": "98658b56-cbfb-491e-b86f-95c04daf8c0e"
+    },
+    {
+      "event_type": "approval.decision.recorded",
+      "id": "fd4f5cc9-1dbe-49dc-9be0-6423de3576b1",
+      "outbox_id": "0b3e5da7-72f0-42e2-aae0-c8be77265f61"
+    },
+    {
+      "event_type": "approval.approved",
+      "id": "a714f9db-4290-4a78-a503-3868bb753ff7",
+      "outbox_id": "62de1ee1-f6b8-40f9-98a0-2ec070b5d988"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "78000da6-ef07-4d16-8f5c-8114ce0e29f4",
+      "outbox_id": "31d52d55-0f29-45f9-b456-5063f6d36f94"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "c2f0206a-e1f1-424f-8ff7-401bf8f6c12d",
+      "outbox_id": "c7c19b5c-831b-40ef-8d29-ac356c17a3a0"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "b30537a3-79cd-4de5-a965-2ae09bf8bc62",
+      "outbox_id": "0eeed376-0fd8-4829-a5a6-49fca52cb359"
+    },
+    {
+      "event_type": "agent.activity.appended",
+      "id": "a6fdf57f-8597-4482-aa05-7b83d7b0a3b7",
+      "outbox_id": "582698cd-8edd-4551-bd6c-eb1051b27f41"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "607baacf-2abd-43ad-bbfa-2b6c14330f08",
+      "outbox_id": "88ee9c3a-816b-496d-90f3-f39787620d58"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "29ce74be-0203-4ca5-b906-9afe220d651f",
+      "outbox_id": "4cbfa632-afee-493c-b77c-621afb5f5eb9"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "af440576-f58c-4808-868c-1001e1f57280",
+      "outbox_id": "b1ed5a5d-6886-4739-b604-1e71ed414efe"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "96e3efc3-fb60-4d28-a80c-b51f9c2b3067",
+      "outbox_id": "85fb5f2f-6763-4e67-9913-861879de63fb"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "77f5d3e4-239a-49e0-ad85-3807a28169d6",
+      "outbox_id": "fb13484c-03c9-4e21-a7ba-c4b1e6f06700"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "c4a9d87b-b796-4561-b6c9-ec04d0676d83",
+      "outbox_id": "0364cc5b-55e4-49bf-a694-7a67740e4eb3"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "22577682-7d57-4511-9911-15b7d2c175b6",
+      "outbox_id": "bdff2a43-da31-4ff0-8506-82dc1966ae2c"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "d1501e3b-8676-4690-a893-7d197c925270",
+      "outbox_id": "ede12ce7-4a73-4495-8120-2cf1c6bda367"
+    },
+    {
+      "event_type": "workbench.turn.dispatched",
+      "id": "67b2e65b-37a1-4af1-88e0-37b67c3a00e9",
+      "outbox_id": "4418cb0b-a2ae-430f-8829-a5646c84d9b0"
+    },
+    {
+      "event_type": "workbench.runner_attempt.started",
+      "id": "46ce08bf-ac85-449b-b58f-39590420e34c",
+      "outbox_id": "4873a8f3-7eb4-4599-947f-f8ad65830acc"
+    },
+    {
+      "event_type": "workbench.message.appended",
+      "id": "6c293d89-1d72-417b-916b-448efa02f070",
+      "outbox_id": "e8062d7f-cbf5-425c-8d2f-f8859c209c43"
+    },
+    {
+      "event_type": "workbench.runner_attempt.settled",
+      "id": "75cfb3a2-7e7d-4467-b24f-f29ed06dfc3a",
+      "outbox_id": "616db238-d050-479f-a4e2-a9b6f637c86e"
+    },
+    {
+      "event_type": "workbench.turn.settled",
+      "id": "706cb82e-4c4f-48e7-a57d-9ab7b801ed61",
+      "outbox_id": "4821b50e-71a6-47c6-9a49-156bfdfd51db"
+    },
+    {
+      "event_type": "agent.session.completed",
+      "id": "c271d7bc-49c8-45dd-97e5-dbd4b8ea9259",
+      "outbox_id": "b9928677-8e94-48e5-b90d-988fd44fd775"
+    }
+  ],
+  "producer": "actual Pi",
+  "reviewer": "actual Pi; OpenCode unavailable",
+  "fullPG": false,
+  "preparation": [
+    "SDK claim/ACK/context",
+    "privileged executor repository scope",
+    "provider webhook fixture"
+  ]
+}

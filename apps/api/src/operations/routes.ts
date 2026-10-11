@@ -1329,7 +1329,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
           workspace_id,team_id,project_id,name,owner_actor_id,agent_id,run_template_version_id,
           trigger,budget,no_overlap,visibility,failure_notification,next_run_at
         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,
-          CASE WHEN $8->>'type'='schedule' THEN now() ELSE NULL END) RETURNING id,revision`,
+          CASE WHEN $8::jsonb->>'type'='schedule' THEN now() ELSE NULL END) RETURNING id,revision`,
         [meta.actor.workspaceId, body.teamId ?? null, body.projectId ?? null, body.name, body.ownerActorId,
           body.agentId, body.runTemplateVersionId, body.trigger, body.budget, body.noOverlap, body.visibility, body.failureNotification],
       )).rows)
@@ -1367,7 +1367,7 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
       )).rows)
       await requireTeamWrite(tx, actor(request), loop.team_id)
       if (loop.revision !== expected) throw new DomainError('REVISION_CONFLICT', 'Loop revision is stale')
-      await tx.query('UPDATE loops SET state=$1,revision=revision+1,updated_at=now(),next_run_at=CASE WHEN $1=\'active\' THEN next_run_at ELSE NULL END WHERE id=$2', [body.state, loopId])
+      await tx.query('UPDATE loops SET state=$1::loop_state,revision=revision+1,updated_at=now(),next_run_at=CASE WHEN $1::loop_state=\'active\' THEN next_run_at ELSE NULL END WHERE id=$2', [body.state, loopId])
       await emit(tx, meta, `loop.${body.state}`, 'loop', loopId, {}, loop.team_id, loop.revision + 1)
       return { id: loopId, revision: loop.revision + 1 }
     })

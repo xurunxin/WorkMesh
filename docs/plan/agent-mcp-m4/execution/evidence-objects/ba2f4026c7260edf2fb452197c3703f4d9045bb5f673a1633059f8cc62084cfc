@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "run",
+    "--server",
+    "http://127.0.0.1:57726",
+    "--print-logs",
+    "--format",
+    "json",
+    "--model",
+    "m5-local/controlled",
+    "Call only the supplied WorkMesh tools, then report the verified public result."
+  ],
+  "startedAt": "2026-10-11T04:08:42.997Z",
+  "endedAt": "2026-10-11T04:08:44.105Z",
+  "runtimeMs": 1107.3148,
+  "pid": 23004,
+  "nativeExit": 0,
+  "signal": null,
+  "stdout": "{\"type\":\"step_start\",\"timestamp\":1791691723531,\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"part\":{\"id\":\"prt_12926130b001X1M0FrWxbC3CCC\",\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"messageID\":\"msg_1292612dc001A22hER3DIoSkE2\",\"type\":\"step-start\"}}\n{\"type\":\"tool_use\",\"timestamp\":1791691723747,\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"part\":{\"partID\":\"prt_12926130f001G5R8zVthz40WyQ\",\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"messageID\":\"msg_1292612dc001A22hER3DIoSkE2\",\"type\":\"tool\",\"id\":\"40875598-2e98-4941-89b0-bfd38916dd73\",\"tool\":\"workmesh_get_initiative_rollup\",\"state\":{\"status\":\"completed\",\"input\":{\"initiativeId\":\"54cdbcee-0474-4fa8-9aa2-731a2d27a2d6\"},\"output\":\"{\\\"projectCount\\\":1,\\\"completedProjectCount\\\":0,\\\"completedItems\\\":0,\\\"totalItems\\\":1,\\\"progressPercent\\\":0,\\\"health\\\":\\\"unknown\\\",\\\"currencyBuckets\\\":[],\\\"hasUnknownCost\\\":false}\",\"title\":\"workmesh_get_initiative_rollup\",\"metadata\":{\"metadata\":{\"truncated\":false},\"content\":[{\"type\":\"text\",\"text\":\"{\\\"projectCount\\\":1,\\\"completedProjectCount\\\":0,\\\"completedItems\\\":0,\\\"totalItems\\\":1,\\\"progressPercent\\\":0,\\\"health\\\":\\\"unknown\\\",\\\"currencyBuckets\\\":[],\\\"hasUnknownCost\\\":false}\"}],\"providerCall\":{\"executed\":false},\"providerResult\":{\"executed\":false},\"rawInput\":\"{\\\"initiativeId\\\":\\\"54cdbcee-0474-4fa8-9aa2-731a2d27a2d6\\\"}\"},\"time\":{\"start\":1791691723535,\"end\":1791691723747}}}}\n{\"type\":\"step_finish\",\"timestamp\":1791691723762,\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"part\":{\"id\":\"prt_1292613f2001PH8S1Viwy0p2ES\",\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"messageID\":\"msg_1292612dc001A22hER3DIoSkE2\",\"type\":\"step-finish\",\"reason\":\"tool-calls\",\"cost\":0,\"tokens\":{\"input\":1,\"output\":1,\"reasoning\":\"[redacted]\",\"cache\":{\"read\":0,\"write\":0}}}}\n{\"type\":\"text\",\"timestamp\":1791691724002,\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"part\":{\"id\":\"prt_12926143b001p4kkLXuLGvTbcO_text-0\",\"sessionID\":\"ses_ed6d9ed61ffeHOh4y8PCyfvUmF\",\"messageID\":\"msg_12926143b001p4kkLXuLGvTbcO\",\"type\":\"text\",\"text\":\"M5 public result verified.\",\"time\":{\"start\":1791691723928,\"end\":1791691724002}}}\n",
+  "stderr": "",
+  "rawOutput": {
+    "stdout": {
+      "bytes": 2056,
+      "sha256": "5438aaafa6b57a097d4d20a5162e71cfaad0f2fbed7a64e654b67284ba3c090d"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rawBytesPreserved": false
+}

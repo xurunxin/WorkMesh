@@ -1,0 +1,121 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > 真实SDK/MCP C/E分页与四读正反例，origin与target准确分离
+AssertionError: [{"type":"text","text":"{\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"6d14c221-16d3-465f-830f-1749c6fc3b99\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"}]: expected true not to be true // Object.is equality
+ ❯ tool src/optional-domains.conformance.test.ts:14:61
+     12| const tool=async<T>(client:Client,name:string,args:Record<string,unkno…
+     13|   const result=await client.callTool({name,arguments:args})
+     14|   expect(result.isError,JSON.stringify(result.content)).not.toBe(true)
+       |                                                             ^
+     15|   return (result.structuredContent as {data:T}).data
+     16| }
+ ❯ src/optional-domains.conformance.test.ts:75:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > 普通saved view保owner、分页cursor；同key/body回执与异体冲突
+AssertionError: expected WorkMeshSdkError: Idempotency key was use… { …(5) } to match object { code: 'IDEMPOTENCY_CONFLICT' }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "code": "IDEMPOTENCY_CONFLICT",
++ WorkMeshSdkError {
++   "code": "IDEMPOTENCY_KEY_REUSED",
+  }
+
+ ❯ src/optional-domains.conformance.test.ts:91:5
+     89|     const first=await origin.client.createSavedView({name:'M4 own ordi…
+     90|     expect(await origin.client.createSavedView({name:'M4 own ordinary …
+     91|     await expect(origin.client.createSavedView({name:'M4 conflict',tea…
+       |     ^
+     92|     const own=await origin.client.listSavedViews({}, {limit:1})
+     93|     const all=[];let page=own
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > usage本人/projectless与币种unknown，dedupe及异体冲突
+AssertionError: expected WorkMeshSdkError: Idempotency key was use… { …(5) } to match object { code: 'IDEMPOTENCY_CONFLICT' }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "code": "IDEMPOTENCY_CONFLICT",
++ WorkMeshSdkError {
++   "code": "IDEMPOTENCY_KEY_REUSED",
+  }
+
+ ❯ src/optional-domains.conformance.test.ts:108:5
+    106|     const record=await target.client.recordUsage(body,{idempotencyKey:…
+    107|     expect(await target.client.recordUsage(body,{idempotencyKey:'m4-us…
+    108|     await expect(target.client.recordUsage({...body,inputTokens:18},{i…
+       |     ^
+    109|     await target.client.recordUsage({...body,dedupeKey:'m4-unknown',cu…
+    110|     const summary=await target.client.getUsageSummary()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > Loop同occurrence回执、两请求no-overlap竞争及Human暂停拒绝
+AssertionError: expected WorkMeshSdkError: Idempotency key was use… { …(5) } to match object { code: 'IDEMPOTENCY_CONFLICT' }
+(5 matching properties omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "code": "IDEMPOTENCY_CONFLICT",
++ WorkMeshSdkError {
++   "code": "IDEMPOTENCY_KEY_REUSED",
+  }
+
+ ❯ src/optional-domains.conformance.test.ts:122:5
+    120|     const same=await f.coordination.runLoopNow(loopId,body,{idempotenc…
+    121|     expect(same).toMatchObject({runId,sessionId:target.sessionId})
+    122|     await expect(f.coordination.runLoopNow(loopId,{...body,occurrenceK…
+       |     ^
+    123|     const outcomes=await Promise.allSettled([0,1].map(index=>f.coordin…
+    124|     expect(outcomes.every(item=>item.status==='rejected')).toBe(true)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > usage事务真实触发器故障：usage/event/outbox零新增，恢复后一次提交
+error: relation "outbox" does not exist
+ ❯ ../../node_modules/.pnpm/pg-pool@3.14.0_pg@8.22.0/node_modules/pg-pool/index.js:45:11
+ ❯ count src/optional-domains.conformance.test.ts:135:28
+
+ ❯ src/optional-domains.conformance.test.ts:137:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > 真实Pi模型实收完整Template、run、usage、规则/Loop、项目rollup与A2A拒绝
+Error: Human fixture POST /api/v1/workbench/conversations: 403 {"error":{"code":"FORBIDDEN","message":"Only the responsible human can bind a session to its work context","correlationId":"eb070664-5935-4f84-a1ef-f89c7464b23c"}}
+ ❯ human src/mcp-coverage.fixture.ts:63:29
+     61|     body: body === undefined ? undefined : JSON.stringify(body) })
+     62|     const text = await response.text()
+     63|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     64|     return (text ? JSON.parse(text) : undefined) as T
+     65|   }
+ ❯ Object.pi src/planning-collaboration.fixture.ts:145:28
+ ❯ src/optional-domains.conformance.test.ts:170:20
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者 > API重启从A2A独立cursor恢复，Stop后旧E不能读run或写usage
+Error: Human fixture POST /api/v1/agent-sessions/3913a4a6-4e72-4728-b3cd-3848a4eb47e1/stop: 403 {"error":{"code":"FORBIDDEN","message":"The route has no registered authorization policy","correlationId":"65403f3f-e9ea-4f70-a21e-5348307ed993"}}
+ ❯ Object.human src/mcp-coverage.fixture.ts:63:29
+     61|     body: body === undefined ? undefined : JSON.stringify(body) })
+     62|     const text = await response.text()
+     63|     if (!response.ok) throw new Error(`Human fixture ${method} ${path}…
+       |                             ^
+     64|     return (text ? JSON.parse(text) : undefined) as T
+     65|   }
+ ❯ src/optional-domains.conformance.test.ts:194:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+

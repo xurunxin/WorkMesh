@@ -1,0 +1,25 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/contracts/src/agent-discovery.test.ts > 已审发现规则的已知门禁和身份投影 > M4保全138旧bindings/137映射及所有identityVariants，不借新增工具改身份
+AssertionError: expected { …(2) } to deeply equal 'getAgentCapabilityManifest'
+
+- Expected: 
+"getAgentCapabilityManifest"
+
++ Received: 
+{
+  "operationId": "getAgentCapabilityManifest",
+  "policyId": "route.getAgentCapabilityManifest",
+}
+
+ ❯ packages/contracts/src/agent-discovery.test.ts:32:136
+     30|     expect(Object.keys(baseline.policyMappings)).toHaveLength(137)
+     31|     for(const binding of baseline.allBindings) expect(agentDiscoveryBi…
+     32|     for(const [id,mapping] of Object.entries(baseline.policyMappings))…
+       |                                                                                                                                        ^
+     33|   })
+     34|   it.each([
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

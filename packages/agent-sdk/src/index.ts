@@ -38,6 +38,18 @@ import {
   artifactUploadResponseSchema,artifactUploadCancelResponseSchema,artifactDownloadResponseSchema,
 } from '@workmesh/contracts'
 export { releaseMetadata } from '@workmesh/contracts'
+import {
+  cycleResponseSchema, initiativeResponseSchema, initiativeRollupResponseSchema,
+  savedViewInputSchema, savedViewResponseSchema, savedViewCreatedResponseSchema,
+  advancedViewResponseSchema, advancedViewResultResponseSchema, automationRuleResponseSchema,
+  automationRunResponseSchema, automationRunDetailResponseSchema, loopResponseSchema,
+  templatePinResponseSchema, runLoopNowInputSchema, loopAdmissionResponseSchema,
+  usageInputSchema, usageRecordResponseSchema, usageSummaryQuerySchema, usageSummaryResponseSchema,
+  optionalDomainCursorSchema, a2aTaskEventPageSchema,
+  projectHealthResponseSchema, projectHealthCreatedResponseSchema, completionSuggestionResponseSchema,
+  type UsageInput, type UsageSummaryQuery, type RunLoopNowInput, type SavedViewInput,
+  type ProjectHealthResponse, type ProjectHealthCreatedResponse, type CompletionSuggestionResponse,
+} from '@workmesh/contracts'
 
 export type WorkMeshErrorCode =
   | 'NETWORK_ERROR'
@@ -699,12 +711,13 @@ export class WorkMeshClient {
   listWorkItemArtifacts<T=DeliveryArtifactResponse>(workItemId:string,options:RequestOptions & {sessionId?:string}={}):Promise<T[]> {
     return this.request('GET',`/api/v1/work-items/${encodeURIComponent(workItemId)}/artifacts`,undefined,{...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(deliveryArtifactResponseSchema.array(),value) as T[])
   }
-  getProjectHealthHistory<T=unknown>(projectId:string,options:PageRequestOptions & {sessionId?:string}={}):Promise<ListResponse<T>> {
+  getProjectHealthHistory<T=ProjectHealthResponse>(projectId:string,options:PageRequestOptions & {sessionId?:string}={}):Promise<ListResponse<T>> {
     return this.request('GET',pagedPath(`/api/v1/projects/${encodeURIComponent(projectId)}/health`,{},options),undefined,{...options,refreshSessionId:options.sessionId})
+      .then(value=>this.validateResponse(listResponseSchema(projectHealthResponseSchema),value) as ListResponse<T>)
   }
-  createProjectHealthUpdate<T=unknown>(projectId:string,input:ProjectHealthInput,options:RequestOptions & {sessionId:string;ifMatch:number|string}):Promise<T> {
+  createProjectHealthUpdate<T=ProjectHealthCreatedResponse>(projectId:string,input:ProjectHealthInput,options:RequestOptions & {sessionId:string;ifMatch:number|string}):Promise<T> {
     return this.request('POST',`/api/v1/projects/${encodeURIComponent(projectId)}/health`,projectHealthInputSchema.parse(input),
-      {...options,idempotencyKey:options.idempotencyKey??randomUUID(),refreshSessionId:options.sessionId})
+      {...options,idempotencyKey:options.idempotencyKey??randomUUID(),refreshSessionId:options.sessionId}).then(value=>this.validateResponse(projectHealthCreatedResponseSchema,value) as T)
   }
   requestProviderAction<T = unknown>(input: ProviderActionInput, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/provider-actions', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `provider:${input.kind}`), refreshSessionId: input.sessionId }) }
   publishDeliveryArtifact<T = unknown>(input: { workItemId: string; sessionId: string; projectId?: string; planStepId?: string; repositoryId?: string; pullRequestId?: string; headSha?: string; type: ArtifactInput['type'] | 'branch' | 'diff' | 'build' | 'preview'; title: string; uri?: string; checksum: string; sourceTool: string; command?: string; result?: 'passed' | 'failed' | 'skipped'; metadata?: Record<string, unknown> }, options: RequestOptions = {}): Promise<T> { return this.request('POST', '/api/v1/delivery-artifacts', input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(input.sessionId, `delivery-artifact:${input.type}`), refreshSessionId: input.sessionId }) }
@@ -717,8 +730,68 @@ export class WorkMeshClient {
   getProjectDelivery<T = ProjectDeliveryResponse>(projectId: string, options: RequestOptions & {pullRequestId?:string;sessionId?:string} = {}): Promise<T> { return this.request('GET', `/api/v1/projects/${encodeURIComponent(projectId)}/delivery${options.pullRequestId?`?pullRequestId=${encodeURIComponent(options.pullRequestId)}`:''}`, undefined, {...options,refreshSessionId:options.sessionId}).then(value=>this.validateResponse(projectDeliveryResponseSchema,value) as T) }
   draftProjectUpdate<T = unknown>(projectId: string, input: { health: 'on_track' | 'at_risk' | 'off_track'; body: string; evidenceArtifactIds?: string[] }, options: RequestOptions & { sessionId: string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/updates`, { ...input, status: 'draft', evidenceArtifactIds: input.evidenceArtifactIds ?? [] }, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `draft-project-update:${projectId}`), refreshSessionId: options.sessionId }) }
   publishProjectUpdate<T = unknown>(projectId: string, updateId: string, options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/updates/${encodeURIComponent(updateId)}/publish`, {}, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(updateId, 'publish-project-update') }) }
-  suggestCompletion<T = unknown>(projectId: string, input: { workItemId: string; pullRequestId?: string; rationale: string; evidenceArtifactIds?: string[] }, options: RequestOptions & { sessionId: string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/completion-suggestions`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `completion-suggestion:${input.workItemId}`), refreshSessionId: options.sessionId }) }
+  suggestCompletion<T = CompletionSuggestionResponse>(projectId: string, input: { workItemId: string; pullRequestId?: string; rationale: string; evidenceArtifactIds?: string[] }, options: RequestOptions & { sessionId: string }): Promise<T> { return this.request('POST', `/api/v1/projects/${encodeURIComponent(projectId)}/completion-suggestions`, input, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(options.sessionId, `completion-suggestion:${input.workItemId}`), refreshSessionId: options.sessionId }).then(value=>this.validateResponse(completionSuggestionResponseSchema,value) as T) }
   decideCompletionSuggestion<T = unknown>(suggestionId: string, decision: 'accepted' | 'dismissed', options: RequestOptions & { ifMatch: number | string }): Promise<T> { return this.request('POST', `/api/v1/completion-suggestions/${encodeURIComponent(suggestionId)}/decision`, { decision }, { ...options, idempotencyKey: options.idempotencyKey ?? stableIdempotencyKey(suggestionId, `completion-suggestion-${decision}`) }) }
+
+  // Optional-domain methods always use the configured current E/C credential.
+  // An admission target ID never refreshes or replaces this client's identity.
+  private async optionalPage<S extends Parameters<typeof listResponseSchema>[0]>(path: string, schema: S, filters: Record<string,string|undefined>, options: PageRequestOptions) {
+    return this.validateResponse(listResponseSchema(schema),await this.request('GET',pagedPath(path,filters,options),undefined,options))
+  }
+  listCycles(filters: {teamId?: string} = {}, options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/cycles',cycleResponseSchema,filters,options)
+  }
+  listInitiatives(options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/initiatives',initiativeResponseSchema,{},options)
+  }
+  async getInitiativeRollup(initiativeId: string, options: RequestOptions = {}) {
+    return this.validateResponse(initiativeRollupResponseSchema,await this.request('GET',`/api/v1/initiatives/${encodeURIComponent(initiativeId)}/rollup`,undefined,options))
+  }
+  listSavedViews(filters: {teamId?: string} = {}, options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/views',savedViewResponseSchema.passthrough(),filters,options)
+  }
+  async createSavedView(input: SavedViewInput, options: RequestOptions = {}) {
+    const body=savedViewInputSchema.parse(input)
+    return this.validateResponse(savedViewCreatedResponseSchema,await this.request('POST','/api/v1/views',body,{...options,idempotencyKey:options.idempotencyKey??randomUUID()}))
+  }
+  listAdvancedViews(options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/advanced-views',advancedViewResponseSchema,{},options)
+  }
+  getAdvancedViewResults(viewId: string, options: PageRequestOptions = {}) {
+    return this.optionalPage(`/api/v1/advanced-views/${encodeURIComponent(viewId)}/results`,advancedViewResultResponseSchema,{},options)
+  }
+  listAutomationRules(options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/automation-rules',automationRuleResponseSchema,{},options)
+  }
+  listAutomationRuns(filters: {ruleId?:string;loopId?:string} = {}, options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/automation-runs',automationRunResponseSchema,filters,options)
+  }
+  async getAutomationRun(runId: string, options: RequestOptions = {}) {
+    return this.validateResponse(automationRunDetailResponseSchema,await this.request('GET',`/api/v1/automation-runs/${encodeURIComponent(runId)}`,undefined,options))
+  }
+  listLoops(options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/loops',loopResponseSchema,{},options)
+  }
+  async runLoopNow(loopId: string, input: Omit<RunLoopNowInput,'scheduledFor'> & {scheduledFor:Date|string}, options: RequestOptions = {}) {
+    const body=runLoopNowInputSchema.parse(input)
+    return this.validateResponse(loopAdmissionResponseSchema,await this.request('POST',`/api/v1/loops/${encodeURIComponent(loopId)}/run`,body,{...options,idempotencyKey:options.idempotencyKey??randomUUID()}))
+  }
+  async recordUsage(input: Omit<UsageInput,'occurredAt'|'metadata'> & {occurredAt:Date|string;metadata?:UsageInput['metadata']}, options: RequestOptions = {}) {
+    const body=usageInputSchema.parse(input)
+    return this.validateResponse(usageRecordResponseSchema,await this.request('POST','/api/v1/usage-records',body,{...options,idempotencyKey:options.idempotencyKey??randomUUID()}))
+  }
+  async getUsageSummary(input: Omit<UsageSummaryQuery,'from'|'to'> & {from?:Date|string;to?:Date|string} = {}, options: RequestOptions = {}) {
+    const query=usageSummaryQuerySchema.parse(input)
+    const params=new URLSearchParams(Object.entries(query).map(([key,value])=>[key,value instanceof Date?value.toISOString():String(value)]))
+    return this.validateResponse(usageSummaryResponseSchema,await this.request('GET',`/api/v1/usage-summary${params.size?'?'+params.toString():''}`,undefined,options))
+  }
+  listTemplates(options: PageRequestOptions = {}) {
+    return this.optionalPage('/api/v1/templates',templatePinResponseSchema,{},options)
+  }
+  async getA2ATaskEvents(bindingId: string, taskId: string, after='0', options: RequestOptions = {}) {
+    const cursor=optionalDomainCursorSchema.parse(after)
+    return this.validateResponse(a2aTaskEventPageSchema,await this.request('GET',`/api/v1/a2a-bindings/${encodeURIComponent(bindingId)}/tasks/${encodeURIComponent(taskId)}/events?after=${encodeURIComponent(cursor)}`,undefined,options))
+  }
 
   private validateResponse<T>(schema: { safeParse(value: unknown): { success: true; data: T } | { success: false } }, response: unknown): T {
     const parsed = schema.safeParse(response)

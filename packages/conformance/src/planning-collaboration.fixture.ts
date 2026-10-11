@@ -15,7 +15,7 @@ import { createAgentWebhookWorker, signWebhook, signaturesMatch } from '../../..
 const exec = promisify(execFile)
 const redact = (text: string) => text.replace(/wm[ips]_[A-Za-z0-9_-]+/g, '[credential]')
 export const savePlanningEvidence = (name: string, value: unknown) => {
-  const root = resolve(import.meta.dirname, '../../../ci-logs/planning-collaboration')
+  const root = resolve(process.env.WORKMESH_M4_EVIDENCE_ROOT ?? resolve(import.meta.dirname, '../../../ci-logs/planning-collaboration'))
   mkdirSync(root, { recursive: true })
   writeFileSync(resolve(root, name), redact(JSON.stringify(value, null, 2)) + '\n')
 }
@@ -142,7 +142,7 @@ export async function createPlanningCollaborationFixture(options:{capabilities?:
       const connection = await fixture.human<{ id: string }>('POST', '/api/v1/workbench/llm-connections', { scope: 'workspace', name: `M2 ${randomUUID()}`, apiType: 'openai-completions', baseUrl: `https://127.0.0.1:${address.port}/v1`, secretMaterial: 'm2-public-fixture-key' })
       const selected = await fixture.human<{ id: string }>('POST', `/api/v1/workbench/llm-connections/${connection.id}/models`, { externalModelId: 'm2-model', displayName: 'M2 model', enabled: true, capabilities: { inputModalities: ['text'], toolCalling: true, reasoning: false, contextWindowTokens: 32768, maxOutputTokens: 2048 } }, 1)
       const contextHuman = options.contextHuman ?? fixture.human
-      const conversation = await contextHuman<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M2 verified lifecycle', workItemId: execution.workItemId, agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
+      const conversation = await contextHuman<{ id: string }>('POST', '/api/v1/workbench/conversations', { title: 'M2 verified lifecycle', ...(execution.workItemId?{workItemId:execution.workItemId}:{}), agentSessionId: execution.sessionId, llmConnectionId: connection.id, llmModelId: selected.id })
       const queued = await contextHuman<{ turn: { id: string } }>('POST', `/api/v1/workbench/conversations/${conversation.id}/turns`, { messageMarkdown: 'Use the exact approved tools and produce auditable evidence.' }, 1)
       const root = resolve(import.meta.dirname, '../../../apps/agent-runner')
       const env: NodeJS.ProcessEnv = { ...process.env, WORKMESH_API_URL: options.apiUrl??fixture.baseUrl, WORKMESH_AGENT_INSTALLATION_TOKEN: installationToken, WORKMESH_AGENT_SESSION_ID: execution.sessionId, NODE_EXTRA_CA_CERTS: resolve(import.meta.dirname, 'fixtures/model-test-ca.pem') }

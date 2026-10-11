@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "debug",
+    "config"
+  ],
+  "startedAt": "2026-10-11T04:05:39.188Z",
+  "endedAt": "2026-10-11T04:05:43.841Z",
+  "runtimeMs": 4653.513100000002,
+  "stdout": "[{\"type\":\"document\",\"path\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a127d4-e047-7e57-81c2-3d054851fc88\\\\.tmp\\\\m4-4adc5e39\\\\native-evidence\\\\opencode-3d0a9c39-16cb-429e-ab37-3212a8868d36\\\\config\\\\opencode\\\\opencode.json\",\"info\":{\"model\":{\"providerID\":\"m5-local\",\"model\":\"controlled\"},\"update\":\"disable\",\"permissions\":[{\"action\":\"*\",\"resource\":\"*\",\"effect\":\"deny\"},{\"action\":\"workmesh_get_initiative_rollup\",\"resource\":\"*\",\"effect\":\"allow\"},{\"action\":\"workmesh_get_usage_summary\",\"resource\":\"*\",\"effect\":\"allow\"}],\"snapshots\":false,\"tool_output\":{\"max_lines\":2000,\"max_bytes\":2000000},\"mcp\":{\"servers\":{\"workmesh\":{\"type\":\"remote\",\"url\":\"http://127.0.0.1:63750/mcp\",\"headers\":{\"Authorization\":\"[redacted]\"},\"oauth\":false,\"codemode\":false}}},\"plugins\":[\"-opencode.config.compatibility\"],\"providers\":{\"m5-local\":{\"package\":\"@opencode/ai/providers/openai-compatible\",\"settings\":{\"baseURL\":\"https://127.0.0.1:63751/v1\",\"apiKey\":\"[redacted]\"},\"models\":{\"controlled\":{\"name\":\"M5 controlled local model\",\"capabilities\":{\"tools\":true,\"input\":[\"text\"],\"output\":[\"text\"]},\"limit\":{\"context\":131072,\"output\":8192}}}}}}},{\"type\":\"directory\",\"path\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a127d4-e047-7e57-81c2-3d054851fc88\\\\.tmp\\\\m4-4adc5e39\\\\native-evidence\\\\opencode-3d0a9c39-16cb-429e-ab37-3212a8868d36\\\\config\\\\opencode\"}]",
+  "stderr": "",
+  "nativeExit": 0,
+  "signal": null
+}

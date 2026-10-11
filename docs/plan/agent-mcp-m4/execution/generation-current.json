@@ -1,0 +1,208 @@
+{
+  "outputs": [
+    [
+      {
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "bytes": 269216,
+        "sha256": "4bbb1cd9a332efad5a1f1285f1bef495e61993b2babdaf48aa97a9b08506cb70"
+      },
+      {
+        "path": "packages/contracts/src/route-policy.ts",
+        "bytes": 27606,
+        "sha256": "27eb4c969e25cde9498f2f0c4ea4889a1878bc62515d6ef9a35e0a61e5b6a2c4"
+      },
+      {
+        "path": "OPENAPI.yaml",
+        "bytes": 572562,
+        "sha256": "aa24a9671adc6fce6eb18b83f0c846d24f1c65887660219f899f0e79df701a32"
+      },
+      {
+        "path": "docs/route-policy-matrix.md",
+        "bytes": 47844,
+        "sha256": "b350265b2452ac974f07bc755bc78aa3500a3f695d638bf84cde1fced81b8033"
+      },
+      {
+        "path": "apps/agent-runner/src/workbench-skill-manifest.ts",
+        "bytes": 270,
+        "sha256": "358a70b578f5f8db6bea7b3cbad513784f2f7d3eb7bc3e8b72b583a8e64de232"
+      }
+    ],
+    [
+      {
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "bytes": 269216,
+        "sha256": "4bbb1cd9a332efad5a1f1285f1bef495e61993b2babdaf48aa97a9b08506cb70"
+      },
+      {
+        "path": "packages/contracts/src/route-policy.ts",
+        "bytes": 27606,
+        "sha256": "27eb4c969e25cde9498f2f0c4ea4889a1878bc62515d6ef9a35e0a61e5b6a2c4"
+      },
+      {
+        "path": "OPENAPI.yaml",
+        "bytes": 572562,
+        "sha256": "aa24a9671adc6fce6eb18b83f0c846d24f1c65887660219f899f0e79df701a32"
+      },
+      {
+        "path": "docs/route-policy-matrix.md",
+        "bytes": 47844,
+        "sha256": "b350265b2452ac974f07bc755bc78aa3500a3f695d638bf84cde1fced81b8033"
+      },
+      {
+        "path": "apps/agent-runner/src/workbench-skill-manifest.ts",
+        "bytes": 270,
+        "sha256": "358a70b578f5f8db6bea7b3cbad513784f2f7d3eb7bc3e8b72b583a8e64de232"
+      }
+    ],
+    [
+      {
+        "path": "packages/contracts/src/agent-discovery-rules.ts",
+        "bytes": 269216,
+        "sha256": "4bbb1cd9a332efad5a1f1285f1bef495e61993b2babdaf48aa97a9b08506cb70"
+      },
+      {
+        "path": "packages/contracts/src/route-policy.ts",
+        "bytes": 27606,
+        "sha256": "27eb4c969e25cde9498f2f0c4ea4889a1878bc62515d6ef9a35e0a61e5b6a2c4"
+      },
+      {
+        "path": "OPENAPI.yaml",
+        "bytes": 572562,
+        "sha256": "aa24a9671adc6fce6eb18b83f0c846d24f1c65887660219f899f0e79df701a32"
+      },
+      {
+        "path": "docs/route-policy-matrix.md",
+        "bytes": 47844,
+        "sha256": "b350265b2452ac974f07bc755bc78aa3500a3f695d638bf84cde1fced81b8033"
+      },
+      {
+        "path": "apps/agent-runner/src/workbench-skill-manifest.ts",
+        "bytes": 270,
+        "sha256": "358a70b578f5f8db6bea7b3cbad513784f2f7d3eb7bc3e8b72b583a8e64de232"
+      }
+    ]
+  ],
+  "historicalInputs": [
+    {
+      "path": "docs/plan/agent-mcp-m0/operation-decisions.json",
+      "bytes": 11600177,
+      "sha256": "b845f8c7e647ce8d3e0146eb4717914956699f0ef788477f5ffddd4b95a6cc6f"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/operation-decisions.json",
+      "bytes": 3223675,
+      "sha256": "b028d1ef1a119431323fe75d7a7a72ebc07319b74cb9107ee53f380248c704a1"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m2/product-discovery-decisions.json",
+      "bytes": 59488,
+      "sha256": "8ebd345261ffd19155dde029dabe7d67c494ab4490f310742c3f20d2d44856d6"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m3/product-discovery-decisions.json",
+      "bytes": 53272,
+      "sha256": "cfedca6bf3df8f2d50dac040b84ab1ab779be48edce3f86bd6ce458c5e26debc"
+    }
+  ],
+  "historicalInputsUnchangedFromMain": true,
+  "commands": [
+    {
+      "command": [
+        "python",
+        "-B",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.22966769999766257,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 1.8984333999978844,
+      "stdout": "\n> workmesh@ generate:route-policy C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\n> pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.6436699000041699,
+      "stdout": "\n> workmesh@ generate:runner-skill C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\n> node scripts/generate-runner-skill-manifest.mjs\n\nsha256:4aae06ea8e9dd12b93efe7cf3cf94623534963a49324f1197db06c4f6740ce1c pinned\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "--",
+        "packages/contracts/src/agent-discovery-rules.ts",
+        "packages/contracts/src/route-policy.ts",
+        "OPENAPI.yaml",
+        "docs/route-policy-matrix.md",
+        "apps/agent-runner/src/workbench-skill-manifest.ts"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.23243449999426957,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'OPENAPI.yaml', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/agent-runner/src/workbench-skill-manifest.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/route-policy-matrix.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/contracts/src/agent-discovery-rules.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/contracts/src/route-policy.ts', LF will be replaced by CRLF the next time Git touches it\n"
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "scripts/generate-agent-discovery.py"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.21932669999659993,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pnpm.cmd",
+        "generate:route-policy"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 1.847317199993995,
+      "stdout": "\n> workmesh@ generate:route-policy C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\n> pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts\n\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "pnpm.cmd",
+        "generate:runner-skill"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.6267109000036726,
+      "stdout": "\n> workmesh@ generate:runner-skill C:\\Users\\xurx\\.tds\\workspaces\\01a127d4-e047-7e57-81c2-3d054851fc88\n> node scripts/generate-runner-skill-manifest.mjs\n\nsha256:4aae06ea8e9dd12b93efe7cf3cf94623534963a49324f1197db06c4f6740ce1c pinned\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "--",
+        "packages/contracts/src/agent-discovery-rules.ts",
+        "packages/contracts/src/route-policy.ts",
+        "OPENAPI.yaml",
+        "docs/route-policy-matrix.md",
+        "apps/agent-runner/src/workbench-skill-manifest.ts"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.21406949999800418,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'OPENAPI.yaml', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'apps/agent-runner/src/workbench-skill-manifest.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'docs/route-policy-matrix.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/contracts/src/agent-discovery-rules.ts', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'packages/contracts/src/route-policy.ts', LF will be replaced by CRLF the next time Git touches it\n"
+    }
+  ],
+  "zeroDiff": true,
+  "claim": "仅生成一致性，产品测试另查实际回执"
+}

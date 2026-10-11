@@ -5,6 +5,7 @@ import {
   agentDiscoveryRules, agentDiscoveryBindings, deriveOperationEligibility,
   projectAdapterDiscovery, type DiscoveryFacts, type QualifiedDiscovery,
   capabilitySchema,
+  featureKeySchema, mcpPolicyBindings,
 } from './index.js'
 
 const id = '11111111-1111-4111-8111-111111111111'
@@ -21,6 +22,32 @@ const projection = (qualification: QualifiedDiscovery, installationBridge = fals
     mode: 'read-write', coordination: true, installationBridge, transport: 'embedded' })
 
 describe('已审发现规则的已知门禁和身份投影', () => {
+  it('M4保全138旧bindings/137映射及所有identityVariants，不借新增工具改身份',()=>{
+    const baseline=JSON.parse(readFileSync(new URL('../../../docs/plan/agent-mcp-m4/input/discovery-review/discovery-baseline.json',import.meta.url),'utf8')) as {
+      allBindings:Array<{bindingId:string}>;policyMappings:Record<string,unknown>
+    }
+    expect(baseline.allBindings).toHaveLength(138)
+    expect(Object.keys(baseline.policyMappings)).toHaveLength(137)
+    for(const binding of baseline.allBindings) expect(agentDiscoveryBindings.find(item=>item.bindingId===binding.bindingId)).toEqual(binding)
+    for(const [id,mapping] of Object.entries(baseline.policyMappings)) expect(mcpPolicyBindings[id as keyof typeof mcpPolicyBindings]).toEqual({operationId:mapping,policyId:`route.${mapping}`})
+  })
+  it.each([
+    ['getInitiativeRollup','WORKMESH_BETA_PLANNING',['initiativeLinkedProjectScope']],
+    ['getAutomationRun','WORKMESH_EXPERIMENTAL_AUTOMATION',['routeResolvedScope','automationRunSessionMatches']],
+    ['getUsageSummary','WORKMESH_BETA_COSTS',['usageSessionMatches','usageAgentMatches','usageProjectMatches','usageFiltersMatchCurrentSession']],
+    ['streamA2ATaskEvents','WORKMESH_EXPERIMENTAL_A2A',['a2aBindingActive','a2aTaskSessionMatches']],
+  ] as const)('M4 %s保留feature/state/capability与准确target待核', (id,feature,pending)=>{
+    const enabled=Object.fromEntries(featureKeySchema.options.map(key=>[key,true])) as DiscoveryFacts['features']
+    const current=facts({features:enabled})
+    const check=operation(deriveOperationEligibility(current),id).eligibility
+    expect(check.status).toBe('requires_target_check')
+    expect(check.pendingChecks).toEqual(expect.arrayContaining([...pending]))
+    for(const old of ['humanAuthorityMatches','legacyMembershipQueryVisible']) expect(check.pendingChecks).not.toContain(old)
+    expect(check.reasons).not.toContain('DOMAIN_QUERY_NOT_AGENT_ALIGNED')
+    expect(operation(deriveOperationEligibility({...current,features:{...enabled,[feature]:false}}),id).eligibility.status).toBe('blocked')
+    expect(operation(deriveOperationEligibility({...current,state:'queued'}),id).eligibility.status).toBe('blocked')
+    expect(operation(deriveOperationEligibility({...current,capabilities:[]}),id).eligibility.status).toBe('blocked')
+  })
   it('acknowledged 的 ACK 只广告回执重放条件，新命令须 REST 判断', () => {
     const check = operation(deriveOperationEligibility(facts({ state: 'acknowledged' })), 'acknowledgeAgentSession').eligibility
     expect(check).toMatchObject({ status: 'requires_target_check', pendingChecks: expect.arrayContaining(['ackReceiptReplayOnly']) })

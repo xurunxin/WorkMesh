@@ -1,0 +1,95 @@
+
+> workmesh@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> turbo run typecheck
+
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running typecheck in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/observability:typecheck: cache miss, executing 29d15a25fd800c45
+@workmesh/git-provider:typecheck: cache miss, executing 6bb6482e36891217
+@workmesh/contracts:typecheck: cache miss, executing f544094a54689f47
+@workmesh/artifact-storage:typecheck: cache miss, executing 96c0dc1ab85dfc0c
+@workmesh/ui:typecheck: cache miss, executing 90be40ecf9d7f680
+@workmesh/observability:typecheck: 
+@workmesh/observability:typecheck: > @workmesh/observability@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:typecheck: > tsc --noEmit
+@workmesh/observability:typecheck: 
+@workmesh/contracts:typecheck: 
+@workmesh/contracts:typecheck: > @workmesh/contracts@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:typecheck: > tsc --noEmit
+@workmesh/contracts:typecheck: 
+@workmesh/git-provider:typecheck: 
+@workmesh/git-provider:typecheck: > @workmesh/git-provider@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:typecheck: > tsc --noEmit
+@workmesh/git-provider:typecheck: 
+@workmesh/ui:typecheck: 
+@workmesh/ui:typecheck: > @workmesh/ui@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:typecheck: > tsc --noEmit
+@workmesh/ui:typecheck: 
+@workmesh/artifact-storage:typecheck: 
+@workmesh/artifact-storage:typecheck: > @workmesh/artifact-storage@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:typecheck: > tsc --noEmit
+@workmesh/artifact-storage:typecheck: 
+@workmesh/config:typecheck: cache miss, executing 0a8967a111dcbb66
+@workmesh/a2a-adapter:typecheck: cache miss, executing f36c077d2b949c27
+@workmesh/domain:typecheck: cache miss, executing 5024e89635119bc0
+@workmesh/web:typecheck: cache miss, executing 663c7a97704967ff
+@workmesh/agent-sdk:typecheck: cache miss, executing 701ff163435871ba
+@workmesh/agent-runner:typecheck: cache miss, executing 42356bdc9648da36
+@workmesh/config:typecheck: 
+@workmesh/config:typecheck: > @workmesh/config@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\config
+@workmesh/config:typecheck: > tsc --noEmit
+@workmesh/config:typecheck: 
+@workmesh/a2a-adapter:typecheck: 
+@workmesh/a2a-adapter:typecheck: > @workmesh/a2a-adapter@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\a2a-adapter
+@workmesh/a2a-adapter:typecheck: > tsc --noEmit
+@workmesh/a2a-adapter:typecheck: 
+@workmesh/domain:typecheck: 
+@workmesh/domain:typecheck: > @workmesh/domain@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\domain
+@workmesh/domain:typecheck: > tsc --noEmit
+@workmesh/domain:typecheck: 
+@workmesh/web:typecheck: 
+@workmesh/web:typecheck: > @workmesh/web@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\web
+@workmesh/web:typecheck: > tsc --noEmit
+@workmesh/web:typecheck: 
+@workmesh/agent-sdk:typecheck: 
+@workmesh/agent-sdk:typecheck: > @workmesh/agent-sdk@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:typecheck: > tsc --noEmit
+@workmesh/agent-sdk:typecheck: 
+@workmesh/agent-runner:typecheck: 
+@workmesh/agent-runner:typecheck: > @workmesh/agent-runner@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\agent-runner
+@workmesh/agent-runner:typecheck: > tsc --noEmit
+@workmesh/agent-runner:typecheck: 
+@workmesh/db:typecheck: cache miss, executing 71067560753a8ef7
+@workmesh/db:typecheck: 
+@workmesh/db:typecheck: > @workmesh/db@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+@workmesh/db:typecheck: > tsc --noEmit
+@workmesh/db:typecheck: 
+@workmesh/mcp:typecheck: cache miss, executing 1aac763b1e92b5cc
+@workmesh/fake-agent:typecheck: cache miss, executing 17630c2ed2227ef4
+@workmesh/mcp:typecheck: 
+@workmesh/mcp:typecheck: > @workmesh/mcp@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\mcp
+@workmesh/mcp:typecheck: > tsc --noEmit
+@workmesh/mcp:typecheck: 
+@workmesh/fake-agent:typecheck: 
+@workmesh/fake-agent:typecheck: > @workmesh/fake-agent@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\fake-agent
+@workmesh/fake-agent:typecheck: > tsc --noEmit
+@workmesh/fake-agent:typecheck: 
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,57): error TS7006: Parameter 'method' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,64): error TS7006: Parameter 'path' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,69): error TS7006: Parameter 'body' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,74): error TS7006: Parameter '_revision' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,84): error TS7006: Parameter 'key' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(32,88): error TS7006: Parameter 'options' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(50,57): error TS7006: Parameter '_method' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck: src/workmesh-tools.test.ts(50,65): error TS7006: Parameter 'path' implicitly has an 'any' type.
+@workmesh/agent-runner:typecheck:  ELIFECYCLE  Command failed with exit code 2.
+
+ Tasks:    9 successful, 14 total
+Cached:    0 cached, 14 total
+  Time:    13.442s 
+Failed:    @workmesh/agent-runner#typecheck
+
+ ELIFECYCLE  Command failed with exit code 2.

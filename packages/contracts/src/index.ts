@@ -199,6 +199,7 @@ export type HandoffResponse = z.infer<typeof handoffResponseSchema>
 export const commentPatchSchema = z.object({ body: z.string().min(1).max(50000).optional(), isResolved: z.boolean().optional(), deleted: z.boolean().optional() })
 export const savedViewFiltersSchema = z.record(z.unknown())
 export const savedViewInputSchema = z.object({ name: z.string().min(1).max(80), teamId: idSchema.optional(), filters: savedViewFiltersSchema.default({}), layout: savedViewLayoutSchema.default('list') })
+export type SavedViewInput = z.input<typeof savedViewInputSchema>
 export const installInputSchema = workspaceInputSchema.extend({ adminName: z.string().min(1).max(120), email: z.string().email(), password: z.string().min(12) })
 export const loginInputSchema = z.object({ email: z.string().email(), password: z.string().min(1) })
 export const authIdempotencyErrorCodeSchema = z.enum([

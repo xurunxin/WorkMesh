@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "run",
+    "--server",
+    "http://127.0.0.1:57664",
+    "--print-logs",
+    "--format",
+    "json",
+    "--model",
+    "m5-local/controlled",
+    "Call only the supplied WorkMesh tools, then report the verified public result."
+  ],
+  "startedAt": "2026-10-11T04:56:09.512Z",
+  "endedAt": "2026-10-11T04:56:10.964Z",
+  "runtimeMs": 1452.7518000000018,
+  "stdout": "{\"type\":\"step_start\",\"timestamp\":1791694569717,\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"part\":{\"id\":\"prt_1295180f5001DC8WP4gHiJzPc5\",\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"messageID\":\"msg_1295180da001bgBFrbV9z3NrO3\",\"type\":\"step-start\"}}\n{\"type\":\"tool_use\",\"timestamp\":1791694569787,\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"part\":{\"partID\":\"prt_1295180f60018WBNAQ27mftOc7\",\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"messageID\":\"msg_1295180da001bgBFrbV9z3NrO3\",\"type\":\"tool\",\"id\":\"5362c583-5eb8-4b8d-818f-ebb6dc02c88e\",\"tool\":\"workmesh_get_initiative_rollup\",\"state\":{\"status\":\"completed\",\"input\":{\"initiativeId\":\"01a879a6-be46-46e1-863c-6d049b112fed\"},\"output\":\"{\\\"projectCount\\\":1,\\\"completedProjectCount\\\":0,\\\"completedItems\\\":0,\\\"totalItems\\\":1,\\\"progressPercent\\\":0,\\\"health\\\":\\\"on_track\\\",\\\"currencyBuckets\\\":[],\\\"hasUnknownCost\\\":false}\",\"title\":\"workmesh_get_initiative_rollup\",\"metadata\":{\"metadata\":{\"truncated\":false},\"content\":[{\"type\":\"text\",\"text\":\"{\\\"projectCount\\\":1,\\\"completedProjectCount\\\":0,\\\"completedItems\\\":0,\\\"totalItems\\\":1,\\\"progressPercent\\\":0,\\\"health\\\":\\\"on_track\\\",\\\"currencyBuckets\\\":[],\\\"hasUnknownCost\\\":false}\"}],\"providerCall\":{\"executed\":false},\"providerResult\":{\"executed\":false},\"rawInput\":\"{\\\"initiativeId\\\":\\\"01a879a6-be46-46e1-863c-6d049b112fed\\\"}\"},\"time\":{\"start\":1791694569718,\"end\":1791694569787}}}}\n{\"type\":\"step_finish\",\"timestamp\":1791694569789,\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"part\":{\"id\":\"prt_12951813d001tt6AqSP6t9q1gn\",\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"messageID\":\"msg_1295180da001bgBFrbV9z3NrO3\",\"type\":\"step-finish\",\"reason\":\"tool-calls\",\"cost\":0,\"tokens\":{\"input\":1,\"output\":1,\"reasoning\":\"[redacted]\",\"cache\":{\"read\":0,\"write\":0}}}}\n{\"type\":\"text\",\"timestamp\":1791694569823,\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"part\":{\"id\":\"prt_129518145001osgjDlvaYeIR4X_text-0\",\"sessionID\":\"ses_ed6ae7f46ffeOc3U0X8t73M4hU\",\"messageID\":\"msg_129518145001osgjDlvaYeIR4X\",\"type\":\"text\",\"text\":\"M5 public result verified.\",\"time\":{\"start\":1791694569808,\"end\":1791694569823}}}\n",
+  "stderr": "",
+  "nativeExit": 0,
+  "signal": null,
+  "captures": [
+    {
+      "sequence": 0,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [],
+      "call": {
+        "name": "workmesh_get_initiative_rollup",
+        "arguments": {
+          "initiativeId": "01a879a6-be46-46e1-863c-6d049b112fed"
+        }
+      }
+    },
+    {
+      "sequence": 1,
+      "tools": [
+        "workmesh_get_initiative_rollup",
+        "workmesh_get_usage_summary"
+      ],
+      "results": [
+        "{\"projectCount\":1,\"completedProjectCount\":0,\"completedItems\":0,\"totalItems\":1,\"progressPercent\":0,\"health\":\"on_track\",\"currencyBuckets\":[],\"hasUnknownCost\":false}"
+      ],
+      "call": null
+    }
+  ],
+  "actualClient": "opencode",
+  "scope": "E"
+}

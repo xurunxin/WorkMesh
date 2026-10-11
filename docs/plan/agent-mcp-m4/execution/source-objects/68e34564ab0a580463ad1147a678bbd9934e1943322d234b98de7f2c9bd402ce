@@ -1,0 +1,19 @@
+{
+  "name": "@workmesh/agent-sdk",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@workmesh/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.2",
+    "vitest": "^3.1.3"
+  }
+}

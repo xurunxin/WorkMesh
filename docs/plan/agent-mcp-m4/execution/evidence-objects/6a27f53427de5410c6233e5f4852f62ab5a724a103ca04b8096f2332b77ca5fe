@@ -1,0 +1,74 @@
+{
+  "replay": {
+    "id": "679b5845-1faf-4c55-98b4-91e25b222d7f",
+    "state": "acknowledged",
+    "budget": {},
+    "team_id": "6228259f-5043-4c18-be66-fd64c28d6d2b",
+    "agent_id": "6f680df4-6e3f-4149-80a7-5221dbb18d6b",
+    "ended_at": null,
+    "revision": 2,
+    "sequence": 1,
+    "created_at": "2026-10-11T04:56:53.460Z",
+    "error_code": null,
+    "project_id": null,
+    "updated_at": "2026-10-11T04:56:53.546Z",
+    "retry_count": 0,
+    "plan_step_id": null,
+    "retry_reason": null,
+    "session_kind": "execution",
+    "state_reason": "M0 committed ACK",
+    "work_item_id": "e319ee77-1334-4230-b6e5-6e79763da568",
+    "workspace_id": "e855f978-5534-4133-a31d-6fea47773983",
+    "delegation_id": "87578f58-1d35-4767-8491-9396d53f53a7",
+    "error_summary": null,
+    "external_urls": [],
+    "agent_actor_id": "bb3f3f11-a28a-443b-a1a2-d3f76ccaa4b6",
+    "result_summary": null,
+    "acknowledged_at": "2026-10-11T04:56:53.546Z",
+    "heartbeat_usage": {},
+    "result_evidence": [],
+    "heartbeat_health": "healthy",
+    "inherited_budget": {},
+    "automation_run_id": null,
+    "last_heartbeat_at": null,
+    "parent_session_id": null,
+    "stop_requested_at": null,
+    "max_child_sessions": 8,
+    "no_artifact_reason": null,
+    "context_snapshot_id": "6d550c76-607e-49de-9111-c79cc96ce488",
+    "required_for_parent": false,
+    "retry_of_session_id": null,
+    "heartbeat_checked_at": null,
+    "plan_step_version_id": null,
+    "stop_acknowledged_at": null,
+    "heartbeat_request_hash": null,
+    "current_plan_version_id": null,
+    "heartbeat_current_step_id": null,
+    "heartbeat_idempotency_key": null,
+    "coordination_connection_id": null,
+    "heartbeat_health_changed_at": "2026-10-11T04:56:53.460Z"
+  },
+  "fresh": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"SESSION_NOT_ACTIVE\",\"message\":\"Only queued or stale sessions can be acknowledged\",\"correlationId\":\"17a6c0e4-f9d9-496e-8370-62bf1197a868\",\"details\":{\"state\":\"acknowledged\"},\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "SESSION_NOT_ACTIVE",
+        "message": "Only queued or stale sessions can be acknowledged",
+        "correlationId": "17a6c0e4-f9d9-496e-8370-62bf1197a868",
+        "details": {
+          "state": "acknowledged"
+        },
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  },
+  "acknowledgedFactsAdded": 1,
+  "protectedRequests": 3,
+  "responseLoss": "actual REST response read then SDK transport throws; MCP uses real in-memory transport"
+}

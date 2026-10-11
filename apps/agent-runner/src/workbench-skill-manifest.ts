@@ -2,5 +2,5 @@
 export const workbenchSkillManifest = Object.freeze({
   name: 'workmesh-workbench' as const,
   version: '0.1.0' as const,
-  sha256: 'sha256:485e17b94c8b191c0c1104a754aa6613ce1d4b989d90c34afca54f73cae35fd0',
+  sha256: 'sha256:4aae06ea8e9dd12b93efe7cf3cf94623534963a49324f1197db06c4f6740ce1c',
 })

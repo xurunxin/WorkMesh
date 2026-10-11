@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "kind": "workmesh.playwright-suite-scope",
+  "generatedAt": "2026-10-07T12:21:51.325Z",
+  "repositoryRoot": "<workspace>",
+  "status": "pass",
+  "topologies": [
+    {
+      "id": "root-mixed",
+      "label": "root mixed topology",
+      "config": "playwright.config.ts",
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.config.ts",
+        "--list"
+      ],
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 2182,
+      "collected": {
+        "tests": 74,
+        "files": 27,
+        "specs": [
+          "actionable-collaboration-queues.spec.ts",
+          "agent-governed-controls.spec.ts",
+          "agent-run-timeline.spec.ts",
+          "approval-real-agent.spec.ts",
+          "attention-center.spec.ts",
+          "collaboration-hub.spec.ts",
+          "command-center.spec.ts",
+          "connection-diagnostics.spec.ts",
+          "documents.spec.ts",
+          "features-disabled.spec.ts",
+          "guidance.spec.ts",
+          "human-reflow.spec.ts",
+          "mcp-onboarding.spec.ts",
+          "pagination.spec.ts",
+          "project-editor.spec.ts",
+          "recovery-center.spec.ts",
+          "rich-content.spec.ts",
+          "stage0.spec.ts",
+          "stage1.spec.ts",
+          "stage2.spec.ts",
+          "stage4.spec.ts",
+          "theme-unification.spec.ts",
+          "work-item-detail.spec.ts",
+          "work-surfaces.spec.ts",
+          "workbench-accessibility.spec.ts",
+          "workbench-conversation.spec.ts",
+          "workbench-llm-settings.spec.ts"
+        ]
+      },
+      "assertions": [
+        {
+          "name": "root-excludes-mocked-specs",
+          "status": "pass",
+          "expected": [],
+          "actual": []
+        }
+      ]
+    },
+    {
+      "id": "mocked-dev",
+      "label": "mocked development topology",
+      "config": "apps/web/playwright.mocked.config.ts",
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.mocked.config.ts",
+        "--list"
+      ],
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 882,
+      "collected": {
+        "tests": 139,
+        "files": 16,
+        "specs": [
+          "human-reflow.spec.ts",
+          "mocked/accessibility-keyboard.mocked.spec.ts",
+          "mocked/agents-interactions.mocked.spec.ts",
+          "mocked/agents-responsive.mocked.spec.ts",
+          "mocked/approval-human-agent-journey.mocked.spec.ts",
+          "mocked/command-center-routes.mocked.spec.ts",
+          "mocked/connect-clients.mocked.spec.ts",
+          "mocked/final-visual-tour.mocked.spec.ts",
+          "mocked/large-list-pagination.mocked.spec.ts",
+          "mocked/loading-states.mocked.spec.ts",
+          "mocked/operations-settings.mocked.spec.ts",
+          "mocked/operations-ux.mocked.spec.ts",
+          "mocked/overlay-contract.mocked.spec.ts",
+          "mocked/page-hotkeys.mocked.spec.ts",
+          "mocked/settings-workflow-colors.mocked.spec.ts",
+          "mocked/toast-outcomes.mocked.spec.ts"
+        ]
+      },
+      "assertions": [
+        {
+          "name": "mocked-dev-collects-declared-mocked-plus-human-reflow",
+          "status": "pass",
+          "expected": [
+            "human-reflow.spec.ts",
+            "mocked/accessibility-keyboard.mocked.spec.ts",
+            "mocked/agents-interactions.mocked.spec.ts",
+            "mocked/agents-responsive.mocked.spec.ts",
+            "mocked/approval-human-agent-journey.mocked.spec.ts",
+            "mocked/command-center-routes.mocked.spec.ts",
+            "mocked/connect-clients.mocked.spec.ts",
+            "mocked/final-visual-tour.mocked.spec.ts",
+            "mocked/large-list-pagination.mocked.spec.ts",
+            "mocked/loading-states.mocked.spec.ts",
+            "mocked/operations-settings.mocked.spec.ts",
+            "mocked/operations-ux.mocked.spec.ts",
+            "mocked/overlay-contract.mocked.spec.ts",
+            "mocked/page-hotkeys.mocked.spec.ts",
+            "mocked/settings-workflow-colors.mocked.spec.ts",
+            "mocked/toast-outcomes.mocked.spec.ts"
+          ],
+          "actual": [
+            "human-reflow.spec.ts",
+            "mocked/accessibility-keyboard.mocked.spec.ts",
+            "mocked/agents-interactions.mocked.spec.ts",
+            "mocked/agents-responsive.mocked.spec.ts",
+            "mocked/approval-human-agent-journey.mocked.spec.ts",
+            "mocked/command-center-routes.mocked.spec.ts",
+            "mocked/connect-clients.mocked.spec.ts",
+            "mocked/final-visual-tour.mocked.spec.ts",
+            "mocked/large-list-pagination.mocked.spec.ts",
+            "mocked/loading-states.mocked.spec.ts",
+            "mocked/operations-settings.mocked.spec.ts",
+            "mocked/operations-ux.mocked.spec.ts",
+            "mocked/overlay-contract.mocked.spec.ts",
+            "mocked/page-hotkeys.mocked.spec.ts",
+            "mocked/settings-workflow-colors.mocked.spec.ts",
+            "mocked/toast-outcomes.mocked.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "d0-visual-baseline",
+      "label": "D0 专用亮色基线",
+      "config": "apps/web/playwright.d0.config.ts",
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.d0.config.ts",
+        "--list"
+      ],
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 493,
+      "collected": {
+        "tests": 14,
+        "files": 1,
+        "specs": [
+          "mocked/d0-visual-baseline.mocked.spec.ts"
+        ]
+      },
+      "assertions": [
+        {
+          "name": "d0-collects-only-baseline-in-two-viewports",
+          "status": "pass",
+          "expected": [
+            "mocked/d0-visual-baseline.mocked.spec.ts"
+          ],
+          "actual": [
+            "mocked/d0-visual-baseline.mocked.spec.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "production-web-plus-mocked-api",
+      "label": "production Web plus mocked API topology",
+      "config": "apps/web/playwright.production.config.ts",
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "playwright.production.config.ts",
+        "--list"
+      ],
+      "status": "pass",
+      "exitCode": 0,
+      "durationMs": 545,
+      "collected": {
+        "tests": 50,
+        "files": 2,
+        "specs": [
+          "mocked/final-visual-tour.mocked.spec.ts",
+          "mocked/large-list-pagination.mocked.spec.ts"
+        ]
+      },
+      "assertions": [
+        {
+          "name": "production-collects-only-final-runtime-cases",
+          "status": "pass",
+          "expected": [
+            "mocked/final-visual-tour.mocked.spec.ts",
+            "mocked/large-list-pagination.mocked.spec.ts"
+          ],
+          "actual": [
+            "mocked/final-visual-tour.mocked.spec.ts",
+            "mocked/large-list-pagination.mocked.spec.ts"
+          ]
+        }
+      ]
+    }
+  ],
+  "blockers": []
+}

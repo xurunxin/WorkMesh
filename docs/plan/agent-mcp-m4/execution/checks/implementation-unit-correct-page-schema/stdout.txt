@@ -1,0 +1,444 @@
+
+> workmesh@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> turbo run test --concurrency=2
+
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running test in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/observability:build: cache hit, replaying logs 76969a06b175444d
+@workmesh/observability:build: 
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build: 
+@workmesh/git-provider:build: cache hit, replaying logs 57bcc673602bf398
+@workmesh/git-provider:build: 
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build: 
+@workmesh/contracts:build: cache miss, executing fcb4f4f10b44ece4
+@workmesh/ui:build: cache hit, replaying logs 5b80eeb5b67e7aba
+@workmesh/ui:build: 
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build: 
+@workmesh/contracts:test: cache miss, executing 33a8498bad5118c9
+@workmesh/contracts:build: 
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build: 
+@workmesh/contracts:test: 
+@workmesh/contracts:test: > @workmesh/contracts@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:test: > vitest run
+@workmesh/contracts:test: 
+@workmesh/contracts:test: 
+@workmesh/contracts:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/contracts
+@workmesh/contracts:test: 
+@workmesh/contracts:test:  ✓ src/agent-response-contract.test.ts (1 test) 10ms
+@workmesh/contracts:test:  ✓ src/release-contract.test.ts (1 test) 19ms
+@workmesh/contracts:test:  ✓ src/pi-workbench-contracts.test.ts (27 tests) 20ms
+@workmesh/contracts:test:  ✓ src/approval-contract.test.ts (4 tests) 7ms
+@workmesh/contracts:test:  ✓ src/client-profile-contract.test.ts (3 tests) 36ms
+@workmesh/contracts:test:  ✓ src/stage3-contracts.test.ts (8 tests) 40ms
+@workmesh/contracts:test:  ✓ src/stage4-contracts.test.ts (8 tests) 38ms
+@workmesh/contracts:test:  ✓ src/control-plane-contracts.test.ts (5 tests) 67ms
+@workmesh/contracts:test:  ✓ src/stage1-contracts.test.ts (10 tests) 82ms
+@workmesh/contracts:test:  ✓ src/release-manifest.test.ts (2 tests) 141ms
+@workmesh/contracts:test:  ✓ src/runtime-reliability-openapi.test.ts (2 tests) 1803ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > keeps the new response models in schemas and every local reference resolvable  517ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > documents the dedicated identity credential and every execution-capacity conflict  1282ms
+@workmesh/contracts:test:  ✓ src/stage5-contracts.test.ts (66 tests) 746ms
+@workmesh/contracts:test:  ✓ src/recovery-contract.test.ts (2 tests) 1158ms
+@workmesh/contracts:test:    ✓ Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas  1148ms
+@workmesh/contracts:test:  ✓ src/planning-domain-parity-contract.test.ts (5 tests) 1251ms
+@workmesh/contracts:test:    ✓ planning domain parity public contract > keeps the OpenAPI schemas and complete REST surface aligned with Zod  1238ms
+@workmesh/contracts:test:  ✓ src/configuration-readiness-contracts.test.ts (4 tests) 1410ms
+@workmesh/contracts:test:    ✓ 配置就绪契约 > OpenAPI、清单与 Human-only 只读策略一致，拒绝审计保留  1401ms
+@workmesh/contracts:test:  ✓ src/pagination-contract.test.ts (2 tests) 2031ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > declares the common cursor and limit on every paged collection  514ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > keeps durable event cursors separate and documents generic cursor failures  1514ms
+@workmesh/contracts:test:  ✓ src/execution-waits.test.ts (4 tests) 9ms
+@workmesh/contracts:test:  ✓ src/delivery-contracts.test.ts (2 tests) 14ms
+@workmesh/contracts:test:  ✓ src/agent-discovery.test.ts (21 tests) 2223ms
+@workmesh/contracts:test:    ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  1645ms
+@workmesh/contracts:test:  ✓ src/stage2-contracts.test.ts (4 tests) 9ms
+@workmesh/contracts:test:  ✓ src/guidance-contract.test.ts (2 tests) 7ms
+@workmesh/contracts:test:  ✓ src/child-session-contracts.test.ts (4 tests) 10ms
+@workmesh/contracts:test:  ✓ src/autonomous-control-contracts.test.ts (3 tests) 7ms
+@workmesh/contracts:test:  ✓ src/human-attention-contract.test.ts (3 tests) 8ms
+@workmesh/contracts:test:  ✓ src/stage0-route-manifest.test.ts (6 tests) 2684ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > keeps parsed OpenAPI cursor boundaries in parity with runtime  1578ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > documents and validates the backward-compatible Run Explanation keyset cursor  1057ms
+@workmesh/contracts:test:  ✓ src/repository-configuration-contracts.test.ts (1 test) 5ms
+@workmesh/contracts:test:  ✓ src/auth-idempotency.test.ts (2 tests) 7ms
+@workmesh/contracts:test:  ✓ src/active-executor-contract.test.ts (2 tests) 7ms
+@workmesh/ui:test: cache hit, replaying logs 1cfa4ebb2a48c17e
+@workmesh/ui:test: 
+@workmesh/ui:test: > @workmesh/ui@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:test: > vitest run
+@workmesh/ui:test: 
+@workmesh/ui:test: 
+@workmesh/ui:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/ui
+@workmesh/ui:test: 
+@workmesh/ui:test:  ✓ src/domain/control-plane.test.tsx (5 tests) 4ms
+@workmesh/ui:test:  ✓ src/primitives/controls.test.tsx (20 tests) 21ms
+@workmesh/ui:test:  ✓ src/primitives/controls-ssr.test.tsx (6 tests) 34ms
+@workmesh/ui:test:  ✓ src/index.test.ts (19 tests) 30ms
+@workmesh/ui:test: 
+@workmesh/ui:test:  Test Files  4 passed (4)
+@workmesh/ui:test:       Tests  50 passed (50)
+@workmesh/ui:test:    Start at  12:03:14
+@workmesh/ui:test:    Duration  4.46s (transform 2.41s, setup 0ms, collect 7.16s, tests 88ms, environment 1ms, prepare 2.35s)
+@workmesh/ui:test: 
+@workmesh/git-provider:test: cache hit, replaying logs 172334ddd735c0d6
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: > @workmesh/git-provider@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:test: > vitest run
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/git-provider
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  ✓ src/gitea.test.ts (1 test) 4ms
+@workmesh/git-provider:test:  ✓ src/index.test.ts (14 tests) 47ms
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/refs"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits","PATCH:/repos/acme/workmesh/git/refs/heads/workmesh/test"],"readCount":2,"guards":3}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":1,"actualWrites":[],"readCount":2,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":2,"actualWrites":["POST:/repos/acme/workmesh/git/trees"],"readCount":2,"guards":2}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":3,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits"],"readCount":2,"guards":3}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/pulls"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":0,"actualWrites":["PUT:/repos/acme/workmesh/pulls/71/merge"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/check-runs/42/rerequest"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"context","denyAt":0,"actualWrites":[],"readCount":3,"guards":0}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/branches"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":0,"actualWrites":["PUT:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls/71/merge"],"readCount":2,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"retry","denyAt":0,"actualWrites":[],"readCount":0,"guards":0}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"context","denyAt":0,"actualWrites":[],"readCount":2,"guards":0}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  ✓ src/mutation-http.test.ts (2 tests) 191ms
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  Test Files  3 passed (3)
+@workmesh/git-provider:test:       Tests  17 passed (17)
+@workmesh/git-provider:test:    Start at  11:54:44
+@workmesh/git-provider:test:    Duration  2.67s (transform 137ms, setup 0ms, collect 357ms, tests 242ms, environment 1ms, prepare 3.08s)
+@workmesh/git-provider:test: 
+@workmesh/observability:test: cache hit, replaying logs f267aee68a734b4e
+@workmesh/observability:test: 
+@workmesh/observability:test: > @workmesh/observability@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:test: > vitest run
+@workmesh/observability:test: 
+@workmesh/observability:test: 
+@workmesh/observability:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/observability
+@workmesh/observability:test: 
+@workmesh/observability:test:  ✓ src/workbench-slo.test.ts (13 tests) 6ms
+@workmesh/observability:test:  ✓ src/index.test.ts (3 tests) 5ms
+@workmesh/observability:test: 
+@workmesh/observability:test:  Test Files  2 passed (2)
+@workmesh/observability:test:       Tests  16 passed (16)
+@workmesh/observability:test:    Start at  12:03:05
+@workmesh/observability:test:    Duration  1.43s (transform 69ms, setup 0ms, collect 112ms, tests 11ms, environment 0ms, prepare 836ms)
+@workmesh/observability:test: 
+@workmesh/artifact-storage:test: cache hit, replaying logs a85301ec0f04e777
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test: > @workmesh/artifact-storage@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:test: > vitest run
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/artifact-storage
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:  ✓ src/retention-upgrade.test.ts (3 tests) 5ms
+@workmesh/artifact-storage:test:  ✓ src/index.test.ts (19 tests) 98ms
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:  Test Files  2 passed (2)
+@workmesh/artifact-storage:test:       Tests  22 passed (22)
+@workmesh/artifact-storage:test:    Start at  12:03:11
+@workmesh/artifact-storage:test:    Duration  2.04s (transform 115ms, setup 0ms, collect 910ms, tests 102ms, environment 0ms, prepare 752ms)
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:build: cache hit, replaying logs 9db9f56faaedd5a1
+@workmesh/artifact-storage:build: 
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build: 
+@workmesh/domain:build: cache miss, executing 9a363f3dee435140
+@workmesh/domain:build: 
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build: 
+@workmesh/contracts:test:  ✓ src/route-policy.test.ts (14 tests) 4193ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions  1873ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > matches OpenAPI operation IDs and feature tiers  994ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > documents bootstrap authentication failures as a structured 401 response  693ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > keeps deployment feature discovery authenticated for humans and agents  594ms
+@workmesh/contracts:test: 
+@workmesh/contracts:test:  Test Files  29 passed (29)
+@workmesh/contracts:test:       Tests  218 passed (218)
+@workmesh/contracts:test:    Start at  12:05:50
+@workmesh/contracts:test:    Duration  7.24s (transform 2.35s, setup 0ms, collect 23.36s, tests 18.04s, environment 4ms, prepare 23.53s)
+@workmesh/contracts:test: 
+@workmesh/agent-sdk:test: cache miss, executing b1434d0332d51a3e
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test: > @workmesh/agent-sdk@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:test: > vitest run
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/agent-sdk
+@workmesh/agent-sdk:test: 
+@workmesh/agent-runner:test: cache miss, executing 206d0ceb319ef65a
+@workmesh/agent-sdk:test:  ✓ src/optional-domains.test.ts (3 tests) 27ms
+@workmesh/agent-sdk:test:  ✓ src/execution-adapters.test.ts (10 tests) 26ms
+@workmesh/agent-sdk:test:  ✓ src/discovery.test.ts (8 tests) 205ms
+@workmesh/agent-sdk:test:  ✓ src/index.test.ts (35 tests) 314ms
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test:  Test Files  4 passed (4)
+@workmesh/agent-sdk:test:       Tests  56 passed (56)
+@workmesh/agent-sdk:test:    Start at  12:06:00
+@workmesh/agent-sdk:test:    Duration  2.32s (transform 491ms, setup 0ms, collect 2.11s, tests 572ms, environment 0ms, prepare 2.14s)
+@workmesh/agent-sdk:test: 
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: > @workmesh/agent-runner@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\agent-runner
+@workmesh/agent-runner:test: > vitest run
+@workmesh/agent-runner:test: 
+@workmesh/agent-sdk:build: cache miss, executing a7b6f6ea9ecee644
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/apps/agent-runner
+@workmesh/agent-runner:test: 
+@workmesh/agent-sdk:build: 
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build: 
+@workmesh/agent-runner:test:  ✓ src/model-config.test.ts (2 tests) 3ms
+@workmesh/agent-runner:test:  ✓ src/delivery-transfer.test.ts (1 test) 87ms
+@workmesh/agent-runner:test:  ✓ src/configured-model.test.ts (1 test) 2ms
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-XQC2Be","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ❯ src/permission-matrix.test.ts (6 tests | 1 failed) 821ms
+@workmesh/agent-runner:test:    ✓ W11 permission-denial matrix > refuses every tool when the capability manifest is not from an executing session  375ms
+@workmesh/agent-runner:test:    ✓ W11 permission-denial matrix > gates the toolset on the granted capabilities: work:read alone yields the read-only subset 107ms
+@workmesh/agent-runner:test:    ✓ W11 permission-denial matrix > gates the toolset on the granted capabilities: work:read alone yields the read-only subset 83ms
+@workmesh/agent-runner:test:    ✓ W11 permission-denial matrix > aborts every in-flight tool invocation when the shutdown signal fires 58ms
+@workmesh/agent-runner:test:    × W11 permission-denial matrix > keeps every registered tool inside the matrix 103ms
+@workmesh/agent-runner:test:      → expected [ 'workmesh_list_cycles', …(14) ] to deeply equal []
+@workmesh/agent-runner:test:    ✓ W11 permission-denial matrix > reveals the lease-gated publish tools only while a lease is held 92ms
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-XQC2Be","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"retained"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-XQC2Be","status":"removed_after_injected_failure"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"turnId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"failed","code":"RUNNER_SCRATCH_CLEANUP_FAILED"}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-hPp64s","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-hPp64s","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"retained"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"turnId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"failed","code":"RUNNER_SCRATCH_CLEANUP_FAILED"}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-hPp64s","status":"removed_after_injected_failure"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ✓ src/run-session-cleanup.test.ts (2 tests) 2393ms
+@workmesh/agent-runner:test:    ✓ 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity  1246ms
+@workmesh/agent-runner:test:    ✓ 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity  1145ms
+@workmesh/agent-runner:test:  ❯ src/workbench-skill.test.ts (2 tests | 1 failed) 122ms
+@workmesh/agent-runner:test:    × loads exactly the pinned WorkMesh Skill with no ambient resources 82ms
+@workmesh/agent-runner:test:      → RUNNER_SKILL_PIN_MISMATCH
+@workmesh/agent-runner:test:    ✓ rejects a modified Skill before Pi starts 39ms
+@workmesh/agent-runner:test:  ✓ src/isolation.test.ts (9 tests) 120ms
+@workmesh/agent-runner:test:  ✓ src/egress-policy.test.ts (6 tests) 5ms
+@workmesh/agent-runner:test:  ✓ src/execution-lifecycle.test.ts (9 tests) 10ms
+@workmesh/agent-runner:test:  ✓ src/runner-api.test.ts (35 tests) 87ms
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"fake_model_http","host":"127.0.0.1","port":63864,"status":"created"}}
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-UQbGDU","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-UQbGDU","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"removed"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"fake_model_http","status":"closed"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ❯ src/wait-pi.test.ts (1 test | 1 failed) 496ms
+@workmesh/agent-runner:test:    × 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待 495ms
+@workmesh/agent-runner:test:      → RUNNER_SKILL_PIN_MISMATCH
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > M2计划评论/提案/context delta固定自身身份，验证来源并复用同调用幂等包装
+@workmesh/agent-runner:test: {"tool":"workmesh_propose_plan_step_assignment","stage":"input_validation","paths":[""]}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+@workmesh/agent-runner:test: {"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+@workmesh/agent-runner:test: 
+@workmesh/config:build: cache miss, executing c8b670f6ebafb7da
+@workmesh/agent-runner:test: stderr | src/model-errors.test.ts > W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns invalidJson
+@workmesh/agent-runner:test: Could not parse message into JSON: {not json at all
+@workmesh/agent-runner:test: From chunk: [ 'data: {not json at all' ]
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+@workmesh/agent-runner:test: {"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ✓ src/model-wire.test.ts (6 tests) 3844ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > reassembles a tool call whose arguments arrive in arbitrary fragments  2367ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > reassembles a tool call whose arguments are split inside a multi-byte character  366ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > returns the assistant text when the provider omits the terminal event  360ms
+@workmesh/agent-runner:test:  ✓ src/workmesh-tools.test.ts (26 tests) 1805ms
+@workmesh/agent-runner:test:  ✓ src/model-errors.test.ts (6 tests) 3712ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status500  2265ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status429  387ms
+@workmesh/config:build: 
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build: 
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  FAIL  src/permission-matrix.test.ts > W11 permission-denial matrix > keeps every registered tool inside the matrix
+@workmesh/agent-runner:test: AssertionError: expected [ 'workmesh_list_cycles', …(14) ] to deeply equal []
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: - Expected
+@workmesh/agent-runner:test: + Received
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: - []
+@workmesh/agent-runner:test: + [
+@workmesh/agent-runner:test: +   "workmesh_list_cycles",
+@workmesh/agent-runner:test: +   "workmesh_list_initiatives",
+@workmesh/agent-runner:test: +   "workmesh_list_saved_views",
+@workmesh/agent-runner:test: +   "workmesh_list_advanced_views",
+@workmesh/agent-runner:test: +   "workmesh_list_automation_rules",
+@workmesh/agent-runner:test: +   "workmesh_list_automation_runs",
+@workmesh/agent-runner:test: +   "workmesh_list_loops",
+@workmesh/agent-runner:test: +   "workmesh_list_templates",
+@workmesh/agent-runner:test: +   "workmesh_get_initiative_rollup",
+@workmesh/agent-runner:test: +   "workmesh_get_automation_run",
+@workmesh/agent-runner:test: +   "workmesh_get_advanced_view_results",
+@workmesh/agent-runner:test: +   "workmesh_get_usage_summary",
+@workmesh/agent-runner:test: +   "workmesh_get_a2a_task_events",
+@workmesh/agent-runner:test: +   "workmesh_create_saved_view",
+@workmesh/agent-runner:test: +   "workmesh_record_usage",
+@workmesh/agent-runner:test: + ]
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ❯ src/permission-matrix.test.ts:220:21
+@workmesh/agent-runner:test:     218|     const tools = await createWorkMeshTools(api, 'attempt-1', () => {})
+@workmesh/agent-runner:test:     219|     const missing = tools.map(tool => tool.name).filter(name => inputs…
+@workmesh/agent-runner:test:     220|     expect(missing).toEqual([])
+@workmesh/agent-runner:test:        |                     ^
+@workmesh/agent-runner:test:     221|   })
+@workmesh/agent-runner:test:     222| 
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  FAIL  src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: Error: RUNNER_SKILL_PIN_MISMATCH
+@workmesh/agent-runner:test:  ❯ createWorkbenchSkillLoader src/workbench-skill.ts:13:55
+@workmesh/agent-runner:test:      11|   const content = await readFile(path, 'utf8')
+@workmesh/agent-runner:test:      12|   const digest = `sha256:${createHash('sha256').update(content).digest…
+@workmesh/agent-runner:test:      13|   if (digest !== workbenchSkillManifest.sha256) throw new Error('RUNNE…
+@workmesh/agent-runner:test:        |                                                       ^
+@workmesh/agent-runner:test:      14|   if (!content.startsWith(`---\nname: ${workbenchSkillManifest.name}\n…
+@workmesh/agent-runner:test:      15|     throw new Error('RUNNER_SKILL_FRONTMATTER_INVALID')
+@workmesh/agent-runner:test:  ❯ runPi src/run-session.ts:382:28
+@workmesh/agent-runner:test:  ❯ src/wait-pi.test.ts:56:20
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  FAIL  src/workbench-skill.test.ts > loads exactly the pinned WorkMesh Skill with no ambient resources
+@workmesh/agent-runner:test: Error: RUNNER_SKILL_PIN_MISMATCH
+@workmesh/agent-runner:test:  ❯ createWorkbenchSkillLoader src/workbench-skill.ts:13:55
+@workmesh/agent-runner:test:      11|   const content = await readFile(path, 'utf8')
+@workmesh/agent-runner:test:      12|   const digest = `sha256:${createHash('sha256').update(content).digest…
+@workmesh/agent-runner:test:      13|   if (digest !== workbenchSkillManifest.sha256) throw new Error('RUNNE…
+@workmesh/agent-runner:test:        |                                                       ^
+@workmesh/agent-runner:test:      14|   if (!content.startsWith(`---\nname: ${workbenchSkillManifest.name}\n…
+@workmesh/agent-runner:test:      15|     throw new Error('RUNNER_SKILL_FRONTMATTER_INVALID')
+@workmesh/agent-runner:test:  ❯ src/workbench-skill.test.ts:16:18
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  Test Files  3 failed | 11 passed (14)
+@workmesh/agent-runner:test:       Tests  3 failed | 109 passed (112)
+@workmesh/agent-runner:test:    Start at  12:06:03
+@workmesh/agent-runner:test:    Duration  17.91s (transform 2.63s, setup 0ms, collect 122.65s, tests 13.51s, environment 3ms, prepare 14.41s)
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ELIFECYCLE  Test failed. See above for more details.
+@workmesh/agent-runner:build: cache miss, executing ad9eed1fd61df5f4
+@workmesh/a2a-adapter:test: cache miss, executing 1d1216dc6ec6d472
+@workmesh/config:test: cache miss, executing 2b23eb5f213c1845
+@workmesh/web:test: cache miss, executing 4f1c8f1e7b3b5fce
+@workmesh/domain:test: cache miss, executing 24bdb2c14f84d894
+@workmesh/a2a-adapter:build: cache miss, executing 6a2edbb440a6af7f
+@workmesh/db:build: cache miss, executing a389ae04a72da765
+@workmesh/db:test: cache miss, executing 2681beaae8dd081d
+@workmesh/mcp:build: cache miss, executing 20e7caf44db9bab6
+@workmesh/mcp:test: cache miss, executing d18a2dae3b157b5e
+@workmesh/fake-agent:test: cache miss, executing 7de446ba89cf61d5
+
+ Tasks:    13 successful, 26 total
+Cached:    8 cached, 26 total
+  Time:    35.356s 
+Failed:    @workmesh/agent-runner#test
+
+ ELIFECYCLE  Test failed. See above for more details.

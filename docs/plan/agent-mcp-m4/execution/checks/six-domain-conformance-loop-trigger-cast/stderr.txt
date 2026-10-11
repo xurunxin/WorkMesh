@@ -1,0 +1,16 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/optional-domains.conformance.test.ts > M4 独立六域实际消费者
+Error: Signed HTTP target delivery missing
+ ❯ Object.receive src/planning-collaboration.fixture.ts:37:40
+     35|     await worker().tick()
+     36|     const payload = delivered.get(sessionId)
+     37|     if (!payload?.exchangeToken) throw new Error('Signed HTTP target d…
+       |                                        ^
+     38|     const count = deliveries.size
+     39|     // A fresh worker represents restart; durable delivered rows canno…
+ ❯ src/optional-domains.conformance.test.ts:41:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,1723 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-07T11:54:49.438Z",
+  "baseCommit": "0e9968dd24748f864370819a239093b42c80ba61",
+  "d0Status": "blocked",
+  "visualStatus": "passed",
+  "d1Gate": "closed",
+  "gateReason": "当前 D0 视觉清单两轮各 14 通过、56 次原始 PNG 与基线严格一致，五项必需检查成功退出；通用 mocked-dev 实际失败尚未处置，不宣称 D0 完成，不改变验收边界。G1/P1/R1 独立验收。",
+  "requiredChecksSucceeded": true,
+  "remainingConditionalSkips": 3,
+  "referenceInput": {
+    "path": "docs/references/todos-analysis/",
+    "addressSynchronized": true,
+    "includedInValidationBase": false,
+    "reason": "用户最新 G1 交接仅同步地址；输入包尚在 G1 审查分支，git ls-tree HEAD 未发现该目录；不导入、不提前放行 G1"
+  },
+  "runs": [
+    {
+      "kind": "capture",
+      "exitCode": 0,
+      "passed": 14,
+      "failed": 0,
+      "recordCount": 14,
+      "captureCount": 28,
+      "rawLogSha256": "630a84e01d357d7b0b137a6911a8d92c483c26a811a2c0a67a13484f214b053c",
+      "entries": [
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+          "captureSha256": [
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/agent-detail.png",
+            "win32/desktop-1440x1000/agent-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/board.png",
+          "captureSha256": [
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/board.png",
+            "win32/desktop-1440x1000/board.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+        },
+        {
+          "surface": "工作项详情",
+          "route": "/?view=my-work&workItem=work-101",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/issue-detail.png",
+            "win32/desktop-1440x1000/issue-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/issues-list.png",
+          "captureSha256": [
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/issues-list.png",
+            "win32/desktop-1440x1000/issues-list.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/project.png",
+          "captureSha256": [
+            "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+            "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/project.png",
+            "win32/desktop-1440x1000/project.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/settings.png",
+          "captureSha256": [
+            "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+            "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/settings.png",
+            "win32/desktop-1440x1000/settings.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/workbench.png",
+          "captureSha256": [
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/workbench.png",
+            "win32/desktop-1440x1000/workbench.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+        },
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/agent-detail.png",
+          "captureSha256": [
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/agent-detail.png",
+            "win32/mobile-390x844/agent-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/board.png",
+          "captureSha256": [
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/board.png",
+            "win32/mobile-390x844/board.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+        },
+        {
+          "surface": "工作项详情",
+          "route": "/?view=my-work&workItem=work-101",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/issue-detail.png",
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/issues-list.png",
+          "captureSha256": [
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/issues-list.png",
+            "win32/mobile-390x844/issues-list.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/project.png",
+          "captureSha256": [
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/project.png",
+            "win32/mobile-390x844/project.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/settings.png",
+          "captureSha256": [
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/settings.png",
+            "win32/mobile-390x844/settings.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/workbench.png",
+          "captureSha256": [
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/workbench.png",
+            "win32/mobile-390x844/workbench.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+        }
+      ]
+    },
+    {
+      "kind": "restartReplay",
+      "exitCode": 0,
+      "passed": 14,
+      "failed": 0,
+      "recordCount": 14,
+      "captureCount": 28,
+      "rawLogSha256": "6593b2b156b33ab640bace0902d6f700e00628760bbf43007fd849bda1daed1e",
+      "entries": [
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/agent-detail.png",
+          "captureSha256": [
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96",
+            "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/agent-detail.png",
+            "win32/desktop-1440x1000/agent-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "22ae1f6f02d1ea2d4a4a8104bbab3e2d5c837d560620ae83a1fd980aaf230d96"
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/board.png",
+          "captureSha256": [
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc",
+            "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 0
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 87
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 676,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 592.1875,
+                "y": 642.09375,
+                "width": 295.625,
+                "height": 274.34375,
+                "top": 642.09375,
+                "right": 887.8125,
+                "bottom": 916.4375,
+                "left": 592.1875
+              },
+              "columnHeaderBounds": {
+                "x": 581,
+                "y": 596.90625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 596.90625,
+                "right": 899,
+                "bottom": 642.09375,
+                "left": 581
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/board.png",
+            "win32/desktop-1440x1000/board.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "ee8702579bc21b74b82d59872b4e96d09e3495f47e596cf7891cd6ee778576dc"
+        },
+        {
+          "surface": "工作项详情",
+          "route": "/?view=my-work&workItem=work-101",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/issue-detail.png",
+          "captureSha256": [
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137",
+            "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/issue-detail.png",
+            "win32/desktop-1440x1000/issue-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "e95d94bc7b602676028c8cc7f6d77ba274d041b67ab756659b268160d78d4137"
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/issues-list.png",
+          "captureSha256": [
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9",
+            "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/issues-list.png",
+            "win32/desktop-1440x1000/issues-list.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "f84fc820c8e7216702a669f5ffc5efb0c5d09593790ef855b76373e4d19762e9"
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/project.png",
+          "captureSha256": [
+            "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94",
+            "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/project.png",
+            "win32/desktop-1440x1000/project.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "6c68120709802a67f45b22be0a1614318f3be04b1b6d72ffbb82a6e0792bbc94"
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/settings.png",
+          "captureSha256": [
+            "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974",
+            "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/settings.png",
+            "win32/desktop-1440x1000/settings.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "8498288fa8088da94582b0062009f7ba54fc84d3d828e444842ce1bff7293974"
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/desktop-1440x1000/workbench.png",
+          "captureSha256": [
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5",
+            "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/desktop-1440x1000/workbench.png",
+            "win32/desktop-1440x1000/workbench.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "02c8e43c311b81c77a5b598f9c1f3a5df96032908cc123a6418e233d73d915e5"
+        },
+        {
+          "surface": "Agent 详情",
+          "route": "/agents/agent%2F1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/agent-detail.png",
+          "captureSha256": [
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500",
+            "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/agent-detail.png",
+            "win32/mobile-390x844/agent-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "28302695a1c2e053d55af9ee786c850eea93f7d7f494c513bcb0d893ed07f500"
+        },
+        {
+          "surface": "看板",
+          "route": "/?view=projects&project=project-1&tab=board",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/board.png",
+          "captureSha256": [
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58",
+            "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+          ],
+          "scrollPositions": [
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            },
+            {
+              "window": {
+                "x": 0,
+                "y": 53
+              },
+              "containers": [
+                {
+                  "selector": "app-content",
+                  "left": 16,
+                  "top": 0
+                },
+                {
+                  "selector": "content projects-page",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "project-detail-pane",
+                  "left": 0,
+                  "top": 0
+                },
+                {
+                  "selector": "wm-work-item-board-scroll wm-work-item-adaptive-scroll",
+                  "left": 672,
+                  "top": 0
+                }
+              ],
+              "cardBounds": {
+                "x": 12.1875,
+                "y": 430.578125,
+                "width": 295.625,
+                "height": 292.75,
+                "top": 430.578125,
+                "right": 307.8125,
+                "bottom": 723.328125,
+                "left": 12.1875
+              },
+              "columnHeaderBounds": {
+                "x": 1,
+                "y": 385.390625,
+                "width": 318,
+                "height": 45.1875,
+                "top": 385.390625,
+                "right": 319,
+                "bottom": 430.578125,
+                "left": 1
+              }
+            }
+          ],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/board.png",
+            "win32/mobile-390x844/board.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "6f10de9b2d00f4992b02fb027248dd24e57c3897db72cc04972d2dfa73648b58"
+        },
+        {
+          "surface": "工作项详情",
+          "route": "/?view=my-work&workItem=work-101",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/issue-detail.png",
+          "captureSha256": [
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc",
+            "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/issue-detail.png",
+            "win32/mobile-390x844/issue-detail.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "32b2b771bd51af43b8ded582cdd408b3abcaad97f0b5797e7b49aa62e8c008fc"
+        },
+        {
+          "surface": "工作项列表",
+          "route": "/?view=my-work",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/issues-list.png",
+          "captureSha256": [
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02",
+            "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/issues-list.png",
+            "win32/mobile-390x844/issues-list.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "446ac22d52fa382cc144fe40db6a3b27a6d60db5fec9ba87ae6fe406285aab02"
+        },
+        {
+          "surface": "项目总览",
+          "route": "/?view=projects&project=project-1",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/project.png",
+          "captureSha256": [
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f",
+            "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/project.png",
+            "win32/mobile-390x844/project.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "cbb0552ca3558ec4649a145167e800304a2e1e82c41c973d4ee19ae57e13d32f"
+        },
+        {
+          "surface": "设置",
+          "route": "/settings?team=team-page-2",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/settings.png",
+          "captureSha256": [
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8",
+            "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/settings.png",
+            "win32/mobile-390x844/settings.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "a4427d48e35fe636b81ea2e65ec86f6f044327728fdca37a4ed511ab10ba15e8"
+        },
+        {
+          "surface": "工作台",
+          "route": "/workbench",
+          "viewport": {
+            "width": 390,
+            "height": 844
+          },
+          "locale": "zh-CN",
+          "colorScheme": "light",
+          "timezoneId": "UTC",
+          "deviceScaleFactor": 1,
+          "fixedTime": "2026-08-22T09:30:00.000Z",
+          "browserVersion": "149.0.7827.55",
+          "platform": "win32",
+          "browserLaunchArguments": [
+            "--disable-gpu",
+            "--disable-skia-runtime-opts",
+            "--force-color-profile=srgb",
+            "--disable-partial-raster"
+          ],
+          "snapshot": "win32/mobile-390x844/workbench.png",
+          "captureSha256": [
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99",
+            "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+          ],
+          "scrollPositions": [],
+          "tokenSha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d",
+          "originalPngFiles": [
+            "win32/mobile-390x844/workbench.png",
+            "win32/mobile-390x844/workbench.png"
+          ],
+          "originalAttachmentsVerified": true,
+          "pairSha256Equal": true,
+          "visualComparisonPassed": true,
+          "baselineSha256": "ba8a8c12e2c46ef6d8ac8b81f856e89f6872b6ffae82a3a722df32fc736f3f99"
+        }
+      ]
+    }
+  ],
+  "verifiedOriginalCaptureCount": 56,
+  "allFourCapturesMatchBaselineBytes": true,
+  "rawCaptureEqualityUsesTolerance": false,
+  "comparator": {
+    "maxDiffPixels": 0,
+    "threshold": 0.005,
+    "captureEquality": "每轮两个独立上下文的 PNG SHA-256 必须相同",
+    "pairCaptureEvaluation": "仅比较原始 PNG SHA-256，不使用视觉容差",
+    "restartReplayEvaluation": "Playwright toHaveScreenshot 使用 threshold=0.005、maxDiffPixels=0；通过不蕴含哈希相同",
+    "thresholdBasis": "零颜色阈值时移动详情原始 13 个圆角边缘像素每通道最多差 1，比较器报告 1 个差异像素；保留失败证据后选择微小颜色感知容差，也可能容许其他微小颜色差异",
+    "productVisualApproval": false
+  },
+  "sources": [
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "ed92a40f6dca083b5fe725c28a2b52571f2e695092b282936f65404f85d0429b"
+    },
+    {
+      "path": "packages/ui/src/tokens.css",
+      "sha256": "f54c5677b4c13d66766799bb3fc0426f7c6e906d99265e1fa37a433169cc850d"
+    },
+    {
+      "path": "apps/web/app/styles.css",
+      "sha256": "a653c821f08c154f9877123e5858e08daa4a2ff3e20558eedb13a962092ba910"
+    },
+    {
+      "path": "apps/web/features/navigation/theme.tsx",
+      "sha256": "05daf2cf407b8899b4d839450cb8d96f427c6f03181688ffcedef88a2ae0e32b"
+    },
+    {
+      "path": "apps/web/features/workbench/conversation-workbench.module.css",
+      "sha256": "26318e154f3e3209df8ec886599acc536c6cbbe77fb54a5d95896d80ae1aeac6"
+    },
+    {
+      "path": "apps/web/e2e/project-work-preview-server.mjs",
+      "sha256": "f92f5b068eca0c21a6d3752df7f0268607734ac498babf9f34d8f9a6790ca9c3"
+    },
+    {
+      "path": "apps/web/playwright.d0.config.ts",
+      "sha256": "f880637a042b1974a1b8c2b6aca72f7a0d6e8f084bc5b6b49a519a4181308bea"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts",
+      "sha256": "a4b784986c56c3c7d8ad2084d50f6fddcc313b15b3a66465209191b3199252c2"
+    },
+    {
+      "path": "apps/web/e2e/mocked/d0-screenshot.css",
+      "sha256": "d58e03cdd879ae52358a06dc67efed1e07d381fdb8f9ab3c8e5d207dc731ba2b"
+    },
+    {
+      "path": "apps/web/playwright.mocked.config.ts",
+      "sha256": "a5ca61e65b2a486c8cb4fbbfe1d2116d4b3459b38c99d78024b19ebd053c6599"
+    },
+    {
+      "path": "apps/web/e2e/playwright-config-contract.test.ts",
+      "sha256": "49d5f4db081c9c14e3006dfe991045814ae1de67e255150de688cd310f5eeca7"
+    },
+    {
+      "path": "scripts/verify-playwright-suite-scope.mts",
+      "sha256": "1ea51992f492477ed8a5e9eaf9032c66eebfd67d696b45ea6ce4a5addc4fa0a6"
+    },
+    {
+      "path": "scripts/verify-web-ui-final-verification.test.ts",
+      "sha256": "53a95c4ed9f5de0dcdf146156e8fcbbd3cbb91904d9b4ebef894c3d8d9729e65"
+    },
+    {
+      "path": "apps/web/e2e/baselines/d0/evidence/diagnose-raster.mjs",
+      "sha256": "5235543208853b25628b374437189fe57d6b68e88ab7485aa160a07c10c4f8b7"
+    }
+  ],
+  "rasterDiagnosis": "raster-diagnosis.json",
+  "previousFailedRounds": "review-fix-verification.json",
+  "previousHistoricalProof": "feedback-verification.json",
+  "checks": [
+    {
+      "command": "pnpm lint",
+      "log": "d0-stabilized-lint.log",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 18,
+        "turboTasksTotal": 18
+      },
+      "rawLogSha256": "5195344903a4ef252c56963bf9515308960637c90f1fab9bff11e624b8e5eb92",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total",
+        "Cached:    17 cached, 18 total",
+        "  Time:    4.874s "
+      ]
+    },
+    {
+      "command": "pnpm typecheck",
+      "log": "d0-stabilized-typecheck.log",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 18,
+        "turboTasksTotal": 18
+      },
+      "rawLogSha256": "0ddd8fb9b7bdf44ab10283f0c9f48dd6db0700b9053580b71f60f19900e154e0",
+      "excerpt": [
+        " Tasks:    18 successful, 18 total",
+        "Cached:    17 cached, 18 total",
+        "  Time:    5.105s "
+      ]
+    },
+    {
+      "command": "pnpm test",
+      "log": "d0-stabilized-test.log",
+      "exitCode": 0,
+      "result": {
+        "turboTasksPassed": 29,
+        "turboTasksTotal": 29,
+        "passed": 1655,
+        "skipped": 2,
+        "webPassed": 776
+      },
+      "rawLogSha256": "c3b6e18b5ec76e8a760631ed2d80c84d650de395007ee98b97a5a9e946447d45",
+      "excerpt": [
+        "@workmesh/git-provider:test:       Tests  13 passed (13)",
+        "@workmesh/contracts:test:       Tests  180 passed (180)",
+        "@workmesh/observability:test:       Tests  16 passed (16)",
+        "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+        "@workmesh/ui:test:       Tests  50 passed (50)",
+        "@workmesh/agent-sdk:test:       Tests  33 passed (33)",
+        "@workmesh/domain:test:       Tests  65 passed (65)",
+        "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+        "@workmesh/agent-runner:test:       Tests  48 passed (48)",
+        "@workmesh/config:test:       Tests  33 passed (33)",
+        "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+        "@workmesh/conformance:test:       Tests  1 passed (1)",
+        "@workmesh/mcp:test:       Tests  38 passed (38)",
+        "@workmesh/db:test:       Tests  28 passed (28)",
+        "@workmesh/recovery:test:       Tests  7 passed (7)",
+        "@workmesh/worker:test:       Tests  163 passed | 2 skipped (165)",
+        "@workmesh/api:test:       Tests  174 passed (174)",
+        "@workmesh/web:test:       Tests  776 passed (776)",
+        " Tasks:    29 successful, 29 total",
+        "Cached:    28 cached, 29 total",
+        "  Time:    2m7.239s "
+      ]
+    },
+    {
+      "command": "pnpm test:integration",
+      "log": "d0-review-integration.log",
+      "exitCode": 0,
+      "result": {
+        "dbPassed": 77,
+        "apiPassed": 154,
+        "workerPassed": 78,
+        "skipped": 3
+      },
+      "rawLogSha256": "2e1bea16f95f2f6bf424b6bbd0ca854506df00b1dfe01d04ef3ee80ef7103d4e",
+      "excerpt": [
+        " Test Files  17 passed (17)",
+        "      Tests  77 passed (77)",
+        " Test Files  22 passed (22)",
+        "      Tests  154 passed | 1 skipped (155)",
+        " Test Files  8 passed | 1 skipped (9)",
+        "      Tests  78 passed | 1 skipped (79)",
+        " Test Files  1 skipped (1)",
+        "      Tests  1 skipped (1)"
+      ]
+    },
+    {
+      "command": "pnpm test:e2e",
+      "log": "d0-review-e2e.log",
+      "exitCode": 0,
+      "result": {
+        "passed": 74,
+        "turboTasksPassed": 12,
+        "turboTasksTotal": 12,
+        "mockedAndD0Included": false
+      },
+      "rawLogSha256": "ea77863fdfc24806e2c67b434df6de031d29b64f7ead4c4dac49a90f5395d21b",
+      "excerpt": [
+        " Tasks:    12 successful, 12 total",
+        "Cached:    0 cached, 12 total",
+        "  Time:    3m29.841s "
+      ]
+    },
+    {
+      "command": "pnpm test:integration:recovery",
+      "log": "d0-review-recovery.log",
+      "exitCode": 0,
+      "result": {
+        "passed": 1
+      },
+      "rawLogSha256": "9f82580fa1a5ffdf1f1246d0d9d12959f010cf3ee910bd0f9cb0979a2dabc7d2",
+      "excerpt": [
+        " Test Files  1 passed (1)",
+        "      Tests  1 passed (1)"
+      ]
+    },
+    {
+      "command": "pnpm --filter @workmesh/worker test:integration -- integration/retention-upgrade-barrier.integration.test.ts",
+      "log": "d0-review-retention-upgrade.log",
+      "exitCode": 0,
+      "result": {
+        "passed": 1,
+        "enabled": "RUN_RETENTION_UPGRADE_INTEGRATION=1"
+      },
+      "rawLogSha256": "1af1d523f1dcacb9acbd0bf8e7bfeec0a478551208ee6edf71fad088acd168bd",
+      "excerpt": [
+        " Test Files  1 passed (1)",
+        "      Tests  1 passed (1)"
+      ]
+    }
+  ],
+  "extraAttempts": [
+    {
+      "log": "d0-stabilized-before-update.log",
+      "rawLogSha256": "dcfc59e05b3e7b04d9671338e57717fca02078c07fd3adcfe96bb98505dc2c86",
+      "finalAcceptance": false,
+      "excerpt": [
+        "    Error: expect(page).toHaveScreenshot(expected) failed",
+        "      3 pixels (ratio 0.01 of all image pixels) are different.",
+        "      - 3 pixels (ratio 0.01 of all image pixels) are different.",
+        "      - 3 pixels (ratio 0.01 of all image pixels) are different.",
+        "    Error: expect(page).toHaveScreenshot(expected) failed",
+        "      1 pixels (ratio 0.01 of all image pixels) are different.",
+        "      - 1 pixels (ratio 0.01 of all image pixels) are different.",
+        "      - 1 pixels (ratio 0.01 of all image pixels) are different.",
+        "  2 failed",
+        "  12 passed (1.2m)"
+      ]
+    },
+    {
+      "log": "d0-stabilized-detail-update.log",
+      "rawLogSha256": "3d16c9bf44cf5cb36f2fd7996c59da87e263f0069dbd86fc3856e80a3ddc2fc7",
+      "finalAcceptance": false,
+      "excerpt": [
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\desktop-1440x1000\\issue-detail.png is re-generated, writing actual.",
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\desktop-1440x1000\\issue-detail.png is re-generated, writing actual.",
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\mobile-390x844\\issue-detail.png is re-generated, writing actual.",
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\mobile-390x844\\issue-detail.png is re-generated, writing actual.",
+        "  2 passed (20.5s)"
+      ]
+    },
+    {
+      "log": "d0-stabilized-remaining-update.log",
+      "rawLogSha256": "758e63190b76639ba6aafb42859cde3cfb064ec03f6604e976eaa6da68c47900",
+      "finalAcceptance": false,
+      "excerpt": [
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\desktop-1440x1000\\project.png is re-generated, writing actual.",
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\desktop-1440x1000\\project.png is re-generated, writing actual.",
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\desktop-1440x1000\\settings.png is re-generated, writing actual.",
+        "<workspace>\\apps\\web\\e2e\\baselines\\d0\\win32\\desktop-1440x1000\\settings.png is re-generated, writing actual.",
+        "  2 passed (54.8s)"
+      ]
+    },
+    {
+      "log": "d0-stabilized-overlap-capture.log",
+      "rawLogSha256": "86d0d1146b59de63af26e09c6677f2385d840b478e141705a1aede4cbda9a332",
+      "finalAcceptance": false,
+      "excerpt": [
+        "Error: http://127.0.0.1:3201/api/v1/info is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer."
+      ]
+    },
+    {
+      "log": "d0-stabilized-overlap-replay.log",
+      "rawLogSha256": "86d0d1146b59de63af26e09c6677f2385d840b478e141705a1aede4cbda9a332",
+      "finalAcceptance": false,
+      "excerpt": [
+        "Error: http://127.0.0.1:3201/api/v1/info is already used, make sure that nothing is running on the port/url or set reuseExistingServer:true in config.webServer."
+      ]
+    }
+  ],
+  "mockedDev": {
+    "status": "failed",
+    "firstAttempt": {
+      "collected": 139,
+      "passed": 12,
+      "failed": 12,
+      "notExecuted": 115,
+      "interrupted": true
+    },
+    "selectedControlEvidence": "mocked-failures.json",
+    "pendingDecision": "逐项修旧测试/夹具或无关产品需总管裁决，D0 不自行改变验收边界",
+    "fullSuitePassed": false,
+    "selectedControl": {
+      "collectedPerRun": 12,
+      "originalFailed": 12,
+      "currentFailed": 12,
+      "dtoMismatchCases": 9,
+      "scope": "只对照首轮实际失败的 12 项，产品与这些旧测试源均未修改；不能推断其余 115 项结果或默认 upstream 变更对所有用例无影响"
+    }
+  }
+}

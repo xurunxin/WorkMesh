@@ -1,0 +1,28 @@
+
+> workmesh@ ci:test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> node --test scripts/ci-policy.test.mjs
+
+✔ classification bootstrap locks only YAML and cannot bypass policy or evidence (108.8327ms)
+✔ YAML semantics preserve flow maps, aliases and literal command bodies (1.5378ms)
+✔ known prose on PR and main avoids every install/service/test job (0.597ms)
+✔ UI changes test web consumers and E2E, but skip unrelated backend/protocol/recovery jobs (0.3308ms)
+✔ direct web tests, assets and package-local skills are runtime changes (0.1418ms)
+✔ API and worker changes retain destructive recovery and real browser integration (0.1127ms)
+✔ cross-workspace lock audits are selected without inventing runtime dependency cycles (0.186ms)
+✔ upstream contracts/domain/db/config changes include transitive consumers (0.1731ms)
+✔ protocol changes retain SDK consumers, conformance and direct E2E imports (0.1185ms)
+✔ root config, unknown/deleted workspaces and executable-looking docs fail closed to full (0.2624ms)
+✔ main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full (0.1985ms)
+✔ PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full (0.2871ms)
+✔ aggregate rejects failure, cancellation and accidental skips for every required job (0.1973ms)
+✔ aggregate only accepts planned skips and rejects incomplete/malformed decisions (0.1477ms)
+✔ MCP discovery consumers require real conformance and propagate failed or skipped job (0.1433ms)
+✔ real workflow semantic mutations cannot silently omit MCP conformance (8.8464ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 292.2614

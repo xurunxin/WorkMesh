@@ -1,0 +1,14 @@
+{
+  "command": [
+    "python",
+    "-B",
+    "docs/plan/agent-mcp-m4/execution/verify-staged-bytes.py"
+  ],
+  "exitCode": 0,
+  "runtimeSeconds": 1.4242001000093296,
+  "stagedFilesVerifiedFull": 2206,
+  "allStagedExecutionBytesEqualWorkingBytes": true,
+  "orderedWitnessSha256": "df20fcc0b8a3a2989b45c94695aaae3ca90176af4a4527579edf70c01315c481",
+  "excludedOwnResult": "docs/plan/agent-mcp-m4/execution/staged-byte-preservation.json",
+  "source": "暂存blob全文，非工具输出前缀；这里只核受控execution原件，其他产品源码Git规范化字节与运行原件仍分列。"
+}

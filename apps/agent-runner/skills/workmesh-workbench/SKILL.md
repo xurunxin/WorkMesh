@@ -52,6 +52,12 @@ Room metadata 不授正文读取权。使用本人 Inbox 的 metadata→claim→
 
 普通 child 使用有限能力。reviewer 不拥有 `plan:write`，不能发布 Plan；只能发布 `code_review` Artifact，并必须本人发送 Room `review_result`。Artifact 应包含审查 metadata 或真实引用，`noArtifactReason` 或 structured review 不能替代双证据。父用 `workmesh_list_child_sessions` 确认所有 required child 已 completed；其它每种状态都阻止父完成并返回准确 IDs。父终态或撤权不能继续读取子状态，Stop/pause 优先；父 Stop 不表示子已自动停止。
 `workmesh_fail_session` 只请求准确自身 Session 的失败。它与 completion/wait 互斥并关闭后续模型工具；宿主先提交 failed Turn/Attempt，再执行原 `/fail` 命令。两事务之间崩溃或第二个响应不明没有自动恢复，Turn failed 不能证明 Session failed。Stop/撤权优先；后步拒绝不重做 settle 或 Stop cleanup。核查实际 Session 状态并保留原请求 key/revision 与拒绝/不明事实。
+## 已启用可选领域
+
+资格取决于当前部署feature与准确E的live授权；工具出现仍需REST重核target。Cycle、Initiative、普通及高级View、规则/run、Loop、usage、执行pin的Template与A2A单页提供完整授权读取。保留nextCursor；超出传输上限明确拒绝，不能用摘要冒完整页。A2A的after独立于普通事件及集合cursor，最多扫描200事件，空映射页仍保存返回cursor；无无限流。
+
+`workmesh_run_loop_now`须固定occurrenceKey和scheduledFor；origin仅得到admission，target需真实接单取得自己的E，不能凭返回ID读取target run/usage/Template。projectless target记录usage须省略projectId，不能从Loop补出项目权限。`workmesh_record_usage`固定dedupeKey/occurredAt，按币种保留十进制金额及unknown；命令自身落usage/event/outbox，不附加要求work:write的Activity。普通saved view仅本人owner；高级View、Template、规则/Loop管理仍由Human执行。health发布保留Human准确批准；completion仅建议，不代Human裁决。新有限写不加入自动重放白名单。
+
 ## 精确 Git 与证据交付
 
 先读准确 repository context 的 base/path，取得 Lease，依次 branch/commit/openPR 并用 `workmesh_get_provider_action` 确认原 action。`unknown` 只保留原 ID 人工对账，不换 key 盲重发。当前 head 的独立 reviewer 可显式 `repositoryIds` 获得三方交集的仓库读权；省略不增加原 reviewer 能力。reviewer 无仓库写／plan 写权，在有效 E 下发布本人 Room `review_result`、当前 head `code_review` Artifact 与 structured review，再完成。父确认 required child completed，Human 批准准确 head/checks，Worker 最终重验。merge 不 deploy，也不自动关闭 Issue。

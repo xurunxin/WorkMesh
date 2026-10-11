@@ -1,0 +1,7 @@
+# Runtime evidence is addressed by the SHA-256 of its exact bytes.
+# Preserve CRLF and other original bytes across Git checkouts.
+** -text
+source-objects/* -text -diff -merge
+evidence-objects/* -text -diff -merge
+checks/*/stdout.txt -text -diff -merge
+checks/*/stderr.txt -text -diff -merge

@@ -1,0 +1,494 @@
+{
+  "completeReceipts": 86,
+  "verifiedRawOutputs": 172,
+  "uniqueRuntimeSourceObjects": 1032,
+  "gitBlobsVerifiedFull": 12,
+  "casObjectsVerifiedFull": 1020,
+  "legacyWithoutOriginalByteRef": 15644,
+  "laterLocatedByExactRecordedHash": 15578,
+  "missingLegacyExactBytes": [
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-first-build/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 85501,
+      "sha256": "469d406940471c972ec2c71279e02b266c7cbd9e2411822ca0b00a3d16100c67"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 85501,
+      "sha256": "469d406940471c972ec2c71279e02b266c7cbd9e2411822ca0b00a3d16100c67"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-authority/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 86376,
+      "sha256": "85c2dc23f4015a7841bf0da641a2230333b796f4463efd0c4ec0de8bac9e1ecd"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 86376,
+      "sha256": "85c2dc23f4015a7841bf0da641a2230333b796f4463efd0c4ec0de8bac9e1ecd"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-first/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 84614,
+      "sha256": "62481b3a24c25abdc1891234e7b5209dd10bdfc614904153e913a75795e6188c"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 84614,
+      "sha256": "62481b3a24c25abdc1891234e7b5209dd10bdfc614904153e913a75795e6188c"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-fixture-corrected/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 85501,
+      "sha256": "469d406940471c972ec2c71279e02b266c7cbd9e2411822ca0b00a3d16100c67"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15976,
+      "sha256": "db370a00314ea88ca910eb702cf811963e19260a70b7a3909d64b3176a5b9003"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 85501,
+      "sha256": "469d406940471c972ec2c71279e02b266c7cbd9e2411822ca0b00a3d16100c67"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/backend-stage4-protocol/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15976,
+      "sha256": "db370a00314ea88ca910eb702cf811963e19260a70b7a3909d64b3176a5b9003"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/routes.ts",
+      "bytes": 120724,
+      "sha256": "1c093bef2eb30ce01b6c9eb418112d31b5ebe4b93487af107dc4155989d0b39b"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "before",
+      "path": "packages/contracts/src/index.ts",
+      "bytes": 192260,
+      "sha256": "8fa16fa34cd26fea7a2cdf24badb503a1edcaa5cc9361ed1fe5c7be4219fd119"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/routes.ts",
+      "bytes": 120724,
+      "sha256": "1c093bef2eb30ce01b6c9eb418112d31b5ebe4b93487af107dc4155989d0b39b"
+    },
+    {
+      "receipt": "checks/install-dependencies/receipt.json",
+      "phase": "after",
+      "path": "packages/contracts/src/index.ts",
+      "bytes": 192260,
+      "sha256": "8fa16fa34cd26fea7a2cdf24badb503a1edcaa5cc9361ed1fe5c7be4219fd119"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/integration-env/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "before",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "before",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "before",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "after",
+      "path": "OPENAPI.yaml",
+      "bytes": 568120,
+      "sha256": "46dd632521e1db137d37e0a4c65eef9dacf012375bb3f8096e753928172ac54c"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "after",
+      "path": "apps/api/integration/stage4-operations.integration.test.ts",
+      "bytes": 80117,
+      "sha256": "347aedc49684a0e9c848450c977f3d7d38e805dca3ae59193b378902c2291fff"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/live-read-authorization.ts",
+      "bytes": 9856,
+      "sha256": "74310b5e337088fb8e6835fca38bc9261b778f9690f6104ba9cfd47aed217c62"
+    },
+    {
+      "receipt": "checks/migrate-independent/receipt.json",
+      "phase": "after",
+      "path": "apps/api/src/operations/read-projections.ts",
+      "bytes": 15995,
+      "sha256": "513c39408f6bed98ad1ab3287396c679598da76641557949a889bef697295b6a"
+    }
+  ],
+  "legacyByteReferenceLimitation": "早期回执没有 exactBytesSource；按原长度/hash 逐字节定位后续真正保全对象，不称原命令当时已归档，不从 Git 规范化字节猜原运行字节；未定位原件完整列出。",
+  "privateSecretFindings": 0,
+  "deliveryFiles": 2215,
+  "fullReferencedBytesRead": true,
+  "partialInterruptedCommands": "无 receipt 的 interruption 保持缺失，不算完成命令。",
+  "baselineTestCredentialLiterals": [
+    {
+      "path": "docs/plan/agent-mcp-m4/execution/source-objects/4f3396b97d67976afb99e5ec6678e97f2190b8f7dc668073165d900a907b4e09",
+      "baselineTest": "apps/web/app/lib/mcp-onboarding.test.ts",
+      "rawSha256": "4f3396b97d67976afb99e5ec6678e97f2190b8f7dc668073165d900a907b4e09",
+      "baselineGitBlob": "be6fe9a79ea52ddd40cffb34ef8aad40d93b9fdb",
+      "classification": "原基线凭据检测测试的字面示例；非环境或运行凭据，保留完整源码原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/execution/source-objects/94b9e7b104fd22b545a747e1f49c7f21826f30ce11fab5ca6eea58fe061cd0b3",
+      "baselineTest": "apps/web/app/connect/page.test.tsx",
+      "rawSha256": "94b9e7b104fd22b545a747e1f49c7f21826f30ce11fab5ca6eea58fe061cd0b3",
+      "baselineGitBlob": "0d31a68608b6bed3cabad4501e895692da6bb2f1",
+      "classification": "原基线凭据检测测试的字面示例；非环境或运行凭据，保留完整源码原件"
+    }
+  ]
+}

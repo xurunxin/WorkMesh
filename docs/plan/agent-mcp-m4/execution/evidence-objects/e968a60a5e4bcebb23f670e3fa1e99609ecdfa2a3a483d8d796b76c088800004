@@ -1,0 +1,44 @@
+{
+  "documentId": "be4afc3f-704d-4a1c-a45e-6a44c706e42c",
+  "conflict": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"IDEMPOTENCY_KEY_REUSED\",\"message\":\"Idempotency key was used for a different operation or request\",\"correlationId\":\"e3926226-5376-4d46-8fe0-875d2a8fd066\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "IDEMPOTENCY_KEY_REUSED",
+        "message": "Idempotency key was used for a different operation or request",
+        "correlationId": "e3926226-5376-4d46-8fe0-875d2a8fd066",
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  },
+  "stale": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"REVISION_CONFLICT\",\"message\":\"Resource has changed\",\"correlationId\":\"42a3d685-9988-45a5-843e-03905342e327\",\"details\":{\"expectedRevision\":2,\"currentRevision\":1},\"currentRevision\":1,\"safeNextAction\":\"Refetch the resource, reapply the intended change to revision 1, and retry once with that revision.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "REVISION_CONFLICT",
+        "message": "Resource has changed",
+        "correlationId": "42a3d685-9988-45a5-843e-03905342e327",
+        "details": {
+          "expectedRevision": 2,
+          "currentRevision": 1
+        },
+        "currentRevision": 1,
+        "safeNextAction": "Refetch the resource, reapply the intended change to revision 1, and retry once with that revision."
+      }
+    },
+    "isError": true
+  },
+  "dropped": true,
+  "replayedId": "737c91f7-2c9d-4f98-810b-49de34544ec9"
+}

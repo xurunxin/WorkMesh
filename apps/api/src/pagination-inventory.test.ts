@@ -55,12 +55,16 @@ describe('pagination surface inventory', () => {
     const realtimeRoutes = read('apps/api/src/realtime/routes.ts')
     const realtimeCursor = read('apps/api/src/realtime/cursor.ts')
     const operations = read('apps/api/src/operations/routes.ts')
+    const projections = read('apps/api/src/operations/read-projections.ts')
+    const optionalContracts = read('packages/contracts/src/optional-domain-contracts.ts')
     expect(server).toContain('registerRealtimeRoutes')
     expect(realtimeRoutes).toContain("header(request, 'last-event-id')")
     expect(realtimeRoutes).toContain('parseDurableCursor(')
     expect(realtimeCursor).toContain('BigInt(')
-    expect(operations).toContain('durableCursorSchema')
-    expect(operations).toContain('ORDER BY event.cursor LIMIT 200')
+    expect(operations).toContain('a2aTaskEventQuerySchema.parse(request.query)')
+    expect(optionalContracts).toContain('BigInt(value)')
+    expect(optionalContracts).toContain("optionalDomainCursorSchema.default('0')")
+    expect(projections).toContain('ORDER BY event.cursor LIMIT 200')
   })
 
   it('keeps REST, Web, SDK, MCP, and OpenAPI on the page envelope', () => {

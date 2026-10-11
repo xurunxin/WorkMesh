@@ -19,6 +19,7 @@ type OpenApiDocument = {
       }
     }>
     schemas: {
+      [key: string]: unknown
       Error?: {
         properties?: {
           error?: {
@@ -115,6 +116,13 @@ describe('pagination OpenAPI contract', () => {
           properties: {items: {type:'array',items: {$ref:'#/components/schemas/RepositoryResponse'}},
             nextCursor: {type:'string',nullable:true}},
         })
+      } else if (['/api/v1/cycles','/api/v1/initiatives','/api/v1/advanced-views','/api/v1/advanced-views/{id}/results','/api/v1/automation-rules','/api/v1/automation-runs','/api/v1/loops','/api/v1/templates','/api/v1/projects/{id}/health'].includes(path)) {
+        const schema=operation?.responses?.['200']?.content?.['application/json']?.schema as {$ref?:string}
+        expect(schema.$ref,path).toMatch(/^#\/components\/schemas\/\w+Page$/)
+        const page=openapi.components.schemas[schema.$ref!.split('/').at(-1)!] as {properties:{items:{items:{$ref?:string}}}}
+        expect(page).toMatchObject({type:'object',required:['items','nextCursor'],properties:{items:{type:'array'},nextCursor:{type:['string','null']}}})
+        const item=page.properties.items.items
+        expect(item.$ref?openapi.components.schemas[item.$ref.split('/').at(-1)!]:item).toMatchObject({type:'object',required:expect.arrayContaining(['id'])})
       } else expect(operation?.responses?.['200']?.$ref, path).toMatch(
         /^#\/components\/responses\/(?:PagedJson|Teams|WorkflowStates|Projects|HumanActors|WorkItems|Comments|SavedViews|Agents|AgentConnections|AgentSessions|AgentActivities|PlanVersions|Artifacts|Approvals|HumanAttentionItems|RecoveryItems|ControlCenter|InboxItems|Milestones|WorkItemRelations|RepositoryConfigurations)$/,
       )

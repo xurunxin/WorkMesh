@@ -1,0 +1,807 @@
+(node:46916) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:26868) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 73 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/agent-lock-order.integration.test.ts > Agent authority total lock order > serializes forced assignment, retry, and revoke with no partial Session graph
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"install","retryAfterSeconds":1},"correlationId":"4190bb87-ee22-4cc9-8f25-f52ca42db33f"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ makeFixture integration/agent-lock-order.integration.test.ts:229:66
+    227|     },
+    228|   }) as unknown as Response
+    229|   expect(installed.statusCode, JSON.stringify(installed.json())).toBe(…
+       |                                                                  ^
+    230|   const setCookie = Array.isArray(installed.headers['set-cookie'])
+    231|     ? installed.headers['set-cookie'][0]
+ ❯ integration/agent-lock-order.integration.test.ts:1060:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/73]⎯
+
+ FAIL  integration/agent-lock-order.integration.test.ts > Agent authority total lock order > completes reciprocal child, review, and handoff acquisition in sorted order
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"install","retryAfterSeconds":1},"correlationId":"20e08865-1967-44e0-8769-fb8827d61c77"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ makeFixture integration/agent-lock-order.integration.test.ts:229:66
+    227|     },
+    228|   }) as unknown as Response
+    229|   expect(installed.statusCode, JSON.stringify(installed.json())).toBe(…
+       |                                                                  ^
+    230|   const setCookie = Array.isArray(installed.headers['set-cookie'])
+    231|     ? installed.headers['set-cookie'][0]
+ ❯ integration/agent-lock-order.integration.test.ts:1270:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/73]⎯
+
+ FAIL  integration/agent-lock-order.integration.test.ts > Agent authority total lock order > revalidates automation resource, message, and approval authority after exact native lock waits
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"install","retryAfterSeconds":1},"correlationId":"227abc03-bad9-4fb1-a2c2-607fb7479038"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ makeFixture integration/agent-lock-order.integration.test.ts:229:66
+    227|     },
+    228|   }) as unknown as Response
+    229|   expect(installed.statusCode, JSON.stringify(installed.json())).toBe(…
+       |                                                                  ^
+    230|   const setCookie = Array.isArray(installed.headers['set-cookie'])
+    231|     ? installed.headers['set-cookie'][0]
+ ❯ integration/agent-lock-order.integration.test.ts:1492:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/73]⎯
+
+ FAIL  integration/agent-lock-order.integration.test.ts > Agent authority total lock order > denies Loop admission after project routing or exact Team grant changes behind native locks
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"install","retryAfterSeconds":1},"correlationId":"a8dd08af-18cd-4d30-9f7a-5992d9aaab23"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ makeFixture integration/agent-lock-order.integration.test.ts:229:66
+    227|     },
+    228|   }) as unknown as Response
+    229|   expect(installed.statusCode, JSON.stringify(installed.json())).toBe(…
+       |                                                                  ^
+    230|   const setCookie = Array.isArray(installed.headers['set-cookie'])
+    231|     ? installed.headers['set-cookie'][0]
+ ❯ integration/agent-lock-order.integration.test.ts:1683:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/73]⎯
+
+ FAIL  integration/agent-lock-order.integration.test.ts > Agent authority total lock order > serializes reordered multi-recipient reciprocal room messages at the first Definition
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"install","retryAfterSeconds":1},"correlationId":"86b56290-29e9-4ad0-92dc-b2e0fbb7346c"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ makeFixture integration/agent-lock-order.integration.test.ts:229:66
+    227|     },
+    228|   }) as unknown as Response
+    229|   expect(installed.statusCode, JSON.stringify(installed.json())).toBe(…
+       |                                                                  ^
+    230|   const setCookie = Array.isArray(installed.headers['set-cookie'])
+    231|     ? installed.headers['set-cookie'][0]
+ ❯ integration/agent-lock-order.integration.test.ts:1750:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > creates a redacted target, replays the same body and rejects a changed body
+AssertionError: {"error":{"code":"INTERNAL_ERROR","message":"Channel secret storage is unavailable","correlationId":"68b698b1-dd3f-4e7c-a09c-aba158c6b56b"}}: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ integration/notification-channels.integration.test.ts:129:46
+    127|         'idempotency-key': key,
+    128|       })
+    129|     expect(created.statusCode, created.body).toBe(201)
+       |                                              ^
+    130|     const row = created.json<{
+    131|       id: string
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > rejects another admin and anonymous access and validates HTTPS without performing any probe
+AssertionError: expected 400 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 400
+
+ ❯ integration/notification-channels.integration.test.ts:180:7
+    178|         )
+    179|       ).statusCode,
+    180|     ).toBe(404)
+       |       ^
+    181|     expect(
+    182|       (
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > requires current revision, deduplicates update and returns paginated redacted results
+AssertionError: expected 400 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 400
+
+ ❯ integration/notification-channels.integration.test.ts:221:7
+    219|         )
+    220|       ).statusCode,
+    221|     ).toBe(409)
+       |       ^
+    222|     const key = randomUUID(),
+    223|       headers = { ...revision(targetRevision), 'idempotency-key': key }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > isolates targets and deliveries from a Human in another workspace
+AssertionError: expected 400 to be 404 // Object.is equality
+
+- Expected
++ Received
+
+- 404
++ 400
+
+ ❯ integration/notification-channels.integration.test.ts:298:7
+    296|         )
+    297|       ).statusCode,
+    298|     ).toBe(404)
+       |       ^
+    299|     expect(
+    300|       (
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > rejects an otherwise valid active Agent bearer on every channel management route
+TypeError: Cannot read properties of undefined (reading 'revision')
+ ❯ integration/notification-channels.integration.test.ts:408:18
+    406|           [targetId],
+    407|         )
+    408|       ).rows[0]!.revision,
+       |                  ^
+    409|     ).toBe(targetRevision)
+    410|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > lets only the owner reconcile an uncertain result with revision and idempotency
+TypeError: Cannot read properties of undefined (reading 'workspaceId')
+ ❯ prepareChannelSend ../../packages/db/src/channel-notifications.ts:594:61
+    592|   const locator = (await tx.query<{ source_type: string; source_id: st…
+    593|     `SELECT intent.source_type,intent.source_id FROM notification_inte…
+    594|      WHERE intent.workspace_id=$1 AND intent.id=$2`, [claim.workspaceI…
+       |                                                             ^
+    595|   )).rows[0]
+    596|   const discovered = locator && await sourceFor(tx, claim.workspaceId,…
+ ❯ integration/notification-channels.integration.test.ts:450:30
+ ❯ withTx ../../packages/db/src/index.ts:27:26
+ ❯ integration/notification-channels.integration.test.ts:450:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > revokes configuration without returning secret material and rejects subsequent mutations
+AssertionError: {"error":{"code":"VALIDATION_ERROR","message":"Invalid request","details":{"formErrors":["Invalid uuid"],"fieldErrors":{}},"correlationId":"bc14bc28-009e-44dd-8dc3-47e81c17f9a8"}}: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ integration/notification-channels.integration.test.ts:516:46
+    514|       revision(targetRevision),
+    515|     )
+    516|     expect(revoked.statusCode, revoked.body).toBe(200)
+       |                                              ^
+    517|     expect(revoked.json()).toMatchObject({
+    518|       enabled: false,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/73]⎯
+
+ FAIL  integration/notification-channels.integration.test.ts > C1 target ownership, redaction and reconciliation > partitions real Room source snapshots by exact Human audience without public payload leakage or duplicate intents
+AssertionError: expected 400 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 400
+
+ ❯ integration/notification-channels.integration.test.ts:543:7
+    541|       (await call(other, 'POST', root, { ...body, name: '精确收件人目标' }))
+    542|         .statusCode,
+    543|     ).toBe(201)
+       |       ^
+    544|     const states = (
+    545|       await call(owner, 'GET', '/api/v1/teams/' + teamId + '/states')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/73]⎯
+
+ FAIL  integration/route-policy-authorization.integration.test.ts > declarative route policy live authorization > fails closed across principals, resources, audit, events, revocation, and feature gates
+AssertionError: expected 200 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 200
+
+ ❯ integration/route-policy-authorization.integration.test.ts:687:40
+    685| 
+    686|     const featureDisabled = await humanCall(admin, 'GET', '/api/v1/cyc…
+    687|     expect(featureDisabled.statusCode).toBe(403)
+       |                                        ^
+    688|     expect(errorCode(featureDisabled)).toBe('FEATURE_DISABLED')
+    689|     const wrongKindBeforeFeatureGate = await agentCall(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/73]⎯
+
+ FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > coordinates exclusive and shared leases, child budgets, and durable parent blocking
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"install","retryAfterSeconds":1},"correlationId":"57aedef3-4278-43e8-b020-6945c44077f3"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ makeFixture integration/stage2-collaboration.integration.test.ts:105:66
+
+ ❯ integration/stage2-collaboration.integration.test.ts:486:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/73]⎯
+
+ FAIL  integration/stage2-collaboration.integration.test.ts > Stage 2 collaboration API acceptance > M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"install","retryAfterSeconds":1},"correlationId":"9cabdeb2-ee95-49e7-922b-4888c9c8f364"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ makeFixture integration/stage2-collaboration.integration.test.ts:105:66
+
+ ❯ integration/stage2-collaboration.integration.test.ts:588:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/73]⎯
+
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3六kind五status真实GET白名单投影，合法checkpoint与未知效果分别确认且零业务写
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3 exact action最终快照拒绝当前context的read收窄且零副作用
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3 exact action最终快照拒绝当前context的branch收窄且零副作用
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > M3原principal Human可诊断终态Session action，普通terminal E仍拒绝
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 解析期间撤权后无上下文发布：actor
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 解析期间撤权后无上下文发布：membership-role
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 解析期间撤权后无上下文发布：repository-connection
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > checkpoint 后撤权重启无上下文发布：actor
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > checkpoint 后撤权重启无上下文发布：workspace-role
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > checkpoint 后撤权重启无上下文发布：membership-role
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > checkpoint 后撤权重启无上下文发布：target-delete
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > checkpoint 后撤权重启无上下文发布：target-team
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > checkpoint 后撤权重启无上下文发布：repository
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > checkpoint 后撤权重启无上下文发布：repository-connection
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > A2 仓库解析重放仅产生一份上下文
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 撤权与上下文落库按持锁顺序串行
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > A2 配置事务失败无部分状态事件或outbox：repository_contexts
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > A2 配置事务失败无部分状态事件或outbox：domain_events
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > A2 配置事务失败无部分状态事件或outbox：outbox_events
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 仓库发布与 C1 事件快照共享事务兼容
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：webhookSecret
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：privateKey
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > 连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：accessToken
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > persists an exact-head, approval-bound CI retry through the provider action queue
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > uses one live exact-context predicate and revokes repository disclosure immediately
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > rejects missing pinned review and merge permissions before PR evidence with zero residue
+AssertionError: invalid value "undefined" for header x-csrf-token
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ new Request ../../node_modules/.pnpm/light-my-request@6.6.0/node_modules/light-my-request/lib/request.js:125:5
+ ❯ ../../node_modules/.pnpm/light-my-request@6.6.0/node_modules/light-my-request/index.js:88:19
+ ❯ doInject ../../node_modules/.pnpm/light-my-request@6.6.0/node_modules/light-my-request/index.js:87:12
+ ❯ Chain.<computed> [as then] ../../node_modules/.pnpm/light-my-request@6.6.0/node_modules/light-my-request/index.js:177:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/73]⎯
+
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > runs branch, commit, PR, check, independent review, exact-head approval, merge, and suggestion
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ integration/stage3-delivery.integration.test.ts:1460:24
+    1458|     }>()
+    1459|     const put = await fetch(uploadBody.uploadUrl, { method: 'PUT', hea…
+    1460|     expect(put.status).toBe(200)
+       |                        ^
+    1461|     expect((await agentCall(f.agent.token, 'POST', `/api/v1/artifact-u…
+    1462|     const uploadWorker = createArtifactUploadWorker({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/73]⎯
+
+ FAIL  integration/stage3-delivery.integration.test.ts > Stage 3 delivery API > supports a Human-owned upload lifecycle with attribution, listing, download, and cancellation
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ integration/stage3-delivery.integration.test.ts:1505:119
+    1503|     expect(requested.statusCode, JSON.stringify(requested.json())).toB…
+    1504|     const intent = requested.json<{ id: string; uploadUrl: string; req…
+    1505|     expect((await fetch(intent.uploadUrl, { method: 'PUT', headers: in…
+       |                                                                                                                       ^
+    1506|     expect((await humanCall(f.human, 'POST', `/api/v1/artifact-upload-…
+    1507|     const claimed = await worker.claim()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > recovers completed, failed, and canceled terminal-only assignments without rewriting history
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"8e25b9a4-7ea2-4cce-82a8-b332058e8936"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareTerminalSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:186:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:2853:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > converges concurrent terminal-only claims to one queued retry
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"f7058915-7dff-4899-818b-0e3add4c1fd2"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareTerminalSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:186:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3039:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > keeps terminal-only recovery atomic when replacement admission fails
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"4de86cfa-547a-4b86-928d-365b9b3fbe4b"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareTerminalSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:186:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3090:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > recovers one stale self-claim assignment atomically and converges concurrent claims
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"7839546d-798b-452a-8c02-471210142ea2"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3153:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > does not recover mixed stale and queued assignments or a stale assignment owned by another Agent
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"5715b07d-43e4-4177-baba-3724270e015b"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3288:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > rolls back stale recovery mutations when replacement Session admission fails
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"283b5ddd-e6a9-4311-9311-10d49dd4b21a"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3401:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > requires an exact self-claim capability scope and rejects broad assignment scopes
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"92888864-47ea-4dd8-b318-f498341a87fc"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3473:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > rejects a stale self-claim when the assignment capability scope targets another Project
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"cdbf9364-8a44-4cf8-a788-6868c471b148"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3501:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > keeps generic stale state transitions inactive while dedicated ACK recovers and resolves the stale inbox
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"71202ed1-e7cc-4068-bde6-628be4573f48"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3518:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > replays the same stale self-claim idempotency key with the same replacement Session and exchange token
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"76c20bcc-80e5-4c90-9329-4b790718419a"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3578:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/73]⎯
+
+ FAIL  integration/stage5-agent-connections.integration.test.ts > Stage 5 Agent Connection lifecycle > resolves stale inbox and releases its lease when Human forced assignment replaces the same Agent
+AssertionError: {"error":{"code":"AUTH_RATE_LIMITED","message":"Authentication request is temporarily rate limited","details":{"endpointClass":"pairing","retryAfterSeconds":2},"correlationId":"6cf158d1-3fa0-42a0-8398-41fa1e262d48"}}: expected 429 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 429
+
+ ❯ pairConnection integration/stage5-agent-connections.integration.test.ts:82:46
+     80|     headers: { 'idempotency-key': randomUUID() },
+     81|   })
+     82|   expect(redeemed.statusCode, redeemed.body).toBe(200)
+       |                                              ^
+     83|   return {
+     84|     connection: envelope.connection,
+ ❯ prepareStaleSelfClaimFixture integration/stage5-agent-connections.integration.test.ts:123:18
+ ❯ integration/stage5-agent-connections.integration.test.ts:3615:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:149:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[31/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 并发 Worker 原子额度上限；崩溃后仅 token 过期，额度仍保留至 D+60
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:164:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[32/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 可信完成晚于发送截止上界：额度至少保留至完成后 60 秒，token 单独释放
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:180:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[33/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:192:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[34/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:207:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[35/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 授权锁等待跨窗口，过期 permit 不提交 checkpoint、不外发、不消耗失败预算
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:215:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[36/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 disabled 撤权先提交，真实授权锁后零 fake provider 调用
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 inactive 撤权先提交，真实授权锁后零 fake provider 调用
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 revoked 撤权先提交，真实授权锁后零 fake provider 调用
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 membership 撤权先提交，真实授权锁后零 fake provider 调用
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 changed 撤权先提交，真实授权锁后零 fake provider 调用
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 muted 撤权先提交，真实授权锁后零 fake provider 调用
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:228:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[37/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:250:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[38/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:261:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:277:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[40/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 真实 Redis TIME 与部分 bucket 丢失：旧许可失效，共同冷却不吞失败预算
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:287:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[41/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:294:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[42/73]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox
+Error: Channel secret storage is unavailable
+ ❯ storageKey ../../packages/db/src/channel-notifications.ts:79:11
+     77|   const key = process.env.WORKMESH_MASTER_KEY
+     78|   if (!key || !/^[a-f0-9]{64}$/i.test(key))
+     79|     throw new DomainError(
+       |           ^
+     80|       'INTERNAL_ERROR',
+     81|       'Channel secret storage is unavailable',
+ ❯ createChannelTarget ../../packages/db/src/channel-notifications.ts:166:9
+ ❯ withTx ../../packages/db/src/index.ts:27:20
+ ❯ integration/wecom-notifications.integration.test.ts:332:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[43/73]⎯
+

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "debug",
+    "config"
+  ],
+  "startedAt": "2026-10-11T04:15:59.609Z",
+  "endedAt": "2026-10-11T04:16:03.442Z",
+  "runtimeMs": 3833.369900000005,
+  "pid": 30428,
+  "nativeExit": 0,
+  "signal": null,
+  "stdout": "[{\"type\":\"document\",\"path\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a127d4-e047-7e57-81c2-3d054851fc88\\\\.tmp\\\\m4-4adc5e39\\\\native-evidence\\\\opencode-92896494-8297-4045-a32d-a18cf07d0cca\\\\config\\\\opencode\\\\opencode.json\",\"info\":{\"model\":{\"providerID\":\"m5-local\",\"model\":\"controlled\"},\"update\":\"disable\",\"permissions\":[{\"action\":\"*\",\"resource\":\"*\",\"effect\":\"deny\"},{\"action\":\"workmesh_list_templates\",\"resource\":\"*\",\"effect\":\"allow\"},{\"action\":\"workmesh_get_automation_run\",\"resource\":\"*\",\"effect\":\"allow\"},{\"action\":\"workmesh_get_usage_summary\",\"resource\":\"*\",\"effect\":\"allow\"},{\"action\":\"workmesh_get_a2a_task_events\",\"resource\":\"*\",\"effect\":\"allow\"}],\"snapshots\":false,\"tool_output\":{\"max_lines\":2000,\"max_bytes\":2000000},\"mcp\":{\"servers\":{\"workmesh\":{\"type\":\"remote\",\"url\":\"http://127.0.0.1:65207/mcp\",\"headers\":{\"Authorization\":\"[redacted]\"},\"oauth\":false,\"codemode\":false}}},\"plugins\":[\"-opencode.config.compatibility\"],\"providers\":{\"m5-local\":{\"package\":\"@opencode/ai/providers/openai-compatible\",\"settings\":{\"baseURL\":\"https://127.0.0.1:65208/v1\",\"apiKey\":\"[redacted]\"},\"models\":{\"controlled\":{\"name\":\"M5 controlled local model\",\"capabilities\":{\"tools\":true,\"input\":[\"text\"],\"output\":[\"text\"]},\"limit\":{\"context\":131072,\"output\":8192}}}}}}},{\"type\":\"directory\",\"path\":\"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a127d4-e047-7e57-81c2-3d054851fc88\\\\.tmp\\\\m4-4adc5e39\\\\native-evidence\\\\opencode-92896494-8297-4045-a32d-a18cf07d0cca\\\\config\\\\opencode\"}]",
+  "stderr": "",
+  "rawOutput": {
+    "stdout": {
+      "bytes": 2421,
+      "sha256": "c755152b63e39196e3e52666a4cc93f9a84f3ec7bdd0807e4e62a1ec68dc2f6f"
+    },
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "rawBytesPreserved": false
+}

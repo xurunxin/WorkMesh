@@ -1,0 +1,20 @@
+{
+  "events": [
+    {
+      "kind": "api",
+      "url": "http://127.0.0.1:64143",
+      "ready": 200
+    },
+    {
+      "kind": "mcp",
+      "mode": "read-write",
+      "transport": "in-memory SDK transport to real HTTP API"
+    }
+  ],
+  "cleanup": [
+    "fulfilled"
+  ],
+  "ownedListenersClosed": true,
+  "database": "/workmesh_m4_test",
+  "databasePreserved": true
+}

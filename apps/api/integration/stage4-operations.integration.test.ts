@@ -2226,7 +2226,7 @@ describe("Stage 4 planning and operations API", () => {
         payload:{pairingCode:new URL(envelope.connect_url).hash.slice(1),agentSlug:slug,client:{type:'generic_mcp',version:'1'}}})
       expect(redeemed.statusCode,redeemed.body).toBe(200)
       const token=redeemed.json<{installation_token:string}>().installation_token
-      const authenticated=await app.inject({method:'GET',url:'/api/v1/agent-connections/current',headers:{'x-workmesh-installation-token':token}})
+      const authenticated=await app.inject({method:'GET',url:'/api/v1/agent-connections/current-identity',headers:{'x-workmesh-installation-token':token}})
       expect(authenticated.statusCode,authenticated.body).toBe(200)
       const session=(await db.query<{agent_id:string;agent_actor_id:string;agent_session_id:string}>(
         'SELECT agent_id,agent_actor_id,agent_session_id FROM agent_coordination_sessions WHERE connection_id=$1 AND status=\'active\'',[envelope.connection.id])).rows[0]!

@@ -1,0 +1,13 @@
+{
+  "requestPath": "/v1/chat/completions",
+  "sequence": 7,
+  "tools": [
+    "workmesh_get_a2a_task_events",
+    "workmesh_get_automation_run",
+    "workmesh_get_usage_summary",
+    "workmesh_list_templates"
+  ],
+  "publicToolResults": [
+    "{\"events\":[{\"cursor\":\"9007199254743493\",\"event\":{\"kind\":\"status-update\",\"taskId\":\"m4-loop-task\",\"final\":false,\"status\":{\"state\":\"working\",\"timestamp\":\"2026-10-11T04:08:06.656Z\"}}}],\"cursor\":\"9007199254743511\"}"
+  ]
+}

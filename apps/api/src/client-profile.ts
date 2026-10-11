@@ -22,12 +22,12 @@ type ManifestSession = {
   revision: number
   permissions_snapshot: Capability[]
   capability_scope: {
-    workspaceId: string
+    workspaceId?: string
     teamIds?: string[]
     projectIds?: string[]
     workItemIds?: string[]
     repositoryIds?: string[]
-    capabilities: Capability[]
+    capabilities?: Capability[]
   }
   definition_capabilities: Capability[]
   team_capabilities: Capability[]
@@ -90,9 +90,13 @@ export function registerClientProfileRoutes(
     if (!session) throw new DomainError('DELEGATION_NOT_ACTIVE', 'Agent Session authority is unavailable')
     const definition = new Set(session.definition_capabilities)
     const team = new Set(session.team_capabilities)
+    // Legacy automation Delegations store permissions in permissions_snapshot
+    // without a duplicate capability_scope.capabilities field. Match the live
+    // command guard's existing intersection; an explicit narrower array wins.
+    const scopedCapabilities=session.capability_scope.capabilities ?? session.permissions_snapshot
     const effectiveCapabilities = session.permissions_snapshot.filter(capability =>
       definition.has(capability) && team.has(capability)
-        && session.capability_scope.capabilities.includes(capability)
+        && scopedCapabilities.includes(capability)
         && capabilitySchema.safeParse(capability).success,
     )
     const manifest = createAgentCapabilityManifest({
@@ -102,12 +106,12 @@ export function registerClientProfileRoutes(
       sessionRevision: session.revision,
       effectiveCapabilities,
       capabilityScope: {
-        workspaceId: session.capability_scope.workspaceId,
+        workspaceId: session.capability_scope.workspaceId ?? actor.workspaceId,
         teamIds: session.capability_scope.teamIds ?? [],
         projectIds: session.capability_scope.projectIds ?? [],
         workItemIds: session.capability_scope.workItemIds ?? [],
         repositoryIds: session.capability_scope.repositoryIds ?? [],
-        capabilities: session.capability_scope.capabilities,
+        capabilities: scopedCapabilities,
       },
       supportedProtocols: session.supported_protocols,
       pushConfigured: Boolean(session.endpoint_url),

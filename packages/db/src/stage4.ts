@@ -377,7 +377,7 @@ export async function admitLoopRun(
     || loop.team_id!==loopLocator.team_id
     || loop.project_id!==loopLocator.project_id
   ) throw new Error('LOOP_AUTHORITY_BINDING_CHANGED')
-  if (loop.state !== 'active') throw new Error('LOOP_NOT_ACTIVE')
+  if (loop.state !== 'active') throw new DomainError('INVALID_STATE','LOOP_NOT_ACTIVE')
   let lockedProjectTeamId:string|null=null
   if (loop.project_id) {
     lockedProjectTeamId = (await tx.query<{ team_id: string }>(
@@ -443,8 +443,22 @@ export async function admitLoopRun(
          AND currency=$3`,
     [loop.workspace_id, loop.id, budgetCurrency],
   )).rows[0]
-  const consumedCostMinor = consumed?.cost ?? '0'
-  const consumedTokens = Number(consumed?.tokens ?? 0)
+  // Admission holds the Loop lock. Conservative active reservations must join
+  // observed usage before checking its hard limit (ADR 0024/0026); otherwise
+  // two no_overlap=false runs can both spend the same unobserved budget.
+  const reserved=(await tx.query<{cost:string;tokens:string}>(
+    `SELECT coalesce(sum((reservation.amount->>'maxCostMinor')::bigint),0)::text AS cost,
+            coalesce(sum(coalesce((reservation.amount->>'maxTokens')::bigint,
+              (session.budget->>'maxTokens')::bigint,0)),0)::text AS tokens
+       FROM loop_budget_reservations reservation
+       JOIN automation_runs run ON run.id=reservation.automation_run_id AND run.workspace_id=$1
+       JOIN agent_sessions session ON session.id=run.session_id
+      WHERE reservation.loop_id=$2 AND reservation.status='reserved'
+        AND reservation.amount->>'currency'=$3`,
+    [loop.workspace_id,loop.id,budgetCurrency],
+  )).rows[0]
+  const consumedCostMinor = (BigInt(consumed?.cost ?? '0')+BigInt(reserved?.cost ?? '0')).toString()
+  const consumedTokens = Number(BigInt(consumed?.tokens ?? '0')+BigInt(reserved?.tokens ?? '0'))
   const policy = (await tx.query<{
     hard_cost_minor: string | null
     soft_cost_minor: string | null
@@ -594,7 +608,7 @@ export async function admitLoopRun(
   await tx.query(
     `INSERT INTO loop_budget_reservations(loop_id,automation_run_id,amount)
      VALUES($1,$2,$3)`,
-    [loop.id, run.id, { maxCostMinor: requestedCostMinor, currency: budgetCurrency }],
+    [loop.id, run.id, { maxCostMinor: requestedCostMinor, maxTokens:requestedTokens, currency: budgetCurrency }],
   )
   const softCostMinor = policy?.soft_cost_minor ?? undefined
   const softTokens = policy?.soft_tokens ? Number(policy.soft_tokens) : undefined

@@ -1,0 +1,26 @@
+{
+  "cursor": "2931",
+  "resumedCursors": [],
+  "denied": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"SESSION_NOT_ACTIVE\",\"message\":\"The Agent Session is no longer active\",\"correlationId\":\"29b3c093-2aa4-48de-b441-1ea5880d7a85\",\"details\":{\"authorizationStage\":\"session\",\"policyId\":\"route.getAgentCapabilityManifest\"},\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "SESSION_NOT_ACTIVE",
+        "message": "The Agent Session is no longer active",
+        "correlationId": "29b3c093-2aa4-48de-b441-1ea5880d7a85",
+        "details": {
+          "authorizationStage": "session",
+          "policyId": "route.getAgentCapabilityManifest"
+        },
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  },
+  "cleanupEntry": "SDK stopAcknowledgement"
+}

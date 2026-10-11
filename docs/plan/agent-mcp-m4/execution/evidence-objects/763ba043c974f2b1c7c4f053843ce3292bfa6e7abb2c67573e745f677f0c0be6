@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Unexpected server error\",\"correlationId\":\"b89dff88-2a7b-48d9-89c5-c3d593908343\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+    }
+  ],
+  "structuredContent": {
+    "error": {
+      "code": "INTERNAL_ERROR",
+      "message": "Unexpected server error",
+      "correlationId": "b89dff88-2a7b-48d9-89c5-c3d593908343",
+      "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+    }
+  },
+  "isError": true
+}

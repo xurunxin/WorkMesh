@@ -2,7 +2,9 @@
 
 ## 状态
 
-Proposed。本次仅规划文件；原候选已获正式方案独审并留下1项High(blocking)，本提案补正该项后待Chief正式复审，未获闭合、未实施、未新增权限。原审及候选保留于 [审查回应](../plan/agent-mcp-m4/review-response.md)。
+Accepted（安全设计已获正式方案复审；产品成果仍待完整检查及 Chief 正式成果独审）。原规划候选与原 High(blocking) 保留于 [审查回应](../plan/agent-mcp-m4/review-response.md)，规划阶段的未测记录不改写。
+
+下文关于“当前仅提案、registry 空、尚未生成/运行”的现状陈述，均保留批准方案 `4adc5e39680e66543613d3f4f84c57a555fd94c1` 的规划快照含义。实施已实际捕获注册、生成并运行回归；当前实证见 [实施报告](../plan/agent-mcp-m4/execution/product-current-report.md)，不能把原未测声明当本轮结果。A2A 实施在首条查询前固定 READ COMMITTED，最终资格使用受控 `statement_timestamp()`；其他调用继续使用默认 `now()`，真实 PG 正反屏障另存，未新增权限或领域事实。
 
 ## 背景
 

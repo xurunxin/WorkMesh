@@ -1,0 +1,17 @@
+{
+  "scope": "仅本卡独立私有环境",
+  "masterKeyFormat": "64 hex；原base64准备错误已纠正，值不存入公共工件",
+  "authBursts": "逐项沿现行CI env，不改变产品配置默认门禁",
+  "globalFeatureNamesRemoved": [
+    "WORKMESH_BETA_PLANNING",
+    "WORKMESH_BETA_TEMPLATES",
+    "WORKMESH_BETA_COSTS",
+    "WORKMESH_EXPERIMENTAL_AUTOMATION",
+    "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+    "WORKMESH_EXPERIMENTAL_A2A",
+    "WORKMESH_BETA_COORDINATION_MCP"
+  ],
+  "sixDomainActivation": "optional-domains.fixture.ts按部署启用六域；根旧套件保默认关闭负例",
+  "objectStoreBucket": "workmesh-m4-test",
+  "productionChanged": false
+}
