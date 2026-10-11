@@ -7,5 +7,5 @@
   "lockSha256": "fc961994fc104070bd85470ed0b24b32528373e21c48b32cb3c48019de9b6859",
   "importMethod": "copy",
   "privateWritableDependencies": "worktree/node_modules",
-  "cleanup": "测试使用中；结束后仅定向删除本人 shim，依赖保留用于后续复验，不清共享 store"
+  "cleanup": "私有环境文件与任务 pnpm shim 已定向清理，见 private-runtime-cleanup.json；copy 私有 worktree 依赖保留供成果独审和复验，不清共享 store"
 }

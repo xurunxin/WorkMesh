@@ -1,54 +1,43 @@
-# 实际验证记录
+# 后端化实际验收记录
 
-## 工具与隔离
+## 范围与运行来源
 
-当前宿主 Node 为 25.4.0，项目锁定 Node 由镜像和 CI 另验；宿主结果不能代替锁定运行时验收。pnpm 使用已有精确 9.15.4，复用共享 store，任务依赖采用 copy 私有可写隔离。测试容器、端口、数据库和对象存储为本轮独有；归属见 dependency-owner.json 和 integration-resources.json，不清共享缓存或业务数据。
+产品实施依据已审提交 `66a3764bb54bef4c1549528f902f78854aa2f3f2` 的活动方案与精确修订；两项用户通知选择保持。独立读取和复核 main 为 `f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c`，未删除共享锁或取共享 FETCH_HEAD。原件与产品差异分别保全。
 
-## 已执行与进行中
+宿主为 Windows、Node 25.4.0；实际使用已有 pnpm 9.15.4，复用共享 store，以 copy 安装隔离可写依赖。CI 与容器使用锁定 Node。测试数据库、Redis、对象存储、Compose、builder 和临时凭据均为本任务独有；没有真实通知、厂商调用、新登录或外部发布。准确命令和源 SHA、镜像 ID、原始输出见日志清单、`runs/*/receipts.json` 与 `ci-artifacts/`。
 
-| 命令 | 实际结果与日志 |
+## 本机命令与结果
+
+| 命令 | 实际结果 |
 |---|---|
-| pnpm install --frozen-lockfile | 通过；install.log，原生 postinstall 正常执行 |
-| pnpm build | 17 workspace 通过；build.log |
-| pnpm typecheck | 首轮 17 workspace 通过；typecheck.log；最终复验 17 workspace 通过 |
-| pnpm lint | 17 workspace 通过；lint.log |
-| pnpm ci:test | 首轮旧 E2E 合同失败保留 ci-policy-first.log，更新后 19 项通过 ci-policy.log |
-| pnpm ci:validate | 通过；ci-validate.log，Required、自举、发布、Lite、历史证据检查保持 |
-| pnpm check:route-policy / check:workmesh-skill | 通过；route-policy-generation-retry.log；原 Skill digest 与签名通过 |
-| pnpm test | 首轮旧 Web 合同失败 unit.log，复验保留 unit-retry.log；最终完整复验运行中 unit-final.log |
-| pnpm test:integration | 独有真实 PG/Redis/S3，数据库 17 文件 81 项通过；后续 API/协议/worker/恢复待完成 integration-full.log |
-| API 退役及通知定向测试 | 通知 19 项和迁入的审批纵向用例通过；固定 Skill 公开清单首败及拒绝状态首败均保留，最终复验待完整套件 |
-| 留存升级维护脚本 | 定向 33 项通过；unit-targeted-retry.log |
+| `pnpm install --frozen-lockfile`，私有 copy 依赖、共享 store | 通过；`install.log`，正常原生 postinstall；归属在 `dependency-owner.json` |
+| `pnpm build`、`pnpm typecheck`、`pnpm lint` | 各 17 个 workspace 通过；`build.log`、`typecheck.log`、`lint.log`；没有 Web 构建 |
+| `pnpm ci:test`、`pnpm ci:validate` | 最新本机 20 项策略测试通过，自检通过；`ci-policy-deployment.log`、`ci-validate-deployment.log`；删除、跳过、吞错、缺结果和取消仍拒绝 |
+| `pnpm validate:lite:self-test` | 通过；16 个违规变体拒绝，`lite-self-test.log` |
+| `pnpm check:route-policy`、`pnpm check:workmesh-skill` | 通过；`route-policy-generation-retry.log`；固定 Skill 的 LF、摘要、签名保持 |
+| `pnpm test` | 失败；私有 APPDATA 复验中连接器 71 项通过、管道及嵌套终端 2 项失败，25/28 个任务成功；`unit-private-appdata.log`。不修改安全规则或超时 |
+| `pnpm test:integration` | 本机完整复验失败并停在 DB 阶段：14 文件通过、3 文件失败，68 项通过、7 项失败、6 项跳过；`integration-final.log`。后续包没有由该根命令执行 |
+| 定向 API 退役套件 | 6 项真实 PostgreSQL/API 用例通过；`retirement-six.log`；固定 Skill、Cookie/CSRF、通知授权、精确上下文、SSE 重启和真实 worker→fake Agent 审批纵向 |
+| 企业微信通知集成 | 19 项通过；包含完整旧哈希校验、合法待发/显式 retry、篡改拒绝、撤权、并发 claim/fence、checkpoint 回滚和不确定投递零自动重发；CI 原件另验 |
+| 留存升级维护脚本 | 定向 33 项通过；`unit-targeted-retry.log`；维护、freeze、停止和恢复门禁保持 |
+| `pnpm smoke:agents:ci`、`pnpm test:conformance` | 本机通过；六组 adapter/fixture 结果不代替真实集成协议或镜像部署 |
 
-unit-direct.log 是错误的根目录诊断调用，混入 RUN_INTEGRATION 并绕过包 cwd，不能作为正常单元验收；失败保留，不改产品或其他检查凑通过。未发布 Workbench Skill 的旧生成入口没有对应已跟踪资产，未新增签名或冒校验成功。
+宿主完整检查失败不表示通过。数据库 DDL/TRUNCATE 等待 DataFileImmediateSync 与本机资源压力均有诊断原件；没有关闭 fsync、增加 hook 时限、改变数据库合同或重启共享 Docker。管道/ConPTY 的宿主失败只按观察记录，不把不同 Node 的 CI 成功冒成本机修复证明。
 
-## 尚未完成
+## CI 与真实部署
 
-真实生产/Lite 和开发镜像首轮构建已尝试，中止记录与原日志保留；原上下文含大量历史证据，后续改为准确 Git 提交中的 Docker COPY 所需产品路径。部署、save/load、TLS、镜像内/HTTP Skill、MCP 与恢复后 smoke 未通过验收。浏览器布局与视觉项明确退役，没有标成通过。最新远端 Required CI、成果独审与实际合入尚未完成。
+运行 `38176577167` 绑定产品提交 `7209be0641cc224b19b88bc36b0d3a03996b0b63`。实际 PR 合成检出 `47faa50156178fccebf3d6ea2db33c11550688f5` 的 tree 与分支提交相同；父提交、三平台前后源码绑定、开发镜像与恢复报告见 `ci-artifacts/verified-bindings.json`。API 29 文件通过、304 项通过/1 项跳过，DB 17 文件/81 项通过；MCP 真实集成协议 6 文件/96 项通过。源码、三平台原生连接器、三后端开发镜像无缓存构建、正常 postinstall 和完整灾备通过。恢复后 API、worker、MCP ready、真实 MCP 初始化与持久 Agent heartbeat 均通过。
 
+该次 worker 有一个 Web Push 完整 URL 断言首败，Required 失败；已按明确配置 API origin 修正，后续 CI `38178554946` 的 worker 检查通过。首败 ZIP 保留，见 `ci-artifacts/test-summary-7209.json`。取消的中间 CI 不当通过；最终 Required 仍须对最后交付 head 核验。
 
-## 本轮首败与资源诊断
+本机 Lite `backend-lite-47db4f07` 实际完成镜像构建、save/load 身份、三个角色加载、无源码 API/worker 安装和测试 CA/TLS 下真实 worker 精确上下文，随后 Skill 验收因脚本把配对创建的 201 写成 200 而失败。已纠正调用为合同的准确 201，原件在 `runs/backend-lite-47db4f07/34.log`。该次不能标完整部署通过。后续本机独有 builder 的 pnpm 下载网络失败在 `runs/backend-lite-558fdf2d`，没有进入产品验收。
 
-`retirement-final.log` 的新增套件在 beforeAll 阶段超时，五项断言未执行；`recovery-matrix.log` 同样在准备阶段达到原 hook 限制，恢复断言未执行。真实 PostgreSQL `pg_stat_activity` 同时显示三个本轮测试数据库的 DDL/TRUNCATE 等待 `DataFileImmediateSync`，读取连接仍可用。没有增加超时、关闭 fsync、修改业务安全机制或重启共享 Docker 来凑通过。后续复验须串行并保留首败。
+必需源码检查现执行 `python3 scripts/validate-development-images.py`、`node scripts/verify-a2-backend-lite.mjs` 和 `pnpm validate:production-images`。Lite helper 从真实镜像运行 `sh infra/lite/verify-image-roles.sh <该轮镜像>`，覆盖三角色与未知/MCP 拒绝；两类部署都从 discovery 校验后授权配对兑换，再使用 `redeemed.skill.download_url` 真实 HTTP 核对 Git blob、镜像内原件、响应字节及 Ed25519。生产还执行 MCP initialize→verify_connection→get_workmesh_context。CI 原件中的实际执行和结果将在完成后补充，不能用静态 validator、假资产或注入 worker 代验。
 
-镜像首轮中止分别见 `build-context-first-interruption.json`、`archive-first-interruption.json`、`build-plugin-first-interruption.json` 和 `production-context-interruption.json`，仅涉及本轮准确 PID/源 SHA/tag/专用 builder。Lite/生产安装临时目录已按逐路径清单收尾，开发 builder 清理仍等待实际回执，不能写为已清除。
+## 保留、收尾与交接
 
-`smoke:agents:ci` 通过；`test:conformance` 的六组 adapter/fixture 均通过。它们是构造/协议夹具结果，不能代替真实集成协议、签名镜像或恢复验收。
+52 个原测试源、23 个既有后端目标及新迁入套件见 `backend-assertion-map.json`；它们是精确源码去向，不是全部通过声明。纯页面和视觉项退役；79 份截图/基线按原字节保全。41 个已审方案/规格/答复来源逐字复核相同；固定写作规范按原来源手检，没有全局安装。终端原字节 ZIP 与阅读视图 SHA 分别登记，未放宽全仓空白规则。
 
-## 实施检查点复验
+资源清理、原拒绝路径保留和私有依赖去向见 `cleanup.md`。尚未在真实低功耗设备、真实通知厂商或正式生产环境验证；没有发布。本轮回成果 review，方案通过不等于产品通过。独立成果审查闭合 blocking/high、最终 head 的最新适用 Required CI 成功并确认 PR/main 实际落地前，不 merge 或 Done；后续顺序保持退役→接入文档初版→既定客户端适配→后续交付。
 
-`retirement-six.log` 的六项真实 PostgreSQL/API 用例全部通过；`wecom-notifications` 的十九项通过，包括旧哈希合法发送、显式重试、篡改拒绝、撤权先提交与不确定投递零自动重发。此前夹具的 CSRF 状态和 Human 必填字段错误已修正；`retirement-pool-first-failure.log` 的 Vitest RPC 启动超时另留原件，没有放宽超时。
-
-CI 运行 `38176577167` 绑定分支提交 `7209be0641cc224b19b88bc36b0d3a03996b0b63`。实际 PR 合成检出为 `47faa50156178fccebf3d6ea2db33c11550688f5`，源码 tree 与分支提交相同；父提交和三平台前后源码绑定见 `ci-artifacts/verified-bindings.json`。源码门禁、数据库、协议构造、三平台原生连接器和完整灾备通过。三个开发镜像实际无缓存构建且正常 postinstall；恢复后 API、worker、MCP ready、MCP 初始化和持久 Agent heartbeat 均通过。原 ZIP、摘要和报告分开保全，不把运行页面的 head 字段当实际检出 SHA。
-
-该 CI 的 worker 检查因 Web Push 测试遗漏 API origin 而失败，已补为固定配置 origin 的准确完整链接；API 检查仍在执行，Required CI 未通过。新增必需 Lite 部署入口及二十项 CI 策略负例在本机通过，自检也通过，尚待新提交的实际 CI 复验。
-
-宿主 Node 25 的完整单元复验仍有失败。私有 APPDATA 修复本机虚拟化祖先导致的安全拒绝后，连接器七十一项通过，管道交互及嵌套终端两项失败；没有修改 ACL 信任边界或延长测试时限。锁定 Node 运行时的三平台 CI 结果独立保全。完整本机集成复验已有部分迁移准备达到原 hook 限制，命令仍在执行，不能把准备超时后的跳过算作通过。
-
-Lite 已有一次真实构建、save/load 身份一致及三个角色加载通过，随后因 PATH 缺 OpenSSL 停下；已找到现有 Git 工具。另一次构建在本机内存压力下定向中止，其插件 PID 另核归属后停止，未重启共享 Docker。限制内存的专用 builder 部署继续执行，本地进行中的目录暂不作为远端交付或成功证据。
-
-真实 Lite 首轮完成部署后发现验收调用对配对创建状态码写成 200，而 API 合同为 201，见 runs/backend-lite-47db4f07/34.log；改为精确 201 并保留首败。该轮真实 worker 精确上下文和 TLS 已完成调用，完整 Skill/MCP 验收尚未通过，资源回执记录本人镜像、builder、安装目录、Compose 容器/卷/网络和测试 CA 卷均已收尾。
-
-本机完整集成命令结束失败：数据库 14 文件通过、3 文件失败，68 项通过、7 项失败、6 项跳过；超时及其后续 schema 缺失见 integration-final.log，没有执行后续包，也没有放宽时限。CI 38176577167 的 API 集成最终成功，Required 因 worker 首败失败。
-
-后续本机独有 builder 在 Corepack 下载 pnpm 时遇到网络 fetch 失败，未运行产品构建或部署，见 runs/backend-lite-558fdf2d。本人 builder、容器、卷和安装目录清理已复核。新增 CI 将在锁定 Node 上实际重验 Lite 与生产安装，不改下载校验或秘密门禁。
+CI `38178554946` 的 Lite 实际部署（`backend-lite-e07a9c8f`）完整通过，原件在 artifact `11717163412`；实际源码为 PR 合成检出 `811b3cb356ba1688d784eb8eee6ee3f6782500d1`。生产三个镜像构建和 save/load 通过，随后探针把生产入口当作 Lite 的分派入口而失败；`backend-production-4978c9fa/26.log` 显示实际启动了 API。修订探针读取真实生产 Compose migrate command，并分别核对实际服务启动日志；不改生产入口或放宽无源码部署、ready、TLS、Skill 与 MCP 后续要求。首败原 ZIP 保留，本轮产品验收仍待复验。

@@ -3,6 +3,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto'
 import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:https'
 import net from 'node:net'
+import { parse } from 'yaml'
 import { tmpdir } from 'node:os'
 import { dirname, isAbsolute, relative, resolve } from 'node:path'
 import { StringDecoder } from 'node:string_decoder'
@@ -17,7 +18,7 @@ if (!/^[a-f0-9]{40}$/.test(sha)) throw Error('缺少精确 Git 提交')
 const evidence = resolve(root, process.env.WORKMESH_VALIDATION_OUTPUT ?? 'docs/reviews/backend-retirement/runs', runId)
 const installDir = resolve(tmpdir(), runId)
 mkdirSync(evidence, { recursive: true })
-const receipts = { runId, sha, deploymentClass, environment: '工作站 Linux Docker；非真实低功耗设备', installDir, resources: [], results: [], outcome: '未运行' }
+const receipts = { runId, sha, deploymentClass, environment: `${process.env.GITHUB_ACTIONS === 'true' ? 'GitHub Actions' : '工作站'} ${process.platform} / Docker Linux；非真实低功耗设备`, node: process.version, installDir, resources: [], results: [], outcome: '未运行' }
 const writeEvidence = (path, bytes) => {
   for (let attempt = 0; ; attempt++) {
     try { writeFileSync(path, bytes); return } catch (error) {
@@ -119,12 +120,19 @@ try {
     REDIS_URL: 'redis://127.0.0.1:1', S3_ENDPOINT: 'http://127.0.0.1:1', WEB_ORIGIN: 'http://127.0.0.1:3001' }
   // Inherited team secrets do not belong in entrypoint probes.
   const roleKeys = ['WORKMESH_BUILD_SHA', 'SESSION_SECRET', 'WORKMESH_MASTER_KEY', 'WORKMESH_BOOTSTRAP_TOKEN', 'PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID', 'AUTH_RATE_LIMIT_HMAC_KEY', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_BUCKET', 'S3_REGION', 'WORKMESH_BETA_GITEA', 'DATABASE_URL', 'REDIS_URL', 'S3_ENDPOINT', 'WEB_ORIGIN']
+  const topology = parse(readFileSync(resolve(root, composeFile), 'utf8'), { merge: true })
   for (const role of ['migrate', 'api', 'worker']) {
+    // Production migration uses the Compose command; only Lite dispatches roles.
+    const roleCommand = deploymentClass === 'production' && role === 'migrate' ? topology.services.migrate.command : []
+    if (!Array.isArray(roleCommand) || roleCommand.some(argument => typeof argument !== 'string')) throw Error('迁移入口必须是实际 Compose 的命令数组')
     const container = register('container', `${runId}-probe-${role}`)
-    container.id = await must('docker', ['run', '-d', '--name', container.target, '--label', `workmesh.task=${runId}`, '-e', `WORKMESH_SERVICE=${role}`, ...roleKeys.flatMap(key => ['-e', key]), (images.get(role === 'migrate' ? 'api' : role) ?? image).target], { env: roleEnv })
+    container.id = await must('docker', ['run', '-d', '--name', container.target, '--label', `workmesh.task=${runId}`, '-e', `WORKMESH_SERVICE=${role}`, ...roleKeys.flatMap(key => ['-e', key]), (images.get(role === 'migrate' ? 'api' : role) ?? image).target, ...roleCommand], { env: roleEnv })
     await pause(12000)
     const log = await must('docker', ['logs', container.id])
-    if (!log.includes(`role=${role} `) || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载入口`)
+    const loaded = deploymentClass === 'lite' ? log.includes(`role=${role} `)
+      : role === 'migrate' ? /connect ECONNREFUSED/.test(log)
+        : role === 'api' ? /Server listening at http/.test(log) : /worker identity initialization failed/.test(log)
+    if (!loaded || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载实际入口`)
     save()
   }
   if (deploymentClass === 'lite') await must('sh', [resolve(root, 'infra/lite/verify-image-roles.sh'), image.target])

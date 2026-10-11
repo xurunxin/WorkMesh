@@ -1,9 +1,20 @@
 {
-  "cleanup": "active tests",
+  "cleanup": {
+    "code": 0,
+    "stdout": "",
+    "stderr": "",
+    "existsAfter": false
+  },
   "sid": "S-1-5-21-1639209366-2029717219-1954241612-1001",
   "realPath": "C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142",
   "path": "C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142",
   "purpose": "private test APPDATA only; no parent ACL changes",
   "owner": "G9grPMcWhjVMFaEcNoVAG",
-  "acl": "O:S-1-5-21-1639209366-2029717219-1954241612-1001G:S-1-5-21-1639209366-2029717219-1954241612-1001D:PAI(A;OICI;FA;;;S-1-5-21-1639209366-2029717219-1954241612-1001)"
+  "acl": "O:S-1-5-21-1639209366-2029717219-1954241612-1001G:S-1-5-21-1639209366-2029717219-1954241612-1001D:PAI(A;OICI;FA;;;S-1-5-21-1639209366-2029717219-1954241612-1001)",
+  "preCleanup": {
+    "absolutePath": "C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142",
+    "entries": [],
+    "activity": "原生测试命令已结束；零测试进程，专用 APPDATA 为空",
+    "at": "2026-10-11T22:00:09.465474+00:00"
+  }
 }

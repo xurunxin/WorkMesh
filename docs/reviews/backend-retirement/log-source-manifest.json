@@ -1583,6 +1583,33 @@
       "rawBytes": 2294,
       "viewSha256": "49d89a6e6901522612c67175b5a011345c25052669b0844b62f29877fe6afc73",
       "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/ci-policy-deployment.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-9fdd09982c86.zip",
+      "entry": "ci-policy-deployment.log",
+      "rawSha256": "c6b3e5495d8e5618e7fae75ce809b0440eee7a8bf6ed10bb97f748104af39e8a",
+      "rawBytes": 2120,
+      "viewSha256": "a3f44c52b860acba3966967db6e60a660dae6609445de6288583201a3359cfa8",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/ci-validate-deployment.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-9fdd09982c86.zip",
+      "entry": "ci-validate-deployment.log",
+      "rawSha256": "0700e240a2312ec692c9f652651c1aa12611a821ff1e5e60374473c3de9cab35",
+      "rawBytes": 1511,
+      "viewSha256": "d06d9a25401117e850d7bb01fb0a0d0b7c5e9d217e1841cee72152161f8ed527",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/lite-self-test.log",
+      "archive": "docs/reviews/backend-retirement/raw-logs/run-994c174498b9.zip",
+      "entry": "lite-self-test.log",
+      "rawSha256": "d8069fffa4225b20520c458134d6fdc6623982d5f5ffef8d50fae5a046f73d50",
+      "rawBytes": 1067,
+      "viewSha256": "1996c65da41081ac9ab8cb811701e5e2716adc86f9e2cc3c3da9dd238f17bc50",
+      "viewTransform": "decode UTF-8; strip line-end whitespace and terminal blank lines; source bytes unchanged in ZIP"
     }
   ],
   "archives": [
@@ -1613,6 +1640,14 @@
     {
       "path": "docs/reviews/backend-retirement/raw-logs/run-7b7ae9229768.zip",
       "sha256": "6da61d5f59c429f212a11db01f67d23df4dea320c38f95b22cde67ca06feee46"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/raw-logs/run-9fdd09982c86.zip",
+      "sha256": "eec39d030ab9dbfe43913486d84d86b99d03ca9bac133c15caee2d3ead611b7e"
+    },
+    {
+      "path": "docs/reviews/backend-retirement/raw-logs/run-994c174498b9.zip",
+      "sha256": "48525fa5e95f9bf338b9989d8f26e2ae0aea9b5109272e0b1bb5c2ed1068740a"
     }
   ]
 }

@@ -8,7 +8,7 @@
 
 保留 Web Push REST、订阅和投递。通知改用既有鉴权 JSON API，旧摘要逐字段重建、严格匹配并保持原值；原投递 checkpoint、revision、claim/fence 和不确定状态门禁继续适用。领域授权、数据库和内部执行服务没有删除，没有新数据库迁移。
 
-CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Skill 消费者触发 API 集成。发布清单改为 API、worker、MCP，恢复 smoke 增加 MCP 初始化。目录外 Lite 两脚本采用原生 HTTP、Cookie 和 CSRF；仍执行真实部署 worker、TLS、无源码安装和镜像 save/load，不能由注入测试代替。
+CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Skill 消费者触发 API 集成。发布清单改为 API、worker、MCP，恢复 smoke 增加 MCP 初始化。目录外 Lite 两脚本采用原生 HTTP、Cookie 和 CSRF；必需源码检查实际执行真实部署 worker、TLS、无源码 Lite/生产安装、镜像 save/load、Lite 角色脚本及签名 Skill，生产环境还验证 MCP，不能由注入测试代替。
 
 ## 证据与使用
 
@@ -17,9 +17,12 @@ CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Sk
 - `webui-path-receipt.json` 记录逐路径 Git blob 与迁移/退役归属；`webui-history/` 保全原截图与基线，历史规格、审核和首败不改写。
 - `backend-assertion-map.json` 将已审的 52 个测试源绑定到现有 23 个后端测试文件、准确 Git blob 和用例声明；新迁入用例与真实部署入口分别列出。源码索引不代替运行结果。
 - `platform-source.json` 保全本轮工具实际返回全文及完整 Spec 段，Saved plan 截断单列缺口。已审原件沿用批准提交，`source-preservation.json` 逐文件复核。
-- [实际验证记录](test-results.md) 区分首败、复验、未测与正在运行；日志不等于产品全部验收通过。`runs/` 将实际镜像提交、身份、部署、TLS 和定向清理绑定。终端日志原始字节存入 `raw-logs/`，同名 `.log` 为去除行尾空白的阅读视图，二者的 SHA-256 由 `log-source-manifest.json` 分开记录；没有放宽空白门禁。
+- [实际验证记录](test-results.md) 区分首败、复验、未测与正在运行；日志不等于产品全部验收通过。`runs/` 将实际镜像提交、身份、部署、TLS 和定向清理绑定。`ci-artifacts/` 保全 GitHub 原 ZIP、实际 PR 合成检出及源码 tree、三平台前后绑定、镜像和恢复回执；终端日志原始字节存入 `raw-logs/`，同名 `.log` 为去除行尾空白的阅读视图，二者的 SHA-256 由 `log-source-manifest.json` 分开记录；没有放宽空白门禁。
 
 中文部署与后端说明按固定来源 `ffda9353768dece8aabd26ccb3a4978025e9437c` 的 SKILL.md、manual-structure.md 和 typography.md 手检；来源文件哈希见已审 `sources/writing-skill.json`。没有全局安装，未发现 autocorrect。原来源文本保持原字节。
+
+- `integration-resources.json` 记录本轮 PG/Redis/S3 容器、私有卷的归属与清理后不存在证明；`private-appdata-owner.json` 记录专用 APPDATA 收尾，`development-builder-cleanup.json` 核对首败专用 builder 不存在。共享 store、工作树复验依赖、业务数据及共享 Docker 设置保持。
+- `required-status-source.json` 为 GitHub main 严格 `Required CI` 设置的实际读取原件，没有浏览器 context。
 
 ## 当前关口
 

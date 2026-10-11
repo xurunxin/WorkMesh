@@ -1,0 +1,14 @@
+{
+  "builder": "wm-connector-dev-b83833c7859b",
+  "command": [
+    "docker",
+    "buildx",
+    "inspect",
+    "wm-connector-dev-b83833c7859b"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "ERROR: no builder \"wm-connector-dev-b83833c7859b\" found\n",
+  "absent": true,
+  "noMutation": "本轮首败专用 builder 已不存在；未修改默认 builder 或共享缓存"
+}

@@ -48,7 +48,7 @@ inventing a reverse runtime dependency or selecting DB integration. The same
 inventory is validated against Turbo test inputs. Shared TypeScript/Vitest
 configuration participates in global inputs.
 
-源码检查实际构建三个后端开发镜像，并执行无源码 Lite 安装、镜像 save/load、测试 TLS、真实部署 worker 的精确上下文和 API 签名 Skill 下载。部署使用专用 builder、Compose 项目和测试凭据；验收及归属收尾原件进入 `ci-logs/backend-deployment`。移除或条件跳过该步骤、吞掉失败均使 CI 自检拒绝。
+源码检查实际构建三个后端开发镜像，并执行无源码 Lite 与生产安装、镜像 save/load、Lite 角色脚本、测试 TLS、真实部署 worker 的精确上下文和 API 签名 Skill 下载；生产安装还验证 MCP 的真实初始化与身份查询。部署使用专用 builder、Compose 项目和测试凭据；验收及归属收尾原件进入 `ci-logs/backend-deployment`。移除或条件跳过该步骤、吞掉失败均使 CI 自检拒绝。
 Root scripts are also global inputs because tests import
 them during typechecking. API typecheck inputs cover their direct imports of
 worker, MCP, fake-agent and package source from integration fixtures.
@@ -67,6 +67,8 @@ invalid event metadata and unavailable Git history fall back to full acceptance.
 All seven selected check jobs depend only on `changes`, so service setup and
 integration tests can overlap typechecking, builds and unit tests:
 
+- `source-gates` 执行选中的源码、生成合同、开发镜像及实际 Lite/生产部署检查。
+- `connector-platform` 在 Linux、macOS 与 Windows 使用锁定 Node 验证原生秘密存储和前后源码绑定。
 - `db-integration` uses its own PostgreSQL 16 test database.
 - `api-integration` uses its own PostgreSQL 16 test database plus isolated
   RustFS object storage and a signed-request bucket initialization step.
@@ -85,8 +87,7 @@ integration tests can overlap typechecking, builds and unit tests:
 It requires successful classification, `success` for every selected job, and
 `skipped` only for jobs explicitly excluded by the plan. A missing plan, missing
 result, failure, cancellation, or unplanned skip fails the gate, giving branch
-protection one stable aggregate check name when an administrator configures it.
-This repository change does not itself modify branch-protection settings.
+protection one stable aggregate check name. 已只读核对 GitHub main：strict 检查仅要求 `Required CI`，没有遗留浏览器 context；返回原件见 `reviews/backend-retirement/required-status-source.json`。本次没有修改远端保护设置。
 
 Workflow-level path filters are deliberately avoided: GitHub leaves their
 required checks pending when the workflow is skipped. See the official
@@ -100,11 +101,7 @@ check once. Contracts and SDK unit tests run once in the selected unit suites;
 `smoke:agents:ci` retains both construction smoke commands and the conformance
 job retains all protocol drivers. Local `smoke:agents` keeps its self-contained
 SDK test. SDK HTTP fixtures retain the real SDK and retry count with an in-memory 1ms
-backoff; production retry behavior is unchanged. Browser accessibility checks
-perform structural and keyboard assertions on each shared page navigation, at
-both existing viewports. The root E2E command selects the web workspace, avoiding
-synthetic E2E tasks and nine unrelated prerequisite builds. No behavioral
-assertions are deleted.
+backoff; production retry behavior is unchanged. 纯页面、键盘与布局断言退役；仍属后端合同的断言及实际执行结果见后端化验收记录。根命令不再提供浏览器测试入口。
 
 `format:check` is deliberately absent: the repository has
 no accepted formatting baseline and introducing one would mechanically touch
@@ -120,10 +117,7 @@ original evidence.
 
 Raw command logs are uploaded with `always()` and retained for 14 days. Missing
 raw-log paths fail the upload step instead of producing a warning. Jobs with
-service containers also capture container logs on failure. E2E additionally
-uploads `playwright-report` and `test-results` for 14 days, and missing
-Playwright evidence also fails its upload step. Both raw logs and browser
-reports include the shard number in their artifact name to prevent collisions.
+service containers also capture container logs on failure. 浏览器报告及分片产物不再生成；现行后端原件按 run 和 attempt 区分，原始日志与部署/清理回执仍须上传。历史截图和基线保留在 `reviews/backend-retirement/webui-history/`。
 A dedicated failure-only service
 log upload may use `if-no-files-found: ignore`, because a failed setup can leave
 no service container to inspect. Artifact paths are allowlisted and never include
