@@ -1,0 +1,693 @@
+{
+  "runId": 38183774603,
+  "runHead": "21c1c52552e05553be7f87d87f3da78f90254aa6",
+  "actualCheckout": "89ab0c2036edfc0b575068034aaff5bc5867f2bc",
+  "actualTree": "452ad5caa076df49ea5befce375b97b431af1ef8",
+  "parents": [
+    "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+    "21c1c52552e05553be7f87d87f3da78f90254aa6"
+  ],
+  "sourceTreeEqualsProductHead": true,
+  "runConclusion": "success",
+  "jobs": [
+    {
+      "id": 114601818254,
+      "name": "Classify changes and validate CI selection",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959052,
+      "name": "Worker integration",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959074,
+      "name": "Database integration",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959107,
+      "name": "Connector native storage (macos-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959117,
+      "name": "API integration",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959120,
+      "name": "Connector native storage (windows-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959126,
+      "name": "Complete disaster recovery",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959128,
+      "name": "Source gates",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959151,
+      "name": "Agent construction and protocol smoke",
+      "conclusion": "success"
+    },
+    {
+      "id": 114601959170,
+      "name": "Connector native storage (ubuntu-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114604932924,
+      "name": "Required CI",
+      "conclusion": "success"
+    }
+  ],
+  "nativeBindings": [
+    {
+      "artifactId": 11718663060,
+      "platform": "win32",
+      "node": "v22.19.0",
+      "files": 648,
+      "beforeSha256": "287b712fc7c1aa3116d7c33975000fb987238d931adf420ae7fae1a805c5a796",
+      "afterSha256": "9776c0dd7a5bcead24058d89f504d5757d0a597d4f46c8393d1a9e517ac96e1c",
+      "sameSourceBeforeAfter": true
+    },
+    {
+      "artifactId": 11717884491,
+      "platform": "linux",
+      "node": "v22.19.0",
+      "files": 648,
+      "beforeSha256": "887600fd7fb282d80951b1d1162563a99b3ba40428f8f9a4ba2669acbebb3758",
+      "afterSha256": "2b44e8557d7646b8ee6c76640147fc71475013b6794186dc7bef410678be8e0c",
+      "sameSourceBeforeAfter": true
+    },
+    {
+      "artifactId": 11717524963,
+      "platform": "darwin",
+      "node": "v22.19.0",
+      "files": 648,
+      "beforeSha256": "116cb58a0ee16a034e9a53482c1a2094d55247f1ae9bee96f5f160f824317392",
+      "afterSha256": "d921e2fb3a437477f81c038f2787c99480602bdc27deb2c10ca5023958bf70ef",
+      "sameSourceBeforeAfter": true
+    }
+  ],
+  "deployment": [
+    {
+      "artifactId": 11718937953,
+      "entry": "backend-deployment/backend-lite-d67c3a45/receipts.json",
+      "rawSha256": "5e77d270925cb3d4fa79b79878b949dd6b7d536508139924ce1e73dfbeaca473",
+      "runId": "backend-lite-d67c3a45",
+      "deploymentClass": "lite",
+      "environment": "GitHub Actions linux / Docker Linux；非真实低功耗设备",
+      "node": "v22.19.0",
+      "source": "89ab0c2036edfc0b575068034aaff5bc5867f2bc",
+      "skillBlob": {
+        "sha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "imageId": "sha256:6f3771f99659a63f059575515b282ef61da80dbd41f6a82d3dac40b93e15a5de",
+        "assetPath": "/opt/workmesh/api/assets/skills/workmesh-1.1.0.md"
+      },
+      "apiVerification": {
+        "installViaApi": true,
+        "authenticatedRead": true,
+        "connectionReplay": true,
+        "contextAction": "50d05ba1-51a3-44fa-9917-2a782a1f5a70",
+        "contextId": "17e2c8f1-3a61-43be-a2d7-a63885f92587",
+        "exactContextConfirmed": true,
+        "providerTls": true,
+        "skillSha256": "sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "signedBytes": 12114,
+        "downloadSource": "redeemed.skill.download_url",
+        "mcpVerified": false
+      },
+      "apiLog": "backend-deployment/backend-lite-d67c3a45/35.log",
+      "apiLogSha256": "b050d321fdbcc35662b75135ca2ae4e0b4ff3652cd55732ac96c69e171bcbf23",
+      "resources": [
+        {
+          "type": "directory",
+          "target": "/tmp/backend-lite-d67c3a45",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "builder",
+          "target": "backend-lite-d67c3a45",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": [
+            {
+              "kind": "container",
+              "target": "e7a33161925342f4143fcfb5972a7c8768998e0b2d1a20843d8ac15d73f4eb6c",
+              "absent": true,
+              "code": 1
+            },
+            {
+              "kind": "volume",
+              "target": "buildx_buildkit_backend-lite-d67c3a450_state",
+              "absent": true,
+              "code": 1
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-lite:backend-lite-d67c3a45",
+          "id": "sha256:6f3771f99659a63f059575515b282ef61da80dbd41f6a82d3dac40b93e15a5de",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-d67c3a45-probe-migrate",
+          "id": "f63b4d0cc2aefbb577e751f914946f9af30b8c0927dc965b5b5760f350edee1f",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-d67c3a45-probe-api",
+          "id": "712daf139263660faaf967a571c19dcbef5b627a8fcd1338805925697d542a61",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-d67c3a45-probe-worker",
+          "id": "17d621d965fa6f1775ab6957b0afd5f8df431677288445e46aa07f1cb46d4a1a",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "volume",
+          "target": "backend-lite-d67c3a45-ca",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-d67c3a45-ca-loader",
+          "id": "6196668e95910e3a7fc02d9c2c30c22f35aac19f860cf3b4e97f94d540c8ac64",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "compose-project",
+          "target": "backend-lite-d67c3a45",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": [
+            {
+              "kind": "container",
+              "id": "ca1944d54f72",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.722Z"
+            },
+            {
+              "kind": "container",
+              "id": "a4be86700db9",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.743Z"
+            },
+            {
+              "kind": "container",
+              "id": "2f68c48c69ee",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.762Z"
+            },
+            {
+              "kind": "container",
+              "id": "b736bb1e66cf",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.782Z"
+            },
+            {
+              "kind": "container",
+              "id": "85d8a120cdec",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.801Z"
+            },
+            {
+              "kind": "container",
+              "id": "dc23a1dd1901",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.820Z"
+            },
+            {
+              "kind": "container",
+              "id": "464ab7d798ec",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.839Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-d67c3a45_lite-object-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.854Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-d67c3a45_lite-postgres-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.867Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-d67c3a45_lite-redis-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.878Z"
+            },
+            {
+              "kind": "network",
+              "id": "5f239fcd2dc1",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:30:33.891Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifactId": 11718937953,
+      "entry": "backend-deployment/backend-production-c3dba9cb/receipts.json",
+      "rawSha256": "e6117e0d5fb6fc8d619e6acd8e01d7d9489e7371d78fd5edc571c3fbba12a1fb",
+      "runId": "backend-production-c3dba9cb",
+      "deploymentClass": "production",
+      "environment": "GitHub Actions linux / Docker Linux；非真实低功耗设备",
+      "node": "v22.19.0",
+      "source": "89ab0c2036edfc0b575068034aaff5bc5867f2bc",
+      "skillBlob": {
+        "sha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "imageId": "sha256:47c1c33a343f198bab8bc97c83141454a3679eea35e0addaec22f679563952fd",
+        "assetPath": "/app/assets/skills/workmesh-1.1.0.md"
+      },
+      "apiVerification": {
+        "installViaApi": true,
+        "authenticatedRead": true,
+        "connectionReplay": true,
+        "contextAction": "ca7b9e92-b356-49ae-95a0-88e0584a16c8",
+        "contextId": "8690a908-1804-4635-951e-312a9683d0ec",
+        "exactContextConfirmed": true,
+        "providerTls": true,
+        "skillSha256": "sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "signedBytes": 12114,
+        "downloadSource": "redeemed.skill.download_url",
+        "mcpVerified": true
+      },
+      "apiLog": "backend-deployment/backend-production-c3dba9cb/49.log",
+      "apiLogSha256": "3a1fb5cde64c94866a30834b565db3dffee89296f4c9a58148b1df91c9bc2ee6",
+      "resources": [
+        {
+          "type": "directory",
+          "target": "/tmp/backend-production-c3dba9cb",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "builder",
+          "target": "backend-production-c3dba9cb",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": [
+            {
+              "kind": "container",
+              "target": "76999ab0f0cddac2bb956d12af6b38bf99c7c5e17ad068df18f5070b3dc3fbfb",
+              "absent": true,
+              "code": 1
+            },
+            {
+              "kind": "volume",
+              "target": "buildx_buildkit_backend-production-c3dba9cb0_state",
+              "absent": true,
+              "code": 1
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-api:backend-production-c3dba9cb",
+          "id": "sha256:47c1c33a343f198bab8bc97c83141454a3679eea35e0addaec22f679563952fd",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-worker:backend-production-c3dba9cb",
+          "id": "sha256:c19d96912720cacc002c3d518b3d836f964c0a1f65e4c22fd459e6b0705ee1cc",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-mcp:backend-production-c3dba9cb",
+          "id": "sha256:ed7ad80e514f0ddf38bd7d45699c67472847fcd93a8b4636b64d1878cef37be6",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-production-c3dba9cb-probe-migrate",
+          "id": "cdc89f2d06efe4b065764330f999338777d5a9cd03c5e11326d455ea34efd81d",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-production-c3dba9cb-probe-api",
+          "id": "6a80c6ff05899b7cec7cadaf70cdf21d87a705bd9f42e2885301cd16e78badc4",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-production-c3dba9cb-probe-worker",
+          "id": "802010b9a95ec8d3a6b974ed90701e288c17e984a9202b620132f7da1c0387b8",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "volume",
+          "target": "backend-production-c3dba9cb-ca",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "container",
+          "target": "backend-production-c3dba9cb-ca-loader",
+          "id": "3f390d9d81f5dd7b13aee4b7e80491ec347649941cc3364f7d663118436a71a9",
+          "cleanupExit": 0,
+          "postDelete": []
+        },
+        {
+          "type": "compose-project",
+          "target": "backend-production-c3dba9cb",
+          "id": null,
+          "cleanupExit": 0,
+          "postDelete": [
+            {
+              "kind": "container",
+              "id": "65e32b6c26dc",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.187Z"
+            },
+            {
+              "kind": "container",
+              "id": "560c33b3ea6a",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.208Z"
+            },
+            {
+              "kind": "container",
+              "id": "ebb74bce8e96",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.227Z"
+            },
+            {
+              "kind": "container",
+              "id": "f147d53058f2",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.246Z"
+            },
+            {
+              "kind": "container",
+              "id": "8a75593dfe33",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.265Z"
+            },
+            {
+              "kind": "container",
+              "id": "beadf7b026b9",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.283Z"
+            },
+            {
+              "kind": "container",
+              "id": "8ddad06923d9",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.301Z"
+            },
+            {
+              "kind": "container",
+              "id": "c0872dd9135d",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.319Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-production-c3dba9cb_minio-production-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.331Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-production-c3dba9cb_postgres-production-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.342Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-production-c3dba9cb_redis-production-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.354Z"
+            },
+            {
+              "kind": "network",
+              "id": "c0c60ce8ed01",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:35:10.365Z"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "artifactId": 11718908149,
+      "entry": "api-integration.log",
+      "rawSha256": "768b25281651d4be3b587746aa85f0759b8f750c8e5790b30c2a2dd05e1a5ed0",
+      "summaries": [
+        "Test Files  29 passed (29)",
+        "Tests  304 passed | 1 skipped (305)"
+      ],
+      "skippedNotPassed": true
+    },
+    {
+      "artifactId": 11718908149,
+      "entry": "mcp-coverage/conformance.log",
+      "rawSha256": "270a3c68e60f3b7325fcefc675fe740ea18a66382b0e8929ae1855e7fa7ccb94",
+      "summaries": [
+        "Test Files  6 passed (6)",
+        "Tests  96 passed (96)"
+      ],
+      "skippedNotPassed": true
+    },
+    {
+      "artifactId": 11718509147,
+      "entry": "worker-integration.log",
+      "rawSha256": "30e6137351618c907f313ef41ab5a8038d8fd89ff861302134e4ab89ff10ca4d",
+      "summaries": [
+        "Test Files  7 passed | 2 skipped (9)",
+        "Tests  146 passed | 2 skipped (148)"
+      ],
+      "skippedNotPassed": true
+    },
+    {
+      "artifactId": 11719076092,
+      "entry": "db-integration.log",
+      "rawSha256": "6c83c6d76ad485fcaf9c6078a6923c323f93c81c3d0cc71aaa5c2c987bf274c8",
+      "summaries": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)"
+      ],
+      "skippedNotPassed": true
+    }
+  ],
+  "developmentImages": {
+    "artifactId": 11718937953,
+    "entry": "development-images/wm-connector-dev-9c7dd1344e73/builds.json",
+    "rawSha256": "139f348a8c84addb806a3e91a6646ee87c4b96b1995c48aed3fb819370699901",
+    "builds": {
+      "head": "89ab0c2036edfc0b575068034aaff5bc5867f2bc",
+      "indexTree": "452ad5caa076df49ea5befce375b97b431af1ef8",
+      "results": [
+        {
+          "name": "api",
+          "command": [
+            "docker",
+            "buildx",
+            "build",
+            "--builder",
+            "wm-connector-dev-9c7dd1344e73",
+            "--platform",
+            "linux/amd64",
+            "--progress=plain",
+            "--no-cache",
+            "--load",
+            "--label",
+            "com.workmesh.validation.owner=wm-connector-dev-9c7dd1344e73",
+            "--label",
+            "com.workmesh.validation.index-tree=452ad5caa076df49ea5befce375b97b431af1ef8",
+            "--tag",
+            "wm-connector-dev-9c7dd1344e73:api",
+            "--file",
+            "infra/docker/api.Dockerfile",
+            "-"
+          ],
+          "buildExit": 0,
+          "archiveExit": 0,
+          "log": "api.log",
+          "logBytes": 18543,
+          "logSha256": "4c57e9b52c8b6f891912469f37f38b454ab70aff97cdbb50f459ec8b537781e3",
+          "postinstallLines": [
+            "#27 8.428 apps/connector postinstall$ node scripts/prepare-native.mjs",
+            "#27 8.464 apps/connector postinstall: Done"
+          ],
+          "imageId": "sha256:43ce9cdcd23c000d95f57013f0f236509dce3b3b45c252d3732981d0d3f4d4d2",
+          "user": "workmesh",
+          "cmd": [
+            "pnpm",
+            "--filter",
+            "@workmesh/api",
+            "dev"
+          ],
+          "normalPostinstallVerified": true
+        },
+        {
+          "name": "worker",
+          "command": [
+            "docker",
+            "buildx",
+            "build",
+            "--builder",
+            "wm-connector-dev-9c7dd1344e73",
+            "--platform",
+            "linux/amd64",
+            "--progress=plain",
+            "--no-cache",
+            "--load",
+            "--label",
+            "com.workmesh.validation.owner=wm-connector-dev-9c7dd1344e73",
+            "--label",
+            "com.workmesh.validation.index-tree=452ad5caa076df49ea5befce375b97b431af1ef8",
+            "--tag",
+            "wm-connector-dev-9c7dd1344e73:worker",
+            "--file",
+            "infra/docker/worker.Dockerfile",
+            "-"
+          ],
+          "buildExit": 0,
+          "archiveExit": 0,
+          "log": "worker.log",
+          "logBytes": 15807,
+          "logSha256": "d231c049f39334697792a2b3b97126f457e2b1a0d3e78133e224b69d115015a7",
+          "postinstallLines": [
+            "#25 9.666 apps/connector postinstall$ node scripts/prepare-native.mjs",
+            "#25 9.702 apps/connector postinstall: Done"
+          ],
+          "imageId": "sha256:94d962bee2447fdd5a0b75765664fee52ca1e70c5fc6dd10ea1b509625ad2529",
+          "user": "workmesh",
+          "cmd": [
+            "pnpm",
+            "--filter",
+            "@workmesh/worker",
+            "dev"
+          ],
+          "normalPostinstallVerified": true
+        },
+        {
+          "name": "mcp",
+          "command": [
+            "docker",
+            "buildx",
+            "build",
+            "--builder",
+            "wm-connector-dev-9c7dd1344e73",
+            "--platform",
+            "linux/amd64",
+            "--progress=plain",
+            "--no-cache",
+            "--load",
+            "--label",
+            "com.workmesh.validation.owner=wm-connector-dev-9c7dd1344e73",
+            "--label",
+            "com.workmesh.validation.index-tree=452ad5caa076df49ea5befce375b97b431af1ef8",
+            "--tag",
+            "wm-connector-dev-9c7dd1344e73:mcp",
+            "--file",
+            "infra/docker/mcp.Dockerfile",
+            "-"
+          ],
+          "buildExit": 0,
+          "archiveExit": 0,
+          "log": "mcp.log",
+          "logBytes": 15875,
+          "logSha256": "0c3fdd0ce55d2c778269993899f331b1725b2c2782def4d35754f461e5f98730",
+          "postinstallLines": [
+            "#25 10.20 apps/connector postinstall$ node scripts/prepare-native.mjs",
+            "#25 10.24 apps/connector postinstall: Done"
+          ],
+          "imageId": "sha256:fcf91bbd23d4b76fe9e1fa6a1633878b9f77f53777d006bdf80eae2727880cf9",
+          "user": "workmesh",
+          "cmd": [
+            "pnpm",
+            "--filter",
+            "@workmesh/mcp",
+            "start"
+          ],
+          "normalPostinstallVerified": true
+        }
+      ]
+    },
+    "cleanupEntry": "development-images/wm-connector-dev-9c7dd1344e73/cleanup.json",
+    "cleanupSha256": "88f628fb13341e5aa5311bbb314bb889d0213c3f32878dc254a69d00490099e8"
+  },
+  "restoredServiceSmoke": {
+    "artifactId": 11719255828,
+    "entry": "recovery-service-smoke.json",
+    "rawSha256": "d6f78234084b7ffa297343893381bfcb1a850e2d9a8cc0631ce014c3ba596408",
+    "result": {
+      "schemaVersion": 1,
+      "status": "passed",
+      "startedAt": "2026-10-11T23:24:32.562Z",
+      "endedAt": "2026-10-11T23:24:32.756Z",
+      "checks": {
+        "apiReady": 200,
+        "workerReady": 200,
+        "mcpReady": 200,
+        "mcpInitialized": true,
+        "agentHeartbeat": 200,
+        "agentHeartbeatDurable": true
+      }
+    }
+  }
+}

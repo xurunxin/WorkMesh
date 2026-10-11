@@ -58,9 +58,11 @@ must not rebuild or substitute any image digest.
 Authenticate to GHCR on the host, then pull and start the exact revision:
 
 ```powershell
-docker compose --env-file .env.production -f docker-compose.production.yml --profile agent pull
-docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent pull api worker mcp
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240 api worker mcp
 ```
+
+Runner 按既有外部隔离要求单独部署；上述安装命令明确选择 API、worker 和 MCP。
 
 The production stack waits for the final PostgreSQL TCP server, runs the compiled one-shot migrator, creates the configured object-store bucket, and then starts API and worker. MCP waits for API readiness. The migrator is safe to rerun for a new installation or an already-completed supported upgrade. It verifies the explicit manifest, SHA-256 ledger, and accepted pre-v1 endpoint before applying SQL; see [Database migrations](operations/migrations.md).
 
@@ -215,7 +217,7 @@ $env:WORKMESH_MCP_IMAGE    = "ghcr.io/$namespace/workmesh-mcp@sha256:<previous-m
 $env:WORKMESH_BUILD_SHA    = $previousSha
 
 # 3. Recreate and wait for readiness rather than trusting the running state.
-docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240 api worker mcp
 docker compose --env-file .env.production -f docker-compose.production.yml ps
 ```
 

@@ -28,4 +28,4 @@ CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Sk
 
 ## 当前关口
 
-本记录为实施检查点，产品验证仍在执行。方案通过不等于产品通过；完成所有适用验收并提交结果后回 review，由正式成果独审闭合 blocking/high，最终 head 的最新 Required CI 成功并实际合入 main 后才 Done。本次不直接合并，也不实施 B3、后续新领域或外部发布。
+产品代码 `21c1c52552e05553be7f87d87f3da78f90254aa6` 的完整 CI（含 Required CI）、真实 Lite/生产安装、签名 Skill、MCP 与恢复验证已成功，绑定及原件见 `ci-artifacts/verified-product-468.json`。本机失败、跳过及未测范围在实际记录中单列，均不计通过。本轮交付报告与证据后进入成果 review；新增交付提交仍须核其最新 Required CI。方案通过不等于产品通过；由正式成果独审核查实现与验收并闭合 blocking/high，最终 head 的最新 Required CI 成功并实际合入 main 后才 Done。本次不直接合并，也不实施 B3、后续新领域或外部发布。
