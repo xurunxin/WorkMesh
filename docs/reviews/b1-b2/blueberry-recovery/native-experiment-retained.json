@@ -33,5 +33,10 @@
     }
   ],
   "scope": "仅本任务一次性非秘密实验；非用户数据或业务配置",
-  "noRetry": true
+  "noRetry": true,
+  "protectedAncestors": [
+    "I:/tds_workspace/workspaces/01a12a8e-cadc-7c05-a07a-1d6a77c8f64c/.tmp",
+    "I:/tds_workspace/workspaces/01a12a8e-cadc-7c05-a07a-1d6a77c8f64c"
+  ],
+  "cleanupBoundary": "已有真实rmdir EPERM目标及其父目录不重试、不改ACL/属性、不通过递归删父目录或worktree remove绕过；当前worktree同时因未合入/独审保持保护"
 }

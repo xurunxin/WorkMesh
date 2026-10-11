@@ -99,3 +99,13 @@ Windows4通过1失败，新首败发生在夹具准备 `/grant *S-1-1-0:DE` 的 
 [CI447](https://github.com/xurunxin/WorkMesh/actions/runs/38143859973) head `8dc82b0348069d8cb6ed1ec2a019b9f4abb5a102`：Linux6平台＋73单元及前后源码绑定成功，macOS9平台＋73单元及前后绑定成功。Windows完整日志确认高级参数设置成功、不安全祖先已实际移动，随后替代目录创建返回2005，不能冒整体攻击正对照通过。原先WD/AD只授父目录、不继承，新建unsafe仅继承读取权限，不能在其中再建connector；本轮错误聚合在单次CreateDirectory调用，未单独定位哪一层。下一轮仅在一次性安全父设置可继承WD/AD，不增加DELETE/DC；原私有目录/文件禁继承DACL保持。分开创建unsafe/connector并分别保2000/3000加原HRESULT低16位，保持原强断言，使用新UUID测试。没有改原失败目录或产品权限。
 
 ci447-native/保存三OS完整原日志和准确运行来源；ci447-artifacts/选定原字节源码JSON/Windows清理回执与下载ZIP的hash/长度，完整ZIP未保留。新机local-source-binding/实跑准确Node22.19.0：1103文件与Git三方一致，实际追加非秘密源码注释后原脚本exit1拒绝，再恢复原字节后exit0且前后匹配。此为绑定脚本验收，期间没有运行产品套件，不冒产品测试或第二用户证明。local-source-binding-node25/仅保存最初PATH Node25的脚本试跑，不冒仓库指定runtime。两次本任务ci-logs普通JSON已保全后逐文件移除，准确原源码字节恢复。
+
+## CI448：三系统与完整Required CI实测成功
+
+[CI448](https://github.com/xurunxin/WorkMesh/actions/runs/38144556735) head `c29c22efca9929c0dc3390a86dca83439b172337` 的13项job全部成功，包括Required CI、Source gates、API/DB/Worker、两E2E、灾难恢复、Agent smoke及三OS原生。Windows平台5项及73单元成功，真实第二用户读取/祖先替换与原私有DACL/字节保持全部通过；Linux6平台＋73单元、macOS9平台＋73单元成功。ci448-native/保存三OS完整日志，ci448-artifacts/保存7份选定原字节JSON，ci448-source-equivalence.json逐Git路径/blob核实际1103文件、前后原字节与三OS等价。checkout为f311e03a5c6a22208c44db9c2be2046c6f0bc5e8，GitHubparent/tree与准确PR源提交绑定。实际Node均22.19.0；Linux/Windows x64，Mac arm64，不冒其他设备版本。
+
+Windows实际清理回执：账户wmct52e0c97c2732（准确SID在原件）、C:/Users/Public/workmesh-connector-265b405b417e40c4bb4000172e178d58均移除、errors为空。回执只证明声明账户/目录清理，不推算系统profile或物理净释放。此前失败/取消run均保历史，不改为通过。
+
+原件索引复核另发现：ci447的Windows cleanup JSON首次普通add已转LF，新增-text属性后再次普通add因index/stat缓存仍沿用旧blob。第一次7文件index复核明确失败，但生产者仍继续推送c29，属于顺序错误；该head的产品/CI成功不能证明该原件提交字节正确。工作树原件SHA与下载receipt完全相等；只对该路径git add --renormalize，后续7文件index原SHA全一致。新属性仅限定原生source JSON/cleanup原件，cleanup仅允许CR行尾并保持其余空白规则。最终证据提交修正原件字节，不修改原件/receipt或放宽全仓格式门禁。
+
+本轮后续提交只收齐证据、独审入口及这一原件blob修正，不改变通过的产品或平台断言；仍须其自身最终Required CI成功。CI448完整日志/metadata收齐后保存ci448-complete/；正式独审、Chief确认和实际main落地尚未完成，不提前Done或推进#7/#20。
