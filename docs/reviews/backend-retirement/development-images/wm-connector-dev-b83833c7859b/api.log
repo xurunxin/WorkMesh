@@ -1,0 +1,17 @@
+#0 building with "wm-connector-dev-b83833c7859b" instance using docker-container driver
+
+#1 [internal] booting buildkit
+#1 pulling image moby/buildkit:buildx-stable-1
+#1 pulling image moby/buildkit:buildx-stable-1 9.8s done
+#1 creating container buildx_buildkit_wm-connector-dev-b83833c7859b0
+#1 creating container buildx_buildkit_wm-connector-dev-b83833c7859b0 276.6s done
+#1 DONE 286.5s
+
+#2 [internal] load remote build context
+#2 DONE 126.7s
+
+#2 [internal] load remote build context
+#2 DONE 126.7s
+
+#3 copy /context /
+ERROR: failed to build: failed to receive status: rpc error: code = Unavailable desc = closing transport due to: connection error: desc = "error reading from server: EOF", received prior goaway: code: NO_ERROR, debug data: "graceful_stop"

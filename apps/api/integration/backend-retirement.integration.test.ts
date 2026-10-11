@@ -5,13 +5,15 @@ import { beforeAll, afterAll, expect, it } from 'vitest'
 import { createDb, applyMigrations } from '@workmesh/db'
 import { FakeAgent, createFakeAgentServer } from '../../fake-agent/src/index.js'
 import { createAgentWebhookWorker } from '../../worker/src/agent-webhook.js'
+import { createProviderActionWorker } from '../../worker/src/provider-actions.js'
+import { FakeGitProvider } from '@workmesh/git-provider'
 import { buildApp } from '../src/server.js'
 
 const databaseUrl = process.env.DATABASE_URL
 if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))
   throw new Error('Backend retirement requires a dedicated test database')
 const db = createDb(databaseUrl)
-const app = buildApp({ logger: { level: 'error' } })
+let app = buildApp({ logger: { level: 'error' } })
 const previousPrivateWebhooks = process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS
 let apiUrl = '', cookie = '', csrf = '', actorId = ''
 type JsonRecord = Record<string, unknown>
@@ -58,6 +60,82 @@ it('固定 Skill 下载路径返回签名原字节，未声明路径和穿越请
   expect(verify(null, bytes, publicKey, Buffer.from(workmeshSkillManifest.signature.slice(8), 'base64'))).toBe(true)
   for (const path of ['/skills/unlisted.md', '/skills/%2e%2e%2fprivate-key.pem'])
     expect([401, 403, 404]).toContain((await fetch(`${apiUrl}${path}`)).status)
+})
+
+it('liteInstallCookieCsrf：接口会话可管理，缺 Cookie 或 CSRF 拒绝', async () => {
+  const anonymous = await app.inject({ method: 'GET', url: '/api/v1/auth/me' })
+  expect(anonymous.statusCode).toBe(401)
+  const teamId = (await call<{ items: Array<{ id: string }> }>('GET', '/api/v1/teams')).items[0]!.id
+  const rejected = await app.inject({ method: 'POST', url: '/api/v1/projects',
+    headers: { cookie, 'idempotency-key': randomUUID() }, payload: { teamId, name: 'Missing CSRF' } })
+  expect(rejected.statusCode).toBe(403)
+  expect((await call<{ actor: { id: string } }>('GET', '/api/v1/auth/me')).actor.id).toBe(actorId)
+})
+
+it('liteProviderConnectionReplay 与 liteExactProjectContext：幂等拒变体，worker 发布精确范围', async () => {
+  const teamId = (await call<{ items: Array<{ id: string }> }>('GET', '/api/v1/teams')).items[0]!.id
+  const project = await call<{ id: string }>('POST', '/api/v1/projects', { teamId, name: 'Lite context' })
+  const key = randomUUID()
+  const input = { provider: 'fake', externalAccountId: `retirement-${randomUUID()}`, displayName: 'Fake provider', webhookSecret: 'retirement-fixture-not-a-real-secret' }
+  const connection = await call<{ id: string }>('POST', '/api/v1/provider-connections', input, { 'idempotency-key': key })
+  expect((await call<{ id: string }>('POST', '/api/v1/provider-connections', input, { 'idempotency-key': key })).id).toBe(connection.id)
+  const changed = await app.inject({ method: 'POST', url: '/api/v1/provider-connections',
+    headers: { cookie, 'x-csrf-token': csrf, 'idempotency-key': key }, payload: { ...input, displayName: 'Changed' } })
+  expect(changed.statusCode).toBe(409)
+  expect(changed.json<{ error: { code: string } }>().error.code).toBe('IDEMPOTENCY_KEY_REUSED')
+  expect((await db.query('SELECT 1 FROM provider_connections WHERE external_account_id=$1', [input.externalAccountId])).rowCount).toBe(1)
+  const repository = await call<{ id: string }>('POST', '/api/v1/repositories', {
+    connectionId: connection.id, teamId, externalId: 'retirement/fixture', fullName: 'retirement/fixture', defaultBranch: 'main', requiredChecks: [],
+  })
+  const contextInput = { projectId: project.id, baseBranch: 'main', baseSha: 'retirement-base-sha', branchPattern: 'workmesh/{workItemKey}-{slug}', allowedPaths: ['**'], permissions: ['read'] }
+  const actionKey = randomUUID()
+  const action = await call<{ id: string }>('POST', `/api/v1/repositories/${repository.id}/context`, contextInput, { 'idempotency-key': actionKey })
+  expect((await call<{ id: string }>('POST', `/api/v1/repositories/${repository.id}/context`, contextInput, { 'idempotency-key': actionKey })).id).toBe(action.id)
+  const provider = new FakeGitProvider()
+  provider.seedRepository(connection.id, 'retirement/fixture', 'main', contextInput.baseSha)
+  provider.seedRepositoryFiles(connection.id, 'retirement/fixture', contextInput.baseSha, { 'AGENTS.md': '# Exact repository guidance\n' })
+  await createProviderActionWorker({ db, resolveProvider: () => provider, workerId: 'retirement-context' }).tick()
+  const contexts = await call<Array<{ provider_action_id: string; repository_id: string; project_id: string; work_item_id: string | null; session_id: string | null; base_sha: string; permissions: string[]; guidance: Array<{ content: string }> }>>('GET', `/api/v1/repositories/${repository.id}/context`)
+  expect(contexts).toHaveLength(1)
+  expect(contexts[0]).toMatchObject({ provider_action_id: action.id, repository_id: repository.id, project_id: project.id, work_item_id: null, session_id: null, base_sha: contextInput.baseSha, permissions: ['read'] })
+  expect(contexts[0]!.guidance[0]!.content).toBe('# Exact repository guidance\n')
+})
+
+it('API 重启后保留 Human 会话与 durable SSE cursor，断线接续不丢事件', async () => {
+  const teamId = (await call<{ items: Array<{ id: string }> }>('GET', '/api/v1/teams')).items[0]!.id
+  const cursor = (await db.query<{ cursor: string }>('SELECT coalesce(max(cursor),0)::text AS cursor FROM domain_events')).rows[0]!.cursor
+  const first = await call<{ id: string }>('POST', '/api/v1/projects', { teamId, name: 'Before restart' })
+  const receive = async (after: string, expected: string) => {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10_000)
+    try {
+      const response = await fetch(`${apiUrl}/api/v1/events/stream`, { headers: { cookie, 'Last-Event-ID': after }, signal: controller.signal })
+      expect(response.status).toBe(200)
+      const reader = response.body!.getReader(), decoder = new TextDecoder()
+      let buffered = ''
+      try {
+        for (;;) {
+          const chunk = await reader.read()
+          if (chunk.done) throw new Error('SSE ended before durable event')
+          buffered += decoder.decode(chunk.value, { stream: true })
+          let end: number
+          while ((end = buffered.indexOf('\n\n')) >= 0) {
+            const frame = buffered.slice(0, end); buffered = buffered.slice(end + 2)
+            const data = /^data: (.+)$/m.exec(frame), id = /^id: (\d+)$/m.exec(frame)
+            if (data && id && JSON.parse(data[1]!).aggregate_id === expected) return id[1]!
+          }
+        }
+      } finally { await reader.cancel() }
+    } finally { clearTimeout(timeout); controller.abort() }
+  }
+  const firstCursor = await receive(cursor, first.id)
+  await app.close()
+  app = buildApp({ logger: { level: 'error' } })
+  await app.listen({ host: '127.0.0.1', port: 0 })
+  apiUrl = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`
+  expect((await call<{ actor: { id: string } }>('GET', '/api/v1/auth/me')).actor.id).toBe(actorId)
+  const second = await call<{ id: string }>('POST', '/api/v1/projects', { teamId, name: 'After restart' })
+  expect(BigInt(await receive(firstCursor, second.id))).toBeGreaterThan(BigInt(firstCursor))
 })
 
 async function listen(server: ReturnType<typeof createFakeAgentServer>): Promise<number> {

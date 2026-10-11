@@ -26,5 +26,15 @@
       "port": "3356"
     }
   ],
-  "cleanup": "\u6d4b\u8bd5\u4f7f\u7528\u4e2d"
+  "cleanup": "测试使用中",
+  "dedicatedDatabases": [
+    "workmesh_retirement_test",
+    "workmesh_retirement_targeted_test",
+    "workmesh_retirement_recovery_source_test",
+    "workmesh_retirement_recovery_target_test"
+  ],
+  "recoveryBuckets": [
+    "recovery-source-retirement-004cf62e6c",
+    "recovery-target-retirement-004cf62e6c"
+  ]
 }

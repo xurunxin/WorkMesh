@@ -1,0 +1,9 @@
+
+> workmesh@ test:conformance I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> pnpm --filter @workmesh/conformance conformance
+
+
+> @workmesh/conformance@ conformance I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\conformance
+> tsx src/cli.ts
+
+WorkMesh client conformance: 6/6 adapter/fixture runs passed. Evidence: I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\conformance\conformance-results

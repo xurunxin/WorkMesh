@@ -1,0 +1,81 @@
+No projects matched the filters "C:\Users\xurx\.tds\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055" in "I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055"
+
+ RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/api
+
+ ❯ integration/backend-retirement.integration.test.ts (5 tests | 5 skipped) 420958ms
+   ↓ 固定 Skill 下载路径返回签名原字节，未声明路径和穿越请求拒绝
+   ↓ liteInstallCookieCsrf：接口会话可管理，缺 Cookie 或 CSRF 拒绝
+   ↓ liteProviderConnectionReplay 与 liteExactProjectContext：幂等拒变体，worker 发布精确范围
+   ↓ API 重启后保留 Human 会话与 durable SSE cursor，断线接续不丢事件
+   ↓ 审批要求由真实 worker 投递给 fake Agent，并进入完成结果和证据
+ ❯ integration/wecom-notifications.integration.test.ts (19 tests | 19 skipped) 144964ms
+   ↓ C2 channel delivery with existing Redis integration fixture > 旧 request_hash 全字段匹配后发送新 API 链接，保留旧摘要；字段篡改零外发
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 并发 Worker 原子额度上限；崩溃后仅 token 过期，额度仍保留至 D+60
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 可信完成晚于发送截止上界：额度至少保留至完成后 60 秒，token 单独释放
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 授权锁等待跨窗口，过期 permit 不提交 checkpoint、不外发、不消耗失败预算
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 disabled 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 inactive 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 revoked 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 membership 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 changed 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 muted 撤权先提交，真实授权锁后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 真实 Redis TIME 与部分 bucket 丢失：旧许可失效，共同冷却不吞失败预算
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效
+   ↓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/backend-retirement.integration.test.ts [ integration/backend-retirement.integration.test.ts ]
+Error: Hook timed out in 120000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ integration/backend-retirement.integration.test.ts:27:1
+     25|   return response.json<T>()
+     26| }
+     27| beforeAll(async () => {
+       | ^
+     28|   process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS = 'true'
+     29|   await applyMigrations(db)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  integration/backend-retirement.integration.test.ts [ integration/backend-retirement.integration.test.ts ]
+Error: Hook timed out in 300000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ integration/backend-retirement.integration.test.ts:43:1
+     41|   actorId = (await call<{ actor: { id: string } }>('GET', '/api/v1/aut…
+     42| }, 120_000)
+     43| afterAll(async () => {
+       | ^
+     44|   if (previousPrivateWebhooks === undefined) delete process.env.ALLOW_…
+     45|   else process.env.ALLOW_PRIVATE_AGENT_WEBHOOKS = previousPrivateWebho…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  integration/wecom-notifications.integration.test.ts > C2 channel delivery with existing Redis integration fixture
+Error: Hook timed out in 120000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ integration/wecom-notifications.integration.test.ts:18:3
+     16| const features=loadFeatureConfig({WORKMESH_EXPERIMENTAL_NOTIFICATION_C…
+     17| describe('C2 channel delivery with existing Redis integration fixture'…
+     18|   beforeAll(async () => {
+       |   ^
+     19|     await applyMigrations(db)
+     20|     await db.query('TRUNCATE TABLE workspaces CASCADE')
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  24 skipped (24)
+   Start at  04:42:45
+   Duration  616.84s (transform 3.36s, setup 0ms, collect 44.74s, tests 565.92s, environment 1ms, prepare 2.06s)
+
+undefined
+I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/backend-retirement.integration.test.ts integration/wecom-notifications.integration.test.ts

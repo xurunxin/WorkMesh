@@ -35,7 +35,7 @@ baseline = {
 }
 save("registration.json", {"owner": owner, "registeredAt": datetime.now(timezone.utc).isoformat(),
      "head": head, "indexTree": source_tree, "builder": owner, "tags": tags,
-     "context": "git archive准确index tree，二进制管道传入Docker；全部已跟踪文件，排除未跟踪本机环境/秘密，不创建额外工作树或上下文目录",
+     "context": "git archive准确index tree，二进制管道传入Docker；产品源码保留；准确归档Docker COPY所需产品路径及权威根合同；历史docs与未跟踪本机环境/秘密不进入上下文，不创建额外工作树或上下文目录",
      "dockerVersion": command(["docker", "version"]).decode(), "baseline": baseline})
 results = []
 cleanup = []
@@ -51,7 +51,7 @@ try:
                 "--tag", tags[name], "--file", "infra/docker/" + name + ".Dockerfile", "-"]
         log_path = directory / (name + ".log")
         with log_path.open("wb") as log:
-            archive = subprocess.Popen(["git", "archive", "--format=tar", source_tree], stdout=subprocess.PIPE, stderr=log)
+            archive = subprocess.Popen(["git", "archive", "--format=tar", source_tree, ".dockerignore", ".node-version", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "turbo.json", "tsconfig.base.json", "OPENAPI.yaml", "SCHEMA.sql", "AGENT_PROTOCOL.md", "README.md", "AGENTS.md", "CONTEXT.md", "apps", "packages", "scripts", "skills", "infra"], stdout=subprocess.PIPE, stderr=log)
             build = subprocess.Popen(args, stdin=archive.stdout, stdout=log, stderr=subprocess.STDOUT)
             archive.stdout.close()
             build_code = build.wait()

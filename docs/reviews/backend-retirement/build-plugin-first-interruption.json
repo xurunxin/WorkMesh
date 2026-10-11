@@ -1,0 +1,8 @@
+[
+  {
+    "pid": 15864,
+    "action": "cancel-own-build-plugin",
+    "command": "\"C:\\Program Files\\Docker\\cli-plugins\\docker-buildx.exe\" buildx build --progress=plain --label workmesh.task=backend-lite-73936be5 --build-arg WORKMESH_BUILD_SHA=7fbea7ddc3833ce7c661a9b049c721666de36541 -t workmesh-retirement-lite:backend-lite-73936be5 -f infra/docker/lite.Dockerfile -",
+    "parent": 2164
+  }
+]

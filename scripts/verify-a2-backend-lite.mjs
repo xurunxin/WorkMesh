@@ -43,6 +43,7 @@ const disabledFeatures = ['WORKMESH_BETA_PLANNING', 'WORKMESH_BETA_TEMPLATES', '
 for (const feature of disabledFeatures) env[feature] = 'false'
 env.WORKMESH_BETA_COORDINATION_MCP = 'true'
 env.WORKMESH_MODEL_PRESETS_FILE = ''
+receipts.buildContext = { source: sha, paths: ['.dockerignore', '.node-version', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json', 'tsconfig.base.json', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md', 'README.md', 'AGENTS.md', 'CONTEXT.md', 'apps', 'packages', 'scripts', 'skills', 'infra'], reason: '历史证据保留在 Git，不复制进镜像构建上下文' }
 receipts.features = { ...Object.fromEntries(disabledFeatures.map(feature => [feature, false])), WORKMESH_BETA_GITEA: true, WORKMESH_BETA_COORDINATION_MCP: true }
 const command = (name, args, options = {}) => new Promise(resolveResult => {
   const startedAt = new Date().toISOString(); let output = ''
@@ -84,7 +85,7 @@ try {
     if (!supplied) {
       const previous = await command('docker', ['image', 'inspect', image.target])
       if (previous.code === 0 || !/no such (image|object)/i.test(previous.output)) throw Error('专用镜像 tag 不存在状态未确认')
-      const archiveArgs = ['-c', 'core.autocrlf=false', 'archive', '--format=tar', sha]
+      const archiveArgs = ['-c', 'core.autocrlf=false', 'archive', '--format=tar', sha, '.dockerignore', '.node-version', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json', 'tsconfig.base.json', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md', 'README.md', 'AGENTS.md', 'CONTEXT.md', 'apps', 'packages', 'scripts', 'skills', 'infra']
       const archive = spawn('git', archiveArgs, { cwd: root, windowsHide: true })
       let archiveError = ''
       archive.stderr.on('data', value => { archiveError += value })
