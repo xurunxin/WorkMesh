@@ -158,7 +158,8 @@ function worker(dir: string, e: Expectation, store: MemoryStore, stopAt?: string
     stage: (name: string) => new Promise<void>(resolve => stages.set(name, resolve)) }
 }
 describe('真实客户端进程竞争与强制终止', () => {
-  it('两个进程竞争收敛同一请求和配置', async () => {
+  // 独立进程的调度会改变首次创建锁文件与祖先核验的交错；多轮保留同一强断言。
+  it.each(Array.from({ length: 16 }, (_, index) => index + 1))('两个进程竞争收敛同一请求和配置（第 %i 轮）', async () => {
     const f = await fixture(); const dir = await directory(); const store = new MemoryStore()
     const a = worker(dir, f.e, store); const b = worker(dir, f.e, store)
     try {

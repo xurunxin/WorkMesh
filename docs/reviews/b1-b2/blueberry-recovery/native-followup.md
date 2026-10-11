@@ -33,3 +33,11 @@ Windows 的 TEMP/TMP 问题已消失，平台三项通过、两项跨用户夹�
 [微软 PSModulePath 文档](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_psmodulepath) 明确说明 PowerShell7 经中间进程启动5.1会把7的模块路径传给5.1，导致同名内置模块无法加载。两处测试探针在5.1进程中先设 PSModulePath 为该进程 PSHOME/Modules，并按该路径显式加载 Security/Management；仅改变子进程，不改用户环境或产品。保留所有真实第二用户读/替换及攻击正对照断言。本机 windows-module-probe.json 实际验证5.1.26100.9032加载两个系统模块并完成非秘密SecureString探针，退出0；不将其计作第二用户验收。新增夹具改动 typecheck 通过。
 
 retained-environment.json 记录当前准确依赖归属、成功安装日志与未变锁哈希：共享 pnpm CAS 不清，任务隔离 virtual store/copy 依赖和 Node22 runtime 因原生验证/独审尚未完成而保留。本轮 local-02/03/04 收尾汇总见 resource-summary.json。当前工作树没有达到合入后移除条件。
+
+## CI441：第二用户进程的原生长度限制
+
+[CI441](https://github.com/xurunxin/WorkMesh/actions/runs/38139019435) head `7e2db7c17550b82670432eb6a919302497d91c6a` 的 Linux/macOS 原生成功。Windows 模块加载已成功，准确新首败为 `Start-Process ... The parameter is incorrect`，真实第二用户进程尚未启动。[微软 CreateProcessWithLogonW 文档](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw) 给定子进程命令行上限1024字符；native-logon-limit.json 从实际失败外层命令解码 rename 子脚本，证明即使仅以最短 exe 文件名计算也超过上限。原始完整日志、错误及历史退出不改。
+
+两个探针改将**无秘密的测试正文与路径**写到受控公共夹具中的只读脚本，以短 `-File` 命令在准确5.1 exe/第二用户身份下执行；父进程环境保留一次性密码，文件和命令行没有密码或令牌。强制计算命令行小于1024；保持隐藏窗口、真实读拒绝/安全路径替换拒绝/不安全路径攻击成功及准确退出码。夹具结束清理脚本。未改产品 ACL、安装凭据合同或系统策略；ExecutionPolicy Bypass 仅作用受控探针子进程，非用户配置。
+
+为继续调查CI438偶发并发失败，将原双进程竞争断言独立执行16轮，保持单请求、单秘密、两进程正常退出及无秘密输出要求。local-05 对这些源文件 lint/typecheck/build 及73单元成功，平台仍三成功两缺第二用户；原始退出与源码稳定性、资源事件另存，不用模拟第二账户。无秘密探针改动另外 typecheck 成功。新三系统及最终 Required CI 继续验证。

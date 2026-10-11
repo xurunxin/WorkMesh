@@ -17,6 +17,22 @@ $env:PSModulePath=[IO.Path]::Combine($PSHOME,'Modules')
 Import-Module ([IO.Path]::Combine($PSHOME,'Modules','Microsoft.PowerShell.Security','Microsoft.PowerShell.Security.psd1'))
 Import-Module ([IO.Path]::Combine($PSHOME,'Modules','Microsoft.PowerShell.Management','Microsoft.PowerShell.Management.psd1'))
 `
+async function runWindowsProbe(parent: string, filename: string, source: string, expectedExitCode: number): Promise<void> {
+  const path = join(parent, filename)
+  // 文件仅含非秘密探针和路径；凭据只留父进程环境，不写入脚本/命令行。
+  await writeFile(path, source)
+  const script = `${windowsProbePrelude}
+$cred=New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,(ConvertTo-SecureString $env:WM_CONNECTOR_OTHER_PASSWORD -AsPlainText -Force))
+$exe=[IO.Path]::Combine($PSHOME,'powershell.exe')
+$args=@('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',('"'+$env:WM_TEST_PROBE_PATH+'"'))
+if (('"'+$exe+'" '+($args -join ' ')).Length -ge 1024) {throw 'probe command exceeds native logon limit'}
+$probe=Start-Process $exe -Credential $cred -WorkingDirectory $env:PUBLIC -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
+if ($probe.ExitCode -ne ${expectedExitCode}) {throw ('unexpected probe exit: '+$probe.ExitCode)}
+`
+  const env: NodeJS.ProcessEnv = { ...process.env, WM_TEST_PROBE_PATH: path }
+  for (const key of Object.keys(env)) if (key.toLowerCase() === 'psmodulepath') delete env[key]
+  await execute('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], { env, windowsHide: true })
+}
 describe('实际系统后端与权限（不可跳过）', () => {
   it('系统秘密存储写入、跨进程读回和删除', async () => {
     const store = new SystemSecretStore(); const ref = randomUUID()
@@ -60,19 +76,10 @@ describe('实际系统后端与权限（不可跳过）', () => {
         // CI 提供一次性第二用户；本机未提供则失败并明确留验收缺口。
         expect(Boolean(process.env.WM_CONNECTOR_OTHER_USER && process.env.WM_CONNECTOR_OTHER_PASSWORD)).toBe(true)
         const script = `
-${windowsProbePrelude}
-$secure=ConvertTo-SecureString $env:WM_CONNECTOR_OTHER_PASSWORD -AsPlainText -Force
-$cred=New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,$secure)
-$p=$env:WM_TEST_PATH
-$path64=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($p))
-$control64=[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($env:WM_TEST_CONTROL))
-$cmd="try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$control64'))) | Out-Null } catch { exit 24 }; try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$path64'))) | Out-Null; exit 0 } catch { exit 23 }"
-$args=@('-NoProfile','-NonInteractive','-EncodedCommand',[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd)))
-$process=Start-Process powershell.exe -Credential $cred -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
-if ($process.ExitCode -ne 23) { exit 1 }
+try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(control, 'utf8').toString('base64')}'))) | Out-Null } catch { exit 24 }
+try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(join(dir, 'pending.json'), 'utf8').toString('base64')}'))) | Out-Null; exit 0 } catch { exit 23 }
 `
-        const env: NodeJS.ProcessEnv = { ...process.env, WM_TEST_PATH: join(dir, 'pending.json'), WM_TEST_CONTROL: control }; delete env.PSModulePath
-        await execute('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], { env, windowsHide: true })
+        await runWindowsProbe(parent, 'read-probe.ps1', script, 23)
       } else {
         // 仅临时改变父目录遍历权限，以使拒绝来自连接器的目录/文件权限。
         await execute('chmod', ['0755', parent])
@@ -98,23 +105,15 @@ if ($process.ExitCode -ne 23) { exit 1 }
         await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DC,AD)'], { windowsHide: true })
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
         const script = `
-${windowsProbePrelude}
-$cred=New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,(ConvertTo-SecureString $env:WM_CONNECTOR_OTHER_PASSWORD -AsPlainText -Force))
-$cmd=@'
 $p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(parent, 'utf8').toString('base64')}'))
 try { [IO.File]::ReadAllText([IO.Path]::Combine($p,'control.txt'))|Out-Null } catch {exit 24}
 foreach($target in @($p,[IO.Path]::Combine($p,'connector'))) { try { [IO.Directory]::Move($target,$target+'-moved'); exit 25 } catch {} }
 $v=[IO.Path]::Combine($p,'unsafe','connector')
 try { [IO.Directory]::Move($v,$v+'-moved'); [IO.Directory]::CreateDirectory($v)|Out-Null; [IO.Directory]::Delete($v); [IO.Directory]::Move($v+'-moved',$v) } catch {exit 26}
 exit 0
-'@
-$args=@('-NoProfile','-NonInteractive','-EncodedCommand',[Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($cmd)))
-$probe=Start-Process powershell.exe -Credential $cred -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
-if ($probe.ExitCode -ne 0) {exit $probe.ExitCode}
 `
         await writeFile(join(parent, 'control.txt'), '非秘密可读对照')
-        const env: NodeJS.ProcessEnv = { ...process.env, WM_TEST_PARENT: parent }; delete env.PSModulePath
-        await execute('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], { env, windowsHide: true })
+        await runWindowsProbe(parent, 'rename-probe.ps1', script, 0)
       } else {
         await execute('chmod', ['0755', parent]); await execute('chmod', ['0777', unsafe])
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
