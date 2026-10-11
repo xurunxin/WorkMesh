@@ -1,0 +1,9 @@
+{
+  "command": "powershell.exe -NoProfile -NonInteractive -EncodedCommand <derived exact windowsProbePrelude + non-secret module probe>",
+  "sourceSha256": "285e9596bbcdb4ab95a546b76583fdd4d279f08a0a6e6c3a3989728c9e571b00",
+  "preambleSha256": "38145699b43cf906585f97dda8c7e2dafec38f9b061287ff3a8bd97787f5c96f",
+  "exitCode": 0,
+  "stdout": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\Modules\\Microsoft.PowerShell.Security\\Microsoft.PowerShell.Security.psd1\r\nC:\\Windows\\System32\\WindowsPowerShell\\v1.0\\Modules\\Microsoft.PowerShell.Management\\Microsoft.PowerShell.Management.psd1\r\n5.1.26100.9032\r\n",
+  "stderr": "",
+  "note": "仅核本机5.1系统模块解析；没有账户登录或第二用户权限验收"
+}

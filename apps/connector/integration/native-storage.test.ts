@@ -10,6 +10,13 @@ import { sha256 } from '../src/config.js'
 import { temporaryDirectory, cleanupDirectory } from '../test-support/resources.js'
 
 const execute = promisify(execFile)
+// CI 从 PowerShell 7 经 Node 启动 5.1；只让探针解析该 5.1 安装自身的内置模块。
+const windowsProbePrelude = `
+$ErrorActionPreference='Stop'
+$env:PSModulePath=[IO.Path]::Combine($PSHOME,'Modules')
+Import-Module ([IO.Path]::Combine($PSHOME,'Modules','Microsoft.PowerShell.Security','Microsoft.PowerShell.Security.psd1'))
+Import-Module ([IO.Path]::Combine($PSHOME,'Modules','Microsoft.PowerShell.Management','Microsoft.PowerShell.Management.psd1'))
+`
 describe('实际系统后端与权限（不可跳过）', () => {
   it('系统秘密存储写入、跨进程读回和删除', async () => {
     const store = new SystemSecretStore(); const ref = randomUUID()
@@ -53,7 +60,7 @@ describe('实际系统后端与权限（不可跳过）', () => {
         // CI 提供一次性第二用户；本机未提供则失败并明确留验收缺口。
         expect(Boolean(process.env.WM_CONNECTOR_OTHER_USER && process.env.WM_CONNECTOR_OTHER_PASSWORD)).toBe(true)
         const script = `
-$ErrorActionPreference='Stop'
+${windowsProbePrelude}
 $secure=ConvertTo-SecureString $env:WM_CONNECTOR_OTHER_PASSWORD -AsPlainText -Force
 $cred=New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,$secure)
 $p=$env:WM_TEST_PATH
@@ -91,7 +98,7 @@ if ($process.ExitCode -ne 23) { exit 1 }
         await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DC,AD)'], { windowsHide: true })
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
         const script = `
-$ErrorActionPreference='Stop'
+${windowsProbePrelude}
 $cred=New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,(ConvertTo-SecureString $env:WM_CONNECTOR_OTHER_PASSWORD -AsPlainText -Force))
 $cmd=@'
 $p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(parent, 'utf8').toString('base64')}'))

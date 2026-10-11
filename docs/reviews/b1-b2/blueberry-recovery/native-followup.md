@@ -25,3 +25,11 @@ macOS 这轮在单元检查的双进程竞争用例失败：57 项通过，1 项
 Windows 的 TEMP/TMP 问题已消失，平台三项通过、两项跨用户夹具在收尾 `rmdir` 报 EPERM；finally 的错误掩盖了业务探针可能更早的错误，所以不冒两项探针本身已成功。公共夹具根由产品以当前用户非继承 FullControl 创建，再单独给 Everyone 继承 RX；普通 mkdtemp 子目录只有继承 RX，缺少当前用户的创建/删除权限。仅在一次性夹具根增加当前 SID 的继承 FullControl；Everyone 保持 RX，真实连接器子目录/文件仍由产品创建私有保护 ACL。已有失败目标不重试、不改其权限；下一 CI 使用新 UUID 夹具。ci439-native-first/windows-cleanup.json 实际证明本次最终准确根与临时用户已移除，来源 artifact id/hash 另存。
 
 本机 local-04 再次 lint/typecheck/build 及58单元通过，平台三过两缺第二用户；1100文件在运行前后与提交0bf50be三方绑定零不一致，39目录及空根收尾。新增 macOS 专属检查的 typecheck 已通过，实际运行由下一轮 macOS runner 证明。本机进程未提权，不冒真实第二用户补验。
+
+## CI440：实际模块首败
+
+[CI440](https://github.com/xurunxin/WorkMesh/actions/runs/38138610138) head `4a3d98bbc40bdbeb730c2d83888cf9b4587d15ff`：Linux、macOS 原生成功；macOS 增加32路目录准备后7平台＋58单元成功，仍不能倒填CI438首败原因。Windows三项成功、两项跨用户失败，夹具临时目录已正常移除，实际新错误为 `ConvertTo-SecureString ... Microsoft.PowerShell.Security ... module could not be loaded`，账户探针未执行。完整原字节 job 日志见 ci440-windows/、ci440-macos/ 的 receipt 与归档索引。
+
+[微软 PSModulePath 文档](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_psmodulepath) 明确说明 PowerShell7 经中间进程启动5.1会把7的模块路径传给5.1，导致同名内置模块无法加载。两处测试探针在5.1进程中先设 PSModulePath 为该进程 PSHOME/Modules，并按该路径显式加载 Security/Management；仅改变子进程，不改用户环境或产品。保留所有真实第二用户读/替换及攻击正对照断言。本机 windows-module-probe.json 实际验证5.1.26100.9032加载两个系统模块并完成非秘密SecureString探针，退出0；不将其计作第二用户验收。新增夹具改动 typecheck 通过。
+
+retained-environment.json 记录当前准确依赖归属、成功安装日志与未变锁哈希：共享 pnpm CAS 不清，任务隔离 virtual store/copy 依赖和 Node22 runtime 因原生验证/独审尚未完成而保留。本轮 local-02/03/04 收尾汇总见 resource-summary.json。当前工作树没有达到合入后移除条件。
