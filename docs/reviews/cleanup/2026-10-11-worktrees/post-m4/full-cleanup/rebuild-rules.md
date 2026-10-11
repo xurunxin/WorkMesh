@@ -34,12 +34,12 @@ python -B docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/rebuild
 
 ## 大型证据的稀疏检出边界
 
-入口另有 `thin` 与准确 `hydrate --path docs/...`。默认薄检出计划保留源码/协议/ADR与清理入口，省去历史 reviews 与 M0–M5 大型证据目录；做相关业务或归档验证前必须 hydrate 所需准确目录，CI继续完整检出。该入口要求平台仓库**已经**启用每工作树配置 `extensions.worktreeConfig=true`。本机当前未启用，入口会在改动前停止；没有擅改主仓库/平台 cache/config，所以本轮没有宣称平台自动建树已经避免3GB证据副本。
+入口另有 `thin` 与准确 `hydrate --path docs/...`（已提交目录，单文件选其父目录）。默认使用 Git cone 模式，保留全部源码/协议/ADR、普通计划与清理入口，省去历史 reviews 与 M0–M5 大型证据目录；做相关业务或归档验证前必须 hydrate 所需准确目录，CI继续完整检出。已用 Git 本身的只读 `check-rules` 验证2417个保留文件、207,453,592 B Git对象长度，源码/ADR及盘点/重建入口都在，历史R1/M0–M5证据不在；见 `thin-plan-verification.json`。这是计划验证，不是实际检出或物理节省。该入口要求平台仓库**已经**启用每工作树配置 `extensions.worktreeConfig=true`。本机当前未启用，入口会在改动前停止；没有擅改主仓库/平台 cache/config，所以本轮没有宣称平台自动建树已经避免3GB证据副本。[Git官方每工作树配置与cone机制](https://git-scm.com/docs/git-sparse-checkout)。
 
 这项限制如需在未来解除，应由平台支持准确的每工作树配置/选择性检出入口；本轮没有相关平台权限或自动接线，不以手动文档冒已生效配置。现行可直接使用的是严格管理器/store定位、前景离线安装、独立可变状态与结束登记。
 
 ## 结束
 
-执行 `rebuild-environment.py finish-plan` 生成本 workspace 与**准确 owner/锁 hash** task virtual store 两个精确候选。先逐路径保全独有代码、staged/index和必要脱敏原件，提交推送并核远端 immutable 来源；核本人退出/端口关闭、容器/卷和其他消费者、真实拒绝边界后，分别走正式 Git remove 和已声明的非递归链接本体/普通空目录流程。专属 virtual store 的原生回收也需独立绝对路径、owner/链接/消费者预检；不因它位于公共父目录便清父目录或 CAS。
+执行 `rebuild-environment.py finish-plan` 登记本 workspace，并读取 install 的 owner 账本，按**安装时的准确锁 hash**登记其 task virtual store；锁后续改变不会错认另一个目录。没有账本时仅列 workspace 和明确缺口，不把推算目录当可删候选。先逐路径保全独有代码、staged/index和必要脱敏原件，提交推送并核远端 immutable 来源；核本人退出/端口关闭、容器/卷和其他消费者、真实拒绝边界后，分别走正式 Git remove 和已声明的非递归链接本体/普通空目录流程。专属 virtual store 的原生回收也需独立绝对路径、owner/链接/消费者预检；不因它位于公共父目录便清父目录或 CAS。
 
 异常占用须按逻辑组成、文件身份去重长度、卷可用变化分列。未合或待审的业务仍从远端原分支及必要保全恢复；清理不表示接受/取消业务。每次真正合入后登记该旧会话 head，及时前景收尾；本轮自身始终保持当前构建保护，待本轮合入后再作为独立候选，不能清自己或销毁依据。

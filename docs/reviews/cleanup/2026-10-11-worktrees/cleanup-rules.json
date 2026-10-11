@@ -17,5 +17,6 @@
   "sharedEnvironmentRule": "核已安装 pnpm9.15.4、锁 hash 与真实 store；任务专属 virtual store/node_modules/cache/秘密，公共 store/工具/镜像复用；离线 frozen install，copy 身份隔离已验证。clone-or-copy 本机产生 hardlink，不能冒写隔离或物理节省；thin 未具备每工作树配置则停，不改平台 cache/config",
   "onRejectionOrFailure": "停止原目标；保存原理由；不 Force、不改属性/ACL、不拆批、不换工具/rename/move/父删绕过",
   "onExistingReceipt": "成功且目标不存在只读核对；停止/拒绝不自动重试；缺失历史回执不补造",
+  "onPreflightPause": "删除尚未派发、仅活动安全门暂停时，保原回执；实际消费者已退出后可另存并先推送新的完整预检，再进行首次删除。不得用于任何原生删除失败/系统拒绝，不覆盖旧原件或忽略真实消费者。",
   "physicalNetReleasedBytes": "无法归因时 null；卷级可用空间变化和逻辑长度分别报告"
 }

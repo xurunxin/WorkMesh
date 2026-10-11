@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -28,6 +29,8 @@ def cached_manager():
 def plan(root):
     root=root.absolute()
     if root!=Path.cwd().absolute() or root.parent!=WORKSPACES:raise RuntimeError('只允许本次会话自己的 workspace')
+    for parent in (root,*root.parents):
+        if getattr(os.lstat(parent),'st_file_attributes',0)&1024:raise RuntimeError('workspace 祖先是 reparse point，停止')
     if root.is_symlink() or not (root/'.git').is_file():raise RuntimeError('需要平台 linked worktree；不得对主仓库/独立 clone 应用')
     if run(['git','remote','get-url','origin'],root)!=REPOSITORY:raise RuntimeError('不是 WorkMesh')
     branch=run(['git','branch','--show-current'],root)
@@ -48,6 +51,18 @@ def plan(root):
         shared=['既有 pnpm CAS/download store（不 prune）','既有公共 Node/pnpm/OpenCode 安装','已有 Docker 镜像'],
         isolated=['任务专属 virtual store、node_modules 入口','构建缓存/.next/dist/.turbo','测试容器/卷/端口、私有配置/DB/秘密'],
         limitation='本机 clone-or-copy 实测产生 CAS hardlink，不能保证任意写隔离；copy 须再核身份。共享 store 减少下载，任务安装字节仍可能复制；离线缺包即停止，不默认联网或执行安装脚本。')
+
+def thin_directories(root):
+    def directories(tree):
+        return run(['git','ls-tree','-d','--name-only',tree],root).splitlines()
+    # cone 保根文件/源码和必要文档，避免 ignore 模式重纳父目录的歧义。
+    selected=[d for d in directories('HEAD') if d!='docs']
+    selected += ['docs/'+d for d in directories('HEAD:docs') if d not in ('reviews','plan')]
+    excluded={'agent-mcp-m'+str(i) for i in range(6)}
+    selected += ['docs/plan/'+d for d in directories('HEAD:docs/plan') if d not in excluded]
+    selected.append('docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup')
+    return sorted(selected)
+
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -72,22 +87,37 @@ def main():
         setting=subprocess.run(['git','config','--get','extensions.worktreeConfig'],cwd=root,capture_output=True,text=True)
         if setting.stdout.strip()!='true':raise RuntimeError('平台仓库未启用每工作树配置；不修改共享 cache/config，停止 thin；仍可使用隔离的同卷依赖入口')
         # 默认仍有源码、协议、ADR、计划正文及清理入口；仅省大体积历史验收目录。
-        patterns=['/*','!/docs/reviews/','!/docs/plan/agent-mcp-m0/','!/docs/plan/agent-mcp-m1/','!/docs/plan/agent-mcp-m2/',
-            '!/docs/plan/agent-mcp-m3/','!/docs/plan/agent-mcp-m4/','!/docs/plan/agent-mcp-m5/',
-            '/docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/']
-        p=subprocess.run(['git','sparse-checkout','set','--no-cone','--stdin'],cwd=root,input='\n'.join(patterns)+'\n',text=True,capture_output=True)
+        patterns=thin_directories(root)
+        p=subprocess.run(['git','sparse-checkout','set','--cone','--stdin'],cwd=root,input='\n'.join(patterns)+'\n',text=True,capture_output=True)
         if p.returncode:raise RuntimeError(p.stderr)
         data.update(applied=True,patterns=patterns,requirement='涉及 M0–M5 或证据归档校验时先 hydrate 所需准确目录；CI 保持完整检出')
     elif args.mode=='hydrate':
+        if run(['git','config','--get','extensions.worktreeConfig'],root)!='true':raise RuntimeError('未启用每工作树配置，不修改共享 cache/config')
+        if run(['git','config','--worktree','--get','core.sparseCheckout'],root)!='true':raise RuntimeError('当前会话尚未启用薄检出，不对完整树应用 hydrate')
         if not args.path:raise RuntimeError('必须给出本任务实际需要的 --path')
         for path in args.path:
             if Path(path).is_absolute() or '..' in Path(path).parts or not path.startswith('docs/'):raise RuntimeError('仅允许仓库内 docs 路径')
-        data['output']=run(['git','sparse-checkout','add','--no-cone',*['/'+p.rstrip('/')+'/' for p in args.path]],root)
+            entry=run(['git','ls-tree','HEAD','--',path.rstrip('/')],root)
+            if not entry or entry.split()[1]!='tree':raise RuntimeError('hydrate 需要准确已提交的 docs 目录；单文件选择其父目录')
+        data['output']=run(['git','sparse-checkout','add','--cone',*[p.rstrip('/') for p in args.path]],root)
         data['applied']=True
     elif args.mode=='finish-plan':
-        data.update(applied=False,cleanupCandidates=[str(root),data['privateVirtualStore']],
+        ledger=root/'.tmp/workmesh-environment-owner.json'
+        candidates=[str(root)]
+        if ledger.exists():
+            if getattr(os.lstat(ledger),'st_file_attributes',0)&1024:raise RuntimeError('owner 账本是链接，停止')
+            owner=json.loads(ledger.read_text(encoding='utf-8'))
+            old_lock=owner['lockSha256']
+            if not re.fullmatch('[0-9a-f]{64}',old_lock) or owner['workspace']!=str(root) or owner['branch']!=data['branch']:raise RuntimeError('owner 身份不符')
+            owned=Path(owner['privateVirtualStore'])
+            expected=Path(data['privateVirtualStore']).parent/(root.name+'-'+old_lock[:12])
+            if owned!=expected or owner['store']!=data['store'] or owner['pnpmVersion']!=VERSION:raise RuntimeError('owner 专属目录/store/版本不符')
+            candidates.append(str(owned))
+            data['ownerLedger']=str(ledger)
+        else:data['ownerGap']='没有 install owner 账本，不把推算 virtual store 当可删候选；受控测试环境另按实际试验回执定位'
+        data.update(applied=False,cleanupCandidates=candidates,
             steps=['逐路径保全独有成果并推送远端，核准确 Git/归档哈希','停止本人进程并核他人挂载/引用、审批拒绝边界',
-                '先登记本 workspace 和 task virtual store 两个精确候选；正式 Git remove 与原生链接本体流程需各自预检',
+                '登记本 workspace；仅 owner 账本准确匹配时另登记 task virtual store；两者各自预检',
                 '结束后只回收本人 task virtual store；共享 CAS/镜像/公共工具保持，不后台自动删'])
     else:data['applied']=False
     print(json.dumps(data,ensure_ascii=False,indent=2))

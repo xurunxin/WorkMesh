@@ -1,0 +1,3252 @@
+{
+  "recordedAt": "2026-10-11T08:21:23.830567+00:00",
+  "inputs": [
+    {
+      "path": "docs\\reviews\\r1\\adr-states.json",
+      "bytes": 8941,
+      "sha256": "699f12b590feb82b43d9586c3e99b9aeef21f66feaa68c86bd82a855c919a75b"
+    },
+    {
+      "path": "docs\\reviews\\r1\\archive-checks.mjs",
+      "bytes": 3583,
+      "sha256": "a0f521dc22065654a825c759383744acf9a37100b94531863c667c3ba6e82150"
+    },
+    {
+      "path": "docs\\reviews\\r1\\checks.md",
+      "bytes": 5483,
+      "sha256": "b574c6ba5b55f8359becb1abaafa93f3e843ccc4892b34b0d75f7aea7d65105b"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci-selection.json",
+      "bytes": 8386,
+      "sha256": "69a136186cad599a269c3a2176e19269318a1724cd86c7609cc6bfd15d99524d"
+    },
+    {
+      "path": "docs\\reviews\\r1\\completion.md",
+      "bytes": 2027,
+      "sha256": "83bdccb3eb04ba68f118d71937154ac7acb3e8e538ac10cb36e18d4797600809"
+    },
+    {
+      "path": "docs\\reviews\\r1\\decisions.md",
+      "bytes": 4632,
+      "sha256": "e9dc781f557b29660aa8285e767f0e906f74bbf5fd208a3a065e5e55bf857a31"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-check-results.json",
+      "bytes": 4965,
+      "sha256": "06b6c88796ba9421ff86f9efdcb2997410f4a1ec22b62d1f293ee584dbbc9221"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-checks.md",
+      "bytes": 5865,
+      "sha256": "593a55a9d86324d8e15cd1d5cdc496a3c996f4b071e449b56d6641481f496308"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-environment.json",
+      "bytes": 928,
+      "sha256": "d3768fdd6ed005f31caf056192313cbb3d4b9334d939f65c0dbfc15d8130273f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-inputs.json",
+      "bytes": 328288,
+      "sha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-main-inputs.json",
+      "bytes": 1150066,
+      "sha256": "161f5e6ee5ffb8d18164517d025085ab432c41fa47fb3d7399a8f666c5e7b71d"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-manifest.json",
+      "bytes": 72107,
+      "sha256": "6f9019260c7d839ee5ed3618392bc3917560f32b21288550b782fe735029f61e"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-review.md",
+      "bytes": 2335,
+      "sha256": "e95e73848b14d49b0f6157c8f4c534e9412f027eafa9dcb7ca4ae4dc01fb213f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-spec-deltas.json",
+      "bytes": 25464,
+      "sha256": "4ecc7ff2841ffdd70ad27af19744f95fe4873c0953a41520106c889536f45691"
+    },
+    {
+      "path": "docs\\reviews\\r1\\findings.json",
+      "bytes": 25591,
+      "sha256": "1746fd12e532ee4a154e29cd31f40e5bf2600232febd29f585823b03f3390b48"
+    },
+    {
+      "path": "docs\\reviews\\r1\\handoff-manifest.json",
+      "bytes": 3722,
+      "sha256": "5a06f16744f96560222ba0235f3f23ab1afcf4c60a44f52bce142136f50982e6"
+    },
+    {
+      "path": "docs\\reviews\\r1\\historical-plan-excerpts.json",
+      "bytes": 21582,
+      "sha256": "448372029a7d815507b0cda5a1492b522583be5104a0aea35cdd2baae439cd8f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\input-deltas.json",
+      "bytes": 15157,
+      "sha256": "3d54f1bb4f84501812cacf47cf4931d8c09ce05d806e84061fa7969b9d2cff4e"
+    },
+    {
+      "path": "docs\\reviews\\r1\\legacy-requirements.json",
+      "bytes": 55208,
+      "sha256": "e549ae50c3c27b076de8ad1c5fd22239bcbd9f1aabb1c7cb53db3d9ad5914ff5"
+    },
+    {
+      "path": "docs\\reviews\\r1\\lock-contract.md",
+      "bytes": 3711,
+      "sha256": "9b181d1f9f2716427a1bf47e9d119af28bea40b102472ec1b7087e6430e6f5fd"
+    },
+    {
+      "path": "docs\\reviews\\r1\\main-inputs.json",
+      "bytes": 222660,
+      "sha256": "74455e9b09f6bd8958e28852f89533f3721afed90db51cb90736dbdc4eb1a1e9"
+    },
+    {
+      "path": "docs\\reviews\\r1\\plan-review-response.md",
+      "bytes": 11766,
+      "sha256": "6f61de15ec5348e94523182684a84f30b3a1b8e6df3fa2f46a898ad46ab55808"
+    },
+    {
+      "path": "docs\\reviews\\r1\\plan.md",
+      "bytes": 9369,
+      "sha256": "a3f636f1d30383519e984f7cce4f29d1d837f70c9f3694d1ced8ff8e061dfaed"
+    },
+    {
+      "path": "docs\\reviews\\r1\\pre-review-deltas.json",
+      "bytes": 15605,
+      "sha256": "d3f94aa64de64b42988770c17ee76f73ebc541892ceec8d801027e6612852ba4"
+    },
+    {
+      "path": "docs\\reviews\\r1\\pre-review-inputs.json",
+      "bytes": 328239,
+      "sha256": "fd9007e8365e7e9b6944a3b844a16140a1bf81da67bfed2726dfd625d3063fb5"
+    },
+    {
+      "path": "docs\\reviews\\r1\\producer-review-response.md",
+      "bytes": 3845,
+      "sha256": "0bda292beeb053ee51d1fa45f40be78d892045890bc9b76aedfa905d230f629d"
+    },
+    {
+      "path": "docs\\reviews\\r1\\r1-spec-source.json",
+      "bytes": 1573,
+      "sha256": "794f165d1b581918c60f59c717fa43a8490c491696247d4c90700f468c661cbf"
+    },
+    {
+      "path": "docs\\reviews\\r1\\r1-spec-source.md",
+      "bytes": 15420,
+      "sha256": "b6f0d424fc89565ba76d41b6c05acad0797925acac06548c5d76c035c416dccb"
+    },
+    {
+      "path": "docs\\reviews\\r1\\review-feedback-checks.json",
+      "bytes": 16905,
+      "sha256": "590558e20c5f3f2a3c6a1124cbe72dbccd61f8bc51540760e53949674057ebb4"
+    },
+    {
+      "path": "docs\\reviews\\r1\\review-feedback-response.md",
+      "bytes": 3694,
+      "sha256": "1fa9f0c1811f10e935306a072bcc7c761dae8b3f2e6543c5269ad3a7cc54250d"
+    },
+    {
+      "path": "docs\\reviews\\r1\\review-feedback-source.json",
+      "bytes": 30403,
+      "sha256": "31119bf209541aace8bde3c03727298a16e338869465e52e696801369743a396"
+    },
+    {
+      "path": "docs\\reviews\\r1\\source-gaps.md",
+      "bytes": 1487,
+      "sha256": "87bc0360e06d112736094d73c447cc0233385003ed3f28f03a1ae08685afd2bd"
+    },
+    {
+      "path": "docs\\reviews\\r1\\static-check-results.json",
+      "bytes": 3834,
+      "sha256": "efaee7b12a849a20e7903869beb2907746f11eed196d84db0bca5fd98e884891"
+    },
+    {
+      "path": "docs\\reviews\\r1\\task-contracts.json",
+      "bytes": 22805,
+      "sha256": "b71ac2162215f9fc996376b3181b955a0383ebf1ef9dbc5a6bd4116eb5fafa06"
+    },
+    {
+      "path": "docs\\reviews\\r1\\test-coverage.json",
+      "bytes": 477111,
+      "sha256": "27387687622a012314b879320f2645481aa23b6e036d21ed64c99ef0573326c5"
+    },
+    {
+      "path": "docs\\reviews\\r1\\test-coverage.md",
+      "bytes": 58085,
+      "sha256": "f5a3ded3c42e64a502c159268333689a627661222eb28b05329859770afff4e4"
+    },
+    {
+      "path": "docs\\reviews\\r1\\todo-inputs.json",
+      "bytes": 343283,
+      "sha256": "19db2cfc4d910379d0e3eec255d8563e6f704ccc35cf71a761691640cf37f52c"
+    },
+    {
+      "path": "docs\\reviews\\r1\\verify-handoff.mjs",
+      "bytes": 6131,
+      "sha256": "82bc549148d9ceefce08bbfb9c17ad8a0c6970de773fb17f4e9c736152b001b3"
+    },
+    {
+      "path": "docs\\reviews\\r1\\verify-specs.mjs",
+      "bytes": 15590,
+      "sha256": "f930dfe8a2d4ab568c3739dd7a4d6db2025c2c3b7027993c4932a93e3e2f417f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\binary-repair.md",
+      "bytes": 4966,
+      "sha256": "85a4e20a440673fb38dd924e8f5f9ff173496842af49ab39ca8603766e2fdbdf"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\binary-validation.json",
+      "bytes": 14979,
+      "sha256": "a7b7319b522d4c4d2eab9cbde304bec6ed580cdf0944aed8d5f73d69b90f63a5"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\diagnostic-checks.json",
+      "bytes": 9417,
+      "sha256": "24c3c4dbd4bea2a39e9353d442d3d3e38083213120f6b7e7846898b761d83330"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\e2e.redacted.log",
+      "bytes": 983995,
+      "sha256": "a3375448af2342042bf560697040a79baaae12028355d7bd94d7c125676bd93f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\error-context.md",
+      "bytes": 22614,
+      "sha256": "0ab74e8a58ff9489d25f7d4def49fea917ec5159360fd7833d74a7b97e8965a1"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\evidence-index.json",
+      "bytes": 18713,
+      "sha256": "f638f9f352788d7a267959534249fe977879801802dd0045ee2cb810d8913616"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\job.redacted.log",
+      "bytes": 1181323,
+      "sha256": "bf9127fe01206dcc8e05e468b9d90fe3cea60127929f4a8103fd6e6152d535c5"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\platform-read.json",
+      "bytes": 2488,
+      "sha256": "baf86abd27654fa50455b2a36a2256ded325ee0fa9bc9338327e76f55c7c8a0e"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\README.md",
+      "bytes": 9775,
+      "sha256": "9e5fe33f7343e38ae5c12137d97129e4264d2738c5cecdec5075da490550d176"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\report-summary.json",
+      "bytes": 27787,
+      "sha256": "23af209d40d602d125ab8aac0f4938f52a6d0b8cbe3c912b8493ebf44f176f7d"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\shard-coverage.log",
+      "bytes": 75,
+      "sha256": "e3fbcb6f8cbc504e47a0da4d5bf294f7e7c4bf00e5a07f6d9b3ace5024f8cd37"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\source-hashes.json",
+      "bytes": 1355,
+      "sha256": "a2a15b1d3e96888a1324af3b751f127b78ecc0af8339da68dbc5953b0cb8edb1"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\trace-timeline.json",
+      "bytes": 8611,
+      "sha256": "8236ba5927f145199f54308f6881abc7a675b60bbb5e91e3902864b7a936fa7b"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\ci-policy-tests.log",
+      "bytes": 1406,
+      "sha256": "4863aabc0e21dc361567a1cc6b58c980bb0bcc7b1c029b110d2f7df3516645fb"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\ci-results.json",
+      "bytes": 44,
+      "sha256": "150081f1634211b9fc7be06ceba5a1f01a04d5e19d3ec38ce6477ce22bf13935"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\ci-validate.log",
+      "bytes": 1483,
+      "sha256": "0237fead396b3b59997a0bade6d4e0d5d4f61a35b900f750e45a504ad86eb395"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\e2e-reset.log",
+      "bytes": 135,
+      "sha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\e2e.log",
+      "bytes": 4058,
+      "sha256": "09bd1b243e96babca8a8d19db0933bb95b36e970e495d2fa36440247554bfa00"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\integration.log",
+      "bytes": 23405,
+      "sha256": "0bac94ad83d8d7ad1f85651412addd0c9db3431dc1517f841e88f45b93058b15"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\lint.log",
+      "bytes": 5971,
+      "sha256": "9881a1965df3c0c15135052fa7690fc80a2ef1258ba55570042601242a7fb279"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\raw-checks-index.json",
+      "bytes": 32725,
+      "sha256": "5b31b3d7f4140b975fcd7b47852d2a87905f98a26e989a430d551616809bc036"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\reachability-latest-main.log",
+      "bytes": 25427,
+      "sha256": "f3a7473f2a6ba0cb04f7cca5b2c7edf36a5d940b36e9ae408d16ac1c9128f9d4"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\reachability-worktree.log",
+      "bytes": 26040,
+      "sha256": "fea4b930fc18a097a0f2242d7692229dd84229fc02ee4541db1f63978a389cdc"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\README.md",
+      "bytes": 1652,
+      "sha256": "ce60105caebbc806f4a77f14278a1b623f6e7f81a981c26586b46d0746389a9e"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\service-results.json",
+      "bytes": 476,
+      "sha256": "a8ec930ee231f9bacbd468c76bc1c0fdc6a4a7a865a65fa1e9c6be0110724423"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\source-results.json",
+      "bytes": 47,
+      "sha256": "3335988c648252b1c95803d32b7755d085494f8c9b0ddb55df1a554a8af9383c"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\typecheck.log",
+      "bytes": 6526,
+      "sha256": "aba0cc1d6077954662cd1ae57dabacb25cd2da388421beec36312372a90f7af2"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\unit.log",
+      "bytes": 58386,
+      "sha256": "f1f2c974c20d6b5ecc4cba03b4ef53630b25bef2bb1004507b51b111169d6f1d"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\check-route-policy.log",
+      "bytes": 185,
+      "sha256": "668d00d584c1b7fac28e6f3a6a871b421fd8790bda17026f33da8fab9acae4aa"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\check-runner-skill.log",
+      "bytes": 239,
+      "sha256": "5a93a9d81152fa82c66f6923c25bc8a65a8424ed2f2c6a2e184c90179d29d4a9"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\check-workmesh-skill.log",
+      "bytes": 243,
+      "sha256": "caaf2e5975f1c08f64946cfb47fbf7a522bf9e748cd5bf66a556b90648164ab1"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\ci-source-build.log",
+      "bytes": 16249,
+      "sha256": "6cc32d908a49ac080da5091ed72adc3b2d413e9086ee6229da884fc1e0591986"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\compose-configured.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\compose.log",
+      "bytes": 588,
+      "sha256": "78acb551c48b0f429915e9fdb11d0dcdd785f786ea520680c489beb180df84bf"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\lint.log",
+      "bytes": 5885,
+      "sha256": "10e88f3dee9762f5c16778a33684a9e000b1a29a6de18206deac4bd831d3d65a"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\results.json",
+      "bytes": 1373,
+      "sha256": "b325e9cc7fd28027f6b148259152bdc2728149a570720f072f5582354b7023b6"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\smoke-agents-ci.log",
+      "bytes": 538,
+      "sha256": "8ef4df178c74a1b96c4fced26974aebd1af7fc1e4aa092c87da16e9731474732"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\test-conformance.log",
+      "bytes": 472,
+      "sha256": "466af39b15f3fdca6daaffd8d9b50bdf069c868245f43d8a6bd00f0c6300eef5"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\test.log",
+      "bytes": 59752,
+      "sha256": "c8726443c3e0bb4ea1aa4a6e67cfe2326b88928f96dd34182cef9ab354d95a32"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\typecheck.log",
+      "bytes": 6440,
+      "sha256": "5fb08f166ac780254ef96177dd437be853bfcaec5be036b5ecf8aa8ef3cf03ae"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run2\\integration.log",
+      "bytes": 162552,
+      "sha256": "1a0b80fcaa173fb32b94b4e23f0cf26d1317babb81d1217aac4ebf52c60c38c0"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run3\\infrastructure-error.log",
+      "bytes": 198,
+      "sha256": "2743e860cfbcf9e1db51daa08b2debfaba8b60250841901f2218382199a53196"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run4\\bucket-preflight.json",
+      "bytes": 244,
+      "sha256": "1b53f0d057e3bc7ebda050c0b63ea9483dae708101de2464cb9c24ae9bc7387e"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run4\\e2e-reset.log",
+      "bytes": 135,
+      "sha256": "1321fb7035546571bd6a29a683366d38480af70d850e5ba7ea43cf4593127104"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run4\\e2e.log",
+      "bytes": 1481481,
+      "sha256": "a823c38b296adec6660da9720ccde4092f0a841cc517b45873db7992a9f5dc64"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run4\\integration.log",
+      "bytes": 1024220,
+      "sha256": "1bf1544d825ceb60486e134a46103091ab00246eb417f0e7db307bb5a484552d"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run4\\service-results.json",
+      "bytes": 476,
+      "sha256": "2564bfab7547092635106bf66ea0769e60327e32946a98731ac69a537f59dc66"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run5\\integration.log",
+      "bytes": 1032095,
+      "sha256": "51ebc8338806b8cfe20a221edff19fb4dcf031fcfb198a35e9357b0d3b0317d6"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run5\\service-results.json",
+      "bytes": 158,
+      "sha256": "b9774e42800941af7b5de6f9a8a6862e13875802b03381f4b2d250eeaff0bb38"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run6\\integration.log",
+      "bytes": 1032465,
+      "sha256": "3f963c45fd5eb8b54ca2308761a2e336bdbab5e5d2c9c3fc51a1c2b1dcf361fa"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run6\\service-results.json",
+      "bytes": 158,
+      "sha256": "aa5c4f6716a0d0e5d136ccaba5d4ecb4783dc132704138f1109162a87a748572"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run7\\e2e-project-diagnostic.log",
+      "bytes": 3358,
+      "sha256": "d93ff8fdc4ec534bc4cff51e2744fa831c2b4892c33494789ae7485c72290c4e"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run7\\service-results.json",
+      "bytes": 244,
+      "sha256": "36f555765405223bd36dc7977c67bdaeeae561df67fb90a0586fa41813f4139e"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run8\\e2e-project-diagnostic.log",
+      "bytes": 313014,
+      "sha256": "74b1c8da5c5625ddc248896071b3653f99a92389660c0cb2038afb8d195d4d6f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run8\\service-results.json",
+      "bytes": 196,
+      "sha256": "be1140aea9167cb4b17bc3a16aa5ea807b80b531b0c16e19ff884c8426758043"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run9\\e2e.log",
+      "bytes": 1709337,
+      "sha256": "558dc52238b691cd5b3c54cfa9e90712b339556b58f11f283c6abcce8aa9c9a0"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run9\\service-results.json",
+      "bytes": 150,
+      "sha256": "43fedb08e64d90f67cc3562a5556d2ab17c2af1c1dbbe09a5e7bed5c43624a2b"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\run4\\browser-failure\\error-context.md",
+      "bytes": 23128,
+      "sha256": "4f41065ca6ec7be4ad89915e970e16c85c7b3fc6f9790a78e767cdcab2f34886"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\conformance\\report.json",
+      "bytes": 38936,
+      "sha256": "216e0de2f69056d5e69e9573c24cdcfc610c9c8f48dee1bcda0cedb1c97e0a1c"
+    },
+    {
+      "path": "docs\\reviews\\r1\\execution-logs\\final-source\\conformance\\transcript.md",
+      "bytes": 13755,
+      "sha256": "a7fc7d1d595defbf651024547a809a606fa7a46e05433f18ef82b91b51092e06"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\control\\e2e.log",
+      "bytes": 5275,
+      "sha256": "eb5fc9c0a212826b87b9937b5a8b76d9751123b8d9f99a96e719bd705abfc10f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\control\\service-results.json",
+      "bytes": 181,
+      "sha256": "a2067551d09ec0783633575114fe050e8a0834f60a30baf14faa1e84a52fec48"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\control2\\e2e.log",
+      "bytes": 256464,
+      "sha256": "d1c921233275199e8b3175dee2f5b60dadf1ad52212ca3ea296ce291a349576f"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\control2\\error-context.md",
+      "bytes": 24448,
+      "sha256": "03b2300541f624b7392e1e0dc69003bc9cc2b3373f988475f1c7db221662ffc2"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\control2\\service-results.json",
+      "bytes": 176,
+      "sha256": "44d14b16add0dc0f9916c83832db42583d7d6af030180f351fcec50538955eef"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\fixed-control\\e2e.log",
+      "bytes": 321441,
+      "sha256": "e04646fc0ad7e2108a18a870cada55b69f3e57ca0508834e57211421b207d13a"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\fixed-control\\service-results.json",
+      "bytes": 176,
+      "sha256": "1782e7fe1735396de6d53e60b28fd98699232f0b9e628879f3cf3fcf191bda88"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\shard2\\e2e.log",
+      "bytes": 1200145,
+      "sha256": "763935c0b58ee0058dc730a202dd8728ed7cc083c9f70225b382c0686a141fff"
+    },
+    {
+      "path": "docs\\reviews\\r1\\ci381\\shard2\\service-results.json",
+      "bytes": 165,
+      "sha256": "a59ae8fa1e50ebc260152295b1cf449b895081e258cbf6aabfb599fb893af828"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\before-kind-normalization-source-index.json",
+      "bytes": 26332,
+      "sha256": "e2f74cb6a85ffc9171b67a494c677fe631d3d7104f10a9e26a79825fb22f95cb"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\e2e-port-conflict.json",
+      "bytes": 3276,
+      "sha256": "05448ed509a9d5b49725a15b6781a37ef3b800004451461d749c612fbdc7717a"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\environment.json",
+      "bytes": 1486,
+      "sha256": "8129dd1ef582d15780151e13c2cc1a0bacf52b53be0c64c507397d2a1bf753e9"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\evidence-verification.json",
+      "bytes": 206,
+      "sha256": "54b7ab8bd9cc16a5ec641bdee13344a9604d979d6a3fccb5102620f6dd97df70"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\main-integration.json",
+      "bytes": 1533,
+      "sha256": "c2ebce53ba13f4950c375a262440ebd1d2ceb28f3569bb4db9b59e62785a750f"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\pre-a1-source-index.json",
+      "bytes": 21610,
+      "sha256": "955d16bc9648397e52b8267bfd270bfdcb4d0a58b2ce6b78bf8ef84fe46edc3b"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\raw-evidence-index.json",
+      "bytes": 91876,
+      "sha256": "170c1bc1a71bf97d88dfae79570882fffd0f903b03df19ad9914e03d52fd54aa"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\README.md",
+      "bytes": 8660,
+      "sha256": "3c3665b95f9c44c72faf461b8b9151fdbe7c7bec6027885ac80de54c38a6c5af"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+      "bytes": 17095,
+      "sha256": "1cd851ec717fe54b61d2b2911d07f3a9df431a5e72959b69fa4514a8cd68840c"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\runs.json",
+      "bytes": 11567,
+      "sha256": "561e61b91bd5de8cc997f0bbcaeb9886fec055f437621af64564481800174164"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\setup-first-failure.json",
+      "bytes": 361,
+      "sha256": "34cfa3298cc9ae43d44d997cca57913ecf4fb6584c8cc8c0813a3dd606949156"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\test-coverage.json",
+      "bytes": 2824,
+      "sha256": "03ef4ad3e97f0117107fd0e1baa56e295506cc3fc46edf93dba8a75ba8cb2c50"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\tested-source-before-a1.json",
+      "bytes": 13185,
+      "sha256": "f83fd8d0c7fdfaef1a8c1120e765af5f5e04d45d21e219c740171b9d6623c586"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\tested-source-before-kind-normalization.json",
+      "bytes": 15643,
+      "sha256": "26916859c94e395a79d285b71093166336b946688b93fb71d9795b81e11feae3"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\tested-source.json",
+      "bytes": 15925,
+      "sha256": "bacda59295bdf4550e1d7dac047070e15aa0a6f5dab4f3d37fb41324d0fd492e"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\verification.json",
+      "bytes": 5266,
+      "sha256": "6515f5b93518af903b7b5548a55325e207d34213b9418add6aca92680254d71f"
+    },
+    {
+      "path": "docs\\reviews\\c1\\review-fixes\\verify-evidence.mjs",
+      "bytes": 2662,
+      "sha256": "35de05c71e7d90e5d23b6472ab257c1d3abd6983c76010fe969d432b9d6c4a30"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\agent-smoke-complete.json",
+      "bytes": 14377,
+      "sha256": "2752f5a91d4747414f579db8227556395cd0d03e0154ad36ec8af95bdcd24f0d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\agent-smoke-complete.log",
+      "bytes": 552,
+      "sha256": "708cddc5179088e6571560106e4b8d17a045ac287f410e0152a0d8668fea670c"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-fourth.json",
+      "bytes": 13324,
+      "sha256": "3d7d601a9fd3cc483dc824f268869d8fd5e8ba70194d9004138e0a3349dac1d7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-fourth.log",
+      "bytes": 1342994,
+      "sha256": "ceb82cd2d3cdc00ac9062cbc344d659241940e50162cbb58359e7e8a8afedaaa"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-m1-first.json",
+      "bytes": 12167,
+      "sha256": "21b51a825dff9cf39aa1ad1fe1bf5e23cf4f919a01e586173967ab7eec97af72"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-m1-first.log",
+      "bytes": 12692,
+      "sha256": "becbf1cc3b1a2c7d7f5256a3e044d29f4a7387c106255ea10d469a94d78c1d89"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-m1-second.json",
+      "bytes": 12745,
+      "sha256": "831e5ace53e401390bb2722f54fe63319c0e30a7120e39157841edf62e41d8c9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-m1-second.log",
+      "bytes": 11539,
+      "sha256": "c2aefe73c1b41755f2e40ae002793ab9a4446d9cc6a4b4a6c2464323f43988db"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-m1-third.json",
+      "bytes": 12744,
+      "sha256": "726d15441cb74f79ba2030de79e9ba5ae1867f068f0cb5fbe9d0d70fa5d1a497"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-m1-third.log",
+      "bytes": 9268,
+      "sha256": "0d87045cbc146b0eac5d453e3a26a4069e9553df75d096fccd31f33b389a6f47"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-types.json",
+      "bytes": 10076,
+      "sha256": "25914cbd70b133d4eca3553ca0c4040b1e0cd11e8fe67ba38c78b15af4019a80"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\api-types.log",
+      "bytes": 122,
+      "sha256": "5a398250ef478c25e5c0bb1cbb27e632719b8850f73f9cd4e795b2a1b88b41e1"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\atomicity-capability-fixed.json",
+      "bytes": 13840,
+      "sha256": "cacb5393a39023571f0aceb67482aa71cfe569f59c02dcca32393e486d5efb9a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\atomicity-capability-fixed.log",
+      "bytes": 828,
+      "sha256": "2447acd594cf76fb2a81f2d67ec806045cec0d9a0ad9cb96c09c2e4d494a761c"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\atomicity-supplement.json",
+      "bytes": 13606,
+      "sha256": "3afbe18a73210d7ed863bb9c4cf106c07c533315ed3479e4550c546579ec9d0d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\atomicity-supplement.log",
+      "bytes": 3448,
+      "sha256": "1a3d860fc3805a12b96159ab4ec78b8e30dc65374c8508d0a5ade673e39711b7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-clean-source.json",
+      "bytes": 14590,
+      "sha256": "a4dbf049d53028af7d9ddd42e12c33f62f13b706e78cac9828fccd7851149950"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-clean-source.log",
+      "bytes": 9304,
+      "sha256": "c4353b661ae678a6fc1453a08f8e4bb14b73b262b526b320685f1fd581ade260"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-complete.json",
+      "bytes": 14360,
+      "sha256": "aa97f1714bdd86b0ff3491ffd7f9faf68d6a9d9fedaf6a6f293144df1ab4c3bc"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-complete.log",
+      "bytes": 73571,
+      "sha256": "936ff19d133ef2079a6acac69430e0bc45c991a8575f0a79242e7ca8be60323a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-fixture-fixed.json",
+      "bytes": 27243,
+      "sha256": "46a76bb555d3d27d9bae1c27a4d15868937365161db9614e7a4855f22bbd0039"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-fixture-fixed.log",
+      "bytes": 9360,
+      "sha256": "5b8d20bc56943f2c4c7e0b4b1a83a2ad8c0097da2627869b6dd3d06f20f54eb3"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-spill-cleanup.json",
+      "bytes": 87449,
+      "sha256": "b582f5e084b92369939a36fc0744f50fbab5684cdbc284d5cd674660541be2f7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-spill-removal-fixed.json",
+      "bytes": 27267,
+      "sha256": "15c83a9b662993d6363c19167e07fde534530990a8857513b769eccfb3d9bfa9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-spill-removal-fixed.log",
+      "bytes": 664,
+      "sha256": "390e200e646817b2246edcb464acb8efac8c3aa864fece9ea632c51f1e53d23d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-spill-removal-verified.json",
+      "bytes": 14508,
+      "sha256": "2791ab589bd82b41a041ddfe2834bbf4d964fecbf18cd6d9c1c7691bd358b22f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-spill-removal-verified.log",
+      "bytes": 50,
+      "sha256": "df11cb9a49117657f1a634a1874a0fd368d0b8d16a99627473dde87f43bde85e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-spill-removal.json",
+      "bytes": 27261,
+      "sha256": "48c454a948af7c47f57a7c551fb5890d84121e7e05d6f1a80a21de045719d195"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\build-spill-removal.log",
+      "bytes": 574,
+      "sha256": "efe9c16d5107595db6162389a9db96e0e3d29baad5ad7a868e3323a46b376b48"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\candidate-binding.json",
+      "bytes": 64024,
+      "sha256": "fcb0a7691200cd0d34024369c1319ba3350e6060823ec03e0561b56655f02356"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\changed-api-tests-lint.json",
+      "bytes": 13683,
+      "sha256": "b94e024327a5c287af38141290307b08108fed5bf5b0140c27d3753cbbe27cf7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\changed-api-tests-lint.log",
+      "bytes": 117,
+      "sha256": "b49d37cf0c74f7745c9513a8ed6d9bdad98d42fe1f8ff0e73d461840501680b6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\changed-api-tests-types.json",
+      "bytes": 13688,
+      "sha256": "1a92815ea4ab2dfbde7176742e386a000b697c7d58992e7b83247a7a65b53bcd"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\changed-api-tests-types.log",
+      "bytes": 122,
+      "sha256": "5a398250ef478c25e5c0bb1cbb27e632719b8850f73f9cd4e795b2a1b88b41e1"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\changed-test-types.json",
+      "bytes": 13478,
+      "sha256": "90e30dedeab4f6e4afaa229df8a7dd13ebdb1ef07af9e55bda0c216819ea7de9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\changed-test-types.log",
+      "bytes": 2,
+      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\check-index.json",
+      "bytes": 180222,
+      "sha256": "085fd6235f17c959451cf9adc00040431366e6c32077e8dae9e19016e78cde33"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\check-index.md",
+      "bytes": 20472,
+      "sha256": "581e7e5c3f113f9f8360e68a44faa538e6b9189bedd39120d4810b1dfa953df9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\ci-test-second.json",
+      "bytes": 13438,
+      "sha256": "da9b3a6381466698ae126a0f0ebeb5a0bc0532f77122506fe0bb51915211bd0b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\ci-test-second.log",
+      "bytes": 4015,
+      "sha256": "9ca7b4a632915b297571043c4d413983c1d9c819120c58f684a72e775cd2e79e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\ci-validate-final.json",
+      "bytes": 13657,
+      "sha256": "408fde6c4e009f0e844fd84b8e92ed8d65eb6945a6ce6462d57450da5c5e7288"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\ci-validate-final.log",
+      "bytes": 2910,
+      "sha256": "170eba255277c1233db3e1e900c0c5b5c2692b8b83c0c5baac6288266e962983"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\ci410-original-index.json",
+      "bytes": 24887,
+      "sha256": "67ee6487ff9db36a8783995a80336ab3b8bca27924a965ffd09aff9df03cbb3f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\ci410-static.json",
+      "bytes": 3298,
+      "sha256": "175aa4ded0f029a3da2d5d11da393557e9c421774e193ffd96d83173a8a62a88"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\ci410-test-summaries.json",
+      "bytes": 9295,
+      "sha256": "112e99f744a38f3da67c1d6924e237084818c7e347e859656c6de5a5d5a11fe7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\client-finish-types.json",
+      "bytes": 13257,
+      "sha256": "03a982ed842f178b38be0b20c0fcc4247f4b41cb55e26c987f7cffd60c7a5b1e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\client-finish-types.log",
+      "bytes": 142,
+      "sha256": "349774ce0728d7d3f0e7bd1f01f7b37779f7ebff9e0037089de5f84ad40e5969"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-final.json",
+      "bytes": 579,
+      "sha256": "262067d39f5a84f6ac4b0bdd73a51cd4e58b7aa10a86c686a43c7975f241485f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-final.log",
+      "bytes": 2701,
+      "sha256": "d89661be11fe92158ace6dd2b0d9d555f15bb8617c16a23151c5a0debf73796f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-first.json",
+      "bytes": 12636,
+      "sha256": "27dc68fb11f0f7290d3e3de2df1653cece68c831e4f9b9047d758764bd84c24b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-first.log",
+      "bytes": 14253,
+      "sha256": "d242ffbc42c2198bbc0ef86425cd2c9bbfe5d0ca2a4890970ca10ce609689dab"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-revoke-fixed.json",
+      "bytes": 14169,
+      "sha256": "ccd10e0d30995b07fe7b0b6869433978d937e2b239d23760ac3f3c9b7db1a0b7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-revoke-fixed.log",
+      "bytes": 10070,
+      "sha256": "25d162399c5a19949fc622f5fa127960426229b19fd29832b23a80516e5b634e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-second.json",
+      "bytes": 13340,
+      "sha256": "abd9416005b7550abfdf80fc9cedab59c3b7936070738f75747ba689a6bfbd9c"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-second.log",
+      "bytes": 14047,
+      "sha256": "4143061a2cfd1dd7a232c15f567cc6203d865b3c8afd9cd3b0e7546a9f942c92"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-test-types.json",
+      "bytes": 14195,
+      "sha256": "b206d3987c1ca006fd6e1bf9e43ac27cc783cc6f0c4274ba54b014595374ecc5"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-test-types.log",
+      "bytes": 142,
+      "sha256": "349774ce0728d7d3f0e7bd1f01f7b37779f7ebff9e0037089de5f84ad40e5969"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-tests-lint.json",
+      "bytes": 14190,
+      "sha256": "a38a3bdd45e293c8cd5ffdca6dbf779d90c13ec9c4edcafd4b257dd75fb2af30"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\conformance-tests-lint.log",
+      "bytes": 137,
+      "sha256": "32d713221b9826426548312c37d128c6df8ad2ea4879ba6917963636711e7ec0"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\db-integration-first.json",
+      "bytes": 11306,
+      "sha256": "d673e77d36bc0d649600c031b82e420ab41f7ed35116e149853e676b6517ee32"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\db-integration-first.log",
+      "bytes": 6957,
+      "sha256": "f3bfc966003381fe7a747d886da51a95b6528ae98736df23a0b97755ca755240"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\e2e-complete.json",
+      "bytes": 13201,
+      "sha256": "29c5b04225f905606bf0cfe72749428e4ca02906a496d3a4389f568c207f579e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\e2e-complete.log",
+      "bytes": 1414758,
+      "sha256": "f201d93a7ff7faaa07d29512f248351888acdd090bcae50ef9d16230d28c3317"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\e2e-second.json",
+      "bytes": 552,
+      "sha256": "5d57e3a0428bebaa78fe9c0661efd758d7c73043a21ca20672293f39ec95f2c2"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\e2e-second.log",
+      "bytes": 112799,
+      "sha256": "0f2be3aedad27e5192131a438a7596b5221bc56a55ad54cd6b9b9f0753bda007"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\evidence-index-first.json",
+      "bytes": 456,
+      "sha256": "7188aa49a4618c4cfee405756f4cca918959cbecbfaf8c7038cdd27c588e2f59"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\final-static-check.json",
+      "bytes": 26848,
+      "sha256": "63dcae9f7d162b8c1e0071e239166efda49c9c502a5e5364c20a4c6bb5d6e9ff"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-tests-after-skill-lf.log",
+      "bytes": 2226,
+      "sha256": "a972356342b056f9bb96770ee5c5038f9507cf527dce484d9406de0708a1923a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-tests-final.log",
+      "bytes": 2227,
+      "sha256": "f6431af8d3bbd8965e78c229152ba673991de6072595ce8ee48082216f559018"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-tests-latest.log",
+      "bytes": 4309,
+      "sha256": "1f05b012d8e19c995c8512cc1a6efe1573ea3637bb1ce651cc37276e396bd0a4"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-tests-second.log",
+      "bytes": 2226,
+      "sha256": "8b4bcae81546315c603400b64e9a8127bab9159ffddddaa57f0ea723f3b533c0"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-tests-uncertainty.log",
+      "bytes": 3098,
+      "sha256": "a6891786b155c1329a59832ec3572db0f8fff22f3a3b6d22a1725d63e44bbc91"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-typecheck-final.log",
+      "bytes": 140,
+      "sha256": "adb147e35783e33bd00e0f875ec387bdff9c6840e5e6510bc7dac4ff2df24916"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-typecheck-latest.log",
+      "bytes": 140,
+      "sha256": "adb147e35783e33bd00e0f875ec387bdff9c6840e5e6510bc7dac4ff2df24916"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\historical-runner-typecheck-uncertainty.log",
+      "bytes": 140,
+      "sha256": "adb147e35783e33bd00e0f875ec387bdff9c6840e5e6510bc7dac4ff2df24916"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\integration-complete.json",
+      "bytes": 13217,
+      "sha256": "ffd2e08f0f34feaa8a0d48ddcb748152cf2c9b0bae6e3d7b783f2975d7240135"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\integration-complete.log",
+      "bytes": 1355873,
+      "sha256": "28b8f0fc3a5db3d045c98683ee6490b0c22568492077ba9cbb88fa37033abfff"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\integration-fixed.json",
+      "bytes": 13432,
+      "sha256": "8de2916f51faed0fb368160a14a3f039804c5583e998fc3dbd9c9ffcac718e93"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\integration-fixed.log",
+      "bytes": 1353021,
+      "sha256": "f9b34ee5dbd80a01971ae8f44af4ec4c054facd6d78e4e8f72a6c93ca69643d0"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\integration-stable.json",
+      "bytes": 13663,
+      "sha256": "ea2c96c723caf4d76216acc07b4495f4ebfcdb0b36a6795523c449aa18ed4926"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\integration-stable.log",
+      "bytes": 1363094,
+      "sha256": "bc4220be41f44f89d006cbbe546072192d760b09d26ed8559544f07aaa687e37"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\lint-complete.json",
+      "bytes": 13199,
+      "sha256": "ef197000f5f7b22c7a759505446642143dbb05f065ae3343f469e97711263266"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\lint-complete.log",
+      "bytes": 5990,
+      "sha256": "115f530c84235c53206eb9cf0cb9c08aff9746f6daa90fca05d6733cc925dd57"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\lint-first.json",
+      "bytes": 13623,
+      "sha256": "b198e37a59a41d98b6c179e15519ecd19679056dd7561afd6b5ad18509e1df57"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\lint-first.log",
+      "bytes": 5486,
+      "sha256": "8cc08cf1ad39b00c8c290552cd2b594a845f1b55e072333302f5e9a1782477dc"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\locks-final-generate.json",
+      "bytes": 13317,
+      "sha256": "d1030d49ca094b44f2d06ace8bdbe2a27dfc1f010238376d1a15786b2b4bad26"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\locks-final-generate.log",
+      "bytes": 720,
+      "sha256": "bd397e13f3a93cb5c8cf10cd4c6ef84ba8e2571cf948e0f1f2b0dcb5d4bd3bae"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\locks-generate.json",
+      "bytes": 12619,
+      "sha256": "8f053dd1cd52b27e585c885baf664fac13477ea358c42013e76cc425578ad806"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\locks-generate.log",
+      "bytes": 33949,
+      "sha256": "a26296e09aea4bfc76b061d76da7b64d04ccb112de4b9aeaac8e89449b582ee8"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-05e6bbc4f2f2-postgres.log",
+      "bytes": 3854,
+      "sha256": "562e11415ff6736449af608c76fc3a72addb1843c9ade9e05a617d9811f44c46"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-05e6bbc4f2f2-recovery-report.json",
+      "bytes": 1000,
+      "sha256": "773895f82194be65400768cd43c3a63178283d78f2e15d00e310fab801469b48"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-05e6bbc4f2f2-redis.log",
+      "bytes": 606,
+      "sha256": "c4b2bde94099b38c90ace2c5229b5eb2940b486f8fcfa25369b8881aad09498a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-05e6bbc4f2f2-resources.json",
+      "bytes": 1539,
+      "sha256": "60ed78aa5c896010c26fcae6c284a6f08e4e30c1832e4d969ee200656426e297"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-05e6bbc4f2f2-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-0eca19c903b3-postgres.log",
+      "bytes": 93436,
+      "sha256": "2196379487852e9ab7e4ee819a68bead6bfa92324630f68ce7a78caf3032817a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-0eca19c903b3-redis.log",
+      "bytes": 957,
+      "sha256": "ba48f2a7f6f788a18ae3e3f5fa804654cbcacaa6dec6d42e9bcc7d4d9e2a8de9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-0eca19c903b3-resources.json",
+      "bytes": 1314,
+      "sha256": "00c5826658674a0dc7d3bad231619fa2866e42ae797c09125eee3a7eb5e6079f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-0eca19c903b3-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-21c7ca4bd324-postgres.log",
+      "bytes": 95468,
+      "sha256": "7a5c8edfda353c56c4067fb68f906972f58efc507b792f72b0f5eb918b0d4854"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-21c7ca4bd324-redis.log",
+      "bytes": 957,
+      "sha256": "96cae6a235b08170dceb470805ebea2051bafe8fe852b36b57e9fee756436f70"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-21c7ca4bd324-resources.json",
+      "bytes": 1314,
+      "sha256": "5a17656b73dffe641b6b8b7ad3d34fd979c091f5b0d718b5378b65cd5d4c0652"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-21c7ca4bd324-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-2651090bce93-postgres.log",
+      "bytes": 7471,
+      "sha256": "734dbcb3344c8d1a1d03cf5a5d8d1e86a6645cff0a56a6329d3a9250a6294afa"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-2651090bce93-redis.log",
+      "bytes": 606,
+      "sha256": "10dd6482fb898ee8a97cd9ec22613e31af5baf628c2c9d6f9fc6496e95d4d05a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-2651090bce93-resources.json",
+      "bytes": 1314,
+      "sha256": "fd4b67fec0e128469edc0e32d9c4df6d7c86f99b64e82fff8021f166147b3ebd"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-2651090bce93-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-32f1f4c4ba0f-postgres.log",
+      "bytes": 3352,
+      "sha256": "9ea453b1bfb0190cbfa6c99eeabb8075ed295c0e5140593e9369c444c2b371d0"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-32f1f4c4ba0f-redis.log",
+      "bytes": 957,
+      "sha256": "d70b1c0f80f29fd13052a336098f14da7de576167bd0e7014ec191b467afa949"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-32f1f4c4ba0f-resources.json",
+      "bytes": 1314,
+      "sha256": "3949c6fde57ea0e24896f3feaf4729c175565bb79be177ed32eb217d6bbd22ec"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-32f1f4c4ba0f-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-3dfa2f93ff11-postgres.log",
+      "bytes": 8591,
+      "sha256": "928ea19b48f4a150458a363821f12b57e593af4a44e1c38b4dcdca587884359b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-3dfa2f93ff11-redis.log",
+      "bytes": 606,
+      "sha256": "fa78e6c49196ff1ffba788751dcdefa76d4000f054d57d446009992158da99f7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-3dfa2f93ff11-resources.json",
+      "bytes": 1314,
+      "sha256": "da2e9f458ab0268dfebf5de39ff539376f17264c9aa5662523e85a46a9467b1f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-3dfa2f93ff11-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-5d990a5cbf81-postgres.log",
+      "bytes": 63410,
+      "sha256": "bb009537e29ba3b35814c13fa35031b6042bc1aced14c8fc0140cb60ed612aff"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-5d990a5cbf81-redis.log",
+      "bytes": 606,
+      "sha256": "743d779ea3d9f917a31b14bab6f782d1a0f609a263e2df020fc2e54692e112b3"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-5d990a5cbf81-resources.json",
+      "bytes": 1314,
+      "sha256": "637b1bdabdf24b9ab3a40dd21afc814452774c76f3a8d2c701d683b221a0d84d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-5d990a5cbf81-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-610952fddbc1-postgres.log",
+      "bytes": 78231,
+      "sha256": "ead25775415d70a7e58d201648e3c7946eb83d325013a6971dbfae1850a59b95"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-610952fddbc1-redis.log",
+      "bytes": 957,
+      "sha256": "d88ce7b7f2ad3a927afc90d2082370742674ea65c90d693bedf6e7bd72962cd0"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-610952fddbc1-resources.json",
+      "bytes": 1314,
+      "sha256": "c43e5834a64634b9c30b5c264d568acae789cec2419cc2316ae38b4c3dd31604"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-610952fddbc1-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-6e8e6f214790-interrupted-cleanup.json",
+      "bytes": 2885,
+      "sha256": "95eea64f2c3238c0a2ee2eb8b740306faf26d34b88032b90a15bf1351f43ced8"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-6e8e6f214790-interrupted-postgres.log",
+      "bytes": 3286,
+      "sha256": "c3273c3d4befc6fcf0257ce6052f65037ade5bcc8b5048b0b9ee0a9e0eeeb4d4"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-6e8e6f214790-interrupted-redis.log",
+      "bytes": 606,
+      "sha256": "288386cae72e2d7c231b953c8a83d0f9cc87059194f9201d23beadba931918a4"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-6e8e6f214790-interrupted-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-6e8e6f214790-interrupted-state.log",
+      "bytes": 184,
+      "sha256": "cf350c454b467ae16ca0a402c6e4c7a10b1818c3f4ec42e62c65e16eb504a8fe"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-6e8e6f214790-resources.json",
+      "bytes": 1149,
+      "sha256": "fc445edd6b77d0d7c98c88b4d2f903cd9419f97722503d00b5c51e8f11010964"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7ac935c9155c-postgres.log",
+      "bytes": 5927,
+      "sha256": "18b46b9fc5518180346a3fca54034197e10bbfacfc212189fce9cd0c578f2005"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7ac935c9155c-redis.log",
+      "bytes": 606,
+      "sha256": "b7c7547d75650c3794a33377c48f735f0ede69597f14db5304a4aa7f2ba5be2d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7ac935c9155c-resources.json",
+      "bytes": 1314,
+      "sha256": "764d22096c335a74fa3a7a0aac519d2cb3ff870a87b107a96e2c5cad5e5a2548"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7ac935c9155c-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7e5e7375cc57-postgres.log",
+      "bytes": 3286,
+      "sha256": "d5a52b3d859ef2cb5a42bc96066d45770cd3879f66cc4826876f6e5c1d5c2864"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7e5e7375cc57-redis.log",
+      "bytes": 606,
+      "sha256": "92023ac39e17acf2972c653aa5769e0c08b28715eebb9386e5f215bde59caea2"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7e5e7375cc57-resources.json",
+      "bytes": 1314,
+      "sha256": "fa18f5da3ede63eaa2edf791e9d2f3f366a1bac4b8ee8694057dafdb5d00d100"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-7e5e7375cc57-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-86a5b73f4cbe-postgres.log",
+      "bytes": 6096,
+      "sha256": "1123e334f64edbac63619a66ab3888f823605a30eb74561fb13c8ac16ed3f0e9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-86a5b73f4cbe-redis.log",
+      "bytes": 606,
+      "sha256": "a41b0d88c7b5dc929b5066fd688af883fae84e2fadacca9194ed6f8e594e6b6f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-86a5b73f4cbe-resources.json",
+      "bytes": 1314,
+      "sha256": "21858d2534a367f48787f88ad42cd2af9f889e4237598cee51aaa67fcb3973b8"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-86a5b73f4cbe-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-895b1be30efd-postgres.log",
+      "bytes": 5565,
+      "sha256": "07c2c815e1a6a548ac3f8a6a12cbd184a7b10c85b25c7dc3db89d61c2a1d464e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-895b1be30efd-redis.log",
+      "bytes": 606,
+      "sha256": "f6b62ba2fa7023987f94b00b59a60ce1e4592dfb55ba5c6c8ab8c547aee29121"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-895b1be30efd-resources.json",
+      "bytes": 1314,
+      "sha256": "1b6af5e635b3fb4543de8c7cdcb2c5cc9235878abe8d688bc38de489a0597b2f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-895b1be30efd-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-89d8c4db9e78-postgres.log",
+      "bytes": 8401,
+      "sha256": "07289ccfc2f05132216bd04d9ec9a9f04f5d39c43a0108e21ee1bfac2d6c5428"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-89d8c4db9e78-redis.log",
+      "bytes": 606,
+      "sha256": "3393e7cbb1f86608dfa92c3031e361316bef72fc62539e8ea616b08e8950d8c6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-89d8c4db9e78-resources.json",
+      "bytes": 1314,
+      "sha256": "65abeb7921000cd6c147f4b264f6984bbd4afcaac2eb5dc8e664068613094a33"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-89d8c4db9e78-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-8f919364cdd8-interrupted-cleanup.json",
+      "bytes": 2885,
+      "sha256": "9e64ff8e71842618b3e5bc8b731bea283552d23917d1132aa5bd41f6904dacb8"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-8f919364cdd8-interrupted-postgres.log",
+      "bytes": 3643,
+      "sha256": "b27dea6b678d0c1f9633d91d19a039c17cd59f9767c9e58bca8f897f40900ddc"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-8f919364cdd8-interrupted-redis.log",
+      "bytes": 606,
+      "sha256": "f615a072cf5a70b7b8880e3ed25706322ad0dd4a8d43ea1c74f2409fce6e132b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-8f919364cdd8-interrupted-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-8f919364cdd8-interrupted-state.log",
+      "bytes": 190,
+      "sha256": "002e3e899894b020162f0f7208c5e60b90d5a797f2c2263cc9a6d60dc4a40bda"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-8f919364cdd8-resources.json",
+      "bytes": 1149,
+      "sha256": "e8e1534498646aa4e74480bfcd6d10d06fe7889499eca54ac4fd4c1f3b84831d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-951a400c74c6-interrupted-cleanup.json",
+      "bytes": 2885,
+      "sha256": "050ce0cc3f45174229e67682a4c2ac52bf574e9484b9a7589e39f0657c9837e6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-951a400c74c6-interrupted-postgres.log",
+      "bytes": 3286,
+      "sha256": "c3291f87b8a1cac1e6f207cfddb3767f473e8e0c9e69bf9d49e2ad21215dc318"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-951a400c74c6-interrupted-redis.log",
+      "bytes": 606,
+      "sha256": "c4c2b8ecfb6d05133472e5b31f1a838f8416277df5e5cd0bfa84cee825069316"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-951a400c74c6-interrupted-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-951a400c74c6-interrupted-state.log",
+      "bytes": 184,
+      "sha256": "cf350c454b467ae16ca0a402c6e4c7a10b1818c3f4ec42e62c65e16eb504a8fe"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-951a400c74c6-resources.json",
+      "bytes": 1149,
+      "sha256": "4b596fceae53e37d615bae11ba262bf2f42cb692cadd546d304dd31566d9b05e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9cf679a69107-postgres.log",
+      "bytes": 3286,
+      "sha256": "0dde765df873ba5f24a41616c312275db44e127b2a179e7e128ad79691ec8b04"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9cf679a69107-redis.log",
+      "bytes": 606,
+      "sha256": "238b09afcaf505729a55a504264c33ad367436cc28378d30abc958fae138e854"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9cf679a69107-resources.json",
+      "bytes": 1314,
+      "sha256": "4094453dda097c1a71398ca027f15cb0a5ad63ac5bd5dbc556e8e4a1e84a6354"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9cf679a69107-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9ec8e3debf17-postgres.log",
+      "bytes": 6096,
+      "sha256": "120e8afdc6261265bd2dbe1de5970fdf8f202ddb9a242fee80a3680353517ae1"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9ec8e3debf17-redis.log",
+      "bytes": 606,
+      "sha256": "a6d7374c4a8b73710778172250904a3013d63c4cd6bfee8ab6023a6d64d855d4"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9ec8e3debf17-resources.json",
+      "bytes": 1314,
+      "sha256": "c99face0324686a52ae14889bc4134c4265e11dee9cfd326f1228fd2e6f17b87"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-9ec8e3debf17-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-a609b9b0f88c-postgres.log",
+      "bytes": 4459,
+      "sha256": "3db68766a689f4c27381f35bae7abdd85e23ed2055fe0b2ea965340fa26c7057"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-a609b9b0f88c-redis.log",
+      "bytes": 606,
+      "sha256": "b3c81b5d0a37bc41ad23d886cf0d90cb99b6d3fd9661dadd320eedd30cfd5cb2"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-a609b9b0f88c-resources.json",
+      "bytes": 1314,
+      "sha256": "761f7fef3a99aaeb389647339b89e7cbef19558e1f504e879f983ee33b503cba"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-a609b9b0f88c-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-bb374da076b8-postgres.log",
+      "bytes": 6345,
+      "sha256": "3c5f26fb39b5c2e0070353530cfef06a8faa938c0923e372170c13f8ffac0e3e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-bb374da076b8-redis.log",
+      "bytes": 606,
+      "sha256": "d31bfa605a1a98a5db2508ac35ed79be57d5a114e9610bcce878dd2dbcaf2482"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-bb374da076b8-resources.json",
+      "bytes": 1314,
+      "sha256": "7714d0e465bc89bdf0090372736b3764b1031e7e2587ac3feedb6171d8dedefb"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-bb374da076b8-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ce05e55a9e95-postgres.log",
+      "bytes": 16921,
+      "sha256": "b69e41a6aa10b366fc6050f084973eac28b0d1cfbb17b9e62bb11baf555bc528"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ce05e55a9e95-redis.log",
+      "bytes": 606,
+      "sha256": "dd8826eb7e475d7fd0b942f76cc567496ebc6917c95ff6adec95f6b0f75f9bdf"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ce05e55a9e95-resources.json",
+      "bytes": 1314,
+      "sha256": "7ba1f5971233420eeeba8089d4436de68877a5ea7961ce41da83d003a2823868"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ce05e55a9e95-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ceffa526f57a-postgres.log",
+      "bytes": 88436,
+      "sha256": "b5287a464df28f8536c706eea2a055f4e310a21c5fc2f9f4c383b83dcf6a300e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ceffa526f57a-redis.log",
+      "bytes": 957,
+      "sha256": "1fb078f6707eba7e1efa31aac02f7d810db4eede7310a49096e7ddd4dbab3704"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ceffa526f57a-resources.json",
+      "bytes": 1314,
+      "sha256": "e2ddddc77c3fdcab9deb11529c979fcab8e6bfb4f439f7fb1fa402f5ed06a88a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-ceffa526f57a-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-cfde65a2e9a4-postgres.log",
+      "bytes": 3286,
+      "sha256": "de0ae3a55366608ef799dce878959e3627c5590aa6f5f2fa8cc3e525884678b6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-cfde65a2e9a4-redis.log",
+      "bytes": 606,
+      "sha256": "25f31f387b823add9012ea120dab61ec79b7516279f4feb034d2ac06194a10a4"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-cfde65a2e9a4-resources.json",
+      "bytes": 1314,
+      "sha256": "cd594d596a141718a9db4077d05b0db02991ada764e95a2cde705240222c4b0f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-cfde65a2e9a4-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d237cec0ecba-postgres.log",
+      "bytes": 3958,
+      "sha256": "fd59292a96a776389087f3d6e9c41674863a7d2885779005d4eefc4533aebd0a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d237cec0ecba-redis.log",
+      "bytes": 606,
+      "sha256": "ca2a1f504964e2d80c3c34a12be830e1ccc89742e2df7377c5909154ff46a341"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d237cec0ecba-resources.json",
+      "bytes": 1314,
+      "sha256": "8b3af747a2088e53011f8e970fb45f282e51f83c301496658a7d82e36c55a30f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d237cec0ecba-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d31ae441e899-postgres.log",
+      "bytes": 6096,
+      "sha256": "1345de7c0890504ecd32fd2b736de17fa196b95b7520fe2d7a59dc032200fab6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d31ae441e899-redis.log",
+      "bytes": 606,
+      "sha256": "8cbe66d804f67c206665fae49b8b15fdc900fd4e815e0484970f6feb394efdbf"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d31ae441e899-resources.json",
+      "bytes": 1314,
+      "sha256": "ed517a08d7d53cfa6f00330d371a5ca7cfc11f40053e1199dc2b2d4e2c923cbd"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d31ae441e899-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d574abe7362b-postgres.log",
+      "bytes": 4692,
+      "sha256": "c6e71df52455ad89b5b8bb205d0cc494f67b1aea7f88d6c9cf54bf439c19cc24"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d574abe7362b-redis.log",
+      "bytes": 606,
+      "sha256": "c42e70520a973c5f26b57d68764d85f2dfac77c4e68e0339fffaced6093d2829"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d574abe7362b-resources.json",
+      "bytes": 1314,
+      "sha256": "fc023f7e887d9ed965fe7da7dad5b3712ce14e8dcbb8a5b50734ad8aed665b96"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d574abe7362b-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9458452756e-interrupted-cleanup.json",
+      "bytes": 2885,
+      "sha256": "a8d3426c03a72ec2ab79ac904f97533ca3fc6b16655ea030a3fbc5a20190876b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9458452756e-interrupted-postgres.log",
+      "bytes": 3286,
+      "sha256": "848005359286058aa88650ae1017303320d09344618764066258730af3a66064"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9458452756e-interrupted-redis.log",
+      "bytes": 606,
+      "sha256": "ebcac1d7f6815fd4d1ac2558a83100de3cf5e421e348549fd6201d445394f720"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9458452756e-interrupted-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9458452756e-interrupted-state.log",
+      "bytes": 190,
+      "sha256": "002e3e899894b020162f0f7208c5e60b90d5a797f2c2263cc9a6d60dc4a40bda"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9458452756e-resources.json",
+      "bytes": 1149,
+      "sha256": "5c4420768cf548fd1e80211cc32282090201058e629453b8615bccd76abb07d5"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9629a4cf92b-postgres.log",
+      "bytes": 6190,
+      "sha256": "b1bad94ff210552a9b2698f453149ed03562287087030c19045ea7cca5d9bbb2"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9629a4cf92b-redis.log",
+      "bytes": 606,
+      "sha256": "83c489d58d5a56eede2758da2ea259a186aa5d987506b8c3758fb71faa97f6b4"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9629a4cf92b-resources.json",
+      "bytes": 1314,
+      "sha256": "b40f7db9ac660dfc7a70e18d1fdd5ad47574f86bc58f239031ea8ca5597db439"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-d9629a4cf92b-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-e3ae74575637-postgres.log",
+      "bytes": 90608,
+      "sha256": "1a4613eda9c02f544bcca57c3fcbb6609956812eb4181fde56fd7164204ba707"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-e3ae74575637-redis.log",
+      "bytes": 957,
+      "sha256": "a8853c36a8e30958b64f3f75488819d6c378303997896524bc36e9f5fd809fac"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-e3ae74575637-resources.json",
+      "bytes": 1314,
+      "sha256": "f194a51a0f1445b54e0b3e1af3dd278c8b72bc4484b17ce8b076bb8033886493"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-e3ae74575637-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-eb4c5b46a8d1-interrupted-cleanup.json",
+      "bytes": 2885,
+      "sha256": "e03cdd511f5e813fd396f901743e00b6968f0828ebe245c024e9d5951f031913"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-eb4c5b46a8d1-interrupted-postgres.log",
+      "bytes": 3286,
+      "sha256": "edfac4d2d235b4f7dd137a3ed4d65763fcbe60aa902f051bc842d12f5e5eb396"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-eb4c5b46a8d1-interrupted-redis.log",
+      "bytes": 606,
+      "sha256": "a3d8317e5bedc620a1acc35f5db33f2194f614fcd9b6f3cb55473723ab255f80"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-eb4c5b46a8d1-interrupted-rustfs.log",
+      "bytes": 107,
+      "sha256": "c0cc332296dd264fc6877e70b48e828f312763591fe82056d4063f199d61bff7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-eb4c5b46a8d1-interrupted-state.log",
+      "bytes": 190,
+      "sha256": "002e3e899894b020162f0f7208c5e60b90d5a797f2c2263cc9a6d60dc4a40bda"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\m1-eb4c5b46a8d1-resources.json",
+      "bytes": 1149,
+      "sha256": "9d8fca8110f76059fd2cd1702ca899f930c2f5883ac77e8ba048e3eb8109112a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\main-ref-observation.json",
+      "bytes": 596,
+      "sha256": "d8dd330c1ca1b4049d7a2101eaea234261c86de250c7074f45b910bb27f92091"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\migration-generate.json",
+      "bytes": 10219,
+      "sha256": "f88304f70e083bf51174deb62d700b1f4592c0fab912882e4cca7b4055ad356d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\migration-generate.log",
+      "bytes": 230,
+      "sha256": "938acf6439290f8415a482f78ebacf7ecc3ea91b5a8b9c520da09393c32eafc1"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\postcommit-binding-check.json",
+      "bytes": 1256,
+      "sha256": "1255ee5541c2c42d6c979de292ed2f1f5df6cc46e5bcbdb256cbdeb9c578baf3"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\product-mapping-modules.json",
+      "bytes": 13848,
+      "sha256": "4addf9b78849f1dfa96790c67579d5f8a9df08de6b41ec1aab21152693b35976"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\product-mapping-modules.log",
+      "bytes": 99,
+      "sha256": "fd076df3df426d1b0bdf1e9b949ce955448ee2b54333e76c30038fadcbf93e1a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\product-mapping.json",
+      "bytes": 13840,
+      "sha256": "f2def80215d99d939015ad8eaa352ed1cb185c35cc696e001f80c86d14eef455"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\product-mapping.log",
+      "bytes": 940,
+      "sha256": "1e7cdcf127d2d73fc1fca08b3f8a1bbe5dbab1f87bfd4e51c4e68ff913767165"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\product-source-index.json",
+      "bytes": 30987,
+      "sha256": "99e23af2680b5c33987a5519580ccbbb61a2631dbf6b06c9f3221358b23928b8"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\raw-log-index-38110de0d27cce68.json",
+      "bytes": 67830,
+      "sha256": "a2ee6ed864327f01306e2c01c38805078cd82c22577f72e608c89129335ef61d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\raw-log-index-d18866873989e059.json",
+      "bytes": 65386,
+      "sha256": "fb7577436159d1b793b23965f1bbc4eda5dcc324c84d760b8b35f1c9fe74fc07"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\raw-log-index.json",
+      "bytes": 67874,
+      "sha256": "756b8dbc5f2a11f17404cc588d79fc7fe962ff1e3f93f999c250b0a9ce7e2005"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\recovery-complete.json",
+      "bytes": 14158,
+      "sha256": "be69e2d1a65e698e09c46c5ab63fd08cb419efb03320fe757834d0e994318185"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\recovery-complete.log",
+      "bytes": 753,
+      "sha256": "2492e87969011f06184e0309c6a46cde074466a2983484787dac98272f9ed8f2"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\recovery-real.json",
+      "bytes": 14153,
+      "sha256": "f12813dd89c791b256912c22621f2b6e0494924871a8347a52d538f2a5fa2688"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\recovery-real.log",
+      "bytes": 885,
+      "sha256": "007e2b153cd80a68d87d5ed4b8285cffb8790ae15dc14f8acaf871d98347d47a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\resource-audit-first.json",
+      "bytes": 728,
+      "sha256": "ba9d4f93f812aad721c3f3175e26852c637241f6f28f43a4b656a4a1470489cb"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\resource-audit.json",
+      "bytes": 62053,
+      "sha256": "6b12d67118b7a7b367c91adf819de11448be10adc24dc4698e1a827da1693239"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\resource-audit.md",
+      "bytes": 10245,
+      "sha256": "59c5c8aeffcb47d5d405ee9b0e9040cc63aa3dfda9dd9627eb5347ccd458f4df"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-archive-index.json",
+      "bytes": 2695,
+      "sha256": "f4955850ebe48d8d11f0d5e3f999dd54005699863a1719976152706ae58c5fe7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-build.json",
+      "bytes": 15078,
+      "sha256": "a9ae38655918665c48f77b30670c7cccfa1bdcdb8cb771bbf3973237eceae64b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-build.log",
+      "bytes": 9302,
+      "sha256": "4883ddf973cbf1ac144dfc139795e3a5248a6cce6236b3d2d9404da1f04e9459"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-check-index.json",
+      "bytes": 15286,
+      "sha256": "95bb1dd4877fa53e094bdf249dfe709be465dcb2500fb0316ccde74bfae1ecbe"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-check-index.md",
+      "bytes": 5042,
+      "sha256": "cf28421fbf1ff24d582a75f3310bcc52431a7dd7dcd1bd2bb1802eed88f729e9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-conformance-first.json",
+      "bytes": 15058,
+      "sha256": "aa8c455aca47af7175ded2c520b3d750877fb42dc07dcbc8bc18901dfdf5ac7a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-conformance-first.log",
+      "bytes": 3695,
+      "sha256": "5a9c50355f9b966158b154d6714ef2c953441e0423160d0ed08424e2f8b6100e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-derived-types.json",
+      "bytes": 15129,
+      "sha256": "23f65a5f69d0888d565af61270a95f815d6e7593e0251bc4fa14dfca310a1aaa"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-derived-types.log",
+      "bytes": 124,
+      "sha256": "4c1eb275b074a87e8fca0f87c921ac8224865c3d257c75ad5ebe09c682db3cc1"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-integration.json",
+      "bytes": 14956,
+      "sha256": "9d8c7d5a4bf54165ae66f69e1ef8370c4ef071cdb85d09c1a01038ceedd241a2"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-integration.log",
+      "bytes": 1376577,
+      "sha256": "a012573c8217d8f8b603f4d00963d9862e4a967a307457194871898eba5dda70"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-lint.json",
+      "bytes": 14939,
+      "sha256": "0a3ecea561cd3b75eaa4bd1a8de041336fc2548558806d2422ee93a4468f4407"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-lint.log",
+      "bytes": 5990,
+      "sha256": "993248082f342841535516c671e57eb2c334ed3a0b5ca5f6738ddd6c70a02785"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-lock-generate.json",
+      "bytes": 15033,
+      "sha256": "24088f67f584fe672fbbd298e22a67e077ee9b553798a29e9a24df5f3564a604"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-lock-generate.log",
+      "bytes": 880,
+      "sha256": "652de92d2c727ea93cffa5d2e31817d073a63659058678382b0fa9b98f84f791"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-main.json",
+      "bytes": 712,
+      "sha256": "d831c8336e24855ad587dd8f215a274b7cd70290d44ccb2e6ea679d7e2175b58"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-raw-log-index.json",
+      "bytes": 4201,
+      "sha256": "a7e941ed9b59a732468d6709ca798d5b27a777d000085f078053f2862c554a7b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+      "bytes": 11026,
+      "sha256": "b0ae36dee492b26da003ecf18304ac70fb89f684a46bf139bb18bf148f9092fe"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-source-index.json",
+      "bytes": 28370,
+      "sha256": "27be9cf92b1af173b7c687c348a3cb0ab099e56c303fd64d5cd82660f9f02532"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-static.json",
+      "bytes": 33202,
+      "sha256": "acd85f27bb8bfcdce43fae783e7a91e4f5e3675ea34ff1e90a4aab69a53e6c9c"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-typecheck.json",
+      "bytes": 14948,
+      "sha256": "352dd0e1ba6fff3604e232e6d2b74944b082d212706d807dc25cebca3a6a88e9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-typecheck.log",
+      "bytes": 6544,
+      "sha256": "6ac45c1e003bdeabd15d38b5b0e56c5ca9e36656b59a0e7ed490f2ea893849db"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-types-final.json",
+      "bytes": 14949,
+      "sha256": "36391473e2ca294e36f0815c27f650e8f725e002dabe951b453530621d1f51a5"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-types-final.log",
+      "bytes": 6545,
+      "sha256": "14e3f8755d0002748ba69ea32778750a8d78bbcfb93db3084ff52a5b87ee8c58"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-unit-fixed.json",
+      "bytes": 14944,
+      "sha256": "d434c4c0a481f26815dc4adf3bd63c8dd0d2238030ce316723fafef80f6c5cbe"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-unit-fixed.log",
+      "bytes": 70782,
+      "sha256": "1172a6ad3367b5dbf4d8888b3791d4be62129dd0a3419ee32dd369229ce61b44"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-unit.json",
+      "bytes": 14938,
+      "sha256": "2b10e9c16d199e36f0e0ac993711dfe9c822e61e0ccde5fd1d41b3a04e739bc9"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-unit.log",
+      "bytes": 41489,
+      "sha256": "aef2fc7a4355a0725dc4a549abff7516579012c3464be66a48b1d05367c2042d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-archive-index.json",
+      "bytes": 3464,
+      "sha256": "0b4e1347f30d4d96b38c96f3eb6cd10fc7f705da8f76e526678ab272f47d3720"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-build.json",
+      "bytes": 14809,
+      "sha256": "6d89966b559c404801a46570b7397cd7404c5f057aa922d97de3fc4f00c0d8cd"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-build.log",
+      "bytes": 9324,
+      "sha256": "e571c1918ea05df74a98c546c5dee4f94d41a41fd4e6e980f8199a26f7db647d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-check-index.json",
+      "bytes": 15901,
+      "sha256": "2e6ed6d0a80de0f8e8c88003e9d2706f7fd87e3851cd704a2815a5f42f14dbcf"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-check-index.md",
+      "bytes": 5306,
+      "sha256": "ff27655aabcf1c4d67df83d66868d6a5e2b773533f4a51f05ba56261c554e143"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-conformance-first.json",
+      "bytes": 14813,
+      "sha256": "0460af204d18c512f3e7d99c103e4def789fb0d805d5cb78629061fe67994755"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-conformance-first.log",
+      "bytes": 8038,
+      "sha256": "a1ca1e197f9fb649097b7b4fe697a42f9b35d737e12970bf495707ab6f652b49"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-derived-types.json",
+      "bytes": 14860,
+      "sha256": "abe8f79a2605d42b9ea5c522d492698b844e53719710db647b2babc5f12ffb60"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-derived-types.log",
+      "bytes": 124,
+      "sha256": "4c1eb275b074a87e8fca0f87c921ac8224865c3d257c75ad5ebe09c682db3cc1"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-integration.json",
+      "bytes": 14713,
+      "sha256": "a450a0416338175d0fdb97fa9efd9e44c7297cf433fb3529fb532fd55c5ea08a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-integration.log",
+      "bytes": 1372747,
+      "sha256": "8e24c30173f88e6b3979051cdee20e8e7b08413e14b6d3125d0b92de71715087"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-lint-fixed.json",
+      "bytes": 14701,
+      "sha256": "3276f8d456be9ff1447d409869bf9fec7dc127844207b6607ab4f2c6c32884ef"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-lint-fixed.log",
+      "bytes": 6050,
+      "sha256": "49435a8dbca6b25dee0d18b1075353d823f80fb1b829794558626e24018fa13f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-lint.json",
+      "bytes": 14694,
+      "sha256": "4165c5e6232372b0d1a60d5317618a94e99df6fd87d242b9b0c7c45afd32cb06"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-lint.log",
+      "bytes": 6186,
+      "sha256": "f99f4568bbaa32bdc9ff6e0af7a9a073693ce60576f2bcaa9891bd9146eaf3bc"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-lock-generate.json",
+      "bytes": 14789,
+      "sha256": "b3f2de1230d377b590ed63f2d1c1f661c0c445ad0894180f9d2d50d621ba9ac6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-lock-generate.log",
+      "bytes": 744,
+      "sha256": "7ae32a3b60eb77ea0be79289d6cdb8cca89f88e01e130a8cd10deea606b464fe"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-main.json",
+      "bytes": 504,
+      "sha256": "cdb4f59108f98a2b61e1ecb10eb5e5fe4a8717c6a37e4eab531b81f1a1c0d250"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-raw-log-index.json",
+      "bytes": 5487,
+      "sha256": "62a0ec8e3db5ce5c278fc3a50f6f67ee3dfc3c29429770d4c0ecb710a239a316"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+      "bytes": 12456,
+      "sha256": "a9c9bcfbf0315ca476a82ddf41801af1c7ba4da4e4d8a98fd1d62993328494d7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-source-index.json",
+      "bytes": 28307,
+      "sha256": "f375fedf6c35a288e996bcca12b1a5e4796844d5d0b5564c926c81e37b300d95"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-static.json",
+      "bytes": 35552,
+      "sha256": "208331f408239fb8cf45b9f6b8544daea13b200541bcfd72919f678f5600ea5e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-types-first.json",
+      "bytes": 14705,
+      "sha256": "dc1fb494384beafe2af80cee5834770f01277c07fd6e6a64f506481c06b47f02"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-types-first.log",
+      "bytes": 6734,
+      "sha256": "1ca54aef992afed4dbd2d286e7386785829e7d7aaa2c94d044a2ba5de6c656fc"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-types.json",
+      "bytes": 14700,
+      "sha256": "c244c6bba87f86f23cc8a25f7fcd49aaba8eeaae4b717e390fc485d164361f78"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-types.log",
+      "bytes": 6605,
+      "sha256": "8f2d4948ea684fb05441d487a3e8c053c091d2dd0c7d264e2a02be4c4d48ce31"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-unit-fixed.json",
+      "bytes": 14813,
+      "sha256": "dd2e94ba84b8de54912f9c82abd8d9f8e2263a3b17afde1360679d47a42b8282"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-unit-fixed.log",
+      "bytes": 80086,
+      "sha256": "0cd36d68e227d3f83bc0412045a8742e2b434c0a884d3501c5bf913b7ad5bb5a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-unit.json",
+      "bytes": 14695,
+      "sha256": "7e7f7859caa7ee55e0f6c9b3a5d6a0841e40a22d46bbea8905dc6648159d0f12"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-unit.log",
+      "bytes": 67839,
+      "sha256": "28a1749057e0438fd2fc3ee647e17a81b1abc66765baafe7d20965fe99205d00"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-worker-first.json",
+      "bytes": 14755,
+      "sha256": "65e6eda485d55107cd7965871774113c4077922a8f2bd4b8485d7a2e05aabe7a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-worker-first.log",
+      "bytes": 5091,
+      "sha256": "c3087fd7f819c9d40b6de7e83f017bce0cf44582af19c963f78e1e581b993971"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\route-policy-final.json",
+      "bytes": 13218,
+      "sha256": "d4fee27a713e5ac846061e0b51be8674d78c0cddb0ddaadfe5baa647cd6db400"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\route-policy-final.log",
+      "bytes": 188,
+      "sha256": "eb09164af19f5916fe0fbc257e623dc4b1031f60cf3aeaf6db25405a6b783125"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\route-policy-generate.json",
+      "bytes": 11449,
+      "sha256": "4760784c5770d0935444973c0b361cc7132f6a6f79ab06cf9a079f81493a1b36"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\route-policy-generate.log",
+      "bytes": 183,
+      "sha256": "27752822b72f0960b977fc332126d79c2538ef073c3726e87a36c900af40997f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-legacy-logs.json",
+      "bytes": 5869,
+      "sha256": "93e6ebbf000dae92df104e627d60421a4ee4aa9fe181982d2183b56a70ec3fb8"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-report.md",
+      "bytes": 3623,
+      "sha256": "e07e967b6ed15d071a316c3f8d33f282a2076da7a127e6ef7c54d154da666077"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-test-second.json",
+      "bytes": 13686,
+      "sha256": "6cab982ac9300f5d0bbc43527ffb86cbfc199a3245b5c59a9850cb6bc7fc67b6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-test-second.log",
+      "bytes": 6155,
+      "sha256": "b414754e01fe053c2e2146c618569941383dcbba7b5a6bc499cb10ce69e60567"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-test.json",
+      "bytes": 14077,
+      "sha256": "ed17a503ddfea44f67e893ee27fb2841851f9f24b924ccc87ae96d99b4408bf5"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-test.log",
+      "bytes": 4755,
+      "sha256": "4a47e91d22f148616ed30c074360ea995d4f3a9434d21ece025e0bc4ccce39cd"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-types-second.json",
+      "bytes": 13691,
+      "sha256": "3a63684a24ec0ef0fa0841407c1eb7c46bfcf0b125e0fa2ce7ce99e4dd6e0744"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-types-second.log",
+      "bytes": 140,
+      "sha256": "adb147e35783e33bd00e0f875ec387bdff9c6840e5e6510bc7dac4ff2df24916"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-types.json",
+      "bytes": 14184,
+      "sha256": "3cd40edc568826cc97af4a757a873397e9286cca49d1454e668a67f3e3431b34"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-repair-types.log",
+      "bytes": 531,
+      "sha256": "6d5bbca96d2e04fb73ab8d7544f71f3c73fe4476ad64910264263e3756cff294"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-skill-final.json",
+      "bytes": 13218,
+      "sha256": "54cdef82c6823f5e9804d9f28b8c4dece077bbe02d180d8d5ecc023c400ea09e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\runner-skill-final.log",
+      "bytes": 244,
+      "sha256": "83015e6704c0e00cd780dd42d49b622a85673b583bc93e902cd7293dfa32fd5c"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\sdk-second.json",
+      "bytes": 14167,
+      "sha256": "91a2983d33925a3938a99672a35b27c92dd59b735ae4433e3162619057d50262"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\sdk-second.log",
+      "bytes": 565,
+      "sha256": "20335ab9322f9301dd98f8d9a136bd70d16a0be622dee6d264f6ffbdd75345cc"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\types-final.json",
+      "bytes": 13082,
+      "sha256": "2e47c645241c25799a23b93796d590649b8467dfeb7e225edb77ae77924192dd"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\types-final.log",
+      "bytes": 6544,
+      "sha256": "a5add9099a8e9b5f1c8dfc60374f2c46d887d02ee8e622a3f16ca2964da36a99"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\types-first.json",
+      "bytes": 12032,
+      "sha256": "d9182bae71ade16e92db91f2b08fefc2476733b0f307917b8acd70fb1db04ece"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\types-first.log",
+      "bytes": 2991,
+      "sha256": "8f2016c4520bfa325b206d3aa9b3d6f6483edc0dc165631335750f1f06ca2847"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\types-second.json",
+      "bytes": 12388,
+      "sha256": "69b668bbd388476b1f3c8b3b17e5bbc9717c660bb1c50141dbd4633f728af12a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\types-second.log",
+      "bytes": 6562,
+      "sha256": "17a8a566e40e64f119f04b88f98ec2a0a02313c620c7b4a3f90782e7a9d19520"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-after-manifest.json",
+      "bytes": 13203,
+      "sha256": "b1795ede8ec1a21cd7e891827ef5b2974fae26254241b5be248baa3f1fa3a53a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-after-manifest.log",
+      "bytes": 50311,
+      "sha256": "729af38f3b48011f0aa0d8501ea5afa9a6bf4d94899999e1f292f5f14e8a8482"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-complete.json",
+      "bytes": 13199,
+      "sha256": "217a9c1dedc59441f3c8d65e1c6ce6be32dc3e9b94401d0d42a27d2c511559d4"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-complete.log",
+      "bytes": 44053,
+      "sha256": "1e14c9974ad03585a7d3b175284e293c1c3d0a28cff001de67d0f55a39dcaf1e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-first.json",
+      "bytes": 12606,
+      "sha256": "379af9ee62ebcb8d4c77392d029dfa2c38249aa8a02a94b704ef7545db2085d6"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-first.log",
+      "bytes": 11813,
+      "sha256": "943442ccabc72525bff192278deed3d1d91fcbe7ead1a7c88bce0c97b2d3feae"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-fixed.json",
+      "bytes": 13414,
+      "sha256": "a6cd7bbf984f7a3390bf7d49d851bfff6491ee43c1b8b28b2feef057fe7b9e23"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-fixed.log",
+      "bytes": 82394,
+      "sha256": "d687d7601973503e1bd798f0e67b4585b03c736a6090cbf5f57c47fd76540b12"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-reservation-fixed.json",
+      "bytes": 13654,
+      "sha256": "d8899d4433786d4eccd6fd9c57007838f6a15197b7ab0e2e4dc30bcd0fbe7267"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-reservation-fixed.log",
+      "bytes": 71294,
+      "sha256": "66d3143610b61aaa0eec70521006589afd9f8cf98c42526d2d9e23b44718211f"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-second.json",
+      "bytes": 14021,
+      "sha256": "f5d09ff3068ea7111644295442eecbbc752b9f262ccf5c55d1cfdbb8192b4d74"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\unit-second.log",
+      "bytes": 15857,
+      "sha256": "96f3d0f4904e85dbe9e57e98add0d6efe5a3dec5a847c339da3116b581d5e085"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\wait-contract-types.json",
+      "bytes": 13680,
+      "sha256": "2c53d2dd3826c5c44f6778716cf7e3b4a0fbd45242bc206767ae88a9c034f19b"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\wait-contract-types.log",
+      "bytes": 138,
+      "sha256": "68e4e73697bb0146d444fe4b74013e5123a535121355ae541b92c91c19fd364a"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\whitespace-diagnostic-first.json",
+      "bytes": 696,
+      "sha256": "703c4b477ebc27f9ebb3f4515ec039f1ba709c03352027611cc7be73b7fcb792"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-complete.json",
+      "bytes": 14154,
+      "sha256": "f31777b59eaa21c8e240c15b4245f32463a046382c4321e2eb91f5ebc9c0eed7"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-complete.log",
+      "bytes": 3627,
+      "sha256": "ebb574606cada6d88b1b30e587d0e9708c76cd20ce7304586ee0bcef9d9a3780"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-first.json",
+      "bytes": 13329,
+      "sha256": "9e2b472bd05c0c3bfeb2908a5e816a13c8c46dd455405c7f0848717cdd8a9966"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-first.log",
+      "bytes": 206,
+      "sha256": "c3bfbd9622914d7b22d0f48f44b170bc0a5750b9c6e3d6f96bada254f72f014d"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-second.json",
+      "bytes": 13916,
+      "sha256": "55f8f9d8323847bfd1a7ea9f300d37982ab23a6ad6f48faf9f70a963dba0b8e0"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-second.log",
+      "bytes": 6837,
+      "sha256": "96d42740afb89d4925bbab215736e5a066687efadcf2e4bceb63ad7059a7f299"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-third.json",
+      "bytes": 13643,
+      "sha256": "e0323627f0f75c72c8ca803b470bf0cf22481231fcacc7ec6b7540968cc3db4e"
+    },
+    {
+      "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\worker-third.log",
+      "bytes": 3515,
+      "sha256": "32faa98f8251ec265ef0c415287511a88b49bca1b98383945305ae6609de19dd"
+    }
+  ],
+  "originalZip": {
+    "path": "docs\\reviews\\r1\\execution-logs\\raw-checks.zip",
+    "sha256": "940b71a698531b15308a3a9dbc8b8365181a2aadf9e544de7d3dd84743b08014",
+    "crcVerified": true,
+    "members": []
+  },
+  "sources": [
+    {
+      "path": "docs/reviews/r1/execution-environment.json",
+      "mainGitBlob": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "6a06ce338f90bf16ce27e3cca1a76771eba42e6e:docs/reviews/r1/execution-environment.json"
+        ],
+        "startedAt": "2026-10-11T08:21:23.831509+00:00",
+        "endedAt": "2026-10-11T08:21:23.914324+00:00",
+        "exit": 0,
+        "stdout": "b3e7b2811b715b22015b6a7dfb3eb1e3a639f61c\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "docs/reviews/r1/execution-logs/run9/service-results.json",
+      "mainGitBlob": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "6a06ce338f90bf16ce27e3cca1a76771eba42e6e:docs/reviews/r1/execution-logs/run9/service-results.json"
+        ],
+        "startedAt": "2026-10-11T08:21:23.914339+00:00",
+        "endedAt": "2026-10-11T08:21:23.977216+00:00",
+        "exit": 0,
+        "stdout": "8beaba5a2ce07b0db8207e6614e09efa1782932b\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "docs/reviews/r1/ci381/shard2/service-results.json",
+      "mainGitBlob": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "6a06ce338f90bf16ce27e3cca1a76771eba42e6e:docs/reviews/r1/ci381/shard2/service-results.json"
+        ],
+        "startedAt": "2026-10-11T08:21:23.977231+00:00",
+        "endedAt": "2026-10-11T08:21:24.039369+00:00",
+        "exit": 0,
+        "stdout": "82bf8a91831415dd1b553d1dcf0f5d8f8f191982\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "docs/reviews/c1/review-fixes/resources.json",
+      "mainGitBlob": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "6a06ce338f90bf16ce27e3cca1a76771eba42e6e:docs/reviews/c1/review-fixes/resources.json"
+        ],
+        "startedAt": "2026-10-11T08:21:24.039383+00:00",
+        "endedAt": "2026-10-11T08:21:24.099359+00:00",
+        "exit": 0,
+        "stdout": "46f479d0634c5b132bf69d13f0310fec862e7762\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/review-repair-resources.json",
+      "mainGitBlob": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "6a06ce338f90bf16ce27e3cca1a76771eba42e6e:docs/plan/agent-mcp-m1/product-evidence/review-repair-resources.json"
+        ],
+        "startedAt": "2026-10-11T08:21:24.099373+00:00",
+        "endedAt": "2026-10-11T08:21:24.160844+00:00",
+        "exit": 0,
+        "stdout": "9976b9a715b55ab928628a469720610cdc2c8faa\n",
+        "stderr": ""
+      }
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/review-queued-resources.json",
+      "mainGitBlob": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "6a06ce338f90bf16ce27e3cca1a76771eba42e6e:docs/plan/agent-mcp-m1/product-evidence/review-queued-resources.json"
+        ],
+        "startedAt": "2026-10-11T08:21:24.160862+00:00",
+        "endedAt": "2026-10-11T08:21:24.222446+00:00",
+        "exit": 0,
+        "stdout": "d4c69f1c187d2ca7b4eb115e4b6231527f55891c\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "rows": [
+    {
+      "id": "8955a6225785bee60cd769ac3737635df6a8c6a53435ad6294d92435417fd52b",
+      "name": "/r1ci381d-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "fdbfaf96fc4b7ae621bd07f221fbedd437526ba50f22683ef322d905baa0c376",
+      "name": "/r1ci381d-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "afb321d3ab8803113c81dd79dd99c4be7fcb9a94a05b88ba53b4ee9604b3a507",
+      "name": "/r1ci381d-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "42c1f96772b6b91e9175cbd40fe394efcb9756bca2ff483a4620ea4d1d5afb39",
+      "name": "/r1ci381c-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "16d965766d2c75a3b4e53b5cf0df183ccfb70388cf752d4d813a5bf03a8f21ca",
+      "name": "/r1ci381c-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "567c5c781c262f1cb2dc31b33a77cbc48b64b595cbbf822d3d0e45082ca844a0",
+      "name": "/r1ci381c-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "bb6b39f0959dc975ebba12692e3de8aadea191fdf0596d184ce7bc08fab9f027",
+      "name": "/r1ci381b-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "1244d5e4667d93ef394142c0bb18cb7a44eccdc7abc04a9278a7775c2df1f0dd",
+      "name": "/r1ci381b-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "4d8e4c20dc847b9edeae08745328d208a6a6f7dac72e186c36f63ea2f3bbc434",
+      "name": "/r1ci381b-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "959f0cabf5d696e3ce51871df90f1b568687eb9e0cc50c0a1e0f40896c37476b",
+      "name": "/r1ci381-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "f3359d7c72a758eace150cb87c35e215a0b6f291061556f782caeeab39258a39",
+      "name": "/r1ci381-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "4b9d5cc52acd838f691b711dadab09bc6aebb42ed567c67129308927044f3d01",
+      "name": "/r1ci381-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "54f147c18124aa0e4664cb5d15e36244d7e2f32c020225b80ed48e86e8ff3d6e",
+      "name": "/r1i-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "ebf6f15a199ee0b9d88c92242124cf6e39cc411457525fb95f434340d81b20a9",
+      "name": "/r1i-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "2709a753abebe3bc0fd4961a81a05f0051468cb03bb831abdb41d4f5cfae3f0d",
+      "name": "/r1i-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "39acded25c5fc47bbc59704fa6a63e504cb5a9adb4329d1712e7d2009210fd5d",
+      "name": "/r1h-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "446d990bae3d184b8dc04c3faf0150834abb8f6c80a323c4fd2f5d3e8c86a76c",
+      "name": "/r1h-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "1aa94d42b532791bc4946c34e8c83d7c613c9fa8c4b8f071f2f05a94f82cf3d7",
+      "name": "/r1h-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "885491d285b034daaa3f48e4f3f91c8a96f422f7f591b62a5f6a7ad93a824ba0",
+      "name": "/r1g-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "88d7597271c372a248f89d4bfe02e1cd796a5d65d34752d72661f2620efef724",
+      "name": "/r1g-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "68ddd591771d178bc3052cadb356ffab1daf3cfeeff714cba60246251645d8b1",
+      "name": "/r1g-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "accb377d0f75666bd9236f5e9f0fd773a6414c425c99dc17fe578ea63f4ec0a8",
+      "name": "/r1f-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "95612d167478ff04dba11d79b7563eb6f7a7458440d9d56780898d3db34d309f",
+      "name": "/r1f-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "666b8a945f4e3f073701b69d8409e87aa7d5fc4defd7e33a4d24a434f357f492",
+      "name": "/r1f-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "6572b97faee7dbe4b1df1eee31623605ed21b589e66cae09421f796a76a73075",
+      "name": "/r1e-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "d74db6d52c2161ed926ba031189ea8ef79ed212cf79752a172b28bbbd744d606",
+      "name": "/r1e-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "25a2355963559e11c9ec2a717e6b4d0148f5eb7fdc0d8e3a0a6c61b474f9b0f3",
+      "name": "/r1e-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "a31c79775de3b1ac268262fbd4e984bcdb38c3340cb73c66a7c0c1326c828bf1",
+      "name": "/r1d-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "cef8749bbce413c24a9b13b712ec62de9f92f79df09601bf6191adcb29584289",
+      "name": "/r1d-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "16bd2b3e98244acda74dfd797991b920a16dafece83caa4031dd91e232e35946",
+      "name": "/r1d-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "d89c37d3a22e8beca1b294dc16db0a69c01664c7f8b3693a422ca6c3b421105e",
+      "name": "/r1c-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "1da14d685015528a2c539646ba1ff6a29839656d7e186cea8028c4e37b84b13e",
+      "name": "/r1c-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "a4173ad93c5a950bb76c9b0522bbc4d8487371ba651dbd52ce4cd0ab82dc64fa",
+      "name": "/r1c-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "fb305d53eee075b81f091d76dd1ef6abb8678077459e6c22c0fff822908eca78",
+      "name": "/r1b-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "8be4c0b2f3b233e1c560c9f368564e420d0cb94df6e7008ed9408fb2464c75c1",
+      "name": "/r1b-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "3ac7b4978d975b63928f70b6c9365972ab309f1363b89e690f9af02b82198d3b",
+      "name": "/r1b-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "a016713d06d3f11dfe2ee9533efd521946fb6077acceaf32d876a16206a17ac1",
+      "name": "/r1-rustfs-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "7a1f3fad0cc930f18dd57ce7c684a2265f0a06076fbb39782c1df8fcc3465366",
+      "name": "/r1-redis-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    },
+    {
+      "id": "557e9b8f1cabae46fbc219d4cabf1fed34955c23e1804fd5e021754226365fc2",
+      "name": "/r1-postgres-test",
+      "matches": [
+        {
+          "path": "docs\\reviews\\c1\\review-fixes\\resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-queued-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        },
+        {
+          "path": "docs\\plan\\agent-mcp-m1\\product-evidence\\review-repair-resources.json",
+          "kind": "准确ID/12位ID文本命中，需看所属字段是否为创建账本"
+        }
+      ],
+      "gap": "r1环境/服务退出回执仅有测试前缀、端口和命令；C1/M1将它列作其它任务观察，未绑定原创建者/独占测试数据。没有明确原ID→owner/可重建数据账本，不能凭名称或退出删卷。",
+      "解除条件": "补准确原创建/任务owner来源，证明卷仅含可重建fake测试数据及当前独占消费者，再另作精确预检。"
+    }
+  ]
+}

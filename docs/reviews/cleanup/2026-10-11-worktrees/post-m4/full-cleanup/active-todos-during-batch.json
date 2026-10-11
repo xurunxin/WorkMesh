@@ -1,0 +1,28 @@
+{
+  "input": {
+    "phase": [
+      "building",
+      "queued",
+      "planning",
+      "confirm",
+      "plan_reviewing",
+      "implement_reviewing",
+      "review"
+    ],
+    "limit": 100
+  },
+  "startedAt": {
+    "current_time": "2026-10-11 08:30:49 UTC"
+  },
+  "endedAt": {
+    "current_time": "2026-10-11 08:31:01 UTC"
+  },
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Matched 2 of 60 todos.\n#5 [review] [B1/B2] 可恢复连接器：稳定请求身份与完整协议验证（零迁移） (id: ti53hOGbvnBNrvjXXveGO, created 2026-10-07)\n#60 [building] [清理] 继续回收无用旧工作树与重复构建残留 (id: mfKRDbW2TwlSuLxBxCoU-, created 2026-10-10)"
+      }
+    ]
+  }
+}
