@@ -1,0 +1,59 @@
+{
+  "recordedAt": "2026-10-11T09:17:20.974256+00:00",
+  "success": true,
+  "calls": [
+    {
+      "input": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\post-m4\\full-cleanup\\new-machine-plan.py",
+        "--store-base",
+        "X:/packages/.pnpm-store"
+      ],
+      "startedAt": "2026-10-11T09:17:20.273626+00:00",
+      "endedAt": "2026-10-11T09:17:20.623881+00:00",
+      "exitCode": 0,
+      "stdout": "{\r\n  \"applied\": false,\r\n  \"workspace\": \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\",\r\n  \"branch\": \"tds/conv-01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\",\r\n  \"head\": \"81cb45463504234ebdd23414c10e11e8011567b4\",\r\n  \"dirty\": true,\r\n  \"expectedNode\": \"22.19.0\",\r\n  \"expectedPnpm\": \"9.15.4\",\r\n  \"lockSha256\": \"4e0e667e898e99c6b5e5640105ce39818a151c2f21930877cd4a8aef8b032a79\",\r\n  \"storeBase\": \"X:\\\\packages\\\\.pnpm-store\",\r\n  \"storeExists\": true,\r\n  \"privateVirtualStore\": \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\\\.tmp\\\\workmesh-virtual-store\",\r\n  \"existingEnvironment\": true,\r\n  \"offlineDependencyPreparation\": [\r\n    \"pnpm\",\r\n    \"install\",\r\n    \"--offline\",\r\n    \"--ignore-scripts\",\r\n    \"--frozen-lockfile\",\r\n    \"--store-dir\",\r\n    \"X:\\\\packages\\\\.pnpm-store\",\r\n    \"--virtual-store-dir\",\r\n    \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\\\.tmp\\\\workmesh-virtual-store\",\r\n    \"--package-import-method=copy\",\r\n    \"--side-effects-cache=false\"\r\n  ],\r\n  \"fullDependencyInstallation\": [\r\n    \"pnpm\",\r\n    \"install\",\r\n    \"--frozen-lockfile\",\r\n    \"--store-dir\",\r\n    \"X:\\\\packages\\\\.pnpm-store\",\r\n    \"--virtual-store-dir\",\r\n    \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\\\.tmp\\\\workmesh-virtual-store\",\r\n    \"--package-import-method=copy\",\r\n    \"--side-effects-cache=false\"\r\n  ],\r\n  \"nextReadOnlyChecks\": [\r\n    [\r\n      \"node\",\r\n      \"--version\"\r\n    ],\r\n    [\r\n      \"pnpm\",\r\n      \"--version\"\r\n    ],\r\n    [\r\n      \"docker\",\r\n      \"version\"\r\n    ]\r\n  ],\r\n  \"limitation\": \"命令数组仅供审阅；没有验证当地工具版本、缓存完整性或部署。新环境确认工具版本后才执行。冷缓存需要用户恢复工作后允许联网准备；离线忽略脚本不代表完整可运行环境。\"\r\n}\r\n",
+      "stderr": ""
+    },
+    {
+      "input": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\post-m4\\full-cleanup\\new-machine-plan.py",
+        "--store-base",
+        "relative-store"
+      ],
+      "startedAt": "2026-10-11T09:17:20.623954+00:00",
+      "endedAt": "2026-10-11T09:17:20.790171+00:00",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\post-m4\\full-cleanup\\new-machine-plan.py\", line 59, in <module>\r\n    main()\r\n    ~~~~^^\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\post-m4\\full-cleanup\\new-machine-plan.py\", line 31, in main\r\n    raise RuntimeError('store-base 必须是新机器实际选定的绝对路径')\r\nRuntimeError: store-base 必须是新机器实际选定的绝对路径\r\n"
+    },
+    {
+      "input": [
+        "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-B",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\post-m4\\full-cleanup\\new-machine-plan.py",
+        "--store-base",
+        "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5"
+      ],
+      "startedAt": "2026-10-11T09:17:20.790221+00:00",
+      "endedAt": "2026-10-11T09:17:20.973669+00:00",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\post-m4\\full-cleanup\\new-machine-plan.py\", line 59, in <module>\r\n    main()\r\n    ~~~~^^\r\n  File \"C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\docs\\reviews\\cleanup\\2026-10-11-worktrees\\post-m4\\full-cleanup\\new-machine-plan.py\", line 36, in main\r\n    raise RuntimeError('共享 store 须独立于任务仓库，不放进源码或其祖先')\r\nRuntimeError: 共享 store 须独立于任务仓库，不放进源码或其祖先\r\n"
+    }
+  ],
+  "hashesBefore": {
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\package.json": "629cc919d251d13c8583ced00dbedc08dca92824be29cd706916b6aff787f103",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\pnpm-lock.yaml": "4e0e667e898e99c6b5e5640105ce39818a151c2f21930877cd4a8aef8b032a79",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\.node-version": "751fc97484d12d7946b0ec9c74d94ecfa555de9daa35f040f037ae1fadc22958"
+  },
+  "hashesAfter": {
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\package.json": "629cc919d251d13c8583ced00dbedc08dca92824be29cd706916b6aff787f103",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\pnpm-lock.yaml": "4e0e667e898e99c6b5e5640105ce39818a151c2f21930877cd4a8aef8b032a79",
+    "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\.node-version": "751fc97484d12d7946b0ec9c74d94ecfa555de9daa35f040f037ae1fadc22958"
+  },
+  "scope": "本机只读计划/相对store与仓库内store拒绝；未执行新机器安装、容器部署或产品验收"
+}

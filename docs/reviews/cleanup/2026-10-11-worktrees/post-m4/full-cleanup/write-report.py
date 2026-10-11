@@ -31,6 +31,8 @@ def main():
         '',
         '用户15:05原话：“可以完全清理，后续待开始项目，重新拉取代码重新建立环境开始，这次建立环境注意尽可能复用共享部分内容，减少空间的重复占用”。本次不再仅因待开始、待审、checkpoint 或未来恢复而保留完整旧环境；先保存必要独有成果，再收尾准确旧现场。清理不等于接受、取消或完成未验收业务。',
         '',
+        '用户17:06要求本轮结束后暂停后续推进，随后要求实际提交成果便于换机部署。远端获取、必要保全入口、当地工具/store选择、依赖准备和源码容器部署步骤见 [handoff.md](handoff.md)，跨机器只读计划见 [new-machine-plan.py](new-machine-plan.py)。本机绝对路径和可移植用法、已验证与未验证范围分列；本轮不配置新机器或迁移秘密。完成本轮独审及准确最新RequiredCI后的条件合入后，停止推进，等待用户换机接入并明确恢复。',
+        '',
         f'实际完整回收 **{len(removed)} 个旧工作树，{sum(r["logicalBytes"] for r in removed):,} B（{gb(sum(r["logicalBytes"] for r in removed))} GB）目标逻辑长度**。工作树 {before["worktreeCount"]}→{after["worktreeCount"]}。实际失败/停止目标 {len(failed)} 个。原第三轮已删的 `01a12766` 及更早成功清单不重复执行或计入本轮释放。',
         '',
         f'本人精确测试容器完成收尾 {sum(not r["error"] for r in final["containers"]["receipts"])} 个；逐容器及其独占卷结果见下表。共享镜像和原 store 保留。**物理净释放 `null`（未知）**；逻辑长度、身份去重长度及卷可用变化分别报告，不能相互代替。',
@@ -108,7 +110,7 @@ def main():
         text.append(f'| `{t["id"]}` / `{t["name"]}` | ' + '<br>'.join('`'+v+'`' for v in t['volumes']) + f' | {r["result"]}' + (f'；{r["error"]}' if r['error'] else '') + ' |')
     text += ['', '六目标来源为 main 可达 M4 execution/resources.json 和 M5 product-cleanup.json 的准确 immutable ID/名称/镜像/独占卷；[containers-plan.json](containers-plan.json) 含开工消费者和卷元数据，[containers-execution.json](containers-execution.json) 与逐容器回执含执行前重新核验、真实 docker exit、不存在后验和共享镜像存在后验。无 Force、prune 或镜像删除。', '', '以下名称虽似本项目，未找到准确原 container ID→任务 owner/数据重建账本，或属于默认 compose 业务数据，不凭 stopped/名称删除。需给出精确 owner 和必要数据/独占消费者来源后，才能作为独立候选；不得全局清卷。', '', '| 未能清理的精确 ID / 名称 | 当前状态 | 挂载卷 | 原因 |', '|---|---|---|---|']
     # 完整调查记录独立列出，不能以未找到一份 registry 便泛判所有旧容器无用。
-    text.insert(len(text)-2,'准确调查见 [remaining-container-ownership-complete.json](remaining-container-ownership-complete.json)：471份相关文本和原 raw-checks ZIP 全38成员/CRC。39个r1 ID共117处命中仅在C1/M1其它任务观察中；原R1环境/服务日志未绑定原创建ID、owner及卷的数据用途。默认compose另由实际label定位 G:/S:/Projects/MetronX/WorkMesh，属于工作区外业务数据，不扩清理范围。')
+    text.insert(len(text)-2,'准确调查见 [remaining-container-ownership-complete.json](remaining-container-ownership-complete.json)：471份相关文本和原 raw-checks ZIP 全38成员/CRC。39个r1 ID共117处命中仅在C1/M1其它任务观察中；原R1环境/服务日志未绑定原创建ID、owner及卷的数据用途。另核平台最新R1构建聊天，未取得原创建ID账本，见 [remaining-container-platform-source.json](remaining-container-platform-source.json)；不把最新聊天无ID冒全部历史无原件。默认compose另由实际label定位 G:/S:/Projects/MetronX/WorkMesh，属于工作区外业务数据，不扩清理范围。\n')
     current_containers = {c['id']:c for c in a.load(OUT/'activity-after.json')['containers']}
     for old in containers_plan['remainingProjectNamed']:
         c = current_containers.get(old['id'])
@@ -125,7 +127,7 @@ def main():
         text.insert(text.index('## 每个旧工作树的实际结果'),
             '一次活动安全门暂停原件完整保留，未派发Git删除：原命中pwsh PID34632与本轮并发只读查看时间重叠，原命令行未记录不倒填。消费者已退出后，另存新的完整预检/推送/源码绑定，才首次派发该目标的正式删除；见 [gate-resume-decision.json](gate-resume-decision.json)、[gate-resume-source-binding.json](gate-resume-source-binding.json)及两个execution原件。这不是重试原生删除失败或系统拒绝，原暂停回执没有被覆盖。\n')
     text += ['规则实际触发分列：本轮开工只读盘点已执行，旧环境回收按逐目标原件实际执行；本轮自身尚未合入，合入后触发未发生，只登记为受保护的后续候选，见 current-lifecycle-registration.json。',
-        '本轮不改产品源码、数据库迁移、API或事件；后续业务环境按用户选定任务再启动。\n']
+        '本轮不改产品源码、数据库迁移、API或事件；交付和条件合入完成后暂停后续任务，等待换机并明确恢复，不自动追加下一轮。\n']
     destination = OUT / 'report.md'
     with destination.open('x',encoding='utf-8',newline='\n') as stream:
         stream.write('\n'.join(text))

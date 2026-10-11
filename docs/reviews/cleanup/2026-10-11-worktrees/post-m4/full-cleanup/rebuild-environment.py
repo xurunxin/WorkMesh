@@ -92,6 +92,7 @@ def main():
         for parent in [Path(data['privateVirtualStore']),*Path(data['privateVirtualStore']).parents]:
             if os.path.lexists(parent) and getattr(os.lstat(parent),'st_file_attributes',0)&1024:raise RuntimeError('任务 virtual store 祖先是 reparse point，停止')
         if os.path.lexists(root/'.tmp/workmesh-environment-owner.json'):raise RuntimeError('已有 owner 账本，不覆盖或新建替代环境')
+        if os.path.lexists(root/'.tmp') and getattr(os.lstat(root/'.tmp'),'st_file_attributes',0)&1024:raise RuntimeError('owner 账本父目录是 reparse point，停止')
         Path(data['privateVirtualStore']).mkdir(parents=True)
         ledger=root/'.tmp/workmesh-environment-owner.json'
         ledger.parent.mkdir(exist_ok=True)

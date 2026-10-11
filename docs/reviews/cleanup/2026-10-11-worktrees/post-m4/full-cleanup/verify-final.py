@@ -23,7 +23,8 @@ def main():
         sources.append(path.name)
     binding=a.load(OUT/'preflight-binding.json')
     objects=[]
-    for row in binding['files']:
+    bound_files = binding['files'] + a.load(OUT/'hardlink-source-binding.json')['files'] + a.load(OUT/'gate-resume-source-binding.json')['files']
+    for row in bound_files:
         args=['git','-C',str(CURRENT),'cat-file','blob',row['gitBlob']]
         begin=a.utc();result=subprocess.run(args,capture_output=True)
         assert result.returncode==0 and len(result.stdout)==row['gitBytes'] and a.sha(result.stdout)==row['gitSha256']
@@ -52,7 +53,8 @@ def main():
     assert final['physicalNetReleasedBytes'] is None and len(final['protectedChecks'])==4
     report=(OUT/'report.md').read_text(encoding='utf-8')
     assert '物理净释放' in report and 'RequiredCI' in report
-    assert a.load(OUT/'entry-verification.json')['success']
+    assert a.load(OUT/'entry-verification-handoff.json')['success']
+    assert a.load(OUT/'new-machine-verification.json')['success']
     assert a.load(OUT/'rebuild-verification-copy-isolation.json')['storeUnchangedAfterPrivateWrite']
     assert a.load(OUT/'thin-plan-verification.json')['sharedConfigUnchanged']
     a.write('final-verification.json',dict(startedAt=started,endedAt=a.utc(),success=True,parsed=parsed,pythonAst=sources,

@@ -1,0 +1,47 @@
+{
+  "recordedAt": "2026-10-11T09:17:58.143819+00:00",
+  "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+  "branch": {
+    "input": [
+      "git",
+      "-C",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+      "branch",
+      "--show-current"
+    ],
+    "startedAt": "2026-10-11T09:17:58.143828+00:00",
+    "endedAt": "2026-10-11T09:17:58.194746+00:00",
+    "exit": 0,
+    "stdout": "tds/conv-01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\n",
+    "stderr": ""
+  },
+  "headAtRegistration": {
+    "input": [
+      "git",
+      "-C",
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+      "rev-parse",
+      "HEAD"
+    ],
+    "startedAt": "2026-10-11T09:17:58.194784+00:00",
+    "endedAt": "2026-10-11T09:17:58.231627+00:00",
+    "exit": 0,
+    "stdout": "81cb45463504234ebdd23414c10e11e8011567b4\n",
+    "stderr": ""
+  },
+  "completedHead": null,
+  "protected": true,
+  "eligibleForDeletion": false,
+  "openingInventoryActuallyTriggered": true,
+  "postMergeTriggerActuallyOccurred": false,
+  "currentWorktreeRemoved": false,
+  "exactPrivateTestCandidates": [
+    "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors",
+    "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors-isolated",
+    "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors-copy-isolation"
+  ],
+  "futureCondition": "本轮准确新head独审和RequiredCI及实际合入后再刷新owner/活动/保护来源；本轮不清自己",
+  "followupPolicy": "按用户17:06裁定，本轮收尾后停止后续推进，等待换机并明确恢复；不自动启动候选回收或业务任务",
+  "newMachineConfigurationPerformed": false,
+  "secretMigrationPerformed": false
+}

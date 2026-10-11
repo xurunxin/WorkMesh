@@ -12,7 +12,7 @@ a, OUT, CURRENT = audit.a, audit.OUT, audit.CURRENT
 
 def main():
     phase=sys.argv[1] if len(sys.argv)>1 else 'opening'
-    assert phase in ('opening','ending')
+    assert phase in ('opening','ending','handoff')
     config_call = a.call(CURRENT,'rev-parse','--path-format=absolute','--git-common-dir')
     assert config_call['exit'] == 0
     config = Path(config_call['stdout'].strip()) / 'config'
@@ -40,7 +40,7 @@ def main():
                 assert data['cleanupCandidates'] == [str(CURRENT)] and data['ownerGap']
     after = {str(p):a.sha(p.read_bytes()) for p in paths}
     assert before == after
-    name='entry-verification-ending.json' if phase=='ending' else 'entry-verification.json'
+    name='entry-verification-'+phase+'.json' if phase!='opening' else 'entry-verification.json'
     a.write(name,dict(recordedAt=a.utc(),calls=calls,configLocator=config_call,
         hashesBefore=before,hashesAfter=after,unchanged=True,success=True,
         scope='真实 plan/finish-plan 与当前 dirty/未启用每树配置的安全拒绝，不冒新任务完整业务安装'))

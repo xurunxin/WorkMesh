@@ -1,0 +1,116 @@
+{
+  "recordedAt": "2026-10-11T09:04:37.120607+00:00",
+  "commit": "81cb45463504234ebdd23414c10e11e8011567b4",
+  "files": [
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/verify-target.py",
+      "gitBlob": "7631a7212d18067a9eefc33d2eb37c2a6cb77e50",
+      "gitBytes": 5256,
+      "gitSha256": "5d02ca04af03edf5b09a2fa05311b8af2009d38c313daf44f917a61646780efa",
+      "windowsBytes": 5256,
+      "windowsSha256": "5d02ca04af03edf5b09a2fa05311b8af2009d38c313daf44f917a61646780efa",
+      "reconstruction": "identity",
+      "sourceCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "81cb45463504234ebdd23414c10e11e8011567b4:docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/verify-target.py"
+        ],
+        "startedAt": "2026-10-11T09:04:36.789975+00:00",
+        "endedAt": "2026-10-11T09:04:36.849893+00:00",
+        "exit": 0,
+        "stdout": "7631a7212d18067a9eefc33d2eb37c2a6cb77e50\n",
+        "stderr": ""
+      },
+      "objectCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "cat-file",
+          "blob",
+          "7631a7212d18067a9eefc33d2eb37c2a6cb77e50"
+        ],
+        "startedAt": "2026-10-11T09:04:36.849914+00:00",
+        "endedAt": "2026-10-11T09:04:36.914711+00:00",
+        "exitCode": 0
+      }
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/execute-target.ps1",
+      "gitBlob": "2c7ec8fd0e69d05f4a15af72f41f96317711c4c8",
+      "gitBytes": 10099,
+      "gitSha256": "a0b857808c22e9c81cc83c5bf1e6ecec90f2dc70f2181f9ab91cf6d7245e5e8f",
+      "windowsBytes": 10099,
+      "windowsSha256": "a0b857808c22e9c81cc83c5bf1e6ecec90f2dc70f2181f9ab91cf6d7245e5e8f",
+      "reconstruction": "identity",
+      "sourceCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "81cb45463504234ebdd23414c10e11e8011567b4:docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/execute-target.ps1"
+        ],
+        "startedAt": "2026-10-11T09:04:36.914819+00:00",
+        "endedAt": "2026-10-11T09:04:36.961607+00:00",
+        "exit": 0,
+        "stdout": "2c7ec8fd0e69d05f4a15af72f41f96317711c4c8\n",
+        "stderr": ""
+      },
+      "objectCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "cat-file",
+          "blob",
+          "2c7ec8fd0e69d05f4a15af72f41f96317711c4c8"
+        ],
+        "startedAt": "2026-10-11T09:04:36.961624+00:00",
+        "endedAt": "2026-10-11T09:04:37.010559+00:00",
+        "exitCode": 0
+      }
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/gate-resume-decision.json",
+      "gitBlob": "c5d60dec77c3505e59eaf04455cdb0330b157af9",
+      "gitBytes": 1437,
+      "gitSha256": "cd5b9d74259bdc215122915cc80ffc2fbb198d1f28ea4937990a29298676856b",
+      "windowsBytes": 1437,
+      "windowsSha256": "cd5b9d74259bdc215122915cc80ffc2fbb198d1f28ea4937990a29298676856b",
+      "reconstruction": "identity",
+      "sourceCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "81cb45463504234ebdd23414c10e11e8011567b4:docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/gate-resume-decision.json"
+        ],
+        "startedAt": "2026-10-11T09:04:37.010703+00:00",
+        "endedAt": "2026-10-11T09:04:37.073999+00:00",
+        "exit": 0,
+        "stdout": "c5d60dec77c3505e59eaf04455cdb0330b157af9\n",
+        "stderr": ""
+      },
+      "objectCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "cat-file",
+          "blob",
+          "c5d60dec77c3505e59eaf04455cdb0330b157af9"
+        ],
+        "startedAt": "2026-10-11T09:04:37.074017+00:00",
+        "endedAt": "2026-10-11T09:04:37.120596+00:00",
+        "exitCode": 0
+      }
+    }
+  ],
+  "success": true,
+  "prerequisite": "该commit先实际推送并独立回读本会话远端ref；原预检b7与历史原回执不覆盖"
+}
