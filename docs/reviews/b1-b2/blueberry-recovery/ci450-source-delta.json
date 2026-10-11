@@ -1,0 +1,14 @@
+{
+  "before": "c29c22efca9929c0dc3390a86dca83439b172337",
+  "after": "76be94a28e5bad5a68c0c91c427ca6914af83aba",
+  "selectedFiles": 1103,
+  "changed": [
+    {
+      "path": "apps/web/e2e/stage0.spec.ts",
+      "beforeBlob": "e4c0ccadabec58a1e6651993a963bf4178764f5b",
+      "afterBlob": "d299b1101ce25ae544df6a24ed22a930a8e3ef98"
+    }
+  ],
+  "checkout": "3b7a6d0ab9ebc438acbe461cae17cd2ed013159b",
+  "note": "一次读取两提交完整Git树，按原生捕获的1103路径逐blob比较；只变更E2E前置，产品/平台源码不变。"
+}

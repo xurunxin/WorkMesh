@@ -1,12 +1,13 @@
 # B1/B2 换机接续：正式成果独审入口
 
-本轮已恢复旧产品、正常整合主线并在源提交c29取得三系统原生及完整 Required CI 的真实成功结果。最终证据提交bd1的CI449出现E2E首败，原件保留；已补齐既有删除场景的Settings表单就绪前置，新提交全套验证待核。**没有合入、Done 或推进 #7/#20；本轮新增产品修正仍须正式成果独审和 Chief 确认。**
+本轮已恢复旧产品、正常整合主线，修正原生验证缺口并取得最新通过源76be的三系统及完整 Required CI 成功。CI449的E2E首败、选定trace与最小就绪前置修正均保留，CI450完整验证通过。**没有合入、Done 或推进 #7/#20；本轮新增产品修正仍须正式成果独审和 Chief 确认。**
 
 ## 准确来源与授权
 
 - 当前分支：`tds/conv-01a12a8e-cadc-7c05-a07a-1d6a77c8f64c`；[PR221](https://github.com/xurunxin/WorkMesh/pull/221)。
 - 主线独立读回并整合：`20fb7358f6c6818a452e78c1fd3da096cdc31286`；旧产品来源：`5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19`。恢复提交 `718350f83d4a74edca33051e939204e90bf89e4c` 同时包含两者。
-- 本报告的通过源提交：`c29c22efca9929c0dc3390a86dca83439b172337`；[CI448](https://github.com/xurunxin/WorkMesh/actions/runs/38144556735) 的13项job全部成功。实际三个runner checkout为 `f311e03a5c6a22208c44db9c2be2046c6f0bc5e8`，不是把 API 的 head_sha 当 checkout。
+- 本报告最新通过源提交：`76be94a28e5bad5a68c0c91c427ca6914af83aba`；[CI450](https://github.com/xurunxin/WorkMesh/actions/runs/38148009266) 的13项job全部成功，Required CI job114498731784成功。实际三个runner checkout为 `3b7a6d0ab9ebc438acbe461cae17cd2ed013159b`，不是把 API 的 head_sha 当 checkout。
+- 历史通过源c29及CI448完整保留；证据提交bd1的CI449真实E2E首败及汇总失败也保留。76be相对c29的1103源码路径仅变动stage0.spec.ts的Settings表单就绪前置；详见 `ci450-source-delta.json`。原删除/撤权/超时断言保持，不改UI。
 - 用户18:37恢复接续及19:05长路径反馈适用；原实施确认、三个选择和Chief放行不重复确认。本卡按已批准例外使用 Todos＋仓库，不创建真实 WorkMesh 双轨记录。
 - 完整中文计划：[connector-recovery.md](../../../plan/connector-recovery.md)。saved plan 来源 `doc:m7WeSHWZt1Bv3FZwYlnlv`；原正文 SHA-256 `72e6fcb9d46a3f433291db4b1db3e351c243bc38202fdc884d463f5d50341230`，可读文件 SHA-256 `71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352`，本轮两份字节摘要实核一致。平台版本/计划时间未知，保留null；当前工具没有独立完整计划读回，不重建或新增同源计划。来源与冻结测试映射见上级 `plan-source.json`、`source-snapshot.json`、`test-coverage.json`。
 
@@ -28,7 +29,7 @@ CI Windows检出前设置/读回longpaths；Docker全workspace安装的build/dev
 
 ## 实际检查与原件
 
-所有下面结果仅属于准确CI448源，不冒最终证据提交自身已通过。各OS原件：`ci448-native/`完整job日志、`ci448-artifacts/`选定源码/清理JSON、`ci448-source-equivalence.json`逐Git原blob等价证明；全部job状态与其余10份完整日志见 `ci448-complete/`。
+所有下面结果属于准确CI450源，不冒收齐证据后的最终提交自身已通过。各OS原件：`ci450-native/`完整job日志、`ci450-artifacts/`选定源码/清理JSON、`ci450-source-equivalence.json`逐Git原blob等价证明。其余已成功8份完整日志见 `ci450-other-success/`（当时run仍运行中）；最终13项job全部成功状态及API/Required CI完整日志见 `ci450-complete/`。历史CI448/449原件保持。
 
 | 实际系统/架构 | 实际入口 | 结果 |
 | --- | --- | --- |
@@ -40,20 +41,20 @@ CI Windows检出前设置/读回longpaths；Docker全workspace安装的build/dev
 
 Blueberry本机 `local-06/` 的lint/typecheck/build及73单元成功、源码前后稳定；平台三通过两缺本机第二用户失败如实保留。该设备未提权；跨用户缺口由上面真实Windows runner关闭。`local-source-binding/`准确Node22实跑1103文件三方绑定、真实源码变更exit1及原字节恢复exit0；Node25的最初脚本试跑单列，不冒产品runtime。
 
-原始日志存 `raw-evidence.zip`＋`raw-evidence-index.json`，逐字节验证后才从普通日志路径收尾，首次失败/取消/截断/未运行均保历史。复核：`node docs/reviews/b1-b2/blueberry-recovery/archive-logs.mjs`；工件复核：`python docs/reviews/b1-b2/blueberry-recovery/verify-native-sources.py ci448-artifacts c29c22efca9929c0dc3390a86dca83439b172337`。
+原始日志存 `raw-evidence.zip`＋`raw-evidence-index.json`，逐字节验证后才从普通日志路径收尾，首次失败/取消/截断/未运行均保历史。复核：`node docs/reviews/b1-b2/blueberry-recovery/archive-logs.mjs`；工件复核：`python docs/reviews/b1-b2/blueberry-recovery/verify-native-sources.py ci450-artifacts 76be94a28e5bad5a68c0c91c427ca6914af83aba`。
 
 曾发生ci447 Windows cleanup JSON的index换行归一化首败后仍推送的顺序错误，详见native-followup；最终证据提交仅对原件重新应用-text属性并核实际Git blob，与下载来源SHA一致。不改原件或receipt，不放宽全仓格式门禁。
 
 ## 清理与保留
 
 - 本机未创建Docker容器、镜像、卷或网络。初轮39目录＋2诊断探针已定向移除；local-02/03/04各39、local-05/06各54目录全部收尾，专用空根非递归移除。声明的HTTP/普通子进程/PTY关闭、测试秘密删除回执见 `resource-summary.json`，不推算物理净释放。
-- CI448 Windows账户 `wmct52e0c97c2732` 与 `C:/Users/Public/workmesh-connector-265b405b417e40c4bb4000172e178d58`实际移除，errors为空；准确SID及原字节回执在工件中。不冒已测系统profile收尾。
+- CI450 Windows账户 `wmcta863b93e7729` 与 `C:/Users/Public/workmesh-connector-59c9b0303a134eddab64b9067487a2fc`实际移除，errors为空；准确SID及原字节回执在工件中。CI448历史回执保持。不冒已测系统profile收尾。
 - 保留本任务Node22 runtime、copy导入的隔离virtual store/node_modules与当前worktree，供正式独审及必要继续验收；登记/原锁SHA/store来源见 `retained-environment.json`。共享CAS、主仓库、用户配置和历史拒目标未改。
 - 两个非秘密诊断根保全：`.tmp/rename-probe-1bc20940-3d2c-482c-9aeb-dfcee8fca580`（收尾rmdir首败EPERM）及 `.tmp/rename-probe-7dd37e1f-8a33-457b-a2bb-7c8bb58c764b`（native1005后未派发删除，含4096字节DLL）。准确绝对路径/ACL/对象清单见 `native-experiment-retained.json`。不重试、改ACL/属性、拆批或通过删除父目录/worktree绕首败；不冒临时资源已全清。合后worktree清理仍受这些保护及原活动/保全条件约束。
 
 ## 剩余门禁、演示与限制
 
-最终证据提交不改变已通过的产品/平台断言，仍须**该提交自身**的最新Required CI成功。由于在文件内写入自身提交SHA/结果会再生成另一提交，最终head/run与实际结果由本次最终回复和PR最新head检查给出，不能用CI448代替。
+最终证据提交不改变已通过的产品/平台断言，仍须**该提交自身**的最新Required CI成功。由于在文件内写入自身提交SHA/结果会再生成另一提交，最终head/run与实际结果由本次最终回复和PR最新head检查给出，不能用CI448或CI450代替。
 
 正式独审请以本报告、完整中文计划、ADR0079、当前PR差异、原件及所有历史首败为对象；本轮没有新正式审查回执，PR查询未见review。独审blocking/high与Chief确认闭合后才按既有授权合入，actual main落地才能Done。平台消息框发送按钮左侧“AI审核”可发起独审：[使用说明](https://todos.dev/docs/ai-review)。
 

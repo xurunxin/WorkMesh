@@ -1,0 +1,31 @@
+{
+  "capturedAt": "2026-10-11T14:57:23.461160+00:00",
+  "runId": 38148009266,
+  "head": "76be94a28e5bad5a68c0c91c427ca6914af83aba",
+  "event": "pull_request",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38148009266",
+  "status": "completed",
+  "conclusion": "success",
+  "logs": [
+    {
+      "jobId": 114495492051,
+      "name": "API integration",
+      "conclusion": "success",
+      "path": "job-114495492051-original.log",
+      "bytes": 2361420,
+      "sha256": "fb18ac167a8b355cec8bbf57567cd26eefee889fa2c49cf0f256107380d0640b",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    },
+    {
+      "jobId": 114498731784,
+      "name": "Required CI",
+      "conclusion": "success",
+      "path": "job-114498731784-original.log",
+      "bytes": 25796,
+      "sha256": "3cccafcbceeab2b8c029d6d83e0ef1abc2e3f969f8a8c85f40f67e3644be0c79",
+      "redactions": 0,
+      "source": "gh api job logs 的原始 stdout 字节；只作明确凭据形态脱敏"
+    }
+  ]
+}

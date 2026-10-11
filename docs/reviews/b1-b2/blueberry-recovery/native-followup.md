@@ -117,3 +117,13 @@ Windows实际清理回执：账户wmct52e0c97c2732（准确SID在原件）、C:/
 选定Playwright trace证据见ci449-e2e-first/selected-trace.json（准确artifact11705456513与完整下载/trace ZIP摘要；不持久化完整trace、network或cookie）。call349已导航/settings，call351从禁用Loading Settings选择器开始，返回目标Team UUID；其后快照URL及选择器却为General。并非旧Issues页面命中，React内部交错原因不能仅凭此trace确定。仅在原删除场景增加目标Settings的Team details表单可见前置，再执行原选择。原目标Team值、删除确认、后续子写拒绝、超时与零导航等断言全部保持；不改UI或用重复运行冒修复。该场景不承担初始化加载期间用户操作的交错覆盖，后续如需专项产品修复须另核真实机制及范围。
 
 这次E2E测试文件变化会进入下一提交源码绑定；此前bd1相对c29的1103源码零变化结论只属于bd1，不延伸到修正提交。新提交须重新取得完整Required CI、三OS绑定及正式成果独审。诊断下载只在内存解包，临时两份解析JSON已逐文件移除；没有创建本机容器、服务或用户。
+
+## CI450：修正后完整门禁与源码实证
+
+[CI450](https://github.com/xurunxin/WorkMesh/actions/runs/38148009266) head `76be94a28e5bad5a68c0c91c427ca6914af83aba` 的13项job全部成功，Required CI job114498731784成功。此前失败的Browser acceptance (2/2)及另一分片通过，API真实MCP/Pi conformance、DB、Worker、Source gates、灾难恢复及Agent smoke均通过。Windows5平台＋73单元、Mac9平台＋73单元、Linux6平台＋73单元保持成功，无skip/弱化断言/提高超时。
+
+ci450-native保存三OS完整job日志；ci450-other-success保存当时已成功8项的完整日志，run状态仍为运行中如实保留；ci450-complete收齐最终13项状态及API/汇总日志。ci450-artifacts保存7份选定原字节JSON；ci450-source-equivalence逐原blob核1103文件、前后原字节及三OS等价，checkout3b7a6d0ab9ebc438acbe461cae17cd2ed013159b的parent/tree与准确PR源绑定，零字节不等价。ci450-source-delta对照c29，唯一源码差异是Stage0就绪前置；本次报告/证据收齐不再变产品源码，仍要求其自身最终head完整门禁。
+
+Windows临时账户wmcta863b93e7729（准确SID见回执）、C:/Users/Public/workmesh-connector-59c9b0303a134eddab64b9067487a2fc实际移除，errors为空。不冒已测profile删除/物理净释放。新机本地Stage0语法解析通过，完整验收由上述真实CI消费；两次直接ESLint尝试分别因忽略规则/无匹配配置没有消费此E2E文件，未冒本地lint通过。一次诊断JSON默认GBK读取报编码错，改明确UTF-8读取成功；原件未改，不混为产品测试失败。
+
+中文正式独审入口及review-source更新到76be/CI450，完整计划及原冻结规范未变。该新增方案修正的正式成果独审、Chief确认与实际main落地仍缺，不能Done或推进#7/#20。
