@@ -13,7 +13,7 @@ export async function verifyBackendSkill({ origin, api, teamId, principalId }) {
     name: 'Backend retirement verification', agentSlug, clientType: 'codex',
     teamId, principalHumanActorId: principalId,
     requestedCapabilities: ['work:read'], grantAgentDelegate: false,
-  })
+  }, randomUUID(), 201)
   const locator = new URL(created.connect_url)
   assert.equal(locator.pathname, '/api/v1/agent-connections/redeem')
   const redemption = await fetch(`${origin}/api/v1/agent-connections/redeem`, {

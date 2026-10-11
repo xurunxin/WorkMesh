@@ -26,9 +26,9 @@ try {
   assert.equal(installed.status(), 200, `安装失败：HTTP ${installed.status()}`)
   csrf = (await installed.json()).csrfToken
   assert.equal(typeof csrf, 'string')
-  const api = async (path, data, key = randomUUID()) => {
+  const api = async (path, data, key = randomUUID(), expectedStatus = 200) => {
     const response = data === undefined ? await client.get(path) : await client.post(path, { data, headers: { 'X-CSRF-Token': csrf, 'Idempotency-Key': key } })
-    assert.equal(response.status(), 200, `${path} HTTP ${response.status()}`)
+    assert.equal(response.status(), expectedStatus, `${path} HTTP ${response.status()}`)
     return response.json()
   }
   const actor = (await api('/api/v1/auth/me')).actor

@@ -155,11 +155,11 @@ export function validateDevelopmentImageEntrypoint(job) {
 }
 
 export function validateBackendLiteEntrypoint(job) {
-  const expected = 'set -o pipefail\nnode scripts/verify-a2-backend-lite.mjs 2>&1 | tee ci-logs/backend-lite-deployment.log'
+  const expected = 'set -o pipefail\nnode scripts/verify-a2-backend-lite.mjs 2>&1 | tee ci-logs/backend-lite-deployment.log\npnpm validate:production-images 2>&1 | tee ci-logs/backend-production-deployment.log'
   const steps = job?.steps?.filter(step => step.run?.trim() === expected) ?? []
   if (steps.length !== 1 || steps[0].if !== undefined || steps[0]['continue-on-error']
     || steps[0].env?.WORKMESH_VALIDATION_OUTPUT !== 'ci-logs/backend-deployment')
-    return ['source-gates必须执行无源码 Lite、TLS、真实 worker 和签名 Skill 验收，不得跳过或吞掉失败']
+    return ['source-gates必须执行无源码 Lite/生产、TLS、真实 worker 和签名 Skill 验收，不得跳过或吞掉失败']
   return []
 }
 

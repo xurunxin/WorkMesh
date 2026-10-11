@@ -152,6 +152,7 @@ jobs:
         run: |
           set -o pipefail
           node scripts/verify-a2-backend-lite.mjs 2>&1 | tee ci-logs/backend-lite-deployment.log
+          pnpm validate:production-images 2>&1 | tee ci-logs/backend-production-deployment.log
       - name: Verify clean tracked tree
         run: |
           set -o pipefail
