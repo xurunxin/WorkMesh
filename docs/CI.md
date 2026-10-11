@@ -24,7 +24,7 @@ store. The source job also restores pure typecheck results from
 `.turbo/typecheck`.
 Only main pushes that pass all source gates save these caches; PRs only restore.
 Keys bind platform, Node, lockfile and commit, with a same-toolchain/lockfile
-fallback. No `node_modules`, complete `.next`/`dist` artifacts or unit/integration/
+fallback. No `node_modules`, complete `dist` artifacts or unit/integration/
 protocol results are persisted between runs. 后端编译继续独立执行。
 
 ## Change selection and required job graph

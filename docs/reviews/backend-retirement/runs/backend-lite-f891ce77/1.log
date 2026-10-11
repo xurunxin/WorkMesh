@@ -1,3 +1,4 @@
+阅读视图；原始字节：raw-logs/run-21cb4e867f71.zip 内 runs/backend-lite-f891ce77/1.log；SHA-256：ce70edf9c152d312f83e21245346775d2ca011e0f4c8dd6f3ce31d24eaf3daa9
 #0 building with "desktop-linux" instance using docker driver
 
 #1 [internal] load remote build context
@@ -197,7 +198,7 @@
 #19 1.756 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #19 2.395 Progress: resolved 447, reused 0, downloaded 0, added 0
 #19 3.493 Progress: resolved 447, reused 0, downloaded 1, added 0
-#19 3.775 
+#19 3.775
 #19 3.775    ╭───────────────────────────────────────────────────────────────────╮
 #19 3.775    │                                                                   │
 #19 3.775    │                Update available! 9.15.4 → 12.11.2.                │
@@ -205,7 +206,7 @@
 #19 3.775    │         Run "corepack install -g pnpm@12.11.2" to update.         │
 #19 3.775    │                                                                   │
 #19 3.775    ╰───────────────────────────────────────────────────────────────────╯
-#19 3.775 
+#19 3.775
 #19 4.494 Progress: resolved 447, reused 0, downloaded 17, added 3
 #19 7.456 Progress: resolved 447, reused 0, downloaded 18, added 3
 #19 8.470 Progress: resolved 447, reused 0, downloaded 86, added 79
@@ -319,7 +320,7 @@
 #19 101.0 .../node-pty@1.1.0/node_modules/node-pty install:   SOLINK_MODULE(target) Release/obj.target/pty.node
 #19 101.1 .../node-pty@1.1.0/node_modules/node-pty install:   COPY Release/pty.node
 #19 101.1 .../node-pty@1.1.0/node_modules/node-pty install: make: Leaving directory '/workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/build'
-#19 101.1 .../node-pty@1.1.0/node_modules/node-pty install: gyp info ok 
+#19 101.1 .../node-pty@1.1.0/node_modules/node-pty install: gyp info ok
 #19 101.1 .../node-pty@1.1.0/node_modules/node-pty install: Done
 #19 101.1 .../node-pty@1.1.0/node_modules/node-pty postinstall$ node scripts/post-install.js
 #19 101.1 .../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Cleaning release folder...[0m
@@ -329,7 +330,7 @@
 #19 101.8 .../node_modules/@google/genai preinstall$ echo 'preinstall: no-op'
 #19 101.8 .../node_modules/@google/genai preinstall: preinstall: no-op
 #19 101.8 .../node_modules/@google/genai preinstall: Done
-#19 102.1 
+#19 102.1
 #19 102.1 devDependencies:
 #19 102.1 + @types/node 22.20.1
 #19 102.1 + eslint 9.39.5
@@ -339,22 +340,22 @@
 #19 102.1 + typescript 5.9.3
 #19 102.1 + vitest 3.2.7
 #19 102.1 + yaml 2.9.0
-#19 102.1 
+#19 102.1
 #19 102.1 apps/connector postinstall$ node scripts/prepare-native.mjs
 #19 102.2 apps/connector postinstall: Done
 #19 102.3 Done in 1m 41.9s
 #19 DONE 111.1s
 
 #20 [build 13/14] RUN pnpm check:workmesh-skill     && pnpm --filter @workmesh/config build     && pnpm --filter @workmesh/api... build     && pnpm --filter @workmesh/worker... build
-#20 1.768 
+#20 1.768
 #20 1.768 > workmesh@ check:workmesh-skill /workspace
 #20 1.768 > node scripts/generate-workmesh-skill-artifact.mjs --check
-#20 1.768 
+#20 1.768
 #20 1.824 sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad verified
-#20 2.394 
+#20 2.394
 #20 2.394 > @workmesh/config@ build /workspace/packages/config
 #20 2.394 > tsc -p tsconfig.json
-#20 2.394 
+#20 2.394
 #20 12.16 Scope: 11 of 18 workspace projects
 #20 12.16 packages/contracts build$ tsc -p tsconfig.build.json
 #20 12.16 packages/artifact-storage build$ tsc -p tsconfig.json
@@ -369,4 +370,125 @@
 #20 22.59 packages/domain build$ tsc -p tsconfig.json
 #20 22.59 apps/connector build$ tsc -p tsconfig.build.json
 #20 24.95 packages/a2a-adapter build: Done
-#20 33.29 packages/config build: Do
+#20 33.29 packages/config build: Done
+#20 33.40 packages/domain build: Done
+#20 33.51 apps/connector build: Done
+#20 33.52 packages/db build$ tsc -p tsconfig.json
+#20 50.94 packages/db build: Done
+#20 50.94 packages/recovery build$ tsc -p tsconfig.build.json
+#20 60.82 packages/recovery build: Done
+#20 60.83 apps/api build$ tsc -p tsconfig.build.json
+#20 81.79 apps/api build: Done
+#20 82.36 Scope: 7 of 18 workspace projects
+#20 82.37 packages/artifact-storage build$ tsc -p tsconfig.json
+#20 82.37 packages/git-provider build$ tsc -p tsconfig.json
+#20 82.37 packages/contracts build$ tsc -p tsconfig.build.json
+#20 85.02 packages/git-provider build: Done
+#20 85.59 packages/artifact-storage build: Done
+#20 92.17 packages/contracts build: Done
+#20 92.17 packages/domain build$ tsc -p tsconfig.json
+#20 92.17 packages/config build$ tsc -p tsconfig.json
+#20 101.3 packages/config build: Done
+#20 101.6 packages/domain build: Done
+#20 101.6 packages/db build$ tsc -p tsconfig.json
+#20 116.2 packages/db build: Done
+#20 116.2 apps/worker build$ tsc -p tsconfig.build.json
+#20 130.2 apps/worker build: Done
+#20 DONE 130.5s
+
+#21 [build 14/14] RUN pnpm --filter @workmesh/api --prod deploy /out-api     && node infra/docker/prepare-production-deploy.mjs /out-api     && pnpm --filter @workmesh/worker --prod deploy /out-worker     && node infra/docker/prepare-production-deploy.mjs /out-worker
+#21 1.085 Packages are copied from the content-addressable store to the virtual store.
+#21 1.085   Content-addressable store is at: /root/.local/share/pnpm/store/v3
+#21 1.085   Virtual store is at:             ../out-api/node_modules/.pnpm
+#21 1.226 Progress: resolved 1, reused 0, downloaded 0, added 0
+#21 2.236 Progress: resolved 10, reused 10, downloaded 0, added 0
+#21 3.237 Progress: resolved 16, reused 10, downloaded 6, added 0
+#21 3.813 .                                        |  WARN  deprecated eslint@9.39.5
+#21 4.236 Progress: resolved 24, reused 10, downloaded 14, added 0
+#21 5.240 Progress: resolved 31, reused 10, downloaded 21, added 0
+#21 6.240 Progress: resolved 87, reused 10, downloaded 72, added 0
+#21 7.241 Progress: resolved 162, reused 10, downloaded 131, added 0
+#21 8.242 Progress: resolved 233, reused 10, downloaded 170, added 0
+#21 9.242 Progress: resolved 301, reused 10, downloaded 207, added 0
+#21 10.25 Progress: resolved 399, reused 10, downloaded 307, added 0
+#21 11.25 Progress: resolved 420, reused 10, downloaded 316, added 0
+#21 13.15 Progress: resolved 421, reused 10, downloaded 316, added 0
+#21 14.15 Progress: resolved 428, reused 10, downloaded 332, added 0
+#21 15.15 Progress: resolved 441, reused 10, downloaded 336, added 0
+#21 16.15 Progress: resolved 454, reused 10, downloaded 352, added 0
+#21 17.15 Progress: resolved 463, reused 10, downloaded 357, added 0
+#21 18.15 Progress: resolved 466, reused 10, downloaded 371, added 0
+#21 18.40 .                                        | +121 ++++++++++++
+#21 19.15 Progress: resolved 466, reused 10, downloaded 372, added 109
+#21 20.15 Progress: resolved 466, reused 10, downloaded 372, added 111
+#21 33.52 Progress: resolved 466, reused 10, downloaded 372, added 112
+#21 37.53 Progress: resolved 466, reused 10, downloaded 372, added 113
+#21 38.74 Progress: resolved 466, reused 10, downloaded 372, added 114
+#21 39.26 Progress: resolved 466, reused 10, downloaded 372, added 121, done
+#21 39.34 .../argon2@0.41.1/node_modules/argon2 install$ node-gyp-build
+#21 39.47 .../argon2@0.41.1/node_modules/argon2 install: Done
+#21 39.64  WARN  Failed to create bin at /workspace/apps/out-api/node_modules/.bin/vite. ENOENT: no such file or directory, open '/out-api/node_modules/.pnpm/vite@7.3.6_@types+node@22.20.1_jiti@2.7.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/bin/vite.js'
+#21 39.64  WARN  Failed to create bin at /workspace/apps/out-api/node_modules/.bin/jiti. ENOENT: no such file or directory, open '/out-api/node_modules/.pnpm/jiti@2.7.0/node_modules/jiti/lib/jiti-cli.mjs'
+#21 39.64  WARN  Failed to create bin at /workspace/apps/out-api/node_modules/.bin/yaml. ENOENT: no such file or directory, open '/out-api/node_modules/.pnpm/yaml@2.9.0/node_modules/yaml/bin.mjs'
+#21 40.77 Packages are copied from the content-addressable store to the virtual store.
+#21 40.77   Content-addressable store is at: /root/.local/share/pnpm/store/v3
+#21 40.77   Virtual store is at:             ../out-worker/node_modules/.pnpm
+#21 40.87 Progress: resolved 1, reused 0, downloaded 0, added 0
+#21 41.37 .                                        |  WARN  deprecated eslint@9.39.5
+#21 41.88 Progress: resolved 18, reused 18, downloaded 0, added 0
+#21 42.88 Progress: resolved 19, reused 18, downloaded 1, added 0
+#21 43.88 Progress: resolved 231, reused 175, downloaded 2, added 0
+#21 44.88 Progress: resolved 246, reused 181, downloaded 11, added 0
+#21 45.88 Progress: resolved 260, reused 192, downloaded 14, added 0
+#21 46.88 Progress: resolved 271, reused 203, downloaded 14, added 0
+#21 47.88 Progress: resolved 279, reused 208, downloaded 14, added 0
+#21 51.78 Progress: resolved 279, reused 209, downloaded 14, added 0
+#21 52.78 Progress: resolved 304, reused 235, downloaded 14, added 0
+#21 53.79 Progress: resolved 314, reused 245, downloaded 14, added 0
+#21 54.70  WARN  GET https://registry.npmjs.org/source-map-js error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#21 54.79 Progress: resolved 315, reused 246, downloaded 14, added 0
+#21 65.90 .                                        |  +82 ++++++++
+#21 65.97 Progress: resolved 315, reused 246, downloaded 14, added 1
+#21 66.28 Progress: resolved 315, reused 246, downloaded 14, added 82, done
+#21 66.42  WARN  Failed to create bin at /workspace/apps/out-worker/node_modules/.bin/vite. ENOENT: no such file or directory, open '/out-worker/node_modules/.pnpm/vite@7.3.6_@types+node@22.20.1_jiti@2.7.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/bin/vite.js'
+#21 66.42  WARN  Failed to create bin at /workspace/apps/out-worker/node_modules/.bin/jiti. ENOENT: no such file or directory, open '/out-worker/node_modules/.pnpm/jiti@2.7.0/node_modules/jiti/lib/jiti-cli.mjs'
+#21 66.42  WARN  Failed to create bin at /workspace/apps/out-worker/node_modules/.bin/yaml. ENOENT: no such file or directory, open '/out-worker/node_modules/.pnpm/yaml@2.9.0/node_modules/yaml/bin.mjs'
+#21 DONE 67.4s
+
+#22 [runtime  4/11] COPY --from=build --chown=10001:10001 /out-api /opt/workmesh/api
+#22 DONE 5.4s
+
+#23 [runtime  5/11] COPY --from=build --chown=10001:10001 /out-worker /opt/workmesh/worker
+#23 DONE 4.6s
+
+#24 [runtime  6/11] COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs
+#24 DONE 0.1s
+
+#25 [runtime  7/11] COPY --chown=10001:10001 infra/docker/runtime-guard.mjs ./runtime-guard.mjs
+#25 DONE 0.5s
+
+#26 [runtime  8/11] COPY --chown=10001:10001 infra/docker/lite-dispatch.mjs ./lite-dispatch.mjs
+#26 DONE 0.0s
+
+#27 [runtime  9/11] COPY --chown=10001:10001 infra/docker/lite-entrypoint.sh ./entrypoint.sh
+#27 DONE 0.0s
+
+#28 [runtime 10/11] COPY --chown=10001:10001 infra/docker/healthcheck.mjs ./healthcheck.mjs
+#28 DONE 0.0s
+
+#29 [runtime 11/11] RUN sed -i 's/\r$//' /opt/workmesh/api/entrypoint.sh     && chmod 0555 /opt/workmesh/api/entrypoint.sh
+#29 DONE 0.2s
+
+#30 exporting to image
+#30 exporting layers
+#30 exporting layers 3.7s done
+#30 exporting manifest sha256:452cb0fcf68993e6cb05458832f92943b81b7816a7f2211a403f034274d1ecf4 done
+#30 exporting config sha256:47a1782e427e76a8558579f970bc7a32add3756b6797d8d1f15c4fb296612a08 done
+#30 exporting attestation manifest sha256:f592646e51a7184f65f644c2405010827450762d360598a14af826e37c4acb63 0.0s done
+#30 exporting manifest list sha256:4809cc083d4eb1d459c28e73ee46bdb0da7956e8c2d31ad53e45a4317d82ac56 done
+#30 naming to docker.io/library/workmesh-retirement-lite:backend-lite-f891ce77 done
+#30 unpacking to docker.io/library/workmesh-retirement-lite:backend-lite-f891ce77
+#30 unpacking to docker.io/library/workmesh-retirement-lite:backend-lite-f891ce77 5.8s done
+#30 DONE 9.6s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/jhkuliujksok1pw3lkwudpys4

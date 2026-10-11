@@ -1,0 +1,281 @@
+阅读视图；原始字节：raw-logs/run-349a62eebe34.zip 内 runs/backend-lite-af2fb988/1.log；SHA-256：fc052b4f3a9756c6b2cf8bd487021c03523681860c2d23abf9ef124dc28114e6
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load remote build context
+#1 DONE 0.9s
+
+#1 [internal] load remote build context
+#1 DONE 0.9s
+
+#2 copy /context /
+#2 DONE 0.3s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 3.6s
+
+#4 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#4 CACHED
+
+#5 [internal] load metadata for docker.io/library/node:22.19.0-alpine3.21
+#5 DONE 2.4s
+
+#6 [build  1/14] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 resolve docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9 0.0s done
+#6 CACHED
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "13709aaf66a30c83edec6c732c35b76ba2235aea"     && echo "13709aaf66a30c83edec6c732c35b76ba2235aea" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 ...
+
+#8 [build  4/14] WORKDIR /workspace
+#8 CACHED
+
+#9 [build  2/14] RUN corepack enable     && corepack prepare pnpm@9.15.4 --activate
+#9 CACHED
+
+#10 [build  3/14] RUN apk add --no-cache python3 make g++
+#10 CACHED
+
+#11 [build  5/14] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+#11 CACHED
+
+#12 [build  6/14] COPY apps ./apps
+#12 DONE 1.4s
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "13709aaf66a30c83edec6c732c35b76ba2235aea"     && echo "13709aaf66a30c83edec6c732c35b76ba2235aea" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 0.910 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#7 2.782 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#7 3.610 (1/10) Upgrading musl (1.2.5-r9 -> 1.2.5-r11)
+#7 ...
+
+#13 [build  7/14] COPY packages ./packages
+#13 DONE 2.2s
+
+#14 [build  8/14] COPY scripts ./scripts
+#14 DONE 0.5s
+
+#15 [build  9/14] COPY skills/workmesh/SKILL.md skills/workmesh/public-key.pem ./skills/workmesh/
+#15 DONE 0.5s
+
+#16 [build 10/14] COPY skills/workmesh/references/protocol.md skills/workmesh/references/clients.md ./skills/workmesh/references/
+#16 DONE 0.7s
+
+#17 [build 11/14] COPY infra/docker/prepare-production-deploy.mjs ./infra/docker/prepare-production-deploy.mjs
+#17 DONE 0.2s
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "13709aaf66a30c83edec6c732c35b76ba2235aea"     && echo "13709aaf66a30c83edec6c732c35b76ba2235aea" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 3.814 (2/10) Upgrading busybox (1.37.0-r12 -> 1.37.0-r14)
+#7 4.324 Executing busybox-1.37.0-r14.post-upgrade
+#7 4.636 (3/10) Upgrading busybox-binsh (1.37.0-r12 -> 1.37.0-r14)
+#7 4.815 (4/10) Upgrading alpine-release (3.21.4-r0 -> 3.21.8-r0)
+#7 5.268 (5/10) Upgrading ca-certificates-bundle (20250619-r0 -> 20260909-r0)
+#7 5.479 (6/10) Upgrading libcrypto3 (3.3.4-r0 -> 3.3.7-r2)
+#7 5.790 (7/10) Upgrading libssl3 (3.3.4-r0 -> 3.3.7-r2)
+#7 5.992 (8/10) Upgrading ssl_client (1.37.0-r12 -> 1.37.0-r14)
+#7 6.174 (9/10) Upgrading zlib (1.3.1-r2 -> 1.3.2-r1)
+#7 6.356 (10/10) Upgrading musl-utils (1.2.5-r9 -> 1.2.5-r11)
+#7 6.542 Executing busybox-1.37.0-r14.trigger
+#7 6.555 OK: 10 MiB in 17 packages
+#7 6.700 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#7 8.390 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#7 9.420 (1/8) Installing postgresql-common (1.2-r1)
+#7 9.592 Executing postgresql-common-1.2-r1.pre-install
+#7 14.00 (2/8) Installing lz4-libs (1.10.0-r0)
+#7 14.22 (3/8) Installing libpq (17.11-r0)
+#7 14.40 (4/8) Installing ncurses-terminfo-base (6.5_p20241006-r3)
+#7 14.58 (5/8) Installing libncursesw (6.5_p20241006-r3)
+#7 14.76 (6/8) Installing readline (8.2.13-r0)
+#7 14.94 (7/8) Installing zstd-libs (1.5.6-r2)
+#7 15.13 (8/8) Installing postgresql16-client (16.15-r0)
+#7 15.39 Executing busybox-1.37.0-r14.trigger
+#7 15.40 Executing postgresql-common-1.2-r1.trigger
+#7 15.40 * Setting postgresql16 as the default version
+#7 ...
+
+#18 [build 12/14] RUN --mount=type=cache,id=workmesh-lite-pnpm,target=/pnpm/store,sharing=locked     pnpm install --frozen-lockfile --store-dir /pnpm/store
+#18 1.203 Scope: all 18 workspace projects
+#18 1.400 Lockfile is up to date, resolution step is skipped
+#18 1.505 Progress: resolved 1, reused 0, downloaded 0, added 0
+#18 2.068 Packages: +447
+#18 2.068 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#18 2.527 Progress: resolved 447, reused 0, downloaded 0, added 0
+#18 3.577 Progress: resolved 447, reused 426, downloaded 0, added 0
+#18 4.158
+#18 4.158    ╭───────────────────────────────────────────────────────────────────╮
+#18 4.158    │                                                                   │
+#18 4.158    │                Update available! 9.15.4 → 12.11.2.                │
+#18 4.158    │   Changelog: https://github.com/pnpm/pnpm/releases/tag/v12.11.2   │
+#18 4.158    │         Run "corepack install -g pnpm@12.11.2" to update.         │
+#18 4.158    │                                                                   │
+#18 4.158    ╰───────────────────────────────────────────────────────────────────╯
+#18 4.158
+#18 4.579 Progress: resolved 447, reused 446, downloaded 0, added 0
+#18 6.835 Progress: resolved 447, reused 447, downloaded 0, added 0
+#18 7.836 Progress: resolved 447, reused 447, downloaded 0, added 17
+#18 8.837 Progress: resolved 447, reused 447, downloaded 0, added 32
+#18 9.837 Progress: resolved 447, reused 447, downloaded 0, added 41
+#18 ...
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "13709aaf66a30c83edec6c732c35b76ba2235aea"     && echo "13709aaf66a30c83edec6c732c35b76ba2235aea" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 16.05 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.21/main: No such file or directory
+#7 16.05 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.21/community: No such file or directory
+#7 19.62 OK: 15 MiB in 25 packages
+#7 ...
+
+#18 [build 12/14] RUN --mount=type=cache,id=workmesh-lite-pnpm,target=/pnpm/store,sharing=locked     pnpm install --frozen-lockfile --store-dir /pnpm/store
+#18 10.84 Progress: resolved 447, reused 447, downloaded 0, added 44
+#18 11.84 Progress: resolved 447, reused 447, downloaded 0, added 49
+#18 13.45 Progress: resolved 447, reused 447, downloaded 0, added 50
+#18 14.45 Progress: resolved 447, reused 447, downloaded 0, added 59
+#18 15.45 Progress: resolved 447, reused 447, downloaded 0, added 60
+#18 16.45 Progress: resolved 447, reused 447, downloaded 0, added 61
+#18 17.46 Progress: resolved 447, reused 447, downloaded 0, added 63
+#18 25.37 Progress: resolved 447, reused 447, downloaded 0, added 64
+#18 26.38 Progress: resolved 447, reused 447, downloaded 0, added 66
+#18 28.16 Progress: resolved 447, reused 447, downloaded 0, added 67
+#18 29.46 Progress: resolved 447, reused 447, downloaded 0, added 68
+#18 30.47 Progress: resolved 447, reused 447, downloaded 0, added 69
+#18 31.47 Progress: resolved 447, reused 447, downloaded 0, added 70
+#18 32.47 Progress: resolved 447, reused 447, downloaded 0, added 74
+#18 33.47 Progress: resolved 447, reused 447, downloaded 0, added 77
+#18 34.47 Progress: resolved 447, reused 447, downloaded 0, added 80
+#18 35.47 Progress: resolved 447, reused 447, downloaded 0, added 85
+#18 36.47 Progress: resolved 447, reused 447, downloaded 0, added 89
+#18 37.47 Progress: resolved 447, reused 447, downloaded 0, added 94
+#18 38.47 Progress: resolved 447, reused 447, downloaded 0, added 104
+#18 39.48 Progress: resolved 447, reused 447, downloaded 0, added 105
+#18 40.48 Progress: resolved 447, reused 447, downloaded 0, added 111
+#18 41.48 Progress: resolved 447, reused 447, downloaded 0, added 113
+#18 42.48 Progress: resolved 447, reused 447, downloaded 0, added 119
+#18 46.13 Progress: resolved 447, reused 447, downloaded 0, added 120
+#18 47.13 Progress: resolved 447, reused 447, downloaded 0, added 129
+#18 48.13 Progress: resolved 447, reused 447, downloaded 0, added 135
+#18 49.14 Progress: resolved 447, reused 447, downloaded 0, added 144
+#18 50.14 Progress: resolved 447, reused 447, downloaded 0, added 154
+#18 51.14 Progress: resolved 447, reused 447, downloaded 0, added 155
+#18 52.14 Progress: resolved 447, reused 447, downloaded 0, added 156
+#18 53.14 Progress: resolved 447, reused 447, downloaded 0, added 161
+#18 54.14 Progress: resolved 447, reused 447, downloaded 0, added 165
+#18 55.14 Progress: resolved 447, reused 447, downloaded 0, added 170
+#18 56.14 Progress: resolved 447, reused 447, downloaded 0, added 171
+#18 57.14 Progress: resolved 447, reused 447, downloaded 0, added 173
+#18 58.15 Progress: resolved 447, reused 447, downloaded 0, added 174
+#18 59.15 Progress: resolved 447, reused 447, downloaded 0, added 175
+#18 60.98 Progress: resolved 447, reused 447, downloaded 0, added 176
+#18 61.98 Progress: resolved 447, reused 447, downloaded 0, added 188
+#18 62.99 Progress: resolved 447, reused 447, downloaded 0, added 189
+#18 63.99 Progress: resolved 447, reused 447, downloaded 0, added 196
+#18 64.99 Progress: resolved 447, reused 447, downloaded 0, added 197
+#18 65.99 Progress: resolved 447, reused 447, downloaded 0, added 200
+#18 68.44 Progress: resolved 447, reused 447, downloaded 0, added 201
+#18 69.44 Progress: resolved 447, reused 447, downloaded 0, added 205
+#18 70.44 Progress: resolved 447, reused 447, downloaded 0, added 207
+#18 71.44 Progress: resolved 447, reused 447, downloaded 0, added 209
+#18 72.44 Progress: resolved 447, reused 447, downloaded 0, added 214
+#18 73.44 Progress: resolved 447, reused 447, downloaded 0, added 216
+#18 74.45 Progress: resolved 447, reused 447, downloaded 0, added 220
+#18 75.45 Progress: resolved 447, reused 447, downloaded 0, added 228
+#18 76.86 Progress: resolved 447, reused 447, downloaded 0, added 229
+#18 77.86 Progress: resolved 447, reused 447, downloaded 0, added 230
+#18 78.87 Progress: resolved 447, reused 447, downloaded 0, added 233
+#18 79.87 Progress: resolved 447, reused 447, downloaded 0, added 236
+#18 80.87 Progress: resolved 447, reused 447, downloaded 0, added 239
+#18 82.49 Progress: resolved 447, reused 447, downloaded 0, added 240
+#18 83.49 Progress: resolved 447, reused 447, downloaded 0, added 248
+#18 84.49 Progress: resolved 447, reused 447, downloaded 0, added 256
+#18 85.49 Progress: resolved 447, reused 447, downloaded 0, added 270
+#18 86.49 Progress: resolved 447, reused 447, downloaded 0, added 275
+#18 92.20 Progress: resolved 447, reused 447, downloaded 0, added 276
+#18 93.20 Progress: resolved 447, reused 447, downloaded 0, added 313
+#18 95.37 Progress: resolved 447, reused 447, downloaded 0, added 314
+#18 96.37 Progress: resolved 447, reused 447, downloaded 0, added 315
+#18 97.37 Progress: resolved 447, reused 447, downloaded 0, added 327
+#18 98.37 Progress: resolved 447, reused 447, downloaded 0, added 333
+#18 99.37 Progress: resolved 447, reused 447, downloaded 0, added 381
+#18 100.4 Progress: resolved 447, reused 447, downloaded 0, added 404
+#18 101.4 Progress: resolved 447, reused 447, downloaded 0, added 406
+#18 102.4 Progress: resolved 447, reused 447, downloaded 0, added 414
+#18 103.4 Progress: resolved 447, reused 447, downloaded 0, added 430
+#18 104.4 Progress: resolved 447, reused 447, downloaded 0, added 432
+#18 ...
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "13709aaf66a30c83edec6c732c35b76ba2235aea"     && echo "13709aaf66a30c83edec6c732c35b76ba2235aea" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 DONE 113.3s
+
+#19 [runtime  3/11] WORKDIR /opt/workmesh/api
+#19 DONE 5.3s
+
+#18 [build 12/14] RUN --mount=type=cache,id=workmesh-lite-pnpm,target=/pnpm/store,sharing=locked     pnpm install --frozen-lockfile --store-dir /pnpm/store
+#18 108.5 Progress: resolved 447, reused 447, downloaded 0, added 433
+#18 109.5 Progress: resolved 447, reused 447, downloaded 0, added 435
+#18 111.9 Progress: resolved 447, reused 447, downloaded 0, added 436
+#18 112.9 Progress: resolved 447, reused 447, downloaded 0, added 437
+#18 113.9 Progress: resolved 447, reused 447, downloaded 0, added 441
+#18 120.0 Progress: resolved 447, reused 447, downloaded 0, added 442
+#18 121.0 Progress: resolved 447, reused 447, downloaded 0, added 445
+#18 122.0 Progress: resolved 447, reused 447, downloaded 0, added 446
+#18 125.0 Progress: resolved 447, reused 447, downloaded 0, added 447
+#18 125.0 Progress: resolved 447, reused 447, downloaded 0, added 447, done
+#18 126.3
+#18 126.3 devDependencies:
+#18 126.3 + @types/node 22.20.1
+#18 126.3 + eslint 9.39.5
+#18 126.3 + prettier 3.9.6
+#18 126.3 + tsx 4.23.1
+#18 126.3 + turbo 2.10.6
+#18 126.3 + typescript 5.9.3
+#18 126.3 + vitest 3.2.7
+#18 126.3 + yaml 2.9.0
+#18 126.3
+#18 126.3 apps/connector postinstall$ node scripts/prepare-native.mjs
+#18 126.4 apps/connector postinstall: Done
+#18 126.4 Done in 2m 5.9s
+#18 DONE 130.4s
+
+#20 [build 13/14] RUN pnpm check:workmesh-skill     && pnpm --filter @workmesh/config build     && pnpm --filter @workmesh/api... build     && pnpm --filter @workmesh/worker... build
+#20 1.841
+#20 1.841 > workmesh@ check:workmesh-skill /workspace
+#20 1.841 > node scripts/generate-workmesh-skill-artifact.mjs --check
+#20 1.841
+#20 1.906 sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad verified
+#20 2.544
+#20 2.544 > @workmesh/config@ build /workspace/packages/config
+#20 2.544 > tsc -p tsconfig.json
+#20 2.544
+#20 15.38 Scope: 11 of 18 workspace projects
+#20 15.39 packages/contracts build$ tsc -p tsconfig.build.json
+#20 15.39 packages/observability build$ tsc -p tsconfig.json
+#20 15.39 packages/git-provider build$ tsc -p tsconfig.json
+#20 15.39 packages/artifact-storage build$ tsc -p tsconfig.json
+#20 18.45 packages/observability build: Done
+#20 19.36 packages/git-provider build: Done
+#20 20.13 packages/artifact-storage build: Done
+#20 27.31 packages/contracts build: Done
+#20 27.31 apps/connector build$ tsc -p tsconfig.build.json
+#20 27.31 packages/a2a-adapter build$ tsc -p tsconfig.json
+#20 27.31 packages/config build$ tsc -p tsconfig.json
+#20 27.31 packages/domain build$ tsc -p tsconfig.json
+#20 30.76 packages/a2a-adapter build: Done
+#20 39.61 packages/config build: Done
+#20 47.28 packages/domain build: Done
+#20 47.45 apps/connector build: Done
+#20 47.46 packages/db build$ tsc -p tsconfig.json
+#20 63.15 packages/db build: Done
+#20 63.15 packages/recovery build$ tsc -p tsconfig.build.json
+#20 73.71 packages/recovery build: Done
+#20 73.71 apps/api build$ tsc -p tsconfig.build.json
+#20 114.9 apps/api build: Done
+#20 119.1 Scope: 7 of 18 workspace projects
+#20 119.1 packages/artifact-storage build$ tsc -p tsconfig.json
+#20 119.1 packages/contracts build$ tsc -p tsconfig.build.json
+#20 119.2 packages/git-provider build$ tsc -p tsconfig.json
+#20 133.5 packages/git-provider build: Done
+#20 139.4 packages/artifact-storage build: Done
+#20 139.6 packages/contracts build: Done
+#20 139.6 packages/domain build$ tsc -p tsconfig.json
+#20 140.3 packages/config build$ tsc -p tsconfig.json
+#20 153.5 packages/config build: Done
+#20 153.5 packages/domain build: Done
+#20 153.6 packages/db build$ tsc -p tsconfig.json
+#20 442.6 packages/db build: Done
+#20 443.2 apps/worker build$ tsc -p tsconfig.build.json

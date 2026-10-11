@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
 type PackageManifest = {
@@ -17,7 +17,7 @@ describe('worker image dependency closure', () => {
     const packageRoot = new URL('../../../packages/', import.meta.url)
     const workspaceManifests = new Map(
       readdirSync(packageRoot, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory())
+        .filter((entry) => entry.isDirectory() && existsSync(new URL(`${entry.name}/package.json`, packageRoot)))
         .map((entry) => {
           const relativePath = `packages/${entry.name}/package.json`
           const manifest = readManifest(

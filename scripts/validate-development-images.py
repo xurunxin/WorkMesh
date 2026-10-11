@@ -42,7 +42,7 @@ cleanup = []
 created = False
 failed = False
 try:
-    command(["docker", "buildx", "create", "--name", owner, "--driver", "docker-container"])
+    command(["docker", "buildx", "create", "--name", owner, "--driver", "docker-container", "--driver-opt", "memory=4g", "--driver-opt", "memory-swap=4g"])
     created = True
     for name in targets:
         args = ["docker", "buildx", "build", "--builder", owner, "--platform", "linux/amd64",

@@ -1,0 +1,13 @@
+阅读视图；原始字节：raw-logs/run-349a62eebe34.zip 内 retirement-six.log；SHA-256：2b3ef4af751edec799e8e1cfb6c574dd20c91cac6e4832dcde70b7bf3a9946d4
+No projects matched the filters "C:\Users\xurx\.tds\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055" in "I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055"
+
+ RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/api
+
+ ✓ integration/backend-retirement.integration.test.ts (6 tests) 7485ms
+   ✓ liteProviderConnectionReplay 与 liteExactProjectContext：幂等拒变体，worker 发布精确范围  441ms
+   ✓ 审批要求由真实 worker 投递给 fake Agent，并进入完成结果和证据  1784ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  05:18:26
+   Duration  29.16s (transform 2.84s, setup 0ms, collect 20.85s, tests 7.49s, environment 0ms, prepare 212ms)

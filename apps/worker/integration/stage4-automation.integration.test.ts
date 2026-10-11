@@ -784,7 +784,7 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     expect(deliveredInputs).toEqual([expect.objectContaining({
       title: 'Approval required',
       body: 'Open WorkMesh to review a pending approval.',
-      url: `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:approval:${approvalId}`)}`,
+      url: `/api/v1/human-attention/${encodeURIComponent(`v1:approval:${approvalId}`)}`,
     })])
     expect(JSON.stringify(deliveredInputs[0])).not.toMatch(/reason|credential|payload/i)
     expect((await db.query<{ status: string; last_delivered_at: Date | null }>(

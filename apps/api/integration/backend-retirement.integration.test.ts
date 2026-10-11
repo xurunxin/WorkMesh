@@ -68,7 +68,8 @@ it('liteInstallCookieCsrf：接口会话可管理，缺 Cookie 或 CSRF 拒绝',
   const teamId = (await call<{ items: Array<{ id: string }> }>('GET', '/api/v1/teams')).items[0]!.id
   const rejected = await app.inject({ method: 'POST', url: '/api/v1/projects',
     headers: { cookie, 'idempotency-key': randomUUID() }, payload: { teamId, name: 'Missing CSRF' } })
-  expect(rejected.statusCode).toBe(403)
+  expect(rejected.statusCode).toBe(400)
+  expect(rejected.json<{ error: { code: string } }>().error.code).toBe('CSRF_FAILED')
   expect((await call<{ actor: { id: string } }>('GET', '/api/v1/auth/me')).actor.id).toBe(actorId)
 })
 
@@ -78,7 +79,7 @@ it('通知 API 链接返回本人 JSON，匿名、其他 Human 和失权者拒�
   const itemId = randomUUID()
   await db.query(`INSERT INTO inbox_items(id,workspace_id,recipient_human_actor_id,team_id,kind,source_type,source_id,payload)
     VALUES($1,$2,$3,$4,'ask','activity',$5,'{"summary":"Private notification source"}')`, [itemId, workspaceId, actorId, teamId, randomUUID()])
-  const other = (await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name,workspace_role) VALUES($1,'human','Other Human','member') RETURNING id", [workspaceId])).rows[0]!.id
+  const other = (await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name,workspace_role,email,password_hash) VALUES($1,'human','Other Human','member',$2,'unused') RETURNING id", [workspaceId, `other-${randomUUID()}@example.test`])).rows[0]!.id
   await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')", [workspaceId, teamId, other])
   const otherToken = opaqueToken()
   await db.query("INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '1 day')", [other, tokenHash(otherToken), opaqueToken()])

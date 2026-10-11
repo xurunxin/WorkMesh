@@ -74,6 +74,16 @@ const composeArgs = ['compose', '--project-name', runId, '-f', resolve(installDi
 let composeStarted = false
 try {
   const directory = register('directory', installDir); mkdirSync(installDir); directory.realPath = realpathSync(installDir); directory.created = true; save()
+  const builder = register('builder', runId)
+  const previousBuilder = await command('docker', ['buildx', 'inspect', runId])
+  if (previousBuilder.code === 0 || !/no builder|not found/i.test(previousBuilder.output)) throw Error('专用 builder 的不存在状态未确认')
+  await must('docker', ['buildx', 'create', '--name', runId, '--driver', 'docker-container', '--driver-opt', 'memory=4g', '--driver-opt', 'memory-swap=4g'])
+  builder.created = true
+  builder.containerName = `buildx_buildkit_${runId}0`
+  save()
+  await must('docker', ['buildx', 'inspect', '--bootstrap', runId])
+  builder.containerId = await must('docker', ['inspect', '--format', '{{.Id}}', builder.containerName])
+  save()
   const services = deploymentClass === 'production' ? ['api', 'worker', 'mcp'] : ['lite']
   const images = new Map()
   for (const service of services) {
@@ -91,7 +101,7 @@ try {
       archive.stderr.on('data', value => { archiveError += value })
       const archived = new Promise(done => archive.on('close', code => done(code)))
       try {
-        await must('docker', ['build', '--progress=plain', '--label', `workmesh.task=${runId}`, '--build-arg', `WORKMESH_BUILD_SHA=${sha}`,
+        await must('docker', ['buildx', 'build', '--builder', runId, '--load', '--progress=plain', '--label', `workmesh.task=${runId}`, '--build-arg', `WORKMESH_BUILD_SHA=${sha}`,
           '-t', image.target, '-f', `infra/docker/${service === 'lite' ? 'lite' : service + '.production'}.Dockerfile`, '-'], { input: archive.stdout })
       } finally { archive.stdout.destroy(); await archived }
       if (await archived !== 0) throw Error(`Git archive 失败：${archiveError}`)
@@ -201,6 +211,20 @@ finally {
   }
   if (provider) { await new Promise(resolveClose => provider.close(resolveClose)); receipts.resources.find(item => item.type === 'https-provider').cleanup = '已关闭'; save() }
   for (const resource of receipts.resources.toReversed()) {
+    if (resource.type === 'builder' && resource.created) {
+      const identity = await command('docker', ['inspect', '--format', '{{.Id}}', resource.containerName])
+      resource.preDelete = { expectedId: resource.containerId, actualId: identity.output.trim(), code: identity.code, activity: '专用构建已结束；核对本人 builder 容器身份', at: new Date().toISOString() }; save()
+      resource.cleanup = identity.code === 0 && identity.output.trim() === resource.containerId ? await command('docker', ['buildx', 'rm', resource.target]) : 'builder 身份未知，保留'
+      if (typeof resource.cleanup !== 'object' || resource.cleanup.code !== 0) servicesStopped = false
+      resource.postDelete = []
+      for (const [kind, target] of [['container', resource.containerId], ['volume', `${resource.containerName}_state`]]) {
+        const result = await command('docker', [kind, 'inspect', target])
+        const absent = result.code !== 0 && /no such (object|container|volume)/i.test(result.output)
+        resource.postDelete.push({ kind, target, absent, code: result.code })
+        if (!absent) servicesStopped = false
+      }
+      save()
+    }
     if (resource.type === 'container' && resource.id) {
       const owner = await command('docker', ['inspect', '--format', '{{ index .Config.Labels "workmesh.task" }}', resource.id])
       resource.preDelete = { owner: owner.output.trim(), code: owner.code, id: resource.id, at: new Date().toISOString() }; save()
