@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-10-11T08:37:40.197887+00:00",
+  "commit": "ea03a90785ab95cc1f59f597c0fed60060bd71b4",
+  "files": [
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/verify-target.py",
+      "gitBlob": "442cb644be29806d79ec51c2ab295cf758d868d8",
+      "gitBytes": 4627,
+      "gitSha256": "6cdd2a7822978bebd57999fa02df1c28a0868fb7952b810b354767760d2d1880",
+      "windowsBytes": 4627,
+      "windowsSha256": "6cdd2a7822978bebd57999fa02df1c28a0868fb7952b810b354767760d2d1880",
+      "reconstruction": "identity",
+      "sourceCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "ea03a90785ab95cc1f59f597c0fed60060bd71b4:docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/verify-target.py"
+        ],
+        "startedAt": "2026-10-11T08:37:39.946173+00:00",
+        "endedAt": "2026-10-11T08:37:40.007691+00:00",
+        "exit": 0,
+        "stdout": "442cb644be29806d79ec51c2ab295cf758d868d8\n",
+        "stderr": ""
+      },
+      "objectCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "cat-file",
+          "blob",
+          "442cb644be29806d79ec51c2ab295cf758d868d8"
+        ],
+        "startedAt": "2026-10-11T08:37:40.007705+00:00",
+        "endedAt": "2026-10-11T08:37:40.071284+00:00",
+        "exitCode": 0
+      }
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/hardlink-retirement-policy.json",
+      "gitBlob": "3f4756baf1e91d470902e4f599a718d39b55a23c",
+      "gitBytes": 14915,
+      "gitSha256": "84b6433e8765f73ea6d0e383366982813097312e6959e99ccc9f0a0a39c2b0de",
+      "windowsBytes": 14915,
+      "windowsSha256": "84b6433e8765f73ea6d0e383366982813097312e6959e99ccc9f0a0a39c2b0de",
+      "reconstruction": "identity",
+      "sourceCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "rev-parse",
+          "ea03a90785ab95cc1f59f597c0fed60060bd71b4:docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/hardlink-retirement-policy.json"
+        ],
+        "startedAt": "2026-10-11T08:37:40.071435+00:00",
+        "endedAt": "2026-10-11T08:37:40.135273+00:00",
+        "exit": 0,
+        "stdout": "3f4756baf1e91d470902e4f599a718d39b55a23c\n",
+        "stderr": ""
+      },
+      "objectCall": {
+        "input": [
+          "git",
+          "-C",
+          "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+          "cat-file",
+          "blob",
+          "3f4756baf1e91d470902e4f599a718d39b55a23c"
+        ],
+        "startedAt": "2026-10-11T08:37:40.135289+00:00",
+        "endedAt": "2026-10-11T08:37:40.197874+00:00",
+        "exitCode": 0
+      }
+    }
+  ],
+  "success": true,
+  "prerequisite": "该commit先实际推送并独立回读本会话远端ref；原预检b7与历史原回执不覆盖"
+}

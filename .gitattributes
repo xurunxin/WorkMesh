@@ -9,3 +9,7 @@ docs/references/todos-analysis/SOURCE-MANIFEST.json text eol=lf
 # theirs with sed at build time, and a host-side script has no such step.
 infra/docker/*.sh text eol=lf
 infra/lite/*.sh text eol=lf
+
+# 本轮压缩字节映射和归档保持原字节，禁止换行转换。
+docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/*.zip -text
+docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/*.gz -text

@@ -1,0 +1,67 @@
+{
+  "recordedAt": "2026-10-11T07:58:01.199139+00:00",
+  "success": true,
+  "targets": 14,
+  "files": 705727,
+  "indexEntries": 75975,
+  "archiveMembers": 1330,
+  "archiveBytes": 26189270,
+  "kinds": {
+    "existing-git": 78544,
+    "administration": 14,
+    "rebuildable-dependency": 608476,
+    "unique-archive": 1551,
+    "existing-zip": 12051,
+    "rebuildable-cache": 4639,
+    "rebuildable-git-index": 2,
+    "existing-sanitized-archive": 2,
+    "existing-shared-CAS": 52,
+    "rebuildable-native-runtime": 262,
+    "rebuildable-private-test-state": 134
+  },
+  "gitBlobs": 13343,
+  "sourceZipCrcVerified": 810,
+  "historicalInvalidZips": [
+    {
+      "path": "docs/plan/agent-mcp-m0/product-evidence/contracts-typecheck-inputs.zip",
+      "blob": "1cfb5fb75b728a8bae1cebc3df86bf29ac249389",
+      "bytes": 15174099,
+      "sha256": "5b854416ac89d0741b963190b890ebf62feaed47ba64aecf18ed050449f06e3e",
+      "crcVerified": false,
+      "error": "历史原件不是完整有效 ZIP；不消费成员、不修补原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/integration-final-inputs.zip",
+      "blob": "6943c9072d85984e43ae3f01557e6277f345f4ca",
+      "bytes": 2129560,
+      "sha256": "8a0fc8d607dc71ca319d58879ff757f017e4adf77abe98cd5a14b9dcfe32b7a9",
+      "crcVerified": false,
+      "error": "历史原件不是完整有效 ZIP；不消费成员、不修补原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/lint-final-inputs.zip",
+      "blob": "1ccd8b33331782b381279db9e47c54fa85b9106c",
+      "bytes": 498161,
+      "sha256": "e70e6aa0bdc238e4e543c2d6e0dc86ba58668bb226ef3fcb99432c816d33b39a",
+      "crcVerified": false,
+      "error": "历史原件不是完整有效 ZIP；不消费成员、不修补原件"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m1/product-evidence/wait-ddl-first-inputs.zip",
+      "blob": "648ea9b5e1d9aa3530d9ee36830b09ef6069760e",
+      "bytes": 591568,
+      "sha256": "4fec8bab23e596e1e24191bbd07e66181325f5961894af4bf65f9530af8b68df",
+      "crcVerified": false,
+      "error": "历史原件不是完整有效 ZIP；不消费成员、不修补原件"
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/followup/additional-g1-plan-2.zip",
+      "blob": "b6201f8297d9bc4708460cf921d0a85be540d1ec",
+      "bytes": 31176,
+      "sha256": "226cc63562975eb4db43b881282ee8cb186e69f324b8483b6d9c049ed77c149b",
+      "crcVerified": false,
+      "error": "历史原件不是完整有效 ZIP；不消费成员、不修补原件"
+    }
+  ],
+  "scope": "最终成员 SHA/长度/CRC 全核；Git 变换及已核源目录关联；Python AST解析；每目标现场仍须删除前另核身份/hash/活动/远端main"
+}

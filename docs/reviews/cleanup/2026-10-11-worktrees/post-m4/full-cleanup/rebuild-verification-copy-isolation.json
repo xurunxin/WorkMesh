@@ -1,0 +1,75 @@
+{
+  "plan": {
+    "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+    "branch": "tds/conv-01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+    "pnpm": "C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\win-x64\\9.15.4\\bfb797e76292406eac54b60b921660f57a8d09f75b7d0356b84eabbf195fc8ba\\node_modules\\@pnpm\\win-x64\\pnpm.exe",
+    "pnpmVersion": "9.15.4",
+    "store": "X:\\packages\\.pnpm-store\\v3",
+    "lockSha256": "4e0e667e898e99c6b5e5640105ce39818a151c2f21930877cd4a8aef8b032a79",
+    "privateVirtualStore": "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-4e0e667e898e",
+    "sameVolume": true,
+    "importMethod": "copy",
+    "installCommand": [
+      "C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\win-x64\\9.15.4\\bfb797e76292406eac54b60b921660f57a8d09f75b7d0356b84eabbf195fc8ba\\node_modules\\@pnpm\\win-x64\\pnpm.exe",
+      "install",
+      "--offline",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "X:\\packages\\.pnpm-store",
+      "--virtual-store-dir",
+      "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-4e0e667e898e",
+      "--package-import-method=copy",
+      "--side-effects-cache=false"
+    ],
+    "shared": [
+      "既有 pnpm CAS/download store（不 prune）",
+      "既有公共 Node/pnpm/OpenCode 安装",
+      "已有 Docker 镜像"
+    ],
+    "isolated": [
+      "任务专属 virtual store、node_modules 入口",
+      "构建缓存/.next/dist/.turbo",
+      "测试容器/卷/端口、私有配置/DB/秘密"
+    ],
+    "limitation": "本机 clone-or-copy 实测产生 CAS hardlink，不能保证任意写隔离；copy 须再核身份。共享 store 减少下载，任务安装字节仍可能复制；离线缺包即停止，不默认联网或执行安装脚本。"
+  },
+  "fixture": "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\.tmp\\full-cleanup-rebuild-proof-copy-isolation",
+  "privateVirtualStore": "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors-copy-isolation",
+  "input": [
+    "C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\win-x64\\9.15.4\\bfb797e76292406eac54b60b921660f57a8d09f75b7d0356b84eabbf195fc8ba\\node_modules\\@pnpm\\win-x64\\pnpm.exe",
+    "install",
+    "--ignore-workspace",
+    "--offline",
+    "--frozen-lockfile",
+    "--ignore-scripts",
+    "--store-dir",
+    "X:\\packages\\.pnpm-store",
+    "--virtual-store-dir",
+    "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors-copy-isolation",
+    "--package-import-method=copy",
+    "--side-effects-cache=false"
+  ],
+  "exit": 0,
+  "stdout": "Lockfile is up to date, resolution step is skipped\nProgress: resolved 1, reused 0, downloaded 0, added 0\nPackages: +1\n+\nProgress: resolved 1, reused 1, downloaded 0, added 1, done\n\ndependencies:\n+ picocolors 1.1.1\n\nDone in 212ms\n",
+  "stderr": "",
+  "verification": "单包从已有 store 离线重建成功；源码锁未变；copy/任务 virtual store 生效，物理节省未测",
+  "physicalSavedBytes": null,
+  "lockUnchanged": true,
+  "packageBytes": 2663,
+  "packageSha256": "213bb870fcaad4def0215fe34fbb0f529836cc4d2462e02f14f1a49d09781625",
+  "privateFileIdentity": [
+    8572667822612394731,
+    21186233142608009707388932
+  ],
+  "nlink": 1,
+  "storePath": "X:\\packages\\.pnpm-store\\v3\\files\\1c\\9218b80c8870c59c03523d8cc9fd12e44c5c81fc6bbbb65fdbb34ad2eec0d212b44d8a25d553b51201e30055eca4e2080b48ded1cf30bedebefeec22174b3d",
+  "storeIdentity": [
+    8572667822612394731,
+    18386183412915563158044688
+  ],
+  "sameIdentity": false,
+  "rootNodeModulesIsPrivate": "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\.tmp\\full-cleanup-rebuild-proof-copy-isolation\\node_modules",
+  "packageModulesYaml": "hoistPattern:\n  - '*'\nhoistedDependencies: {}\nincluded:\n  dependencies: true\n  devDependencies: true\n  optionalDependencies: true\ninjectedDeps: {}\nlayoutVersion: 5\nnodeLinker: isolated\npackageManager: pnpm@9.15.4\npendingBuilds: []\nprunedAt: Sun, 11 Oct 2026 07:29:32 GMT\npublicHoistPattern:\n  - '*eslint*'\n  - '*prettier*'\nregistries:\n  default: https://registry.npmjs.org/\nskipped: []\nstoreDir: X:\\packages\\.pnpm-store\\v3\nvirtualStoreDir: X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors-copy-isolation\nvirtualStoreDirMaxLength: 120\n",
+  "storeUnchangedAfterPrivateWrite": true
+}

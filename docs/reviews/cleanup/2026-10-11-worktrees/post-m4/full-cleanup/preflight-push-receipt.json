@@ -1,0 +1,11 @@
+{
+  "commit": "b7e9f24554e4b6031c035f66f6db299a725ad7c6",
+  "input": {
+    "tool": "mcp__tds__push_branch",
+    "message": "chore(cleanup): preserve full cleanup candidates before removal"
+  },
+  "returnedText": "Committed b7e9f24554e4 and pushed \"tds/conv-01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\" — the remote now has all work up to this point.",
+  "source": "functions.wait cell_id=66 实际返回；完整 dispatch/return 原行随后由 capture-tools 保存",
+  "nativeExitCode": null,
+  "operationTimeSource": "调用/返回原行中的可得时间；不以本次写文件时间倒填推送时间"
+}

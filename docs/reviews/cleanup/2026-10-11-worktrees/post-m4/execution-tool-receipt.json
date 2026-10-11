@@ -1,0 +1,35 @@
+{
+  "input": {
+    "cmd": "pwsh -NoProfile -File docs/reviews/cleanup/2026-10-11-worktrees/post-m4/execute.ps1 -MainSha 6a06ce338f90bf16ce27e3cca1a76771eba42e6e",
+    "yield_time_ms": 1000,
+    "max_output_tokens": 2300,
+    "login": false
+  },
+  "started": {
+    "current_time": "2026-10-11 06:50:11 UTC"
+  },
+  "initialReturn": {
+    "chunk_id": "738d5a",
+    "wall_time_seconds": 10.008249,
+    "session_id": 83826,
+    "original_token_count": 0,
+    "output": ""
+  },
+  "waits": [
+    {
+      "input": {
+        "session_id": 83826,
+        "chars": "",
+        "yield_time_ms": 1000,
+        "max_output_tokens": 3000
+      },
+      "result": {
+        "chunk_id": "e7007e",
+        "wall_time_seconds": 0.0000334,
+        "exit_code": 0,
+        "original_token_count": 405,
+        "output": "{\r\n  \"target\": \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12766-4132-7d8c-a542-dcbfb2008b49\",\r\n  \"main\": \"6a06ce338f90bf16ce27e3cca1a76771eba42e6e\",\r\n  \"startedAt\": \"2026-10-11T06:50:11.8482565Z\",\r\n  \"calls\": [\r\n    {\r\n      \"input\": [\r\n        \"python\",\r\n        \"-B\",\r\n        \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\\\docs\\\\reviews\\\\cleanup\\\\2026-10-11-worktrees\\\\post-m4\\\\verify.py\",\r\n        \"6a06ce338f90bf16ce27e3cca1a76771eba42e6e\"\r\n      ],\r\n      \"startedAt\": \"2026-10-11T06:50:12.2696136Z\",\r\n      \"endedAt\": \"2026-10-11T06:50:22.2127505Z\",\r\n      \"stdout\": \"{\\\"key\\\": \\\"cleanup-pr217\\\", \\\"success\\\": true, \\\"exclusiveReadCount\\\": 12617, \\\"logicalBytes\\\": 3030837288, \\\"errors\\\": []}\\r\\n\",\r\n      \"stderr\": \"\",\r\n      \"exit\": 0\r\n    },\r\n    {\r\n      \"input\": [\r\n        \"git\",\r\n        \"-C\",\r\n        \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\",\r\n        \"worktree\",\r\n        \"remove\",\r\n        \"C:\\\\Users\\\\xurx\\\\.tds\\\\workspaces\\\\01a12766-4132-7d8c-a542-dcbfb2008b49\"\r\n      ],\r\n      \"startedAt\": \"2026-10-11T06:50:22.6641447Z\",\r\n      \"endedAt\": \"2026-10-11T06:50:28.2710839Z\",\r\n      \"stdout\": \"\",\r\n      \"stderr\": \"\",\r\n      \"exit\": 0\r\n    }\r\n  ],\r\n  \"result\": \"正式 Git 完整移除成功；未使用子路径删除或备用工具\",\r\n  \"error\": null,\r\n  \"diskBefore\": {\r\n    \"DeviceID\": \"C:\",\r\n    \"FreeSpace\": 300692312064,\r\n    \"Size\": 998956331008\r\n  },\r\n  \"diskAfter\": {\r\n    \"DeviceID\": \"C:\",\r\n    \"FreeSpace\": 303751835648,\r\n    \"Size\": 998956331008\r\n  },\r\n  \"targetExistsAfter\": false,\r\n  \"endedAt\": \"2026-10-11T06:50:28.3043795Z\"\r\n}\r\n"
+      }
+    }
+  ]
+}

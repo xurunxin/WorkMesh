@@ -1,0 +1,57 @@
+{
+  "plan": {
+    "workspace": "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+    "branch": "tds/conv-01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5",
+    "pnpm": "C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\win-x64\\9.15.4\\bfb797e76292406eac54b60b921660f57a8d09f75b7d0356b84eabbf195fc8ba\\node_modules\\@pnpm\\win-x64\\pnpm.exe",
+    "pnpmVersion": "9.15.4",
+    "store": "X:\\packages\\.pnpm-store\\v3",
+    "lockSha256": "4e0e667e898e99c6b5e5640105ce39818a151c2f21930877cd4a8aef8b032a79",
+    "privateVirtualStore": "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-4e0e667e898e",
+    "sameVolume": true,
+    "importMethod": "clone-or-copy",
+    "installCommand": [
+      "C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\win-x64\\9.15.4\\bfb797e76292406eac54b60b921660f57a8d09f75b7d0356b84eabbf195fc8ba\\node_modules\\@pnpm\\win-x64\\pnpm.exe",
+      "install",
+      "--offline",
+      "--frozen-lockfile",
+      "--ignore-scripts",
+      "--store-dir",
+      "X:\\packages\\.pnpm-store",
+      "--virtual-store-dir",
+      "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-4e0e667e898e",
+      "--package-import-method=clone-or-copy",
+      "--side-effects-cache=false"
+    ],
+    "shared": [
+      "既有 pnpm CAS/download store（不 prune）",
+      "既有公共 Node/pnpm/OpenCode 安装",
+      "已有 Docker 镜像"
+    ],
+    "isolated": [
+      "任务专属 virtual store、node_modules 入口",
+      "构建缓存/.next/dist/.turbo",
+      "测试容器/卷/端口、私有配置/DB/秘密"
+    ],
+    "limitation": "clone-or-copy 保障写隔离；是否实际块克隆须实测，不能把同卷/同 hash 当净释放。离线缺包即停止；不默认联网或执行安装脚本。"
+  },
+  "fixture": "C:\\Users\\xurx\\.tds\\workspaces\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5\\.tmp\\full-cleanup-rebuild-proof",
+  "privateVirtualStore": "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors",
+  "input": [
+    "C:\\Users\\xurx\\AppData\\Local\\pnpm\\package-manager-store\\v11\\links\\@pnpm\\win-x64\\9.15.4\\bfb797e76292406eac54b60b921660f57a8d09f75b7d0356b84eabbf195fc8ba\\node_modules\\@pnpm\\win-x64\\pnpm.exe",
+    "install",
+    "--offline",
+    "--frozen-lockfile",
+    "--ignore-scripts",
+    "--store-dir",
+    "X:\\packages\\.pnpm-store",
+    "--virtual-store-dir",
+    "X:\\packages\\workmesh-task-virtual-stores\\01a129ad-6e0b-7f8f-bf12-5bbdf4b192b5-proof-picocolors",
+    "--package-import-method=clone-or-copy",
+    "--side-effects-cache=false"
+  ],
+  "exit": 4294967295,
+  "stdout": "Scope: all 19 workspace projects\n../..                                    | Progress: resolved 1, reused 0, downloaded 0, added 0\n../..                                    | +609 ++++++++++++++++++++++++++++++++\n../..                                    | Progress: resolved 609, reused 0, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 1, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 2, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 3, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 4, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 7, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 8, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 10, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 12, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 18, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 39, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 72, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 116, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 176, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 190, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 278, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 440, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 592, downloaded 0, added 0\n../..                                    | Progress: resolved 609, reused 603, downloaded 0, added 8\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 13\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 15\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 16\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 17\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 18\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 25\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 31\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 37\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 39\n../..                                    | Progress: resolved 609, reused 605, downloaded 0, added 43\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 52\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 57\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 61\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 71\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 82\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 90\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 98\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 110\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 130\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 154\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 166\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 177\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 180\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 194\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 199\n../..                                    | Progress: resolved 609, reused 606, downloaded 0, added 216\n../..                                    | Progress: resolved 609, reused 607, downloaded 0, added 247\n../..                                    | Progress: resolved 609, reused 607, downloaded 0, added 267\n../..                                    | Progress: resolved 609, reused 607, downloaded 0, added 282\n../..                                    | Progress: resolved 609, reused 607, downloaded 0, added 298\n../..                                    | Progress: resolved 609, reused 607, downloaded 0, added 329\n../..                                    | Progress: resolved 609, reused 607, downloaded 0, added 347\n../..                                    | Progress: resolved 609, reused 607, downloaded 0, added 374\n../..                                    | Progress: resolved 609, reused 608, downloaded 0, added 397\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 427\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 441\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 476\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 519\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 565\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 582\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 591\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 594\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 596\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 597\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 600\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 601\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 603\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 604\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 605\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 606\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 607\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 608\n../..                                    | Progress: resolved 609, reused 609, downloaded 0, added 609, done\n",
+  "stderr": "",
+  "verification": "尚未通过",
+  "physicalSavedBytes": null
+}
