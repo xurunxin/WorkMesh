@@ -9,8 +9,8 @@ from datetime import datetime, timezone
 
 OUT = Path(__file__).resolve().parent
 ROOT = OUT.parents[2]
-excluded = ['docs/plan/agent-mcp-m4/input/delivery-manifest.json',
-            'docs/plan/agent-mcp-m4/input/delivery-checks.json']
+excluded = ['docs/plan/agent-mcp-m4/input/discovery-review/delivery-manifest.json',
+            'docs/plan/agent-mcp-m4/input/discovery-review/delivery-checks.json']
 receipts = []
 def run(args):
     start=time.perf_counter()
@@ -23,7 +23,11 @@ def run(args):
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 run(['git','diff','--cached','--check'])
-paths=run(['git','diff','--cached','--name-only']).decode().splitlines()
+changed=run(['git','diff','--cached','--name-only']).decode().splitlines()
+for path in changed:
+    if not (path.startswith('docs/plan/agent-mcp-m4/') or path=='docs/adr/0086-optional-agent-domain-read-projections.md'):
+        raise RuntimeError(f'发现非规划改动：{path}')
+paths=run(['git','ls-files','--','docs/plan/agent-mcp-m4','docs/adr/0086-optional-agent-domain-read-projections.md']).decode().splitlines()
 records=[]
 for path in paths:
     if not (path.startswith('docs/plan/agent-mcp-m4/') or path=='docs/adr/0086-optional-agent-domain-read-projections.md'):
@@ -42,11 +46,11 @@ for path in paths:
                     'worktreeBytes':len(working),'worktreeSha256':sha(working),'byteMapping':mapping})
 manifest={'scope':'仅本卡规划文档，非产品受测源码','records':records,'excludedSelfReference':excluded,
           'fullBlobRead':True,'physicalNetReleasedBytes':None,'productRuntime':'未运行'}
-(OUT/'input/delivery-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
+(OUT/'input/discovery-review/delivery-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 data={'sampleUtc':datetime.now(timezone.utc).isoformat(),'receipts':receipts,
-      'stagedPlanningFilesChecked':len(records),'excludedSelfReference':excluded,
+      'stagedPlanningFilesChecked':len(records),'changedPlanningFiles':len(changed),'excludedSelfReference':excluded,
       'commitVerification':'提交后另按该清单逐blob核对；准确head仅最终回复及Git自身记录，不循环自写',
       'remoteDelivery':'平台在回合结束push，当前未取得push回执，不声称远端可见',
       'productChecksRun':False}
-(OUT/'input/delivery-checks.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
+(OUT/'input/discovery-review/delivery-checks.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
 print(json.dumps({'文档staged匹配':len(records),'白名单内':True,'排除自引用账本':len(excluded),'whitespaceExit':0},ensure_ascii=False))

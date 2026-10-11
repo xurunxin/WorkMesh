@@ -20,6 +20,12 @@
 
 每条子场景保存caseId、operation/actor/feature/credential mode、准确权限facts、输入/响应、SQL/领域事实、允许正对照、拒绝结果及适用理由。env skip写具体条件和影响，不能以skip/pass-with-no-tests做必需正例。readonly GET、A2A派生写、Human管理回归分别记账。
 
+## discovery专属回归
+
+以下同属九类中的正常、越权/撤权、非法状态及重启/恢复，不另造已通过场景。逐规则以真实合法E/C提供共同门禁，目标未知时断言 `requires_target_check` 和准确pendingChecks：rollup为initiativeLinkedProjectScope；run为routeResolvedScope/automationRunSessionMatches；usage为usageSessionMatches/usageAgentMatches/usageProjectMatches/usageFiltersMatchCurrentSession；A2A为a2aBindingActive/a2aTaskSessionMatches。均不得再含旧humanAuthorityMatches/legacyMembershipQueryVisible；REST允许非空与拒例另核，pending不等于已授权。
+
+四条规则逐项覆盖feature=false、queued/stopping/终态、缺work:read的blocked反例及合法目标待核正例。真实MCP同样测feature/state/target-pending；注册capture与filtered tools/list分开，read-only不见有限写、read-write同操作E/C current_session，原health/completion变体及ACK/heartbeat/Stop不回退。对baseline138旧bindings/137映射逐字段保留，不仅比数量。生成器未知operation、缺M4真实注册、冲突及activation未达成拒例必须失败且无部分写；这些是未来测试，当前未运行。
+
 ## 真实客户端固定链
 
 在 [独立部署准备](environment-and-resources.md) 登记并准备空test DB及fake服务后，对 SDK、HTTP MCP C/E、真实Pi executing E、native OpenCode分别运行：规则/Loops发现与分页 → 合法origin runLoopNow回执 → target通过原接单/兑换E读取run/effects/pin/result → 本人准确Usage及summary → 另project/item E项目进展/rollup/health/completion → A2A本人task有界恢复。source/session变更分成真实新credential，不把同origin贯穿target虚报一条闭环。
@@ -36,8 +42,15 @@ pnpm.cmd db:migrate
 pnpm.cmd db:seed
 pnpm.cmd --filter @workmesh/api exec vitest run --config ../../vitest.integration.config.ts integration/stage4-operations.integration.test.ts
 pnpm.cmd --filter @workmesh/conformance exec vitest run --config vitest.integration.config.ts src/optional-domains.conformance.test.ts
+python -B scripts/generate-agent-discovery.py
 pnpm.cmd generate:route-policy
 pnpm.cmd generate:runner-skill
+git add -- packages/contracts/src/agent-discovery-rules.ts packages/contracts/src/route-policy.ts OPENAPI.yaml docs/route-policy-matrix.md apps/agent-runner/src/workbench-skill-manifest.ts
+python -B scripts/generate-agent-discovery.py
+pnpm.cmd generate:route-policy
+pnpm.cmd generate:runner-skill
+git diff --exit-code -- packages/contracts/src/agent-discovery-rules.ts packages/contracts/src/route-policy.ts OPENAPI.yaml docs/route-policy-matrix.md apps/agent-runner/src/workbench-skill-manifest.ts
+pnpm.cmd --filter @workmesh/contracts exec vitest run src/agent-discovery.test.ts
 pnpm.cmd check:route-policy
 pnpm.cmd check:runner-skill
 pnpm.cmd lint
@@ -46,11 +59,16 @@ pnpm.cmd test
 pnpm.cmd test:integration
 pnpm.cmd test:e2e
 pnpm.cmd --filter @workmesh/conformance build
-pnpm.cmd ci:source
+pnpm.cmd ci:source build
+pnpm.cmd ci:source lint
+pnpm.cmd ci:source typecheck
+pnpm.cmd ci:source test
 pnpm.cmd ci:test
 pnpm.cmd ci:validate
 pnpm.cmd smoke:agents
 ```
+
+生成前须完成正式复审、后端正反测试及真实工具注册capture，填M4 activationGate及实际registeredBindingIds；不以尚未生成的新发现回归作为第一次生成前提形成循环。第一次生成后才运行发现回归并登记postGenerationAcceptance。两轮生成前后分别保存五个文件完整长度/SHA256，暂存后零diff仅证明幂等；同时核M0–M3输入hash未变、旧bindings/mappings/identityVariants全保留。`ci:source`现行脚本要求build/lint/typecheck/test参数，以上按实际script展开，不调用无参数失败命令冒通过。本轮没有执行此命令块。
 
 原test:integration从DB/API/conformance/Worker/recovery串行reset，本卡专库且无并行suite占用。原命令失败必须保stdout/stderr/exit，定位首败后保准确修复消费源码，只续证据明确分段，不把续跑exit0改原exit1；完整新root重跑如实际发生另留回执。source-gates/测试实际cache数量照实记录；直接conformance生产build保证新cross-package fixture的rootDir/exclude不被缓存掩盖。
 

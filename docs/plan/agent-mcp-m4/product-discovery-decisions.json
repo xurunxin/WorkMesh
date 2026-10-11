@@ -1,0 +1,1451 @@
+{
+  "source": {
+    "main": "c2b3d363c037157df13beb82799d99d07a9b7db8",
+    "reviewedCandidate": "4e144f35759525a8a377acc73ba2f2dbfe02ab67",
+    "status": "Proposed；仅规划，未实施，待正式复审",
+    "commonRuleSource": "listInitiatives",
+    "baseline": "input/discovery-review/discovery-baseline.json",
+    "registrationSource": "apps/mcp/src/discovery.ts installDiscovery真实registerTool/registerResource捕获",
+    "activationGate": "正式方案复审闭合、后端合同通过、实际MCP注册捕获齐后才可首次生成；发现回归在生成后运行，不能互为前置"
+  },
+  "rules": [
+    {
+      "operationId": "getInitiativeRollup",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "human_session",
+            "agent_session",
+            "coordination_connection"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution",
+            "coordination"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "reviewer",
+            "researcher",
+            "coordinator",
+            "triager"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "featureEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "FEATURE_DISABLED"
+        },
+        {
+          "fact": "initiativeLinkedProjectScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": "WORKMESH_BETA_PLANNING",
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "getAutomationRun",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "human_session",
+            "agent_session",
+            "coordination_connection"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution",
+            "coordination"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "reviewer",
+            "researcher",
+            "coordinator",
+            "triager"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "featureEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "FEATURE_DISABLED"
+        },
+        {
+          "fact": "routeResolvedScope",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND"
+        },
+        {
+          "fact": "automationRunSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "getUsageSummary",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "human_session",
+            "agent_session",
+            "coordination_connection"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution",
+            "coordination"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "reviewer",
+            "researcher",
+            "coordinator",
+            "triager"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "featureEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "FEATURE_DISABLED"
+        },
+        {
+          "fact": "usageSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "usageAgentMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "usageProjectMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        },
+        {
+          "fact": "usageFiltersMatchCurrentSession",
+          "allowed": [
+            true
+          ],
+          "reason": "RESOURCE_SCOPE_DENIED"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": "WORKMESH_BETA_COSTS",
+      "variants": [],
+      "write": false
+    },
+    {
+      "operationId": "streamA2ATaskEvents",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "human_session",
+            "agent_session",
+            "coordination_connection"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        },
+        {
+          "fact": "sessionKind",
+          "allowed": [
+            "execution",
+            "coordination"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "role",
+          "allowed": [
+            "executor",
+            "reviewer",
+            "researcher",
+            "coordinator",
+            "triager"
+          ],
+          "reason": "ROLE_REQUIRED"
+        },
+        {
+          "fact": "state",
+          "allowed": [
+            "acknowledged",
+            "planning",
+            "executing",
+            "awaiting_input",
+            "awaiting_approval",
+            "blocked"
+          ],
+          "reason": "SESSION_STATE_DENIED"
+        },
+        {
+          "fact": "liveAuthority",
+          "allowed": [
+            true
+          ],
+          "reason": "AUTHORITY_REVOKED"
+        },
+        {
+          "fact": "capabilitiesAllPresent",
+          "allowed": [
+            true
+          ],
+          "reason": "CAPABILITY_DENIED"
+        },
+        {
+          "fact": "featureEnabled",
+          "allowed": [
+            true
+          ],
+          "reason": "FEATURE_DISABLED"
+        },
+        {
+          "fact": "a2aBindingActive",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND"
+        },
+        {
+          "fact": "a2aTaskSessionMatches",
+          "allowed": [
+            true
+          ],
+          "reason": "NOT_FOUND"
+        }
+      ],
+      "capabilities": [
+        "work:read"
+      ],
+      "feature": "WORKMESH_EXPERIMENTAL_A2A",
+      "variants": [],
+      "write": false
+    }
+  ],
+  "bindings": [
+    {
+      "bindingId": "tool:list_cycles",
+      "operationIds": [
+        "listCycles"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_initiatives",
+      "operationIds": [
+        "listInitiatives"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_initiative_rollup",
+      "operationIds": [
+        "getInitiativeRollup"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_saved_views",
+      "operationIds": [
+        "listSavedViews"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_saved_view",
+      "operationIds": [
+        "createSavedView"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_advanced_views",
+      "operationIds": [
+        "listAdvancedViews"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_advanced_view_results",
+      "operationIds": [
+        "evaluateAdvancedView"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_automation_rules",
+      "operationIds": [
+        "listAutomationRules"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_automation_runs",
+      "operationIds": [
+        "listAutomationRuns"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_automation_run",
+      "operationIds": [
+        "getAutomationRun"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_loops",
+      "operationIds": [
+        "listLoops"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:run_loop_now",
+      "operationIds": [
+        "runLoopNow"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:record_usage",
+      "operationIds": [
+        "recordUsage"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_usage_summary",
+      "operationIds": [
+        "getUsageSummary"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:list_templates",
+      "operationIds": [
+        "listTemplates"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_a2a_task_events",
+      "operationIds": [
+        "streamA2ATaskEvents"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": null,
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "current_session",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": null,
+          "installationBridgeRequired": false
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:get_project_health_history",
+      "operationIds": [
+        "getProjectHealthHistory"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-only",
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:create_project_health_update",
+      "operationIds": [
+        "createProjectHealthUpdate"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    },
+    {
+      "bindingId": "tool:suggest_work_item_completion",
+      "operationIds": [
+        "suggestWorkItemCompletion"
+      ],
+      "execution": "api",
+      "mode": [
+        "read-write"
+      ],
+      "coordination": false,
+      "identityBinding": "explicit_identity_variants",
+      "targetParameter": "sessionId",
+      "variant": null,
+      "identityVariants": [
+        {
+          "variant": "self_execution",
+          "credentialMode": [
+            "agent_session"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": false
+        },
+        {
+          "variant": "target_execution",
+          "credentialMode": [
+            "coordination_connection"
+          ],
+          "targetParameter": "sessionId",
+          "installationBridgeRequired": true
+        }
+      ]
+    }
+  ],
+  "registeredBindingIds": [],
+  "plannedRegistrationAdditions": [
+    "tool:list_cycles",
+    "tool:list_initiatives",
+    "tool:get_initiative_rollup",
+    "tool:list_saved_views",
+    "tool:create_saved_view",
+    "tool:list_advanced_views",
+    "tool:get_advanced_view_results",
+    "tool:list_automation_rules",
+    "tool:list_automation_runs",
+    "tool:get_automation_run",
+    "tool:list_loops",
+    "tool:run_loop_now",
+    "tool:record_usage",
+    "tool:get_usage_summary",
+    "tool:list_templates",
+    "tool:get_a2a_task_events"
+  ],
+  "preservedExistingSelectedBindings": [
+    "tool:get_project_health_history",
+    "tool:create_project_health_update",
+    "tool:suggest_work_item_completion"
+  ],
+  "requiredPreservedBindingIds": [
+    "resource:server-info",
+    "resource:server-features",
+    "resource:agent-capabilities",
+    "tool:list_teams",
+    "tool:list_workflow_states",
+    "tool:resolve_identifier",
+    "tool:prepare_project_import",
+    "tool:list_projects",
+    "tool:apply_project_import",
+    "tool:create_project",
+    "tool:get_project",
+    "tool:update_project",
+    "tool:list_claimable_work_items",
+    "tool:list_work_items",
+    "tool:create_work_item",
+    "resource:work-item",
+    "tool:get_work_item",
+    "tool:update_work_item",
+    "tool:list_events",
+    "tool:delegate_work_item",
+    "tool:claim_work_item",
+    "resource:agent-session",
+    "tool:ack_agent_session",
+    "tool:heartbeat",
+    "tool:transition_agent_session_state",
+    "resource:session-activity",
+    "tool:list_session_activities",
+    "tool:append_activity",
+    "tool:send_message",
+    "tool:ask",
+    "resource:session-plan",
+    "tool:publish_plan",
+    "resource:session-context",
+    "tool:complete_session",
+    "tool:fail_session",
+    "tool:publish_artifact",
+    "tool:request_approval",
+    "tool:list_human_attention",
+    "tool:get_human_attention",
+    "tool:get_control_center",
+    "tool:get_project_control_center",
+    "tool:explain_agent_session",
+    "tool:get_work_item_execution_summary",
+    "tool:preview_agent_session_control",
+    "tool:get_work_room",
+    "tool:post_work_room_message",
+    "tool:list_inbox_items",
+    "tool:get_inbox_item",
+    "tool:claim_inbox_item",
+    "tool:acknowledge_inbox_item",
+    "tool:reply_inbox_item",
+    "tool:acquire_lease",
+    "tool:offer_handoff",
+    "tool:inspect_pending_handoff",
+    "tool:request_handoff",
+    "tool:reject_handoff",
+    "tool:comment_plan_step",
+    "tool:propose_plan_step_assignment",
+    "tool:create_child_session",
+    "tool:append_context_delta",
+    "tool:create_review_delegation",
+    "resource:workspace-guidance",
+    "resource:team-guidance",
+    "resource:project-guidance",
+    "resource:repository-context",
+    "tool:create_repository_branch",
+    "tool:create_repository_commit",
+    "tool:open_pull_request",
+    "tool:publish_delivery_artifact",
+    "tool:request_artifact_upload",
+    "tool:finalize_artifact_upload",
+    "tool:publish_structured_review",
+    "tool:merge_pull_request",
+    "tool:retry_ci_check",
+    "tool:list_project_milestones",
+    "tool:create_milestone",
+    "tool:get_milestone",
+    "tool:update_milestone",
+    "tool:delete_milestone",
+    "tool:list_documents",
+    "tool:create_document",
+    "tool:get_document",
+    "tool:update_document",
+    "tool:list_document_history",
+    "resource:document-revision",
+    "tool:get_document_revision",
+    "tool:diff_document_revisions",
+    "tool:restore_document_revision",
+    "tool:list_work_item_relations",
+    "tool:add_work_item_relation",
+    "tool:remove_work_item_relation",
+    "tool:draft_project_update",
+    "tool:publish_project_update",
+    "tool:decide_completion_suggestion",
+    "tool:verify_connection",
+    "tool:get_current_identity",
+    "tool:get_workmesh_context",
+    "tool:get_server_info",
+    "tool:get_server_features",
+    "tool:get_agent_capabilities",
+    "tool:get_agent_session",
+    "tool:get_session_plan",
+    "tool:get_session_context",
+    "tool:get_workspace_guidance",
+    "tool:get_team_guidance",
+    "tool:get_project_guidance",
+    "tool:get_repository_context",
+    "tool:list_agent_sessions",
+    "tool:list_session_plan_versions",
+    "tool:list_approvals",
+    "tool:get_approval",
+    "tool:list_leases",
+    "tool:heartbeat_lease",
+    "tool:renew_lease",
+    "tool:release_lease",
+    "tool:list_recovery_items",
+    "tool:get_recovery_item",
+    "tool:consume_approval",
+    "tool:stop_ack",
+    "tool:get_session_execution_result",
+    "tool:list_work_item_comments",
+    "tool:export_document_markdown",
+    "tool:create_work_item_decision",
+    "tool:create_project_decision",
+    "tool:create_session_decision",
+    "tool:get_decision",
+    "tool:list_handoffs",
+    "tool:list_child_sessions",
+    "tool:list_repositories",
+    "tool:get_artifact_upload_status",
+    "tool:cancel_artifact_upload",
+    "tool:list_work_item_artifacts",
+    "tool:download_verified_artifact",
+    "tool:get_project_delivery",
+    "tool:suggest_work_item_completion",
+    "tool:get_project_health_history",
+    "tool:create_project_health_update",
+    "tool:get_provider_action"
+  ],
+  "requiredPreservedPolicyMappings": {
+    "resource:agent-capabilities": "getAgentCapabilityManifest",
+    "resource:agent-session": "getAgentSession",
+    "resource:document-revision": "getDocumentRevision",
+    "resource:project-guidance": "getProjectGuidance",
+    "resource:repository-context": "getRepositoryContext",
+    "resource:server-features": "getDeploymentFeatures",
+    "resource:server-info": "getServerInfo",
+    "resource:session-activity": "listAgentActivities",
+    "resource:session-context": "getAgentSessionContext",
+    "resource:session-plan": "getAgentPlan",
+    "resource:team-guidance": "getTeamGuidance",
+    "resource:work-item": "getWorkItem",
+    "resource:workspace-guidance": "getWorkspaceGuidance",
+    "tool:ack_agent_session": "acknowledgeAgentSession",
+    "tool:acknowledge_inbox_item": "acknowledgeInboxItem",
+    "tool:acquire_lease": "acquireLease",
+    "tool:add_work_item_relation": "createWorkItemRelation",
+    "tool:append_activity": "appendAgentActivity",
+    "tool:append_context_delta": "appendContextDelta",
+    "tool:apply_project_import": "createProject",
+    "tool:ask": "appendAgentActivity",
+    "tool:cancel_artifact_upload": "cancelArtifactUpload",
+    "tool:claim_inbox_item": "claimInboxItem",
+    "tool:claim_work_item": "claimWorkItem",
+    "tool:comment_plan_step": "commentOnPlanStep",
+    "tool:complete_session": "completeAgentSession",
+    "tool:consume_approval": "consumeApproval",
+    "tool:create_child_session": "createChildAgentSession",
+    "tool:create_document": "createDocument",
+    "tool:create_milestone": "createProjectMilestone",
+    "tool:create_project": "createProject",
+    "tool:create_project_decision": "createProjectDecision",
+    "tool:create_project_health_update": "createProjectHealthUpdate",
+    "tool:create_repository_branch": "requestProviderAction",
+    "tool:create_repository_commit": "requestProviderAction",
+    "tool:create_review_delegation": "createReviewDelegation",
+    "tool:create_session_decision": "createSessionDecision",
+    "tool:create_work_item": "createWorkItem",
+    "tool:create_work_item_decision": "createWorkItemDecision",
+    "tool:decide_completion_suggestion": "decideCompletionSuggestion",
+    "tool:delegate_work_item": "delegateAndStartAgentSession",
+    "tool:delete_milestone": "deleteMilestone",
+    "tool:diff_document_revisions": "diffDocumentRevisions",
+    "tool:download_verified_artifact": "downloadVerifiedArtifact",
+    "tool:draft_project_update": "createProjectUpdateDraft",
+    "tool:explain_agent_session": "explainAgentSession",
+    "tool:export_document_markdown": "exportDocumentMarkdown",
+    "tool:fail_session": "failAgentSession",
+    "tool:finalize_artifact_upload": "finalizeArtifactUpload",
+    "tool:get_agent_capabilities": "getAgentCapabilityManifest",
+    "tool:get_agent_session": "getAgentSession",
+    "tool:get_approval": "getApproval",
+    "tool:get_artifact_upload_status": "getArtifactUploadStatus",
+    "tool:get_control_center": "listControlCenter",
+    "tool:get_current_identity": "getCurrentAgentConnectionIdentity",
+    "tool:get_decision": "getDecision",
+    "tool:get_document": "getDocument",
+    "tool:get_document_revision": "getDocumentRevision",
+    "tool:get_human_attention": "getHumanAttention",
+    "tool:get_inbox_item": "getInboxItem",
+    "tool:get_milestone": "getMilestone",
+    "tool:get_project": "getProject",
+    "tool:get_project_control_center": "getProjectControlCenter",
+    "tool:get_project_delivery": "getProjectDelivery",
+    "tool:get_project_guidance": "getProjectGuidance",
+    "tool:get_project_health_history": "getProjectHealthHistory",
+    "tool:get_provider_action": "getProviderAction",
+    "tool:get_recovery_item": "getRecoveryItem",
+    "tool:get_repository_context": "getRepositoryContext",
+    "tool:get_server_features": "getDeploymentFeatures",
+    "tool:get_server_info": "getServerInfo",
+    "tool:get_session_context": "getAgentSessionContext",
+    "tool:get_session_execution_result": "getAgentSessionExecutionResult",
+    "tool:get_session_plan": "getAgentPlan",
+    "tool:get_team_guidance": "getTeamGuidance",
+    "tool:get_work_item": "getWorkItem",
+    "tool:get_work_item_execution_summary": "getWorkItemExecutionSummary",
+    "tool:get_work_room": "getWorkRoom",
+    "tool:get_workmesh_context": "getCurrentAgentConnectionIdentity",
+    "tool:get_workspace_guidance": "getWorkspaceGuidance",
+    "tool:heartbeat": "heartbeatAgentSession",
+    "tool:heartbeat_lease": "heartbeatLease",
+    "tool:inspect_pending_handoff": "inspectExactTargetHandoff",
+    "tool:list_agent_sessions": "listAgentSessions",
+    "tool:list_approvals": "listApprovals",
+    "tool:list_child_sessions": "listAgentSessionChildren",
+    "tool:list_claimable_work_items": "listWorkItems",
+    "tool:list_document_history": "listDocumentHistory",
+    "tool:list_documents": "listDocuments",
+    "tool:list_events": "listEvents",
+    "tool:list_handoffs": "listHandoffs",
+    "tool:list_human_attention": "listHumanAttention",
+    "tool:list_inbox_items": "listInbox",
+    "tool:list_leases": "listLeases",
+    "tool:list_project_milestones": "listProjectMilestones",
+    "tool:list_projects": "listProjects",
+    "tool:list_recovery_items": "listRecoveryItems",
+    "tool:list_repositories": "listRepositories",
+    "tool:list_session_activities": "listAgentActivities",
+    "tool:list_session_plan_versions": "listAgentPlanVersions",
+    "tool:list_teams": "listTeams",
+    "tool:list_work_item_artifacts": "listWorkItemArtifacts",
+    "tool:list_work_item_comments": "listWorkItemComments",
+    "tool:list_work_item_relations": "listWorkItemRelations",
+    "tool:list_work_items": "listWorkItems",
+    "tool:list_workflow_states": "listWorkflowStates",
+    "tool:merge_pull_request": "requestPullRequestMerge",
+    "tool:offer_handoff": "offerHandoff",
+    "tool:open_pull_request": "requestProviderAction",
+    "tool:post_work_room_message": "postWorkRoomMessage",
+    "tool:preview_agent_session_control": "previewAgentSessionControl",
+    "tool:propose_plan_step_assignment": "proposePlanAssignment",
+    "tool:publish_artifact": "publishArtifact",
+    "tool:publish_delivery_artifact": "publishDeliveryArtifact",
+    "tool:publish_plan": "publishAgentPlan",
+    "tool:publish_project_update": "publishProjectUpdate",
+    "tool:publish_structured_review": "publishStructuredReview",
+    "tool:reject_handoff": "rejectHandoff",
+    "tool:release_lease": "releaseLease",
+    "tool:remove_work_item_relation": "deleteWorkItemRelation",
+    "tool:renew_lease": "renewLease",
+    "tool:reply_inbox_item": "replyInboxItem",
+    "tool:request_approval": "requestApproval",
+    "tool:request_artifact_upload": "requestArtifactUpload",
+    "tool:request_handoff": "requestHandoff",
+    "tool:resolve_identifier": "listProjects",
+    "tool:restore_document_revision": "restoreDocumentRevision",
+    "tool:retry_ci_check": "retryPullRequestCheck",
+    "tool:send_message": "appendAgentActivity",
+    "tool:stop_ack": "acknowledgeAgentSessionStop",
+    "tool:suggest_work_item_completion": "suggestWorkItemCompletion",
+    "tool:transition_agent_session_state": "transitionAgentSessionState",
+    "tool:update_document": "updateDocument",
+    "tool:update_milestone": "updateMilestone",
+    "tool:update_project": "updateProject",
+    "tool:update_work_item": "updateWorkItem",
+    "tool:verify_connection": "getCurrentAgentConnectionIdentity"
+  },
+  "historicalRegistryInputUnion": [
+    "resource:agent-capabilities",
+    "resource:agent-session",
+    "resource:document-revision",
+    "resource:project-guidance",
+    "resource:repository-context",
+    "resource:server-features",
+    "resource:server-info",
+    "resource:session-activity",
+    "resource:session-context",
+    "resource:session-plan",
+    "resource:team-guidance",
+    "resource:work-item",
+    "resource:workspace-guidance",
+    "tool:ack_agent_session",
+    "tool:acknowledge_inbox_item",
+    "tool:acquire_lease",
+    "tool:add_work_item_relation",
+    "tool:append_activity",
+    "tool:append_context_delta",
+    "tool:apply_project_import",
+    "tool:ask",
+    "tool:cancel_artifact_upload",
+    "tool:claim_inbox_item",
+    "tool:claim_work_item",
+    "tool:comment_plan_step",
+    "tool:complete_session",
+    "tool:consume_approval",
+    "tool:create_child_session",
+    "tool:create_document",
+    "tool:create_milestone",
+    "tool:create_project",
+    "tool:create_project_decision",
+    "tool:create_project_health_update",
+    "tool:create_repository_branch",
+    "tool:create_repository_commit",
+    "tool:create_review_delegation",
+    "tool:create_session_decision",
+    "tool:create_work_item",
+    "tool:create_work_item_decision",
+    "tool:decide_completion_suggestion",
+    "tool:delegate_work_item",
+    "tool:delete_milestone",
+    "tool:diff_document_revisions",
+    "tool:download_verified_artifact",
+    "tool:draft_project_update",
+    "tool:explain_agent_session",
+    "tool:export_document_markdown",
+    "tool:fail_session",
+    "tool:finalize_artifact_upload",
+    "tool:get_agent_capabilities",
+    "tool:get_agent_discovery",
+    "tool:get_agent_session",
+    "tool:get_approval",
+    "tool:get_artifact_upload_status",
+    "tool:get_control_center",
+    "tool:get_current_identity",
+    "tool:get_decision",
+    "tool:get_document",
+    "tool:get_document_revision",
+    "tool:get_human_attention",
+    "tool:get_inbox_item",
+    "tool:get_milestone",
+    "tool:get_project",
+    "tool:get_project_control_center",
+    "tool:get_project_delivery",
+    "tool:get_project_guidance",
+    "tool:get_project_health_history",
+    "tool:get_provider_action",
+    "tool:get_recovery_item",
+    "tool:get_repository_context",
+    "tool:get_server_features",
+    "tool:get_server_info",
+    "tool:get_session_context",
+    "tool:get_session_execution_result",
+    "tool:get_session_plan",
+    "tool:get_team_guidance",
+    "tool:get_work_item",
+    "tool:get_work_item_execution_summary",
+    "tool:get_work_room",
+    "tool:get_workmesh_context",
+    "tool:get_workspace_guidance",
+    "tool:heartbeat",
+    "tool:heartbeat_lease",
+    "tool:inspect_pending_handoff",
+    "tool:list_agent_sessions",
+    "tool:list_approvals",
+    "tool:list_child_sessions",
+    "tool:list_claimable_work_items",
+    "tool:list_document_history",
+    "tool:list_documents",
+    "tool:list_events",
+    "tool:list_handoffs",
+    "tool:list_human_attention",
+    "tool:list_inbox_items",
+    "tool:list_leases",
+    "tool:list_project_milestones",
+    "tool:list_projects",
+    "tool:list_recovery_items",
+    "tool:list_repositories",
+    "tool:list_session_activities",
+    "tool:list_session_plan_versions",
+    "tool:list_teams",
+    "tool:list_work_item_artifacts",
+    "tool:list_work_item_comments",
+    "tool:list_work_item_relations",
+    "tool:list_work_items",
+    "tool:list_workflow_states",
+    "tool:merge_pull_request",
+    "tool:offer_handoff",
+    "tool:open_pull_request",
+    "tool:post_work_room_message",
+    "tool:prepare_project_import",
+    "tool:preview_agent_session_control",
+    "tool:propose_plan_step_assignment",
+    "tool:publish_artifact",
+    "tool:publish_delivery_artifact",
+    "tool:publish_plan",
+    "tool:publish_project_update",
+    "tool:publish_structured_review",
+    "tool:reject_handoff",
+    "tool:release_lease",
+    "tool:remove_work_item_relation",
+    "tool:renew_lease",
+    "tool:reply_inbox_item",
+    "tool:request_approval",
+    "tool:request_artifact_upload",
+    "tool:request_handoff",
+    "tool:resolve_identifier",
+    "tool:restore_document_revision",
+    "tool:retry_ci_check",
+    "tool:send_message",
+    "tool:stop_ack",
+    "tool:suggest_work_item_completion",
+    "tool:transition_agent_session_state",
+    "tool:update_document",
+    "tool:update_milestone",
+    "tool:update_project",
+    "tool:update_work_item",
+    "tool:verify_connection"
+  ],
+  "registrationEvidence": {
+    "status": "未运行",
+    "readOnlyCaptured": [],
+    "readWriteCaptured": [],
+    "note": "不把plannedRegistrationAdditions写入实际registeredBindingIds；实现时依真实捕获填充并绑定源码/输入/输出"
+  },
+  "activation": {
+    "formalReviewClosed": false,
+    "backendContractPassed": false,
+    "registrationCaptured": false,
+    "evidenceRefs": []
+  },
+  "postGenerationAcceptance": {
+    "discoveryRegressionsPassed": false,
+    "regenerationZeroDiffProved": false,
+    "historicalBindingsPreserved": false
+  },
+  "productGeneratorRun": false,
+  "futureRegeneration": "M0->M1->M2->M3->M4；各批冻结输入不回写；两次完整bytes一致并git diff零差异"
+}

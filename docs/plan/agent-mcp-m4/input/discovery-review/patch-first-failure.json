@@ -1,0 +1,8 @@
+{
+  "tool": "apply_patch",
+  "status": "Failed to find expected lines in implementation.md",
+  "cause": "同一文件多段hunk顺序逆行，健康合同上下文位于先前conformance hunk之前",
+  "osExitCode": null,
+  "productTestsExecuted": false,
+  "resolution": "只读核当前文件后按实际文件顺序重新应用规划补丁；不改产品文件，无审批拒绝或清理操作"
+}

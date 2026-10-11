@@ -1,0 +1,73 @@
+{
+  "sampleUtc": "2026-10-11T03:09:58.636715+00:00",
+  "before": [
+    {
+      "path": "docs/plan/agent-mcp-m4/operation-decisions.json",
+      "bytes": 149832,
+      "sha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/operation-matrix.md",
+      "bytes": 9569,
+      "sha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/product-discovery-decisions.json",
+      "bytes": 41865,
+      "sha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c"
+    }
+  ],
+  "receipts": [
+    {
+      "command": "python -B docs/plan/agent-mcp-m4/build-operation-matrix.py",
+      "exitCode": 0,
+      "runtimeSeconds": 0.16429829999106005,
+      "stdout": "{\"ѡ��������\": 19, \"Human����������\": 20, \"���ʸ����\": 4, \"�������᰸\": 16, \"ʵ��ע��֤��\": 0, \"��������selected��\": 3}\r\n",
+      "stderr": "",
+      "fingerprints": [
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-decisions.json",
+          "bytes": 149832,
+          "sha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-matrix.md",
+          "bytes": 9569,
+          "sha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/product-discovery-decisions.json",
+          "bytes": 41865,
+          "sha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c"
+        }
+      ]
+    },
+    {
+      "command": "python -B docs/plan/agent-mcp-m4/build-operation-matrix.py",
+      "exitCode": 0,
+      "runtimeSeconds": 0.12727530000847764,
+      "stdout": "{\"ѡ��������\": 19, \"Human����������\": 20, \"���ʸ����\": 4, \"�������᰸\": 16, \"ʵ��ע��֤��\": 0, \"��������selected��\": 3}\r\n",
+      "stderr": "",
+      "fingerprints": [
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-decisions.json",
+          "bytes": 149832,
+          "sha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/operation-matrix.md",
+          "bytes": 9569,
+          "sha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965"
+        },
+        {
+          "path": "docs/plan/agent-mcp-m4/product-discovery-decisions.json",
+          "bytes": 41865,
+          "sha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c"
+        }
+      ]
+    }
+  ],
+  "planningBytesStable": true,
+  "productGeneratorsRun": false,
+  "productTestsRun": false
+}

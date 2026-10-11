@@ -106,7 +106,133 @@
         "negative": "跨Team、撤grant、关闭Planning",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listCycles",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "teamCollectionScope",
+                "allowed": [
+                  "workspace",
+                  "current_team"
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_PLANNING",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_cycles",
+            "operationIds": [
+              "listCycles"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -212,7 +338,132 @@
         "negative": "跨项目、先list撤Delegation",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listInitiatives",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "initiativeLinkedProjectScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_PLANNING",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_initiatives",
+            "operationIds": [
+              "listInitiatives"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -273,7 +524,132 @@
         "negative": "撤grant后拒绝而非零；Human、201可见上限",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "getInitiativeRollup",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "initiativeLinkedProjectScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_PLANNING",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:get_initiative_rollup",
+            "operationIds": [
+              "getInitiativeRollup"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "通过M4增量替换旧Human查询谓词",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -372,7 +748,125 @@
         "negative": "另一个owner私有项、跨Team、撤权",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listSavedViews",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "savedViewVisibleScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": null,
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_saved_views",
+            "operationIds": [
+              "listSavedViews"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -478,7 +972,131 @@
         "negative": "异体key冲突、他Team、owner注入不能生效",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "createSavedView",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "idempotencyValid",
+                "allowed": [
+                  true
+                ],
+                "reason": "IDEMPOTENCY_CONFLICT"
+              },
+              {
+                "fact": "savedViewVisibleScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              }
+            ],
+            "capabilities": [
+              "work:write"
+            ],
+            "feature": null,
+            "variants": [],
+            "write": true
+          },
+          "binding": {
+            "bindingId": "tool:create_saved_view",
+            "operationIds": [
+              "createSavedView"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -586,7 +1204,134 @@
         "negative": "他owner private、关闭Planning",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listAdvancedViews",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "viewVisibility",
+                "allowed": [
+                  "owner",
+                  "workspace",
+                  "current_team"
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_PLANNING",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_advanced_views",
+            "operationIds": [
+              "listAdvancedViews"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -708,7 +1453,148 @@
         "negative": "越resultScope、非法filter、混币请求",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "evaluateAdvancedView",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "viewVisibility",
+                "allowed": [
+                  "owner",
+                  "workspace",
+                  "current_team"
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "viewResultScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "viewLayoutFilterSupported",
+                "allowed": [
+                  true
+                ],
+                "reason": "VIEW_FILTER_UNSUPPORTED"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_PLANNING",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:get_advanced_view_results",
+            "operationIds": [
+              "evaluateAdvancedView"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -822,7 +1708,140 @@
         "negative": "跨Team、撤grant、Agent触发/改版拒绝",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listAutomationRules",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "routeResolvedScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "teamCollectionScope",
+                "allowed": [
+                  "workspace",
+                  "current_team"
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_automation_rules",
+            "operationIds": [
+              "listAutomationRules"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -935,7 +1954,139 @@
         "negative": "另Session、session_id=null、跨Team",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listAutomationRuns",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "routeResolvedScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "automationRunSessionMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_automation_runs",
+            "operationIds": [
+              "listAutomationRuns"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -996,7 +2147,139 @@
         "negative": "origin E读target、别人nullTeam run、Stop",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "getAutomationRun",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "routeResolvedScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "automationRunSessionMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_EXPERIMENTAL_AUTOMATION",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:get_automation_run",
+            "operationIds": [
+              "getAutomationRun"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "通过M4增量替换旧Human查询谓词",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1111,7 +2394,141 @@
         "negative": "private owner、跨Team、feature关闭",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listLoops",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "routeResolvedScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "loopVisibility",
+                "allowed": [
+                  "workspace",
+                  "owner",
+                  "current_team"
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_loops",
+            "operationIds": [
+              "listLoops"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1244,7 +2661,158 @@
         "negative": "停用pin/Loop、竞争容量预算、跨Team/撤权",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "runLoopNow",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "routeResolvedScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "idempotencyValid",
+                "allowed": [
+                  true
+                ],
+                "reason": "IDEMPOTENCY_CONFLICT"
+              },
+              {
+                "fact": "loopSameTeam",
+                "allowed": [
+                  true
+                ],
+                "reason": "FORBIDDEN"
+              },
+              {
+                "fact": "loopTemplateActive",
+                "allowed": [
+                  true
+                ],
+                "reason": "RUN_TEMPLATE_INVALID"
+              },
+              {
+                "fact": "loopAdmissionCapacity",
+                "allowed": [
+                  true
+                ],
+                "reason": "LOOP_RUN_LIMIT"
+              }
+            ],
+            "capabilities": [
+              "automation:manage",
+              "work:write"
+            ],
+            "feature": "WORKMESH_EXPERIMENTAL_AGENT_LOOPS",
+            "variants": [],
+            "write": true
+          },
+          "binding": {
+            "bindingId": "tool:run_loop_now",
+            "operationIds": [
+              "runLoopNow"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1371,7 +2939,152 @@
         "negative": "冒他Session/Agent/项目、同key异body、extra Activity禁止",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "recordUsage",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "idempotencyValid",
+                "allowed": [
+                  true
+                ],
+                "reason": "IDEMPOTENCY_CONFLICT"
+              },
+              {
+                "fact": "usageSessionMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              },
+              {
+                "fact": "usageAgentMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              },
+              {
+                "fact": "usageProjectMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_COSTS",
+            "variants": [],
+            "write": true
+          },
+          "binding": {
+            "bindingId": "tool:record_usage",
+            "operationIds": [
+              "recordUsage"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1432,7 +3145,153 @@
         "negative": "异Session显式过滤、撤权、零记录不能呈免费",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "getUsageSummary",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "usageSessionMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              },
+              {
+                "fact": "usageAgentMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              },
+              {
+                "fact": "usageProjectMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              },
+              {
+                "fact": "usageFiltersMatchCurrentSession",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_COSTS",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:get_usage_summary",
+            "operationIds": [
+              "getUsageSummary"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "通过M4增量替换旧Human查询谓词",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1545,7 +3404,139 @@
         "negative": "普通E无pin合法空、他owner/pin、停用Template",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "listTemplates",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "routeResolvedScope",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "templatePinnedToRun",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_BETA_TEMPLATES",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:list_templates",
+            "operationIds": [
+              "listTemplates"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1606,7 +3597,139 @@
         "negative": "另task/session、越bigint、撤权between scan/insert",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "streamA2ATaskEvents",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "human_session",
+                  "agent_session",
+                  "coordination_connection"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution",
+                  "coordination"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "reviewer",
+                  "researcher",
+                  "coordinator",
+                  "triager"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "featureEnabled",
+                "allowed": [
+                  true
+                ],
+                "reason": "FEATURE_DISABLED"
+              },
+              {
+                "fact": "a2aBindingActive",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              },
+              {
+                "fact": "a2aTaskSessionMatches",
+                "allowed": [
+                  true
+                ],
+                "reason": "NOT_FOUND"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": "WORKMESH_EXPERIMENTAL_A2A",
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:get_a2a_task_events",
+            "operationIds": [
+              "streamA2ATaskEvents"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": null,
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "current_session",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": null,
+                "installationBridgeRequired": false
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "通过M4增量替换旧Human查询谓词",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1700,7 +3823,120 @@
         "negative": "projectless Loop E、C模式、跨project",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "getProjectHealthHistory",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "agent_session"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "researcher",
+                  "reviewer"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "domainTargetFactsMatch",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              }
+            ],
+            "capabilities": [
+              "work:read"
+            ],
+            "feature": null,
+            "variants": [],
+            "write": false
+          },
+          "binding": {
+            "bindingId": "tool:get_project_health_history",
+            "operationIds": [
+              "getProjectHealthHistory"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-only",
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": "sessionId",
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "self_execution",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": "sessionId",
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "target_execution",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": "sessionId",
+                "installationBridgeRequired": true
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1811,7 +4047,136 @@
         "negative": "旧revision、未批准publish、非精确project",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "createProjectHealthUpdate",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "agent_session"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "researcher",
+                  "reviewer"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "domainTargetFactsMatch",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              },
+              {
+                "fact": "idempotencyValid",
+                "allowed": [
+                  true
+                ],
+                "reason": "IDEMPOTENCY_CONFLICT"
+              },
+              {
+                "fact": "exactHumanApproval",
+                "allowed": [
+                  true
+                ],
+                "reason": "APPROVAL_REQUIRED",
+                "when": {
+                  "publish": true
+                }
+              }
+            ],
+            "capabilities": [
+              "work:write"
+            ],
+            "feature": null,
+            "variants": [],
+            "write": true
+          },
+          "binding": {
+            "bindingId": "tool:create_project_health_update",
+            "operationIds": [
+              "createProjectHealthUpdate"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": "sessionId",
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "self_execution",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": "sessionId",
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "target_execution",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": "sessionId",
+                "installationBridgeRequired": true
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     },
     {
@@ -1912,7 +4277,126 @@
         "negative": "越workItem、Agent decide/publish管理拒绝",
         "runtime": "独立Windows测试部署；六域全开及逐域关闭；controlled model/fake provider",
         "actualStatus": "未实施/未测",
-        "requiresFormalReview": true
+        "requiresFormalReview": true,
+        "discovery": {
+          "rule": {
+            "operationId": "suggestWorkItemCompletion",
+            "predicates": [
+              {
+                "fact": "credentialMode",
+                "allowed": [
+                  "agent_session"
+                ],
+                "reason": "CREDENTIAL_MODE_MISMATCH"
+              },
+              {
+                "fact": "sessionKind",
+                "allowed": [
+                  "execution"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "role",
+                "allowed": [
+                  "executor",
+                  "researcher",
+                  "reviewer"
+                ],
+                "reason": "ROLE_REQUIRED"
+              },
+              {
+                "fact": "state",
+                "allowed": [
+                  "acknowledged",
+                  "planning",
+                  "executing",
+                  "awaiting_input",
+                  "awaiting_approval",
+                  "blocked"
+                ],
+                "reason": "SESSION_STATE_DENIED"
+              },
+              {
+                "fact": "liveAuthority",
+                "allowed": [
+                  true
+                ],
+                "reason": "AUTHORITY_REVOKED"
+              },
+              {
+                "fact": "capabilitiesAllPresent",
+                "allowed": [
+                  true
+                ],
+                "reason": "CAPABILITY_DENIED"
+              },
+              {
+                "fact": "domainTargetFactsMatch",
+                "allowed": [
+                  true
+                ],
+                "reason": "RESOURCE_SCOPE_DENIED"
+              },
+              {
+                "fact": "idempotencyValid",
+                "allowed": [
+                  true
+                ],
+                "reason": "IDEMPOTENCY_CONFLICT"
+              }
+            ],
+            "capabilities": [
+              "work:write"
+            ],
+            "feature": null,
+            "variants": [],
+            "write": true
+          },
+          "binding": {
+            "bindingId": "tool:suggest_work_item_completion",
+            "operationIds": [
+              "suggestWorkItemCompletion"
+            ],
+            "execution": "api",
+            "mode": [
+              "read-write"
+            ],
+            "coordination": false,
+            "identityBinding": "explicit_identity_variants",
+            "targetParameter": "sessionId",
+            "variant": null,
+            "identityVariants": [
+              {
+                "variant": "self_execution",
+                "credentialMode": [
+                  "agent_session"
+                ],
+                "targetParameter": "sessionId",
+                "installationBridgeRequired": false
+              },
+              {
+                "variant": "target_execution",
+                "credentialMode": [
+                  "coordination_connection"
+                ],
+                "targetParameter": "sessionId",
+                "installationBridgeRequired": true
+              }
+            ]
+          },
+          "runtimeRegistrationVerified": false,
+          "ruleDisposition": "保留现行资格规则",
+          "backendTargetAuthority": "调用REST按准确当前凭据/Session实时重核；requires_target_check不授权限",
+          "regressionCases": [
+            "feature关闭(有feature时)",
+            "非法Session状态",
+            "缺capability",
+            "合法身份精确target待核",
+            "mode/身份变体一致",
+            "旧bindings保留"
+          ]
+        }
       }
     }
   ],

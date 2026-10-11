@@ -56,3 +56,7 @@ SDK/MCP覆盖sourceRule准许的真实C/E模式；四投影的C scope可能合�
 | `acceptA2ATask` | `WORKMESH_EXPERIMENTAL_A2A` | 保持Human管理，不新增Agent适配或授权 |
 
 现行 `createAdvancedView` Human-only、`decideCompletionSuggestion` Human-only 均保留。首轮真实测试须对每个Human保留动作使用Human合法正例与准确Agent拒例；不以没有工具作为REST拒绝证据。外部通知发送不执行，只验证准入拒绝与fake adapter事实。
+
+## 四读新资格与精确bindings
+
+[受控discovery增量](product-discovery-decisions.json)列4项完整新rules、16项新增绑定及3项原样保留的health/completion绑定；[发现合同](discovery-contract.md)解释逐项谓词、未知目标与生成边界。当前sourceRule仍是主线旧事实，planned.discovery.rule才是待实施替换，不覆盖sourceRule。registeredBindingIds为空且registrationEvidence未运行，不是假实测清单；实际捕获前不得启用产品生成。

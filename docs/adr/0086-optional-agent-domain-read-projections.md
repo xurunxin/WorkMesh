@@ -2,7 +2,7 @@
 
 ## 状态
 
-Proposed。本次仅规划文件；未获正式独审、未实施、未新增权限。接受前由 Chief 交另一 Agent 审核四项逐条授权证据及 Runner 边界。
+Proposed。本次仅规划文件；原候选已获正式方案独审并留下1项High(blocking)，本提案补正该项后待Chief正式复审，未获闭合、未实施、未新增权限。原审及候选保留于 [审查回应](../plan/agent-mcp-m4/review-response.md)。
 
 ## 背景
 
@@ -22,6 +22,8 @@ Proposed。本次仅规划文件；未获正式独审、未实施、未新增权
 A2A GET 具有既有派生写：初始授权与事件快照后，最终 guarded batch SQL 在 READ COMMITTED 事务重验同凭据/Session/principal/binding/task及固定扫描事件归属，`INSERT ... SELECT ... ON CONFLICT` 写原 outbound deliveries，权限标记与输出在同最终 statement决定。零映射页也重验；失权或故障整个事务回滚。其他三个投影零领域写、不加行锁。没有新领域 event/outbox、表、receipt 或 Idempotency-Key。
 
 SDK/MCP/Runner 与 REST 使用同 DTO、policyfeature 与 derived manifest；发现阻断须在后端合同测试通过后逐条解除。工具 A2A 单页有界，checkpoint 与普通 domain events/集合分页独立。Runner `recordUsage` 关闭额外 Activity 包装，沿命令本身事实；不为 work:read 写偷加 work:write。Runner 保 executing exact E、完整有界正文、原错误包及 ADR0084/0085恢复边界，不新增自动重放动作。
+
+明确未来实施将M4 `product-discovery-decisions.json` 纳入 `scripts/generate-agent-discovery.py`，并把M4实际registry加入M2/M3 union，不改历史输入。四读规则以listInitiatives共同读取门禁替换Human查询谓词，rollup/run/usage/A2A各自精确target predicates在 [发现合同](../plan/agent-mcp-m4/discovery-contract.md) 和JSON逐项定义；未知目标requires_target_check，不提前授权。原bindings/mappings/identityVariants保留，discovery→route-policy→RunnerSkill分开生成，两次完整bytes/零diff验证及feature关闭/非法状态/合法target待核回归必须实际运行。当前M4 JSON仅提案、registeredBindingIds空，未改生成器或派生结果；不声称这些未来检查已过。
 
 详细安全合同及正反判定见 [安全合同](../plan/agent-mcp-m4/safety-contract.md)，逐操作消费者及测试见 [矩阵](../plan/agent-mcp-m4/operation-matrix.md) 与 [九类验收](../plan/agent-mcp-m4/verification.md)。这些文档是本提案组成部分，仍是待审设计。
 

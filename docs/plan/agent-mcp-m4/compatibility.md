@@ -20,6 +20,8 @@ SDK 每个新的逻辑动作产生或接受一个key，同一动作的底层传�
 
 复用 `apps/mcp/src/index.ts` 的 `tool`：成功 text JSON 与 structuredContent.data一致，失败保 code/details/correlationId/safeNextAction。只读模式仅读工具；写工具read-write才注册，discovery只投影真实binding。四投影在后端合同未落地前继续 `DOMAIN_QUERY_NOT_AGENT_ALIGNED`；解除后也可能 requires_target_check，展示scope/pin/target facts，调用仍REST重核。
 
+[受控M4增量](product-discovery-decisions.json) 与 [发现合同](discovery-contract.md) 定义16个新工具E/C current_session绑定、targetParameter=null、installationBridgeRequired=false；输入resourceId/sessionId不变成另一Session bridge。原3项health/completion绑定及全部旧138 bindings、137 mappings和identityVariants完整保留。四项规则通过M4增量替换旧Human谓词，feature/状态/能力可判blocked、合法未知目标列精确pendingChecks；既有Human REST读不依Agent manifest放行。registry实际证据当前为空，未来用原register调用捕获，不把公开tools/list当全集；缺注册不能生成。分别生成discovery、route-policy、RunnerSkill并复生成零diff，防止SDK/MCP已注册却被旧生成输入删除。以上兼容验证尚未运行。
+
 Runner内嵌Pi工具只支持准确 executing E 的 qualified manifest；SDK/HTTP MCP再覆盖C允许的当前查询模式。C不可借Runner claim有执行E权。`recordUsage` 不附额外Activity，原命令append-only usage/event/outbox及tool result是证据；可运行Runner本身的既有生命周期权限另行测试，不用一个work:read工具正例冒整个read-only Runner准入。
 
 已有50,000字符摘要不能吞本批run/effect、rollup/usage、Template正文或A2A events/cursor；本批具名受保护读取沿既有12,000,000字符边界完整返回，超界抛明确失败且不给“已消费”cursor。普通items分页继续同cursor缩小limit，最多8次；不能完整返回的单大页明确失败。真实Pi及native OpenCode的私有 max_bytes/config 只在本卡私有目录设置，并实测完整UTF-8原HTTP实收与模型结果逐值匹配，不能从磁盘读全文冒模型实收。

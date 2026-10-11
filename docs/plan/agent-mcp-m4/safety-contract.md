@@ -12,6 +12,8 @@ Agent 资格取自精确当前凭据 C 或 E，而不是 caller 提交的 actor/
 
 用真实 PG barrier 分别证明撤权在正文 statement 前必须拒绝；撤权在该 statement 取得快照之后允许返回该快照正文、下一请求必须拒绝。记录 DB barrier/SQL/HTTP 时间与具体事实，不把两个顺序请求冒充竞争。C 和 E 资格逐项正负验证，不把 C target E bridge 与当前 C 查询混为一个 binding。
 
+发现资格同步须完整执行 [M4 discovery合同](discovery-contract.md)：四读使用current listInitiatives共同门禁与各自精确目标facts，替换Human查询旧谓词，同时移除queryDifferences。受控增量纳入真正discovery生成器及registry，而不是只生成route-policy。目标未知为requires_target_check，最终授权仍是本文件同SQL快照及A2A final gate；生成来源完整并不授额外Team/project/current或target Session权限。当前产品仍未修、未生成。
+
 Human 保留每个路径的当前 admin/membership、Team-null、字段和空结果语义；修复不得缩减合法 Human 读取。A2A 增加最终实时 Human 凭据及 Team 核验是防止中途撤权继续派生写，使用现行 `liveHumanTeamReadPredicate`，不是新增 Human 管理权。
 
 ## Initiative：只聚合 list 已允许的项目

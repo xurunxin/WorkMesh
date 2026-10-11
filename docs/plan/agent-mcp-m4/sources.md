@@ -24,10 +24,16 @@ M0 `operation-decisions.json/domain-rules.json/domain-audit.md` 是原发现决�
 
 源码落点与函数按 [实施步骤](implementation.md)、[安全合同](safety-contract.md) 引用；symbolLocations保存关键符号真实行号。对本卡拟新文件没有虚构blob/已存在函数。所有ADR的标题与状态开头另保 [索引](input/adr-status-index.json)，保留Proposed/Accepted事实，不用数字较大推正式接受。
 
+## 正式审查修订的增量来源
+
+原177来源清单与原读取/检查回执不覆盖。新增 [14项审查来源](input/discovery-review/source-manifest.json) 完整消费当前main的discovery/route-policy/RunnerSkill生成器、ci:source入口、发现规则与测试、实际MCP注册钩子、M0–M3历史输入；逐项记录完整Git blob长度/SHA256及工作树字节映射。新增 [baseline](input/discovery-review/discovery-baseline.json) 保存138旧bindings、137映射和139历史registry输入，不把历史登记当本轮注册实测。
+
+[原审](input/discovery-review/reviewer-feedback.md) 与 [用户指令](input/discovery-review/user-feedback.md) 来源是用户注入；原候选 `4e144f35759525a8a377acc73ba2f2dbfe02ab67` 用可达Git全文保全，36原交付记录逐blob匹配、另读两自引用账本，准确结果见 [读取回执](input/discovery-review/source-capture-receipt.json)。新增文件不假注册成功，不复制旧整树或构建包。最新只读 [remote观察](input/discovery-review/remote-main-review-sync.json) 确认当前main与原候选远端分支；不是尚未发生的新head push回执。
+
 ## 平台全文、运行字节与缺口
 
-[spec.md](spec.md) 来自完整todos Spec读回；[平台同步说明](platform-sync.md) 区分用户注入完整savedcopy、工具Saved plan截断和本轮单段edit。未返回新planVersion/创建字段均null，不猜新docID。todo原工具返回保 [todo-readback.json](input/todo-readback.json)，其截断Saved plan不生成全文hash。用户选六域及允许仅规划写入来自 [feedback](input/feedback.md)，无需重复问许可。
+[spec.md](spec.md) 来自完整todos Spec读回；[平台同步说明](platform-sync.md) 区分旧候选原edit、当前用户注入完整savedcopy及本轮工具Saved plan截断。当前plan引用doc:2lrk57A39k3aZfYY5BGeJ来自用户反馈，版本/创建字段未知不推断；本轮只同步仓库不另edit_plan。原 [todo-readback](input/todo-readback.json) 与 [本轮读回](input/discovery-review/todo-review-sync.json) 均保原文，截断Saved plan不生成平台全文hash。六域选择和仅规划写入授权沿原反馈及当前指令，无需重复许可。
 
 source capture首轮整体exit0，但3个猜测路径内部Git解析exit128；[原回执](input/source-capture-first-receipt.json) 标真实缺件，不能把163个成功blob叫全部候选成功。校正到RunnerApi实际run-session.ts、featureDefinitions实际index.ts并去不存在auth路径；随后完整重读且所有候选可达。首次stdout编码问题分列，文件UTF-8校验不假为显示完整。旧产品中间原件缺口不本轮重造。
 
-本轮没有新的产品运行bytes或检查成功；交付规划文件/stagedblob/hash只证明文档一致。后续运行必须另做实际消费指纹与完整命令回执，不能用此来源列表代检查。在缺全机handles/全局恢复registry条件下不清其他workspace；物理净释放未测null。未有formal独审、新候选RequiredCI和actualDone/main，不宣产品验收。
+本轮没有新的产品运行bytes或检查成功；交付规划文件/stagedblob/hash只证明文档一致。后续运行必须另做实际消费指纹与完整命令回执，不能用此来源列表代检查。在缺全机handles/全局恢复registry条件下不清其他workspace；物理净释放未测null。原正式独审High(blocking)已保全，本次修订尚待正式复审；没有新候选RequiredCI和actualDone/main，不宣产品验收。

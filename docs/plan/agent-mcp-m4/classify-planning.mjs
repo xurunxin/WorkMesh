@@ -17,6 +17,6 @@ if (plan.mode !== 'full') throw new Error('本卡结构化规划工件应保留f
 const data = { command: 'node docs/plan/agent-mcp-m4/classify-planning.mjs',
   exitCode: 0, runtimeSeconds: (performance.now() - start) / 1000, paths, plan,
   limits: '仅分类，不是ci:test、Required CI或产品测试成功；动态输出随后进入同一受控目录。' }
-writeFileSync(resolve(directory, 'input/ci-classification.json'), JSON.stringify(data, null, 2) + '\n')
+writeFileSync(resolve(directory, 'input/discovery-review/ci-classification.json'), JSON.stringify(data, null, 2) + '\n')
 process.stdout.write(JSON.stringify({ mode: plan.mode, affectedPackages: plan.packages.length,
   requiredCheckCount: Object.values(plan.checks).filter(Boolean).length }) + '\n')

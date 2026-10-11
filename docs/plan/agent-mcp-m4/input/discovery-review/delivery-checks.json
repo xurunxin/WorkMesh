@@ -1,0 +1,51 @@
+{
+  "sampleUtc": "2026-10-11T03:11:56.704806+00:00",
+  "receipts": [
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.06837429999723099,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-only"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.06571210001129657,
+      "stdout": "docs/adr/0086-optional-agent-domain-read-projections.md\ndocs/plan/agent-mcp-m4/README.md\ndocs/plan/agent-mcp-m4/build-operation-matrix.py\ndocs/plan/agent-mcp-m4/capture-discovery-review.py\ndocs/plan/agent-mcp-m4/classify-planning.mjs\ndocs/plan/agent-mcp-m4/compatibility.md\ndocs/plan/agent-mcp-m4/discovery-contract.md\ndocs/plan/agent-mcp-m4/finalize-delivery.py\ndocs/plan/agent-mcp-m4/history/index.json\ndocs/plan/agent-mcp-m4/implementation.md\ndocs/plan/agent-mcp-m4/input/discovery-review/ci-classification.json\ndocs/plan/agent-mcp-m4/input/discovery-review/delivery-checks.json\ndocs/plan/agent-mcp-m4/input/discovery-review/delivery-manifest.json\ndocs/plan/agent-mcp-m4/input/discovery-review/discovery-baseline.json\ndocs/plan/agent-mcp-m4/input/discovery-review/patch-first-failure.json\ndocs/plan/agent-mcp-m4/input/discovery-review/patch-second-failure.json\ndocs/plan/agent-mcp-m4/input/discovery-review/patch-third-failure.json\ndocs/plan/agent-mcp-m4/input/discovery-review/planning-generation-checks-first.json\ndocs/plan/agent-mcp-m4/input/discovery-review/planning-generation-checks.json\ndocs/plan/agent-mcp-m4/input/discovery-review/planning-validation.json\ndocs/plan/agent-mcp-m4/input/discovery-review/remote-main-review-sync.json\ndocs/plan/agent-mcp-m4/input/discovery-review/reviewer-feedback.md\ndocs/plan/agent-mcp-m4/input/discovery-review/source-capture-receipt.json\ndocs/plan/agent-mcp-m4/input/discovery-review/source-manifest.json\ndocs/plan/agent-mcp-m4/input/discovery-review/todo-review-sync.json\ndocs/plan/agent-mcp-m4/input/discovery-review/user-feedback.md\ndocs/plan/agent-mcp-m4/operation-decisions.json\ndocs/plan/agent-mcp-m4/operation-matrix.md\ndocs/plan/agent-mcp-m4/planning-report.md\ndocs/plan/agent-mcp-m4/platform-sync.md\ndocs/plan/agent-mcp-m4/product-discovery-decisions.json\ndocs/plan/agent-mcp-m4/review-response.md\ndocs/plan/agent-mcp-m4/safety-contract.md\ndocs/plan/agent-mcp-m4/savedplan.md\ndocs/plan/agent-mcp-m4/sources.md\ndocs/plan/agent-mcp-m4/validate-plan.py\ndocs/plan/agent-mcp-m4/verification.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "ls-files",
+        "--",
+        "docs/plan/agent-mcp-m4",
+        "docs/adr/0086-optional-agent-domain-read-projections.md"
+      ],
+      "exitCode": 0,
+      "runtimeSeconds": 0.04934139999386389,
+      "stdout": "docs/adr/0086-optional-agent-domain-read-projections.md\ndocs/plan/agent-mcp-m4/README.md\ndocs/plan/agent-mcp-m4/build-operation-matrix.py\ndocs/plan/agent-mcp-m4/capture-discovery-review.py\ndocs/plan/agent-mcp-m4/capture-sources.py\ndocs/plan/agent-mcp-m4/classify-planning.mjs\ndocs/plan/agent-mcp-m4/compatibility.md\ndocs/plan/agent-mcp-m4/discovery-contract.md\ndocs/plan/agent-mcp-m4/environment-and-resources.md\ndocs/plan/agent-mcp-m4/finalize-delivery.py\ndocs/plan/agent-mcp-m4/history/index.json\ndocs/plan/agent-mcp-m4/implementation.md\ndocs/plan/agent-mcp-m4/input/adr-status-index.json\ndocs/plan/agent-mcp-m4/input/ci-classification.json\ndocs/plan/agent-mcp-m4/input/current-main-m4.md\ndocs/plan/agent-mcp-m4/input/delivery-checks.json\ndocs/plan/agent-mcp-m4/input/delivery-manifest.json\ndocs/plan/agent-mcp-m4/input/discovery-review/ci-classification.json\ndocs/plan/agent-mcp-m4/input/discovery-review/delivery-checks.json\ndocs/plan/agent-mcp-m4/input/discovery-review/delivery-manifest.json\ndocs/plan/agent-mcp-m4/input/discovery-review/discovery-baseline.json\ndocs/plan/agent-mcp-m4/input/discovery-review/patch-first-failure.json\ndocs/plan/agent-mcp-m4/input/discovery-review/patch-second-failure.json\ndocs/plan/agent-mcp-m4/input/discovery-review/patch-third-failure.json\ndocs/plan/agent-mcp-m4/input/discovery-review/planning-generation-checks-first.json\ndocs/plan/agent-mcp-m4/input/discovery-review/planning-generation-checks.json\ndocs/plan/agent-mcp-m4/input/discovery-review/planning-validation.json\ndocs/plan/agent-mcp-m4/input/discovery-review/remote-main-review-sync.json\ndocs/plan/agent-mcp-m4/input/discovery-review/reviewer-feedback.md\ndocs/plan/agent-mcp-m4/input/discovery-review/source-capture-receipt.json\ndocs/plan/agent-mcp-m4/input/discovery-review/source-manifest.json\ndocs/plan/agent-mcp-m4/input/discovery-review/todo-review-sync.json\ndocs/plan/agent-mcp-m4/input/discovery-review/user-feedback.md\ndocs/plan/agent-mcp-m4/input/environment-observation.json\ndocs/plan/agent-mcp-m4/input/feedback.md\ndocs/plan/agent-mcp-m4/input/frozen-m4.md\ndocs/plan/agent-mcp-m4/input/planning-discovery-failures.json\ndocs/plan/agent-mcp-m4/input/planning-validation.json\ndocs/plan/agent-mcp-m4/input/platform-observation.json\ndocs/plan/agent-mcp-m4/input/priority-difference.json\ndocs/plan/agent-mcp-m4/input/remote-main-final.json\ndocs/plan/agent-mcp-m4/input/source-capture-first-receipt.json\ndocs/plan/agent-mcp-m4/input/source-manifest.json\ndocs/plan/agent-mcp-m4/input/todo-readback.json\ndocs/plan/agent-mcp-m4/input/whitespace-first-failure.json\ndocs/plan/agent-mcp-m4/input/workspace-inventory.json\ndocs/plan/agent-mcp-m4/observe-environment.py\ndocs/plan/agent-mcp-m4/operation-decisions.json\ndocs/plan/agent-mcp-m4/operation-matrix.md\ndocs/plan/agent-mcp-m4/planning-report.md\ndocs/plan/agent-mcp-m4/platform-sync.md\ndocs/plan/agent-mcp-m4/product-discovery-decisions.json\ndocs/plan/agent-mcp-m4/review-response.md\ndocs/plan/agent-mcp-m4/safety-contract.md\ndocs/plan/agent-mcp-m4/savedplan.md\ndocs/plan/agent-mcp-m4/sources.md\ndocs/plan/agent-mcp-m4/spec.md\ndocs/plan/agent-mcp-m4/validate-plan.py\ndocs/plan/agent-mcp-m4/verification.md\n",
+      "stderr": ""
+    }
+  ],
+  "stagedPlanningFilesChecked": 57,
+  "changedPlanningFiles": 37,
+  "excludedSelfReference": [
+    "docs/plan/agent-mcp-m4/input/discovery-review/delivery-manifest.json",
+    "docs/plan/agent-mcp-m4/input/discovery-review/delivery-checks.json"
+  ],
+  "commitVerification": "提交后另按该清单逐blob核对；准确head仅最终回复及Git自身记录，不循环自写",
+  "remoteDelivery": "平台在回合结束push，当前未取得push回执，不声称远端可见",
+  "productChecksRun": false
+}

@@ -1,0 +1,525 @@
+{
+  "scope": "仅本卡规划文档，非产品受测源码",
+  "records": [
+    {
+      "path": "docs/adr/0086-optional-agent-domain-read-projections.md",
+      "stagedBlob": "4b30df90249afc366077c11199d4932c8f8942fd",
+      "stagedBytes": 5512,
+      "stagedSha256": "276e27b7988ca58b7aaae4848b426d565df9964a6ab87944fd388e329fb5feda",
+      "worktreeBytes": 5512,
+      "worktreeSha256": "276e27b7988ca58b7aaae4848b426d565df9964a6ab87944fd388e329fb5feda",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/README.md",
+      "stagedBlob": "5cd2da68b32d88fb9b5b101385c67c11440574ae",
+      "stagedBytes": 4043,
+      "stagedSha256": "7b37f86117639f1ac41459cc14520da880a4140789c08a9e8af37e6b854580f8",
+      "worktreeBytes": 4043,
+      "worktreeSha256": "7b37f86117639f1ac41459cc14520da880a4140789c08a9e8af37e6b854580f8",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/build-operation-matrix.py",
+      "stagedBlob": "5568ee6034adb5c935999db9df02065ad8610b13",
+      "stagedBytes": 15426,
+      "stagedSha256": "93cab31a95eca1cba6f896f93b09cb5457486109de68b4b2d2f21b8c36e48bed",
+      "worktreeBytes": 15426,
+      "worktreeSha256": "93cab31a95eca1cba6f896f93b09cb5457486109de68b4b2d2f21b8c36e48bed",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/capture-discovery-review.py",
+      "stagedBlob": "f402bb702bb2ba7fb8b88d24e3d0b6db7d7730a4",
+      "stagedBytes": 4638,
+      "stagedSha256": "78e3c1ad42b41b7f60274b6c6bbd560624a73fffdd054823ab88a418ca972070",
+      "worktreeBytes": 4638,
+      "worktreeSha256": "78e3c1ad42b41b7f60274b6c6bbd560624a73fffdd054823ab88a418ca972070",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/capture-sources.py",
+      "stagedBlob": "2b73931ef101b6798e49485202387d0812c6026c",
+      "stagedBytes": 10154,
+      "stagedSha256": "9347de63a5a5d8aa82f9dc7bc3c33fc4b9afc458d9b37b5b01d71b700f0e30e5",
+      "worktreeBytes": 10154,
+      "worktreeSha256": "9347de63a5a5d8aa82f9dc7bc3c33fc4b9afc458d9b37b5b01d71b700f0e30e5",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/classify-planning.mjs",
+      "stagedBlob": "729600c01b0ee597c8deda83319edb0faac53627",
+      "stagedBytes": 1588,
+      "stagedSha256": "3b7e9a9f9f41c84a1b27e07b40421dfebe328ee6cbc5203bd758fb0770909921",
+      "worktreeBytes": 1588,
+      "worktreeSha256": "3b7e9a9f9f41c84a1b27e07b40421dfebe328ee6cbc5203bd758fb0770909921",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/compatibility.md",
+      "stagedBlob": "8fca179a9a3f1de3fee89efe2e34f4663bdc712b",
+      "stagedBytes": 6346,
+      "stagedSha256": "11d638192694fab27d4bf12ab735f0cf6bb569ea791ca6dbc663368daecab4bb",
+      "worktreeBytes": 6346,
+      "worktreeSha256": "11d638192694fab27d4bf12ab735f0cf6bb569ea791ca6dbc663368daecab4bb",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/discovery-contract.md",
+      "stagedBlob": "eb0a82537cb7263258c95b311615b5e6c54fbedf",
+      "stagedBytes": 8683,
+      "stagedSha256": "3c7b0ba4729f913da4b8376ed31b004722c108307fa7eaaa14392953d2362ef6",
+      "worktreeBytes": 8683,
+      "worktreeSha256": "3c7b0ba4729f913da4b8376ed31b004722c108307fa7eaaa14392953d2362ef6",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/environment-and-resources.md",
+      "stagedBlob": "a33a93b74c7871f800cc05d2445196d1b54cf47f",
+      "stagedBytes": 5820,
+      "stagedSha256": "44912fc089381e8239bdbce2844fd92d2d156e2dd556a94755b0d7f1e5ecc030",
+      "worktreeBytes": 5820,
+      "worktreeSha256": "44912fc089381e8239bdbce2844fd92d2d156e2dd556a94755b0d7f1e5ecc030",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/finalize-delivery.py",
+      "stagedBlob": "81b5ec544146056cb4722c3ba5f296a81d0f3161",
+      "stagedBytes": 3603,
+      "stagedSha256": "e7318d51b290681d87fa4809a47f9d4ffb4bf2d8a4f450973a889cfa3ea61364",
+      "worktreeBytes": 3603,
+      "worktreeSha256": "e7318d51b290681d87fa4809a47f9d4ffb4bf2d8a4f450973a889cfa3ea61364",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/history/index.json",
+      "stagedBlob": "3258d3375ef93da3e73a2307b9c77e27f7194cec",
+      "stagedBytes": 1247,
+      "stagedSha256": "6f6029553b00ec92729401d9026f6a3788a4e23ad897f50de99acf19ab6b03e0",
+      "worktreeBytes": 1247,
+      "worktreeSha256": "6f6029553b00ec92729401d9026f6a3788a4e23ad897f50de99acf19ab6b03e0",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/implementation.md",
+      "stagedBlob": "d12ce479c360e862f8975a83d9b3d1e01f0fbea2",
+      "stagedBytes": 8122,
+      "stagedSha256": "a482f974bf84739da6ab898480054d2c5574e7e25645866cc5fcb2593741cad5",
+      "worktreeBytes": 8122,
+      "worktreeSha256": "a482f974bf84739da6ab898480054d2c5574e7e25645866cc5fcb2593741cad5",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/adr-status-index.json",
+      "stagedBlob": "c0777336934b7aacb8ecd8c5351790cc8612ee20",
+      "stagedBytes": 65829,
+      "stagedSha256": "960d86174406fb3fab46b8ad04bb53e8a2444cf8b7ee1311cf5440e624d914a6",
+      "worktreeBytes": 65829,
+      "worktreeSha256": "960d86174406fb3fab46b8ad04bb53e8a2444cf8b7ee1311cf5440e624d914a6",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/ci-classification.json",
+      "stagedBlob": "2eb91ef7881c93e00a3c9a7eb00acd5c2a2daef6",
+      "stagedBytes": 3170,
+      "stagedSha256": "eb260072a2d4a7a2a4d53e47d74114f0054e5cf5aef02da5ff83f36c5b72a04c",
+      "worktreeBytes": 3170,
+      "worktreeSha256": "eb260072a2d4a7a2a4d53e47d74114f0054e5cf5aef02da5ff83f36c5b72a04c",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/current-main-m4.md",
+      "stagedBlob": "7b8c91804c54404be907aba2ebabbee140c2b8eb",
+      "stagedBytes": 3991,
+      "stagedSha256": "ed621bae581d09327f08175009fc53ae858455ac7decb46d9ba748b38c3fc22a",
+      "worktreeBytes": 3991,
+      "worktreeSha256": "ed621bae581d09327f08175009fc53ae858455ac7decb46d9ba748b38c3fc22a",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/delivery-checks.json",
+      "stagedBlob": "de763f5054c70ba57458433ed989b9ee06b4481e",
+      "stagedBytes": 2675,
+      "stagedSha256": "82e2e8664d69e84e5f1fc00e8ecd2e34c2d47a4d4d3674bb73c9e6ca5ed24765",
+      "worktreeBytes": 2675,
+      "worktreeSha256": "82e2e8664d69e84e5f1fc00e8ecd2e34c2d47a4d4d3674bb73c9e6ca5ed24765",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/delivery-manifest.json",
+      "stagedBlob": "dfd4e76d4c21565462bb769f06b24caa2a9f3fef",
+      "stagedBytes": 15110,
+      "stagedSha256": "be749118269cd4e5397bfea1808ea1a9fc1b0ff26f84062c909fc9c08f74494b",
+      "worktreeBytes": 15110,
+      "worktreeSha256": "be749118269cd4e5397bfea1808ea1a9fc1b0ff26f84062c909fc9c08f74494b",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/ci-classification.json",
+      "stagedBlob": "1676519d3e8598c4e5c7b1be1917d9073d87280a",
+      "stagedBytes": 3562,
+      "stagedSha256": "77393b1a8956259c085f236f93432e35b25d80ceee61a3224ee3de6ee76ac184",
+      "worktreeBytes": 3562,
+      "worktreeSha256": "77393b1a8956259c085f236f93432e35b25d80ceee61a3224ee3de6ee76ac184",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/discovery-baseline.json",
+      "stagedBlob": "8ac6fb48a62a83ef9aba3e5df8b41ac8112ee9dd",
+      "stagedBytes": 130445,
+      "stagedSha256": "57db92262d6dc48c7b22c13053b8fec1ea059c71f6b32313c88e07ccde22437f",
+      "worktreeBytes": 130445,
+      "worktreeSha256": "57db92262d6dc48c7b22c13053b8fec1ea059c71f6b32313c88e07ccde22437f",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/patch-first-failure.json",
+      "stagedBlob": "c11fa085e0dde362e1f1dc10fe5a2e4ab999788b",
+      "stagedBytes": 399,
+      "stagedSha256": "5658b533709648b424ff19ab3fc9c6740319dc966f41367d9b92e6272d5d0b01",
+      "worktreeBytes": 399,
+      "worktreeSha256": "5658b533709648b424ff19ab3fc9c6740319dc966f41367d9b92e6272d5d0b01",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/patch-second-failure.json",
+      "stagedBlob": "3d7bc8d24fc05e67ad6f052556a4ab98e783b2fa",
+      "stagedBytes": 360,
+      "stagedSha256": "a27da820ac079ceb50ab829cd554fb1d824efae3740a2e5b3ca0bf6bc4e4f1fa",
+      "worktreeBytes": 360,
+      "worktreeSha256": "a27da820ac079ceb50ab829cd554fb1d824efae3740a2e5b3ca0bf6bc4e4f1fa",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/patch-third-failure.json",
+      "stagedBlob": "59a6f9f1eab995ded0c45faf580cefb18b406dd4",
+      "stagedBytes": 276,
+      "stagedSha256": "de69646ddeae0dc310308fd6874355c2136584d4f7074d5578bbdd18c81745d4",
+      "worktreeBytes": 276,
+      "worktreeSha256": "de69646ddeae0dc310308fd6874355c2136584d4f7074d5578bbdd18c81745d4",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/planning-generation-checks-first.json",
+      "stagedBlob": "8353ab3a1fe7a318507ee397cc55bfc2e28f1225",
+      "stagedBytes": 2880,
+      "stagedSha256": "6134dec6c9d121f341118f51ed09dcaf085163afbe65a257c00ad83dd38bb700",
+      "worktreeBytes": 2880,
+      "worktreeSha256": "6134dec6c9d121f341118f51ed09dcaf085163afbe65a257c00ad83dd38bb700",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/planning-generation-checks.json",
+      "stagedBlob": "e8ac86f2f37cefcc5c4e0b3ae423ae44325c1f23",
+      "stagedBytes": 3690,
+      "stagedSha256": "4367c426c4d6b49b5d359d1007d9e80b0314450f15b749a0171276da43a7c172",
+      "worktreeBytes": 3690,
+      "worktreeSha256": "4367c426c4d6b49b5d359d1007d9e80b0314450f15b749a0171276da43a7c172",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/planning-validation.json",
+      "stagedBlob": "bca7442ea3f1a4a05bd52dbd95ed4ea85ba8de88",
+      "stagedBytes": 589,
+      "stagedSha256": "df68bfa0d41d863d09b84240d19ff173745b29f41159cd8bdb19fe3715f4aee3",
+      "worktreeBytes": 589,
+      "worktreeSha256": "df68bfa0d41d863d09b84240d19ff173745b29f41159cd8bdb19fe3715f4aee3",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/remote-main-review-sync.json",
+      "stagedBlob": "671f6db7c0a9c4889d8900168eeb01833cfab01d",
+      "stagedBytes": 538,
+      "stagedSha256": "df7549461529e88c9b7e6deb69f0d77c9466baaf38154c88865945130a1d9485",
+      "worktreeBytes": 538,
+      "worktreeSha256": "df7549461529e88c9b7e6deb69f0d77c9466baaf38154c88865945130a1d9485",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/reviewer-feedback.md",
+      "stagedBlob": "95f74c7fd7163b91e8fd417d59da414d0c279127",
+      "stagedBytes": 1755,
+      "stagedSha256": "7ecd4183c7e3f7ea323e9b6004dc508b643cc0d57356a92a045f3cb7c3bc8ce2",
+      "worktreeBytes": 1755,
+      "worktreeSha256": "7ecd4183c7e3f7ea323e9b6004dc508b643cc0d57356a92a045f3cb7c3bc8ce2",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/source-capture-receipt.json",
+      "stagedBlob": "db1233ea75d3bd26b854de8433092987aa9be0f4",
+      "stagedBytes": 416,
+      "stagedSha256": "ead51fd835a86ba34a60aba44cd199270afcc039bd29d10b4819371033ebd9dd",
+      "worktreeBytes": 416,
+      "worktreeSha256": "ead51fd835a86ba34a60aba44cd199270afcc039bd29d10b4819371033ebd9dd",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/source-manifest.json",
+      "stagedBlob": "0270a340a907c4fb502062ed749c8a7663ed3b1a",
+      "stagedBytes": 7109,
+      "stagedSha256": "0ea06dd98ed1a99b58d8b195a8231af24e0fc62892962d322f627d5ea9bc4219",
+      "worktreeBytes": 7109,
+      "worktreeSha256": "0ea06dd98ed1a99b58d8b195a8231af24e0fc62892962d322f627d5ea9bc4219",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/todo-review-sync.json",
+      "stagedBlob": "b9ea5b0e9a88fb43953221a860deddb9378f4e91",
+      "stagedBytes": 14016,
+      "stagedSha256": "3c116a7b27660a08f08bc2d1e913724bcbf73fa8825f80cc5eadfa66461128bd",
+      "worktreeBytes": 14016,
+      "worktreeSha256": "3c116a7b27660a08f08bc2d1e913724bcbf73fa8825f80cc5eadfa66461128bd",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/discovery-review/user-feedback.md",
+      "stagedBlob": "23180c2407ee42f38c547c35af0ab2c747d217ef",
+      "stagedBytes": 1201,
+      "stagedSha256": "9bb31bf3eaa272570018159b05f63ae46d8af15b6da493c80deed0431451f7b5",
+      "worktreeBytes": 1201,
+      "worktreeSha256": "9bb31bf3eaa272570018159b05f63ae46d8af15b6da493c80deed0431451f7b5",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/environment-observation.json",
+      "stagedBlob": "d7bd288bf0a479c6cea2831d8bdc76f538c24161",
+      "stagedBytes": 33137,
+      "stagedSha256": "6c63d018d45e5c9cdc2d379c2d1e859c64a721b3ac0f7cffafbc96216ab9e73b",
+      "worktreeBytes": 33137,
+      "worktreeSha256": "6c63d018d45e5c9cdc2d379c2d1e859c64a721b3ac0f7cffafbc96216ab9e73b",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/feedback.md",
+      "stagedBlob": "ed3e107ecc37371c1a7a9b5d5c37a0f0dcc634a7",
+      "stagedBytes": 814,
+      "stagedSha256": "3be87cd9a19ccd76443fc677782e8dcb3a6dc377b2a0113025e18447c6c49138",
+      "worktreeBytes": 814,
+      "worktreeSha256": "3be87cd9a19ccd76443fc677782e8dcb3a6dc377b2a0113025e18447c6c49138",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/frozen-m4.md",
+      "stagedBlob": "7b8c91804c54404be907aba2ebabbee140c2b8eb",
+      "stagedBytes": 3991,
+      "stagedSha256": "ed621bae581d09327f08175009fc53ae858455ac7decb46d9ba748b38c3fc22a",
+      "worktreeBytes": 3991,
+      "worktreeSha256": "ed621bae581d09327f08175009fc53ae858455ac7decb46d9ba748b38c3fc22a",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/planning-discovery-failures.json",
+      "stagedBlob": "1aed563d7418b68be480ab0fca632993d028480a",
+      "stagedBytes": 720,
+      "stagedSha256": "42b7552889f82f043f238f409a89ea2673394c8dc5341a3858d3e4b346b33143",
+      "worktreeBytes": 720,
+      "worktreeSha256": "42b7552889f82f043f238f409a89ea2673394c8dc5341a3858d3e4b346b33143",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/planning-validation.json",
+      "stagedBlob": "aa89968cbad8d1f094902a84360f0300b03bf40a",
+      "stagedBytes": 448,
+      "stagedSha256": "f3a3522d353f55e40afa52d8a8f64e2a1cdeddf197592ace5802d0e92d24ba91",
+      "worktreeBytes": 448,
+      "worktreeSha256": "f3a3522d353f55e40afa52d8a8f64e2a1cdeddf197592ace5802d0e92d24ba91",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/platform-observation.json",
+      "stagedBlob": "cebdceecd33463947c805688c120b501315b413d",
+      "stagedBytes": 648,
+      "stagedSha256": "530b1850437ad2fbaee0937c39333b7509683f526c2f0353a4e10e14b62c7ad0",
+      "worktreeBytes": 648,
+      "worktreeSha256": "530b1850437ad2fbaee0937c39333b7509683f526c2f0353a4e10e14b62c7ad0",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/priority-difference.json",
+      "stagedBlob": "12e26027efd1baf7fa0c6ea9b96139f022e860bf",
+      "stagedBytes": 700,
+      "stagedSha256": "1ae52b1d9cff86a74491470458690454b9162b15ba60c37eeb6d875e7329c564",
+      "worktreeBytes": 700,
+      "worktreeSha256": "1ae52b1d9cff86a74491470458690454b9162b15ba60c37eeb6d875e7329c564",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/remote-main-final.json",
+      "stagedBlob": "993423ac7485b71ea929e371d259fdaad76e68e9",
+      "stagedBytes": 131,
+      "stagedSha256": "cf5a46af2ef42956fda56fae7c59fc90c76f1255860c34ad09933a2c78908ae6",
+      "worktreeBytes": 131,
+      "worktreeSha256": "cf5a46af2ef42956fda56fae7c59fc90c76f1255860c34ad09933a2c78908ae6",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/source-capture-first-receipt.json",
+      "stagedBlob": "9108f9f79ee95365247f10175ac7366205ce12fb",
+      "stagedBytes": 684,
+      "stagedSha256": "19a4a74b50b253c9fc47401baeccc6b4da26357f395275c6a997331041519861",
+      "worktreeBytes": 684,
+      "worktreeSha256": "19a4a74b50b253c9fc47401baeccc6b4da26357f395275c6a997331041519861",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/source-manifest.json",
+      "stagedBlob": "194a4d0f65bbc426a3c82eb0de66898fc45d08a6",
+      "stagedBytes": 94503,
+      "stagedSha256": "cf01defe08827edb0ecf082367f67cefaac4ef1969bd4a27961aab8b3f1241b9",
+      "worktreeBytes": 94503,
+      "worktreeSha256": "cf01defe08827edb0ecf082367f67cefaac4ef1969bd4a27961aab8b3f1241b9",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/todo-readback.json",
+      "stagedBlob": "728c0fe1d83758ccf199131a71f74ab901bfc81f",
+      "stagedBytes": 14103,
+      "stagedSha256": "e553cc3af6f0a14e63c9cd57df680aff093a4bcb28e410cd45006c84d2445feb",
+      "worktreeBytes": 14103,
+      "worktreeSha256": "e553cc3af6f0a14e63c9cd57df680aff093a4bcb28e410cd45006c84d2445feb",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/whitespace-first-failure.json",
+      "stagedBlob": "165ad7d7584a7ce716204fe8a5b9ea98d904fbbf",
+      "stagedBytes": 320,
+      "stagedSha256": "6cf60af28bbd19ce84659670596549438db34ae0e0212050a9215fe62967711c",
+      "worktreeBytes": 320,
+      "worktreeSha256": "6cf60af28bbd19ce84659670596549438db34ae0e0212050a9215fe62967711c",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/input/workspace-inventory.json",
+      "stagedBlob": "c993939a2560a70fef3463dba9474c6d8245f6e0",
+      "stagedBytes": 587,
+      "stagedSha256": "042475ecdae027ce3aeef18b3ebd628ff929219d90fb7bb96152e9962b4410d9",
+      "worktreeBytes": 587,
+      "worktreeSha256": "042475ecdae027ce3aeef18b3ebd628ff929219d90fb7bb96152e9962b4410d9",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/observe-environment.py",
+      "stagedBlob": "bb6aaf94628f5ebd3fe89f19c4925573c3f5be31",
+      "stagedBytes": 3182,
+      "stagedSha256": "fb1a41c8113e5e7ccbaf9dcc74e1f35c6541287f04c13c642de6d47b98192be6",
+      "worktreeBytes": 3182,
+      "worktreeSha256": "fb1a41c8113e5e7ccbaf9dcc74e1f35c6541287f04c13c642de6d47b98192be6",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/operation-decisions.json",
+      "stagedBlob": "7c46819c446a1348380388c4a1ff4889860cba0a",
+      "stagedBytes": 149832,
+      "stagedSha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8",
+      "worktreeBytes": 149832,
+      "worktreeSha256": "075323410a76349368ac917122fe1f612d7019cf3a3043a8be9e76426a222af8",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/operation-matrix.md",
+      "stagedBlob": "0421dd4e5ecca0c510a84094307152519eb5807d",
+      "stagedBytes": 9569,
+      "stagedSha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965",
+      "worktreeBytes": 9569,
+      "worktreeSha256": "1e5948645b4e7016d5e74f7e311b1d5a8308436861ab54ba3d23d9c6fe820965",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/planning-report.md",
+      "stagedBlob": "ace50c7f5690af4108d08f8287003efdf8707810",
+      "stagedBytes": 4560,
+      "stagedSha256": "8fe181a613a43d6e290aa10c8298404d14c7c9d68e03fc88cff1dacae8a3cfa5",
+      "worktreeBytes": 4560,
+      "worktreeSha256": "8fe181a613a43d6e290aa10c8298404d14c7c9d68e03fc88cff1dacae8a3cfa5",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/platform-sync.md",
+      "stagedBlob": "2d78f8d738523c3fe52ee614db5210c541a738f7",
+      "stagedBytes": 2156,
+      "stagedSha256": "b247a580c36b0d4ce46e9f1bfe0a7f8724c2673c0576fd423b7cf72b5506de42",
+      "worktreeBytes": 2156,
+      "worktreeSha256": "b247a580c36b0d4ce46e9f1bfe0a7f8724c2673c0576fd423b7cf72b5506de42",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/product-discovery-decisions.json",
+      "stagedBlob": "8c6f365fa051cbb7b816da1a7abee4881a9a505f",
+      "stagedBytes": 41865,
+      "stagedSha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c",
+      "worktreeBytes": 41865,
+      "worktreeSha256": "62984bcaaab97700d446bdb0803c2ee72e9ca808aba0ca3e460ee881111af97c",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/review-response.md",
+      "stagedBlob": "7056773ecc17c1574c2d3378d4deb5a62a24cab0",
+      "stagedBytes": 5875,
+      "stagedSha256": "44c8c14001f1b353bc27610af8b712827bef43c82df9683e521da5b46f7a9ea1",
+      "worktreeBytes": 5875,
+      "worktreeSha256": "44c8c14001f1b353bc27610af8b712827bef43c82df9683e521da5b46f7a9ea1",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/safety-contract.md",
+      "stagedBlob": "336263ea75a4b00139456b2629dd3c38b6447a25",
+      "stagedBytes": 12920,
+      "stagedSha256": "48487fa653e3bd261f31fd41628394231d3ff95382b5b98e649ce861e8641ab4",
+      "worktreeBytes": 12920,
+      "worktreeSha256": "48487fa653e3bd261f31fd41628394231d3ff95382b5b98e649ce861e8641ab4",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/savedplan.md",
+      "stagedBlob": "1dd8b70936e54630c8091415d559cda5dd2e0e79",
+      "stagedBytes": 9563,
+      "stagedSha256": "080360fa6e4d0479449911f0e33cf2e4742dfd4b63aad0b555291fedee5bb690",
+      "worktreeBytes": 9563,
+      "worktreeSha256": "080360fa6e4d0479449911f0e33cf2e4742dfd4b63aad0b555291fedee5bb690",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/sources.md",
+      "stagedBlob": "23a4662b019fcfd8cd5be56cc4f8696166898527",
+      "stagedBytes": 6305,
+      "stagedSha256": "7a7d149ef29b97ba5b4ca4aa13b3cb10c7c63b4a97211a96772b9406f467ee77",
+      "worktreeBytes": 6305,
+      "worktreeSha256": "7a7d149ef29b97ba5b4ca4aa13b3cb10c7c63b4a97211a96772b9406f467ee77",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/spec.md",
+      "stagedBlob": "d4516d121f64c0821f0e37138d2120202e12e983",
+      "stagedBytes": 8123,
+      "stagedSha256": "9dfc42b4a20e4fafa21f67c90255b8cdc40c1550ddb9e3b82e8391a87f427d48",
+      "worktreeBytes": 8123,
+      "worktreeSha256": "9dfc42b4a20e4fafa21f67c90255b8cdc40c1550ddb9e3b82e8391a87f427d48",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/validate-plan.py",
+      "stagedBlob": "512c80a6fdbab8adff6a5f9e7e266d1dd0ab046b",
+      "stagedBytes": 11441,
+      "stagedSha256": "67f6cd97c07f9adae85ccab38c32a8d2bd1cf28077ccde7e50b45c9de4541885",
+      "worktreeBytes": 11441,
+      "worktreeSha256": "67f6cd97c07f9adae85ccab38c32a8d2bd1cf28077ccde7e50b45c9de4541885",
+      "byteMapping": "identity"
+    },
+    {
+      "path": "docs/plan/agent-mcp-m4/verification.md",
+      "stagedBlob": "2cb9cd659546ccd52703484807f2f5b0a2fad076",
+      "stagedBytes": 11130,
+      "stagedSha256": "c8aae1e92d3dd18ab8e82932a6ed9634e12b2a992f9d8145d4b0f1a77aa80ea1",
+      "worktreeBytes": 11130,
+      "worktreeSha256": "c8aae1e92d3dd18ab8e82932a6ed9634e12b2a992f9d8145d4b0f1a77aa80ea1",
+      "byteMapping": "identity"
+    }
+  ],
+  "excludedSelfReference": [
+    "docs/plan/agent-mcp-m4/input/discovery-review/delivery-manifest.json",
+    "docs/plan/agent-mcp-m4/input/discovery-review/delivery-checks.json"
+  ],
+  "fullBlobRead": true,
+  "physicalNetReleasedBytes": null,
+  "productRuntime": "未运行"
+}
