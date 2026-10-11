@@ -12,7 +12,7 @@ a,OUT,CURRENT=audit.a,audit.OUT,audit.CURRENT
 
 def main():
     phase=sys.argv[1] if len(sys.argv)>1 else 'initial'
-    assert phase in ('initial','review')
+    assert phase in ('initial','review','closing')
     started=a.utc()
     parsed=[]
     for pattern in ('*.json','*.json.gz'):
@@ -59,13 +59,18 @@ def main():
     assert a.load(OUT/'new-machine-verification.json')['success']
     assert a.load(OUT/'rebuild-verification-copy-isolation.json')['storeUnchangedAfterPrivateWrite']
     assert a.load(OUT/'thin-plan-verification.json')['sharedConfigUnchanged']
-    if phase=='review':
+    if phase in ('review','closing'):
         supplement=a.load(OUT/'tool-receipts-ending-supplement.json.gz')
         waits=[r for r in supplement['receipts'] if json.loads(r['dispatchOriginalLine'])['payload']['name'].rsplit('.',1)[-1]=='wait']
         assert waits and all(r['allReturnOriginalLines'] for r in waits)
         for cell in ('66','125'):
             assert any(json.loads(json.loads(r['dispatchOriginalLine'])['payload']['arguments']).get('cell_id')==cell for r in waits)
-    name='final-verification-review.json' if phase=='review' else 'final-verification.json'
+    if phase=='closing':
+        native=a.load(OUT/'shared-native-identity-review.json')
+        source=a.load(OUT/'runtime-shared-source.json')
+        assert native['success'] and native['sourceSha256']==a.sha((OUT/'runtime-shared-source.json').read_bytes())
+        assert all(native['observed'][key]==source[key] for key in native['comparedFields'])
+    name='final-verification-'+phase+'.json' if phase!='initial' else 'final-verification.json'
     a.write(name,dict(startedAt=started,endedAt=a.utc(),success=True,parsed=parsed,pythonAst=sources,
         immutablePreflightCommit=binding['commit'],gitObjects=objects,archiveMembers=members,
         successfulWorktrees=successful,stoppedWorktrees=len(plan['targets'])-successful,

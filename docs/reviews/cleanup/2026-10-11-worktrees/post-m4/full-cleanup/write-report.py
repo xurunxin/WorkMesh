@@ -126,7 +126,11 @@ def main():
     if (OUT/'gate-resume-decision.json').exists():
         text.insert(text.index('## 每个旧工作树的实际结果'),
             '一次活动安全门暂停原件完整保留，未派发Git删除：原命中pwsh PID34632与本轮并发只读查看时间重叠，原命令行未记录不倒填。消费者已退出后，另存新的完整预检/推送/源码绑定，才首次派发该目标的正式删除；见 [gate-resume-decision.json](gate-resume-decision.json)、[gate-resume-source-binding.json](gate-resume-source-binding.json)及两个execution原件。这不是重试原生删除失败或系统拒绝，原暂停回执没有被覆盖。\n')
+    for index,value in enumerate(text):
+        if '公共 native 安装字节/身份与 CAS 样本字节未变' in value:
+            text[index]=value.replace('公共 native 安装字节/身份与 CAS 样本字节未变', '原audit-after核公共 native 安装字节/hash与 CAS 样本字节未变；独审后新增当前时点 [shared-native-identity-review.json](shared-native-identity-review.json)，实际核 device/fileId/长度/属性/hash与原runtime source一致，不倒填或覆盖旧后验')
     text += ['独审发现工具名规范化的索引缺口，修订 capture-tools.py 同时识别 wait/exec 与 functions.wait/functions.exec；旧 ending 原件不覆盖，追加 [tool-receipts-ending-supplement.json.gz](tool-receipts-ending-supplement.json.gz)，补齐cell66/cell125两个预检推送的原wait最终返回及全部原行。修订后实际解析见 [final-verification-review.json](final-verification-review.json)；新head须重新独审绑定与自己的最新RequiredCI。', '',
+        '共享 native 身份补件与其余交付的最终集中解析见 [final-verification-closing.json](final-verification-closing.json)。旧采样和首次验证均保留其实际时间，不把新观测冒成旧执行前原证。', '',
         '规则实际触发分列：本轮开工只读盘点已执行，旧环境回收按逐目标原件实际执行；本轮自身尚未合入，合入后触发未发生，只登记为受保护的后续候选，见 current-lifecycle-registration.json。',
         '本轮不改产品源码、数据库迁移、API或事件；交付和条件合入完成后暂停后续任务，等待换机并明确恢复，不自动追加下一轮。\n']
     destination = OUT / 'report.md'

@@ -1,0 +1,29 @@
+{
+  "startedAt": "2026-10-11T09:27:38.026286+00:00",
+  "endedAt": "2026-10-11T09:27:38.188290+00:00",
+  "input": [
+    "C:\\Users\\xurx\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "-B",
+    "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/verify-shared-native.py"
+  ],
+  "source": "runtime-shared-source.json",
+  "sourceSha256": "3fddb21ceabc02f7e43ca9c246ac9dbcde7fcecde43e1d0158fb91a9974d5388",
+  "observed": {
+    "path": "C:\\Users\\xurx\\.bun\\install\\global\\node_modules\\@opencode\\cli\\bin\\opencode.exe",
+    "device": 3788334274782804502,
+    "fileId": 10696049115743460,
+    "bytes": 212567080,
+    "attributes": 32,
+    "nlink": 3,
+    "sha256": "e13e57a7f6b7abddec887e0b2d912d22484077c50dff5bed4f3199bcf63b6088"
+  },
+  "comparedFields": [
+    "device",
+    "fileId",
+    "bytes",
+    "attributes",
+    "sha256"
+  ],
+  "success": true,
+  "note": "当前新时点身份/属性/字节只读复核；不覆盖或倒填audit-after；nlink变化独立记录，物理释放未知"
+}

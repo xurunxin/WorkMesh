@@ -171,7 +171,7 @@ C卷可用差值为 21,642,752,000 B；同时存在其他项目/当前构建写�
 | `f8b614913c4efea2e944686c9b4c855cb5e61167d9bad0e7e6f35c150b9d473c` / `/workmesh-minio-init-1` | exited | `3e2ed69dee01abe2a6731a86c3f75528b513e86ab65440202518646c51194314` | 默认 compose 业务数据未授权 |
 | `ed7ebe27231e729a3176572704a99846a8b180d1742f62002add5a11b12179cd` / `/workmesh-minio-1` | exited | `workmesh_minio-data` | 默认 compose 业务数据未授权 |
 
-其他项目容器未调用删除；独立前后对照有 1 个名称/挂载/镜像或缺失变化、新增 12 个，详见 audit-after。活动消费者动态变化不归因本次清理。公共 native 安装字节/身份与 CAS 样本字节未变；native nlink 44→3 仅另列，不冒物理释放。
+其他项目容器未调用删除；独立前后对照有 1 个名称/挂载/镜像或缺失变化、新增 12 个，详见 audit-after。活动消费者动态变化不归因本次清理。原audit-after核公共 native 安装字节/hash与 CAS 样本字节未变；独审后新增当前时点 [shared-native-identity-review.json](shared-native-identity-review.json)，实际核 device/fileId/长度/属性/hash与原runtime source一致，不倒填或覆盖旧后验。native nlink 44→3 仅另列，不冒物理释放。
 
 ## 已落实的前景重建和防膨胀入口
 
@@ -190,6 +190,8 @@ C卷可用差值为 21,642,752,000 B；同时存在其他项目/当前构建写�
 本轮新增成果仍须重新独审、blocking/high闭合及准确最终head自己的最新 RequiredCI。旧1266审查与CI不能证明本次新增删除/共享入口；本报告不宣称已合入。最终head与实时CI查询保在本轮回复/平台记录；合入后本轮工作树仅登记为未来独立候选，本轮不删除自身。
 
 独审发现工具名规范化的索引缺口，修订 capture-tools.py 同时识别 wait/exec 与 functions.wait/functions.exec；旧 ending 原件不覆盖，追加 [tool-receipts-ending-supplement.json.gz](tool-receipts-ending-supplement.json.gz)，补齐cell66/cell125两个预检推送的原wait最终返回及全部原行。修订后实际解析见 [final-verification-review.json](final-verification-review.json)；新head须重新独审绑定与自己的最新RequiredCI。
+
+共享 native 身份补件与其余交付的最终集中解析见 [final-verification-closing.json](final-verification-closing.json)。旧采样和首次验证均保留其实际时间，不把新观测冒成旧执行前原证。
 
 规则实际触发分列：本轮开工只读盘点已执行，旧环境回收按逐目标原件实际执行；本轮自身尚未合入，合入后触发未发生，只登记为受保护的后续候选，见 current-lifecycle-registration.json。
 本轮不改产品源码、数据库迁移、API或事件；交付和条件合入完成后暂停后续任务，等待换机并明确恢复，不自动追加下一轮。
