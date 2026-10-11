@@ -93,5 +93,35 @@
       "removed": true
     },
     "note": "按真实事件计数；reserved 不是所有秘密引用创建数量，不推算物理释放"
+  },
+  "local-05": {
+    "counts": {
+      "temporaryPath": {
+        "created": 54,
+        "removed": 54
+      },
+      "testProcess": {
+        "created": 2,
+        "closed": 2
+      },
+      "testPtyProcess": {
+        "created": 1,
+        "closed": 1
+      },
+      "systemSecret": {
+        "reserved": 1,
+        "removed": 2
+      },
+      "httpService": {
+        "created": 1,
+        "closed": 1
+      }
+    },
+    "rootCleanup": {
+      "path": "C:\\Users\\xurx\\workmesh-b1-b2-blueberry-01a12a8e",
+      "operation": "rmdir empty root",
+      "removed": true
+    },
+    "note": "按真实事件计数；reserved不是所有创建引用的数量，不推算物理释放"
   }
 }

@@ -24,9 +24,9 @@ async function runWindowsProbe(parent: string, filename: string, source: string,
   const script = `${windowsProbePrelude}
 $cred=New-Object Management.Automation.PSCredential($env:WM_CONNECTOR_OTHER_USER,(ConvertTo-SecureString $env:WM_CONNECTOR_OTHER_PASSWORD -AsPlainText -Force))
 $exe=[IO.Path]::Combine($PSHOME,'powershell.exe')
-$args=@('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',('"'+$env:WM_TEST_PROBE_PATH+'"'))
-if (('"'+$exe+'" '+($args -join ' ')).Length -ge 1024) {throw 'probe command exceeds native logon limit'}
-$probe=Start-Process $exe -Credential $cred -WorkingDirectory $env:PUBLIC -ArgumentList $args -WindowStyle Hidden -Wait -PassThru
+$probeArguments=@('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',('"'+$env:WM_TEST_PROBE_PATH+'"'))
+if (('"'+$exe+'" '+($probeArguments -join ' ')).Length -ge 1024) {throw 'probe command exceeds native logon limit'}
+$probe=Start-Process $exe -Credential $cred -WorkingDirectory $env:PUBLIC -ArgumentList $probeArguments -WindowStyle Hidden -Wait -PassThru
 if ($probe.ExitCode -ne ${expectedExitCode}) {throw ('unexpected probe exit: '+$probe.ExitCode)}
 `
   const env: NodeJS.ProcessEnv = { ...process.env, WM_TEST_PROBE_PATH: path }
@@ -109,7 +109,9 @@ $p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${Buffer.from(pa
 try { [IO.File]::ReadAllText([IO.Path]::Combine($p,'control.txt'))|Out-Null } catch {exit 24}
 foreach($target in @($p,[IO.Path]::Combine($p,'connector'))) { try { [IO.Directory]::Move($target,$target+'-moved'); exit 25 } catch {} }
 $v=[IO.Path]::Combine($p,'unsafe','connector')
-try { [IO.Directory]::Move($v,$v+'-moved'); [IO.Directory]::CreateDirectory($v)|Out-Null; [IO.Directory]::Delete($v); [IO.Directory]::Move($v+'-moved',$v) } catch {exit 26}
+try { [IO.Directory]::Move($v,$v+'-moved') } catch {exit 26}
+try { [IO.Directory]::CreateDirectory($v)|Out-Null } catch {exit 27}
+# 必需攻击已完成；其他用户不需要拥有新目录的删除权限，由夹具 owner 收尾。
 exit 0
 `
         await writeFile(join(parent, 'control.txt'), '非秘密可读对照')
