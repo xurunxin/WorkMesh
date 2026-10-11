@@ -13,7 +13,7 @@ def main():
     source = sources[0]
     lines = source.read_text(encoding='utf-8').splitlines()
     calls = {}
-    sessions = ('51474','23423','13682','53340')
+    sessions = ('51474','23423','13682','53340','83826','55693','31373','14798')
     for i, raw in enumerate(lines,1):
         row = json.loads(raw)
         p = row.get('payload',{})

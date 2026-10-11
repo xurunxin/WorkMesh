@@ -1,0 +1,11 @@
+{
+  "input": [
+    "pwsh",
+    "-NoProfile",
+    "-Command",
+    "$records=@(); foreach ($path in @('execute.ps1','references.ps1')) { $errors=$null; $literal=Join-Path 'docs/reviews/cleanup/2026-10-11-worktrees/post-m4' $path; [System.Management.Automation.Language.Parser]::ParseFile($literal,[ref]$null,[ref]$errors) | Out-Null; $records += [pscustomobject]@{path=$path;errors=@($errors)} }; $records | ConvertTo-Json -Depth 8; if (@($records | Where-Object {$_.errors.Count}).Count) { exit 1 }"
+  ],
+  "exit": 0,
+  "stdout": "[\r\n  {\r\n    \"path\": \"execute.ps1\",\r\n    \"errors\": []\r\n  },\r\n  {\r\n    \"path\": \"references.ps1\",\r\n    \"errors\": []\r\n  }\r\n]\r\n",
+  "stderr": ""
+}
