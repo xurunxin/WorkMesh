@@ -124,4 +124,15 @@ if ($probe.ExitCode -ne 0) {exit $probe.ExitCode}
     const source = "import {SystemSecretStore} from './src/secret-store.ts'; try { await new SystemSecretStore().put(process.env.WM_TEST_REF,'wmi_'+'x'.repeat(43)); process.exit(1); } catch { process.exit(0); }"
     await execute(process.execPath, ['--import', 'tsx', '--input-type=module', '-e', source], { env: { ...process.env, WM_TEST_REF: randomUUID(), DBUS_SESSION_BUS_ADDRESS: 'unix:path=/nonexistent/workmesh-connector-test' } })
   })
+  if (process.platform === 'darwin') it('没有扩展 ACL 的目录可用，修改型 allow ACL 仍拒绝', async () => {
+    const parent = await temporaryDirectory('mac-acl', '/tmp'); const dir = join(parent, 'connector')
+    try {
+      await execute('chmod', ['-N', parent])
+      await prepareDirectory(dir)
+      await execute('chmod', ['+a', 'user:nobody allow delete_child', parent])
+      await expect(prepareDirectory(dir)).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
+      await execute('chmod', ['-N', parent])
+      await prepareDirectory(dir)
+    } finally { await cleanupDirectory(parent) }
+  })
 })

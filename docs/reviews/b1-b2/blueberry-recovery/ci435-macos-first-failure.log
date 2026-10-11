@@ -1,0 +1,546 @@
+﻿2026-10-11T11:23:24.3846210Z Current runner version: '2.337.0'
+2026-10-11T11:23:24.3872150Z ##[group]Runner Image Provisioner
+2026-10-11T11:23:24.3873830Z Hosted Compute Agent
+2026-10-11T11:23:24.3874410Z Version: 20260828.587
+2026-10-11T11:23:24.3875440Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-10-11T11:23:24.3877420Z Build Date: 2026-08-28T16:44:25Z
+2026-10-11T11:23:24.3878080Z Worker ID: {e0529af8-fa79-4cf4-b459-0e498d34690d}
+2026-10-11T11:23:24.3879020Z Azure Region: westus
+2026-10-11T11:23:24.3879770Z ##[endgroup]
+2026-10-11T11:23:24.3881930Z ##[group]Operating System
+2026-10-11T11:23:24.3884740Z macOS
+2026-10-11T11:23:24.3885330Z 26.6.2
+2026-10-11T11:23:24.3885720Z 25G83
+2026-10-11T11:23:24.3886090Z ##[endgroup]
+2026-10-11T11:23:24.3887040Z ##[group]Runner Image
+2026-10-11T11:23:24.3887640Z Image: macos-26-arm64
+2026-10-11T11:23:24.3888340Z Version: 20260907.0351.1
+2026-10-11T11:23:24.3889710Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20260907.0351/images/macos/macos-26-arm64-Readme.md
+2026-10-11T11:23:24.3892500Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20260907.0351
+2026-10-11T11:23:24.3893610Z ##[endgroup]
+2026-10-11T11:23:24.3895350Z ##[group]GITHUB_TOKEN Permissions
+2026-10-11T11:23:24.3897530Z Contents: read
+2026-10-11T11:23:24.3899530Z Metadata: read
+2026-10-11T11:23:24.3900990Z ##[endgroup]
+2026-10-11T11:23:24.3903400Z Secret source: Actions
+2026-10-11T11:23:24.3904430Z Cache mode: write
+2026-10-11T11:23:24.3906050Z Prepare workflow directory
+2026-10-11T11:23:24.4205850Z Prepare all required actions
+2026-10-11T11:23:24.4239720Z Getting action download info
+2026-10-11T11:23:24.5834910Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-11T11:23:24.7914860Z Download action repository 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-11T11:23:24.8935270Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-11T11:23:25.0780850Z Complete job name: Connector native storage (macos-latest)
+2026-10-11T11:23:25.1258920Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-11T11:23:25.1259640Z with:
+2026-10-11T11:23:25.1259980Z   persist-credentials: false
+2026-10-11T11:23:25.1260370Z   repository: xurunxin/WorkMesh
+2026-10-11T11:23:25.1263140Z   token: ***
+2026-10-11T11:23:25.1263450Z   ssh-strict: true
+2026-10-11T11:23:25.1263770Z   ssh-user: git
+2026-10-11T11:23:25.1264080Z   clean: true
+2026-10-11T11:23:25.1264410Z   sparse-checkout-cone-mode: true
+2026-10-11T11:23:25.1264790Z   fetch-depth: 1
+2026-10-11T11:23:25.1265110Z   fetch-tags: false
+2026-10-11T11:23:25.1265430Z   show-progress: true
+2026-10-11T11:23:25.1265760Z   lfs: false
+2026-10-11T11:23:25.1266070Z   submodules: false
+2026-10-11T11:23:25.1266400Z   set-safe-directory: true
+2026-10-11T11:23:25.1266770Z   allow-unsafe-pr-checkout: false
+2026-10-11T11:23:25.1267330Z ##[endgroup]
+2026-10-11T11:23:25.4524040Z Syncing repository: xurunxin/WorkMesh
+2026-10-11T11:23:25.4525740Z ##[group]Getting Git version info
+2026-10-11T11:23:25.4526580Z Working directory is '/Users/runner/work/WorkMesh/WorkMesh'
+2026-10-11T11:23:25.4527880Z [command]/opt/homebrew/bin/git version
+2026-10-11T11:23:25.5028790Z git version 2.55.0
+2026-10-11T11:23:25.5051440Z ##[endgroup]
+2026-10-11T11:23:25.5056500Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/c1af21d0-3d26-43ca-b68b-d57b14afe852/.gitconfig'
+2026-10-11T11:23:25.5057870Z Temporarily overriding HOME='/Users/runner/work/_temp/c1af21d0-3d26-43ca-b68b-d57b14afe852' before making global git config changes
+2026-10-11T11:23:25.5058950Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T11:23:25.5062140Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/WorkMesh/WorkMesh
+2026-10-11T11:23:25.5169340Z Deleting the contents of '/Users/runner/work/WorkMesh/WorkMesh'
+2026-10-11T11:23:25.5171930Z ##[group]Initializing the repository
+2026-10-11T11:23:25.5175600Z [command]/opt/homebrew/bin/git init /Users/runner/work/WorkMesh/WorkMesh
+2026-10-11T11:23:25.5379620Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T11:23:25.5382520Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T11:23:25.5383480Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T11:23:25.5388730Z hint: call:
+2026-10-11T11:23:25.5490000Z hint:
+2026-10-11T11:23:25.5490730Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T11:23:25.5491620Z hint:
+2026-10-11T11:23:25.5492260Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T11:23:25.5493090Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T11:23:25.5493720Z hint:
+2026-10-11T11:23:25.5563110Z hint: 	git branch -m <name>
+2026-10-11T11:23:25.5564200Z hint:
+2026-10-11T11:23:25.5564970Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T11:23:25.5566270Z Initialized empty Git repository in /Users/runner/work/WorkMesh/WorkMesh/.git/
+2026-10-11T11:23:25.5568440Z [command]/opt/homebrew/bin/git remote add origin https://github.com/xurunxin/WorkMesh
+2026-10-11T11:23:25.5584400Z ##[endgroup]
+2026-10-11T11:23:25.5585850Z ##[group]Disabling automatic garbage collection
+2026-10-11T11:23:25.5587580Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-10-11T11:23:25.5631770Z ##[endgroup]
+2026-10-11T11:23:25.5632350Z ##[group]Setting up auth
+2026-10-11T11:23:25.5636290Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T11:23:25.5706010Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T11:23:25.6622280Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T11:23:25.6683210Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T11:23:25.7430150Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T11:23:25.7495200Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T11:23:25.8166990Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T11:23:25.8250000Z ##[endgroup]
+2026-10-11T11:23:25.8250620Z ##[group]Fetching the repository
+2026-10-11T11:23:25.8255150Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7:refs/remotes/pull/221/merge
+2026-10-11T11:24:17.6687010Z From https://github.com/xurunxin/WorkMesh
+2026-10-11T11:24:17.6775560Z  * [new ref]         f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7 -> pull/221/merge
+2026-10-11T11:24:17.6844890Z ##[endgroup]
+2026-10-11T11:24:17.6846110Z ##[group]Determining the checkout info
+2026-10-11T11:24:17.6889530Z ##[endgroup]
+2026-10-11T11:24:17.6891630Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-10-11T11:24:17.7031600Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T11:24:17.7129250Z ##[group]Checking out the ref
+2026-10-11T11:24:17.7132430Z [command]/opt/homebrew/bin/git checkout --progress --force refs/remotes/pull/221/merge
+2026-10-11T11:24:18.8388580Z Updating files:  14% (2315/16258)
+2026-10-11T11:24:18.9459010Z Updating files:  15% (2439/16258)
+2026-10-11T11:24:19.0967570Z Updating files:  16% (2602/16258)
+2026-10-11T11:24:19.1527900Z Updating files:  17% (2764/16258)
+2026-10-11T11:24:19.3300350Z Updating files:  18% (2927/16258)
+2026-10-11T11:24:19.7503020Z Updating files:  19% (3090/16258)
+2026-10-11T11:24:19.7723770Z Updating files:  19% (3246/16258)
+2026-10-11T11:24:20.2306270Z Updating files:  20% (3252/16258)
+2026-10-11T11:24:20.7464310Z Updating files:  21% (3415/16258)
+2026-10-11T11:24:20.8185400Z Updating files:  21% (3553/16258)
+2026-10-11T11:24:21.2873620Z Updating files:  22% (3577/16258)
+2026-10-11T11:24:21.7540950Z Updating files:  23% (3740/16258)
+2026-10-11T11:24:21.8548840Z Updating files:  23% (3892/16258)
+2026-10-11T11:24:22.1544730Z Updating files:  24% (3902/16258)
+2026-10-11T11:24:22.2224240Z Updating files:  25% (4065/16258)
+2026-10-11T11:24:22.2833170Z Updating files:  26% (4228/16258)
+2026-10-11T11:24:22.3078610Z Updating files:  27% (4390/16258)
+2026-10-11T11:24:22.3340240Z Updating files:  28% (4553/16258)
+2026-10-11T11:24:22.3673860Z Updating files:  29% (4715/16258)
+2026-10-11T11:24:22.3906690Z Updating files:  30% (4878/16258)
+2026-10-11T11:24:22.4224270Z Updating files:  31% (5040/16258)
+2026-10-11T11:24:22.4483630Z Updating files:  32% (5203/16258)
+2026-10-11T11:24:22.4704130Z Updating files:  33% (5366/16258)
+2026-10-11T11:24:22.4954170Z Updating files:  34% (5528/16258)
+2026-10-11T11:24:22.5171150Z Updating files:  35% (5691/16258)
+2026-10-11T11:24:22.5420230Z Updating files:  36% (5853/16258)
+2026-10-11T11:24:22.5705700Z Updating files:  37% (6016/16258)
+2026-10-11T11:24:22.5942750Z Updating files:  38% (6179/16258)
+2026-10-11T11:24:22.6198410Z Updating files:  39% (6341/16258)
+2026-10-11T11:24:22.6464850Z Updating files:  40% (6504/16258)
+2026-10-11T11:24:22.7724310Z Updating files:  41% (6666/16258)
+2026-10-11T11:24:23.1805350Z Updating files:  41% (6798/16258)
+2026-10-11T11:24:23.2629760Z Updating files:  42% (6829/16258)
+2026-10-11T11:24:23.3043970Z Updating files:  43% (6991/16258)
+2026-10-11T11:24:23.3216530Z Updating files:  44% (7154/16258)
+2026-10-11T11:24:23.3372890Z Updating files:  45% (7317/16258)
+2026-10-11T11:24:23.3531800Z Updating files:  46% (7479/16258)
+2026-10-11T11:24:23.3737180Z Updating files:  47% (7642/16258)
+2026-10-11T11:24:23.3942500Z Updating files:  48% (7804/16258)
+2026-10-11T11:24:23.4149410Z Updating files:  49% (7967/16258)
+2026-10-11T11:24:23.4748280Z Updating files:  50% (8129/16258)
+2026-10-11T11:24:23.5438640Z Updating files:  51% (8292/16258)
+2026-10-11T11:24:23.7063270Z Updating files:  52% (8455/16258)
+2026-10-11T11:24:23.7465350Z Updating files:  53% (8617/16258)
+2026-10-11T11:24:23.7764550Z Updating files:  53% (8702/16258)
+2026-10-11T11:24:23.8770420Z Updating files:  54% (8780/16258)
+2026-10-11T11:24:23.8988030Z Updating files:  55% (8942/16258)
+2026-10-11T11:24:23.9147170Z Updating files:  56% (9105/16258)
+2026-10-11T11:24:23.9325870Z Updating files:  57% (9268/16258)
+2026-10-11T11:24:23.9513760Z Updating files:  58% (9430/16258)
+2026-10-11T11:24:23.9799330Z Updating files:  59% (9593/16258)
+2026-10-11T11:24:24.0096100Z Updating files:  60% (9755/16258)
+2026-10-11T11:24:24.0390900Z Updating files:  61% (9918/16258)
+2026-10-11T11:24:24.0983350Z Updating files:  62% (10080/16258)
+2026-10-11T11:24:24.1193310Z Updating files:  63% (10243/16258)
+2026-10-11T11:24:24.4015550Z Updating files:  64% (10406/16258)
+2026-10-11T11:24:24.5465420Z Updating files:  65% (10568/16258)
+2026-10-11T11:24:24.6326110Z Updating files:  66% (10731/16258)
+2026-10-11T11:24:24.6738090Z Updating files:  67% (10893/16258)
+2026-10-11T11:24:24.7303900Z Updating files:  68% (11056/16258)
+2026-10-11T11:24:24.7462070Z Updating files:  69% (11219/16258)
+2026-10-11T11:24:24.7720110Z Updating files:  69% (11299/16258)
+2026-10-11T11:24:24.8149390Z Updating files:  70% (11381/16258)
+2026-10-11T11:24:24.9789240Z Updating files:  71% (11544/16258)
+2026-10-11T11:24:25.0061530Z Updating files:  72% (11706/16258)
+2026-10-11T11:24:25.0912370Z Updating files:  73% (11869/16258)
+2026-10-11T11:24:25.1162310Z Updating files:  74% (12031/16258)
+2026-10-11T11:24:25.1543740Z Updating files:  75% (12194/16258)
+2026-10-11T11:24:25.2045240Z Updating files:  76% (12357/16258)
+2026-10-11T11:24:25.2195990Z Updating files:  77% (12519/16258)
+2026-10-11T11:24:25.2333550Z Updating files:  78% (12682/16258)
+2026-10-11T11:24:25.2455720Z Updating files:  79% (12844/16258)
+2026-10-11T11:24:25.2783500Z Updating files:  80% (13007/16258)
+2026-10-11T11:24:25.3092690Z Updating files:  81% (13169/16258)
+2026-10-11T11:24:25.3309050Z Updating files:  82% (13332/16258)
+2026-10-11T11:24:25.3672470Z Updating files:  83% (13495/16258)
+2026-10-11T11:24:25.4002020Z Updating files:  84% (13657/16258)
+2026-10-11T11:24:25.4568920Z Updating files:  85% (13820/16258)
+2026-10-11T11:24:25.4815580Z Updating files:  86% (13982/16258)
+2026-10-11T11:24:25.5471540Z Updating files:  87% (14145/16258)
+2026-10-11T11:24:25.6903370Z Updating files:  88% (14308/16258)
+2026-10-11T11:24:25.7477920Z Updating files:  89% (14470/16258)
+2026-10-11T11:24:25.7641740Z Updating files:  89% (14585/16258)
+2026-10-11T11:24:26.4769060Z Updating files:  90% (14633/16258)
+2026-10-11T11:24:26.6681560Z Updating files:  91% (14795/16258)
+2026-10-11T11:24:26.7749300Z Updating files:  92% (14958/16258)
+2026-10-11T11:24:27.4357340Z Updating files:  92% (14993/16258)
+2026-10-11T11:24:27.5338860Z Updating files:  93% (15120/16258)
+2026-10-11T11:24:27.5570110Z Updating files:  94% (15283/16258)
+2026-10-11T11:24:27.5791500Z Updating files:  95% (15446/16258)
+2026-10-11T11:24:27.7516630Z Updating files:  96% (15608/16258)
+2026-10-11T11:24:27.8163020Z Updating files:  96% (15624/16258)
+2026-10-11T11:24:27.9707510Z Updating files:  97% (15771/16258)
+2026-10-11T11:24:28.0408620Z Updating files:  98% (15933/16258)
+2026-10-11T11:24:28.0693420Z Updating files:  99% (16096/16258)
+2026-10-11T11:24:28.0694910Z Updating files: 100% (16258/16258)
+2026-10-11T11:24:28.0696640Z Updating files: 100% (16258/16258), done.
+2026-10-11T11:24:28.0906270Z HEAD is now at f58ffce Merge 718350f83d4a74edca33051e939204e90bf89e4c into 20fb7358f6c6818a452e78c1fd3da096cdc31286
+2026-10-11T11:24:28.1039920Z ##[endgroup]
+2026-10-11T11:24:28.1201060Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-10-11T11:24:28.1308800Z f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:28.1327660Z ##[group]Removing auth
+2026-10-11T11:24:28.1328520Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T11:24:28.1384940Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T11:24:28.2204230Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T11:24:28.2254840Z http.https://github.com/.extraheader
+2026-10-11T11:24:28.2260390Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-11T11:24:28.2315630Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T11:24:28.2983570Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T11:24:28.3039220Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T11:24:28.3761990Z ##[endgroup]
+2026-10-11T11:24:28.4208110Z ##[group]Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+2026-10-11T11:24:28.4208450Z with:
+2026-10-11T11:24:28.4208600Z   node-version-file: .node-version
+2026-10-11T11:24:28.4208850Z   always-auth: false
+2026-10-11T11:24:28.4209030Z   check-latest: false
+2026-10-11T11:24:28.4210920Z   token: ***
+2026-10-11T11:24:28.4211100Z ##[endgroup]
+2026-10-11T11:24:28.6028410Z Node version file is not JSON file
+2026-10-11T11:24:28.6029100Z Resolved .node-version as 22.19.0
+2026-10-11T11:24:28.6044430Z Attempting to download 22.19.0...
+2026-10-11T11:24:28.6219450Z (node:2037) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T11:24:28.6220510Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T11:24:29.6197770Z Acquiring 22.19.0 - arm64 from https://github.com/actions/node-versions/releases/download/22.19.0-17311483029/node-22.19.0-darwin-arm64.tar.gz
+2026-10-11T11:24:30.2013970Z Extracting ...
+2026-10-11T11:24:30.2221120Z [command]/usr/bin/tar xz --strip 1 -C /Users/runner/work/_temp/71a097c1-6246-462c-b2bc-10a2aabbe525 -f /Users/runner/work/_temp/a70e5e47-5461-42c7-b274-7a29851fc69e
+2026-10-11T11:24:31.2180630Z Adding to the cache ...
+2026-10-11T11:24:33.5505830Z ##[group]Environment details
+2026-10-11T11:24:33.8370310Z node: v22.19.0
+2026-10-11T11:24:33.8370590Z npm: 10.9.3
+2026-10-11T11:24:33.8371390Z yarn: 1.22.22
+2026-10-11T11:24:33.8372280Z ##[endgroup]
+2026-10-11T11:24:33.8513630Z ##[group]Run corepack enable
+2026-10-11T11:24:33.8513970Z [36;1mcorepack enable[0m
+2026-10-11T11:24:33.8514210Z [36;1mcorepack prepare pnpm@9.15.4 --activate[0m
+2026-10-11T11:24:33.8711410Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:33.8711770Z ##[endgroup]
+2026-10-11T11:24:34.0201220Z Preparing pnpm@9.15.4 for immediate activation...
+2026-10-11T11:24:34.5153170Z ##[group]Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+2026-10-11T11:24:34.5153570Z with:
+2026-10-11T11:24:34.5153840Z   node-version-file: .node-version
+2026-10-11T11:24:34.5154120Z   cache: pnpm
+2026-10-11T11:24:34.5154400Z   cache-dependency-path: pnpm-lock.yaml
+2026-10-11T11:24:34.5154660Z   always-auth: false
+2026-10-11T11:24:34.5154920Z   check-latest: false
+2026-10-11T11:24:34.5156850Z   token: ***
+2026-10-11T11:24:34.5157090Z ##[endgroup]
+2026-10-11T11:24:34.6534240Z Node version file is not JSON file
+2026-10-11T11:24:34.6534730Z Resolved .node-version as 22.19.0
+2026-10-11T11:24:34.6540210Z Found in cache @ /Users/runner/hostedtoolcache/node/22.19.0/arm64
+2026-10-11T11:24:34.6543330Z (node:2155) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T11:24:34.6543980Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T11:24:34.6544830Z ##[group]Environment details
+2026-10-11T11:24:34.7102370Z [warning]This project is configured to use pnpm because /Users/runner/work/WorkMesh/WorkMesh/package.json has a "packageManager" field
+2026-10-11T11:24:34.7129320Z 
+2026-10-11T11:24:34.7409460Z node: v22.19.0
+2026-10-11T11:24:34.7416680Z npm: 10.9.3
+2026-10-11T11:24:34.7417260Z yarn: 
+2026-10-11T11:24:34.7417790Z ##[endgroup]
+2026-10-11T11:24:34.7426480Z [command]/Users/runner/hostedtoolcache/node/22.19.0/arm64/bin/pnpm store path --silent
+2026-10-11T11:24:35.0325020Z /Users/runner/Library/pnpm/store/v3
+2026-10-11T11:24:35.1377440Z pnpm cache is not found
+2026-10-11T11:24:35.1453580Z ##[group]Run mkdir -p ci-logs
+2026-10-11T11:24:35.1453820Z [36;1mmkdir -p ci-logs[0m
+2026-10-11T11:24:35.1454040Z [36;1mset -o pipefail[0m
+2026-10-11T11:24:35.1454310Z [36;1mpnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log[0m
+2026-10-11T11:24:35.1486820Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:35.1487070Z ##[endgroup]
+2026-10-11T11:24:35.3854960Z Scope: all 20 workspace projects
+2026-10-11T11:24:35.4263450Z Lockfile is up to date, resolution step is skipped
+2026-10-11T11:24:35.4661180Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-11T11:24:35.5018380Z Packages: +617
+2026-10-11T11:24:35.5018820Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-11T11:24:36.4660560Z Progress: resolved 617, reused 0, downloaded 90, added 79
+2026-10-11T11:24:37.4657380Z Progress: resolved 617, reused 0, downloaded 153, added 141
+2026-10-11T11:24:38.4672360Z Progress: resolved 617, reused 0, downloaded 179, added 167
+2026-10-11T11:24:39.4713930Z Progress: resolved 617, reused 0, downloaded 197, added 183
+2026-10-11T11:24:40.4729940Z Progress: resolved 617, reused 0, downloaded 223, added 208
+2026-10-11T11:24:41.4754100Z Progress: resolved 617, reused 0, downloaded 266, added 251
+2026-10-11T11:24:42.4795780Z Progress: resolved 617, reused 0, downloaded 332, added 321
+2026-10-11T11:24:43.4827800Z Progress: resolved 617, reused 0, downloaded 339, added 327
+2026-10-11T11:24:44.4834850Z Progress: resolved 617, reused 0, downloaded 357, added 344
+2026-10-11T11:24:45.4875670Z Progress: resolved 617, reused 0, downloaded 405, added 390
+2026-10-11T11:24:46.4990910Z Progress: resolved 617, reused 0, downloaded 426, added 413
+2026-10-11T11:24:47.4886460Z Progress: resolved 617, reused 0, downloaded 427, added 413
+2026-10-11T11:24:48.4917610Z Progress: resolved 617, reused 0, downloaded 430, added 415
+2026-10-11T11:24:49.4958160Z Progress: resolved 617, reused 0, downloaded 442, added 427
+2026-10-11T11:24:50.5076370Z Progress: resolved 617, reused 0, downloaded 458, added 441
+2026-10-11T11:24:51.4997530Z Progress: resolved 617, reused 0, downloaded 553, added 542
+2026-10-11T11:24:52.5022710Z Progress: resolved 617, reused 0, downloaded 589, added 575
+2026-10-11T11:24:53.5050250Z Progress: resolved 617, reused 0, downloaded 616, added 604
+2026-10-11T11:24:53.8322030Z Progress: resolved 617, reused 0, downloaded 617, added 617, done
+2026-10-11T11:24:53.9520260Z .../node-pty@1.1.0/node_modules/node-pty install$ node scripts/prebuild.js || node-gyp rebuild
+2026-10-11T11:24:53.9579660Z .../.pnpm/koffi@3.3.2/node_modules/koffi install$ node ./cnoke.cjs -P . -D src/koffi --prebuild --release
+2026-10-11T11:24:53.9618620Z .../node_modules/protobufjs postinstall$ node scripts/postinstall
+2026-10-11T11:24:53.9700310Z .../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+2026-10-11T11:24:53.9952720Z .../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+2026-10-11T11:24:54.0143540Z .../node-pty@1.1.0/node_modules/node-pty install: [32m> Checking prebuilds...[0m
+2026-10-11T11:24:54.0228260Z .../node_modules/protobufjs postinstall: Done
+2026-10-11T11:24:54.0311550Z .../node-pty@1.1.0/node_modules/node-pty install: Done
+2026-10-11T11:24:54.0325880Z .../node-pty@1.1.0/node_modules/node-pty postinstall$ node scripts/post-install.js
+2026-10-11T11:24:54.0634830Z .../argon2@0.41.1/node_modules/argon2 install$ node-gyp-build
+2026-10-11T11:24:54.0735120Z .../.pnpm/koffi@3.3.2/node_modules/koffi install: Done
+2026-10-11T11:24:54.0806500Z .../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Cleaning release folder...[0m
+2026-10-11T11:24:54.0824770Z .../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Moving conpty.dll...[0m
+2026-10-11T11:24:54.0845850Z .../node-pty@1.1.0/node_modules/node-pty postinstall:   SKIPPED (not Windows)
+2026-10-11T11:24:54.0855750Z .../node-pty@1.1.0/node_modules/node-pty postinstall: Done
+2026-10-11T11:24:54.0993830Z .../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+2026-10-11T11:24:54.1303980Z .../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+2026-10-11T11:24:54.2058540Z .../argon2@0.41.1/node_modules/argon2 install: Done
+2026-10-11T11:24:54.2171810Z .../node_modules/@google/genai preinstall$ echo 'preinstall: no-op'
+2026-10-11T11:24:54.2228790Z .../node_modules/@google/genai preinstall: preinstall: no-op
+2026-10-11T11:24:54.2229950Z .../node_modules/@google/genai preinstall: Done
+2026-10-11T11:24:54.3822540Z 
+2026-10-11T11:24:54.3823050Z devDependencies:
+2026-10-11T11:24:54.3823390Z + @playwright/test 1.61.1
+2026-10-11T11:24:54.3823800Z + @types/node 22.20.1
+2026-10-11T11:24:54.3836250Z + eslint 9.39.5
+2026-10-11T11:24:54.3836650Z + prettier 3.9.6
+2026-10-11T11:24:54.3837230Z + tsx 4.23.1
+2026-10-11T11:24:54.3837560Z + turbo 2.10.6
+2026-10-11T11:24:54.3838710Z + typescript 5.9.3
+2026-10-11T11:24:54.3839320Z + vitest 3.2.7
+2026-10-11T11:24:54.3839610Z + yaml 2.9.0
+2026-10-11T11:24:54.3839840Z 
+2026-10-11T11:24:54.4203330Z Done in 19.1s
+2026-10-11T11:24:54.4819580Z ##[group]Run set -o pipefail
+2026-10-11T11:24:54.4819840Z [36;1mset -o pipefail[0m
+2026-10-11T11:24:54.4821620Z [36;1mpnpm --filter @workmesh/connector test:platform 2>&1 | tee ci-logs/connector-platform.log[0m
+2026-10-11T11:24:54.4822160Z [36;1mpnpm --filter @workmesh/connector test 2>&1 | tee ci-logs/connector-unit.log[0m
+2026-10-11T11:24:54.5689580Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:54.5708650Z ##[endgroup]
+2026-10-11T11:24:54.8136280Z 
+2026-10-11T11:24:54.8136890Z > @workmesh/connector@ test:platform /Users/runner/work/WorkMesh/WorkMesh/apps/connector
+2026-10-11T11:24:54.8137520Z > vitest run --config vitest.platform.config.ts
+2026-10-11T11:24:54.8137720Z 
+2026-10-11T11:24:55.1003770Z 
+2026-10-11T11:24:55.1005430Z [1m[46m RUN [49m[22m [36mv3.2.7 [39m[90m/Users/runner/work/WorkMesh/WorkMesh/apps/connector[39m
+2026-10-11T11:24:55.1005850Z 
+2026-10-11T11:24:55.6050850Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m系统秘密存储写入、跨进程读回和删除
+2026-10-11T11:24:55.6052000Z [22m[39m{"resource":"systemSecret","reference":"1e9e6400-9e50-4851-bfb8-7263f3eb8838","state":"reserved"}
+2026-10-11T11:24:55.6052460Z 
+2026-10-11T11:24:56.2241110Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m系统秘密存储写入、跨进程读回和删除
+2026-10-11T11:24:56.2242060Z [22m[39m{"resource":"systemSecret","reference":"1e9e6400-9e50-4851-bfb8-7263f3eb8838","state":"removed"}
+2026-10-11T11:24:56.2242390Z 
+2026-10-11T11:24:56.2253460Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m实际 ACL 或 0700/0600、原子替换、拒绝不安全路径
+2026-10-11T11:24:56.2254570Z [22m[39m{"resource":"temporaryPath","path":"/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/workmesh-b1-b2-platform-NB88Bl","state":"created"}
+2026-10-11T11:24:56.2255050Z 
+2026-10-11T11:24:56.2267940Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m实际 ACL 或 0700/0600、原子替换、拒绝不安全路径
+2026-10-11T11:24:56.2269120Z [22m[39m{"resource":"temporaryPath","path":"/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/workmesh-b1-b2-platform-NB88Bl","state":"removed"}
+2026-10-11T11:24:56.2269670Z 
+2026-10-11T11:24:56.2337040Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m不同用户实际读取被拒绝
+2026-10-11T11:24:56.2338170Z [22m[39m{"resource":"temporaryPath","path":"/private/tmp/workmesh-b1-b2-other-user-AckzIv","state":"created"}
+2026-10-11T11:24:56.2338780Z 
+2026-10-11T11:24:56.2339460Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m不同用户实际读取被拒绝
+2026-10-11T11:24:56.2349690Z [22m[39m{"resource":"temporaryPath","path":"/private/tmp/workmesh-b1-b2-other-user-AckzIv","state":"removed"}
+2026-10-11T11:24:56.2350250Z 
+2026-10-11T11:24:56.2351270Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m不同用户不能重命名或替换安全祖先/连接器；不安全祖先拒绝且攻击正对照成功
+2026-10-11T11:24:56.2352230Z [22m[39m{"resource":"temporaryPath","path":"/private/tmp/workmesh-b1-b2-rename-jbjsXP","state":"created"}
+2026-10-11T11:24:56.2352670Z 
+2026-10-11T11:24:56.2353410Z [90mstdout[2m | integration/native-storage.test.ts[2m > [22m[2m实际系统后端与权限（不可跳过）[2m > [22m[2m不同用户不能重命名或替换安全祖先/连接器；不安全祖先拒绝且攻击正对照成功
+2026-10-11T11:24:56.2355610Z [22m[39m{"resource":"temporaryPath","path":"/private/tmp/workmesh-b1-b2-rename-jbjsXP","state":"removed"}
+2026-10-11T11:24:56.2356090Z 
+2026-10-11T11:24:56.2370810Z  [31m❯[39m integration/native-storage.test.ts [2m([22m[2m4 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[33m 633[2mms[22m[39m
+2026-10-11T11:24:56.2371870Z    [33m[2m✓[22m[39m 实际系统后端与权限（不可跳过）[2m > [22m系统秘密存储写入、跨进程读回和删除 [33m 622[2mms[22m[39m
+2026-10-11T11:24:56.2372560Z [31m   [31m×[31m 实际系统后端与权限（不可跳过）[2m > [22m实际 ACL 或 0700/0600、原子替换、拒绝不安全路径[39m[32m 6[2mms[22m[39m
+2026-10-11T11:24:56.2373310Z [31m     → CONNECTOR_UNSAFE_ACL[39m
+2026-10-11T11:24:56.2374360Z [31m   [31m×[31m 实际系统后端与权限（不可跳过）[2m > [22m不同用户实际读取被拒绝[39m[32m 3[2mms[22m[39m
+2026-10-11T11:24:56.2375050Z [31m     → CONNECTOR_UNSAFE_ACL[39m
+2026-10-11T11:24:56.2375710Z [31m   [31m×[31m 实际系统后端与权限（不可跳过）[2m > [22m不同用户不能重命名或替换安全祖先/连接器；不安全祖先拒绝且攻击正对照成功[39m[32m 1[2mms[22m[39m
+2026-10-11T11:24:56.2376160Z [31m     → CONNECTOR_UNSAFE_ACL[39m
+2026-10-11T11:24:56.4712460Z [90mstdout[2m | integration/cli.test.ts[2m > [22m[2m实际 CLI 单次完整验证、系统存储、无秘密片段与启动注入
+2026-10-11T11:24:56.4713700Z [22m[39m{"resource":"temporaryPath","path":"/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/workmesh-b1-b2-cli-Q5YjtY","state":"created"}
+2026-10-11T11:24:56.4714230Z 
+2026-10-11T11:24:56.4872560Z [90mstdout[2m | integration/cli.test.ts[2m > [22m[2m实际 CLI 单次完整验证、系统存储、无秘密片段与启动注入
+2026-10-11T11:24:56.4873400Z [22m[39m{"resource":"httpService","address":"http://127.0.0.1:49194","state":"created"}
+2026-10-11T11:24:56.4873880Z 
+2026-10-11T11:24:56.8766670Z [90mstdout[2m | integration/cli.test.ts[2m > [22m[2m实际 CLI 单次完整验证、系统存储、无秘密片段与启动注入
+2026-10-11T11:24:56.8768140Z [22m[39m{"resource":"httpService","address":"http://127.0.0.1:49194","state":"closed"}
+2026-10-11T11:24:56.8768660Z 
+2026-10-11T11:24:56.8773060Z [90mstdout[2m | integration/cli.test.ts[2m > [22m[2m实际 CLI 单次完整验证、系统存储、无秘密片段与启动注入
+2026-10-11T11:24:56.8774500Z [22m[39m{"resource":"temporaryPath","path":"/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/workmesh-b1-b2-cli-Q5YjtY","state":"removed"}
+2026-10-11T11:24:56.8774960Z 
+2026-10-11T11:24:56.8813860Z  [31m❯[39m integration/cli.test.ts [2m([22m[2m1 test[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 411[2mms[22m[39m
+2026-10-11T11:24:56.8814590Z [31m   [31m×[31m 实际 CLI 单次完整验证、系统存储、无秘密片段与启动注入[39m[33m 411[2mms[22m[39m
+2026-10-11T11:24:56.8815370Z [31m     → expected 1 to be +0 // Object.is equality[39m
+2026-10-11T11:24:56.8884340Z 
+2026-10-11T11:24:56.8885630Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 4 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-10-11T11:24:56.8886230Z 
+2026-10-11T11:24:56.8886770Z [41m[1m FAIL [22m[49m integration/cli.test.ts[2m > [22m实际 CLI 单次完整验证、系统存储、无秘密片段与启动注入
+2026-10-11T11:24:56.8894930Z [31m[1mAssertionError[22m: expected 1 to be +0 // Object.is equality[39m
+2026-10-11T11:24:56.8895490Z 
+2026-10-11T11:24:56.8895730Z [32m- Expected[39m
+2026-10-11T11:24:56.8896040Z [31m+ Received[39m
+2026-10-11T11:24:56.8896250Z 
+2026-10-11T11:24:56.8896400Z [32m- 0[39m
+2026-10-11T11:24:56.8896680Z [31m+ 1[39m
+2026-10-11T11:24:56.8896870Z 
+2026-10-11T11:24:56.8897220Z [36m [2m❯[22m integration/cli.test.ts:[2m66:25[22m[39m
+2026-10-11T11:24:56.8928360Z     [90m 64| [39m    const expected = join(parent, 'expectation.json'); await writeFile…
+2026-10-11T11:24:56.8929260Z     [90m 65| [39m    const result = await cli(['connect', '--expect', expected], pairin…
+2026-10-11T11:24:56.8929910Z     [90m 66| [39m    expect(result.code).toBe(0); expect(result.stdout).toContain('[mcp…
+2026-10-11T11:24:56.8930890Z     [90m   | [39m                        [31m^[39m
+2026-10-11T11:24:56.8931570Z     [90m 67| [39m    expect(calls.filter(name => name !== 'notifications/initialized'))…
+2026-10-11T11:24:56.8933000Z     [90m 68| [39m    [35mconst[39m raw [33m=[39m [35mawait[39m [34mreadFile[39m([34mjoin[39m(directory[33m,[39m [32m'config.json'[39m))
+2026-10-11T11:24:56.8933540Z 
+2026-10-11T11:24:56.8934020Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+2026-10-11T11:24:56.8934300Z 
+2026-10-11T11:24:56.8935070Z [41m[1m FAIL [22m[49m integration/native-storage.test.ts[2m > [22m实际系统后端与权限（不可跳过）[2m > [22m实际 ACL 或 0700/0600、原子替换、拒绝不安全路径
+2026-10-11T11:24:56.8936630Z [31m[1mConnectorError[22m: CONNECTOR_UNSAFE_ACL[39m
+2026-10-11T11:24:56.8937190Z [36m [2m❯[22m requireThat src/errors.ts:[2m5:25[22m[39m
+2026-10-11T11:24:56.8938530Z     [90m  3| [39m}
+2026-10-11T11:24:56.8939050Z     [90m  4| [39mexport function requireThat(condition: unknown, code: string): asserts…
+2026-10-11T11:24:56.8940210Z     [90m  5| [39m  [35mif[39m ([33m![39mcondition) [35mthrow[39m [35mnew[39m [33mConnectorError[39m(code)
+2026-10-11T11:24:56.8940870Z     [90m   | [39m                        [31m^[39m
+2026-10-11T11:24:56.8942040Z     [90m  6| [39m}
+2026-10-11T11:24:56.8942960Z     [90m  7| [39m[35mexport[39m [35mfunction[39m [34msafeError[39m(error[33m:[39m unknown)[33m:[39m [33mConnectorError[39m {
+2026-10-11T11:24:56.8947130Z [90m [2m❯[22m verifyAncestor src/platform-security.ts:[2m66:7[22m[39m
+2026-10-11T11:24:56.8949360Z [90m [2m❯[22m withPreparedDirectory src/platform-security.ts:[2m132:7[22m[39m
+2026-10-11T11:24:56.8950140Z [90m [2m❯[22m integration/native-storage.test.ts:[2m30:7[22m[39m
+2026-10-11T11:24:56.8950710Z 
+2026-10-11T11:24:56.8951190Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+2026-10-11T11:24:56.8951440Z 
+2026-10-11T11:24:56.8952120Z [41m[1m FAIL [22m[49m integration/native-storage.test.ts[2m > [22m实际系统后端与权限（不可跳过）[2m > [22m不同用户实际读取被拒绝
+2026-10-11T11:24:56.8952920Z [31m[1mConnectorError[22m: CONNECTOR_UNSAFE_ACL[39m
+2026-10-11T11:24:56.8953450Z [36m [2m❯[22m requireThat src/errors.ts:[2m5:25[22m[39m
+2026-10-11T11:24:56.8953820Z     [90m  3| [39m}
+2026-10-11T11:24:56.8954330Z     [90m  4| [39mexport function requireThat(condition: unknown, code: string): asserts…
+2026-10-11T11:24:56.8955060Z     [90m  5| [39m  [35mif[39m ([33m![39mcondition) [35mthrow[39m [35mnew[39m [33mConnectorError[39m(code)
+2026-10-11T11:24:56.8955620Z     [90m   | [39m                        [31m^[39m
+2026-10-11T11:24:56.8955960Z     [90m  6| [39m}
+2026-10-11T11:24:56.8956590Z     [90m  7| [39m[35mexport[39m [35mfunction[39m [34msafeError[39m(error[33m:[39m unknown)[33m:[39m [33mConnectorError[39m {
+2026-10-11T11:24:56.8957560Z [90m [2m❯[22m verifyAncestor src/platform-security.ts:[2m66:7[22m[39m
+2026-10-11T11:24:56.8963840Z [90m [2m❯[22m withPreparedDirectory src/platform-security.ts:[2m132:7[22m[39m
+2026-10-11T11:24:56.8964660Z [90m [2m❯[22m integration/native-storage.test.ts:[2m50:7[22m[39m
+2026-10-11T11:24:56.8964980Z 
+2026-10-11T11:24:56.8965350Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯[22m[39m
+2026-10-11T11:24:56.8965770Z 
+2026-10-11T11:24:56.8966410Z [41m[1m FAIL [22m[49m integration/native-storage.test.ts[2m > [22m实际系统后端与权限（不可跳过）[2m > [22m不同用户不能重命名或替换安全祖先/连接器；不安全祖先拒绝且攻击正对照成功
+2026-10-11T11:24:56.8967210Z [31m[1mConnectorError[22m: CONNECTOR_UNSAFE_ACL[39m
+2026-10-11T11:24:56.8967820Z [36m [2m❯[22m requireThat src/errors.ts:[2m5:25[22m[39m
+2026-10-11T11:24:56.8968210Z     [90m  3| [39m}
+2026-10-11T11:24:56.8968770Z     [90m  4| [39mexport function requireThat(condition: unknown, code: string): asserts…
+2026-10-11T11:24:56.8969930Z     [90m  5| [39m  [35mif[39m ([33m![39mcondition) [35mthrow[39m [35mnew[39m [33mConnectorError[39m(code)
+2026-10-11T11:24:56.8970520Z     [90m   | [39m                        [31m^[39m
+2026-10-11T11:24:56.8970900Z     [90m  6| [39m}
+2026-10-11T11:24:56.8971790Z     [90m  7| [39m[35mexport[39m [35mfunction[39m [34msafeError[39m(error[33m:[39m unknown)[33m:[39m [33mConnectorError[39m {
+2026-10-11T11:24:56.8972800Z [90m [2m❯[22m verifyAncestor src/platform-security.ts:[2m66:7[22m[39m
+2026-10-11T11:24:56.8973480Z [90m [2m❯[22m withPreparedDirectory src/platform-security.ts:[2m132:7[22m[39m
+2026-10-11T11:24:56.8974570Z [90m [2m❯[22m integration/native-storage.test.ts:[2m86:7[22m[39m
+2026-10-11T11:24:56.8975850Z 
+2026-10-11T11:24:56.8976210Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯[22m[39m
+2026-10-11T11:24:56.8976790Z 
+2026-10-11T11:24:56.8976900Z 
+2026-10-11T11:24:56.8977430Z [2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+2026-10-11T11:24:56.8978530Z [2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (5)[39m
+2026-10-11T11:24:56.8979320Z [2m   Start at [22m 11:24:55
+2026-10-11T11:24:56.8980300Z [2m   Duration [22m 1.79s[2m (transform 270ms, setup 0ms, collect 459ms, tests 1.04s, environment 0ms, prepare 82ms)[22m
+2026-10-11T11:24:56.8982640Z 
+2026-10-11T11:24:56.8982700Z 
+2026-10-11T11:24:56.9008590Z ##[error]AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ integration/cli.test.ts:66:25
+
+
+2026-10-11T11:24:56.9012820Z 
+2026-10-11T11:24:56.9015040Z ##[error]ConnectorError: CONNECTOR_UNSAFE_ACL
+ ❯ requireThat src/errors.ts:5:25
+ ❯ verifyAncestor src/platform-security.ts:66:7
+ ❯ withPreparedDirectory src/platform-security.ts:132:7
+ ❯ integration/native-storage.test.ts:30:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'CONNECTOR_UNSAFE_ACL' }
+
+2026-10-11T11:24:56.9016190Z 
+2026-10-11T11:24:56.9017980Z ##[error]ConnectorError: CONNECTOR_UNSAFE_ACL
+ ❯ requireThat src/errors.ts:5:25
+ ❯ verifyAncestor src/platform-security.ts:66:7
+ ❯ withPreparedDirectory src/platform-security.ts:132:7
+ ❯ integration/native-storage.test.ts:50:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'CONNECTOR_UNSAFE_ACL' }
+
+2026-10-11T11:24:56.9019140Z 
+2026-10-11T11:24:56.9021430Z ##[error]ConnectorError: CONNECTOR_UNSAFE_ACL
+ ❯ requireThat src/errors.ts:5:25
+ ❯ verifyAncestor src/platform-security.ts:66:7
+ ❯ withPreparedDirectory src/platform-security.ts:132:7
+ ❯ integration/native-storage.test.ts:86:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'CONNECTOR_UNSAFE_ACL' }
+
+2026-10-11T11:24:56.9784820Z /Users/runner/work/WorkMesh/WorkMesh/apps/connector:
+2026-10-11T11:24:56.9785730Z  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workmesh/connector@ test:platform: `vitest run --config vitest.platform.config.ts`
+2026-10-11T11:24:56.9786210Z Exit status 1
+2026-10-11T11:24:56.9956850Z ##[error]Process completed with exit code 1.
+2026-10-11T11:24:57.0316130Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-10-11T11:24:57.0316430Z with:
+2026-10-11T11:24:57.0316670Z   name: connector-platform-raw-macos-latest-38135325940-1
+2026-10-11T11:24:57.0316970Z   path: ci-logs
+2026-10-11T11:24:57.0317120Z   if-no-files-found: error
+2026-10-11T11:24:57.0317290Z   retention-days: 14
+2026-10-11T11:24:57.0317440Z   compression-level: 6
+2026-10-11T11:24:57.0317610Z   overwrite: false
+2026-10-11T11:24:57.0317770Z   include-hidden-files: false
+2026-10-11T11:24:57.0317940Z ##[endgroup]
+2026-10-11T11:24:57.3879040Z (node:2671) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T11:24:57.3879770Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T11:24:57.4842450Z With the provided path, there will be 334 files uploaded
+2026-10-11T11:24:57.4843200Z Artifact name is valid!
+2026-10-11T11:24:57.4843550Z Root directory input is valid!
+2026-10-11T11:24:57.6944920Z Beginning upload of artifact content to blob storage
+2026-10-11T11:24:57.9533230Z (node:2671) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-11T11:24:58.0152930Z Uploaded bytes 2332554
+2026-10-11T11:24:58.0286570Z Finished uploading artifact content to blob storage!
+2026-10-11T11:24:58.0287890Z SHA256 digest of uploaded artifact zip is e44b554c307767667c6db25fb8dafcc00752d062d206674bc49882c3f5f6856f
+2026-10-11T11:24:58.0288450Z Finalizing artifact upload
+2026-10-11T11:24:58.2422490Z Artifact connector-platform-raw-macos-latest-38135325940-1.zip successfully finalized. Artifact ID 11701052077
+2026-10-11T11:24:58.2423470Z Artifact connector-platform-raw-macos-latest-38135325940-1 has been successfully uploaded! Final size is 2332554 bytes. Artifact ID is 11701052077
+2026-10-11T11:24:58.2424370Z Artifact download URL: https://github.com/xurunxin/WorkMesh/actions/runs/38135325940/artifacts/11701052077
+2026-10-11T11:24:58.2514950Z Post job cleanup.
+2026-10-11T11:24:58.3390700Z [command]/opt/homebrew/bin/git version
+2026-10-11T11:24:58.3759560Z git version 2.55.0
+2026-10-11T11:24:58.3777280Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/9d6f2cda-902f-442e-8d04-f47364f03527/.gitconfig'
+2026-10-11T11:24:58.3783760Z Temporarily overriding HOME='/Users/runner/work/_temp/9d6f2cda-902f-442e-8d04-f47364f03527' before making global git config changes
+2026-10-11T11:24:58.3784830Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T11:24:58.3787850Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/WorkMesh/WorkMesh
+2026-10-11T11:24:58.3854200Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T11:24:58.3908590Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T11:24:58.4697760Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T11:24:58.4754820Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T11:24:58.5446940Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T11:24:58.5508250Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T11:24:58.6339070Z Cleaning up orphan processes
+2026-10-11T11:24:59.2467930Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

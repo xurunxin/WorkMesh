@@ -1,0 +1,46 @@
+[
+  {
+    "name": "lint",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\\.tmp\\blueberry-runtime\\node-v22.19.0-win-x64\\node.exe",
+      "X:/packages/npm/_npx/32b21065a482fe57/node_modules/pnpm/bin/pnpm.cjs",
+      "--filter",
+      "@workmesh/connector",
+      "lint"
+    ],
+    "node": "v22.19.0",
+    "startedAt": "2026-10-11T11:26:04.392Z",
+    "endedAt": "2026-10-11T11:26:18.232Z",
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "changedBefore": [
+      ".github/workflows/ci.yml"
+    ],
+    "changedAfter": [
+      ".github/workflows/ci.yml"
+    ]
+  },
+  {
+    "name": "typecheck",
+    "command": [
+      "C:\\Users\\xurx\\.tds\\workspaces\\01a12a8e-cadc-7c05-a07a-1d6a77c8f64c\\.tmp\\blueberry-runtime\\node-v22.19.0-win-x64\\node.exe",
+      "X:/packages/npm/_npx/32b21065a482fe57/node_modules/pnpm/bin/pnpm.cjs",
+      "--filter",
+      "@workmesh/connector",
+      "typecheck"
+    ],
+    "node": "v22.19.0",
+    "startedAt": "2026-10-11T11:26:18.913Z",
+    "endedAt": "2026-10-11T11:26:29.038Z",
+    "exitCode": 0,
+    "signal": null,
+    "error": null,
+    "changedBefore": [
+      ".github/workflows/ci.yml"
+    ],
+    "changedAfter": [
+      ".github/workflows/ci.yml"
+    ]
+  }
+]

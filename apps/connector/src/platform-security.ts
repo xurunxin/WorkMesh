@@ -63,6 +63,16 @@ async function verifyAncestor(path: string): Promise<void> {
     trustedPosixDirectory(info.uid, info.mode, process.getuid!())
     if (macAclGet) {
       const entry = macAclGet(path, 0x100)
+      if (!entry) {
+        // Darwin 对没有扩展 ACL 的现存对象返回 NULL/ENOENT；读取失败仍须关闭。
+        // 重核同一对象，不能把路径消失、替换或属性变化当作无 ACL。
+        const error = koffi.decode(errnoAddress!(), 'int') as number
+        const current = await lstat(path)
+        requireThat(error === 2 && current.isDirectory() && !current.isSymbolicLink()
+          && current.dev === info.dev && current.ino === info.ino && current.uid === info.uid
+          && current.mode === info.mode && current.ctimeMs === info.ctimeMs, 'CONNECTOR_UNSAFE_ACL')
+        return
+      }
       requireThat(entry, 'CONNECTOR_UNSAFE_ACL')
       try {
         const text = macAclText!(entry, null)

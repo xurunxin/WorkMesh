@@ -1,0 +1,1171 @@
+﻿2026-10-11T11:23:21.3035512Z Current runner version: '2.337.0'
+2026-10-11T11:23:21.3061861Z ##[group]Runner Image Provisioner
+2026-10-11T11:23:21.3062824Z Hosted Compute Agent
+2026-10-11T11:23:21.3063414Z Version: 20261002.596
+2026-10-11T11:23:21.3064160Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-11T11:23:21.3064869Z Build Date: 2026-10-02T22:28:27Z
+2026-10-11T11:23:21.3065536Z Worker ID: {8c5d6515-421d-46b5-a42b-c688e88a1a51}
+2026-10-11T11:23:21.3066316Z Region: westus
+2026-10-11T11:23:21.3066853Z Cloud: Azure
+2026-10-11T11:23:21.3067448Z ##[endgroup]
+2026-10-11T11:23:21.3068982Z ##[group]Operating System
+2026-10-11T11:23:21.3069620Z Ubuntu
+2026-10-11T11:23:21.3070463Z 24.04.5
+2026-10-11T11:23:21.3070974Z LTS
+2026-10-11T11:23:21.3071495Z ##[endgroup]
+2026-10-11T11:23:21.3072157Z ##[group]Runner Image
+2026-10-11T11:23:21.3072758Z Image: ubuntu-24.04
+2026-10-11T11:23:21.3073396Z Version: 20261004.327.1
+2026-10-11T11:23:21.3074676Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-11T11:23:21.3076280Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-11T11:23:21.3077231Z ##[endgroup]
+2026-10-11T11:23:21.3078351Z ##[group]GITHUB_TOKEN Permissions
+2026-10-11T11:23:21.3080681Z Contents: read
+2026-10-11T11:23:21.3081376Z Metadata: read
+2026-10-11T11:23:21.3081926Z ##[endgroup]
+2026-10-11T11:23:21.3084098Z Secret source: Actions
+2026-10-11T11:23:21.3085159Z Cache mode: write
+2026-10-11T11:23:21.3085870Z Prepare workflow directory
+2026-10-11T11:23:21.3687750Z Prepare all required actions
+2026-10-11T11:23:21.3738025Z Getting action download info
+2026-10-11T11:23:21.7228365Z Download action repository 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-11T11:23:21.8607035Z Download action repository 'actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-11T11:23:21.9485409Z Download action repository 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-11T11:23:22.1527514Z Complete job name: Complete disaster recovery
+2026-10-11T11:23:22.2301248Z ##[group]Run actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+2026-10-11T11:23:22.2302410Z with:
+2026-10-11T11:23:22.2302873Z   persist-credentials: false
+2026-10-11T11:23:22.2303412Z   repository: xurunxin/WorkMesh
+2026-10-11T11:23:22.2307073Z   token: ***
+2026-10-11T11:23:22.2307521Z   ssh-strict: true
+2026-10-11T11:23:22.2307975Z   ssh-user: git
+2026-10-11T11:23:22.2308404Z   clean: true
+2026-10-11T11:23:22.2308867Z   sparse-checkout-cone-mode: true
+2026-10-11T11:23:22.2309413Z   fetch-depth: 1
+2026-10-11T11:23:22.2309854Z   fetch-tags: false
+2026-10-11T11:23:22.2310583Z   show-progress: true
+2026-10-11T11:23:22.2311045Z   lfs: false
+2026-10-11T11:23:22.2311481Z   submodules: false
+2026-10-11T11:23:22.2311938Z   set-safe-directory: true
+2026-10-11T11:23:22.2312455Z   allow-unsafe-pr-checkout: false
+2026-10-11T11:23:22.2313295Z env:
+2026-10-11T11:23:22.2313712Z   RUN_INTEGRATION: 1
+2026-10-11T11:23:22.2314190Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:23:22.2314740Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:23:22.2315852Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:23:22.2317194Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:23:22.2318030Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:23:22.2318676Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:23:22.2319407Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:23:22.2320415Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:23:22.2321172Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:23:22.2321982Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:23:22.2322718Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:23:22.2323594Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:23:22.2324629Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:23:22.2325329Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:23:22.2326138Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:23:22.2327085Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:23:22.2328025Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:23:22.2328713Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:23:22.2329258Z   S3_REGION: us-east-1
+2026-10-11T11:23:22.2329761Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:23:22.2330500Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:23:22.2331076Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:23:22.2331701Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:23:22.2332232Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:23:22.2332826Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:23:22.2333377Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:23:22.2333893Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:23:22.2334554Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:23:22.2335566Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:23:22.2336759Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:23:22.2337647Z ##[endgroup]
+2026-10-11T11:23:22.3512933Z Syncing repository: xurunxin/WorkMesh
+2026-10-11T11:23:22.3515444Z ##[group]Getting Git version info
+2026-10-11T11:23:22.3516529Z Working directory is '/home/runner/work/WorkMesh/WorkMesh'
+2026-10-11T11:23:22.3518071Z [command]/usr/bin/git version
+2026-10-11T11:23:22.3518865Z git version 2.55.0
+2026-10-11T11:23:22.3534369Z ##[endgroup]
+2026-10-11T11:23:22.3548168Z Temporarily overriding HOME='/home/runner/work/_temp/bd028609-4de0-4ec1-b382-7d1b09b494d3' before making global git config changes
+2026-10-11T11:23:22.3551204Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T11:23:22.3556642Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/WorkMesh/WorkMesh
+2026-10-11T11:23:22.3617854Z Deleting the contents of '/home/runner/work/WorkMesh/WorkMesh'
+2026-10-11T11:23:22.3624032Z ##[group]Initializing the repository
+2026-10-11T11:23:22.3630690Z [command]/usr/bin/git init /home/runner/work/WorkMesh/WorkMesh
+2026-10-11T11:23:22.3750247Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T11:23:22.3752496Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T11:23:22.3753935Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T11:23:22.3755220Z hint: call:
+2026-10-11T11:23:22.3756192Z hint:
+2026-10-11T11:23:22.3757393Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T11:23:22.3758821Z hint:
+2026-10-11T11:23:22.3760357Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T11:23:22.3762365Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T11:23:22.3763960Z hint:
+2026-10-11T11:23:22.3764911Z hint: 	git branch -m <name>
+2026-10-11T11:23:22.3765893Z hint:
+2026-10-11T11:23:22.3767097Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T11:23:22.3769314Z Initialized empty Git repository in /home/runner/work/WorkMesh/WorkMesh/.git/
+2026-10-11T11:23:22.3774651Z [command]/usr/bin/git remote add origin https://github.com/xurunxin/WorkMesh
+2026-10-11T11:23:22.3833292Z ##[endgroup]
+2026-10-11T11:23:22.3834810Z ##[group]Disabling automatic garbage collection
+2026-10-11T11:23:22.3839097Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T11:23:22.3878711Z ##[endgroup]
+2026-10-11T11:23:22.3880668Z ##[group]Setting up auth
+2026-10-11T11:23:22.3889578Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T11:23:22.3931872Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T11:23:22.4325290Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T11:23:22.4379551Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T11:23:22.4641246Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T11:23:22.4674428Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T11:23:22.4925960Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T11:23:22.4971083Z ##[endgroup]
+2026-10-11T11:23:22.4972467Z ##[group]Fetching the repository
+2026-10-11T11:23:22.4988588Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7:refs/remotes/pull/221/merge
+2026-10-11T11:23:54.0632275Z From https://github.com/xurunxin/WorkMesh
+2026-10-11T11:23:54.0639524Z  * [new ref]         f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7 -> pull/221/merge
+2026-10-11T11:23:54.0643548Z ##[endgroup]
+2026-10-11T11:23:54.0644366Z ##[group]Determining the checkout info
+2026-10-11T11:23:54.0645221Z ##[endgroup]
+2026-10-11T11:23:54.0647686Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T11:23:54.0709613Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T11:23:54.0757977Z ##[group]Checking out the ref
+2026-10-11T11:23:54.0763965Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/221/merge
+2026-10-11T11:23:55.3438727Z Updating files:  19% (3098/16258)
+2026-10-11T11:23:55.5924631Z Updating files:  20% (3252/16258)
+2026-10-11T11:23:56.0204306Z Updating files:  21% (3415/16258)
+2026-10-11T11:23:56.1159816Z Updating files:  22% (3577/16258)
+2026-10-11T11:23:56.4516992Z Updating files:  22% (3595/16258)
+2026-10-11T11:23:56.8859169Z Updating files:  23% (3740/16258)
+2026-10-11T11:23:57.0967408Z Updating files:  24% (3902/16258)
+2026-10-11T11:23:57.1049176Z Updating files:  24% (4020/16258)
+2026-10-11T11:23:57.1452456Z Updating files:  25% (4065/16258)
+2026-10-11T11:23:57.1789026Z Updating files:  26% (4228/16258)
+2026-10-11T11:23:57.1896216Z Updating files:  27% (4390/16258)
+2026-10-11T11:23:57.2019068Z Updating files:  28% (4553/16258)
+2026-10-11T11:23:57.2195865Z Updating files:  29% (4715/16258)
+2026-10-11T11:23:57.2281718Z Updating files:  30% (4878/16258)
+2026-10-11T11:23:57.2511228Z Updating files:  31% (5040/16258)
+2026-10-11T11:23:57.2621092Z Updating files:  32% (5203/16258)
+2026-10-11T11:23:57.2742148Z Updating files:  33% (5366/16258)
+2026-10-11T11:23:57.2864904Z Updating files:  34% (5528/16258)
+2026-10-11T11:23:57.3006018Z Updating files:  35% (5691/16258)
+2026-10-11T11:23:57.3149154Z Updating files:  36% (5853/16258)
+2026-10-11T11:23:57.3281756Z Updating files:  37% (6016/16258)
+2026-10-11T11:23:57.3439868Z Updating files:  38% (6179/16258)
+2026-10-11T11:23:57.3568946Z Updating files:  39% (6341/16258)
+2026-10-11T11:23:57.3704388Z Updating files:  40% (6504/16258)
+2026-10-11T11:23:57.6245783Z Updating files:  41% (6666/16258)
+2026-10-11T11:23:57.6650971Z Updating files:  42% (6829/16258)
+2026-10-11T11:23:57.6775170Z Updating files:  43% (6991/16258)
+2026-10-11T11:23:57.6839058Z Updating files:  44% (7154/16258)
+2026-10-11T11:23:57.6911441Z Updating files:  45% (7317/16258)
+2026-10-11T11:23:57.6977160Z Updating files:  46% (7479/16258)
+2026-10-11T11:23:57.7048048Z Updating files:  47% (7642/16258)
+2026-10-11T11:23:57.7124803Z Updating files:  48% (7804/16258)
+2026-10-11T11:23:57.7205086Z Updating files:  49% (7967/16258)
+2026-10-11T11:23:57.7606362Z Updating files:  50% (8129/16258)
+2026-10-11T11:23:57.7971577Z Updating files:  51% (8292/16258)
+2026-10-11T11:23:57.8853115Z Updating files:  52% (8455/16258)
+2026-10-11T11:23:57.9331253Z Updating files:  53% (8617/16258)
+2026-10-11T11:23:57.9523429Z Updating files:  54% (8780/16258)
+2026-10-11T11:23:57.9586964Z Updating files:  55% (8942/16258)
+2026-10-11T11:23:57.9649634Z Updating files:  56% (9105/16258)
+2026-10-11T11:23:57.9716520Z Updating files:  57% (9268/16258)
+2026-10-11T11:23:57.9798058Z Updating files:  58% (9430/16258)
+2026-10-11T11:23:57.9909369Z Updating files:  59% (9593/16258)
+2026-10-11T11:23:58.0012507Z Updating files:  60% (9755/16258)
+2026-10-11T11:23:58.0113642Z Updating files:  61% (9918/16258)
+2026-10-11T11:23:58.0230375Z Updating files:  62% (10080/16258)
+2026-10-11T11:23:58.0341633Z Updating files:  63% (10243/16258)
+2026-10-11T11:23:58.1127983Z Updating files:  64% (10406/16258)
+2026-10-11T11:23:58.1974100Z Updating files:  64% (10468/16258)
+2026-10-11T11:23:58.2303367Z Updating files:  65% (10568/16258)
+2026-10-11T11:23:58.2671732Z Updating files:  66% (10731/16258)
+2026-10-11T11:23:58.2855159Z Updating files:  67% (10893/16258)
+2026-10-11T11:23:58.3160002Z Updating files:  68% (11056/16258)
+2026-10-11T11:23:58.3392457Z Updating files:  69% (11219/16258)
+2026-10-11T11:23:58.3596148Z Updating files:  70% (11381/16258)
+2026-10-11T11:23:58.4589379Z Updating files:  71% (11544/16258)
+2026-10-11T11:23:58.4760672Z Updating files:  72% (11706/16258)
+2026-10-11T11:23:58.5217303Z Updating files:  73% (11869/16258)
+2026-10-11T11:23:58.5322836Z Updating files:  74% (12031/16258)
+2026-10-11T11:23:58.5638411Z Updating files:  75% (12194/16258)
+2026-10-11T11:23:58.6000272Z Updating files:  76% (12357/16258)
+2026-10-11T11:23:58.6078076Z Updating files:  77% (12519/16258)
+2026-10-11T11:23:58.6140359Z Updating files:  78% (12682/16258)
+2026-10-11T11:23:58.6200405Z Updating files:  79% (12844/16258)
+2026-10-11T11:23:58.6445934Z Updating files:  80% (13007/16258)
+2026-10-11T11:23:58.6610265Z Updating files:  81% (13169/16258)
+2026-10-11T11:23:58.6682289Z Updating files:  82% (13332/16258)
+2026-10-11T11:23:58.6846500Z Updating files:  83% (13495/16258)
+2026-10-11T11:23:58.7065194Z Updating files:  84% (13657/16258)
+2026-10-11T11:23:58.7394110Z Updating files:  85% (13820/16258)
+2026-10-11T11:23:58.7496748Z Updating files:  86% (13982/16258)
+2026-10-11T11:23:58.7777338Z Updating files:  87% (14145/16258)
+2026-10-11T11:23:58.8031548Z Updating files:  88% (14308/16258)
+2026-10-11T11:23:58.8361756Z Updating files:  89% (14470/16258)
+2026-10-11T11:23:59.0955787Z Updating files:  90% (14633/16258)
+2026-10-11T11:23:59.0964273Z Updating files:  91% (14795/16258)
+2026-10-11T11:23:59.2069278Z Updating files:  91% (14804/16258)
+2026-10-11T11:23:59.6276938Z Updating files:  92% (14958/16258)
+2026-10-11T11:23:59.6775194Z Updating files:  93% (15120/16258)
+2026-10-11T11:23:59.6953239Z Updating files:  94% (15283/16258)
+2026-10-11T11:23:59.7127974Z Updating files:  95% (15446/16258)
+2026-10-11T11:23:59.8118737Z Updating files:  96% (15608/16258)
+2026-10-11T11:23:59.8446336Z Updating files:  97% (15771/16258)
+2026-10-11T11:23:59.8559197Z Updating files:  98% (15933/16258)
+2026-10-11T11:23:59.8669549Z Updating files:  99% (16096/16258)
+2026-10-11T11:23:59.8670680Z Updating files: 100% (16258/16258)
+2026-10-11T11:23:59.8671080Z Updating files: 100% (16258/16258), done.
+2026-10-11T11:24:00.2035356Z Note: switching to 'refs/remotes/pull/221/merge'.
+2026-10-11T11:24:00.2035828Z 
+2026-10-11T11:24:00.2036176Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T11:24:00.2037011Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T11:24:00.2037827Z state without impacting any branches by switching back to a branch.
+2026-10-11T11:24:00.2038319Z 
+2026-10-11T11:24:00.2038633Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T11:24:00.2039403Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T11:24:00.2040653Z 
+2026-10-11T11:24:00.2040832Z   git switch -c <new-branch-name>
+2026-10-11T11:24:00.2041134Z 
+2026-10-11T11:24:00.2041321Z Or undo this operation with:
+2026-10-11T11:24:00.2041591Z 
+2026-10-11T11:24:00.2041738Z   git switch -
+2026-10-11T11:24:00.2041937Z 
+2026-10-11T11:24:00.2042300Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T11:24:00.2042820Z 
+2026-10-11T11:24:00.2043425Z HEAD is now at f58ffce Merge 718350f83d4a74edca33051e939204e90bf89e4c into 20fb7358f6c6818a452e78c1fd3da096cdc31286
+2026-10-11T11:24:00.2230162Z ##[endgroup]
+2026-10-11T11:24:00.2282281Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T11:24:00.2316182Z f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:00.5499210Z ##[group]Removing auth
+2026-10-11T11:24:00.5505212Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T11:24:00.5550511Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T11:24:00.5804723Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T11:24:00.5834300Z http.https://github.com/.extraheader
+2026-10-11T11:24:00.5845195Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-11T11:24:00.6017889Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T11:24:00.6295647Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T11:24:00.6334185Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T11:24:00.6591959Z ##[endgroup]
+2026-10-11T11:24:01.0449498Z ##[group]Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+2026-10-11T11:24:01.0450110Z with:
+2026-10-11T11:24:01.0450334Z   node-version-file: .node-version
+2026-10-11T11:24:01.0450597Z   always-auth: false
+2026-10-11T11:24:01.0450810Z   check-latest: false
+2026-10-11T11:24:01.0453144Z   token: ***
+2026-10-11T11:24:01.0453339Z env:
+2026-10-11T11:24:01.0453525Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:01.0453755Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:01.0454000Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:01.0454598Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:01.0455356Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:01.0455795Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:01.0456126Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:01.0456497Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:01.0456980Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:01.0457375Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:01.0457790Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:01.0458159Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:01.0458437Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:01.0458998Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:01.0459350Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:01.0459694Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:01.0460322Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:01.0460812Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:01.0461156Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:01.0461434Z   S3_REGION: us-east-1
+2026-10-11T11:24:01.0461690Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:01.0462150Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:01.0462430Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:01.0462742Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:01.0462999Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:01.0463284Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:01.0463537Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:01.0463783Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:01.0464120Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:01.0464668Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:01.0465324Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:01.0465799Z ##[endgroup]
+2026-10-11T11:24:01.1858910Z Node version file is not JSON file
+2026-10-11T11:24:01.1861085Z Resolved .node-version as 22.19.0
+2026-10-11T11:24:01.1875682Z Attempting to download 22.19.0...
+2026-10-11T11:24:01.1981904Z (node:2401) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T11:24:01.1982659Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T11:24:01.9048501Z Acquiring 22.19.0 - x64 from https://github.com/actions/node-versions/releases/download/22.19.0-17311483029/node-22.19.0-linux-x64.tar.gz
+2026-10-11T11:24:02.3604239Z Extracting ...
+2026-10-11T11:24:02.3733442Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/33357ec8-606c-4ca0-9902-ebe43f3f10c9 -f /home/runner/work/_temp/08867aab-7b1a-4c24-a151-968d9add6a66
+2026-10-11T11:24:03.6023397Z Adding to the cache ...
+2026-10-11T11:24:07.3655805Z ##[group]Environment details
+2026-10-11T11:24:07.5988396Z node: v22.19.0
+2026-10-11T11:24:07.5988852Z npm: 10.9.3
+2026-10-11T11:24:07.5989060Z yarn: 1.22.22
+2026-10-11T11:24:07.5989530Z ##[endgroup]
+2026-10-11T11:24:07.6171641Z ##[group]Run node scripts/set-ci-bootstrap-token.mjs recovery-integration
+2026-10-11T11:24:07.6172283Z [36;1mnode scripts/set-ci-bootstrap-token.mjs recovery-integration[0m
+2026-10-11T11:24:07.6486995Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:07.6487429Z env:
+2026-10-11T11:24:07.6487669Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:07.6487931Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:07.6488220Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:07.6489120Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:07.6490247Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:07.6490778Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:07.6491171Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:07.6491619Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:07.6492202Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:07.6492689Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:07.6493190Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:07.6493641Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:07.6493958Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:07.6494519Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:07.6494868Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:07.6495225Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:07.6495724Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:07.6496219Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:07.6496562Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:07.6496831Z   S3_REGION: us-east-1
+2026-10-11T11:24:07.6497080Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:07.6497366Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:07.6497877Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:07.6498185Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:07.6498452Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:07.6498739Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:07.6498991Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:07.6499226Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:07.6499553Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:07.6500226Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:07.6500880Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:07.6501370Z ##[endgroup]
+2026-10-11T11:24:07.6952047Z ##[group]Run corepack enable
+2026-10-11T11:24:07.6952373Z [36;1mcorepack enable[0m
+2026-10-11T11:24:07.6952656Z [36;1mcorepack prepare pnpm@9.15.4 --activate[0m
+2026-10-11T11:24:07.6952985Z [36;1mpnpm --version[0m
+2026-10-11T11:24:07.7018399Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:07.7018762Z env:
+2026-10-11T11:24:07.7018958Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:07.7019190Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:07.7019446Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:07.7020548Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:07.7021371Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:07.7021827Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:07.7022172Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:07.7022546Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:07.7023024Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:07.7023420Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:07.7023833Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:07.7024218Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:07.7024498Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:07.7025054Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:07.7025406Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:07.7025748Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:07.7026253Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:07.7026766Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:07.7027117Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:07.7027409Z   S3_REGION: us-east-1
+2026-10-11T11:24:07.7027711Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:07.7028005Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:07.7028290Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:07.7028609Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:07.7028884Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:07.7029188Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:07.7029454Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:07.7029715Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:07.7030366Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:07.7030930Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:07.7031613Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:07.7032232Z   WORKMESH_BOOTSTRAP_TOKEN: QvfeZkrUx0Gcw51hsSQM46BHfzJATptac9ysCZ2qQ1M
+2026-10-11T11:24:07.7032744Z   PAGINATION_CURSOR_KEYS: ci:I2vcxXMqKy0FXPCLmrvtaouIqaRgNJeFpgoyjBX9Adw
+2026-10-11T11:24:07.7033164Z   PAGINATION_CURSOR_ACTIVE_KID: ci
+2026-10-11T11:24:07.7033537Z   AUTH_RATE_LIMIT_HMAC_KEY: 0ZMYUZK9bG2Q_BP72EavKVe8F2hklrN6Uua8-7ZHNbA
+2026-10-11T11:24:07.7033908Z ##[endgroup]
+2026-10-11T11:24:07.8271751Z Preparing pnpm@9.15.4 for immediate activation...
+2026-10-11T11:24:08.8709017Z 9.15.4
+2026-10-11T11:24:08.8859760Z ##[group]Run actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+2026-10-11T11:24:08.8860525Z with:
+2026-10-11T11:24:08.8860745Z   node-version-file: .node-version
+2026-10-11T11:24:08.8861008Z   cache: pnpm
+2026-10-11T11:24:08.8861234Z   cache-dependency-path: pnpm-lock.yaml
+2026-10-11T11:24:08.8861512Z   always-auth: false
+2026-10-11T11:24:08.8861731Z   check-latest: false
+2026-10-11T11:24:08.8864035Z   token: ***
+2026-10-11T11:24:08.8864232Z env:
+2026-10-11T11:24:08.8864413Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:08.8864635Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:08.8864881Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:08.8865459Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:08.8866170Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:08.8866603Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:08.8866980Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:08.8867351Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:08.8867785Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:08.8868188Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:08.8868621Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:08.8869003Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:08.8869285Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:08.8869826Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:08.8870316Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:08.8870674Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:08.8871190Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:08.8871705Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:08.8872090Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:08.8872359Z   S3_REGION: us-east-1
+2026-10-11T11:24:08.8872607Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:08.8872894Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:08.8873182Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:08.8873497Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:08.8873755Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:08.8874053Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:08.8874306Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:08.8874549Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:08.8874871Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:08.8875424Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:08.8876091Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:08.8876702Z   WORKMESH_BOOTSTRAP_TOKEN: QvfeZkrUx0Gcw51hsSQM46BHfzJATptac9ysCZ2qQ1M
+2026-10-11T11:24:08.8877223Z   PAGINATION_CURSOR_KEYS: ci:I2vcxXMqKy0FXPCLmrvtaouIqaRgNJeFpgoyjBX9Adw
+2026-10-11T11:24:08.8877626Z   PAGINATION_CURSOR_ACTIVE_KID: ci
+2026-10-11T11:24:08.8877981Z   AUTH_RATE_LIMIT_HMAC_KEY: 0ZMYUZK9bG2Q_BP72EavKVe8F2hklrN6Uua8-7ZHNbA
+2026-10-11T11:24:08.8878343Z ##[endgroup]
+2026-10-11T11:24:09.0263600Z Node version file is not JSON file
+2026-10-11T11:24:09.0265596Z Resolved .node-version as 22.19.0
+2026-10-11T11:24:09.0277436Z Found in cache @ /opt/hostedtoolcache/node/22.19.0/x64
+2026-10-11T11:24:09.0282503Z (node:2478) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T11:24:09.0283371Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T11:24:09.0284798Z ##[group]Environment details
+2026-10-11T11:24:09.1198983Z [warning]This project is configured to use pnpm because /home/runner/work/WorkMesh/WorkMesh/package.json has a "packageManager" field
+2026-10-11T11:24:09.1201520Z 
+2026-10-11T11:24:09.1693462Z node: v22.19.0
+2026-10-11T11:24:09.1693789Z npm: 10.9.3
+2026-10-11T11:24:09.1694010Z yarn: 
+2026-10-11T11:24:09.1694757Z ##[endgroup]
+2026-10-11T11:24:09.1727914Z [command]/opt/hostedtoolcache/node/22.19.0/x64/bin/pnpm store path --silent
+2026-10-11T11:24:09.4715270Z /home/runner/.local/share/pnpm/store/v3
+2026-10-11T11:24:09.7293054Z pnpm cache is not found
+2026-10-11T11:24:09.7411834Z ##[group]Run mkdir -p ci-logs
+2026-10-11T11:24:09.7412160Z [36;1mmkdir -p ci-logs[0m
+2026-10-11T11:24:09.7412403Z [36;1mset -o pipefail[0m
+2026-10-11T11:24:09.7412750Z [36;1mpnpm install --frozen-lockfile 2>&1 | tee ci-logs/install.log[0m
+2026-10-11T11:24:09.7479465Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:09.7479817Z env:
+2026-10-11T11:24:09.7480307Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:09.7480539Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:09.7480799Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:09.7481479Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:09.7482234Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:09.7482684Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:09.7483029Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:09.7483440Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:09.7483875Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:09.7484271Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:09.7484693Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:09.7485063Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:09.7485357Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:09.7485903Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:09.7486265Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:09.7486629Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:09.7487138Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:09.7487642Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:09.7488003Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:09.7488270Z   S3_REGION: us-east-1
+2026-10-11T11:24:09.7488525Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:09.7488813Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:09.7489100Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:09.7489411Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:09.7489668Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:09.7490175Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:09.7490437Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:09.7490686Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:09.7491018Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:09.7491564Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:09.7492228Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:09.7492828Z   WORKMESH_BOOTSTRAP_TOKEN: QvfeZkrUx0Gcw51hsSQM46BHfzJATptac9ysCZ2qQ1M
+2026-10-11T11:24:09.7493341Z   PAGINATION_CURSOR_KEYS: ci:I2vcxXMqKy0FXPCLmrvtaouIqaRgNJeFpgoyjBX9Adw
+2026-10-11T11:24:09.7493746Z   PAGINATION_CURSOR_ACTIVE_KID: ci
+2026-10-11T11:24:09.7494112Z   AUTH_RATE_LIMIT_HMAC_KEY: 0ZMYUZK9bG2Q_BP72EavKVe8F2hklrN6Uua8-7ZHNbA
+2026-10-11T11:24:09.7494475Z ##[endgroup]
+2026-10-11T11:24:10.0898669Z Scope: all 20 workspace projects
+2026-10-11T11:24:10.1666512Z Lockfile is up to date, resolution step is skipped
+2026-10-11T11:24:10.2365441Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-11T11:24:10.3597030Z Packages: +620
+2026-10-11T11:24:10.3598807Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-11T11:24:11.2383791Z Progress: resolved 620, reused 0, downloaded 128, added 116
+2026-10-11T11:24:12.2391593Z Progress: resolved 620, reused 0, downloaded 213, added 199
+2026-10-11T11:24:13.2411522Z Progress: resolved 620, reused 0, downloaded 421, added 409
+2026-10-11T11:24:14.2414826Z Progress: resolved 620, reused 0, downloaded 444, added 434
+2026-10-11T11:24:15.2420514Z Progress: resolved 620, reused 0, downloaded 456, added 444
+2026-10-11T11:24:16.2418990Z Progress: resolved 620, reused 0, downloaded 603, added 590
+2026-10-11T11:24:16.8680272Z Progress: resolved 620, reused 0, downloaded 620, added 620, done
+2026-10-11T11:24:17.0731334Z .../node_modules/protobufjs postinstall$ node scripts/postinstall
+2026-10-11T11:24:17.0736717Z .../.pnpm/koffi@3.3.2/node_modules/koffi install$ node ./cnoke.cjs -P . -D src/koffi --prebuild --release
+2026-10-11T11:24:17.0740332Z .../node-pty@1.1.0/node_modules/node-pty install$ node scripts/prebuild.js || node-gyp rebuild
+2026-10-11T11:24:17.1411552Z .../node_modules/protobufjs postinstall: Done
+2026-10-11T11:24:17.1482146Z .../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+2026-10-11T11:24:17.1501442Z .../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+2026-10-11T11:24:17.1775362Z .../node-pty@1.1.0/node_modules/node-pty install: [32m> Checking prebuilds...[0m
+2026-10-11T11:24:17.1779197Z .../node-pty@1.1.0/node_modules/node-pty install: [33m> Rebuilding because directory /home/runner/work/WorkMesh/WorkMesh/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/prebuilds/linux-x64 does not exist[0m
+2026-10-11T11:24:17.2022879Z .../.pnpm/koffi@3.3.2/node_modules/koffi install: Done
+2026-10-11T11:24:17.2210620Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info it worked if it ends with ok
+2026-10-11T11:24:17.2224855Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info using node-gyp@10.3.1
+2026-10-11T11:24:17.2227785Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info using node@22.19.0 | linux | x64
+2026-10-11T11:24:17.2586497Z .../argon2@0.41.1/node_modules/argon2 install$ node-gyp-build
+2026-10-11T11:24:17.2779668Z .../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+2026-10-11T11:24:17.3052266Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info find Python using Python version 3.12.3 found at "/usr/bin/python3"
+2026-10-11T11:24:17.3240763Z .../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+2026-10-11T11:24:17.3721486Z .../argon2@0.41.1/node_modules/argon2 install: Done
+2026-10-11T11:24:17.4216202Z .../node-pty@1.1.0/node_modules/node-pty install: gyp http GET https://nodejs.org/download/release/v22.19.0/node-v22.19.0-headers.tar.gz
+2026-10-11T11:24:17.4961735Z .../node-pty@1.1.0/node_modules/node-pty install: gyp http 200 https://nodejs.org/download/release/v22.19.0/node-v22.19.0-headers.tar.gz
+2026-10-11T11:24:18.7081708Z .../node-pty@1.1.0/node_modules/node-pty install: gyp http GET https://nodejs.org/download/release/v22.19.0/SHASUMS256.txt
+2026-10-11T11:24:18.7218790Z .../node-pty@1.1.0/node_modules/node-pty install: gyp http 200 https://nodejs.org/download/release/v22.19.0/SHASUMS256.txt
+2026-10-11T11:24:18.7275005Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn /usr/bin/python3
+2026-10-11T11:24:18.7285087Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args [
+2026-10-11T11:24:18.7287248Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/home/runner/.cache/node/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/gyp/gyp_main.py',
+2026-10-11T11:24:18.7289243Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args 'binding.gyp',
+2026-10-11T11:24:18.7290793Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-f',
+2026-10-11T11:24:18.7292049Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args 'make',
+2026-10-11T11:24:18.7293408Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-I',
+2026-10-11T11:24:18.7298674Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/home/runner/work/WorkMesh/WorkMesh/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/build/config.gypi',
+2026-10-11T11:24:18.7316576Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-I',
+2026-10-11T11:24:18.7319032Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/home/runner/.cache/node/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/addon.gypi',
+2026-10-11T11:24:18.7321185Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-I',
+2026-10-11T11:24:18.7323132Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/home/runner/.cache/node-gyp/22.19.0/include/node/common.gypi',
+2026-10-11T11:24:18.7324987Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dlibrary=shared_library',
+2026-10-11T11:24:18.7326839Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dvisibility=default',
+2026-10-11T11:24:18.7328694Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_root_dir=/home/runner/.cache/node-gyp/22.19.0',
+2026-10-11T11:24:18.7355055Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_gyp_dir=/home/runner/.cache/node/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp',
+2026-10-11T11:24:18.7357648Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_lib_file=/home/runner/.cache/node-gyp/22.19.0/<(target_arch)/node.lib',
+2026-10-11T11:24:18.7360759Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dmodule_root_dir=/home/runner/work/WorkMesh/WorkMesh/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty',
+2026-10-11T11:24:18.7362945Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_engine=v8',
+2026-10-11T11:24:18.7364547Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '--depth=.',
+2026-10-11T11:24:18.7366008Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '--no-parallel',
+2026-10-11T11:24:18.7367622Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '--generator-output',
+2026-10-11T11:24:18.7369047Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args 'build',
+2026-10-11T11:24:18.7370753Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Goutput_dir=.'
+2026-10-11T11:24:18.7372127Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args ]
+2026-10-11T11:24:18.8883027Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn make
+2026-10-11T11:24:18.8884652Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+2026-10-11T11:24:18.8900825Z .../node-pty@1.1.0/node_modules/node-pty install: make: Entering directory '/home/runner/work/WorkMesh/WorkMesh/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/build'
+2026-10-11T11:24:18.8917846Z .../node-pty@1.1.0/node_modules/node-pty install:   TOUCH Release/obj.target/../../../node-addon-api@7.1.1/node_modules/node-addon-api/node_addon_api_except.stamp
+2026-10-11T11:24:18.8968906Z .../node-pty@1.1.0/node_modules/node-pty install:   CXX(target) Release/obj.target/pty/src/unix/pty.o
+2026-10-11T11:24:21.8995759Z .../node-pty@1.1.0/node_modules/node-pty install:   SOLINK_MODULE(target) Release/obj.target/pty.node
+2026-10-11T11:24:21.9617758Z .../node-pty@1.1.0/node_modules/node-pty install:   COPY Release/pty.node
+2026-10-11T11:24:21.9659138Z .../node-pty@1.1.0/node_modules/node-pty install: make: Leaving directory '/home/runner/work/WorkMesh/WorkMesh/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/build'
+2026-10-11T11:24:21.9671972Z .../node-pty@1.1.0/node_modules/node-pty install: gyp info ok 
+2026-10-11T11:24:21.9782864Z .../node-pty@1.1.0/node_modules/node-pty install: Done
+2026-10-11T11:24:21.9785062Z .../node-pty@1.1.0/node_modules/node-pty postinstall$ node scripts/post-install.js
+2026-10-11T11:24:22.0177966Z .../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Cleaning release folder...[0m
+2026-10-11T11:24:22.0199636Z .../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Moving conpty.dll...[0m
+2026-10-11T11:24:22.0201574Z .../node-pty@1.1.0/node_modules/node-pty postinstall:   SKIPPED (not Windows)
+2026-10-11T11:24:22.0231280Z .../node-pty@1.1.0/node_modules/node-pty postinstall: Done
+2026-10-11T11:24:22.1461569Z .../node_modules/@google/genai preinstall$ echo 'preinstall: no-op'
+2026-10-11T11:24:22.1631237Z .../node_modules/@google/genai preinstall: preinstall: no-op
+2026-10-11T11:24:22.1634256Z .../node_modules/@google/genai preinstall: Done
+2026-10-11T11:24:22.3448103Z 
+2026-10-11T11:24:22.3448563Z devDependencies:
+2026-10-11T11:24:22.3449077Z + @playwright/test 1.61.1
+2026-10-11T11:24:22.3449576Z + @types/node 22.20.1
+2026-10-11T11:24:22.3450308Z + eslint 9.39.5
+2026-10-11T11:24:22.3450720Z + prettier 3.9.6
+2026-10-11T11:24:22.3451106Z + tsx 4.23.1
+2026-10-11T11:24:22.3451491Z + turbo 2.10.6
+2026-10-11T11:24:22.3451957Z + typescript 5.9.3
+2026-10-11T11:24:22.3452363Z + vitest 3.2.7
+2026-10-11T11:24:22.3452739Z + yaml 2.9.0
+2026-10-11T11:24:22.3452960Z 
+2026-10-11T11:24:22.4001138Z Done in 12.5s
+2026-10-11T11:24:22.4730313Z ##[group]Run set -o pipefail
+2026-10-11T11:24:22.4730693Z [36;1mset -o pipefail[0m
+2026-10-11T11:24:22.4730931Z [36;1m{[0m
+2026-10-11T11:24:22.4731233Z [36;1m  docker run --detach --name workmesh-ci-recovery-postgres \[0m
+2026-10-11T11:24:22.4731661Z [36;1m    --env POSTGRES_USER=workmesh \[0m
+2026-10-11T11:24:22.4732049Z [36;1m    --env POSTGRES_PASSWORD=WmCiRecoveryPg_2026_A7f9K2m4Q8v6 \[0m
+2026-10-11T11:24:22.4732485Z [36;1m    --env POSTGRES_DB=workmesh_recovery_source_test \[0m
+2026-10-11T11:24:22.4732823Z [36;1m    --publish 5432:5432 \[0m
+2026-10-11T11:24:22.4733301Z [36;1m    postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777[0m
+2026-10-11T11:24:22.4733900Z [36;1m  docker run --detach --name workmesh-ci-recovery-rustfs \[0m
+2026-10-11T11:24:22.4734303Z [36;1m    --env RUSTFS_ACCESS_KEY=workmesh \[0m
+2026-10-11T11:24:22.4734679Z [36;1m    --env RUSTFS_SECRET_KEY=WmCiRecoveryS3_2026_Z8k4P6n2R9t5 \[0m
+2026-10-11T11:24:22.4735193Z [36;1m    --publish 9000:9000 \[0m
+2026-10-11T11:24:22.4735767Z [36;1m    rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff[0m
+2026-10-11T11:24:22.4736414Z [36;1m  docker run --detach --name workmesh-ci-recovery-redis \[0m
+2026-10-11T11:24:22.4737023Z [36;1m    --publish 6379:6379 redis:7-alpine[0m
+2026-10-11T11:24:22.4737425Z [36;1m  for attempt in $(seq 1 30); do[0m
+2026-10-11T11:24:22.4738168Z [36;1m    if docker exec workmesh-ci-recovery-postgres pg_isready -U workmesh -d workmesh_recovery_source_test \[0m
+2026-10-11T11:24:22.4738965Z [36;1m      && curl --fail --silent http://127.0.0.1:9000/health/ready > /dev/null \[0m
+2026-10-11T11:24:22.4739653Z [36;1m      && docker exec workmesh-ci-recovery-redis redis-cli ping | grep -q PONG; then[0m
+2026-10-11T11:24:22.4740685Z [36;1m      break[0m
+2026-10-11T11:24:22.4741178Z [36;1m    fi[0m
+2026-10-11T11:24:22.4741615Z [36;1m    if [ "$attempt" = 30 ]; then exit 1; fi[0m
+2026-10-11T11:24:22.4742103Z [36;1m    sleep 2[0m
+2026-10-11T11:24:22.4742445Z [36;1m  done[0m
+2026-10-11T11:24:22.4742847Z [36;1m  docker exec workmesh-ci-recovery-postgres \[0m
+2026-10-11T11:24:22.4743337Z [36;1m    createdb -U workmesh workmesh_recovery_target_test[0m
+2026-10-11T11:24:22.4743818Z [36;1m} 2>&1 | tee ci-logs/infrastructure.log[0m
+2026-10-11T11:24:22.4808690Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:22.4809235Z env:
+2026-10-11T11:24:22.4809531Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:22.4810147Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:22.4810524Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:22.4811527Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:22.4812487Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:22.4828419Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:22.4829031Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:22.4829816Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:22.4830762Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:22.4831470Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:22.4832174Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:22.4832832Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:22.4833322Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:22.4834341Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:22.4834975Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:22.4835609Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:22.4836526Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:22.4837224Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:22.4837602Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:22.4838109Z   S3_REGION: us-east-1
+2026-10-11T11:24:22.4838384Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:22.4838680Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:22.4838969Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:22.4839291Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:22.4839555Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:22.4839848Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:22.4840434Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:22.4840690Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:22.4841028Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:22.4841615Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:22.4842292Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:22.4842906Z   WORKMESH_BOOTSTRAP_TOKEN: QvfeZkrUx0Gcw51hsSQM46BHfzJATptac9ysCZ2qQ1M
+2026-10-11T11:24:22.4843422Z   PAGINATION_CURSOR_KEYS: ci:I2vcxXMqKy0FXPCLmrvtaouIqaRgNJeFpgoyjBX9Adw
+2026-10-11T11:24:22.4843826Z   PAGINATION_CURSOR_ACTIVE_KID: ci
+2026-10-11T11:24:22.4844185Z   AUTH_RATE_LIMIT_HMAC_KEY: 0ZMYUZK9bG2Q_BP72EavKVe8F2hklrN6Uua8-7ZHNbA
+2026-10-11T11:24:22.4844546Z ##[endgroup]
+2026-10-11T11:24:22.5963321Z Unable to find image 'postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777' locally
+2026-10-11T11:24:23.2083791Z docker.io/library/postgres@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777: Pulling from library/postgres
+2026-10-11T11:24:23.4867600Z 55afa1ecc21d: Already exists
+2026-10-11T11:24:23.4906120Z 0749aef11dca: Pulling fs layer
+2026-10-11T11:24:23.4907012Z 2d3064b8615b: Pulling fs layer
+2026-10-11T11:24:23.4907947Z ef6ab46d98b2: Pulling fs layer
+2026-10-11T11:24:23.4908419Z 689a434e3a86: Pulling fs layer
+2026-10-11T11:24:23.4908800Z 2f537278bc74: Pulling fs layer
+2026-10-11T11:24:23.4909275Z 4096c457dc0d: Pulling fs layer
+2026-10-11T11:24:23.4909842Z c86ab38aa6db: Pulling fs layer
+2026-10-11T11:24:23.4910684Z 713473b5b92b: Pulling fs layer
+2026-10-11T11:24:23.4911213Z 7af924000309: Pulling fs layer
+2026-10-11T11:24:23.4911752Z cc7fa208b8a7: Pulling fs layer
+2026-10-11T11:24:23.4912224Z 2f537278bc74: Waiting
+2026-10-11T11:24:23.4912654Z 4096c457dc0d: Waiting
+2026-10-11T11:24:23.4913063Z c86ab38aa6db: Waiting
+2026-10-11T11:24:23.4913469Z 713473b5b92b: Waiting
+2026-10-11T11:24:23.4913858Z 7af924000309: Waiting
+2026-10-11T11:24:23.4914221Z cc7fa208b8a7: Waiting
+2026-10-11T11:24:23.4914449Z 689a434e3a86: Waiting
+2026-10-11T11:24:23.7082575Z ef6ab46d98b2: Verifying Checksum
+2026-10-11T11:24:23.7083558Z ef6ab46d98b2: Download complete
+2026-10-11T11:24:23.7084918Z 0749aef11dca: Verifying Checksum
+2026-10-11T11:24:23.7085558Z 0749aef11dca: Download complete
+2026-10-11T11:24:23.7149302Z 2d3064b8615b: Verifying Checksum
+2026-10-11T11:24:23.7151173Z 2d3064b8615b: Download complete
+2026-10-11T11:24:23.9264064Z 689a434e3a86: Verifying Checksum
+2026-10-11T11:24:23.9265727Z 689a434e3a86: Download complete
+2026-10-11T11:24:23.9304440Z 4096c457dc0d: Verifying Checksum
+2026-10-11T11:24:23.9307754Z 4096c457dc0d: Download complete
+2026-10-11T11:24:24.1503468Z c86ab38aa6db: Verifying Checksum
+2026-10-11T11:24:24.1504330Z c86ab38aa6db: Download complete
+2026-10-11T11:24:24.1524024Z 713473b5b92b: Verifying Checksum
+2026-10-11T11:24:24.1526049Z 713473b5b92b: Download complete
+2026-10-11T11:24:24.3500469Z 2f537278bc74: Verifying Checksum
+2026-10-11T11:24:24.3501321Z 2f537278bc74: Download complete
+2026-10-11T11:24:24.3737610Z cc7fa208b8a7: Verifying Checksum
+2026-10-11T11:24:24.3738008Z cc7fa208b8a7: Download complete
+2026-10-11T11:24:24.3764406Z 7af924000309: Verifying Checksum
+2026-10-11T11:24:24.3764784Z 7af924000309: Download complete
+2026-10-11T11:24:24.6064502Z 0749aef11dca: Pull complete
+2026-10-11T11:24:24.7498048Z 2d3064b8615b: Pull complete
+2026-10-11T11:24:24.7866574Z ef6ab46d98b2: Pull complete
+2026-10-11T11:24:24.7957885Z 689a434e3a86: Pull complete
+2026-10-11T11:24:27.2516065Z 2f537278bc74: Pull complete
+2026-10-11T11:24:27.2621858Z 4096c457dc0d: Pull complete
+2026-10-11T11:24:27.2742186Z c86ab38aa6db: Pull complete
+2026-10-11T11:24:27.2826551Z 713473b5b92b: Pull complete
+2026-10-11T11:24:27.2902528Z 7af924000309: Pull complete
+2026-10-11T11:24:27.2987202Z cc7fa208b8a7: Pull complete
+2026-10-11T11:24:27.3023506Z Digest: sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+2026-10-11T11:24:27.3028958Z Status: Downloaded newer image for postgres@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+2026-10-11T11:24:27.3171314Z 6eb920a66cb7576b6f923371de4f3dfefa2031cbfc07e178ecbd25a6e74d8719
+2026-10-11T11:24:27.6510499Z Unable to find image 'rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff' locally
+2026-10-11T11:24:28.2411161Z docker.io/rustfs/rustfs@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff: Pulling from rustfs/rustfs
+2026-10-11T11:24:28.5080728Z 55afa1ecc21d: Already exists
+2026-10-11T11:24:28.5097255Z fc60adad4a1d: Pulling fs layer
+2026-10-11T11:24:28.5104742Z 2db50cf901eb: Pulling fs layer
+2026-10-11T11:24:28.5106077Z eebc17ed47f7: Pulling fs layer
+2026-10-11T11:24:28.5107889Z a43ede1efa93: Pulling fs layer
+2026-10-11T11:24:28.5108972Z 4f4fb700ef54: Pulling fs layer
+2026-10-11T11:24:28.5109930Z e993fc96bab5: Pulling fs layer
+2026-10-11T11:24:28.5110886Z 4f4fb700ef54: Waiting
+2026-10-11T11:24:28.5111410Z e993fc96bab5: Waiting
+2026-10-11T11:24:28.5112205Z a43ede1efa93: Waiting
+2026-10-11T11:24:28.7359461Z 2db50cf901eb: Verifying Checksum
+2026-10-11T11:24:28.7360511Z 2db50cf901eb: Download complete
+2026-10-11T11:24:28.7612515Z fc60adad4a1d: Verifying Checksum
+2026-10-11T11:24:28.7613224Z fc60adad4a1d: Download complete
+2026-10-11T11:24:28.9621069Z a43ede1efa93: Verifying Checksum
+2026-10-11T11:24:28.9622644Z a43ede1efa93: Download complete
+2026-10-11T11:24:28.9878276Z 4f4fb700ef54: Verifying Checksum
+2026-10-11T11:24:28.9879733Z 4f4fb700ef54: Download complete
+2026-10-11T11:24:29.1291381Z eebc17ed47f7: Verifying Checksum
+2026-10-11T11:24:29.1292038Z eebc17ed47f7: Download complete
+2026-10-11T11:24:29.1720181Z e993fc96bab5: Verifying Checksum
+2026-10-11T11:24:29.1721206Z e993fc96bab5: Download complete
+2026-10-11T11:24:29.2568993Z fc60adad4a1d: Pull complete
+2026-10-11T11:24:29.2697603Z 2db50cf901eb: Pull complete
+2026-10-11T11:24:30.8048327Z eebc17ed47f7: Pull complete
+2026-10-11T11:24:30.8148845Z a43ede1efa93: Pull complete
+2026-10-11T11:24:30.8579466Z 4f4fb700ef54: Pull complete
+2026-10-11T11:24:30.8688763Z e993fc96bab5: Pull complete
+2026-10-11T11:24:30.8722763Z Digest: sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff
+2026-10-11T11:24:30.8731754Z Status: Downloaded newer image for rustfs/rustfs@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff
+2026-10-11T11:24:30.8850588Z 16228dc1685517ad9c6fba0867da73b8fd66df677032c86d7f044aea451f93f7
+2026-10-11T11:24:31.0179206Z Unable to find image 'redis:7-alpine' locally
+2026-10-11T11:24:31.8578126Z 7-alpine: Pulling from library/redis
+2026-10-11T11:24:32.1285538Z 16333ee0c00f: Pulling fs layer
+2026-10-11T11:24:32.1286189Z 83234986c742: Pulling fs layer
+2026-10-11T11:24:32.1286559Z 7eb50503c2b0: Pulling fs layer
+2026-10-11T11:24:32.1286902Z 1522f9c6f453: Pulling fs layer
+2026-10-11T11:24:32.1287372Z 9928009b15c8: Pulling fs layer
+2026-10-11T11:24:32.1287874Z 4f4fb700ef54: Pulling fs layer
+2026-10-11T11:24:32.1288245Z 4eb14bae0e1d: Pulling fs layer
+2026-10-11T11:24:32.1288499Z 1522f9c6f453: Waiting
+2026-10-11T11:24:32.1288878Z 9928009b15c8: Waiting
+2026-10-11T11:24:32.1289116Z 4f4fb700ef54: Waiting
+2026-10-11T11:24:32.1289462Z 4eb14bae0e1d: Waiting
+2026-10-11T11:24:32.3307734Z 83234986c742: Verifying Checksum
+2026-10-11T11:24:32.3308365Z 83234986c742: Download complete
+2026-10-11T11:24:32.3349871Z 7eb50503c2b0: Verifying Checksum
+2026-10-11T11:24:32.3350562Z 7eb50503c2b0: Download complete
+2026-10-11T11:24:32.3644361Z 16333ee0c00f: Verifying Checksum
+2026-10-11T11:24:32.3645280Z 16333ee0c00f: Download complete
+2026-10-11T11:24:32.4757786Z 16333ee0c00f: Pull complete
+2026-10-11T11:24:32.4927175Z 83234986c742: Pull complete
+2026-10-11T11:24:32.5424964Z 9928009b15c8: Download complete
+2026-10-11T11:24:32.5859689Z 4f4fb700ef54: Download complete
+2026-10-11T11:24:32.6084590Z 1522f9c6f453: Verifying Checksum
+2026-10-11T11:24:32.6085451Z 1522f9c6f453: Download complete
+2026-10-11T11:24:32.6558623Z 7eb50503c2b0: Pull complete
+2026-10-11T11:24:32.7584897Z 4eb14bae0e1d: Verifying Checksum
+2026-10-11T11:24:32.7586615Z 4eb14bae0e1d: Download complete
+2026-10-11T11:24:32.8422208Z 1522f9c6f453: Pull complete
+2026-10-11T11:24:32.8522276Z 9928009b15c8: Pull complete
+2026-10-11T11:24:32.8591177Z 4f4fb700ef54: Pull complete
+2026-10-11T11:24:32.8682495Z 4eb14bae0e1d: Pull complete
+2026-10-11T11:24:32.8715242Z Digest: sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+2026-10-11T11:24:32.8724753Z Status: Downloaded newer image for redis:7-alpine
+2026-10-11T11:24:32.8834803Z db610677ce00b4060849d6cba1dd38690732c80b9b54c3b94e8cbad21cbcf11b
+2026-10-11T11:24:33.0589679Z /var/run/postgresql:5432 - accepting connections
+2026-10-11T11:24:33.2239607Z ##[group]Run set -o pipefail
+2026-10-11T11:24:33.2240300Z [36;1mset -o pipefail[0m
+2026-10-11T11:24:33.2240581Z [36;1m{[0m
+2026-10-11T11:24:33.2241013Z [36;1m  docker build --build-arg WORKMESH_BUILD_SHA="f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" \[0m
+2026-10-11T11:24:33.2241585Z [36;1m    --file infra/docker/api.production.Dockerfile \[0m
+2026-10-11T11:24:33.2242098Z [36;1m    --tag "workmesh-ci-recovery-api:f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" .[0m
+2026-10-11T11:24:33.2242743Z [36;1m  docker build --build-arg WORKMESH_BUILD_SHA="f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" \[0m
+2026-10-11T11:24:33.2243297Z [36;1m    --file infra/docker/worker.production.Dockerfile \[0m
+2026-10-11T11:24:33.2243830Z [36;1m    --tag "workmesh-ci-recovery-worker:f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" .[0m
+2026-10-11T11:24:33.2244465Z [36;1m  docker build --build-arg WORKMESH_BUILD_SHA="f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" \[0m
+2026-10-11T11:24:33.2245072Z [36;1m    --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" \[0m
+2026-10-11T11:24:33.2245500Z [36;1m    --file infra/docker/web.production.Dockerfile \[0m
+2026-10-11T11:24:33.2245982Z [36;1m    --tag "workmesh-ci-recovery-web:f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" .[0m
+2026-10-11T11:24:33.2246423Z [36;1m} 2>&1 | tee ci-logs/build.log[0m
+2026-10-11T11:24:33.2309338Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:33.2309705Z env:
+2026-10-11T11:24:33.2310155Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:33.2310435Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:33.2310691Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:33.2311369Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:33.2312320Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:33.2312761Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:33.2313088Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:33.2313472Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:33.2313951Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:33.2314359Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:33.2314777Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:33.2315145Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:33.2315426Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:33.2315967Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:33.2316322Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:33.2316672Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:33.2317168Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:33.2317670Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:33.2318016Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:33.2318281Z   S3_REGION: us-east-1
+2026-10-11T11:24:33.2318528Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:33.2318815Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:33.2319103Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:33.2319412Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:33.2319667Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:33.2320300Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:33.2320584Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:33.2320835Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:33.2321159Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:33.2321700Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:33.2322352Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:33.2322947Z   WORKMESH_BOOTSTRAP_TOKEN: QvfeZkrUx0Gcw51hsSQM46BHfzJATptac9ysCZ2qQ1M
+2026-10-11T11:24:33.2323633Z   PAGINATION_CURSOR_KEYS: ci:I2vcxXMqKy0FXPCLmrvtaouIqaRgNJeFpgoyjBX9Adw
+2026-10-11T11:24:33.2324044Z   PAGINATION_CURSOR_ACTIVE_KID: ci
+2026-10-11T11:24:33.2324407Z   AUTH_RATE_LIMIT_HMAC_KEY: 0ZMYUZK9bG2Q_BP72EavKVe8F2hklrN6Uua8-7ZHNbA
+2026-10-11T11:24:33.2324768Z ##[endgroup]
+2026-10-11T11:24:33.9689380Z #0 building with "default" instance using docker driver
+2026-10-11T11:24:33.9689977Z 
+2026-10-11T11:24:33.9690306Z #1 [internal] load build definition from api.production.Dockerfile
+2026-10-11T11:24:33.9691007Z #1 transferring dockerfile: 2.39kB 0.0s done
+2026-10-11T11:24:33.9691330Z #1 DONE 0.0s
+2026-10-11T11:24:33.9691464Z 
+2026-10-11T11:24:33.9691836Z #2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+2026-10-11T11:24:34.1835445Z #2 ...
+2026-10-11T11:24:34.1835631Z 
+2026-10-11T11:24:34.1835971Z #3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+2026-10-11T11:24:34.1836377Z #3 DONE 0.0s
+2026-10-11T11:24:34.3337972Z 
+2026-10-11T11:24:34.3338802Z #2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+2026-10-11T11:24:34.6614228Z #2 DONE 0.8s
+2026-10-11T11:24:34.7716565Z 
+2026-10-11T11:24:34.7718103Z #4 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+2026-10-11T11:24:34.7720128Z #4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e done
+2026-10-11T11:24:34.7721680Z #4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 9.44MB / 11.98MB 0.1s
+2026-10-11T11:24:34.7723090Z #4 sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 8.40kB / 8.40kB done
+2026-10-11T11:24:34.7724726Z #4 sha256:b5f3b260a9678e1d83d2fce86eeddf79420b79147eaba2a25986f47133d73720 482B / 482B done
+2026-10-11T11:24:34.7725973Z #4 sha256:68ebc061390d9a7d6e194f9d58309c754a53cb8b4e3b0d89593920f42f4a9da4 1.26kB / 1.26kB done
+2026-10-11T11:24:34.8855170Z #4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 0.1s done
+2026-10-11T11:24:34.8856904Z #4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0.1s done
+2026-10-11T11:24:35.1090064Z #4 DONE 0.2s
+2026-10-11T11:24:35.1090599Z 
+2026-10-11T11:24:35.1091096Z #5 [internal] load metadata for docker.io/library/node:22.19.0-alpine3.21
+2026-10-11T11:24:35.3110958Z #5 ...
+2026-10-11T11:24:35.3111218Z 
+2026-10-11T11:24:35.3111617Z #6 [auth] library/node:pull token for registry-1.docker.io
+2026-10-11T11:24:35.3112026Z #6 DONE 0.0s
+2026-10-11T11:24:35.4614341Z 
+2026-10-11T11:24:35.4615345Z #5 [internal] load metadata for docker.io/library/node:22.19.0-alpine3.21
+2026-10-11T11:24:35.7467855Z #5 DONE 0.8s
+2026-10-11T11:24:35.9074967Z 
+2026-10-11T11:24:35.9077347Z #7 [internal] load .dockerignore
+2026-10-11T11:24:35.9079044Z #7 transferring context: 633B done
+2026-10-11T11:24:35.9081477Z #7 DONE 0.0s
+2026-10-11T11:24:35.9082860Z 
+2026-10-11T11:24:35.9085796Z #8 [build  1/10] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+2026-10-11T11:24:35.9088075Z #8 resolve docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9 done
+2026-10-11T11:24:35.9089397Z #8 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 0B / 51.04MB 0.1s
+2026-10-11T11:24:35.9091015Z #8 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 0B / 1.26MB 0.1s
+2026-10-11T11:24:35.9092128Z #8 sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9 6.43kB / 6.43kB done
+2026-10-11T11:24:35.9093074Z #8 sha256:d4760191131171132bb788c4fd0014ef07a5e4e79e5155e26068f3cc9fdffea4 1.72kB / 1.72kB done
+2026-10-11T11:24:35.9094167Z #8 sha256:2e2a0017b710754a25768c948ee2673da9f1a0cf5fb94234a2dcc904f1b85592 6.42kB / 6.42kB done
+2026-10-11T11:24:35.9095200Z #8 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 1.05MB / 3.64MB 0.1s
+2026-10-11T11:24:36.0261730Z #8 ...
+2026-10-11T11:24:36.0262850Z 
+2026-10-11T11:24:36.0263411Z #9 [internal] load build context
+2026-10-11T11:24:36.0264062Z #9 transferring context: 16.87MB 0.2s done
+2026-10-11T11:24:36.0264757Z #9 DONE 0.2s
+2026-10-11T11:24:36.0264965Z 
+2026-10-11T11:24:36.0266181Z #8 [build  1/10] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+2026-10-11T11:24:36.0267601Z #8 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 3.15MB / 51.04MB 0.2s
+2026-10-11T11:24:36.0268716Z #8 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 3.64MB / 3.64MB 0.1s done
+2026-10-11T11:24:36.0269674Z #8 extracting sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 0.1s
+2026-10-11T11:24:36.0270787Z #8 sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 0B / 447B 0.2s
+2026-10-11T11:24:36.2084466Z #8 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 29.36MB / 51.04MB 0.4s
+2026-10-11T11:24:36.2086087Z #8 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 1.26MB / 1.26MB 0.2s done
+2026-10-11T11:24:36.2087365Z #8 extracting sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 0.1s done
+2026-10-11T11:24:36.2088511Z #8 sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 447B / 447B 0.2s done
+2026-10-11T11:24:36.3962494Z #8 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 51.04MB / 51.04MB 0.5s done
+2026-10-11T11:24:36.3964062Z #8 extracting sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 0.1s
+2026-10-11T11:24:37.5685695Z #8 extracting sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 1.3s done
+2026-10-11T11:24:37.8520269Z #8 extracting sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86
+2026-10-11T11:24:38.0633032Z #8 extracting sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 0.0s done
+2026-10-11T11:24:38.0635176Z #8 extracting sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 done
+2026-10-11T11:24:38.0636307Z #8 DONE 2.1s
+2026-10-11T11:24:38.0636731Z 
+2026-10-11T11:24:38.0639790Z #10 [runtime 2/7] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7"     && echo "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh
+2026-10-11T11:24:38.0822062Z #10 0.169 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+2026-10-11T11:24:38.2394658Z #10 0.249 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+2026-10-11T11:24:38.5130528Z #10 0.600 (1/10) Upgrading musl (1.2.5-r9 -> 1.2.5-r11)
+2026-10-11T11:24:38.6145289Z #10 0.608 (2/10) Upgrading busybox (1.37.0-r12 -> 1.37.0-r14)
+2026-10-11T11:24:38.6146661Z #10 0.625 Executing busybox-1.37.0-r14.post-upgrade
+2026-10-11T11:24:38.6148075Z #10 0.645 (3/10) Upgrading busybox-binsh (1.37.0-r12 -> 1.37.0-r14)
+2026-10-11T11:24:38.6149042Z #10 0.646 (4/10) Upgrading alpine-release (3.21.4-r0 -> 3.21.8-r0)
+2026-10-11T11:24:38.6150393Z #10 0.649 (5/10) Upgrading ca-certificates-bundle (20250619-r0 -> 20260909-r0)
+2026-10-11T11:24:38.6152132Z #10 0.654 (6/10) Upgrading libcrypto3 (3.3.4-r0 -> 3.3.7-r2)
+2026-10-11T11:24:38.6153411Z #10 0.691 (7/10) Upgrading libssl3 (3.3.4-r0 -> 3.3.7-r2)
+2026-10-11T11:24:38.6154652Z #10 0.700 (8/10) Upgrading ssl_client (1.37.0-r12 -> 1.37.0-r14)
+2026-10-11T11:24:38.6155423Z #10 0.702 (9/10) Upgrading zlib (1.3.1-r2 -> 1.3.2-r1)
+2026-10-11T11:24:38.7357635Z #10 0.704 (10/10) Upgrading musl-utils (1.2.5-r9 -> 1.2.5-r11)
+2026-10-11T11:24:38.7358645Z #10 0.708 Executing busybox-1.37.0-r14.trigger
+2026-10-11T11:24:38.7359206Z #10 0.713 OK: 10 MiB in 17 packages
+2026-10-11T11:24:38.7360241Z #10 0.823 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+2026-10-11T11:24:38.9751914Z #10 0.912 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+2026-10-11T11:24:39.0699118Z #10 ...
+2026-10-11T11:24:39.0700401Z 
+2026-10-11T11:24:39.0702703Z #11 [build  2/10] RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+2026-10-11T11:24:39.0705250Z #11 0.327 Preparing pnpm@9.15.4 for immediate activation...
+2026-10-11T11:24:39.0706505Z #11 DONE 1.2s
+2026-10-11T11:24:39.2117808Z 
+2026-10-11T11:24:39.2118950Z #12 [build  3/10] WORKDIR /workspace
+2026-10-11T11:24:39.2119490Z #12 DONE 0.0s
+2026-10-11T11:24:39.2119745Z 
+2026-10-11T11:24:39.2120532Z #13 [build  4/10] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+2026-10-11T11:24:39.2121302Z #13 DONE 0.0s
+2026-10-11T11:24:39.2121455Z 
+2026-10-11T11:24:39.2123974Z #10 [runtime 2/7] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7"     && echo "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh
+2026-10-11T11:24:39.2126428Z #10 1.299 (1/8) Installing postgresql-common (1.2-r1)
+2026-10-11T11:24:39.3191777Z #10 ...
+2026-10-11T11:24:39.3192297Z 
+2026-10-11T11:24:39.3192791Z #14 [build  5/10] COPY apps ./apps
+2026-10-11T11:24:39.3194199Z #14 DONE 0.1s
+2026-10-11T11:24:39.3194706Z 
+2026-10-11T11:24:39.3195668Z #15 [build  6/10] COPY packages ./packages
+2026-10-11T11:24:39.3196474Z #15 DONE 0.1s
+2026-10-11T11:24:39.3196892Z 
+2026-10-11T11:24:39.3197782Z #16 [build  7/10] COPY scripts ./scripts
+2026-10-11T11:24:39.3198283Z #16 DONE 0.0s
+2026-10-11T11:24:39.3198593Z 
+2026-10-11T11:24:39.3204075Z #10 [runtime 2/7] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7"     && echo "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh
+2026-10-11T11:24:39.3208835Z #10 1.302 Executing postgresql-common-1.2-r1.pre-install
+2026-10-11T11:24:39.3209307Z #10 1.310 (2/8) Installing lz4-libs (1.10.0-r0)
+2026-10-11T11:24:39.3209783Z #10 1.315 (3/8) Installing libpq (17.11-r0)
+2026-10-11T11:24:39.3211756Z #10 1.321 (4/8) Installing ncurses-terminfo-base (6.5_p20241006-r3)
+2026-10-11T11:24:39.3212498Z #10 1.329 (5/8) Installing libncursesw (6.5_p20241006-r3)
+2026-10-11T11:24:39.3213000Z #10 1.334 (6/8) Installing readline (8.2.13-r0)
+2026-10-11T11:24:39.3213379Z #10 1.340 (7/8) Installing zstd-libs (1.5.6-r2)
+2026-10-11T11:24:39.3214252Z #10 1.351 (8/8) Installing postgresql16-client (16.15-r0)
+2026-10-11T11:24:39.3215008Z #10 1.384 Executing busybox-1.37.0-r14.trigger
+2026-10-11T11:24:39.3215729Z #10 1.389 Executing postgresql-common-1.2-r1.trigger
+2026-10-11T11:24:39.3216540Z #10 1.393 * Setting postgresql16 as the default version
+2026-10-11T11:24:39.5605786Z #10 ...
+2026-10-11T11:24:39.5606185Z 
+2026-10-11T11:24:39.5607436Z #17 [build  8/10] COPY infra/docker/prepare-production-deploy.mjs ./infra/docker/prepare-production-deploy.mjs
+2026-10-11T11:24:39.5608768Z #17 DONE 0.0s
+2026-10-11T11:24:39.5609261Z 
+2026-10-11T11:24:39.5614586Z #10 [runtime 2/7] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7"     && echo "f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh
+2026-10-11T11:24:39.5619278Z #10 1.492 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.21/main: No such file or directory
+2026-10-11T11:24:39.5621516Z #10 1.492 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.21/community: No such file or directory
+2026-10-11T11:24:39.5622904Z #10 1.497 OK: 15 MiB in 25 packages
+2026-10-11T11:24:39.9084949Z #10 DONE 2.0s
+2026-10-11T11:24:39.9086246Z 
+2026-10-11T11:24:39.9088158Z #18 [build  9/10] RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked     pnpm install --frozen-lockfile --store-dir /pnpm/store
+2026-10-11T11:24:40.0797303Z #18 ...
+2026-10-11T11:24:40.0797555Z 
+2026-10-11T11:24:40.0797813Z #19 [runtime 3/7] WORKDIR /app
+2026-10-11T11:24:40.0798322Z #19 DONE 0.0s
+2026-10-11T11:24:40.1089980Z 
+2026-10-11T11:24:40.1091928Z #18 [build  9/10] RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked     pnpm install --frozen-lockfile --store-dir /pnpm/store
+2026-10-11T11:24:40.1093566Z #18 0.781 Scope: all 20 workspace projects
+2026-10-11T11:24:40.2498841Z #18 0.921 Lockfile is up to date, resolution step is skipped
+2026-10-11T11:24:40.4779692Z #18 1.003 Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-10-11T11:24:40.4780841Z #18 1.149 Packages: +620
+2026-10-11T11:24:40.4781968Z #18 1.149 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-10-11T11:24:40.6946387Z #18 1.366 
+2026-10-11T11:24:40.6948150Z #18 1.366    ╭───────────────────────────────────────────────────────────────────╮
+2026-10-11T11:24:40.6949313Z #18 1.366    │                                                                   │
+2026-10-11T11:24:40.6950896Z #18 1.366    │                Update available! 9.15.4 → 12.11.2.                │
+2026-10-11T11:24:40.6952065Z #18 1.366    │   Changelog: https://github.com/pnpm/pnpm/releases/tag/v12.11.2   │
+2026-10-11T11:24:40.6953158Z #18 1.366    │         Run "corepack install -g pnpm@12.11.2" to update.         │
+2026-10-11T11:24:40.6954154Z #18 1.366    │                                                                   │
+2026-10-11T11:24:40.6955188Z #18 1.366    ╰───────────────────────────────────────────────────────────────────╯
+2026-10-11T11:24:40.6955758Z #18 1.366 
+2026-10-11T11:24:41.3344957Z #18 2.006 Progress: resolved 620, reused 0, downloaded 107, added 102
+2026-10-11T11:24:42.3414283Z #18 3.010 Progress: resolved 620, reused 0, downloaded 182, added 170
+2026-10-11T11:24:43.3394855Z #18 4.010 Progress: resolved 620, reused 0, downloaded 208, added 192
+2026-10-11T11:24:44.3387489Z #18 5.010 Progress: resolved 620, reused 0, downloaded 304, added 291
+2026-10-11T11:24:45.3491503Z #18 6.018 Progress: resolved 620, reused 0, downloaded 409, added 396
+2026-10-11T11:24:46.3481868Z #18 7.018 Progress: resolved 620, reused 0, downloaded 427, added 415
+2026-10-11T11:24:47.3467460Z #18 8.018 Progress: resolved 620, reused 0, downloaded 437, added 424
+2026-10-11T11:24:48.3974884Z #18 9.018 Progress: resolved 620, reused 0, downloaded 453, added 438
+2026-10-11T11:24:49.3491398Z #18 10.02 Progress: resolved 620, reused 0, downloaded 539, added 523
+2026-10-11T11:24:50.3490215Z #18 11.02 Progress: resolved 620, reused 0, downloaded 577, added 559
+2026-10-11T11:24:51.3491224Z #18 12.02 Progress: resolved 620, reused 0, downloaded 619, added 606
+2026-10-11T11:24:51.8065224Z #18 12.48 Progress: resolved 620, reused 0, downloaded 620, added 620, done
+2026-10-11T11:24:52.1128191Z #18 12.78 .../node_modules/protobufjs postinstall$ node scripts/postinstall
+2026-10-11T11:24:52.2348087Z #18 12.79 .../node-pty@1.1.0/node_modules/node-pty install$ node scripts/prebuild.js || node-gyp rebuild
+2026-10-11T11:24:52.2349752Z #18 12.79 .../.pnpm/koffi@3.3.2/node_modules/koffi install$ node ./cnoke.cjs -P . -D src/koffi --prebuild --release
+2026-10-11T11:24:52.2351581Z #18 12.81 .../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+2026-10-11T11:24:52.2352619Z #18 12.81 .../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+2026-10-11T11:24:52.2353446Z #18 12.85 .../node_modules/protobufjs postinstall: Done
+2026-10-11T11:24:52.2354865Z #18 12.86 .../node-pty@1.1.0/node_modules/node-pty install: [32m> Checking prebuilds...[0m
+2026-10-11T11:24:52.2357245Z #18 12.86 .../node-pty@1.1.0/node_modules/node-pty install: [33m> Rebuilding because directory /workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/prebuilds/linux-x64 does not exist[0m
+2026-10-11T11:24:52.2359030Z #18 12.91 .../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+2026-10-11T11:24:52.3384550Z #18 12.92 .../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+2026-10-11T11:24:52.3385640Z #18 12.94 .../argon2@0.41.1/node_modules/argon2 install$ node-gyp-build
+2026-10-11T11:24:52.3386873Z #18 12.96 .../node-pty@1.1.0/node_modules/node-pty install: gyp info it worked if it ends with ok
+2026-10-11T11:24:52.3394325Z #18 12.96 .../node-pty@1.1.0/node_modules/node-pty install: gyp info using node-gyp@10.3.1
+2026-10-11T11:24:52.3396002Z #18 12.96 .../node-pty@1.1.0/node_modules/node-pty install: gyp info using node@22.19.0 | linux | x64
+2026-10-11T11:24:52.3400555Z #18 12.96 .../.pnpm/koffi@3.3.2/node_modules/koffi install: Done
+2026-10-11T11:24:52.3404276Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python 
+2026-10-11T11:24:52.5010653Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python Python is not set from command line or npm configuration
+2026-10-11T11:24:52.5012561Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python Python is not set from environment variable PYTHON
+2026-10-11T11:24:52.5014311Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python checking if "python3" can be used
+2026-10-11T11:24:52.5015875Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python - executable path is ""
+2026-10-11T11:24:52.5017357Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python - "" could not be run
+2026-10-11T11:24:52.5018877Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python checking if "python" can be used
+2026-10-11T11:24:52.5020641Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python - executable path is ""
+2026-10-11T11:24:52.5022102Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python - "" could not be run
+2026-10-11T11:24:52.5023387Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python 
+2026-10-11T11:24:52.5024889Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python **********************************************************
+2026-10-11T11:24:52.5026688Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python You need to install the latest version of Python.
+2026-10-11T11:24:52.5028582Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python Node-gyp should be able to find and use Python. If not,
+2026-10-11T11:24:52.5030582Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python you can try one of the following options:
+2026-10-11T11:24:52.5032442Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python - Use the switch --python="/path/to/pythonexecutable"
+2026-10-11T11:24:52.5034202Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python (accepted by both node-gyp and npm)
+2026-10-11T11:24:52.5036154Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python - Set the environment variable PYTHON
+2026-10-11T11:24:52.5037900Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python - Set the npm configuration variable python:
+2026-10-11T11:24:52.5039703Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python npm config set python "/path/to/pythonexecutable"
+2026-10-11T11:24:52.5041749Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python For more information consult the documentation at:
+2026-10-11T11:24:52.5043550Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python https://github.com/nodejs/node-gyp#installation
+2026-10-11T11:24:52.5045359Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python **********************************************************
+2026-10-11T11:24:52.5046771Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! find Python 
+2026-10-11T11:24:52.5047964Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! configure error 
+2026-10-11T11:24:52.5049491Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack Error: Could not find any Python installation to use
+2026-10-11T11:24:52.5051900Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack at PythonFinder.fail (/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/lib/find-python.js:306:11)
+2026-10-11T11:24:52.5054287Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack at PythonFinder.findPython (/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/lib/find-python.js:164:17)
+2026-10-11T11:24:52.5056740Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+2026-10-11T11:24:52.5058892Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack at async configure (/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/lib/configure.js:27:18)
+2026-10-11T11:24:52.5061226Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack at async run (/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/bin/node-gyp.js:81:18)
+2026-10-11T11:24:52.5062814Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! System Linux 6.17.0-1022-azure
+2026-10-11T11:24:52.5064651Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! command "/usr/local/bin/node" "/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/bin/node-gyp.js" "rebuild"
+2026-10-11T11:24:52.5066633Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! cwd /workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty
+2026-10-11T11:24:52.5067974Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! node -v v22.19.0
+2026-10-11T11:24:52.5069019Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! node-gyp -v v10.3.1
+2026-10-11T11:24:52.5070172Z #18 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! not ok 
+2026-10-11T11:24:52.5071027Z #18 13.02 .../node-pty@1.1.0/node_modules/node-pty install: Failed
+2026-10-11T11:24:52.5072131Z #18 13.02  ELIFECYCLE  Command failed with exit code 1.
+2026-10-11T11:24:54.9491931Z #18 ERROR: process "/bin/sh -c pnpm install --frozen-lockfile --store-dir /pnpm/store" did not complete successfully: exit code: 1
+2026-10-11T11:24:54.9659671Z ------
+2026-10-11T11:24:54.9661278Z  > [build  9/10] RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked     pnpm install --frozen-lockfile --store-dir /pnpm/store:
+2026-10-11T11:24:54.9663739Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack at async configure (/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/lib/configure.js:27:18)
+2026-10-11T11:24:54.9666356Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! stack at async run (/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/bin/node-gyp.js:81:18)
+2026-10-11T11:24:54.9668164Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! System Linux 6.17.0-1022-azure
+2026-10-11T11:24:54.9670390Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! command "/usr/local/bin/node" "/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/bin/node-gyp.js" "rebuild"
+2026-10-11T11:24:54.9672551Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! cwd /workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty
+2026-10-11T11:24:54.9674054Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! node -v v22.19.0
+2026-10-11T11:24:54.9675195Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! node-gyp -v v10.3.1
+2026-10-11T11:24:54.9676225Z 13.01 .../node-pty@1.1.0/node_modules/node-pty install: gyp ERR! not ok 
+2026-10-11T11:24:54.9677175Z 13.02 .../node-pty@1.1.0/node_modules/node-pty install: Failed
+2026-10-11T11:24:54.9678430Z 13.02  ELIFECYCLE  Command failed with exit code 1.
+2026-10-11T11:24:54.9679029Z ------
+2026-10-11T11:24:54.9721312Z ERROR: failed to build: failed to solve: process "/bin/sh -c pnpm install --frozen-lockfile --store-dir /pnpm/store" did not complete successfully: exit code: 1
+2026-10-11T11:24:54.9774016Z ##[error]Process completed with exit code 1.
+2026-10-11T11:24:54.9864091Z ##[group]Run mkdir -p ci-logs/services
+2026-10-11T11:24:54.9864701Z [36;1mmkdir -p ci-logs/services[0m
+2026-10-11T11:24:54.9865202Z [36;1mfor id in $(docker ps -aq); do[0m
+2026-10-11T11:24:54.9865877Z [36;1m  name="$(docker inspect --format '{{.Name}}' "$id" | sed 's#^/##')"[0m
+2026-10-11T11:24:54.9866996Z [36;1m  docker logs "$id" > "ci-logs/services/${name}.log" 2>&1[0m
+2026-10-11T11:24:54.9867581Z [36;1mdone[0m
+2026-10-11T11:24:54.9938196Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T11:24:54.9938685Z env:
+2026-10-11T11:24:54.9938879Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:54.9939115Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:54.9939464Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:54.9940497Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:54.9941419Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:54.9942008Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:54.9942403Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:54.9942826Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:54.9943350Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:54.9943752Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:54.9944278Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:54.9944746Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:54.9945034Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:54.9945732Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:54.9946090Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:54.9946533Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:54.9947129Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:54.9947712Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:54.9948073Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:54.9948413Z   S3_REGION: us-east-1
+2026-10-11T11:24:54.9948667Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:54.9948993Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:54.9949329Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:54.9949693Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:54.9950218Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:54.9950510Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:54.9950764Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:54.9951002Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:54.9951324Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:54.9951973Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:54.9952727Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:54.9953418Z   WORKMESH_BOOTSTRAP_TOKEN: QvfeZkrUx0Gcw51hsSQM46BHfzJATptac9ysCZ2qQ1M
+2026-10-11T11:24:54.9954021Z   PAGINATION_CURSOR_KEYS: ci:I2vcxXMqKy0FXPCLmrvtaouIqaRgNJeFpgoyjBX9Adw
+2026-10-11T11:24:54.9954428Z   PAGINATION_CURSOR_ACTIVE_KID: ci
+2026-10-11T11:24:54.9954869Z   AUTH_RATE_LIMIT_HMAC_KEY: 0ZMYUZK9bG2Q_BP72EavKVe8F2hklrN6Uua8-7ZHNbA
+2026-10-11T11:24:54.9955316Z ##[endgroup]
+2026-10-11T11:24:55.1333251Z ##[group]Run actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+2026-10-11T11:24:55.1333745Z with:
+2026-10-11T11:24:55.1333984Z   name: recovery-integration-raw-38135325940-1
+2026-10-11T11:24:55.1334293Z   path: ci-logs
+2026-10-11T11:24:55.1334508Z   if-no-files-found: error
+2026-10-11T11:24:55.1334741Z   retention-days: 14
+2026-10-11T11:24:55.1334957Z   compression-level: 6
+2026-10-11T11:24:55.1335172Z   overwrite: false
+2026-10-11T11:24:55.1335388Z   include-hidden-files: false
+2026-10-11T11:24:55.1335622Z env:
+2026-10-11T11:24:55.1335803Z   RUN_INTEGRATION: 1
+2026-10-11T11:24:55.1336019Z   RUN_RECOVERY_INTEGRATION: 1
+2026-10-11T11:24:55.1336253Z   RECOVERY_TEST_SUFFIX: ci
+2026-10-11T11:24:55.1336932Z   RECOVERY_SOURCE_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_source_test
+2026-10-11T11:24:55.1337673Z   RECOVERY_TARGET_DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:55.1338330Z   RECOVERY_TEST_S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:55.1338660Z   RECOVERY_TEST_S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:55.1339030Z   RECOVERY_TEST_S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:55.1339460Z   RECOVERY_SOURCE_S3_BUCKET: workmesh-recovery-source-test
+2026-10-11T11:24:55.1340556Z   RECOVERY_TARGET_S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:55.1341049Z   WORKMESH_POSTGRES_TOOL_CONTAINER: workmesh-ci-recovery-postgres
+2026-10-11T11:24:55.1341427Z   WORKMESH_POSTGRES_TOOL_HOST: 127.0.0.1
+2026-10-11T11:24:55.1341714Z   WORKMESH_POSTGRES_TOOL_PORT: 5432
+2026-10-11T11:24:55.1342281Z   DATABASE_URL: ***127.0.0.1:5432/workmesh_recovery_target_test
+2026-10-11T11:24:55.1342640Z   REDIS_URL: redis://127.0.0.1:6379
+2026-10-11T11:24:55.1342985Z   SESSION_SECRET: workmesh-ci-recovery-session-secret-00000001
+2026-10-11T11:24:55.1343489Z   WORKMESH_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+2026-10-11T11:24:55.1344014Z   WORKMESH_BUILD_SHA: f58ffce5fe78c2c88e9d6053eb46eba5d9aa68e7
+2026-10-11T11:24:55.1344364Z   S3_ENDPOINT: http://127.0.0.1:9000
+2026-10-11T11:24:55.1344627Z   S3_REGION: us-east-1
+2026-10-11T11:24:55.1344872Z   S3_BUCKET: workmesh-recovery-target-test
+2026-10-11T11:24:55.1345158Z   S3_ACCESS_KEY_ID: workmesh
+2026-10-11T11:24:55.1345439Z   S3_SECRET_ACCESS_KEY: WmCiRecoveryS3_2026_Z8k4P6n2R9t5
+2026-10-11T11:24:55.1345752Z   S3_FORCE_PATH_STYLE: true
+2026-10-11T11:24:55.1346009Z   NEXT_PUBLIC_API_URL: http://127.0.0.1:3001
+2026-10-11T11:24:55.1346294Z   WEB_ORIGIN: http://127.0.0.1:3000
+2026-10-11T11:24:55.1346548Z   WORKER_HEALTH_HOST: 127.0.0.1
+2026-10-11T11:24:55.1346796Z   WORKER_HEALTH_PORT: 3003
+2026-10-11T11:24:55.1347168Z   RECOVERY_SMOKE_AGENT_TOKEN: workmesh-recovery-agent-session-token
+2026-10-11T11:24:55.1348059Z   RECOVERY_TEST_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-report.json
+2026-10-11T11:24:55.1348719Z   RECOVERY_SMOKE_REPORT_PATH: /home/runner/work/WorkMesh/WorkMesh/ci-logs/recovery-service-smoke.json
+2026-10-11T11:24:55.1349331Z   WORKMESH_BOOTSTRAP_TOKEN: QvfeZkrUx0Gcw51hsSQM46BHfzJATptac9ysCZ2qQ1M
+2026-10-11T11:24:55.1350059Z   PAGINATION_CURSOR_KEYS: ci:I2vcxXMqKy0FXPCLmrvtaouIqaRgNJeFpgoyjBX9Adw
+2026-10-11T11:24:55.1350487Z   PAGINATION_CURSOR_ACTIVE_KID: ci
+2026-10-11T11:24:55.1350848Z   AUTH_RATE_LIMIT_HMAC_KEY: 0ZMYUZK9bG2Q_BP72EavKVe8F2hklrN6Uua8-7ZHNbA
+2026-10-11T11:24:55.1351205Z ##[endgroup]
+2026-10-11T11:24:55.3174929Z (node:4016) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-11T11:24:55.3176560Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-11T11:24:55.3882613Z With the provided path, there will be 338 files uploaded
+2026-10-11T11:24:55.3883567Z Artifact name is valid!
+2026-10-11T11:24:55.3884062Z Root directory input is valid!
+2026-10-11T11:24:55.7668837Z Beginning upload of artifact content to blob storage
+2026-10-11T11:24:56.2410067Z (node:4016) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-11T11:24:57.0188761Z Uploaded bytes 2338446
+2026-10-11T11:24:57.0995299Z Finished uploading artifact content to blob storage!
+2026-10-11T11:24:57.0997422Z SHA256 digest of uploaded artifact zip is bec07368dafa4987562ed15649fd07a14f223508ee5a9c24de59f98bdaf83d39
+2026-10-11T11:24:57.0998653Z Finalizing artifact upload
+2026-10-11T11:24:57.3392601Z Artifact recovery-integration-raw-38135325940-1.zip successfully finalized. Artifact ID 11700827520
+2026-10-11T11:24:57.3395025Z Artifact recovery-integration-raw-38135325940-1 has been successfully uploaded! Final size is 2338446 bytes. Artifact ID is 11700827520
+2026-10-11T11:24:57.3401418Z Artifact download URL: https://github.com/xurunxin/WorkMesh/actions/runs/38135325940/artifacts/11700827520
+2026-10-11T11:24:57.3684251Z Post job cleanup.
+2026-10-11T11:24:57.4771045Z [command]/usr/bin/git version
+2026-10-11T11:24:57.4824892Z git version 2.55.0
+2026-10-11T11:24:57.4878267Z Temporarily overriding HOME='/home/runner/work/_temp/5e9ed769-ed96-4a4e-b632-ca2dad67185d' before making global git config changes
+2026-10-11T11:24:57.4880395Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T11:24:57.4889073Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/WorkMesh/WorkMesh
+2026-10-11T11:24:57.4943005Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T11:24:57.5010602Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T11:24:57.5362529Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T11:24:57.5413143Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T11:24:57.5796078Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T11:24:57.5894344Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T11:24:57.6490817Z Cleaning up orphan processes
+2026-10-11T11:24:57.7021743Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11d5960a326750d5838078e36cf38b85af677262, actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020, actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

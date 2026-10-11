@@ -37,3 +37,15 @@ git merge --no-commit --no-ff 5a11c2a2e4da0d00f79e40d59a280bc3eb7a0d19
 当前工作树受保护；未删除主仓库、共享 store、用户配置、业务数据或任何历史拒目标。未创建容器、镜像、卷或网络。诊断采样首次逐文件启动 Git 耗时过长，已按准确进程身份停止该采样，改为一次读取 index；后续采样成功，未修改产品。资源收尾以新增运行账本和准确路径为准，保留失败证据后才清理本任务可确认无消费者的临时资源。
 
 当前报告仅证明准备恢复与成果取回，不声明产品完成，不声明历史失败日志已完整取得，也不声明三 OS/最终 CI 已成功。
+
+## 首轮 PR 原生 CI 实际失败与修正
+
+已推送恢复合并 `718350f83d4a74edca33051e939204e90bf89e4c`（parents 为 main20fb7358 与旧产品5a11），建立 [PR221](https://github.com/xurunxin/WorkMesh/pull/221)，触发 [CI435](https://github.com/xurunxin/WorkMesh/actions/runs/38135325940)。首次创建 PR 请求发生 TLS bad record MAC；只读确认无现有 PR 后重试创建成功，没有重复卡或工作树。
+
+CI435 的 Linux 原生平台及单元已成功，macOS 已实际执行，Windows 尚卡在 checkout。三份完整失败 job 日志通过现有 gh 只读 API 取得，保存于本目录 `ci435-*-first-failure.log`；它们属于 **CI435**，不冒原 18:50/18:56 平台准备日志。
+
+- Windows runner 的准确首败为 `docs/reviews/a2-backend/runs/a2-backend-491ca462/playwright/root-mixed/output/human-reflow-project-rail-and-shell-reflow-at-1440x1000-authenticated/attachments/project-rail-1440x1000-screenshot-cf8819a7e9dd171df25684d0d3da1ce55860688a.png: Filename too long`。新增检出前的 Windows 专用长路径设置与读回；仅作用一次性 CI runner，不改变 Blueberry 或共享主仓库配置。
+- macOS 5 项中 Keychain 跨进程存储项通过，其余 4 项在祖先 ACL 获取时报 `CONNECTOR_UNSAFE_ACL`。Apple 的 [acl_file.c](https://github.com/apple-oss-distributions/Libc/blob/main/posix1e/acl_file.c) 和 [filesec.c](https://github.com/apple-oss-distributions/Libc/blob/main/gen/filesec.c) 表明：现存对象没有扩展 ACL 时，FILESEC_ACL 属性查询返回 ENOENT，acl_get_file 返回 NULL。修正仅接受 NULL/ENOENT 且重新 lstat 证明 dev/inode/owner/mode/ctime 未变的目录；其他读取失败仍拒绝。有 ACL 的修改型 allow 检查保持，并新增 macOS 实际无 ACL 正例、delete_child ACL 拒例及移除 ACL 后恢复正例。不以放开祖先权限解决。
+- 灾难恢复镜像构建在 node-pty 安装时失败：`Could not find any Python installation to use`。六个全 workspace 安装的 production/Lite **build stage** 补 python3/make/g++，工具不进入原独立 runtime stage。四个开发镜像同样安装了含 API 的 workspace，API 的测试依赖新增连接器后须补其 manifest 与 native 编译工具。没有新增生产服务或发布动作。
+
+本机 Node 22.19.0 ZIP 已按同版本官方下载清单验证 SHA-256；pnpm9 实测共享 store 为 `X:/packages/pnpm/v3`，新机冷缓存首次离线安装失败 `ERR_PNPM_NO_OFFLINE_TARBALL`，原日志保留。随后冻结锁、copy 导入、独立 `.tmp/workmesh-virtual-store` 的连接器依赖安装成功。后续检查与资源账本另列，未用未提权机器冒第二用户通过。
