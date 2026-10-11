@@ -46,7 +46,8 @@
     "test:restore:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restore-rehearsal.mts",
     "test:acceptance:retention": "pnpm -C apps/worker exec tsx ../../scripts/retention-restart-acceptance.mts",
     "upgrade:retention:production": "pnpm -C apps/worker exec tsx ../../scripts/retention-production-upgrade.mts",
-    "test:conformance:integration": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration"
+    "test:conformance:integration": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/conformance test:integration",
+    "test:acceptance:m4": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/conformance acceptance:optional"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

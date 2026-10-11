@@ -1,0 +1,104 @@
+
+> workmesh@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> turbo run typecheck
+
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running typecheck in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/contracts:typecheck: cache miss, executing 5b419a186bb5b51e
+@workmesh/git-provider:typecheck: cache miss, executing b6d883e4726cb977
+@workmesh/ui:typecheck: cache miss, executing 4b31e164c3f0f095
+@workmesh/artifact-storage:typecheck: cache miss, executing a06e606178305211
+@workmesh/observability:typecheck: cache miss, executing d864ccc6c4397308
+@workmesh/contracts:typecheck: 
+@workmesh/contracts:typecheck: > @workmesh/contracts@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:typecheck: > tsc --noEmit
+@workmesh/contracts:typecheck: 
+@workmesh/git-provider:typecheck: 
+@workmesh/git-provider:typecheck: > @workmesh/git-provider@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:typecheck: > tsc --noEmit
+@workmesh/git-provider:typecheck: 
+@workmesh/ui:typecheck: 
+@workmesh/ui:typecheck: > @workmesh/ui@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:typecheck: > tsc --noEmit
+@workmesh/ui:typecheck: 
+@workmesh/observability:typecheck: 
+@workmesh/observability:typecheck: > @workmesh/observability@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:typecheck: > tsc --noEmit
+@workmesh/observability:typecheck: 
+@workmesh/artifact-storage:typecheck: 
+@workmesh/artifact-storage:typecheck: > @workmesh/artifact-storage@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:typecheck: > tsc --noEmit
+@workmesh/artifact-storage:typecheck: 
+@workmesh/web:typecheck: cache miss, executing 39f7f80924115080
+@workmesh/domain:typecheck: cache miss, executing 9bf463b511d7a7db
+@workmesh/a2a-adapter:typecheck: cache miss, executing 743dc02768c29486
+@workmesh/config:typecheck: cache miss, executing b56f1b77aa61aba2
+@workmesh/agent-sdk:typecheck: cache miss, executing 656a7217cf8108a0
+@workmesh/agent-runner:typecheck: cache miss, executing a8c06b24848d2b03
+@workmesh/web:typecheck: 
+@workmesh/web:typecheck: > @workmesh/web@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\web
+@workmesh/web:typecheck: > tsc --noEmit
+@workmesh/web:typecheck: 
+@workmesh/domain:typecheck: 
+@workmesh/domain:typecheck: > @workmesh/domain@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\domain
+@workmesh/domain:typecheck: > tsc --noEmit
+@workmesh/domain:typecheck: 
+@workmesh/a2a-adapter:typecheck: 
+@workmesh/a2a-adapter:typecheck: > @workmesh/a2a-adapter@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\a2a-adapter
+@workmesh/a2a-adapter:typecheck: > tsc --noEmit
+@workmesh/a2a-adapter:typecheck: 
+@workmesh/config:typecheck: 
+@workmesh/config:typecheck: > @workmesh/config@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\config
+@workmesh/config:typecheck: > tsc --noEmit
+@workmesh/config:typecheck: 
+@workmesh/agent-sdk:typecheck: 
+@workmesh/agent-sdk:typecheck: > @workmesh/agent-sdk@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:typecheck: > tsc --noEmit
+@workmesh/agent-sdk:typecheck: 
+@workmesh/agent-runner:typecheck: 
+@workmesh/agent-runner:typecheck: > @workmesh/agent-runner@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\agent-runner
+@workmesh/agent-runner:typecheck: > tsc --noEmit
+@workmesh/agent-runner:typecheck: 
+@workmesh/db:typecheck: cache miss, executing bcfe6be2bdb1cd71
+@workmesh/db:typecheck: 
+@workmesh/db:typecheck: > @workmesh/db@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+@workmesh/db:typecheck: > tsc --noEmit
+@workmesh/db:typecheck: 
+@workmesh/fake-agent:typecheck: cache miss, executing 4dc666e2bde6f0aa
+@workmesh/mcp:typecheck: cache miss, executing 52e6b9b067ea7d48
+@workmesh/fake-agent:typecheck: 
+@workmesh/fake-agent:typecheck: > @workmesh/fake-agent@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\fake-agent
+@workmesh/fake-agent:typecheck: > tsc --noEmit
+@workmesh/fake-agent:typecheck: 
+@workmesh/mcp:typecheck: 
+@workmesh/mcp:typecheck: > @workmesh/mcp@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\mcp
+@workmesh/mcp:typecheck: > tsc --noEmit
+@workmesh/mcp:typecheck: 
+@workmesh/worker:typecheck: cache miss, executing bc1d51fcb14e5ee7
+@workmesh/recovery:typecheck: cache miss, executing cf91c2b40c1dae75
+@workmesh/worker:typecheck: 
+@workmesh/worker:typecheck: > @workmesh/worker@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\worker
+@workmesh/worker:typecheck: > tsc --noEmit
+@workmesh/worker:typecheck: 
+@workmesh/recovery:typecheck: 
+@workmesh/recovery:typecheck: > @workmesh/recovery@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\recovery
+@workmesh/recovery:typecheck: > tsc --noEmit
+@workmesh/recovery:typecheck: 
+@workmesh/api:typecheck: cache miss, executing 8a56e38d707b8156
+@workmesh/api:typecheck: 
+@workmesh/api:typecheck: > @workmesh/api@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\api
+@workmesh/api:typecheck: > tsc --noEmit
+@workmesh/api:typecheck: 
+@workmesh/conformance:typecheck: cache miss, executing 352317336c0df9d7
+@workmesh/conformance:typecheck: 
+@workmesh/conformance:typecheck: > @workmesh/conformance@ typecheck C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\conformance
+@workmesh/conformance:typecheck: > tsc --noEmit
+@workmesh/conformance:typecheck: 
+
+ Tasks:    18 successful, 18 total
+Cached:    0 cached, 18 total
+  Time:    53.028s 
+

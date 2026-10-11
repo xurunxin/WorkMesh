@@ -1,0 +1,5359 @@
+{
+  "names": [
+    "get_agent_discovery",
+    "list_saved_views",
+    "create_saved_view",
+    "list_child_sessions",
+    "list_work_item_comments",
+    "get_decision",
+    "list_handoffs",
+    "export_document_markdown",
+    "list_work_items",
+    "list_events",
+    "list_session_activities",
+    "get_work_item",
+    "list_project_milestones",
+    "get_milestone",
+    "list_documents",
+    "get_document",
+    "list_document_history",
+    "get_document_revision",
+    "diff_document_revisions",
+    "list_work_item_relations",
+    "prepare_project_import",
+    "list_projects",
+    "get_project",
+    "get_work_room",
+    "list_inbox_items",
+    "get_inbox_item",
+    "list_human_attention",
+    "get_human_attention",
+    "get_control_center",
+    "get_project_control_center",
+    "explain_agent_session",
+    "get_work_item_execution_summary",
+    "preview_agent_session_control",
+    "heartbeat_lease",
+    "renew_lease",
+    "release_lease",
+    "consume_approval",
+    "stop_ack",
+    "create_document",
+    "update_document",
+    "restore_document_revision",
+    "publish_delivery_artifact",
+    "request_artifact_upload",
+    "finalize_artifact_upload",
+    "draft_project_update",
+    "post_work_room_message",
+    "claim_inbox_item",
+    "acknowledge_inbox_item",
+    "reply_inbox_item",
+    "comment_plan_step",
+    "propose_plan_step_assignment",
+    "create_work_item_decision",
+    "create_project_decision",
+    "create_session_decision",
+    "create_child_session",
+    "append_context_delta",
+    "create_review_delegation",
+    "acquire_lease",
+    "offer_handoff",
+    "request_handoff",
+    "transition_agent_session_state",
+    "heartbeat",
+    "append_activity",
+    "publish_plan",
+    "send_message",
+    "ask",
+    "request_approval",
+    "publish_artifact",
+    "complete_session",
+    "fail_session",
+    "list_agent_sessions",
+    "list_session_plan_versions",
+    "list_approvals",
+    "get_approval",
+    "list_leases",
+    "list_recovery_items",
+    "get_recovery_item",
+    "get_server_info",
+    "get_server_features",
+    "get_agent_capabilities",
+    "get_agent_session",
+    "get_session_context",
+    "get_session_plan",
+    "get_workspace_guidance",
+    "get_team_guidance",
+    "get_project_guidance",
+    "get_artifact_upload_status",
+    "list_work_item_artifacts",
+    "download_verified_artifact",
+    "get_project_delivery",
+    "get_project_health_history",
+    "cancel_artifact_upload",
+    "create_project_health_update",
+    "suggest_work_item_completion"
+  ],
+  "projection": {
+    "mode": "read-write",
+    "bindings": [
+      {
+        "bindingId": "resource:server-info",
+        "operationIds": [
+          "getServerInfo"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "eligible",
+              "reasons": [],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "eligible",
+          "reasons": [],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "resource:server-features",
+        "operationIds": [
+          "getDeploymentFeatures"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "eligible",
+              "reasons": [],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "eligible",
+          "reasons": [],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "resource:agent-capabilities",
+        "operationIds": [
+          "getAgentCapabilityManifest"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "eligible",
+              "reasons": [],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "eligible",
+          "reasons": [],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_teams",
+        "operationIds": [
+          "listTeams"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_workflow_states",
+        "operationIds": [
+          "listWorkflowStates"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:resolve_identifier",
+        "operationIds": [
+          "listTeams",
+          "listProjects",
+          "listWorkflowStates",
+          "listWorkItems",
+          "getWorkItem",
+          "listProjectMilestones"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:prepare_project_import",
+        "operationIds": [],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "eligible",
+          "reasons": [],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_projects",
+        "operationIds": [
+          "listProjects"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:apply_project_import",
+        "operationIds": [
+          "listTeams",
+          "listWorkflowStates",
+          "createProject",
+          "createProjectMilestone",
+          "createWorkItem",
+          "createWorkItemRelation"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:create_project",
+        "operationIds": [
+          "createProject"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_project",
+        "operationIds": [
+          "getProject"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:update_project",
+        "operationIds": [
+          "updateProject"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_claimable_work_items",
+        "operationIds": [
+          "listWorkItems"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_work_items",
+        "operationIds": [
+          "listWorkItems"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_work_item",
+        "operationIds": [
+          "createWorkItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "resource:work-item",
+        "operationIds": [
+          "getWorkItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_work_item",
+        "operationIds": [
+          "getWorkItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:update_work_item",
+        "operationIds": [
+          "updateWorkItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_events",
+        "operationIds": [
+          "listEvents"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:delegate_work_item",
+        "operationIds": [
+          "delegateAndStartAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:claim_work_item",
+        "operationIds": [
+          "claimWorkItem"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "resource:agent-session",
+        "operationIds": [
+          "getAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:ack_agent_session",
+        "operationIds": [
+          "acknowledgeAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "SESSION_STATE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "SESSION_STATE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:heartbeat",
+        "operationIds": [
+          "heartbeatAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:transition_agent_session_state",
+        "operationIds": [
+          "transitionAgentSessionState"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:session-activity",
+        "operationIds": [
+          "listAgentActivities"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_session_activities",
+        "operationIds": [
+          "listAgentActivities"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:append_activity",
+        "operationIds": [
+          "appendAgentActivity"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:send_message",
+        "operationIds": [
+          "appendAgentActivity"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:ask",
+        "operationIds": [
+          "appendAgentActivity"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:session-plan",
+        "operationIds": [
+          "getAgentPlan"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:publish_plan",
+        "operationIds": [
+          "publishAgentPlan"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:session-context",
+        "operationIds": [
+          "getAgentSessionContext"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:complete_session",
+        "operationIds": [
+          "completeAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:fail_session",
+        "operationIds": [
+          "failAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:publish_artifact",
+        "operationIds": [
+          "publishArtifact"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:request_approval",
+        "operationIds": [
+          "requestApproval"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_human_attention",
+        "operationIds": [
+          "listHumanAttention"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "attentionScope",
+                "attentionInboxRecipient"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "attentionScope",
+            "attentionInboxRecipient"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_human_attention",
+        "operationIds": [
+          "getHumanAttention"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "attentionScope",
+                "attentionInboxRecipient"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "attentionScope",
+            "attentionInboxRecipient"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_control_center",
+        "operationIds": [
+          "listControlCenter"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "controlSourceScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "controlSourceScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_project_control_center",
+        "operationIds": [
+          "getProjectControlCenter"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "controlSourceScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "controlSourceScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:explain_agent_session",
+        "operationIds": [
+          "explainAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "readSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "readSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_work_item_execution_summary",
+        "operationIds": [
+          "getWorkItemExecutionSummary"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "controlSourceScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "controlSourceScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:preview_agent_session_control",
+        "operationIds": [
+          "previewAgentSessionControl"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "readSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "readSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_work_room",
+        "operationIds": [
+          "getWorkRoom"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session_without_target",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "roomSubjectBinding"
+              ]
+            }
+          },
+          {
+            "variant": "current_session_without_target",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "roomSubjectBinding"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "roomSubjectBinding"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:post_work_room_message",
+        "operationIds": [
+          "postWorkRoomMessage"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session_without_target",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "roomLineageScope",
+                "messageIntent"
+              ]
+            }
+          },
+          {
+            "variant": "current_session_without_target",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "roomLineageScope",
+                "messageIntent"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "roomLineageScope",
+            "messageIntent"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_inbox_items",
+        "operationIds": [
+          "listInbox"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "inboxAudience",
+                "inboxSourceScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "inboxAudience",
+            "inboxSourceScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_inbox_item",
+        "operationIds": [
+          "getInboxItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "inboxAudience",
+                "inboxSourceScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "inboxAudience",
+            "inboxSourceScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:claim_inbox_item",
+        "operationIds": [
+          "claimInboxItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "inboxAudience",
+                "inboxSourceScope",
+                "inboxStatus"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "inboxAudience",
+            "inboxSourceScope",
+            "inboxStatus"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:acknowledge_inbox_item",
+        "operationIds": [
+          "acknowledgeInboxItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "inboxAudience",
+                "inboxSourceScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "inboxAudience",
+            "inboxSourceScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:reply_inbox_item",
+        "operationIds": [
+          "replyInboxItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "inboxAudience",
+                "inboxSourceScope",
+                "inboxStatus",
+                "inboxReplySourceLive",
+                "replyKind"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "inboxAudience",
+            "inboxSourceScope",
+            "inboxStatus",
+            "inboxReplySourceLive",
+            "replyKind"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:acquire_lease",
+        "operationIds": [
+          "acquireLease"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "leaseResourceBinding",
+                "leaseConflictFree"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "leaseResourceBinding",
+            "leaseConflictFree"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:offer_handoff",
+        "operationIds": [
+          "offerHandoff"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "handoffSourceMatches",
+                "handoffTargetGrant",
+                "handoffScopeNarrow"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "handoffSourceMatches",
+            "handoffTargetGrant",
+            "handoffScopeNarrow"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:inspect_pending_handoff",
+        "operationIds": [
+          "inspectExactTargetHandoff"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "INSTALLATION_TOKEN_REQUIRED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:request_handoff",
+        "operationIds": [
+          "requestHandoff"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "handoffSourceMatches",
+                "handoffStatus",
+                "handoffTargetGrant"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "handoffSourceMatches",
+            "handoffStatus",
+            "handoffTargetGrant"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:reject_handoff",
+        "operationIds": [
+          "rejectHandoff"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "INSTALLATION_TOKEN_REQUIRED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:comment_plan_step",
+        "operationIds": [
+          "commentOnPlanStep"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "currentPlanStep"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "currentPlanStep"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:propose_plan_step_assignment",
+        "operationIds": [
+          "proposePlanAssignment"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "currentPlanStep"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "currentPlanStep"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_child_session",
+        "operationIds": [
+          "createChildAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "currentPlanStep",
+                "childTargetGrant",
+                "childCapacityAvailable",
+                "childExactInstallation"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "currentPlanStep",
+            "childTargetGrant",
+            "childCapacityAvailable",
+            "childExactInstallation"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:append_context_delta",
+        "operationIds": [
+          "appendContextDelta"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "contextBaseMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "contextBaseMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_review_delegation",
+        "operationIds": [
+          "createReviewDelegation"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "currentPlanStep",
+                "childTargetGrant",
+                "childCapacityAvailable",
+                "childExactInstallation",
+                "reviewTargetCaps",
+                "reviewStepLeaseFree"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "currentPlanStep",
+            "childTargetGrant",
+            "childCapacityAvailable",
+            "childExactInstallation",
+            "reviewTargetCaps",
+            "reviewStepLeaseFree"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:workspace-guidance",
+        "operationIds": [
+          "getWorkspaceGuidance"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "guidanceScopeMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "guidanceScopeMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:team-guidance",
+        "operationIds": [
+          "getTeamGuidance"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "guidanceScopeMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "guidanceScopeMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:project-guidance",
+        "operationIds": [
+          "getProjectGuidance"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "guidanceScopeMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "guidanceScopeMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:repository-context",
+        "operationIds": [
+          "getRepositoryContext"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:create_repository_branch",
+        "operationIds": [
+          "requestProviderAction"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:create_repository_commit",
+        "operationIds": [
+          "requestProviderAction"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:open_pull_request",
+        "operationIds": [
+          "requestProviderAction"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:publish_delivery_artifact",
+        "operationIds": [
+          "publishDeliveryArtifact"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch",
+                "idempotencyValid"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch",
+            "idempotencyValid"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:request_artifact_upload",
+        "operationIds": [
+          "requestArtifactUpload"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch",
+                "idempotencyValid"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch",
+            "idempotencyValid"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:finalize_artifact_upload",
+        "operationIds": [
+          "finalizeArtifactUpload"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch",
+                "idempotencyValid"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch",
+            "idempotencyValid"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:publish_structured_review",
+        "operationIds": [
+          "publishStructuredReview"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:merge_pull_request",
+        "operationIds": [
+          "requestPullRequestMerge"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:retry_ci_check",
+        "operationIds": [
+          "retryPullRequestCheck"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_project_milestones",
+        "operationIds": [
+          "listProjectMilestones"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_milestone",
+        "operationIds": [
+          "createProjectMilestone"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_milestone",
+        "operationIds": [
+          "getMilestone"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:update_milestone",
+        "operationIds": [
+          "updateMilestone"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:delete_milestone",
+        "operationIds": [
+          "deleteMilestone"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_documents",
+        "operationIds": [
+          "listDocuments"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_document",
+        "operationIds": [
+          "createDocument"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_document",
+        "operationIds": [
+          "getDocument"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:update_document",
+        "operationIds": [
+          "updateDocument"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope",
+                "documentStatus",
+                "documentBaseMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope",
+            "documentStatus",
+            "documentBaseMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_document_history",
+        "operationIds": [
+          "listDocumentHistory"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "resource:document-revision",
+        "operationIds": [
+          "getDocumentRevision"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_document_revision",
+        "operationIds": [
+          "getDocumentRevision"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:diff_document_revisions",
+        "operationIds": [
+          "diffDocumentRevisions"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:restore_document_revision",
+        "operationIds": [
+          "restoreDocumentRevision"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope",
+                "documentStatus",
+                "documentBaseMatches",
+                "restoreChangesContent"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope",
+            "documentStatus",
+            "documentBaseMatches",
+            "restoreChangesContent"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_work_item_relations",
+        "operationIds": [
+          "listWorkItemRelations"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:add_work_item_relation",
+        "operationIds": [
+          "createWorkItemRelation"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:remove_work_item_relation",
+        "operationIds": [
+          "deleteWorkItemRelation"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "ROLE_REQUIRED",
+                "RESOURCE_SCOPE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ROLE_REQUIRED",
+            "RESOURCE_SCOPE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:draft_project_update",
+        "operationIds": [
+          "createProjectUpdateDraft"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch",
+                "idempotencyValid"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch",
+            "idempotencyValid"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:publish_project_update",
+        "operationIds": [
+          "publishProjectUpdate"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CREDENTIAL_MODE_MISMATCH"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CREDENTIAL_MODE_MISMATCH"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:decide_completion_suggestion",
+        "operationIds": [
+          "decideCompletionSuggestion"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CREDENTIAL_MODE_MISMATCH"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CREDENTIAL_MODE_MISMATCH"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:verify_connection",
+        "operationIds": [
+          "getAgentCapabilityManifest",
+          "getCurrentAgentConnectionIdentity",
+          "listTeams"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_current_identity",
+        "operationIds": [
+          "getAgentCapabilityManifest",
+          "getCurrentAgentConnectionIdentity"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_workmesh_context",
+        "operationIds": [
+          "getAgentCapabilityManifest",
+          "getCurrentAgentConnectionIdentity",
+          "listTeams",
+          "listWorkflowStates",
+          "getServerInfo",
+          "getDeploymentFeatures"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "ADAPTER_NOT_IMPLEMENTED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_server_info",
+        "operationIds": [
+          "getServerInfo"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "eligible",
+              "reasons": [],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "eligible",
+          "reasons": [],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_server_features",
+        "operationIds": [
+          "getDeploymentFeatures"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "eligible",
+              "reasons": [],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "eligible",
+          "reasons": [],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_agent_capabilities",
+        "operationIds": [
+          "getAgentCapabilityManifest"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "eligible",
+              "reasons": [],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "eligible",
+          "reasons": [],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_agent_session",
+        "operationIds": [
+          "getAgentSession"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_session_plan",
+        "operationIds": [
+          "getAgentPlan"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_session_context",
+        "operationIds": [
+          "getAgentSessionContext"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_workspace_guidance",
+        "operationIds": [
+          "getWorkspaceGuidance"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "guidanceScopeMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "guidanceScopeMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_team_guidance",
+        "operationIds": [
+          "getTeamGuidance"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "guidanceScopeMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "guidanceScopeMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_project_guidance",
+        "operationIds": [
+          "getProjectGuidance"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "guidanceScopeMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "guidanceScopeMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_repository_context",
+        "operationIds": [
+          "getRepositoryContext"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_agent_sessions",
+        "operationIds": [
+          "listAgentSessions"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "readSessionMatches",
+                "readObjectSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "readSessionMatches",
+            "readObjectSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_session_plan_versions",
+        "operationIds": [
+          "listAgentPlanVersions"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "readSessionMatches",
+                "readObjectSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "readSessionMatches",
+            "readObjectSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_approvals",
+        "operationIds": [
+          "listApprovals"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "readSessionMatches",
+                "readObjectSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "readSessionMatches",
+            "readObjectSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_approval",
+        "operationIds": [
+          "getApproval"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "readSessionMatches",
+                "readObjectSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "readSessionMatches",
+            "readObjectSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_leases",
+        "operationIds": [
+          "listLeases"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "leaseHolderMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "leaseHolderMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:heartbeat_lease",
+        "operationIds": [
+          "heartbeatLease"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "leaseBound",
+                "leaseHolderMatches",
+                "leaseStatus"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "leaseBound",
+            "leaseHolderMatches",
+            "leaseStatus"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:renew_lease",
+        "operationIds": [
+          "renewLease"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "leaseBound",
+                "leaseHolderMatches",
+                "leaseStatus",
+                "leaseNotExpired"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "leaseBound",
+            "leaseHolderMatches",
+            "leaseStatus",
+            "leaseNotExpired"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:release_lease",
+        "operationIds": [
+          "releaseLease"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "leaseBound",
+                "leaseHolderMatches",
+                "leaseStatus"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "leaseBound",
+            "leaseHolderMatches",
+            "leaseStatus"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_recovery_items",
+        "operationIds": [
+          "listRecoveryItems"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "readSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "readSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_recovery_item",
+        "operationIds": [
+          "getRecoveryItem"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "readSessionMatches"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "readSessionMatches"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:consume_approval",
+        "operationIds": [
+          "consumeApproval"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "revisionMatches",
+                "approvalBound",
+                "approvalSessionMatches",
+                "approvalUsable"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "revisionMatches",
+            "approvalBound",
+            "approvalSessionMatches",
+            "approvalUsable"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:stop_ack",
+        "operationIds": [
+          "acknowledgeAgentSessionStop"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "SESSION_STATE_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "SESSION_STATE_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_session_execution_result",
+        "operationIds": [
+          "getAgentSessionExecutionResult"
+        ],
+        "registered": true,
+        "deploymentSupported": false,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "INSTALLATION_TOKEN_REQUIRED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_work_item_comments",
+        "operationIds": [
+          "listWorkItemComments"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "workItemExact"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "workItemExact"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:export_document_markdown",
+        "operationIds": [
+          "exportDocumentMarkdown"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "documentOwnerBinding",
+                "documentOwnerCapabilityScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "documentOwnerBinding",
+            "documentOwnerCapabilityScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_work_item_decision",
+        "operationIds": [
+          "createWorkItemDecision"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "decisionSubjectBinding"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "decisionSubjectBinding"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_project_decision",
+        "operationIds": [
+          "createProjectDecision"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "decisionSubjectBinding"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "decisionSubjectBinding"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_session_decision",
+        "operationIds": [
+          "createSessionDecision"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "idempotencyValid",
+                "decisionSubjectBinding"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "idempotencyValid",
+            "decisionSubjectBinding"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_decision",
+        "operationIds": [
+          "getDecision"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "decisionSubjectBinding"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "decisionSubjectBinding"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_handoffs",
+        "operationIds": [
+          "listHandoffs"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "routeResolvedScope",
+                "handoffVisibleScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "routeResolvedScope",
+            "handoffVisibleScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_child_sessions",
+        "operationIds": [
+          "listAgentSessionChildren"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_repositories",
+        "operationIds": [
+          "listRepositories"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_artifact_upload_status",
+        "operationIds": [
+          "getArtifactUploadStatus"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:cancel_artifact_upload",
+        "operationIds": [
+          "cancelArtifactUpload"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch",
+                "idempotencyValid"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch",
+            "idempotencyValid"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_work_item_artifacts",
+        "operationIds": [
+          "listWorkItemArtifacts"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:download_verified_artifact",
+        "operationIds": [
+          "downloadVerifiedArtifact"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_project_delivery",
+        "operationIds": [
+          "getProjectDelivery"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:suggest_work_item_completion",
+        "operationIds": [
+          "suggestWorkItemCompletion"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch",
+                "idempotencyValid"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch",
+            "idempotencyValid"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_project_health_history",
+        "operationIds": [
+          "getProjectHealthHistory"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_project_health_update",
+        "operationIds": [
+          "createProjectHealthUpdate"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "domainTargetFactsMatch",
+                "idempotencyValid",
+                "publish"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "domainTargetFactsMatch",
+            "idempotencyValid",
+            "publish"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:get_provider_action",
+        "operationIds": [
+          "getProviderAction"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "self_execution",
+        "identityVariants": [
+          {
+            "variant": "self_execution",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_cycles",
+        "operationIds": [
+          "listCycles"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_initiatives",
+        "operationIds": [
+          "listInitiatives"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_initiative_rollup",
+        "operationIds": [
+          "getInitiativeRollup"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_saved_views",
+        "operationIds": [
+          "listSavedViews"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "savedViewVisibleScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "savedViewVisibleScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:create_saved_view",
+        "operationIds": [
+          "createSavedView"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": true,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "requires_target_check",
+              "reasons": [
+                "TARGET_CHECK_REQUIRED"
+              ],
+              "pendingChecks": [
+                "idempotencyValid",
+                "savedViewVisibleScope"
+              ]
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "requires_target_check",
+          "reasons": [
+            "TARGET_CHECK_REQUIRED"
+          ],
+          "pendingChecks": [
+            "idempotencyValid",
+            "savedViewVisibleScope"
+          ]
+        }
+      },
+      {
+        "bindingId": "tool:list_advanced_views",
+        "operationIds": [
+          "listAdvancedViews"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_advanced_view_results",
+        "operationIds": [
+          "evaluateAdvancedView"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_automation_rules",
+        "operationIds": [
+          "listAutomationRules"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_automation_runs",
+        "operationIds": [
+          "listAutomationRuns"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_automation_run",
+        "operationIds": [
+          "getAutomationRun"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_loops",
+        "operationIds": [
+          "listLoops"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:run_loop_now",
+        "operationIds": [
+          "runLoopNow"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "CAPABILITY_DENIED",
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "CAPABILITY_DENIED",
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:record_usage",
+        "operationIds": [
+          "recordUsage"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_usage_summary",
+        "operationIds": [
+          "getUsageSummary"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:list_templates",
+        "operationIds": [
+          "listTemplates"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      },
+      {
+        "bindingId": "tool:get_a2a_task_events",
+        "operationIds": [
+          "streamA2ATaskEvents"
+        ],
+        "registered": true,
+        "deploymentSupported": true,
+        "discoverable": false,
+        "identityVariant": "current_session",
+        "identityVariants": [
+          {
+            "variant": "current_session",
+            "deploymentSupported": true,
+            "eligibility": {
+              "status": "blocked",
+              "reasons": [
+                "FEATURE_DISABLED"
+              ],
+              "pendingChecks": []
+            }
+          }
+        ],
+        "eligibility": {
+          "status": "blocked",
+          "reasons": [
+            "FEATURE_DISABLED"
+          ],
+          "pendingChecks": []
+        }
+      }
+    ],
+    "allowedOperations": [
+      "getAgentCapabilityManifest",
+      "getDeploymentFeatures",
+      "getServerInfo"
+    ]
+  },
+  "foreign": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"code\":\"SESSION_BINDING_MISMATCH\",\"message\":\"An execution credential can only bind its own Session\",\"correlationId\":\"mcp:aef337f0-620a-4592-80a4-9a5633a9f611\",\"safeNextAction\":\"Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent.\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error": {
+        "code": "SESSION_BINDING_MISMATCH",
+        "message": "An execution credential can only bind its own Session",
+        "correlationId": "mcp:aef337f0-620a-4592-80a4-9a5633a9f611",
+        "safeNextAction": "Inspect the correlation ID, resolve the reported cause, and retry only when the operation remains safe and idempotent."
+      }
+    },
+    "isError": true
+  }
+}

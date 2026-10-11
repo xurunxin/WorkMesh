@@ -8,7 +8,7 @@ Initiative 使用与列表一致的 live Session、Delegation、principal、Team
 
 A2A 保持独立十进制 protocol cursor，扫描最多 200 原事件，空映射页也推进扫描位置。它具有既有 delivery 派生写，初始授权和扫描之后还须最终授权。事务首条查询之前明确 READ COMMITTED，最终语句用 `statement_timestamp()` 检查原凭据、overlap、Session、Delegation、principal、Team grant、binding/task；其他调用默认 `now()` 不变。E、C、Human 凭据扫描后自然到期、已提交撤权、空/非空页、原 RR 连接、故障回滚和并发去重均由真实 PostgreSQL 用例验证，不以静态文本或旧 15 个测试代替。
 
-M4 增量参与 discovery 生成，并同时替换四项旧 Human 查询条件和 queryDifferences 阻断。未知目标仍为 `requires_target_check`，准确 pendingChecks 由 REST 调用时重核。注册证据来自公开 `registerTool/registerResource` 实际调用，区别于已过滤的 tools/list。旧 138 bindings、137 映射及三项 health/completion 身份变体逐字段保留。生成器验证捕获源码完整字节；缺注册、未知操作、改写旧 binding 或捕获过期均在写派生文件之前拒绝。
+M4 增量参与 discovery 生成，并同时替换四项旧 Human 查询条件和 queryDifferences 阻断。未知目标仍为 `requires_target_check`，准确 pendingChecks 由 REST 调用时重核。注册证据来自公开 `registerTool/registerResource` 实际调用，区别于已过滤的 tools/list。旧 138 bindings、137 映射及三项 health/completion 身份变体逐字段保留。生成器分别核验原注册运行字节和完整 Git 源码绑定；仅允许 checkout 的 CRLF→LF 转换，不忽略空格、BOM、单独 CR 或实现变化。原捕获及原件不改写，新的 `registration-source-bindings.json` 另列两种字节与 Git blob。缺注册、未知操作、改写旧 binding 或捕获过期均在写派生文件之前拒绝。
 
 ## SDK、MCP 与 Runner
 
@@ -26,4 +26,4 @@ MCP GET 在两种 mode 注册；新增 saved-view、Loop 手动运行、usage �
 
 ## 演示与复验
 
-使用本卡登记的独立测试部署，按 `run-check.py` 的私有环境执行 `pnpm.cmd --filter @workmesh/conformance exec vitest run --config vitest.integration.config.ts src/optional-domains.conformance.test.ts`。该套件由 Human 夹具准备六域，实际 Agent 身份完成读取/有限写，运行 PG 竞争与回滚、两种真实客户端，并重建 API 验证持久 cursor 与 Stop。完整根集成命令另有回执，不用单套件替代根检查。凭据只在本地私有环境，不提交、不经聊天索取；没有创建 WorkMesh 远端 Project/WorkItem。
+使用本卡登记的独立测试部署，按 `run-check.py` 的私有环境执行 `pnpm.cmd --filter @workmesh/conformance exec vitest run --config vitest.integration.config.ts src/optional-domains.conformance.test.ts`。Required CI 中该套件由 Human 夹具准备六域，实际 Agent 身份完成读取/有限写，运行 PG 竞争与回滚和真实 Pi，并重建 API 验证持久 cursor 与 Stop，共 12 项。native OpenCode 另由本机必需命令 `pnpm.cmd test:acceptance:m4` 验证；缺 `M5_CLIENT_EXECUTABLE` 或私有 `M5_EVIDENCE_ROOT` 明确失败，不能 skip。两个入口复用 `optional-domains.consumer.fixture.ts` 的准确 origin/target 准备；本机验收必须完成两个入口，Ubuntu Required CI 不推断 native 已验。完整根集成命令另有回执，不用单套件替代根检查。凭据只在本地私有环境，不提交、不经聊天索取；没有创建 WorkMesh 远端 Project/WorkItem。

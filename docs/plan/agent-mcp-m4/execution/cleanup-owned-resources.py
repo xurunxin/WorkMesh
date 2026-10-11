@@ -1,15 +1,18 @@
 """必需命令退出且原件保全后，仅停止本卡独有容器；恢复树/卷/镜像不删除。"""
 from pathlib import Path
 from datetime import datetime,timezone
-import hashlib,json,subprocess,time
+import hashlib,json,subprocess,time,sys
 
 root=Path(__file__).resolve().parents[4]
 out=root/'docs/plan/agent-mcp-m4/execution'
-report_path=out/'cleanup-current.json'
+assert sys.argv[1:] in ([], ['--review']), '仅接受当前原模式或明确审查修复模式'
+review = sys.argv[1:] == ['--review']
+report_path=out/('cleanup-review.json' if review else 'cleanup-current.json')
 assert not report_path.exists(),'原收尾回执不可覆盖'
 ledger=json.loads((out/'resources.json').read_text(encoding='utf-8'))
 checks=[]
-for label in ['final-integration-correct-environment','final-e2e-current']:
+labels = ['review-ci-conformance-recovered', 'review-native-local-entry', 'review-optional-stable-final', 'review-root-unit-bounded-pool', 'review-ci-validate'] if review else ['final-integration-correct-environment','final-e2e-current']
+for label in labels:
     value=json.loads((out/'checks'/label/'receipt.json').read_text(encoding='utf-8'))
     assert value['exitCode']==0,(label,value['exitCode'])
     checks.append({'label':label,'exitCode':value['exitCode'],'endUtc':value['endUtc']})

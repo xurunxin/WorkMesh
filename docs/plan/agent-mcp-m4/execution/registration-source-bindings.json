@@ -1,0 +1,67 @@
+{
+  "capture": {
+    "path": "docs/plan/agent-mcp-m4/execution/registration-capture.json",
+    "bytes": 11886,
+    "sha256": "cfa5d3ef31fc2904428f55e13f0a823ce202608e07691ede009789918fbac972"
+  },
+  "conversion": "CRLF_to_LF_only",
+  "gitSourceCommit": "603f5001513872d4e973566d6a4c07ec4e7b179b",
+  "sources": [
+    {
+      "path": "apps/mcp/src/index.ts",
+      "runtime": {
+        "bytes": 82111,
+        "sha256": "9ee505c90ce7c881df47b8db0d96df983ca7a391490390eaef8f241bac8146fb",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/9ee505c90ce7c881df47b8db0d96df983ca7a391490390eaef8f241bac8146fb"
+      },
+      "git": {
+        "bytes": 81666,
+        "sha256": "a618885d4a265b83c9e4afb7ed21f08a82cc91b33a8222813f14aee17239ad55",
+        "blob": "fb1f32008389b965b08db9e8327978449c9ae22a",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/a618885d4a265b83c9e4afb7ed21f08a82cc91b33a8222813f14aee17239ad55"
+      }
+    },
+    {
+      "path": "apps/mcp/src/discovery.ts",
+      "runtime": {
+        "bytes": 17338,
+        "sha256": "60fc7e5e99bcd2df7528d67e609d4d341edc556ad0d711a76b3c12f8d61f5161",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/60fc7e5e99bcd2df7528d67e609d4d341edc556ad0d711a76b3c12f8d61f5161"
+      },
+      "git": {
+        "bytes": 17147,
+        "sha256": "ac10ab24cc3080f254deb6396b60d7c16b66a3afb7b9c43927db740f984fc9b9",
+        "blob": "9084eaed52c4acc54f8c806a111197525b6de587",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/ac10ab24cc3080f254deb6396b60d7c16b66a3afb7b9c43927db740f984fc9b9"
+      }
+    },
+    {
+      "path": "packages/agent-sdk/src/index.ts",
+      "runtime": {
+        "bytes": 91996,
+        "sha256": "4a6c194034662674005a5f6c7dd72c569c866957df7feae6857a22449b1534dd",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/4a6c194034662674005a5f6c7dd72c569c866957df7feae6857a22449b1534dd"
+      },
+      "git": {
+        "bytes": 90936,
+        "sha256": "60c32eb1f30891aa393737c290edf10b754ceb7c4120f46f421f3d0a361ef850",
+        "blob": "ab469ced19b3b9de674c5336bc21253250275200",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/60c32eb1f30891aa393737c290edf10b754ceb7c4120f46f421f3d0a361ef850"
+      }
+    },
+    {
+      "path": "packages/conformance/src/optional-domains.fixture.ts",
+      "runtime": {
+        "bytes": 4174,
+        "sha256": "ee6f0135f237885d7359d89761965b12c4911383deeeef1371e12074edebfd73",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/ee6f0135f237885d7359d89761965b12c4911383deeeef1371e12074edebfd73"
+      },
+      "git": {
+        "bytes": 4174,
+        "sha256": "ee6f0135f237885d7359d89761965b12c4911383deeeef1371e12074edebfd73",
+        "blob": "40007d0367f277b94555071cc4bfda85b3c6817b",
+        "objectPath": "docs/plan/agent-mcp-m4/execution/source-objects/ee6f0135f237885d7359d89761965b12c4911383deeeef1371e12074edebfd73"
+      }
+    }
+  ]
+}

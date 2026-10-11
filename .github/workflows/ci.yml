@@ -127,6 +127,7 @@ jobs:
       - name: Verify generated route policy and signed WorkMesh Skill
         run: |
           set -o pipefail
+          python -B scripts/test-agent-discovery-generation.py 2>&1 | tee ci-logs/discovery-generation.log
           pnpm check:route-policy 2>&1 | tee ci-logs/route-policy.log
           pnpm check:workmesh-skill 2>&1 | tee ci-logs/workmesh-skill.log
           pnpm check:runner-skill 2>&1 | tee ci-logs/runner-skill.log

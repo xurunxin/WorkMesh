@@ -1,0 +1,27 @@
+{
+  "oldAttempt": 2,
+  "newAttempt": 3,
+  "revokerPid": 149,
+  "waiting": [
+    {
+      "pid": 153,
+      "blockers": [
+        149
+      ]
+    }
+  ],
+  "before": {
+    "accepted": 7,
+    "duplicates": 1
+  },
+  "after": {
+    "accepted": 8,
+    "duplicates": 1
+  },
+  "stopDenied": true,
+  "expiredLeaseDenied": true,
+  "expiredTokenDenied": true,
+  "revokedInstallationDenied": true,
+  "sourceNowaitRolledBack": true,
+  "sourceRevokedBeforeSend": true
+}

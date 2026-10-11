@@ -1,0 +1,20 @@
+{
+  "casObjects": 1034,
+  "completeRawSha256Verified": true,
+  "interruption": {
+    "command": [
+      "python",
+      "-B",
+      "docs/plan/agent-mcp-m4/execution/run-check.py",
+      "review-discovery-portability",
+      "python",
+      "-B",
+      "scripts/test-agent-discovery-generation.py"
+    ],
+    "nativeExit": 1,
+    "stage": "before fingerprint, product command not started",
+    "error": "RuntimeError: 内容寻址原件冲突",
+    "cause": "并发只读命令前置CAS保存互读未闭合新文件；完整保存后全部原件SHA复核通过；顺序重跑新label另列",
+    "missingProductOutput": true
+  }
+}

@@ -2,10 +2,9 @@ import {randomUUID,createHash} from 'node:crypto'
 import {beforeAll,afterAll,describe,it,expect} from 'vitest'
 import type {Client} from '@modelcontextprotocol/sdk/client/index.js'
 import { loadFeatureConfig } from '@workmesh/config'
-import { FakeA2AAgent } from '../../../packages/a2a-adapter/src/index.js'
 import { buildApp } from '../../../apps/api/src/server.js'
 import { createOptionalDomainsFixture,saveOptionalEvidence } from './optional-domains.fixture.js'
-import { createExternalConsumer } from './joint-clients.external.js'
+import { createOptionalConsumerFixture } from './optional-domains.consumer.fixture.js'
 import type {Execution} from './mcp-coverage.fixture.js'
 import {WorkMeshClient} from '@workmesh/agent-sdk'
 import {canonicalActionApprovalPayload} from '@workmesh/domain'
@@ -23,47 +22,10 @@ const tool=async<T>(client:Client,name:string,args:Record<string,unknown>={})=>{
 describe('M4 独立六域实际消费者',()=>{
   let f:Awaited<ReturnType<typeof createOptionalDomainsFixture>>
   let origin:Execution,target:Execution
-  let targetInstallation:string
   let projectId:string,initiativeId:string,viewId:string,privateViewId:string,loopId:string,runId:string,templateId:string,bindingId:string,taskId:string,targetAgentId:string
   const pinnedMarkdown='M4 中文完整执行指引\n'.repeat(6000)
   beforeAll(async()=>{
-    f=await createOptionalDomainsFixture()
-    projectId=(await f.human<{id:string}>('POST','/api/v1/projects',{teamId:f.teamId,name:'M4 authorized project'})).id
-    origin=await f.createExecution('M4 exact origin',false,undefined,projectId)
-    const other=(await f.human<{id:string}>('POST','/api/v1/projects',{teamId:f.teamId,name:'M4 excluded linked project'})).id
-    initiativeId=(await f.human<{id:string}>('POST','/api/v1/initiatives',{name:'M4 nonempty rollup',ownerActorId:f.humanActorId,status:'active',projectIds:[projectId,other]})).id
-    await f.human('POST','/api/v1/cycles',{teamId:f.teamId,name:'M4 Cycle',startsAt:'2020-01-01T00:00:00Z',durationWeeks:1})
-    viewId=(await f.human<{id:string}>('POST','/api/v1/advanced-views',{name:'M4 visible View',entityType:'issue',layout:'list',scope:'team',teamId:f.teamId})).id
-    privateViewId=(await f.human<{id:string}>('POST','/api/v1/advanced-views',{name:'M4 Human private',entityType:'issue',layout:'list',scope:'private'})).id
-    await f.human('POST','/api/v1/automation-rules',{teamId:f.teamId,name:'M4 existing Rule',trigger:{type:'event',eventTypes:['m4.controlled.never']},actions:[{type:'notify',parameters:{recipientActorId:f.humanActorId,title:'M4 controlled'}}]})
-    const recipient=await f.registerTarget(['work:read','work:write','artifact:write','plan:write','message:write'])
-    targetInstallation=recipient.token
-    targetAgentId=recipient.agentId
-    const template=await f.human<{id:string;versionId:string;revision:number}>('POST','/api/v1/templates',{teamId:f.teamId,kind:'agent_run',name:'M4 pinned Template',body:{instructions:pinnedMarkdown,requiredCapabilities:['work:read','work:write','artifact:write','plan:write','message:write']}})
-    templateId=template.id
-    await f.human('POST',`/api/v1/templates/${template.id}/state`,{status:'active'},template.revision)
-    loopId=(await f.human<{id:string}>('POST','/api/v1/loops',{name:'M4 bounded Loop',ownerActorId:f.humanActorId,teamId:f.teamId,projectId,agentId:recipient.agentId,runTemplateVersionId:template.versionId,trigger:{type:'event',eventTypes:['m4.controlled.never']},budget:{maxTokens:100,maxCostMinor:'100',currency:'USD'},noOverlap:true})).id
-    const admitted=await f.coordination.runLoopNow(loopId,{occurrenceKey:'m4-first',scheduledFor:'2020-01-01T00:00:00Z'},{idempotencyKey:'m4-first'})
-    expect(admitted.sessionId).not.toBeNull();runId=admitted.runId
-    // Loop admission currently records a queued Session without issuing a
-    // webhook bootstrap. Use its existing, authority-checked installation
-    // refresh endpoint; the origin client and its credential stay untouched.
-    const targetClient=new WorkMeshClient({baseUrl:f.baseUrl,installationToken:recipient.token})
-    await expect(new WorkMeshClient({baseUrl:f.baseUrl,installationToken:f.connectionToken}).refreshSessionToken(admitted.sessionId!)).rejects.toThrow()
-    const accepted=await targetClient.refreshSessionToken(admitted.sessionId!,recipient.token,{idempotencyKey:'m4-target-bootstrap'})
-    await targetClient.acknowledge(admitted.sessionId!,{summary:'M4 exact Loop target accepted',externalUrls:[]})
-    const queued=await targetClient.getSession<{revision:number}>(admitted.sessionId!)
-    await targetClient.transitionState(admitted.sessionId!,'executing','M4 exact target lifecycle',{ifMatch:queued.revision})
-    target={sessionId:admitted.sessionId!,workItemId:'',token:accepted.sessionToken,client:targetClient}
-    const fake=new FakeA2AAgent()
-    const definition=await f.human<{revision:number}>('GET',`/api/v1/agents/${recipient.agentId}`)
-    await f.human('PATCH',`/api/v1/agents/${recipient.agentId}`,{supportedProtocols:['native_http','a2a']},definition.revision)
-    bindingId=(await f.human<{id:string}>('POST','/api/v1/a2a-bindings',{agentId:recipient.agentId,protocolVersion:'0.3',agentCard:{...fake.card,url:'https://example.com/a2a'}})).id
-    taskId='m4-loop-task'
-    // Privileged adapter mapping fixture. No imported task or external call;
-    // the target Session itself was genuinely admitted/refreshed/acknowledged.
-    await f.db.query('INSERT INTO a2a_task_bindings(binding_id,external_task_id,session_id) VALUES($1,$2,$3)',[bindingId,taskId,target.sessionId])
-    saveOptionalEvidence('six-domain-fixture.json',{projectId,initiativeId,viewId,privateViewId,loopId,runId,templateId,bindingId,taskId,originSession:origin.sessionId,targetSession:target.sessionId,targetInstallationRefresh:true,foreignInstallationRefused:true,signedTargetDelivery:false,loopWebhookBootstrapUnsupported:true,privilegedA2ATaskMapping:true,productionChanged:false})
+    ;({f,origin,target,projectId,initiativeId,viewId,privateViewId,loopId,runId,templateId,bindingId,taskId,targetAgentId}=await createOptionalConsumerFixture())
   })
   afterAll(async()=>{if(f) await f.close()})
 
@@ -318,24 +280,6 @@ describe('M4 独立六域实际消费者',()=>{
     expect(results.at(-1)).toMatchObject({projectCount:1,totalItems:1})
     expect(JSON.stringify(results[5])).toContain('NOT_FOUND')
     saveOptionalEvidence('pi-model-received.json',{captures,exactOriginSession:origin.sessionId,foreignTargetDenied:true,workbenchProjectlessLoopUnsupported:true})
-  })
-
-  it('现有native OpenCode实收准确E的rollup/usage，未使用Human cookie',async()=>{
-    if(!process.env.M5_CLIENT_EXECUTABLE) throw new Error('M4既有native OpenCode路径缺失，不能以skip代验收')
-    const native=await createExternalConsumer({baseUrl:f.baseUrl,sessionToken:origin.token,allowedTools:['get_initiative_rollup','get_usage_summary']})
-    try {
-      expect(await native.invoke('get_initiative_rollup',{initiativeId})).toMatchObject({projectCount:1,totalItems:1})
-      expect(await native.invoke('get_usage_summary',{})).toMatchObject({currency_buckets:[]})
-      saveOptionalEvidence('native-opencode-model-received.json',{actualClient:'native OpenCode',exactExecution:origin.sessionId,modelReceivedRollup:true,modelReceivedUsage:true})
-    } finally {await native.close()}
-    const targetNative=await createExternalConsumer({baseUrl:f.baseUrl,sessionToken:target.token,allowedTools:['list_templates','get_automation_run','get_usage_summary','get_a2a_task_events']})
-    try {
-      expect(await targetNative.invoke('list_templates',{limit:1})).toMatchObject({items:[{id:templateId,body:{instructions:pinnedMarkdown}}]})
-      expect(await targetNative.invoke('get_automation_run',{runId})).toMatchObject({id:runId,session_id:target.sessionId})
-      expect(await targetNative.invoke('get_usage_summary',{})).toMatchObject({unknown_cost_records:expect.any(Number)})
-      expect(await targetNative.invoke('get_a2a_task_events',{bindingId,taskId})).toMatchObject({cursor:expect.any(String),events:expect.any(Array)})
-      saveOptionalEvidence('native-target-model-received.json',{exactTargetSession:target.sessionId,fullTemplateReceived:true,runUsageAndA2AReceived:true})
-    } finally {await targetNative.close()}
   })
 
   it('API重启从A2A独立cursor恢复，Stop后旧E不能读run或写usage',async()=>{

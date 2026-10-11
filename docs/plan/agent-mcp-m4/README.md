@@ -1,5 +1,7 @@
 # M4 可选领域 MCP 与授权投影待审方案
 
+正式成果审查三项修复与新运行证据见 [正式审查答复](execution/formal-review-response.md)。
+
 以下为原规划阶段记录，其未测与待审陈述保留历史含义。已确认实施的当前结果见 [实际消费者与边界](execution/consumer-compatibility-current.md)，实际命令、首败、退出和源码指纹位于 `execution/checks/`；不从此规划快照推导产品验收。
 
 本卡仅交付可供正式复审的规划工件。原候选正式独审提出一项High(blocking)，本轮同步仓库修订与逐项答复，仍待Chief正式复审关闭。产品代码、迁移、部署、测试运行、权限、API 与事件均未改变；本目录不宣告 M4 产品完成。

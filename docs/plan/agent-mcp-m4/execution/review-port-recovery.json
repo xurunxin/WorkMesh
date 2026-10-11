@@ -1,0 +1,53 @@
+{
+  "ports": [
+    {
+      "role": "postgres",
+      "containerId": "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+      "recordedOriginalHostPort": 64433,
+      "currentHostPort": 49965,
+      "command": [
+        "docker",
+        "inspect",
+        "99230cd34b29c2b8aff7e5c03b470d277819932f1aa67a54eaa238bc6cd06003",
+        "--format",
+        "{{json .NetworkSettings.Ports}}"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"5432/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"49965\"}]}\n"
+    },
+    {
+      "role": "redis",
+      "containerId": "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+      "recordedOriginalHostPort": 64435,
+      "currentHostPort": 49966,
+      "command": [
+        "docker",
+        "inspect",
+        "a5deb4fe214fed6ba3ddd72621ac945cbd2bef5f03cdc4b56df1b47c7afb9cde",
+        "--format",
+        "{{json .NetworkSettings.Ports}}"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"6379/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"49966\"}]}\n"
+    },
+    {
+      "role": "objectstore",
+      "containerId": "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+      "recordedOriginalHostPort": 64437,
+      "currentHostPort": 49969,
+      "command": [
+        "docker",
+        "inspect",
+        "717183fb31c86217c9a060bfb6ee05286bef10ffa79dd6cdf917fba3b05342df",
+        "--format",
+        "{{json .NetworkSettings.Ports}}"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"9000/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"49969\"}]}\n"
+    }
+  ],
+  "privateEnvironmentBeforeSha256": "7aa85c6624fd734c9b1ba136ca1806a1e9da17fce75a1556631b7e176708baa8",
+  "privateEnvironmentAfterSha256": "fa62544e6c7c8529075eed7ccf399ff4ec962752e8c631d6001a61e2467b0c2d",
+  "productionChanged": false,
+  "reason": "原container使用动态host port，restart后需以实际PortBindings恢复本卡私有环境；保留旧失败"
+}

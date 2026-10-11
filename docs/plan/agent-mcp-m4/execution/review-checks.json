@@ -1,0 +1,393 @@
+[
+  {
+    "label": "review-ci-conformance-recovered",
+    "receipt": "checks/review-ci-conformance-recovered/receipt.json",
+    "command": [
+      "python",
+      "-B",
+      "docs/plan/agent-mcp-m4/execution/review-run.py",
+      "ci-conformance"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 937.687110800005,
+    "sourceChangedDuringCommand": true,
+    "originalQuantityLines": [
+      "Test Files  6 passed (6)",
+      "Tests  96 passed (96)"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-ci-conformance-without-native",
+    "receipt": "checks/review-ci-conformance-without-native/receipt.json",
+    "command": [
+      "python",
+      "-B",
+      "docs/plan/agent-mcp-m4/execution/review-run.py",
+      "ci-conformance"
+    ],
+    "exitCode": 1,
+    "runtimeSeconds": 6.295895700022811,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-ci-policy",
+    "receipt": "checks/review-ci-policy/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "ci:test"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 7.039742399996612,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "ℹ tests 17",
+      "ℹ pass 17",
+      "ℹ fail 0",
+      "ℹ skipped 0"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-ci-validate",
+    "receipt": "checks/review-ci-validate/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "ci:validate"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 6.2222389000235125,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "ℹ tests 15",
+      "ℹ pass 15",
+      "ℹ fail 0",
+      "ℹ skipped 0"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-conformance-clean-build",
+    "receipt": "checks/review-conformance-clean-build/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "build"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 7.492119900009129,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-discovery-portability-retry",
+    "receipt": "checks/review-discovery-portability-retry/receipt.json",
+    "command": [
+      "python",
+      "-B",
+      "scripts/test-agent-discovery-generation.py"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 5.598623499972746,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-native-local-entry",
+    "receipt": "checks/review-native-local-entry/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "test:acceptance:m4"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 62.144050500006415,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-native-missing-client",
+    "receipt": "checks/review-native-missing-client/receipt.json",
+    "command": [
+      "python",
+      "-B",
+      "docs/plan/agent-mcp-m4/execution/review-run.py",
+      "native-missing-config"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 7.186061000014888,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-optional-stable-final",
+    "receipt": "checks/review-optional-stable-final/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "--filter",
+      "@workmesh/conformance",
+      "exec",
+      "vitest",
+      "run",
+      "--config",
+      "vitest.integration.config.ts",
+      "src/optional-domains.conformance.test.ts"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 23.012549300008686,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "Test Files  1 passed (1)",
+      "Tests  12 passed (12)"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-original-ci-log",
+    "receipt": "checks/review-original-ci-log/receipt.json",
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "38114467378",
+      "--log-failed"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 8.490374199987855,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5479815Z       '+      \"Test Files  1 passed (1)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5481779Z       '+      \"Tests  1 passed | 12 skipped (13)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5505959Z       '+      \"Tasks:    18 successful, 18 total\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5506934Z       '+      \"Cached:    0 cached, 18 total\"\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5520680Z       '+      \"Test Files  4 passed (4)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5521649Z       '+      \"Tests  56 passed (56)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5543501Z       '+      \"Test Files  1 passed (1)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5544462Z       '+      \"Tests  26 passed (26)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5581288Z     '+      \"Test Files  1 passed (1)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5582256Z     '+      \"Tests  1 passed | 12 skipped (13)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5597890Z     '+      \"Tasks:    18 successful, 18 total\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5598854Z     '+      \"Cached:    0 cached, 18 total\"\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5612271Z     '+      \"Test Files  4 passed (4)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5613205Z     '+      \"Tests  56 passed (56)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5634707Z     '+      \"Test Files  1 passed (1)\",\\r\\n' +",
+      "Classify changes and validate CI selection\tSelect required jobs\t2026-10-11T05:21:04.5635645Z     '+      \"Tests  26 passed (26)\",\\r\\n' +"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-owned-resource-cleanup",
+    "receipt": "checks/review-owned-resource-cleanup/receipt.json",
+    "command": [
+      "python",
+      "-B",
+      "docs/plan/agent-mcp-m4/execution/cleanup-owned-resources.py",
+      "--review"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 7.109798599994974,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-product-regeneration",
+    "receipt": "checks/review-product-regeneration/receipt.json",
+    "command": [
+      "python",
+      "-B",
+      "docs/plan/agent-mcp-m4/execution/verify-regeneration.py"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 10.409898299985798,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-root-lint",
+    "receipt": "checks/review-root-lint/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "lint"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 60.199370800022734,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "Tasks:    18 successful, 18 total",
+      "Cached:    0 cached, 18 total"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-root-typecheck",
+    "receipt": "checks/review-root-typecheck/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "typecheck"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 57.34274439999717,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "Tasks:    18 successful, 18 total",
+      "Cached:    0 cached, 18 total"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-root-unit",
+    "receipt": "checks/review-root-unit/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "test"
+    ],
+    "exitCode": 1,
+    "runtimeSeconds": 163.28599959998974,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+      "@workmesh/git-provider:test:       Tests  17 passed (17)",
+      "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+      "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+      "@workmesh/observability:test:  Test Files  2 passed (2)",
+      "@workmesh/observability:test:       Tests  16 passed (16)",
+      "@workmesh/ui:test:  Test Files  4 passed (4)",
+      "@workmesh/ui:test:       Tests  50 passed (50)",
+      "@workmesh/contracts:test:  Test Files  29 passed (29)",
+      "@workmesh/contracts:test:       Tests  218 passed (218)",
+      "@workmesh/domain:test:  Test Files  9 passed (9)",
+      "@workmesh/domain:test:       Tests  65 passed (65)",
+      "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+      "@workmesh/agent-runner:test:       Tests  112 passed (112)",
+      "@workmesh/config:test:  Test Files  2 passed (2)",
+      "@workmesh/config:test:       Tests  34 passed (34)",
+      "@workmesh/agent-sdk:test:  Test Files  4 passed (4)",
+      "@workmesh/agent-sdk:test:       Tests  56 passed (56)",
+      "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+      "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+      "@workmesh/db:test:  Test Files  8 passed (8)",
+      "@workmesh/db:test:       Tests  28 passed (28)",
+      "@workmesh/web:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+      "@workmesh/web:test:  Test Files  1 failed | 113 passed (114)",
+      "@workmesh/web:test:       Tests  2 failed | 787 passed (789)",
+      "Tasks:    22 successful, 29 total",
+      "Cached:    0 cached, 29 total"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-root-unit-bounded-pool",
+    "receipt": "checks/review-root-unit-bounded-pool/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "test"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 233.2164779000159,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "@workmesh/observability:test:  Test Files  2 passed (2)",
+      "@workmesh/observability:test:       Tests  16 passed (16)",
+      "@workmesh/contracts:test:  Test Files  29 passed (29)",
+      "@workmesh/contracts:test:       Tests  218 passed (218)",
+      "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+      "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+      "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+      "@workmesh/git-provider:test:       Tests  17 passed (17)",
+      "@workmesh/ui:test:  Test Files  4 passed (4)",
+      "@workmesh/ui:test:       Tests  50 passed (50)",
+      "@workmesh/domain:test:  Test Files  9 passed (9)",
+      "@workmesh/domain:test:       Tests  65 passed (65)",
+      "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+      "@workmesh/agent-runner:test:       Tests  112 passed (112)",
+      "@workmesh/config:test:  Test Files  2 passed (2)",
+      "@workmesh/config:test:       Tests  34 passed (34)",
+      "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+      "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+      "@workmesh/agent-sdk:test:  Test Files  4 passed (4)",
+      "@workmesh/agent-sdk:test:       Tests  56 passed (56)",
+      "@workmesh/fake-agent:test:  Test Files  1 passed (1)",
+      "@workmesh/fake-agent:test:       Tests  4 passed (4)",
+      "@workmesh/mcp:test:  Test Files  4 passed (4)",
+      "@workmesh/mcp:test:       Tests  51 passed (51)",
+      "@workmesh/db:test:  Test Files  8 passed (8)",
+      "@workmesh/db:test:       Tests  28 passed (28)",
+      "@workmesh/recovery:test:  Test Files  1 passed (1)",
+      "@workmesh/recovery:test:       Tests  7 passed (7)",
+      "@workmesh/worker:test:  Test Files  24 passed (24)",
+      "@workmesh/worker:test:       Tests  211 passed | 2 skipped (213)",
+      "@workmesh/api:test:  Test Files  34 passed (34)",
+      "@workmesh/api:test:       Tests  181 passed (181)",
+      "@workmesh/conformance:test:  Test Files  1 passed (1)",
+      "@workmesh/conformance:test:       Tests  1 passed (1)",
+      "@workmesh/web:test:  Test Files  114 passed (114)",
+      "@workmesh/web:test:       Tests  789 passed (789)",
+      "Tasks:    32 successful, 32 total",
+      "Cached:    0 cached, 32 total"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-root-unit-retry",
+    "receipt": "checks/review-root-unit-retry/receipt.json",
+    "command": [
+      "pnpm.cmd",
+      "test"
+    ],
+    "exitCode": 1,
+    "runtimeSeconds": 28.732798500015633,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [
+      "@workmesh/git-provider:test:  Test Files  3 passed (3)",
+      "@workmesh/git-provider:test:       Tests  17 passed (17)",
+      "@workmesh/observability:test:  Test Files  2 passed (2)",
+      "@workmesh/observability:test:       Tests  16 passed (16)",
+      "@workmesh/artifact-storage:test:  Test Files  2 passed (2)",
+      "@workmesh/artifact-storage:test:       Tests  22 passed (22)",
+      "@workmesh/ui:test:  Test Files  4 passed (4)",
+      "@workmesh/ui:test:       Tests  50 passed (50)",
+      "@workmesh/config:test:  Test Files  2 passed (2)",
+      "@workmesh/config:test:       Tests  34 passed (34)",
+      "@workmesh/a2a-adapter:test:  Test Files  1 passed (1)",
+      "@workmesh/a2a-adapter:test:       Tests  4 passed (4)",
+      "@workmesh/domain:test:  Test Files  9 passed (9)",
+      "@workmesh/domain:test:       Tests  65 passed (65)",
+      "@workmesh/agent-sdk:test:  Test Files  4 passed (4)",
+      "@workmesh/agent-sdk:test:       Tests  56 passed (56)",
+      "@workmesh/agent-runner:test:  Test Files  14 passed (14)",
+      "@workmesh/agent-runner:test:       Tests  112 passed (112)",
+      "@workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+      "@workmesh/contracts:test:  Test Files  1 failed | 28 passed (29)",
+      "@workmesh/contracts:test:       Tests  1 failed | 217 passed (218)",
+      "@workmesh/db:test:  Test Files  8 passed (8)",
+      "@workmesh/db:test:       Tests  28 passed (28)",
+      "Tasks:    21 successful, 26 total",
+      "Cached:    21 cached, 26 total"
+    ],
+    "sourceFiles": 986
+  },
+  {
+    "label": "review-full-staged-diff",
+    "receipt": "checks/review-full-staged-diff/receipt.json",
+    "command": [
+      "git",
+      "diff",
+      "--cached",
+      "--check",
+      "c2b3d363c037157df13beb82799d99d07a9b7db8"
+    ],
+    "exitCode": 0,
+    "runtimeSeconds": 4.96310579997953,
+    "sourceChangedDuringCommand": false,
+    "originalQuantityLines": [],
+    "sourceFiles": 986
+  }
+]

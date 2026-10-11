@@ -1,0 +1,1476 @@
+
+> workmesh@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> turbo run test --concurrency=2
+
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/ui, @workmesh/web, @workmesh/worker
+   • Running test in 18 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/artifact-storage:build: cache miss, executing e6ab43725df2538c
+@workmesh/git-provider:test: cache miss, executing b31008d082803527
+@workmesh/artifact-storage:build: 
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build: 
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: > @workmesh/git-provider@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:test: > vitest run
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/git-provider
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  ✓ src/gitea.test.ts (1 test) 3ms
+@workmesh/artifact-storage:test: cache miss, executing 83754d5c4f9f471d
+@workmesh/git-provider:test:  ✓ src/index.test.ts (14 tests) 70ms
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/refs"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits","PATCH:/repos/acme/workmesh/git/refs/heads/workmesh/test"],"readCount":2,"guards":3}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":1,"actualWrites":[],"readCount":2,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":2,"actualWrites":["POST:/repos/acme/workmesh/git/trees"],"readCount":2,"guards":2}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":3,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits"],"readCount":2,"guards":3}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/pulls"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":0,"actualWrites":["PUT:/repos/acme/workmesh/pulls/71/merge"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/check-runs/42/rerequest"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"context","denyAt":0,"actualWrites":[],"readCount":3,"guards":0}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/branches"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":0,"actualWrites":["PUT:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls/71/merge"],"readCount":2,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"retry","denyAt":0,"actualWrites":[],"readCount":0,"guards":0}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"context","denyAt":0,"actualWrites":[],"readCount":2,"guards":0}}
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  ✓ src/mutation-http.test.ts (2 tests) 176ms
+@workmesh/git-provider:test: 
+@workmesh/git-provider:test:  Test Files  3 passed (3)
+@workmesh/git-provider:test:       Tests  17 passed (17)
+@workmesh/git-provider:test:    Start at  13:39:10
+@workmesh/git-provider:test:    Duration  1.30s (transform 102ms, setup 0ms, collect 212ms, tests 249ms, environment 0ms, prepare 867ms)
+@workmesh/git-provider:test: 
+@workmesh/git-provider:build: cache miss, executing 848c04212d0a1fe4
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test: > @workmesh/artifact-storage@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\artifact-storage
+@workmesh/artifact-storage:test: > vitest run
+@workmesh/artifact-storage:test: 
+@workmesh/git-provider:build: 
+@workmesh/git-provider:build: > @workmesh/git-provider@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build: 
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/artifact-storage
+@workmesh/artifact-storage:test: 
+@workmesh/observability:build: cache miss, executing 4a9250c29a7a1912
+@workmesh/artifact-storage:test:  ✓ src/retention-upgrade.test.ts (3 tests) 4ms
+@workmesh/artifact-storage:test:  ✓ src/index.test.ts (19 tests) 34ms
+@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:  Test Files  2 passed (2)
+@workmesh/artifact-storage:test:       Tests  22 passed (22)
+@workmesh/artifact-storage:test:    Start at  13:39:13
+@workmesh/artifact-storage:test:    Duration  1.31s (transform 81ms, setup 0ms, collect 407ms, tests 38ms, environment 0ms, prepare 569ms)
+@workmesh/artifact-storage:test: 
+@workmesh/observability:test: cache miss, executing 2e4610ffb102b305
+@workmesh/observability:build: 
+@workmesh/observability:build: > @workmesh/observability@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build: 
+@workmesh/observability:test: 
+@workmesh/observability:test: > @workmesh/observability@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\observability
+@workmesh/observability:test: > vitest run
+@workmesh/observability:test: 
+@workmesh/ui:test: cache miss, executing bd6239fb80a90a82
+@workmesh/observability:test: 
+@workmesh/observability:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/observability
+@workmesh/observability:test: 
+@workmesh/ui:test: 
+@workmesh/ui:test: > @workmesh/ui@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:test: > vitest run
+@workmesh/ui:test: 
+@workmesh/observability:test:  ✓ src/index.test.ts (3 tests) 5ms
+@workmesh/observability:test:  ✓ src/workbench-slo.test.ts (13 tests) 5ms
+@workmesh/observability:test: 
+@workmesh/observability:test:  Test Files  2 passed (2)
+@workmesh/observability:test:       Tests  16 passed (16)
+@workmesh/observability:test:    Start at  13:39:16
+@workmesh/observability:test:    Duration  1.12s (transform 64ms, setup 0ms, collect 101ms, tests 10ms, environment 0ms, prepare 503ms)
+@workmesh/observability:test: 
+@workmesh/ui:build: cache miss, executing 1e311a63e6a103c5
+@workmesh/ui:test: 
+@workmesh/ui:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/ui
+@workmesh/ui:test: 
+@workmesh/ui:build: 
+@workmesh/ui:build: > @workmesh/ui@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\ui
+@workmesh/ui:build: > tsc -p tsconfig.json
+@workmesh/ui:build: 
+@workmesh/ui:test:  ✓ src/domain/control-plane.test.tsx (5 tests) 4ms
+@workmesh/ui:test:  ✓ src/primitives/controls.test.tsx (20 tests) 21ms
+@workmesh/ui:test:  ✓ src/primitives/controls-ssr.test.tsx (6 tests) 16ms
+@workmesh/ui:test:  ✓ src/index.test.ts (19 tests) 14ms
+@workmesh/ui:test: 
+@workmesh/ui:test:  Test Files  4 passed (4)
+@workmesh/ui:test:       Tests  50 passed (50)
+@workmesh/ui:test:    Start at  13:39:17
+@workmesh/ui:test:    Duration  1.73s (transform 676ms, setup 0ms, collect 1.71s, tests 54ms, environment 0ms, prepare 1.19s)
+@workmesh/ui:test: 
+@workmesh/contracts:test: cache miss, executing ac824b091a217190
+@workmesh/contracts:test: 
+@workmesh/contracts:test: > @workmesh/contracts@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:test: > vitest run
+@workmesh/contracts:test: 
+@workmesh/contracts:build: cache miss, executing ac03dc2b96b73efc
+@workmesh/contracts:test: 
+@workmesh/contracts:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/contracts
+@workmesh/contracts:test: 
+@workmesh/contracts:build: 
+@workmesh/contracts:build: > @workmesh/contracts@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build: 
+@workmesh/contracts:test:  ✓ src/agent-response-contract.test.ts (1 test) 9ms
+@workmesh/contracts:test:  ✓ src/release-contract.test.ts (1 test) 14ms
+@workmesh/contracts:test:  ✓ src/human-attention-contract.test.ts (3 tests) 8ms
+@workmesh/contracts:test:  ✓ src/pi-workbench-contracts.test.ts (27 tests) 25ms
+@workmesh/contracts:test:  ✓ src/stage3-contracts.test.ts (8 tests) 59ms
+@workmesh/contracts:test:  ✓ src/client-profile-contract.test.ts (3 tests) 64ms
+@workmesh/contracts:test:  ✓ src/stage4-contracts.test.ts (8 tests) 75ms
+@workmesh/contracts:test:  ✓ src/stage1-contracts.test.ts (10 tests) 65ms
+@workmesh/contracts:test:  ✓ src/control-plane-contracts.test.ts (5 tests) 101ms
+@workmesh/contracts:test:  ✓ src/configuration-readiness-contracts.test.ts (4 tests) 818ms
+@workmesh/contracts:test:    ✓ 配置就绪契约 > OpenAPI、清单与 Human-only 只读策略一致，拒绝审计保留  810ms
+@workmesh/contracts:test:  ✓ src/planning-domain-parity-contract.test.ts (5 tests) 834ms
+@workmesh/contracts:test:    ✓ planning domain parity public contract > keeps the OpenAPI schemas and complete REST surface aligned with Zod  794ms
+@workmesh/contracts:test:  ✓ src/recovery-contract.test.ts (2 tests) 755ms
+@workmesh/contracts:test:    ✓ Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas  750ms
+@workmesh/contracts:test:  ✓ src/release-manifest.test.ts (2 tests) 319ms
+@workmesh/contracts:test:    ✓ release artifact manifest > binds all four immutable image digests to the exact candidate source  309ms
+@workmesh/contracts:test:  ✓ src/pagination-contract.test.ts (2 tests) 1315ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > declares the common cursor and limit on every paged collection  689ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > keeps durable event cursors separate and documents generic cursor failures  625ms
+@workmesh/contracts:test:  ✓ src/runtime-reliability-openapi.test.ts (2 tests) 1415ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > keeps the new response models in schemas and every local reference resolvable  690ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > documents the dedicated identity credential and every execution-capacity conflict  722ms
+@workmesh/contracts:test:  ✓ src/stage5-contracts.test.ts (66 tests) 1387ms
+@workmesh/contracts:test:    ✓ Stage 5 (v1.1) Agent Connection & Coordination MCP contracts > keeps the subset-block generator in sync with the canonical capability list  883ms
+@workmesh/contracts:test:  ✓ src/agent-discovery.test.ts (21 tests) 1412ms
+@workmesh/contracts:test:    ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  807ms
+@workmesh/contracts:test:  ✓ src/stage0-route-manifest.test.ts (6 tests) 1795ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > keeps parsed OpenAPI cursor boundaries in parity with runtime  783ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > documents and validates the backward-compatible Run Explanation keyset cursor  914ms
+@workmesh/contracts:test:  ✓ src/delivery-contracts.test.ts (2 tests) 12ms
+@workmesh/contracts:test:  ✓ src/child-session-contracts.test.ts (4 tests) 10ms
+@workmesh/contracts:test:  ✓ src/stage2-contracts.test.ts (4 tests) 12ms
+@workmesh/contracts:test:  ✓ src/approval-contract.test.ts (4 tests) 9ms
+@workmesh/contracts:test:  ✓ src/repository-configuration-contracts.test.ts (1 test) 4ms
+@workmesh/contracts:test:  ✓ src/execution-waits.test.ts (4 tests) 6ms
+@workmesh/contracts:test:  ✓ src/auth-idempotency.test.ts (2 tests) 6ms
+@workmesh/contracts:test:  ✓ src/autonomous-control-contracts.test.ts (3 tests) 7ms
+@workmesh/contracts:test:  ✓ src/guidance-contract.test.ts (2 tests) 7ms
+@workmesh/contracts:test:  ✓ src/active-executor-contract.test.ts (2 tests) 7ms
+@workmesh/contracts:test:  ✓ src/route-policy.test.ts (14 tests) 3345ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions  1161ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > matches OpenAPI operation IDs and feature tiers  900ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > documents bootstrap authentication failures as a structured 401 response  627ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > keeps deployment feature discovery authenticated for humans and agents  597ms
+@workmesh/contracts:test: 
+@workmesh/contracts:test:  Test Files  29 passed (29)
+@workmesh/contracts:test:       Tests  218 passed (218)
+@workmesh/contracts:test:    Start at  13:39:20
+@workmesh/contracts:test:    Duration  5.82s (transform 1.96s, setup 0ms, collect 19.33s, tests 13.90s, environment 7ms, prepare 18.60s)
+@workmesh/contracts:test: 
+@workmesh/domain:test: cache miss, executing 4279ed5e2f8094c1
+@workmesh/web:test: cache miss, executing 782cdad7855be167
+@workmesh/domain:test: 
+@workmesh/domain:test: > @workmesh/domain@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\domain
+@workmesh/domain:test: > vitest run
+@workmesh/domain:test: 
+@workmesh/web:test: 
+@workmesh/web:test: > @workmesh/web@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\web
+@workmesh/web:test: > vitest run
+@workmesh/web:test: 
+@workmesh/domain:test: 
+@workmesh/domain:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/domain
+@workmesh/domain:test: 
+@workmesh/web:test: 
+@workmesh/web:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/apps/web
+@workmesh/web:test: 
+@workmesh/domain:test:  ✓ src/session-budget.test.ts (10 tests) 12ms
+@workmesh/domain:test:  ✓ src/approval.test.ts (19 tests) 4ms
+@workmesh/domain:test:  ✓ src/stage1-agent.test.ts (8 tests) 6ms
+@workmesh/domain:test:  ✓ src/index.test.ts (6 tests) 5ms
+@workmesh/domain:test:  ✓ src/planning-domain-parity.test.ts (2 tests) 4ms
+@workmesh/domain:test:  ✓ src/stage3-delivery.test.ts (3 tests) 14ms
+@workmesh/domain:test:  ✓ src/stage4.test.ts (9 tests) 20ms
+@workmesh/domain:test:  ✓ src/stage2-collaboration.test.ts (3 tests) 17ms
+@workmesh/domain:test:  ✓ src/authorization.test.ts (5 tests) 3ms
+@workmesh/domain:test: 
+@workmesh/domain:test:  Test Files  9 passed (9)
+@workmesh/domain:test:       Tests  65 passed (65)
+@workmesh/domain:test:    Start at  13:39:29
+@workmesh/domain:test:    Duration  4.28s (transform 2.31s, setup 0ms, collect 7.22s, tests 84ms, environment 1ms, prepare 9.23s)
+@workmesh/domain:test: 
+@workmesh/agent-runner:test: cache miss, executing 2c4c109f181db306
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: > @workmesh/agent-runner@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\agent-runner
+@workmesh/agent-runner:test: > vitest run
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/apps/agent-runner
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ✓ src/model-config.test.ts (2 tests) 3ms
+@workmesh/agent-runner:test:  ✓ src/delivery-transfer.test.ts (1 test) 296ms
+@workmesh/agent-runner:test:  ✓ src/configured-model.test.ts (1 test) 2ms
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-BYvKgu","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ✓ src/permission-matrix.test.ts (6 tests) 700ms
+@workmesh/agent-runner:test:    ✓ W11 permission-denial matrix > refuses every tool when the capability manifest is not from an executing session  359ms
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-BYvKgu","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"retained"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"turnId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"failed","code":"RUNNER_SCRATCH_CLEANUP_FAILED"}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-BYvKgu","status":"removed_after_injected_failure"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-4mTidU","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-4mTidU","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"retained"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"turnId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"failed","code":"RUNNER_SCRATCH_CLEANUP_FAILED"}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-4mTidU","status":"removed_after_injected_failure"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ✓ src/run-session-cleanup.test.ts (2 tests) 2370ms
+@workmesh/agent-runner:test:    ✓ 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity  1253ms
+@workmesh/agent-runner:test:    ✓ 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity  1116ms
+@workmesh/web:test:  ✓ app/operations/usage-metrics.test.tsx (24 tests) 2088ms
+@workmesh/web:test:    ✓ UsageMetrics > formats supported minor-unit currencies exactly and keeps unsupported and case-distinct buckets raw  439ms
+@workmesh/web:test:  ❯ app/landing-screen.test.tsx (5 tests | 2 failed) 8444ms
+@workmesh/web:test:    × LandingScreen > reads three independent sources, each capped, and links the attention section to its own surface 5009ms
+@workmesh/web:test:      → Test timed out in 5000ms.
+@workmesh/web:test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+@workmesh/web:test:    × LandingScreen > shows four run rows however many the projection returns 3195ms
+@workmesh/web:test:      → Found multiple elements with the text: Agent runs
+@workmesh/web:test: 
+@workmesh/web:test: Here are the matching elements:
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<h2[39m
+@workmesh/web:test:   [33mid[39m=[32m"_r_2_"[39m
+@workmesh/web:test: [36m>[39m
+@workmesh/web:test:   [0mAgent runs[0m
+@workmesh/web:test: [36m</h2>[39m
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<h2[39m
+@workmesh/web:test:   [33mid[39m=[32m"_r_5_"[39m
+@workmesh/web:test: [36m>[39m
+@workmesh/web:test:   [0mAgent runs[0m
+@workmesh/web:test: [36m</h2>[39m
+@workmesh/web:test: 
+@workmesh/web:test: (If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<body>[39m
+@workmesh/web:test:   [36m<div>[39m
+@workmesh/web:test:     [36m<div[39m
+@workmesh/web:test:       [33mclass[39m=[32m"wm-landing"[39m
+@workmesh/web:test:     [36m>[39m
+@workmesh/web:test:       [36m<section[39m
+@workmesh/web:test:         [33maria-labelledby[39m=[32m"_r_0_"[39m
+@workmesh/web:test:         [33mclass[39m=[32m"wm-control-section wm-control-section-attention"[39m
+@workmesh/web:test:       [36m>[39m
+@workmesh/web:test:         [36m<header>[39m
+@workmesh/web:test:           [36m<div>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-control-section-marker"[39m
+@workmesh/web:test:             [36m/>[39m
+@workmesh/web:test:             [36m<h2[39m
+@workmesh/web:test:               [33mid[39m=[32m"_r_0_"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [0mNeeds you[0m
+@workmesh/web:test:             [36m</h2>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-control-section-count"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [0m2[0m
+@workmesh/web:test:             [36m</span>[39m
+@workmesh/web:test:           [36m</div>[39m
+@workmesh/web:test:           [36m<a[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-landing-all"[39m
+@workmesh/web:test:             [33mhref[39m=[32m"/?view=inbox"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [0mHandle all[0m
+@workmesh/web:test:           [36m</a>[39m
+@workmesh/web:test:         [36m</header>[39m
+@workmesh/web:test:         [36m<div[39m
+@workmesh/web:test:           [33mclass[39m=[32m"wm-control-section-content"[39m
+@workmesh/web:test:         [36m>[39m
+@workmesh/web:test:           [36m<article[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:             [36m/>[39m
+@workmesh/web:test:             [36m<div[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mapproval[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mmedium[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0msoon[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<h3[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [0mApprove a1[0m
+@workmesh/web:test:                 [36m</h3>[39m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:               [36m<p[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<b[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span>[39m
+@workmesh/web:test:                     [0mAtlas[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</b>[39m
+@workmesh/web:test:                 [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:               [36m</p>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-consequence"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0mThe run stays blocked until this is answered.[0m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:             [36m</div>[39m
+@workmesh/web:test:           [36m</article>[39m
+@workmesh/web:test:           [36m<article[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:             [36m/>[39m
+@workmesh/web:test:             [36m<div[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mapproval[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mmedium[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0msoon[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<h3[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [0mApprove a2[0m
+@workmesh/web:test:                 [36m</h3>[39m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:               [36m<p[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<b[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span>[39m
+@workmesh/web:test:                     [0mAtlas[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</b>[39m
+@workmesh/web:test:                 [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:               [36m</p>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-consequence"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0mThe run stays blocked until this is answered.[0m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:             [36m</div>[39m
+@workmesh/web:test:           [36m</article>[39m
+@workmesh/web:test:         [36m</div>[39m
+@workmesh/web:test:       [36m</section>[39m
+@workmesh/web:test:       [36m<div[39m
+@workmesh/web:test:         [33mclass[39m=[32m"wm-landing-split"[39m
+@workmesh/web:test:       [36m>[39m
+@workmesh/web:test:         [36m<sectio...
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<html>[39m
+@workmesh/web:test:   [36m<head />[39m
+@workmesh/web:test:   [36m<body>[39m
+@workmesh/web:test:     [36m<div>[39m
+@workmesh/web:test:       [36m<div[39m
+@workmesh/web:test:         [33mclass[39m=[32m"wm-landing"[39m
+@workmesh/web:test:       [36m>[39m
+@workmesh/web:test:         [36m<section[39m
+@workmesh/web:test:           [33maria-labelledby[39m=[32m"_r_0_"[39m
+@workmesh/web:test:           [33mclass[39m=[32m"wm-control-section wm-control-section-attention"[39m
+@workmesh/web:test:         [36m>[39m
+@workmesh/web:test:           [36m<header>[39m
+@workmesh/web:test:             [36m<div>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-control-section-marker"[39m
+@workmesh/web:test:               [36m/>[39m
+@workmesh/web:test:               [36m<h2[39m
+@workmesh/web:test:                 [33mid[39m=[32m"_r_0_"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0mNeeds you[0m
+@workmesh/web:test:               [36m</h2>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-control-section-count"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0m2[0m
+@workmesh/web:test:               [36m</span>[39m
+@workmesh/web:test:             [36m</div>[39m
+@workmesh/web:test:             [36m<a[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-landing-all"[39m
+@workmesh/web:test:               [33mhref[39m=[32m"/?view=inbox"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [0mHandle all[0m
+@workmesh/web:test:             [36m</a>[39m
+@workmesh/web:test:           [36m</header>[39m
+@workmesh/web:test:           [36m<div[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-control-section-content"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [36m<article[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:               [36m/>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<div[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mapproval[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mmedium[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0msoon[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</div>[39m
+@workmesh/web:test:                   [36m<h3[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mApprove a1[0m
+@workmesh/web:test:                   [36m</h3>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<p[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<b[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span>[39m
+@workmesh/web:test:                       [0mAtlas[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</b>[39m
+@workmesh/web:test:                   [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:                 [36m</p>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-consequence"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [0mThe run stays blocked until this is answered.[0m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:             [36m</article>[39m
+@workmesh/web:test:             [36m<article[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:               [36m/>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<div[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mapproval[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mmedium[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0msoon[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</div>[39m
+@workmesh/web:test:                   [36m<h3[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mApprove a2[0m
+@workmesh/web:test:                   [36m</h3>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<p[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<b[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span>[39m
+@workmesh/web:test:                       [0mAtlas[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</b>[39m
+@workmesh/web:test:                   [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:                 [36m</p>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-consequence"[39m...
+@workmesh/web:test:    ✓ LandingScreen > states heartbeat but no meter when a run has no measurable budget 79ms
+@workmesh/web:test:    ✓ LandingScreen > renders the derived budget the server sent, without re-deriving it 68ms
+@workmesh/web:test:    ✓ LandingScreen > keeps the three sections readable when one source fails 92ms
+@workmesh/web:test: stderr | features/work-items/work-item-adaptive.test.tsx > WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test: 
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test: 
+@workmesh/agent-runner:test:  ✓ src/egress-policy.test.ts (6 tests) 12ms
+@workmesh/agent-runner:test:  ✓ src/workbench-skill.test.ts (2 tests) 306ms
+@workmesh/web:test:  ✓ app/settings/workbench-llm-settings.test.tsx (6 tests) 3111ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > 选择预置只填草稿并显示出处  905ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > 手工编辑不被刷新覆盖  449ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > 模型草稿绑定新连接且显式登记  589ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > keeps shared connections read-only for members and never renders the stored credential  300ms
+@workmesh/web:test:    ✓ Agent workbench model service settings > lets a manager disable a model with the current connection revision and preserves its capabilities  640ms
+@workmesh/web:test:  ✓ app/ui-overlay-contract.test.tsx (21 tests) 4215ms
+@workmesh/web:test:    ✓ shared modal stack > focuses close first, supports an explicit initial target, and wraps only eligible controls  433ms
+@workmesh/web:test:    ✓ shared dismissal stack > dismisses a sibling Work Item label menu before opening the next without leaking card drag pointerdown  341ms
+@workmesh/web:test:    ✓ shared dismissal stack > keeps a single editable label menu reachable by click, Enter, and Space without phantom open state  379ms
+@workmesh/web:test:  ✓ features/work-items/work-item-adaptive.test.tsx (7 tests) 4237ms
+@workmesh/web:test:    ✓ WorkItemAdaptiveCollection persistent DOM > keeps the exact 300 card and five column nodes across list-board-list while preserving boundary focus  3774ms
+@workmesh/web:test:  ✓ features/workbench/conversation-workbench.test.tsx (6 tests) 3619ms
+@workmesh/web:test:    ✓ ConversationWorkbench > states the recorded tools for a settled turn and does not imply a count it does not have  546ms
+@workmesh/web:test:    ✓ ConversationWorkbench > sends a Markdown turn with the current conversation revision and keeps the bound session on the server  1180ms
+@workmesh/web:test:    ✓ ConversationWorkbench > uses the service and model selected for this turn in the actual request  588ms
+@workmesh/web:test:    ✓ ConversationWorkbench > shows a terminal bound session and prevents queuing a turn  411ms
+@workmesh/web:test:    ✓ ConversationWorkbench > keeps the newly selected conversation draft when the previous send returns late  816ms
+@workmesh/web:test:  ✓ app/connect/page.test.tsx (4 tests) 2919ms
+@workmesh/web:test:    ✓ ConnectPage MCP client state > atomically selects the first normalized advertised client without ever mounting a Codex guide  1554ms
+@workmesh/web:test:    ✓ ConnectPage MCP client state > keeps Config and Link copied states distinct while client switches stay local  1038ms
+@workmesh/agent-runner:test:  ✓ src/isolation.test.ts (9 tests) 174ms
+@workmesh/agent-runner:test:  ✓ src/execution-lifecycle.test.ts (9 tests) 6ms
+@workmesh/agent-runner:test:  ✓ src/runner-api.test.ts (35 tests) 101ms
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"fake_model_http","host":"127.0.0.1","port":53549,"status":"created"}}
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-7SOWdb","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > M2计划评论/提案/context delta固定自身身份，验证来源并复用同调用幂等包装
+@workmesh/agent-runner:test: {"tool":"workmesh_propose_plan_step_assignment","stage":"input_validation","paths":[""]}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/model-errors.test.ts > W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns invalidJson
+@workmesh/agent-runner:test: Could not parse message into JSON: {not json at all
+@workmesh/agent-runner:test: From chunk: [ 'data: {not json at all' ]
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+@workmesh/agent-runner:test: {"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"C:\\Users\\xurx\\AppData\\Local\\Temp\\workmesh-runner-7SOWdb","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"removed"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"fake_model_http","status":"closed"}}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ✓ src/wait-pi.test.ts (1 test) 2464ms
+@workmesh/agent-runner:test:    ✓ 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待  2463ms
+@workmesh/agent-runner:test:  ✓ src/model-wire.test.ts (6 tests) 5868ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > reassembles a tool call whose arguments arrive in arbitrary fragments  2559ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > reassembles a tool call whose arguments are split inside a multi-byte character  970ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > tolerates empty deltas, usage-only chunks, and an unknown event type  681ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > executes a tool once even when the terminal event and [DONE] are duplicated  716ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > returns the assistant text when the provider omits the terminal event  468ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > drives the responses protocol through the same configuration path  472ms
+@workmesh/agent-runner:test:  ✓ src/model-errors.test.ts (6 tests) 5708ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status500  2738ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status429  946ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status401  532ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns invalidJson  529ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns abruptClose  617ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns incomplete  344ms
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+@workmesh/agent-runner:test: {"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  ✓ src/workmesh-tools.test.ts (26 tests) 2578ms
+@workmesh/agent-runner:test: 
+@workmesh/agent-runner:test:  Test Files  14 passed (14)
+@workmesh/agent-runner:test:       Tests  112 passed (112)
+@workmesh/agent-runner:test:    Start at  13:39:36
+@workmesh/agent-runner:test:    Duration  21.23s (transform 12.47s, setup 0ms, collect 145.79s, tests 20.59s, environment 2ms, prepare 13.32s)
+@workmesh/agent-runner:test: 
+@workmesh/web:test:  ✓ app/operations-content.test.tsx (43 tests) 8661ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > keeps the page header stable while feature authority resolves without exposing dependent anchors  1123ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > uses ordinary anchors and unique focusable targets in deterministic order  306ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > hydrates hash state, gives one link current-location ownership, and focuses on a same-hash click  480ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > reanchors a still-focused direct hash after initial collection layout growth only  323ms
+@workmesh/web:test:    ✓ OperationsContent section navigation > clears stale current state when a refresh hides its target  342ms
+@workmesh/web:test:    ✓ OperationsContent loaded-record search > matches localized rendered values and dates but not hidden raw enums or full identifiers  309ms
+@workmesh/config:test: cache miss, executing f539806eda525e52
+@workmesh/config:test: 
+@workmesh/config:test: > @workmesh/config@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\config
+@workmesh/config:test: > vitest run
+@workmesh/config:test: 
+@workmesh/config:test: 
+@workmesh/config:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/config
+@workmesh/config:test: 
+@workmesh/web:test:  ✓ app/agent-session-detail.test.tsx (4 tests) 1527ms
+@workmesh/web:test:    ✓ agent-session-detail approval inbox > restores the per-approval card surface styles removed by 868478f  440ms
+@workmesh/config:test:  ✓ src/service-command.test.ts (13 tests) 3ms
+@workmesh/web:test:  ✓ features/navigation/theme.test.tsx (10 tests) 1476ms
+@workmesh/web:test:    ✓ coexisting reference token contract > preserves every base token declaration, scope, value, and existing CSS consumer  1170ms
+@workmesh/web:test:  ✓ app/agents/[id]/page.test.tsx (4 tests) 2061ms
+@workmesh/web:test:    ✓ Agent detail route > renders validated definition facts and the authoritative empty Team Access projection  1487ms
+@workmesh/config:test:  ✓ src/index.test.ts (21 tests) 18ms
+@workmesh/config:test: 
+@workmesh/config:test:  Test Files  2 passed (2)
+@workmesh/config:test:       Tests  34 passed (34)
+@workmesh/config:test:    Start at  13:40:02
+@workmesh/config:test:    Duration  4.31s (transform 1.88s, setup 0ms, collect 2.87s, tests 22ms, environment 0ms, prepare 1.23s)
+@workmesh/config:test: 
+@workmesh/domain:build: cache miss, executing 60b7825e540bb792
+@workmesh/domain:build: 
+@workmesh/domain:build: > @workmesh/domain@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build: 
+@workmesh/web:test:  ✓ app/agent-control-dialog.test.tsx (2 tests) 1857ms
+@workmesh/web:test:    ✓ AgentControlDialog > binds the Human reason and selected stop mode to the preview revision  1396ms
+@workmesh/web:test:    ✓ AgentControlDialog > preserves the draft and reloads consequences after a stale revision  460ms
+@workmesh/web:test:  ✓ app/settings/delete-team-dialog.test.tsx (7 tests) 1655ms
+@workmesh/web:test:    ✓ DeleteTeamDialog > cancels without confirmation and confirms the frozen Team snapshot once  777ms
+@workmesh/agent-sdk:test: cache miss, executing 0ca49f10619e05b3
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test: > @workmesh/agent-sdk@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:test: > vitest run
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/agent-sdk
+@workmesh/agent-sdk:test: 
+@workmesh/web:test:  ✓ app/lib/toast-viewport.test.tsx (4 tests) 1069ms
+@workmesh/web:test:    ✓ ToastViewport > renders no viewport while empty and one atomic live role per toast with unique localized close names  620ms
+@workmesh/agent-sdk:test:  ✓ src/optional-domains.test.ts (3 tests) 76ms
+@workmesh/agent-sdk:test:  ✓ src/execution-adapters.test.ts (10 tests) 81ms
+@workmesh/agent-sdk:test:  ✓ src/discovery.test.ts (8 tests) 1046ms
+@workmesh/agent-sdk:test:    ✓ qualified SDK身份及恢复边界 > 两个目标并发只用各自Token核资格/执行，当前C随后保持自身身份  462ms
+@workmesh/agent-sdk:test:  ✓ src/index.test.ts (35 tests) 1230ms
+@workmesh/agent-sdk:test:    ✓ WorkMeshClient > keeps a connection bridge on coordination auth and refreshes each exact execution session request-locally  564ms
+@workmesh/agent-sdk:test:    ✓ WorkMeshClient > rebuilds exact-session authorization independently in separate stateless bridge clients  365ms
+@workmesh/agent-sdk:test: 
+@workmesh/agent-sdk:test:  Test Files  4 passed (4)
+@workmesh/agent-sdk:test:       Tests  56 passed (56)
+@workmesh/agent-sdk:test:    Start at  13:40:22
+@workmesh/agent-sdk:test:    Duration  6.20s (transform 2.86s, setup 0ms, collect 11.21s, tests 2.43s, environment 1ms, prepare 2.69s)
+@workmesh/agent-sdk:test: 
+@workmesh/a2a-adapter:test: cache miss, executing 6198d1e73e516fe4
+@workmesh/a2a-adapter:test: 
+@workmesh/a2a-adapter:test: > @workmesh/a2a-adapter@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\a2a-adapter
+@workmesh/a2a-adapter:test: > vitest run
+@workmesh/a2a-adapter:test: 
+@workmesh/a2a-adapter:test: 
+@workmesh/a2a-adapter:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/a2a-adapter
+@workmesh/a2a-adapter:test: 
+@workmesh/a2a-adapter:test:  ✓ src/index.test.ts (4 tests) 39ms
+@workmesh/a2a-adapter:test: 
+@workmesh/a2a-adapter:test:  Test Files  1 passed (1)
+@workmesh/a2a-adapter:test:       Tests  4 passed (4)
+@workmesh/a2a-adapter:test:    Start at  13:40:32
+@workmesh/a2a-adapter:test:    Duration  1.66s (transform 65ms, setup 0ms, collect 99ms, tests 39ms, environment 0ms, prepare 480ms)
+@workmesh/a2a-adapter:test: 
+@workmesh/agent-runner:build: cache miss, executing 683edcc287554467
+@workmesh/agent-runner:build: 
+@workmesh/agent-runner:build: > @workmesh/agent-runner@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\agent-runner
+@workmesh/agent-runner:build: > tsc -p tsconfig.json
+@workmesh/agent-runner:build: 
+@workmesh/web:test:  ✓ app/workbench/page.test.tsx (2 tests) 1653ms
+@workmesh/web:test:    ✓ WorkbenchPage > renders inside the unified shell with the workbench as the only active destination  536ms
+@workmesh/web:test:    ✓ WorkbenchPage > keeps the shell footer contract and theme control  1114ms
+@workmesh/web:test: stderr | features/work-items/work-surfaces-pagination.test.tsx > WorkSurfaces pagination ownership > does not install an observer or load another page while pagination is loading
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test: 
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test: 
+@workmesh/web:test:  ✓ app/attention-center-bulk.test.tsx (5 tests) 2168ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > uses stable default reason and retains a retryable error per item  1246ms
+@workmesh/web:test:    ✓ Human Attention bulk approval recovery > does not expose retry for forbidden decisions and asks for reconfirmation after a conflict  371ms
+@workmesh/web:test:  ✓ app/lib/use-toast.test.ts (9 tests) 719ms
+@workmesh/web:test:    ✓ toastStore > replaces an explicit dedupe key, resets its timer, and adopts the latest valid focus origin  378ms
+@workmesh/web:test:  ✓ app/agents/approvals-table.test.tsx (18 tests) 3125ms
+@workmesh/web:test:    ✓ ApprovalsTable > shows direct decisions on every actionable row before any bulk selection  714ms
+@workmesh/web:test:  ✓ app/agent-connections-panel.test.tsx (11 tests) 3165ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > uses the active locale for the Agent name placeholder  913ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a committed rotation result when its post-commit refresh fails  380ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > lets a newer successful list revision replace an older committed local mutation result  354ms
+@workmesh/web:test:    ✓ AgentConnectionsPanel collection authority > keeps a just-created result after refresh failure, then rebuilds detail without its one-time URL in a new authority scope  510ms
+@workmesh/web:test:  ✓ app/attention-center-approval.test.tsx (4 tests) 3115ms
+@workmesh/web:test:    ✓ Human Attention inline approval > offers direct decisions without a required text field  1369ms
+@workmesh/web:test:    ✓ Human Attention inline approval > sends approve-with-requirements as the immutable approval reason  869ms
+@workmesh/web:test:    ✓ Human Attention inline approval > keeps decisions fail-closed until the complete Approval scope is loaded  519ms
+@workmesh/web:test:    ✓ Human Attention inline approval > keeps decisions disabled and offers retry when the full Approval read fails  358ms
+@workmesh/web:test:  ✓ features/work-items/detail/work-item-detail-focus.test.tsx (10 tests) 2471ms
+@workmesh/web:test:    ✓ WorkItemDetail focus on revision conflict > moves focus to the Save button when a revision conflict is reported  944ms
+@workmesh/web:test:  ✓ app/project-control-center.test.tsx (7 tests) 3054ms
+@workmesh/web:test:    ✓ Project Control Center > keeps a long Project description available without overwhelming the overview  546ms
+@workmesh/web:test:    ✓ Project Control Center > loads one bounded projection and renders the complete Run digest  563ms
+@workmesh/web:test:    ✓ Project Control Center > paginates a collection independently and restores focus after closing detail  608ms
+@workmesh/web:test:    ✓ Project Control Center > keeps an unapplied filter draft when the projection refreshes with new data  619ms
+@workmesh/web:test:    ✓ Project Control Center > owns server-side filters in the URL and projection request  465ms
+@workmesh/web:test:  ✓ features/work-items/work-item-filters.test.tsx (9 tests) 742ms
+@workmesh/web:test:    ✓ WorkItemFilters compact mode > renders the More filters toggle when compact is true  321ms
+@workmesh/web:test:  ✓ app/evidence-drawer.test.tsx (2 tests) 969ms
+@workmesh/web:test:    ✓ EvidenceDrawer > renders rich provenance, canonical relationships, exact-head drift, and technical IDs  908ms
+@workmesh/web:test:  ✓ app/agents/approval-history-table.test.tsx (8 tests) 838ms
+@workmesh/web:test:    ✓ ApprovalHistoryTable > renders only the selected terminal status and links to the source Session  577ms
+@workmesh/web:test:  ✓ features/rich-content/artifacts.test.tsx (4 tests) 759ms
+@workmesh/web:test:    ✓ WorkItemArtifacts localized copy > renders its complete empty-state and input labels from copy  411ms
+@workmesh/web:test:  ✓ app/operations/page.test.tsx (4 tests) 633ms
+@workmesh/web:test:    ✓ OperationsPage navigation > marks the first-class Operations destination active without falsely marking Agents active  311ms
+@workmesh/web:test:  ✓ app/page.test.tsx (9 tests) 4226ms
+@workmesh/web:test:    ✓ Home default landing > sends a bare / to the Agent workbench  469ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > updates the Work Surface layout URL without a duplicate HomePage render and reuses the latest layout on the next query render  841ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > restores the latest presentation layout from popstate and saved views  409ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > localizes the release build and schema labels  340ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > uses the Guidance copy contract for editor and preview chrome  619ms
+@workmesh/web:test:    ✓ Home project strip keyboard contract > exposes a named project rail with ordinary project activation  478ms
+@workmesh/web:test:    ✓ Home full-page WorkItem semantics > exposes only the active detail h1 and removes the obscured page content from semantics  382ms
+@workmesh/web:test:    ✓ Home full-page WorkItem semantics > keeps Agent executions selected when the automatic agent projection refreshes  445ms
+@workmesh/web:test:  ✓ app/agents/team-access-drawer.test.tsx (8 tests) 1313ms
+@workmesh/web:test:    ✓ TeamAccessDrawer > renders the Sheet with the team access list when an agent is selected and open is true  560ms
+@workmesh/web:test:  ✓ app/page-outcomes.test.tsx (13 tests) 5953ms
+@workmesh/web:test:    ✓ Home mutation outcomes > retries a URL-owned Project after authority invalidates the in-flight request  688ms
+@workmesh/web:test:    ✓ Home mutation outcomes > synchronously retires actor-owned dialog state when authenticated authority changes  1205ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps the exact open detail and focus when auth refresh returns a new actor object for the same authority  686ms
+@workmesh/web:test:    ✓ Home mutation outcomes > ignores a completed A-authority create after switching to B without toast, refresh, URL, or focus side effects  769ms
+@workmesh/web:test:    ✓ Home mutation outcomes > emits exactly one localized success toast while the authorized page remains rendered  444ms
+@workmesh/web:test:    ✓ Home mutation outcomes > keeps a structured conflict in the top modal, preserves the form, emits no toast, and clears it on reopen  649ms
+@workmesh/web:test: stderr | features/work-items/work-surfaces-loading.test.tsx > WorkSurfaces authenticated collection loading > retains exact row DOM and focus through refresh and ordinary failure, then revokes on 403
+@workmesh/web:test: Each child in a list should have a unique "key" prop.
+@workmesh/web:test: 
+@workmesh/web:test: Check the render method of `AdaptiveWorkItemColumn2`. It was passed a child from WorkItemAdaptiveCollection. See https://react.dev/link/warning-keys for more information.
+@workmesh/web:test: 
+@workmesh/web:test:  ✓ features/work-items/work-surfaces-loading.test.tsx (5 tests) 1068ms
+@workmesh/web:test:    ✓ WorkSurfaces authenticated collection loading > gives initial loading exactly one named busy owner and decorative cells  413ms
+@workmesh/web:test:  ✓ features/rich-content/rich-content.test.ts (28 tests) 1569ms
+@workmesh/web:test:    ✓ rich-content safety boundary > collapses only oversized compact content and exposes an accessible toggle  354ms
+@workmesh/web:test:  ✓ features/work-items/work-surfaces-pagination.test.tsx (9 tests) 13892ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > reuses one normalized item projection for layout-only changes  829ms
+@workmesh/web:test:    ✓ WorkSurfaces pagination ownership > keeps all 300 card renders stable when a layout callback rerenders the parent with new inline handlers  12348ms
+@workmesh/web:test:  ✓ app/collaboration-queues.test.tsx (3 tests) 1615ms
+@workmesh/web:test:    ✓ ActionableCollaborationQueues > separates governed responses from informational messages and restores selection in the URL  897ms
+@workmesh/web:test:    ✓ ActionableCollaborationQueues > preserves the reply draft when optimistic concurrency reports a conflict  483ms
+@workmesh/web:test:  ✓ app/settings/page.test.tsx (27 tests) 14084ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > synchronously retires actor-owned destructive state when authenticated authority changes  1421ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > ignores an A-authority Team create that resolves after switching to B  656ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains the exact Settings action and focus during authenticated actor refresh  494ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > gives workflow States an independent initialized authority and retains exact rows and focus on ordinary refresh failure  513ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains initialized empty Team authority through refresh and ordinary failure, then revokes it on 403  654ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains a resolved Team and exact selector on ordinary refresh failure but revokes it on 403  633ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains the exact states scope and focused Team control while refreshing, then corrects a removed Team after success  452ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > refreshes the authorized Team collection before routing to a newly created Team  451ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > keeps create validation and update revision failures contextual without duplicating a toast  734ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > pushes a user Team change while preserving history state and unrelated URL state  326ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > posts only the selected stable preset color and reports success even when refresh has no new row  744ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > renders and focuses the native custom color control only for Custom, preserving it after failure  631ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > resets Custom to its UI-only initial color after a successful create  609ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > keeps every idle dialog dismissal path mutation-free and restores trigger focus  619ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > guards rapid confirmation and sends the exact encoded snapshot mutation without a body  392ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > maps destructive conflicts locally, keeps the snapshot, and performs no refresh on failure  706ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > commits the close before one independent refresh and never relabels a refresh failure  476ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > waits for post-delete Team resolution before moving focus once  716ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > retains one post-delete focus intent across refresh failure until Team retry reconciliation completes  784ms
+@workmesh/web:test:    ✓ SettingsPage routed shared Tabs > preserves a newer Team route and never resumes deleted-Team states after an in-flight delete  744ms
+@workmesh/a2a-adapter:build: cache miss, executing 93fba6cefe179186
+@workmesh/a2a-adapter:build: 
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build: 
+@workmesh/web:test:  ✓ app/agents/page-outcomes.test.tsx (24 tests) 15204ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > owns all Agent surface aria labels in the active locale  539ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > synchronously clears actor-owned approval selection when authenticated authority changes  589ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > revokes every A-authority Agent projection and open surface before B collections resolve  1667ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > ignores an A-authority bulk decision that settles after switching to B  632ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > retains the exact AppShell action and focus during an authenticated actor refresh  488ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps 300 stable Agent cards out of Peek and four-keystroke filter rerenders  4876ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > closes a filtered Peek and transfers orphaned roving focus to the first visible Agent link  317ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > counts and renders only server-projected Human Attention items  365ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > submits a direct approval without bulk selection and reports success on that row  535ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > shows a safe per-row revision conflict and refreshes instead of replaying the decision  605ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps a quorum-pending decision visible as waiting for other reviewers  531ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > emits one localized success toast only after every selected decision succeeds  549ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps network-only partial aggregate detail contextual, retains only failed selection, and emits no toast  762ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps mixed conflict and network aggregate detail contextual, retains only failed selection, and emits no toast  681ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > keeps all failed rows selected with safe contextual copy and no raw or toast output  631ms
+@workmesh/web:test:    ✓ Agents bulk approval outcomes > does not relabel a committed success when the post-commit refresh fails  668ms
+@workmesh/web:test:  ✓ app/operations/runs-table.test.tsx (4 tests) 753ms
+@workmesh/web:test:    ✓ RunsTable > renders a captioned six-column table and associates a historical error detail with its run  670ms
+@workmesh/agent-sdk:build: cache miss, executing e1bfaa85bb1a1d2d
+@workmesh/web:test:  ✓ app/connect/client-picker.test.tsx (2 tests) 845ms
+@workmesh/web:test:    ✓ ClientPicker > renders only the normalized advertised subset in server order  754ms
+@workmesh/web:test:  ✓ app/lib/use-hotkeys.test.ts (5 tests) 487ms
+@workmesh/web:test:    ✓ useHotkeys > focuses only a connected, visible, enabled declared filter  322ms
+@workmesh/agent-sdk:build: 
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build: 
+@workmesh/web:test:  ✓ app/lib/page-header.test.tsx (2 tests) 547ms
+@workmesh/web:test:    ✓ PageHeader > renders title, description, and actions  487ms
+@workmesh/web:test:  ✓ app/lib/skeleton-list.test.tsx (1 test) 481ms
+@workmesh/web:test:    ✓ SkeletonList > owns one localized busy status while every requested cell is decorative  480ms
+@workmesh/web:test:  ✓ app/agents/agent-peek.test.tsx (1 test) 693ms
+@workmesh/web:test:    ✓ AgentPeek > uses the shared Sheet, loaded list projection, and restores trigger focus on close  692ms
+@workmesh/web:test:  ✓ features/work-items/work-item-card.test.tsx (32 tests) 536ms
+@workmesh/web:test:  ✓ app/agent-work-panel.test.tsx (10 tests) 1036ms
+@workmesh/web:test:    ✓ useAgentDelegationController > does not offer an Agent missing either required execution capability  491ms
+@workmesh/web:test:  ✓ app/agents/agent-detail-panel.test.tsx (3 tests) 179ms
+@workmesh/web:test:  ✓ app/app-shell-anatomy.test.tsx (6 tests) 240ms
+@workmesh/web:test:  ✓ app/lib/pagination.test.tsx (14 tests) 1218ms
+@workmesh/web:test:  ✓ app/lib/use-board-column-widths.test.tsx (12 tests) 18ms
+@workmesh/web:test:  ✓ app/agents/approval-route-state.test.ts (9 tests) 28ms
+@workmesh/web:test:  ✓ app/ui-unification-contract.test.ts (2 tests) 58ms
+@workmesh/web:test:  ✓ e2e/playwright-config-contract.test.ts (2 tests) 648ms
+@workmesh/web:test:    ✓ Playwright topology configs > preserves the mocked local list reporter when no run root is set  585ms
+@workmesh/web:test:  ✓ app/lib/agents.test.ts (23 tests) 68ms
+@workmesh/web:test:  ✓ app/lib/list-interactions.test.ts (3 tests) 18ms
+@workmesh/web:test:  ✓ app/ui-layout-contract.test.ts (14 tests) 43ms
+@workmesh/web:test:  ✓ app/lib/api.test.ts (16 tests) 26ms
+@workmesh/web:test:  ✓ features/command-center/integration.test.ts (6 tests) 14ms
+@workmesh/web:test:  ✓ app/lib/i18n.test.ts (3 tests) 165ms
+@workmesh/web:test:  ✓ app/lib/realtime.test.ts (10 tests) 18ms
+@workmesh/web:test:  ✓ app/agents/agent-workspace.test.tsx (2 tests) 200ms
+@workmesh/web:test:  ✓ app/lib/workflow-state-patch.test.ts (2 tests) 4ms
+@workmesh/web:test:  ✓ app/work-item-conflict-placement.test.ts (1 test) 4ms
+@workmesh/web:test:  ✓ app/agents/filters.test.ts (9 tests) 4ms
+@workmesh/web:test:  ✓ app/lib/use-authenticated-actor.test.ts (5 tests) 23ms
+@workmesh/web:test:  ✓ app/lib/use-current-team.test.ts (6 tests) 38ms
+@workmesh/web:test:  ✓ app/lib/use-media-query.test.ts (3 tests) 16ms
+@workmesh/web:test:  ✓ app/lib/model-presets.test.ts (7 tests) 19ms
+@workmesh/web:test:  ✓ features/collaboration/view-model.test.ts (3 tests) 11ms
+@workmesh/web:test:  ✓ features/work-items/detail/work-item-execution-workspace.test.tsx (3 tests) 514ms
+@workmesh/web:test:    ✓ WorkItemExecutionWorkspace > renders responsibility, live execution, Human attention, and verified evidence from server projections  449ms
+@workmesh/config:build: cache miss, executing fe6abf12c4aaaba8
+@workmesh/web:test:  ✓ e2e/mocked/final-tour-server-contract.test.ts (5 tests) 4ms
+@workmesh/web:test:  ✓ app/lib/project-work.test.ts (4 tests) 3ms
+@workmesh/config:build: 
+@workmesh/config:build: > @workmesh/config@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build: 
+@workmesh/web:test:  ✓ e2e/human-control-plane-acceptance.test.ts (3 tests) 6ms
+@workmesh/web:test:  ✓ app/brand-assets.test.ts (3 tests) 7ms
+@workmesh/web:test:  ✓ e2e/playwright-run-directory.test.ts (5 tests) 4ms
+@workmesh/web:test:  ✓ features/work-items/detail/detail.test.ts (4 tests) 6ms
+@workmesh/web:test:  ✓ app/lib/optional-integration-boundary.test.ts (2 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/mcp-onboarding.test.ts (8 tests) 5ms
+@workmesh/web:test:  ✓ app/ui-foundation.test.ts (8 tests) 20ms
+@workmesh/web:test:  ✓ app/health-routes.test.ts (1 test) 5ms
+@workmesh/web:test:  ✓ app/lib/workspace-navigation.test.ts (4 tests) 5ms
+@workmesh/web:test:  ✓ app/lib/product-telemetry.test.ts (3 tests) 4ms
+@workmesh/web:test:  ✓ app/attention-route-state.test.ts (2 tests) 4ms
+@workmesh/web:test:  ✓ features/work-items/view-model.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/human-control-plane-navigation.test.ts (4 tests) 4ms
+@workmesh/web:test:  ✓ app/run-timeline-route-state.test.ts (2 tests) 4ms
+@workmesh/web:test:  ✓ app/agents/agent-detail-return.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/shortcut-scope.test.ts (20 tests) 3ms
+@workmesh/web:test:  ✓ app/settings/team-resolution.test.ts (6 tests) 3ms
+@workmesh/web:test:  ✓ app/settings/route-state.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/realtime-refresh.test.ts (4 tests) 4ms
+@workmesh/web:test:  ✓ app/operations/filter.test.ts (5 tests) 3ms
+@workmesh/web:test:  ✓ app/operations/sections.test.ts (7 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/canonical-route.test.ts (4 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/connection-diagnostics.test.ts (3 tests) 3ms
+@workmesh/web:test:  ✓ app/collaboration-queue-route.test.ts (2 tests) 3ms
+@workmesh/web:test:  ✓ app/recovery-route.test.ts (2 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/room.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/project-work-preview-query.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/settings/workflow-color-presets.test.ts (2 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/latest-request.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/collection-authority.test.ts (7 tests) 3ms
+@workmesh/web:test:  ✓ app/lib/navigation.test.ts (2 tests) 2ms
+@workmesh/web:test:  ✓ app/lib/settings-permissions.test.ts (1 test) 2ms
+@workmesh/web:test:  ✓ app/lib/actor.test.ts (1 test) 1ms
+@workmesh/db:build: cache miss, executing f5270d4a78454df1
+@workmesh/web:test:  ✓ app/lib/document-title.test.ts (2 tests) 1ms
+@workmesh/db:build: 
+@workmesh/db:build: > @workmesh/db@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build: 
+@workmesh/web:test:  ✓ features/command-center/keyboard.test.tsx (5 tests) 684ms
+@workmesh/web:test:    ✓ GlobalCommandCenter keyboard ownership > opens once for slash and Ctrl/Meta+K while preserving interactive contexts  507ms
+@workmesh/db:test: cache miss, executing 38532a86f20f2898
+@workmesh/db:test: 
+@workmesh/db:test: > @workmesh/db@ test C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+@workmesh/db:test: > vitest run
+@workmesh/db:test: 
+@workmesh/web:test:  ✓ app/agents/agent-registry-card.test.tsx (7 tests) 385ms
+@workmesh/db:test: 
+@workmesh/db:test:  RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a127d4-e047-7e57-81c2-3d054851fc88/packages/db
+@workmesh/db:test: 
+@workmesh/web:test:  ✓ app/recovery-center.test.tsx (2 tests) 497ms
+@workmesh/web:test:    ✓ RecoveryCenter > distinguishes terminal-only assignment and opens preserved recovery context  386ms
+@workmesh/web:test:  ✓ features/command-center/registry.test.ts (10 tests) 248ms
+@workmesh/db:test:  ✓ src/agent-concurrency-inventory.test.ts (3 tests) 12ms
+@workmesh/db:test:  ✓ src/event-resources.test.ts (4 tests) 2ms
+@workmesh/db:test:  ✓ src/migrations.test.ts (3 tests) 68ms
+@workmesh/db:test:  ✓ src/agent-concurrency.test.ts (3 tests) 5ms
+@workmesh/web:test:  ✓ app/page-hotkeys.test.tsx (8 tests) 299ms
+@workmesh/db:test:  ✓ src/event-writer-inventory.test.ts (3 tests) 558ms
+@workmesh/db:test:    ✓ durable domain-event writer inventory > requires every production aggregate literal to have a resolver  469ms
+@workmesh/db:test:  ✓ src/index.test.ts (1 test) 1ms
+@workmesh/db:test:  ✓ scripts/seed.test.ts (3 tests) 3ms
+@workmesh/db:test:  ✓ src/agent-lock-order-inventory.test.ts (8 tests) 2163ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > manifests every production file with ranked locking or writes  583ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > manifests every ranked SQL statement with its transaction owner and rank sequence  378ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > rejects unsafe production ordering and proves the negative fixtures  1178ms
+@workmesh/db:test: 
+@workmesh/db:test:  Test Files  8 passed (8)
+@workmesh/db:test:       Tests  28 passed (28)
+@workmesh/db:test:    Start at  13:41:36
+@workmesh/db:test:    Duration  4.28s (transform 899ms, setup 0ms, collect 4.70s, tests 2.81s, environment 1ms, prepare 5.24s)
+@workmesh/db:test: 
+@workmesh/mcp:build: cache miss, executing 0d7a59a6a7fe3fa1
+@workmesh/web:test:  ✓ features/work-items/work-surfaces-filters.test.tsx (5 tests) 8ms
+@workmesh/mcp:build: 
+@workmesh/mcp:build: > @workmesh/mcp@ build C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\apps\mcp
+@workmesh/mcp:build: > tsc -p tsconfig.build.json
+@workmesh/mcp:build: 
+@workmesh/web:test:  ✓ features/work-items/work-items.test.ts (15 tests) 12ms
+@workmesh/web:test:  ✓ features/command-center/queries.test.ts (4 tests) 18ms
+@workmesh/web:test:  ✓ app/attention-center.test.ts (3 tests) 10ms
+@workmesh/web:test:  ✓ app/work-room.test.ts (1 test) 3ms
+@workmesh/web:test: 
+@workmesh/web:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+@workmesh/web:test: 
+@workmesh/web:test:  FAIL  app/landing-screen.test.tsx > LandingScreen > reads three independent sources, each capped, and links the attention section to its own surface
+@workmesh/web:test: Error: Test timed out in 5000ms.
+@workmesh/web:test: If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+@workmesh/web:test:  ❯ app/landing-screen.test.tsx:79:3
+@workmesh/web:test:      77| 
+@workmesh/web:test:      78| describe('LandingScreen', () => {
+@workmesh/web:test:      79|   it('reads three independent sources, each capped, and links the atte…
+@workmesh/web:test:        |   ^
+@workmesh/web:test:      80|     stubFetch([runDigest()])
+@workmesh/web:test:      81|     const { default: LandingScreen } = await import('./landing-screen')
+@workmesh/web:test: 
+@workmesh/web:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+@workmesh/web:test: 
+@workmesh/web:test:  FAIL  app/landing-screen.test.tsx > LandingScreen > shows four run rows however many the projection returns
+@workmesh/web:test: TestingLibraryElementError: Found multiple elements with the text: Agent runs
+@workmesh/web:test: 
+@workmesh/web:test: Here are the matching elements:
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<h2[39m
+@workmesh/web:test:   [33mid[39m=[32m"_r_2_"[39m
+@workmesh/web:test: [36m>[39m
+@workmesh/web:test:   [0mAgent runs[0m
+@workmesh/web:test: [36m</h2>[39m
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<h2[39m
+@workmesh/web:test:   [33mid[39m=[32m"_r_5_"[39m
+@workmesh/web:test: [36m>[39m
+@workmesh/web:test:   [0mAgent runs[0m
+@workmesh/web:test: [36m</h2>[39m
+@workmesh/web:test: 
+@workmesh/web:test: (If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<body>[39m
+@workmesh/web:test:   [36m<div>[39m
+@workmesh/web:test:     [36m<div[39m
+@workmesh/web:test:       [33mclass[39m=[32m"wm-landing"[39m
+@workmesh/web:test:     [36m>[39m
+@workmesh/web:test:       [36m<section[39m
+@workmesh/web:test:         [33maria-labelledby[39m=[32m"_r_0_"[39m
+@workmesh/web:test:         [33mclass[39m=[32m"wm-control-section wm-control-section-attention"[39m
+@workmesh/web:test:       [36m>[39m
+@workmesh/web:test:         [36m<header>[39m
+@workmesh/web:test:           [36m<div>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-control-section-marker"[39m
+@workmesh/web:test:             [36m/>[39m
+@workmesh/web:test:             [36m<h2[39m
+@workmesh/web:test:               [33mid[39m=[32m"_r_0_"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [0mNeeds you[0m
+@workmesh/web:test:             [36m</h2>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-control-section-count"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [0m2[0m
+@workmesh/web:test:             [36m</span>[39m
+@workmesh/web:test:           [36m</div>[39m
+@workmesh/web:test:           [36m<a[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-landing-all"[39m
+@workmesh/web:test:             [33mhref[39m=[32m"/?view=inbox"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [0mHandle all[0m
+@workmesh/web:test:           [36m</a>[39m
+@workmesh/web:test:         [36m</header>[39m
+@workmesh/web:test:         [36m<div[39m
+@workmesh/web:test:           [33mclass[39m=[32m"wm-control-section-content"[39m
+@workmesh/web:test:         [36m>[39m
+@workmesh/web:test:           [36m<article[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:             [36m/>[39m
+@workmesh/web:test:             [36m<div[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mapproval[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mmedium[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0msoon[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<h3[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [0mApprove a1[0m
+@workmesh/web:test:                 [36m</h3>[39m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:               [36m<p[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<b[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span>[39m
+@workmesh/web:test:                     [0mAtlas[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</b>[39m
+@workmesh/web:test:                 [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:               [36m</p>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-consequence"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0mThe run stays blocked until this is answered.[0m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:             [36m</div>[39m
+@workmesh/web:test:           [36m</article>[39m
+@workmesh/web:test:           [36m<article[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [36m<span[39m
+@workmesh/web:test:               [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:             [36m/>[39m
+@workmesh/web:test:             [36m<div[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mapproval[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mmedium[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                   [36m<span[39m
+@workmesh/web:test:                     [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                     [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0msoon[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<h3[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [0mApprove a2[0m
+@workmesh/web:test:                 [36m</h3>[39m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:               [36m<p[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<b[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<span>[39m
+@workmesh/web:test:                     [0mAtlas[0m
+@workmesh/web:test:                   [36m</span>[39m
+@workmesh/web:test:                 [36m</b>[39m
+@workmesh/web:test:                 [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:               [36m</p>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-consequence"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0mThe run stays blocked until this is answered.[0m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:             [36m</div>[39m
+@workmesh/web:test:           [36m</article>[39m
+@workmesh/web:test:         [36m</div>[39m
+@workmesh/web:test:       [36m</section>[39m
+@workmesh/web:test:       [36m<div[39m
+@workmesh/web:test:         [33mclass[39m=[32m"wm-landing-split"[39m
+@workmesh/web:test:       [36m>[39m
+@workmesh/web:test:         [36m<sectio...
+@workmesh/web:test: 
+@workmesh/web:test: Ignored nodes: comments, script, style
+@workmesh/web:test: [36m<html>[39m
+@workmesh/web:test:   [36m<head />[39m
+@workmesh/web:test:   [36m<body>[39m
+@workmesh/web:test:     [36m<div>[39m
+@workmesh/web:test:       [36m<div[39m
+@workmesh/web:test:         [33mclass[39m=[32m"wm-landing"[39m
+@workmesh/web:test:       [36m>[39m
+@workmesh/web:test:         [36m<section[39m
+@workmesh/web:test:           [33maria-labelledby[39m=[32m"_r_0_"[39m
+@workmesh/web:test:           [33mclass[39m=[32m"wm-control-section wm-control-section-attention"[39m
+@workmesh/web:test:         [36m>[39m
+@workmesh/web:test:           [36m<header>[39m
+@workmesh/web:test:             [36m<div>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-control-section-marker"[39m
+@workmesh/web:test:               [36m/>[39m
+@workmesh/web:test:               [36m<h2[39m
+@workmesh/web:test:                 [33mid[39m=[32m"_r_0_"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0mNeeds you[0m
+@workmesh/web:test:               [36m</h2>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-control-section-count"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [0m2[0m
+@workmesh/web:test:               [36m</span>[39m
+@workmesh/web:test:             [36m</div>[39m
+@workmesh/web:test:             [36m<a[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-landing-all"[39m
+@workmesh/web:test:               [33mhref[39m=[32m"/?view=inbox"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [0mHandle all[0m
+@workmesh/web:test:             [36m</a>[39m
+@workmesh/web:test:           [36m</header>[39m
+@workmesh/web:test:           [36m<div[39m
+@workmesh/web:test:             [33mclass[39m=[32m"wm-control-section-content"[39m
+@workmesh/web:test:           [36m>[39m
+@workmesh/web:test:             [36m<article[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:               [36m/>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<div[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test: 
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mapproval[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mmedium[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0msoon[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</div>[39m
+@workmesh/web:test:                   [36m<h3[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mApprove a1[0m
+@workmesh/web:test:                   [36m</h3>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<p[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<b[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span>[39m
+@workmesh/web:test:                       [0mAtlas[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</b>[39m
+@workmesh/web:test:                   [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:                 [36m</p>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-consequence"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [0mThe run stays blocked until this is answered.[0m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:               [36m</div>[39m
+@workmesh/web:test:             [36m</article>[39m
+@workmesh/web:test:             [36m<article[39m
+@workmesh/web:test:               [33mclass[39m=[32m"wm-attention-item wm-attention-risk-medium"[39m
+@workmesh/web:test:             [36m>[39m
+@workmesh/web:test:               [36m<span[39m
+@workmesh/web:test:                 [33maria-hidden[39m=[32m"true"[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-rail"[39m
+@workmesh/web:test:               [36m/>[39m
+@workmesh/web:test:               [36m<div[39m
+@workmesh/web:test:                 [33mclass[39m=[32m"wm-attention-body"[39m
+@workmesh/web:test:               [36m>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-head"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<div[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-badges"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Kind: approval"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-approval"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"approval"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mapproval[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Severity: medium"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-medium"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"medium"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0mmedium[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                     [36m<span[39m
+@workmesh/web:test:                       [33maria-label[39m=[32m"Urgency: soon"[39m
+@workmesh/web:test:                       [33mclass[39m=[32m"wm-badge wm-badge-neutral wm-semantic-badge wm-semantic-soon"[39m
+@workmesh/web:test:                       [33mdata-semantic-value[39m=[32m"soon"[39m
+@workmesh/web:test:                     [36m>[39m
+@workmesh/web:test:                       [0msoon[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</div>[39m
+@workmesh/web:test:                   [36m<h3[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-title"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [0mApprove a2[0m
+@workmesh/web:test:                   [36m</h3>[39m
+@workmesh/web:test:                 [36m</div>[39m
+@workmesh/web:test:                 [36m<p[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-desc"[39m
+@workmesh/web:test:                 [36m>[39m
+@workmesh/web:test:                   [36m<b[39m
+@workmesh/web:test:                     [33mclass[39m=[32m"wm-attention-actor"[39m
+@workmesh/web:test:                   [36m>[39m
+@workmesh/web:test:                     [36m<span>[39m
+@workmesh/web:test:                       [0mAtlas[0m
+@workmesh/web:test:                     [36m</span>[39m
+@workmesh/web:test:                   [36m</b>[39m
+@workmesh/web:test:                   [0mA run is waiting on a Human decision.[0m
+@workmesh/web:test:                 [36m</p>[39m
+@workmesh/web:test:                 [36m<div[39m
+@workmesh/web:test:                   [33mclass[39m=[32m"wm-attention-consequence"[39m...
+@workmesh/web:test:  ❯ waitForWrapper ../../node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+@workmesh/web:test:  ❯ app/landing-screen.test.tsx:104:11
+@workmesh/web:test:     102|     const { container } = render(<LandingScreen locale="en" />)
+@workmesh/web:test:     103| 
+@workmesh/web:test:     104|     await waitFor(() => expect(screen.getByText('Agent runs')).toBeTru…
+@workmesh/web:test:        |           ^
+@workmesh/web:test:     105|     expect(container.querySelectorAll('.wm-run-digest')).toHaveLength(…
+@workmesh/web:test:     106|     // The head count stays the projection's own total, not the shown …
+@workmesh/web:test: 
+@workmesh/web:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+@workmesh/web:test: 
+@workmesh/web:test:  Test Files  1 failed | 113 passed (114)
+@workmesh/web:test:       Tests  2 failed | 787 passed (789)
+@workmesh/web:test:    Start at  13:39:29
+@workmesh/web:test:    Duration  135.51s (transform 50.26s, setup 174.53s, collect 1444.93s, tests 140.52s, environment 401.54s, prepare 58.32s)
+@workmesh/web:test: 
+@workmesh/web:test:  ELIFECYCLE  Test failed. See above for more details.
+@workmesh/mcp:test: cache miss, executing c106c715e6f5cada
+@workmesh/fake-agent:test: cache miss, executing 5ba9e28a40c1f781
+@workmesh/worker:test: cache miss, executing f4cd6155f9b66379
+@workmesh/recovery:build: cache miss, executing ef6a7e6420079221
+@workmesh/recovery:test: cache miss, executing d7fea240de99f293
+
+ Tasks:    22 successful, 29 total
+Cached:    0 cached, 29 total
+  Time:    2m38.323s 
+Failed:    @workmesh/web#test
+
+ ELIFECYCLE  Test failed. See above for more details.

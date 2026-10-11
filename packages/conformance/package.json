@@ -10,7 +10,8 @@
     "test": "vitest run",
     "conformance": "tsx src/cli.ts",
     "test:integration": "vitest run --config vitest.integration.config.ts",
-    "acceptance:joint": "tsx src/joint-clients.acceptance.ts"
+    "acceptance:joint": "tsx src/joint-clients.acceptance.ts",
+    "acceptance:optional": "tsx src/optional-domains.acceptance.ts"
   },
   "dependencies": {
     "@workmesh/agent-sdk": "workspace:*",

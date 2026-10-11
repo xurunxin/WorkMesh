@@ -1,6 +1,7 @@
 """从已独审受控清单生成发现规则；不从回调文本猜测调用身份。"""
-import hashlib,json,re
+import json,re
 from pathlib import Path
+from agent_discovery_source_binding import verify_registration_sources
 
 root = Path(__file__).resolve().parent.parent
 source = json.loads((root / 'docs/plan/agent-mcp-m0/operation-decisions.json').read_text(encoding='utf-8'))
@@ -106,13 +107,9 @@ historical_bindings = {binding['bindingId']: binding for binding in bindings}
 m4 = json.loads((root / 'docs/plan/agent-mcp-m4/product-discovery-decisions.json').read_text(encoding='utf-8'))
 if not all(m4['activation'][key] for key in ('formalReviewClosed','backendContractPassed','registrationCaptured')):
     raise ValueError('M4不得在合同与实际注册关口之前激活')
-capture = json.loads((root / m4['registrationEvidence']).read_text(encoding='utf-8'))
+capture = verify_registration_sources(root, m4['registrationEvidence'], m4['registrationSourceBinding'])
 if capture.get('kind') != 'actual_registerTool_registerResource':
     raise ValueError('M4要求真实公共注册捕获')
-for evidence in capture['sources']:
-    raw = (root / evidence['path']).read_bytes()
-    if len(raw) != evidence['bytes'] or hashlib.sha256(raw).hexdigest() != evidence['sha256']:
-        raise ValueError('M4注册捕获源码已变：'+evidence['path'])
 actual = set(next(item['bindings'] for item in capture['captures'] if item['mode']=='read-write'))
 if set(m4['registeredBindingIds']) != actual:
     raise ValueError('M4注册输入与实际捕获不同')

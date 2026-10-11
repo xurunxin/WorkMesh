@@ -1,0 +1,9 @@
+
+> workmesh@ test:acceptance:m4 C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> node scripts/require-integration-env.mjs && pnpm --filter @workmesh/conformance acceptance:optional
+
+
+> @workmesh/conformance@ acceptance:optional C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\conformance
+> tsx src/optional-domains.acceptance.ts
+
+{"nativeOriginAndTarget":"passed","entry":"test:acceptance:m4","requiredCiNative":"not_run","finalAcceptance":"pending_formal_review_and_required_ci"}

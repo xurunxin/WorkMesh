@@ -1,9 +1,9 @@
 {
-  "completeReceipts": 86,
-  "verifiedRawOutputs": 172,
-  "uniqueRuntimeSourceObjects": 1032,
-  "gitBlobsVerifiedFull": 12,
-  "casObjectsVerifiedFull": 1020,
+  "completeReceipts": 104,
+  "verifiedRawOutputs": 208,
+  "uniqueRuntimeSourceObjects": 1059,
+  "gitBlobsVerifiedFull": 27,
+  "casObjectsVerifiedFull": 1032,
   "legacyWithoutOriginalByteRef": 15644,
   "laterLocatedByExactRecordedHash": 15578,
   "missingLegacyExactBytes": [
@@ -472,23 +472,8 @@
   ],
   "legacyByteReferenceLimitation": "早期回执没有 exactBytesSource；按原长度/hash 逐字节定位后续真正保全对象，不称原命令当时已归档，不从 Git 规范化字节猜原运行字节；未定位原件完整列出。",
   "privateSecretFindings": 0,
-  "deliveryFiles": 2215,
+  "deliveryFiles": 537,
   "fullReferencedBytesRead": true,
   "partialInterruptedCommands": "无 receipt 的 interruption 保持缺失，不算完成命令。",
-  "baselineTestCredentialLiterals": [
-    {
-      "path": "docs/plan/agent-mcp-m4/execution/source-objects/4f3396b97d67976afb99e5ec6678e97f2190b8f7dc668073165d900a907b4e09",
-      "baselineTest": "apps/web/app/lib/mcp-onboarding.test.ts",
-      "rawSha256": "4f3396b97d67976afb99e5ec6678e97f2190b8f7dc668073165d900a907b4e09",
-      "baselineGitBlob": "be6fe9a79ea52ddd40cffb34ef8aad40d93b9fdb",
-      "classification": "原基线凭据检测测试的字面示例；非环境或运行凭据，保留完整源码原件"
-    },
-    {
-      "path": "docs/plan/agent-mcp-m4/execution/source-objects/94b9e7b104fd22b545a747e1f49c7f21826f30ce11fab5ca6eea58fe061cd0b3",
-      "baselineTest": "apps/web/app/connect/page.test.tsx",
-      "rawSha256": "94b9e7b104fd22b545a747e1f49c7f21826f30ce11fab5ca6eea58fe061cd0b3",
-      "baselineGitBlob": "0d31a68608b6bed3cabad4501e895692da6bb2f1",
-      "classification": "原基线凭据检测测试的字面示例；非环境或运行凭据，保留完整源码原件"
-    }
-  ]
+  "baselineTestCredentialLiterals": []
 }
