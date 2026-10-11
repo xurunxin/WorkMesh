@@ -71,7 +71,8 @@ describe('production runtime secrets', () => {
     expect(() => validateRuntimeEnvironment({ ...coordination, WORKMESH_API_URL: '' })).toThrow(/WORKMESH_API_URL is required/)
     expect(() => validateRuntimeEnvironment({ ...coordination, WORKMESH_API_URL: 'invalid' })).toThrow()
     for (const name of ['WORKMESH_SESSION_TOKEN', 'WORKMESH_MCP_ACCESS_TOKEN'])
-      expect(() => validateRuntimeEnvironment({ ...coordination, [name]: 's'.repeat(40) })).toThrow(/must not be mixed/)
+      for (const value of ['s'.repeat(40), ' '])
+        expect(() => validateRuntimeEnvironment({ ...coordination, [name]: value })).toThrow(/must not be mixed/)
     expect(() => validateRuntimeEnvironment({ ...coordination, WORKMESH_BETA_COORDINATION_MCP: 'false' })).toThrow(/WORKMESH_SESSION_TOKEN is required/)
     const staticMcp = { ...mcp, WORKMESH_SESSION_TOKEN: 's'.repeat(40), WORKMESH_MCP_ACCESS_TOKEN: 'a'.repeat(40) }
     expect(() => validateRuntimeEnvironment(staticMcp)).not.toThrow()

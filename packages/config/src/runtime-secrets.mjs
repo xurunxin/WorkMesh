@@ -202,7 +202,7 @@ export const validateRuntimeEnvironment = (environment, comparisonEnvironment = 
   // Match the existing HTTP server: request-scoped Installation credentials
   // and configured static credentials are mutually exclusive.
   if (coordinationMcp(environment)
-    && [environment.WORKMESH_SESSION_TOKEN, environment.WORKMESH_MCP_ACCESS_TOKEN].some(value => value?.trim()))
+    && [environment.WORKMESH_SESSION_TOKEN, environment.WORKMESH_MCP_ACCESS_TOKEN].some(Boolean))
     throw new Error('Coordination and static credential modes must not be mixed')
 
   for (const name of requiredNames) {
