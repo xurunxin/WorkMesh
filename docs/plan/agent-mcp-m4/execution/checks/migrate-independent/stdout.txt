@@ -1,0 +1,9 @@
+
+> workmesh@ db:migrate C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88
+> pnpm --filter @workmesh/db migrate
+
+
+> @workmesh/db@ migrate C:\Users\xurx\.tds\workspaces\01a127d4-e047-7e57-81c2-3d054851fc88\packages\db
+> tsx scripts/migrate.ts
+
+migrations applied

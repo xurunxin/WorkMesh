@@ -1,4 +1,5 @@
 import { z } from 'zod'
+export * from './optional-domain-contracts.js'
 import { childBudgetInputSchema } from './child-session-contracts.js'
 import { leaseResponseSchema } from './execution-contracts.js'
 export * from './child-session-contracts.js'

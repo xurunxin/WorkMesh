@@ -1,0 +1,36 @@
+> webui部分后续考虑彻底重新设计，接下来的任务优先完成后端功能逻辑开发，以及面向agent的mcp工具补齐，要让agent能无障碍使用系统全面的功能
+> 分批补齐既有功能（推荐）
+
+用户2026-10-09 12:00明确批准#53已审实施路线，主力开发gpt-6.1-sol/high执行，独立审查Agent同模型/high复核，沿既有依赖/检查和blocking/high闭后条件合入。此卡是已确认路线的一个完整批次。前置已由Chief独立核实；完整规划4adc5e39680e66543613d3f4f84c57a555fd94c1于2026-10-11 11:16经另一Agent正式复审，结论“可以按方案实施”，原High(blocking)已解决、未提出新阻断，生产者无计划修改。Chief按既定委托准备confirm，由原主力high进入完整实现及独立六域验收；规格更新本身不证明实施已启动或产品已验收。
+
+受控来源：已完成#53/PR209，mainc768e1e3db297d8b91b53dd68b60e723a8a40e7d，docs/plan/backend-agent-mcp-priority/batches-and-acceptance.md中本批完整节，README/coverage-matrix/operation-index/branch-separation/sources/review。全部原测试/DoD与适用理由均须消费精确Git全文，不从工具截断前缀伪造全文或hash，不将UI后续、F/TA新域混入此卡。角色/状态/feature/资源/批准前提严格按CONTEXT/AGENT_PROTOCOL/OPENAPI/SCHEMA和现行ADR；不能补工具时授Agent Human角色或注入Human cookie。
+
+## 本卡范围与前置
+批次：M4；requires/启动条件：M0 [#54](todo:pMO6s_SmEL_d81kjKm6S1) 及本批实际所用核心恢复工具落地；按用户选择在 M5 [#58](todo:OHtiaCWGLuE1ZKuaYcslS) 后安排（是优先顺序，不反过来阻塞核心M3/M5）。
+完整来源为M4节（冻结输入151–175）。只覆盖已存在并按实际部署启用的Planning/Template/Automation/Agent Loops/Costs/A2A及当前允许runLoopNow/recordUsage/health/completion有限写，typed SDK/MCP/必要Runner；owner/private saved view/Template/预算/scope与feature再验，不变Human管理。默认feature关闭仍明确错误，不擅切生产配置、虚报未选域通过或混入TA新机器/日历/CLI计费/出站MCP。A2A独立protocol cursor/受控adapter，tool有界或明确不支持无限流。
+
+包含既有getInitiativeRollup后端授权投影修复：与listInitiatives同live Session/Delegation/Team grant/project-workitem scope，保留Human读、200可见项目上限/COSTS/currency/unknown语义，不授membership或管理权。合法非空授权项目聚合非零正例、同Initiative其他scope排除、先list后撤权必须拒（非空值掩拒），Human回归；先后端安全合同/测试再SDK/MCP/Runner。未修/禁用/未选必须披露而非全面可用。
+
+## 统一执行及验收要求
+开工读真正refs/heads/main精确SHA、前置落地证据和新差异，按以下已正式独审完整方案实施；已审四项最小读取投影按现行权限及ADR0086安全合同落地，不假端点已存在。后续真正新增只读范围仍先ADR/合同复核。普通已授权实现选择由Chief依委托推进，真正扩大范围/权限/外发布另问。冻结已审#53历史，不修改其原报告冒新通过。
+产品交付须REST/Zod合同/SDK/policyfeature/MCP/derivedmanifest/Runner/conformance同一操作一致；对应完整节九类用例及不适用理由、新受测源码前后指纹/精确命令退出runtime/数量skip/首败/准备恢复清理实证落盘。Git对象与运行字节区分，缺旧原件真实标出，旧head检查不能代新组合。适用必需本机checks、独立成果审查、最新PR RequiredCI与actualdone/main均齐才验收；只报告实际运行支持/不支持/未测，不以工具或API数量冒全功能。
+本批仅Todos＋仓库记录，不伪真实WorkMesh远端记录。旧#9/#16按用户同日裁定只交后端并保全UI，仍由原todo承接；#5三OS/版本分发门禁不缩减；未将这些纳入测试场景时不能强加为所有M批次前置，若纳入须消费其实际新已验收源。F0–F6/TA新增域、真实外发/发布、团队权限及凭据连接不自动获批，不在聊天索取秘密。
+收尾先登记独有测试容器/镜像/卷网络/进程/路径，脱敏保全必要证据后仅清本人闲置资源，不globalprune/共享store/他人服务。Windows递归前核绝对workspace目标/link/活动引用/逐path保全依据，保留原操作退出/实际结果；自动审批拒停目标，不Force/改ACL属性/换工具/拆分/移动或父删绕，G1D0C3已拒目标保护。已合worktree须actualmain/保全齐/无引用才清，当前恢复目录保留。回复仅摘要/head/受控路径，未来测试不标已过。
+
+## 2026-10-11 05:57前置落地与规划交接
+来源为Chief本次平台只读todo/PR/Git与此前05:55准确候选CI观察，非用户新增指令：M5 #58 done、PR218 merged，独立refs/heads/main=c2b3d363c037157df13beb82799d99d07a9b7db8；该不可变merge commit的parents为996c940eb6c725fdfe408976ff9570997d1d5bdb及4f435c8268500b8b0a7966362bcb156801a484bc，包含已合M0–M3及两轮清理规则。M5正式独审两blocking闭合，最终候选CI426/run38088466714十job含Required CI全success；当前main中原M4完整节151–175已读。当时阶段为先规划，不直接实施；这是05:57来源快照，不限制下文正式审查后的确认实施。
+消费当前主线docs/plan/agent-mcp-m5/product-current-report.md、product-current-matrix.md、product-pr-ci-report.md及ADR0084/0085，沿用真实资格与消费者兼容合同，不借旧checks验新组合。M5实测仅Windows、loopback受控模型与fake provider；原四链入口exit1与证据续接exit0、集成分段和环境skip如实保留，不改写原整命令成功或其他OS/发行/真实provider支持。
+完整中文方案及源规格快照/来源元数据已提交docs/plan/agent-mcp-m4/并按下文完成正式独审。消费已审的逐域部署feature、既有权限、操作、安全合同/ADR、消费者兼容、实际运行准备与九类场景；不把计划标已运行。确认实施后继续该完整批次，不重新withPlan。
+开工消费已合docs/reviews/cleanup/2026-10-11-worktrees下报告与规则，先盘点本卡资源/磁盘，尽量复用可核来源、避免重复归档构建原件；记录逻辑大小、按文件身份去重长度与物理释放不同口径。仅回收已授权且保全/无活动及恢复引用的安全目标。M5当前恢复目录及旧清理树9个只读对象尚未解除保护；G1D0C3原审批拒目标及父目录继续保护，不因Done自动删除、不新增属性例外或后台删除。真正缺客户端/授权或范围分叉给具体问题，普通已授权实现不重复请求许可。
+
+## 2026-10-11 10:19部署选择与规划工件接续
+用户在本卡原问题卡明确选择：“独立测试部署，覆盖六域（推荐）”。仅在本卡独立本机测试部署启用Planning、Template、Automation、Agent Loops、Costs、A2A，用于现行Agent权限内读取与有限写验收；保留默认关闭负例，生产配置保持原状。Initiative rollup仍纳入。本卡不再以“未选择启用领域”为待裁定缺口。
+10:19–11:16规划回合仅写规划文件，未实现产品、未启动测试部署或证明测试通过；此为已结束回合的历史边界。下文确认实施后须实现产品、按用户选择启本卡独立测试部署及实际验收，继续保留生产不变和授权边界。平台plan doc:bLr0qXDovFqe7sMQaMluT是主力10:23产出；远端构建分支当次仍等于main c2b3d363c037157df13beb82799d99d07a9b7db8，没有已提交方案文件，需在本分支提交docs/plan/agent-mcp-m4/中文完整方案、原规格快照/来源元数据、冻结M4全文及相关安全合同/ADR提案和部署/九类/操作消费者/准备恢复清理矩阵，再回confirm交另一Agent独审；不把聊天摘要当完整受控文件。
+主力10:23只读调查报告另发现单次Automation run、Usage summary、A2A events同Initiative rollup依赖Human membership投影。这是生产者源码观察，不是用户另授范围/权限；方案逐项记录准确源码、现行允许Agent读的policy/scope依据、最小投影或不支持边界供独审。保持Human管理/private owner/Template准确pin/成本currency与unknown/A2A独立cursor边界；若需真正新增读范围或权限，则先形成具体裁定问题，不自行授权。Runner分页完整保留与recordUsage避免额外要求work:write亦需列明现行合同、最小设计及负例，不预记已修。
+
+## 2026-10-11 11:17正式方案复审后的实施依据
+来源为_oY于11:16对准确候选4adc5e39680e66543613d3f4f84c57a555fd94c1相对main c2b3d363c037157df13beb82799d99d07a9b7db8的正式复审，结论“可以按方案实施”；生产者11:17无需计划修改。Chief独立远端refs核主线c2及候选4adc未变。原4e144f35的High(blocking)生成链缺口已按受控方案解决，尚未实现产品和运行产品检查；这是方案放行而非成果验收。
+消费精确4adc的docs/plan/agent-mcp-m4/README、完整spec/savedplan/platform-sync、冻结M4、安全合同/ADR0086、discovery-contract/product-discovery-decisions、implementation、operation-decisions/operation-matrix、compatibility、environment-and-resources、verification、review-response/history及原177+新14来源、当前57交付记录。完整实施四项既有读取授权投影、SDK/MCP/必要Runner、受控M4 discovery增量及scripts/generate-agent-discovery.py生成链，不仅交局部诊断或文档。
+实际注册证据空是规划现状，实施后须从真实注册捕获；不能把19拟bindings直接当实物。保持138旧bindings/137映射及三项health/completion身份变体，按已审新四资格谓词替换旧Human查询条件；实际产品重新生成零差异、feature关闭/状态/准确target资格及原九类实证。规划辅助生成器重复一致不是产品generator或产品测试通过，适用checks须针对新组合实际执行。
+runLoopNow origin不因返回targetID获得目标run/usage/Template读取权；目标准确E分别真实交付，privateowner/Template实际pin/currencyunknown/A2A独立cursor和delivery派生去重、Runner分页和usage生命周期边界保持。只本卡独立本机六域测试部署，生产、用户配置登录及未批外部安装/凭据/外发不变；遇真实范围叉给具体问题而非擅授权。
+按已审方案登记独有资源，保全脱敏原始命令/源码前后指纹/退出/首败/skip与准备恢复收尾回执；只运行适用必需检查，不重跑充分无变旧项，不借旧head通过。完成真实候选、完整操作/九类/真实客户端与支持限制报告和checks原件回review，由另一Agent正式成果审查并核最新PR RequiredCI，之后才能条件合入。当前规划文件禁产品条款均只适用于已结束规划回合，不再要求同一写文件许可，不重新规划或起兄弟卡；原历史文件保留不改写当时未测声明。

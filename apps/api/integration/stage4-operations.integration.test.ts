@@ -1135,6 +1135,14 @@ describe("Stage 4 planning and operations API", () => {
       ).rowCount,
     ).toBe(0);
 
+    const agentStream=await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/${externalTask.id}/events`)
+    expect(agentStream.statusCode,JSON.stringify(agentStream.json())).toBe(200)
+    expect(agentStream.json<{events:unknown[]}>().events.length).toBeGreaterThan(0)
+    const repeatedStream=await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/${externalTask.id}/events`)
+    expect(repeatedStream.json()).toEqual(agentStream.json())
+    expect((await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/not-this-task/events`)).statusCode).toBe(404)
+    expect((await agentCall(agentToken,'GET',`/api/v1/a2a-bindings/${bindingId}/tasks/${externalTask.id}/events?after=9223372036854775808`)).statusCode).toBe(400)
+
     const firstStream = await call(
       human,
       "GET",
@@ -2195,4 +2203,78 @@ describe("Stage 4 planning and operations API", () => {
       ).statusCode,
     ).toBe(401);
   });
+  it('M4 四读仅返回准确Session范围：非零rollup、币种unknown、本人run及Human对照', async () => {
+    const { github } = await repositoryFixtures()
+    const projectId=(await call(human,'POST','/api/v1/projects',{teamId,name:'M4 isolated project'})).json<{id:string}>().id
+    const stateId=(await call(human,'GET',`/api/v1/teams/${teamId}/states`)).json<Page<{id:string;category:string}>>().items.find(state=>state.category==='backlog')!.id
+    const workItemId=(await call(human,'POST','/api/v1/work-items',{teamId,projectId,title:'M4 isolated item',statusId:stateId,responsibleHumanActorId:human.actorId})).json<{id:string}>().id
+    const execution = await createExecutingReviewer(human,workspaceId,teamId,workItemId,github.id)
+    const session=(await db.query<{agent_id:string;delegation_id:string}>('SELECT agent_id,delegation_id FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!
+    const other=(await call(human,'POST','/api/v1/projects',{teamId,name:'M4 hidden linked project'})).json<{id:string}>()
+    const initiativeResponse=await call(human,'POST','/api/v1/initiatives',{name:'M4 authorized nonempty',ownerActorId:human.actorId,status:'active',projectIds:[projectId,other.id]})
+    expect(initiativeResponse.statusCode).toBe(200)
+    const initiativeId=initiativeResponse.json<{id:string}>().id
+    for (const input of [{currency:'USD',costMinor:'9007199254740993',costSource:'manual'},{currency:'EUR',costSource:'unknown'}]) {
+      const response=await agentCall(execution.token,'POST','/api/v1/usage-records',{...input,dedupeKey:randomUUID(),agentId:session.agent_id,sessionId:execution.sessionId,projectId,occurredAt:new Date().toISOString(),inputTokens:7})
+      expect(response.statusCode,JSON.stringify(response.json())).toBe(200)
+    }
+    const list=await agentCall(execution.token,'GET','/api/v1/initiatives')
+    expect(list.json<Page<{id:string}>>().items.some(item=>item.id===initiativeId)).toBe(true)
+    const rollup=await agentCall(execution.token,'GET',`/api/v1/initiatives/${initiativeId}/rollup`)
+    expect(rollup.statusCode,JSON.stringify(rollup.json())).toBe(200)
+    expect(rollup.json()).toMatchObject({projectCount:1,totalItems:1,hasUnknownCost:true,currencyBuckets:expect.arrayContaining([
+      {currency:'USD',knownCostMinor:'9007199254740993',hasUnknownCost:false},{currency:'EUR',knownCostMinor:'0',hasUnknownCost:true}])})
+    expect((await call(human,'GET',`/api/v1/initiatives/${initiativeId}/rollup`)).json()).toMatchObject({projectCount:2})
+    const summary=await agentCall(execution.token,'GET','/api/v1/usage-summary')
+    expect(summary.statusCode,JSON.stringify(summary.json())).toBe(200)
+    expect(summary.json()).toMatchObject({input_tokens:'14',unknown_cost_records:1,currency_buckets:expect.arrayContaining([
+      {currency:'USD',known_cost_minor:'9007199254740993',unknown_cost_records:0}])})
+    for (const filter of [`sessionId=${randomUUID()}`,`agentId=${randomUUID()}`,`projectId=${other.id}`]) {
+      const denied=await agentCall(execution.token,'GET',`/api/v1/usage-summary?${filter}`)
+      expect(denied.statusCode,JSON.stringify(denied.json())).toBe(403)
+      expect(denied.json()).toMatchObject({error:{code:'RESOURCE_SCOPE_DENIED'}})
+    }
+    const own=(await db.query<{id:string}>("INSERT INTO automation_runs(workspace_id,session_id,max_attempts,status) VALUES($1,$2,1,'succeeded') RETURNING id",[workspaceId,execution.sessionId])).rows[0]!
+    const hidden=(await db.query<{id:string}>('INSERT INTO automation_runs(workspace_id,max_attempts) VALUES($1,1) RETURNING id',[workspaceId])).rows[0]!
+    await db.query("INSERT INTO automation_effects(run_id,action_ordinal,effect_key,action) VALUES($1,0,$2,'{}')",[own.id,randomUUID()])
+    const run=await agentCall(execution.token,'GET',`/api/v1/automation-runs/${own.id}`)
+    expect(run.statusCode,JSON.stringify(run.json())).toBe(200)
+    expect(run.json()).toMatchObject({id:own.id,session_id:execution.sessionId,effects:[expect.objectContaining({action_ordinal:0})]})
+    expect((await agentCall(execution.token,'GET',`/api/v1/automation-runs/${hidden.id}`)).statusCode).toBe(404)
+    expect((await call(human,'GET',`/api/v1/automation-runs/${hidden.id}`)).statusCode).toBe(200)
+    await db.query("UPDATE delegations SET status='revoked',revoked_at=now() WHERE id=$1",[session.delegation_id])
+    for (const url of [`/api/v1/initiatives/${initiativeId}/rollup`,'/api/v1/usage-summary',`/api/v1/automation-runs/${own.id}`]) {
+      const denied=await agentCall(execution.token,'GET',url)
+      expect(denied.statusCode).toBe(409)
+      expect(denied.json()).toMatchObject({error:{code:'DELEGATION_NOT_ACTIVE'}})
+    }
+  })
+
+  it('M4 最后读取快照重核principal与Team grant，不能以旧list或零聚合掩拒', async () => {
+    const {github}=await repositoryFixtures()
+    const execution=await createExecutingReviewer(human,workspaceId,teamId,workItemId,github.id)
+    const linked=(await call(human,'POST','/api/v1/initiatives',{name:'M4 revoke barrier',ownerActorId:human.actorId,status:'active',projectIds:[projectId]})).json<{id:string}>()
+    const session=(await db.query<{agent_id:string}>('SELECT agent_id FROM agent_sessions WHERE id=$1',[execution.sessionId])).rows[0]!
+    expect((await agentCall(execution.token,'GET','/api/v1/initiatives')).statusCode).toBe(200)
+    const withdrawing=buildApp({features:enabledFeatures,logger:false,afterAuthorizeRequest:async request=>{
+      if(request.url.endsWith('/rollup')) await db.query('UPDATE agent_team_access SET revoked_at=now() WHERE agent_id=$1 AND team_id=$2',[session.agent_id,teamId])
+    }})
+    try {
+      const result=await withdrawing.inject({method:'GET',url:`/api/v1/initiatives/${linked.id}/rollup`,headers:{authorization:`Bearer ${execution.token}`}})
+      expect(result.statusCode,JSON.stringify(result.json())).toBe(403)
+      expect(result.json()).toMatchObject({error:{code:'SESSION_SCOPE_DENIED'}})
+    } finally {
+      await withdrawing.close()
+      await db.query('UPDATE agent_team_access SET revoked_at=NULL WHERE agent_id=$1 AND team_id=$2',[session.agent_id,teamId])
+    }
+    const principalWithdrawal=buildApp({features:enabledFeatures,logger:false,afterAuthorizeRequest:async request=>{
+      if(request.url==='/api/v1/usage-summary') await db.query('UPDATE actors SET is_active=false WHERE id=$1',[human.actorId])
+    }})
+    try {
+      const result=await principalWithdrawal.inject({method:'GET',url:'/api/v1/usage-summary',headers:{authorization:`Bearer ${execution.token}`}})
+      expect(result.statusCode).toBe(403)
+      expect(result.json()).toMatchObject({error:{code:'SESSION_SCOPE_DENIED'}})
+    } finally { await db.query('UPDATE actors SET is_active=true WHERE id=$1',[human.actorId]); await principalWithdrawal.close() }
+  })
+
 });

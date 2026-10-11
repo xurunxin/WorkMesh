@@ -1,0 +1,123 @@
+(node:28164) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts > Stage 4 planning and operations API > M4 四读仅返回准确Session范围：非零rollup、币种unknown、本人run及Human对照
+error: new row for relation "delegations" violates check constraint "delegations_check1"
+ ❯ ../../node_modules/.pnpm/pg-pool@3.14.0_pg@8.22.0/node_modules/pg-pool/index.js:45:11
+ ❯ integration/stage4-operations.integration.test.ts:341:5
+    339|     expect((await agentCall(execution.token,'GET',`/api/v1/automation-…
+    340|     expect((await call(human,'GET',`/api/v1/automation-runs/${hidden.i…
+    341|     await db.query("UPDATE delegations SET status='revoked' WHERE id=$…
+       |     ^
+    342|     for (const url of [`/api/v1/initiatives/${initiativeId}/rollup`,'/…
+    343|       expect((await agentCall(execution.token,'GET',url)).statusCode).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts > Stage 4 planning and operations API > serves Cycle carry-over, Initiative rollup, advanced View, and explainable health
+AssertionError: expected { items: [ { …(49) } ], …(1) } to deeply equal { items: [], nextCursor: null }
+
+- Expected
++ Received
+
+  {
+-   "items": [],
++   "items": [
++     {
++       "acknowledged_at": "2026-10-11T03:27:17.446Z",
++       "agent_actor_id": "1b1cea86-78fc-481b-a502-e677aa3443cf",
++       "agent_id": "1755a962-3563-452e-aa82-64459c988cf7",
++       "automation_run_id": null,
++       "budget": {},
++       "context_snapshot_id": null,
++       "coordination_connection_id": null,
++       "cost_minor": "9007199254740993",
++       "created_at": "2026-10-11T03:27:17.415Z",
++       "currency": "USD",
++       "current_plan_version_id": null,
++       "delegation_id": "e92cc155-45fa-466e-b4ff-0f405dc92a07",
++       "ended_at": null,
++       "error_code": null,
++       "error_summary": null,
++       "external_urls": [],
++       "heartbeat_checked_at": null,
++       "heartbeat_current_step_id": null,
++       "heartbeat_health": "healthy",
++       "heartbeat_health_changed_at": "2026-10-11T03:27:17.415Z",
++       "heartbeat_idempotency_key": null,
++       "heartbeat_request_hash": null,
++       "heartbeat_usage": {},
++       "id": "2ee238a9-1597-44c0-bc47-b9f7134150f6",
++       "inherited_budget": {},
++       "last_heartbeat_at": null,
++       "max_child_sessions": 8,
++       "no_artifact_reason": null,
++       "parent_session_id": null,
++       "plan_step_id": null,
++       "plan_step_version_id": null,
++       "project_id": null,
++       "required_for_parent": false,
++       "result_evidence": [],
++       "result_summary": null,
++       "retry_count": 0,
++       "retry_of_session_id": null,
++       "retry_reason": null,
++       "revision": 3,
++       "sequence": "2",
++       "session_kind": "execution",
++       "state": "executing",
++       "state_reason": "Reviewing current pull-request head",
++       "stop_acknowledged_at": null,
++       "stop_requested_at": null,
++       "team_id": "768e1cb5-6d95-4776-a776-355265e067a0",
++       "updated_at": "2026-10-11T03:27:17.511Z",
++       "work_item_id": "b783c9b6-7b19-44c6-a68d-12df6f257586",
++       "workspace_id": "9b440842-4713-4cf9-b15c-eec6320df445",
++     },
++   ],
+    "nextCursor": null,
+  }
+
+ ❯ integration/stage4-operations.integration.test.ts:856:45
+    854|     );
+    855|     expect(evaluated.statusCode, JSON.stringify(evaluated.json())).toB…
+    856|     expect(evaluated.json<Page<unknown>>()).toEqual({
+       |                                             ^
+    857|       items: [],
+    858|       nextCursor: null,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts > Stage 4 planning and operations API > keeps mixed-currency usage separate and applies one notification preference path
+AssertionError: expected [ { currency: 'EUR', …(2) }, …(1) ] to deeply equal [ { currency: 'EUR', …(2) }, …(1) ]
+
+- Expected
++ Received
+
+  [
+    {
+      "currency": "EUR",
+-     "hasUnknownCost": false,
++     "hasUnknownCost": true,
+      "knownCostMinor": "450",
+    },
+    {
+      "currency": "USD",
+      "hasUnknownCost": false,
+-     "knownCostMinor": "125",
++     "knownCostMinor": "9007199254741118",
+    },
+  ]
+
+ ❯ integration/stage4-operations.integration.test.ts:2017:7
+    2015|         }>;
+    2016|       }>().currencyBuckets,
+    2017|     ).toEqual([
+       |       ^
+    2018|       { currency: "EUR", knownCostMinor: "450", hasUnknownCost: false …
+    2019|       { currency: "USD", knownCostMinor: "125", hasUnknownCost: false …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

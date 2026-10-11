@@ -1,0 +1,6 @@
+{
+  "productCommandExitCode": 0,
+  "wrapperObservedExitCode": 1,
+  "failure": "UnicodeEncodeError: gbk不能打印stdout中的U+26A0；产品退出及全文日志/receipt已保存",
+  "resolution": "包装器显式以UTF-8打印；不改原wrapper退出，不把此阶段当最终组合检查"
+}

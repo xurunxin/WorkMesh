@@ -1,0 +1,24 @@
+(node:2432) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/stage4-operations.integration.test.ts > Stage 4 planning and operations API > M4 四读仅返回准确Session范围：非零rollup、币种unknown、本人run及Human对照
+AssertionError: expected 409 to be 403 // Object.is equality
+
+- Expected
++ Received
+
+- 403
++ 409
+
+ ❯ integration/stage4-operations.integration.test.ts:2239:71
+    2237|     await db.query("UPDATE delegations SET status='revoked',revoked_at…
+    2238|     for (const url of [`/api/v1/initiatives/${initiativeId}/rollup`,'/…
+    2239|       expect((await agentCall(execution.token,'GET',url)).statusCode).…
+       |                                                                       ^
+    2240|   })
+    2241| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

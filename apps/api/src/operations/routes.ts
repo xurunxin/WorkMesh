@@ -45,7 +45,6 @@ import {
   canonicalActionApprovalPayload,
   generateCycleWindows,
   parseRevision,
-  rollupInitiative,
   sanitizeImportedTemplate,
 } from '@workmesh/domain'
 import { mutate, type CommandContext } from '../commands.js'
@@ -63,9 +62,9 @@ import {
   A2A_TASK_ID_MAX_LENGTH,
   A2AValidationError,
   mapAgentCard,
-  mapStreamEvent,
-  type WorkMeshStreamEvent,
 } from '@workmesh/a2a-adapter'
+import { readInitiativeRollup, readAutomationRun, readUsageSummary, readA2ATaskEventPage } from './read-projections.js'
+import { usageSummaryQuerySchema, a2aTaskEventQuerySchema } from '@workmesh/contracts'
 import type { Paginator, PageSortField } from '../pagination.js'
 import {
   liveHumanTeamReadPredicate,
@@ -82,13 +81,6 @@ type Helpers = {
 }
 
 const uuid = z.string().uuid()
-const durableCursorSchema = z.preprocess(
-  value => value === undefined ? '0' : String(value),
-  z.string().regex(/^\d+$/).max(19).refine(
-    value => BigInt(value) <= 9_223_372_036_854_775_807n,
-    'Cursor exceeds PostgreSQL bigint range',
-  ),
-)
 const actor = (request: FastifyRequest) => request.actor as unknown as ApiActor
 const id = (request: FastifyRequest): string => uuid.parse((request.params as { id?: unknown }).id)
 const runId = (request: FastifyRequest): string => uuid.parse((request.params as { runId?: unknown }).runId)
@@ -488,83 +480,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     })
   })
 
-  app.get('/api/v1/initiatives/:id/rollup', async request => {
-    const initiativeId = id(request)
-    const current = actor(request)
-    const projects = (await db.query<{
-      id: string
-      status: string
-      health: 'on_track' | 'at_risk' | 'off_track' | 'unknown'
-      completed_items: number
-      total_items: number
-      cost_buckets: Array<{
-        currency: string
-        knownCostMinor: string
-        hasUnknownCost: boolean
-      }> | null
-    }>(
-      `SELECT project.id,project.status,coalesce(health.health,'unknown')::text AS health,
-              coalesce(work.completed_items,0)::int AS completed_items,
-              coalesce(work.total_items,0)::int AS total_items,
-              coalesce(usage.cost_buckets,'[]'::jsonb) AS cost_buckets
-         FROM initiative_projects link
-         JOIN projects project ON project.id=link.project_id
-         LEFT JOIN LATERAL (
-           SELECT count(item.id) FILTER (WHERE state.category='completed') AS completed_items,
-                  count(item.id) AS total_items
-             FROM work_items item
-             JOIN workflow_states state ON state.id=item.status_id
-            WHERE item.project_id=project.id AND item.deleted_at IS NULL
-         ) work ON true
-         LEFT JOIN LATERAL (
-           SELECT jsonb_agg(jsonb_build_object(
-                    'currency',bucket.currency,
-                    'knownCostMinor',bucket.known_cost_minor::text,
-                    'hasUnknownCost',bucket.has_unknown_cost
-                  ) ORDER BY bucket.currency) AS cost_buckets
-             FROM (
-               SELECT record.currency,
-                      coalesce(sum(record.cost_minor) FILTER (WHERE record.cost_source<>'unknown'),0) AS known_cost_minor,
-                      bool_or(record.cost_source='unknown') AS has_unknown_cost
-                 FROM usage_records record
-                WHERE $5::boolean AND record.project_id=project.id
-                GROUP BY record.currency
-             ) bucket
-         ) usage ON true
-         LEFT JOIN LATERAL (
-           SELECT update.health FROM project_health_updates update
-           WHERE update.project_id=project.id AND update.status='published'
-           ORDER BY update.published_at DESC LIMIT 1
-         ) health ON true
-        WHERE link.initiative_id=$1 AND project.workspace_id=$2
-          AND ($3::boolean OR EXISTS (
-            SELECT 1 FROM memberships member
-            WHERE member.workspace_id=project.workspace_id AND member.team_id=project.team_id AND member.actor_id=$4
-          ))
-        ORDER BY link.sort_order,project.id LIMIT 201`,
-      [
-        initiativeId,
-        current.workspaceId,
-        current.workspaceRole === 'admin',
-        current.id,
-        helpers.features.WORKMESH_BETA_COSTS,
-      ],
-    )).rows
-    if (projects.length > 200)
-      throw new DomainError('INITIATIVE_ROLLUP_LIMIT_EXCEEDED', 'Initiative rollup is limited to 200 visible projects')
-    return rollupInitiative(projects.map(project => ({
-      id: project.id,
-      status: project.status,
-      health: project.health,
-      completedItems: project.completed_items,
-      totalItems: project.total_items,
-      costBuckets: (project.cost_buckets ?? []).map(bucket => ({
-        currency: bucket.currency,
-        knownCostMinor: bucket.knownCostMinor,
-        hasUnknownCost: bucket.hasUnknownCost,
-      })),
-    })))
-  })
+  app.get('/api/v1/initiatives/:id/rollup', request =>
+    readInitiativeRollup(db, actor(request), id(request), helpers.features.WORKMESH_BETA_COSTS))
 
   app.get('/api/v1/advanced-views', async request => {
     const current = actor(request)
@@ -1537,46 +1454,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     })
   })
 
-  app.get('/api/v1/usage-summary', async request => {
-    const current = actor(request)
-    const query = z.object({
-      agentId: uuid.optional(), sessionId: uuid.optional(), projectId: uuid.optional(),
-      from: z.coerce.date().optional(), to: z.coerce.date().optional(),
-    }).parse(request.query)
-    const values = [current.workspaceId, query.agentId ?? null, query.sessionId ?? null, query.projectId ?? null,
-      query.from ?? null, query.to ?? null, current.workspaceRole === 'admin', current.id]
-    const visibleUsage = `usage.workspace_id=$1 AND ($2::uuid IS NULL OR usage.agent_id=$2)
-         AND ($3::uuid IS NULL OR usage.session_id=$3) AND ($4::uuid IS NULL OR usage.project_id=$4)
-         AND ($5::timestamptz IS NULL OR usage.occurred_at >= $5)
-         AND ($6::timestamptz IS NULL OR usage.occurred_at < $6)
-         AND (
-           $7::boolean OR EXISTS (
-             SELECT 1 FROM agent_sessions session
-             LEFT JOIN memberships member ON member.workspace_id=session.workspace_id
-               AND member.team_id=session.team_id AND member.actor_id=$8
-             WHERE session.id=usage.session_id AND (member.actor_id IS NOT NULL OR session.team_id IS NULL)
-           )
-         )`
-    const totals = one((await db.query(
-      `SELECT coalesce(sum(input_tokens),0)::text AS input_tokens,
-              coalesce(sum(output_tokens),0)::text AS output_tokens,
-              coalesce(sum(runtime_ms),0)::text AS runtime_ms,
-              coalesce(sum(tool_calls),0)::text AS tool_calls,
-              count(*) FILTER (WHERE cost_source='unknown')::int AS unknown_cost_records
-       FROM usage_records usage
-       WHERE ${visibleUsage}`,
-      values,
-    )).rows)
-    const currencyBuckets = (await db.query(
-      `SELECT currency,
-              coalesce(sum(cost_minor) FILTER (WHERE cost_source<>'unknown'),0)::text AS known_cost_minor,
-              count(*) FILTER (WHERE cost_source='unknown')::int AS unknown_cost_records
-         FROM usage_records usage WHERE ${visibleUsage}
-        GROUP BY currency ORDER BY currency`,
-      values,
-    )).rows
-    return { ...totals, currency_buckets: currencyBuckets }
-  })
+  app.get('/api/v1/usage-summary', request =>
+    readUsageSummary(db, actor(request), usageSummaryQuerySchema.parse(request.query)))
 
   app.post('/api/v1/budget-policies', async request => {
     const body = budgetPolicyInputSchema.parse(request.body)
@@ -1864,22 +1743,8 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
 
   // Narrow operational inspection endpoint for a single run, including effect
   // checkpoints. It is deliberately read-only and obeys the run's Team scope.
-  app.get('/api/v1/automation-runs/:runId', async request => {
-    const targetRunId = runId(request)
-    const current = actor(request)
-    return one((await db.query(
-      `SELECT run.*,coalesce(jsonb_agg(effect ORDER BY effect.action_ordinal)
-         FILTER (WHERE effect.id IS NOT NULL),'[]') AS effects
-       FROM automation_runs run LEFT JOIN automation_effects effect ON effect.run_id=run.id
-       WHERE run.id=$1 AND run.workspace_id=$2 AND (
-         $3::boolean OR run.team_id IS NULL OR EXISTS (
-           SELECT 1 FROM memberships member
-           WHERE member.workspace_id=run.workspace_id AND member.team_id=run.team_id AND member.actor_id=$4
-         )
-       ) GROUP BY run.id`,
-      [targetRunId, current.workspaceId, current.workspaceRole === 'admin', current.id],
-    )).rows)
-  })
+  app.get('/api/v1/automation-runs/:runId', request =>
+    readAutomationRun(db, actor(request), runId(request)))
 
   app.post('/api/v1/a2a-bindings', async request => {
     const body = z.object({
@@ -2270,87 +2135,10 @@ export function registerOperationsRoutes(app: FastifyInstance, helpers: Helpers)
     })
   })
 
-  app.get('/api/v1/a2a-bindings/:id/tasks/:taskId/events', async request => {
-    const params = z.object({
-      id: uuid,
-      taskId: z.string().min(1).max(A2A_TASK_ID_MAX_LENGTH),
-    }).parse(request.params)
-    const query = z.object({ after: durableCursorSchema }).parse(request.query)
-    const current = actor(request)
-    const binding = one((await db.query<{ session_id: string; team_id: string }>(
-      `SELECT task.session_id,session.team_id
-         FROM a2a_agent_bindings binding
-         JOIN a2a_task_bindings task ON task.binding_id=binding.id
-           AND task.external_task_id=$2
-         JOIN agent_sessions session ON session.id=task.session_id
-        WHERE binding.id=$1 AND binding.workspace_id=$3 AND binding.active
-          AND ($4::boolean OR EXISTS (
-            SELECT 1 FROM memberships member WHERE member.workspace_id=binding.workspace_id
-              AND member.team_id=session.team_id AND member.actor_id=$5
-          ))`,
-      [params.id, params.taskId, current.workspaceId, current.workspaceRole === 'admin', current.id],
-    )).rows)
-    const events = (await db.query<{
-      cursor: string
-      id: string
-      event_type: string
-      aggregate_id: string
-      payload: Record<string, unknown>
-      occurred_at: Date
-    }>(
-       `SELECT event.cursor::text,event.id,event.event_type,event.aggregate_id,event.payload,event.occurred_at
-          FROM domain_events event
-         WHERE event.workspace_id=$1 AND event.cursor>$2
-         ORDER BY event.cursor LIMIT 200`,
-      [current.workspaceId, query.after],
-    )).rows
-    const deliveries: Array<{ cursor: string; event: ReturnType<typeof mapStreamEvent> }> = []
-    for (const event of events) {
-      if (event.aggregate_id !== binding.session_id && event.payload.sessionId !== binding.session_id)
-        continue
-      let mapped: WorkMeshStreamEvent | undefined
-      if (event.event_type.includes('state')) {
-        const state = typeof event.payload.state === 'string' ? event.payload.state : undefined
-        if (state && ['queued', 'executing', 'awaiting_input', 'awaiting_approval', 'completed', 'failed', 'canceled'].includes(state))
-          mapped = {
-            type: 'session.state_changed',
-            sessionId: binding.session_id,
-            state: state as Extract<WorkMeshStreamEvent, { type: 'session.state_changed' }>['state'],
-            occurredAt: event.occurred_at.toISOString(),
-          }
-      } else if (event.event_type === 'agent.activity.created' && typeof event.payload.bodyMarkdown === 'string') {
-        mapped = {
-          type: 'session.message',
-          sessionId: binding.session_id,
-          messageId: event.id,
-          bodyMarkdown: event.payload.bodyMarkdown,
-          occurredAt: event.occurred_at.toISOString(),
-        }
-      } else if (event.event_type.includes('artifact') && typeof event.payload.title === 'string') {
-        mapped = {
-          type: 'artifact.created',
-          sessionId: binding.session_id,
-          artifactId: typeof event.payload.artifactId === 'string' ? event.payload.artifactId : event.aggregate_id,
-          title: event.payload.title,
-          uri: typeof event.payload.uri === 'string' ? event.payload.uri : undefined,
-          occurredAt: event.occurred_at.toISOString(),
-        }
-      }
-      if (!mapped) continue
-      const payload = mapStreamEvent(params.taskId, mapped)
-      await db.query(
-        `INSERT INTO a2a_deliveries(
-           binding_id,delivery_id,external_task_id,direction,sequence,session_id,domain_event_id,payload,status,processed_at
-         ) VALUES($1,$2,$3,'outbound',$4,$5,$6,$7,'processed',now())
-         ON CONFLICT(binding_id,domain_event_id) WHERE domain_event_id IS NOT NULL DO NOTHING`,
-        [params.id, `event:${event.id}`, params.taskId, event.cursor, binding.session_id, event.id, payload],
-      )
-      deliveries.push({ cursor: event.cursor, event: payload })
-    }
-    return {
-      events: deliveries,
-      cursor: events.at(-1)?.cursor ?? query.after,
-    }
+  app.get('/api/v1/a2a-bindings/:id/tasks/:taskId/events', request => {
+    const params = z.object({ id: uuid, taskId: z.string().min(1).max(A2A_TASK_ID_MAX_LENGTH) }).parse(request.params)
+    const query = a2aTaskEventQuerySchema.parse(request.query)
+    return readA2ATaskEventPage(db, actor(request), params.id, params.taskId, query.after)
   })
 
   app.get('/api/v1/notifications', async request => {
