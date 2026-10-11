@@ -105,7 +105,7 @@ try { [IO.File]::ReadAllText([Text.Encoding]::UTF8.GetString([Convert]::FromBase
         await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(RX,DC,AD,WD)'], { windowsHide: true })
         await expect(withDirectoryLock(victim, async () => { throw new Error('must not acquire lock') })).rejects.toThrow('CONNECTOR_UNSAFE_ANCESTOR')
         // 另证明授 DELETE 的祖先可连同私有子项被整体移动；安全父只授新增条目权限。
-        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:DE'], { windowsHide: true })
+        await execute('icacls.exe', [unsafe, '/grant', '*S-1-1-0:(DE)'], { windowsHide: true })
         await execute('icacls.exe', [parent, '/grant', '*S-1-1-0:(WD,AD)'], { windowsHide: true })
         const fixtureAcl = await execute('icacls.exe', [unsafe], { windowsHide: true })
         console.log(JSON.stringify({ resource: 'aclFixture', path: unsafe, acl: fixtureAcl.stdout }))

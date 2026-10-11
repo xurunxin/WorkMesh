@@ -816,6 +816,9 @@ jobs:
       - name: Prepare Linux Secret Service
         if: ${{ runner.os == 'Linux' }}
         run: sudo apt-get update && sudo apt-get install -y gnome-keyring dbus-x11
+      - name: Bind native runtime source before checks
+        id: connector-source-before
+        run: node scripts/capture-connector-source.mjs before
       - name: Validate Linux native storage
         if: ${{ runner.os == 'Linux' }}
         run: |
@@ -831,6 +834,9 @@ jobs:
         if: ${{ runner.os == 'Windows' }}
         shell: pwsh
         run: ./scripts/test-connector-windows.ps1
+      - name: Bind native runtime source after checks
+        if: ${{ always() && steps.connector-source-before.outcome == 'success' }}
+        run: node scripts/capture-connector-source.mjs after
       - name: Upload raw connector logs
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

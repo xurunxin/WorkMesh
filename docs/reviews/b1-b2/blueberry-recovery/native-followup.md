@@ -83,3 +83,13 @@ Windows攻击正对照增加最小原生API：夹具owner编译无秘密DLL，�
 正式Windows夹具回到实际.NET API，不给受保护子目录/文件增加任何其他用户权限。DC-only祖先仍单独断言产品拒绝；攻击正对照另外在一次性unsafe祖先授DELETE，安全父仅授新增条目WD/AD（不授DELETE/DC）。真实第二用户须移动**整个不安全祖先**（包含原始私有子目录），并在原路径创建替代祖先/连接器；安全父与安全连接器两项移动仍必须失败。移动后owner逐项验证原私有目录/文件DACL与原字节保持。该攻击证明私有叶权限不能代替祖先安全，不冒DC-only已成功移动私有叶，也不减少DELETE/DC产品拒绝断言。下一真实Windows runner验证此新UUID夹具，不再尝试历史失败目录。
 
 macOS最终改动不是前文拟议的ctime忽略例外：所有无ACL对象均先核同一对象与安全属性，ctime改变就第二次读取真实ACL；第二次出现ACL则完整验证，非ENOENT或身份/安全属性变化仍拒绝。真实ctime夹具与16轮原竞争断言保持，结果待新CI。不宣布候选原因已证明历史每一次首败。
+
+## CI446：Mac精确交错通过，Windows夹具参数首败
+
+[CI446](https://github.com/xurunxin/WorkMesh/actions/runs/38143378681) head `b8f30ba7e1f3200895e4105d0057507902232ea8`：Linux6平台＋73单元成功；macOS9平台＋73单元成功，新增真实ctime变化、实际ACL再读取与安全mode变化拒绝全部通过，16轮双进程竞争强断言通过。此前Mac失败仍保留，不能将候选原因冒为全部历史失败的完整路径诊断。
+
+Windows4通过1失败，新首败发生在夹具准备 `/grant *S-1-1-0:DE` 的 `Invalid parameter`，尚未执行新祖先移动正对照。此为本轮参数错误，与此前1005不同。[微软icacls文档](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/icacls)要求DE等高级权限放入括号；改为 `*S-1-1-0:(DE)`，本机独有空目录实际grant/readback成功并非递归移除，windows-icacls-syntax.json保来源；没有调整产品DACL或测试断言。三系统完整日志已保存ci446-native/，其元数据采集时总run仍在运行。
+
+下一轮增加原生job前后源码绑定：scripts/capture-connector-source.mjs只读取明确的源码/规范路径，逐文件保存运行原字节SHA-256与长度、真实Git属性计算的blob、index/提交三方值及checkout HEAD/tree、Node/Git/OS/arch；拒绝源码不匹配和检查期间原字节变化。只输出摘要和路径，不读取环境秘密或pending。两次JSON随已有原生工件上传；失败时仍保存可得后置快照。不以API run.head_sha代替各runner实际checkout/源码身份。脚本语法检查通过，实际三OS执行待下一CI。
+
+本轮执行历史verify-plan.mjs时，它在固定旧branch身份断言失败，原冻结文件/源计划不改；不能用这个历史入口冒新分支完整验证。当前完整中文计划和原始正文仍在docs/plan/connector-recovery.md及source-snapshot.json，plan-source.json记录doc:m7WeSHWZt1Bv3FZwYlnlv、原正文SHA72e6fcb9d46a3f433291db4b1db3e351c243bc38202fdc884d463f5d50341230、可读文件SHA71a0e7845b205f60ecc29b91e66bea2f2086004c16212c03034a51fcbb5b6352。当前todos回读未提供独立Saved plan正文，版本/计划时间字段继续未知，不新建同源计划或猜测字段。

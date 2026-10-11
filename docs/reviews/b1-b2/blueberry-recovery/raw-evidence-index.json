@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "archive": {
     "path": "docs/reviews/b1-b2/blueberry-recovery/raw-evidence.zip",
-    "bytes": 1257482,
-    "sha256": "e2a36ca58c68122e2ebaca8fbe6cf5b3914afeb4f4908258b22682d5810c1d37"
+    "bytes": 1304003,
+    "sha256": "217e1182a90108f82804767357b0cd101cbc898e57f1946c20580dc3e520ad36"
   },
   "entries": [
     {
@@ -35,6 +35,16 @@
       "member": "bytes/30c07da011bcd45f954050f9379661d398bcfdd3a673b80a6a16c7188a38878c",
       "sourceCommit": null,
       "sourceBlobId": "2e2ef125d3b3d0d1047889e89b2231a34eb94ed7"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci-policy-native-binding.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 4325,
+      "sha256": "936d26ca194b9951a1f8f3b61f1c722ef21c0193c30c4470125f187167763d41",
+      "member": "bytes/936d26ca194b9951a1f8f3b61f1c722ef21c0193c30c4470125f187167763d41",
+      "sourceCommit": null,
+      "sourceBlobId": "23ce224ba35dfad7fbc2293beea2281b5bb9d39f"
     },
     {
       "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci-validate-blueberry.log",
@@ -415,6 +425,36 @@
       "member": "bytes/f4ef5f486ec96e0fca7f1295c308e9f3cb2214deefbd56b4c6b432ac964c6f10",
       "sourceCommit": null,
       "sourceBlobId": "ed5da77ca298e29ef2fed1370f17cabef02f984e"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci446-native/job-114481814254-original.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 105002,
+      "sha256": "57704c9404193d9bdeccb1711283a12520086f31e71261e5b6c9236b9f5cab86",
+      "member": "bytes/57704c9404193d9bdeccb1711283a12520086f31e71261e5b6c9236b9f5cab86",
+      "sourceCommit": null,
+      "sourceBlobId": "785d9a1a0c41dda1ee9bca95f8a858564e3a21d1"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci446-native/job-114481814337-original.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 41654,
+      "sha256": "4f660ee10a9d6214b0670061b69d9e60b5cde397adcc9cbd87d9b950470e13be",
+      "member": "bytes/4f660ee10a9d6214b0670061b69d9e60b5cde397adcc9cbd87d9b950470e13be",
+      "sourceCommit": null,
+      "sourceBlobId": "2d94b7039050ff72bb04050fdb913868339cdcfe"
+    },
+    {
+      "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/ci446-native/job-114481814472-original.log",
+      "version": "blueberry-2026-10-11",
+      "byteKind": "worktree",
+      "bytes": 88033,
+      "sha256": "072ea7f40df5bf448f4de8d23d83552d47d8ef19e54e46f85fa8364e7a281d34",
+      "member": "bytes/072ea7f40df5bf448f4de8d23d83552d47d8ef19e54e46f85fa8364e7a281d34",
+      "sourceCommit": null,
+      "sourceBlobId": "b9706b61c03f6dc094f6c744a8ada108cc653ec7"
     },
     {
       "logicalPath": "docs/reviews/b1-b2/blueberry-recovery/connector-install-offline.log",
