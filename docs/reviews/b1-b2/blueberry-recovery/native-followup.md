@@ -127,3 +127,9 @@ ci450-native保存三OS完整job日志；ci450-other-success保存当时已成�
 Windows临时账户wmcta863b93e7729（准确SID见回执）、C:/Users/Public/workmesh-connector-59c9b0303a134eddab64b9067487a2fc实际移除，errors为空。不冒已测profile删除/物理净释放。新机本地Stage0语法解析通过，完整验收由上述真实CI消费；两次直接ESLint尝试分别因忽略规则/无匹配配置没有消费此E2E文件，未冒本地lint通过。一次诊断JSON默认GBK读取报编码错，改明确UTF-8读取成功；原件未改，不混为产品测试失败。
 
 中文正式独审入口及review-source更新到76be/CI450，完整计划及原冻结规范未变。该新增方案修正的正式成果独审、Chief确认与实际main落地仍缺，不能Done或推进#7/#20。
+
+## CI451 后独审：开发镜像 blocking
+
+独审独立读回最终 eb67b765bf30639000b2c002cbfeaf78b6ca8bec/CI451（38149424199）的13项检查成功及三系统1103文件原件与最终HEAD绑定一致，但指出四个开发镜像在安装前仅复制 connector manifest，没有复制 postinstall 脚本，生产镜像CI不能覆盖此路径。正式审查结论不代表此 blocking 已关闭。
+
+本次最小修正为四文件提前复制 prepare-native.mjs，并补齐现行 workspace 依赖输入；正常钩子、版本、原协议/产品断言保持。Blueberry 首轮 API 实际构建在 Docker 基础镜像下载 TLS 错误退出，尚未运行 pnpm，后三镜像未运行；专用 builder/容器/卷实核清理。新增 Source gates 真实四镜像构建及不可省略/跳过/吞失败的反例门禁。本轮19项CI策略测试、validator与静态闭包检查成功；实际新提交镜像和完整门禁仍待CI，详见 development-images/review-fix.md 及准确首败/清理JSON。没有修改旧原件、已审源码或历史保护目录，也没有以静态检查冒四镜像通过。

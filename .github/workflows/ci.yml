@@ -145,6 +145,9 @@ jobs:
           set -o pipefail
           docker compose config --quiet
           printf '%s\n' 'Compose configuration is valid.' | tee ci-logs/compose-config.log
+      # 开发镜像的安装前输入不同于生产镜像，须实际执行正常 postinstall。
+      - name: Build all development images with normal lifecycle hooks
+        run: python3 scripts/validate-development-images.py
       - name: Verify clean tracked tree
         run: |
           set -o pipefail

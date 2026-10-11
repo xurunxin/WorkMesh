@@ -148,6 +148,14 @@ export function planForEvent(eventName, event, workspaces, git = args => execFil
   return classifyChanges(paths, workspaces, { mainPush })
 }
 
+export function validateDevelopmentImageEntrypoint(job) {
+  const command = 'python3 scripts/validate-development-images.py'
+  const steps = job?.steps?.filter(step => step.run?.trim() === command) ?? []
+  if (steps.length !== 1 || steps[0].if !== undefined || steps[0]['continue-on-error'])
+    return ['source-gates必须实际构建四个开发镜像，不得省略、条件跳过或忽略失败']
+  return []
+}
+
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   if (process.argv[2] === 'aggregate') {
     const needs = JSON.parse(process.env.NEEDS_JSON)

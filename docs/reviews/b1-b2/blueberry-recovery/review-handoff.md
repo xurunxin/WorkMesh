@@ -1,6 +1,6 @@
 # B1/B2 换机接续：正式成果独审入口
 
-本轮已恢复旧产品、正常整合主线，修正原生验证缺口并取得最新通过源76be的三系统及完整 Required CI 成功。CI449的E2E首败、选定trace与最小就绪前置修正均保留，CI450完整验证通过。**没有合入、Done 或推进 #7/#20；本轮新增产品修正仍须正式成果独审和 Chief 确认。**
+本轮已恢复旧产品、正常整合主线，修正原生验证缺口。独审对最终 eb67/CI451 的13项检查及三系统原件绑定读回成功，但确认四个开发镜像缺少安装前 postinstall 脚本，属于 blocking。当前已补齐脚本及必要 workspace manifest，并接入真实四镜像构建；本机首次构建的基础镜像下载 TLS 首败保留，新提交验证尚待完成。详见[开发镜像独审修正](development-images/review-fix.md)。CI448/449/450 的历史成功与首败保持。**没有合入、Done 或推进 #7/#20；本修正须实际验证、正式成果复审和 Chief 确认。**
 
 ## 准确来源与授权
 
@@ -47,16 +47,16 @@ Blueberry本机 `local-06/` 的lint/typecheck/build及73单元成功、源码前
 
 ## 清理与保留
 
-- 本机未创建Docker容器、镜像、卷或网络。初轮39目录＋2诊断探针已定向移除；local-02/03/04各39、local-05/06各54目录全部收尾，专用空根非递归移除。声明的HTTP/普通子进程/PTY关闭、测试秘密删除回执见 `resource-summary.json`，不推算物理净释放。
+- 之前本机原生验收未创建Docker资源。此次开发镜像验证创建的专用 builder、容器及卷已定向移除，四镜像标签因下载首败未产生；准确ID与回执见[修正报告](development-images/review-fix.md)。初轮39目录＋2诊断探针已定向移除；local-02/03/04各39、local-05/06各54目录全部收尾，专用空根非递归移除。声明的HTTP/普通子进程/PTY关闭、测试秘密删除回执见 `resource-summary.json`，不推算物理净释放。
 - CI450 Windows账户 `wmcta863b93e7729` 与 `C:/Users/Public/workmesh-connector-59c9b0303a134eddab64b9067487a2fc`实际移除，errors为空；准确SID及原字节回执在工件中。CI448历史回执保持。不冒已测系统profile收尾。
 - 保留本任务Node22 runtime、copy导入的隔离virtual store/node_modules与当前worktree，供正式独审及必要继续验收；登记/原锁SHA/store来源见 `retained-environment.json`。共享CAS、主仓库、用户配置和历史拒目标未改。
 - 两个非秘密诊断根保全：`.tmp/rename-probe-1bc20940-3d2c-482c-9aeb-dfcee8fca580`（收尾rmdir首败EPERM）及 `.tmp/rename-probe-7dd37e1f-8a33-457b-a2bb-7c8bb58c764b`（native1005后未派发删除，含4096字节DLL）。准确绝对路径/ACL/对象清单见 `native-experiment-retained.json`。不重试、改ACL/属性、拆批或通过删除父目录/worktree绕首败；不冒临时资源已全清。合后worktree清理仍受这些保护及原活动/保全条件约束。
 
 ## 剩余门禁、演示与限制
 
-最终证据提交不改变已通过的产品/平台断言，仍须**该提交自身**的最新Required CI成功。由于在文件内写入自身提交SHA/结果会再生成另一提交，最终head/run与实际结果由本次最终回复和PR最新head检查给出，不能用CI448或CI450代替。
+当前开发镜像修正改变 Docker 安装前输入与 CI 验证接线，须实际四镜像完整构建以及**最终提交自身**的最新 Required CI 成功。由于在文件内写入自身提交SHA/结果会再生成另一提交，最终head/run与实际结果由最终回复和PR最新head检查给出，不能用历史CI代替。
 
-正式独审请以本报告、完整中文计划、ADR0079、当前PR差异、原件及所有历史首败为对象；本轮没有新正式审查回执，PR查询未见review。独审blocking/high与Chief确认闭合后才按既有授权合入，actual main落地才能Done。平台消息框发送按钮左侧“AI审核”可发起独审：[使用说明](https://todos.dev/docs/ai-review)。
+正式成果复审请以本报告、开发镜像修正、完整中文计划、ADR0079、当前PR差异、原件及所有历史首败为对象；本轮收到的独审回执确认开发镜像 blocking，尚没有该修正的正式复审结论。blocking/high与Chief确认闭合后才按既有授权合入，actual main落地才能Done。平台消息框发送按钮左侧“AI审核”可发起复审：[使用说明](https://todos.dev/docs/ai-review)。
 
 手工演示与失败重试/无秘密输出验收已列入本todo核验清单，具体源码命令见[连接器README](../../../../apps/connector/README.md)。需要真实系统秘密后端及管理员提供的无秘密预期清单/完整配对码；配对码、安装令牌不发到聊天。版本化无源码设备分发与未定设备矩阵仍由#20承担，不把仓库pnpm命令或这三台runner当发布完成。
 

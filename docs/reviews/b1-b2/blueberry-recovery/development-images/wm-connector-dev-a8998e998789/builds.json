@@ -1,0 +1,35 @@
+{
+  "head": "eb67b765bf30639000b2c002cbfeaf78b6ca8bec",
+  "indexTree": "1c92a58c237b2071fdf21e8e0de4691f7aba3904",
+  "results": [
+    {
+      "name": "api",
+      "command": [
+        "docker",
+        "buildx",
+        "build",
+        "--builder",
+        "wm-connector-dev-a8998e998789",
+        "--platform",
+        "linux/amd64",
+        "--progress=plain",
+        "--load",
+        "--label",
+        "com.workmesh.validation.owner=wm-connector-dev-a8998e998789",
+        "--label",
+        "com.workmesh.validation.index-tree=1c92a58c237b2071fdf21e8e0de4691f7aba3904",
+        "--tag",
+        "wm-connector-dev-a8998e998789:api",
+        "--file",
+        "infra/docker/api.Dockerfile",
+        "-"
+      ],
+      "buildExit": 1,
+      "archiveExit": 0,
+      "log": "api.log",
+      "logBytes": 3999,
+      "logSha256": "7d9aa082a5fe40ee29c194366759ffbd6a3dd1e4063682a25875e42298c9a128",
+      "postinstallLines": []
+    }
+  ]
+}
