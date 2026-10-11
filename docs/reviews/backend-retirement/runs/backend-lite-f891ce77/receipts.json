@@ -1,0 +1,81 @@
+{
+  "runId": "backend-lite-f891ce77",
+  "sha": "9980ac2e4f0afba1ebe891b82f3ea383b51ea980",
+  "deploymentClass": "lite",
+  "environment": "工作站 Linux Docker；非真实低功耗设备",
+  "installDir": "D:\\Cache\\TEMP\\backend-lite-f891ce77",
+  "resources": [
+    {
+      "type": "directory",
+      "target": "D:\\Cache\\TEMP\\backend-lite-f891ce77",
+      "owner": "backend-lite-f891ce77",
+      "createdAt": "2026-10-11T20:57:30.425Z",
+      "cleanup": null,
+      "realPath": "D:\\Cache\\TEMP\\backend-lite-f891ce77",
+      "created": true
+    },
+    {
+      "type": "image",
+      "target": "workmesh-retirement-lite:backend-lite-f891ce77",
+      "owner": "backend-lite-f891ce77",
+      "createdAt": "2026-10-11T20:58:14.927Z",
+      "cleanup": null,
+      "borrowed": false
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "workmesh-retirement-lite:backend-lite-f891ce77"
+      ],
+      "pid": 41532,
+      "startedAt": "2026-10-11T20:58:28.050Z",
+      "endedAt": "2026-10-11T20:58:41.322Z",
+      "code": 1,
+      "log": "0.log"
+    }
+  ],
+  "outcome": "未运行",
+  "buildContext": {
+    "source": "9980ac2e4f0afba1ebe891b82f3ea383b51ea980",
+    "paths": [
+      ".dockerignore",
+      ".node-version",
+      "package.json",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "turbo.json",
+      "tsconfig.base.json",
+      "OPENAPI.yaml",
+      "SCHEMA.sql",
+      "AGENT_PROTOCOL.md",
+      "README.md",
+      "AGENTS.md",
+      "CONTEXT.md",
+      "apps",
+      "packages",
+      "scripts",
+      "skills",
+      "infra"
+    ],
+    "reason": "历史证据保留在 Git，不复制进镜像构建上下文"
+  },
+  "features": {
+    "WORKMESH_BETA_PLANNING": false,
+    "WORKMESH_BETA_TEMPLATES": false,
+    "WORKMESH_BETA_COSTS": false,
+    "WORKMESH_BETA_OPERATIONS_UI": false,
+    "WORKMESH_BETA_COORDINATION_MCP": true,
+    "WORKMESH_BETA_MODEL_PRESETS": false,
+    "WORKMESH_EXPERIMENTAL_AUTOMATION": false,
+    "WORKMESH_EXPERIMENTAL_AGENT_LOOPS": false,
+    "WORKMESH_EXPERIMENTAL_A2A": false,
+    "WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS": false,
+    "WORKMESH_EXPERIMENTAL_MULTI_RUNTIME": false,
+    "WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS": false,
+    "WORKMESH_BETA_GITEA": true
+  }
+}

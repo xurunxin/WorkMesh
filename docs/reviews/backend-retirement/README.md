@@ -16,7 +16,7 @@ CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Sk
 - [已审活动方案](../../plan/backend-only.md)、[原浏览器与目录外脚本去向](../../plan/backend-only/test-impact.md)、[逐卡衔接](../../plan/backend-only/followup-impact.md)。后续顺序为 #61 → #62 → #7 → #20，未开发能力不标完成。
 - `webui-path-receipt.json` 记录逐路径 Git blob 与迁移/退役归属；`webui-history/` 保全原截图与基线，历史规格、审核和首败不改写。
 - `platform-source.json` 保全本轮工具实际返回全文及完整 Spec 段，Saved plan 截断单列缺口。已审原件沿用批准提交，`source-preservation.json` 逐文件复核。
-- [实际验证记录](test-results.md) 区分首败、复验、未测与正在运行；日志不等于产品全部验收通过。`runs/` 将实际镜像提交、身份、部署、TLS 和定向清理绑定。
+- [实际验证记录](test-results.md) 区分首败、复验、未测与正在运行；日志不等于产品全部验收通过。`runs/` 将实际镜像提交、身份、部署、TLS 和定向清理绑定。终端日志原始字节存入 `raw-logs/`，同名 `.log` 为去除行尾空白的阅读视图，二者的 SHA-256 由 `log-source-manifest.json` 分开记录；没有放宽空白门禁。
 
 中文部署与后端说明按固定来源 `ffda9353768dece8aabd26ccb3a4978025e9437c` 的 SKILL.md、manual-structure.md 和 typography.md 手检；来源文件哈希见已审 `sources/writing-skill.json`。没有全局安装，未发现 autocorrect。原来源文本保持原字节。
 

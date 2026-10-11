@@ -2,7 +2,7 @@ import type { AddressInfo } from 'node:net'
 import { randomUUID, createHash, verify } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { beforeAll, afterAll, expect, it } from 'vitest'
-import { createDb, applyMigrations } from '@workmesh/db'
+import { createDb, applyMigrations, opaqueToken, tokenHash } from '@workmesh/db'
 import { FakeAgent, createFakeAgentServer } from '../../fake-agent/src/index.js'
 import { createAgentWebhookWorker } from '../../worker/src/agent-webhook.js'
 import { createProviderActionWorker } from '../../worker/src/provider-actions.js'
@@ -70,6 +70,40 @@ it('liteInstallCookieCsrf：接口会话可管理，缺 Cookie 或 CSRF 拒绝',
     headers: { cookie, 'idempotency-key': randomUUID() }, payload: { teamId, name: 'Missing CSRF' } })
   expect(rejected.statusCode).toBe(403)
   expect((await call<{ actor: { id: string } }>('GET', '/api/v1/auth/me')).actor.id).toBe(actorId)
+})
+
+it('通知 API 链接返回本人 JSON，匿名、其他 Human 和失权者拒绝，读取零写入', async () => {
+  const teamId = (await call<{ items: Array<{ id: string }> }>('GET', '/api/v1/teams')).items[0]!.id
+  const workspaceId = (await db.query<{ workspace_id: string }>('SELECT workspace_id FROM actors WHERE id=$1', [actorId])).rows[0]!.workspace_id
+  const itemId = randomUUID()
+  await db.query(`INSERT INTO inbox_items(id,workspace_id,recipient_human_actor_id,team_id,kind,source_type,source_id,payload)
+    VALUES($1,$2,$3,$4,'ask','activity',$5,'{"summary":"Private notification source"}')`, [itemId, workspaceId, actorId, teamId, randomUUID()])
+  const other = (await db.query<{ id: string }>("INSERT INTO actors(workspace_id,kind,display_name,workspace_role) VALUES($1,'human','Other Human','member') RETURNING id", [workspaceId])).rows[0]!.id
+  await db.query("INSERT INTO memberships(workspace_id,team_id,actor_id,role) VALUES($1,$2,$3,'member')", [workspaceId, teamId, other])
+  const otherToken = opaqueToken()
+  await db.query("INSERT INTO sessions(actor_id,token_hash,csrf_token,expires_at) VALUES($1,$2,$3,now()+interval '1 day')", [other, tokenHash(otherToken), opaqueToken()])
+  const otherCookie = `workmesh_session=${otherToken}`
+  const identity = await app.inject({ method: 'GET', url: '/api/v1/auth/me', headers: { cookie: otherCookie } })
+  expect(identity.statusCode).toBe(200)
+  expect(identity.json<{ actor: { id: string } }>().actor.id).toBe(other)
+  const url = `/api/v1/human-attention/${encodeURIComponent(`v1:inbox_item:${itemId}`)}`
+  expect(url).not.toMatch(/[?#]/)
+  const facts = async () => (await db.query('SELECT (SELECT count(*)::int FROM domain_events) AS events,(SELECT count(*)::int FROM outbox_events) AS outbox,(SELECT count(*)::int FROM notification_deliveries) AS deliveries')).rows[0]
+  const before = await facts()
+  const owner = await app.inject({ method: 'GET', url, headers: { cookie } })
+  expect(owner.statusCode, owner.body).toBe(200)
+  expect(owner.headers['content-type']).toContain('application/json')
+  for (const headers of [{}, { cookie: otherCookie }]) {
+    const denied = await app.inject({ method: 'GET', url, headers })
+    expect([401, 403, 404]).toContain(denied.statusCode)
+    expect(denied.json<{ error: { code: string } }>().error.code).toBeTruthy()
+  }
+  await db.query('UPDATE actors SET is_active=false WHERE id=$1', [actorId])
+  try {
+    const denied = await app.inject({ method: 'GET', url, headers: { cookie } })
+    expect([401, 403]).toContain(denied.statusCode)
+  } finally { await db.query('UPDATE actors SET is_active=true WHERE id=$1', [actorId]) }
+  expect(await facts()).toEqual(before)
 })
 
 it('liteProviderConnectionReplay 与 liteExactProjectContext：幂等拒变体，worker 发布精确范围', async () => {

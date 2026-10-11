@@ -1,3 +1,5 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 integration-retirement-retry.log；SHA-256：0335928c3a392e11190fbd2499ba898f08e0a18aa9d1258733c910a94fad1521
+
 
 > @workmesh/api@ test:integration I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\api
 > vitest run --config ../../vitest.integration.config.ts "backend-retirement.integration.test.ts"
@@ -20,7 +22,7 @@ AssertionError: expected [ 401, 404 ] to include 403
      60|     expect([401, 404]).toContain((await fetch(`${apiUrl}${path}`)).sta…
        |                        ^
      61| })
-     62| 
+     62|
 
 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
 

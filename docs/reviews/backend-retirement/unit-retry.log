@@ -1,3 +1,5 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 unit-retry.log；SHA-256：8231ed796fdccad5e08968ab75149f3d82814a18fb4967fc1f5f5fef90af716b
+
 
 > workmesh@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
 > turbo run test --concurrency=2
@@ -10,147 +12,147 @@
 
 @workmesh/contracts:build: cache miss, executing e3eedb5bfaf87de8
 @workmesh/artifact-storage:test: cache miss, executing f725b0067f8c6531
-@workmesh/contracts:build: 
+@workmesh/contracts:build:
 @workmesh/contracts:build: > @workmesh/contracts@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\contracts
 @workmesh/contracts:build: > tsc -p tsconfig.build.json
-@workmesh/contracts:build: 
-@workmesh/artifact-storage:test: 
+@workmesh/contracts:build:
+@workmesh/artifact-storage:test:
 @workmesh/artifact-storage:test: > @workmesh/artifact-storage@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\artifact-storage
 @workmesh/artifact-storage:test: > vitest run
-@workmesh/artifact-storage:test: 
-@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:
 @workmesh/artifact-storage:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/artifact-storage
-@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:
 @workmesh/artifact-storage:test:  ✓ src/retention-upgrade.test.ts (3 tests) 22ms
 @workmesh/artifact-storage:test:  ✓ src/index.test.ts (19 tests) 137ms
-@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:
 @workmesh/artifact-storage:test:  Test Files  2 passed (2)
 @workmesh/artifact-storage:test:       Tests  22 passed (22)
 @workmesh/artifact-storage:test:    Start at  04:27:52
 @workmesh/artifact-storage:test:    Duration  8.57s (transform 691ms, setup 0ms, collect 10.13s, tests 159ms, environment 1ms, prepare 3.92s)
-@workmesh/artifact-storage:test: 
+@workmesh/artifact-storage:test:
 @workmesh/observability:test: cache miss, executing d562be6104e896ed
 @workmesh/git-provider:test: cache miss, executing b2bc2bf1f3513f7f
-@workmesh/observability:test: 
+@workmesh/observability:test:
 @workmesh/observability:test: > @workmesh/observability@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\observability
 @workmesh/observability:test: > vitest run
-@workmesh/observability:test: 
-@workmesh/git-provider:test: 
+@workmesh/observability:test:
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: > @workmesh/git-provider@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\git-provider
 @workmesh/git-provider:test: > vitest run
-@workmesh/git-provider:test: 
-@workmesh/observability:test: 
+@workmesh/git-provider:test:
+@workmesh/observability:test:
 @workmesh/observability:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/observability
-@workmesh/observability:test: 
-@workmesh/git-provider:test: 
+@workmesh/observability:test:
+@workmesh/git-provider:test:
 @workmesh/git-provider:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/git-provider
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/observability:test:  ✓ src/workbench-slo.test.ts (13 tests) 12ms
 @workmesh/observability:test:  ✓ src/index.test.ts (3 tests) 11ms
 @workmesh/git-provider:test:  ✓ src/gitea.test.ts (1 test) 6ms
 @workmesh/git-provider:test:  ✓ src/index.test.ts (14 tests) 99ms
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/refs"],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits","PATCH:/repos/acme/workmesh/git/refs/heads/workmesh/test"],"readCount":2,"guards":3}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":1,"actualWrites":[],"readCount":2,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":2,"actualWrites":["POST:/repos/acme/workmesh/git/trees"],"readCount":2,"guards":2}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":3,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits"],"readCount":2,"guards":3}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/pulls"],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":0,"actualWrites":["PUT:/repos/acme/workmesh/pulls/71/merge"],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/check-runs/42/rerequest"],"readCount":0,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"context","denyAt":0,"actualWrites":[],"readCount":3,"guards":0}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/branches"],"readCount":0,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":0,"actualWrites":["PUT:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls"],"readCount":0,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls/71/merge"],"readCount":2,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"retry","denyAt":0,"actualWrites":[],"readCount":0,"guards":0}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
 @workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"context","denyAt":0,"actualWrites":[],"readCount":2,"guards":0}}
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/git-provider:test:  ✓ src/mutation-http.test.ts (2 tests) 381ms
 @workmesh/git-provider:test:    ✓ M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可  308ms
-@workmesh/observability:test: 
+@workmesh/observability:test:
 @workmesh/observability:test:  Test Files  2 passed (2)
 @workmesh/observability:test:       Tests  16 passed (16)
 @workmesh/observability:test:    Start at  04:28:16
 @workmesh/observability:test:    Duration  5.27s (transform 838ms, setup 0ms, collect 941ms, tests 24ms, environment 1ms, prepare 6.05s)
-@workmesh/observability:test: 
-@workmesh/git-provider:test: 
+@workmesh/observability:test:
+@workmesh/git-provider:test:
 @workmesh/git-provider:test:  Test Files  3 passed (3)
 @workmesh/git-provider:test:       Tests  17 passed (17)
 @workmesh/git-provider:test:    Start at  04:28:16
 @workmesh/git-provider:test:    Duration  5.75s (transform 713ms, setup 0ms, collect 1.71s, tests 486ms, environment 1ms, prepare 9.08s)
 @workmesh/artifact-storage:build: cache miss, executing a17c12692425de75
-@workmesh/git-provider:test: 
+@workmesh/git-provider:test:
 @workmesh/contracts:test: cache miss, executing 79dda4ffe8fc90a5
-@workmesh/artifact-storage:build: 
+@workmesh/artifact-storage:build:
 @workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\artifact-storage
 @workmesh/artifact-storage:build: > tsc -p tsconfig.json
-@workmesh/artifact-storage:build: 
-@workmesh/contracts:test: 
+@workmesh/artifact-storage:build:
+@workmesh/contracts:test:
 @workmesh/contracts:test: > @workmesh/contracts@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\contracts
 @workmesh/contracts:test: > vitest run
-@workmesh/contracts:test: 
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
+@workmesh/contracts:test:
 @workmesh/contracts:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/contracts
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test:  ❯ src/release-contract.test.ts (1 test | 1 failed) 632ms
 @workmesh/contracts:test:    × 1.0 release contract documentation > keeps OpenAPI, protocol, README, and environment flags aligned 630ms
 @workmesh/contracts:test:      → expected 0 to be greater than 0
@@ -196,9 +198,9 @@
 @workmesh/contracts:test:  ✓ src/auth-idempotency.test.ts (2 tests) 9ms
 @workmesh/contracts:test:  ✓ src/repository-configuration-contracts.test.ts (1 test) 9ms
 @workmesh/contracts:test:  ✓ src/active-executor-contract.test.ts (2 tests) 11ms
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test:  FAIL  src/release-contract.test.ts > 1.0 release contract documentation > keeps OpenAPI, protocol, README, and environment flags aligned
 @workmesh/contracts:test: AssertionError: expected 0 to be greater than 0
 @workmesh/contracts:test:  ❯ src/release-contract.test.ts:32:50
@@ -208,15 +210,15 @@
 @workmesh/contracts:test:        |                                                  ^
 @workmesh/contracts:test:      33|       expect(versionPolicy).toContain(feature.key)
 @workmesh/contracts:test:      34|     }
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
-@workmesh/contracts:test: 
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
+@workmesh/contracts:test:
 @workmesh/contracts:test:  Test Files  1 failed | 28 passed (29)
 @workmesh/contracts:test:       Tests  1 failed | 218 passed (219)
 @workmesh/contracts:test:    Start at  04:28:25
 @workmesh/contracts:test:    Duration  14.15s (transform 1.60s, setup 0ms, collect 11.90s, tests 16.86s, environment 8ms, prepare 6.92s)
-@workmesh/contracts:test: 
+@workmesh/contracts:test:
 @workmesh/contracts:test:  ELIFECYCLE  Test failed. See above for more details.
 @workmesh/observability:build: cache miss, executing 7846ffa65fd5c747
 @workmesh/git-provider:build: cache miss, executing c0219c204ded9ada
@@ -236,7 +238,7 @@
 
  Tasks:    4 successful, 20 total
 Cached:    0 cached, 20 total
-  Time:    4m28.099s 
+  Time:    4m28.099s
 Failed:    @workmesh/contracts#test
 
  WARNING  no output files found for task @workmesh/artifact-storage#test. Please check your `outputs` key in `turbo.json`
