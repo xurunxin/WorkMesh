@@ -850,7 +850,7 @@ export function createAutomationWorker({
           auth: delivery.browserAuth,
           url: new URL(delivery.sourceType === 'approval'
             ? `/api/v1/human-attention/${encodeURIComponent(`v1:approval:${delivery.sourceId}`)}`
-            : '/api/v1/notifications', apiOrigin).href,
+            : '/api/v1/notifications', new URL(apiOrigin).origin).href,
         })
       }
       await withTx(db, async tx => {

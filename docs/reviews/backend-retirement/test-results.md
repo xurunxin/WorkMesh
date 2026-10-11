@@ -43,3 +43,5 @@
 CI `38178554946` 的 Lite 实际部署（`backend-lite-e07a9c8f`）完整通过，原件在 artifact `11717163412`；实际源码为 PR 合成检出 `811b3cb356ba1688d784eb8eee6ee3f6782500d1`。生产三个镜像构建和 save/load 通过，随后探针把生产入口当作 Lite 的分派入口而失败；`backend-production-4978c9fa/26.log` 显示实际启动了 API。修订探针读取真实生产 Compose migrate command，并分别核对实际服务启动日志；不改生产入口或放宽无源码部署、ready、TLS、Skill 与 MCP 后续要求。首败原 ZIP 保留，本轮产品验收仍待复验。
 
 CI `38179856023` 的 API/协议、worker、DB、灾备和三平台原生全部成功；Lite 再次完整通过。生产迁移、API 入口探针及三个镜像构建/save-load 通过，worker 实际进入 readiness 后按不可达数据库预期报 `WORKER_STARTUP_FAILED`，验收脚本只识别 identity 阶段，因而失败。artifact `11717457465` 的 `backend-production-f85136c6/30.log` 保留原输出；按 worker 现有源码补齐两种实际启动阶段日志，并继续要求后续真实 Compose ready/worker/Skill/MCP 全部通过。该首败没有标成生产通过。
+
+投递链接复核发现直接使用配置 URL 会保留 userinfo；Web Push 改为 URL origin 标准化，既有真实 PostgreSQL 成功投递用例使用带测试用户名/密码/查询/fragment 的配置并仍要求无凭据的准确 API 链接，原幂等、订阅撤销与状态断言保持。仅修正链接构造，不改权限、数据或发送门禁。

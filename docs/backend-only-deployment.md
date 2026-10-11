@@ -41,7 +41,7 @@ API origin 提供 `/.well-known/workmesh-agent` 和固定 `/skills/workmesh-1.1.
 
 ## 通知与后续维护
 
-Web Push 的 config、订阅注册/撤销及 worker 投递接口保持。外部客户端自行消费服务合同，本项目不提供替代页面或 Service Worker。企业微信和 Web Push 的新链接使用现有鉴权 API：attention 来源定位到编码后的复合 ID，其他通知定位到 notifications 查询。链接不携带秘密，返回 JSON；匿名、其他 Human 或失权用户按实时权限拒绝，不提供登录页面。
+Web Push 的 config、订阅注册/撤销及 worker 投递接口保持。外部客户端自行消费服务合同，本项目不提供替代页面或 Service Worker。企业微信和 Web Push 的新链接使用现有鉴权 API：attention 来源定位到编码后的复合 ID，其他通知定位到 notifications 查询。链接不携带秘密，返回 JSON；匿名、无该来源读取权限的其他 Human 或失权用户按实时权限拒绝，不提供登录页面。
 
 旧通知 `request_hash` 按原序列化字段完整验证并保留。只有原状态机允许发送的记录渲染新链接，`sending` 和 `uncertain` 不自动重发；显式对账仍受原权限、revision 和状态机约束。
 

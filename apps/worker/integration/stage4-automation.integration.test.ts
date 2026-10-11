@@ -767,7 +767,7 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     const deliveredInputs: Array<Record<string, unknown>> = []
     const deliveryWorker = createBaseAutomationWorker({
       db,
-      apiOrigin: 'https://workmesh.example.test',
+      apiOrigin: 'https://fixture-user:fixture-password@workmesh.example.test/old-page?credential=fixture#ignored',
       workerId: `browser-success-${randomUUID()}`,
       features: loadFeatureConfig({}),
       sink: {
