@@ -1,4 +1,5 @@
 import { resolveExecutionResultIdentity } from './agent/execution-result.js';
+import { agentConnectionErrorBody, agentConnectionValidationDetails, isAgentConnectionIngress } from './agent-connection-errors.js';
 import crypto from "node:crypto";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
@@ -596,21 +597,22 @@ export const buildApp = (options: {
   });
   app.setErrorHandler(async (error, request, reply) => {
     const correlationId = request.correlationId ?? request.id;
+    const responseError = (...args: Parameters<typeof errorBody>) => agentConnectionErrorBody(request, ...args);
     if (error instanceof AuthRateLimitedError) {
       const retryAfter = Math.max(1, Math.ceil(error.retryAfterMs / 1_000));
-      return reply.header("Retry-After", String(retryAfter)).header("RateLimit-Remaining", "0").header("RateLimit-Reset", String(retryAfter)).code(429).send(errorBody("AUTH_RATE_LIMITED", "Authentication request is temporarily rate limited", correlationId, { endpointClass: error.endpointClass, retryAfterSeconds: retryAfter }));
+      return reply.header("Retry-After", String(retryAfter)).header("RateLimit-Remaining", "0").header("RateLimit-Reset", String(retryAfter)).code(429).send(responseError("AUTH_RATE_LIMITED", "Authentication request is temporarily rate limited", correlationId, { endpointClass: error.endpointClass, retryAfterSeconds: retryAfter }));
     }
     if (error instanceof AuthRateLimitUnavailableError)
-      return reply.header("Retry-After", "1").code(503).send(errorBody("AUTH_RATE_LIMIT_UNAVAILABLE", "Authentication is temporarily unavailable", correlationId));
+      return reply.header("Retry-After", "1").code(503).send(responseError("AUTH_RATE_LIMIT_UNAVAILABLE", "Authentication is temporarily unavailable", correlationId));
     if (error instanceof ZodError)
       return reply
         .code(400)
         .send(
-          errorBody(
+          responseError(
             "VALIDATION_ERROR",
             "Invalid request",
             correlationId,
-            error.flatten(),
+            isAgentConnectionIngress(request) ? agentConnectionValidationDetails(error) : error.flatten(),
           ),
         );
     if (error instanceof DomainError) {
@@ -622,7 +624,7 @@ export const buildApp = (options: {
           reply.header("Retry-After", String(Math.max(1, Math.ceil(retryAfterMs / 1_000))));
         } catch (rateError) {
           if (rateError instanceof AuthRateLimitUnavailableError)
-            return reply.header("Retry-After", "1").code(503).send(errorBody("AUTH_RATE_LIMIT_UNAVAILABLE", "Authentication is temporarily unavailable", correlationId));
+            return reply.header("Retry-After", "1").code(503).send(responseError("AUTH_RATE_LIMIT_UNAVAILABLE", "Authentication is temporarily unavailable", correlationId));
           throw rateError;
         }
       }
@@ -662,7 +664,7 @@ export const buildApp = (options: {
       return reply
         .code(status)
         .send(
-          errorBody(error.code, error.message, correlationId, error.details),
+          responseError(error.code, error.message, correlationId, error.details),
         );
     }
     if (
@@ -672,7 +674,7 @@ export const buildApp = (options: {
       return reply
         .code(409)
         .send(
-          errorBody(
+          responseError(
             "INSTALLATION_ALREADY_COMPLETED",
             "Installation has already completed",
             correlationId,
@@ -681,12 +683,12 @@ export const buildApp = (options: {
     if ((error as { code?: string }).code === "23505")
       return reply
         .code(409)
-        .send(errorBody("CONFLICT", "A conflicting resource already exists", correlationId));
+        .send(responseError("CONFLICT", "A conflicting resource already exists", correlationId));
     request.log.error(error);
     return reply
       .code(500)
       .send(
-        errorBody("INTERNAL_ERROR", "Unexpected server error", correlationId),
+        responseError("INTERNAL_ERROR", "Unexpected server error", correlationId),
       );
   });
 

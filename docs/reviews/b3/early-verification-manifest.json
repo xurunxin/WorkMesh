@@ -1,0 +1,241 @@
+{
+  "archive": "early-verification-originals.zip",
+  "archiveSha256": "89d83f29f458145a609c77c11199e2118c46d0076fc8bacf4ed631bf1d2625b8",
+  "note": "保留初次失败、复验及归属/清理原件的准确字节；运行日志未匹配完整凭据格式。原验证器已脱敏，不把历史失败写成通过。",
+  "members": [
+    {
+      "source": ".tmp/b3-appdata-owner.json",
+      "member": ".tmp/b3-appdata-owner.json",
+      "bytes": 521,
+      "sha256": "0844a689fa3d2944f4a001dc90f8ccf1c62ed1a0daf68d10fe12c78a2db802fc"
+    },
+    {
+      "source": ".tmp/b3-ci-test.log",
+      "member": ".tmp/b3-ci-test.log",
+      "bytes": 6507,
+      "sha256": "560058751b78c949d1effb01f3f8d00e596debd24009bf571f797073ec406f61"
+    },
+    {
+      "source": ".tmp/b3-ci-validate.log",
+      "member": ".tmp/b3-ci-validate.log",
+      "bytes": 4602,
+      "sha256": "35169b8bca06201ea4512fa81b28d82fe30f1e08ee221cd3a02c21553d26edfa"
+    },
+    {
+      "source": ".tmp/b3-cli-native.log",
+      "member": ".tmp/b3-cli-native.log",
+      "bytes": 2212,
+      "sha256": "3a9b2e4dbb5cc719e08a78a689e80f810514f10ebc49f31811bfc6368a27d5ec"
+    },
+    {
+      "source": ".tmp/b3-connector-private-tests.log",
+      "member": ".tmp/b3-connector-private-tests.log",
+      "bytes": 32728,
+      "sha256": "8e094b4d098c20404c3dfc312c5eedf70d79953e05fc6045a7fcaaa36105dc0c"
+    },
+    {
+      "source": ".tmp/b3-connector-tests.log",
+      "member": ".tmp/b3-connector-tests.log",
+      "bytes": 50185,
+      "sha256": "d95c35ef79de7578f96b9c9a7ddf05be4d463a4654d46f4ab5567c5438b75cb7"
+    },
+    {
+      "source": ".tmp/b3-contract-tests.log",
+      "member": ".tmp/b3-contract-tests.log",
+      "bytes": 459,
+      "sha256": "7e8d7b42ccc115579a4e14d5630147628e03685f55ec03465c5226b2829d0d74"
+    },
+    {
+      "source": ".tmp/b3-docs-static-recheck.log",
+      "member": ".tmp/b3-docs-static-recheck.log",
+      "bytes": 300,
+      "sha256": "202cedbe6a54d23c165e81f6b0cddd3e7d2e953d369d80eb60c9c2d318484efe"
+    },
+    {
+      "source": ".tmp/b3-environment-owner.json",
+      "member": ".tmp/b3-environment-owner.json",
+      "bytes": 780,
+      "sha256": "67af23a62b11a1b24a1bdbab3590fec206fecf6cae0feaba1f276fc3e51b748a"
+    },
+    {
+      "source": ".tmp/b3-install.log",
+      "member": ".tmp/b3-install.log",
+      "bytes": 14316,
+      "sha256": "49debb923853f63cd117d9e830e9871773b9b62852e640fc95ca2f7e564f738c"
+    },
+    {
+      "source": ".tmp/b3-lock-manifest-check.log",
+      "member": ".tmp/b3-lock-manifest-check.log",
+      "bytes": 722,
+      "sha256": "3a6b2b7fc2940ea484b119ef4394fda35784a01de0b93326dad358b221001ba1"
+    },
+    {
+      "source": ".tmp/b3-lock-manifest-generation.log",
+      "member": ".tmp/b3-lock-manifest-generation.log",
+      "bytes": 506,
+      "sha256": "9c15d5b8f3b5e033fd6d5d353a7fe8ce383741c220e45e4ab7ca494579fd7953"
+    },
+    {
+      "source": ".tmp/b3-mcp-tests.log",
+      "member": ".tmp/b3-mcp-tests.log",
+      "bytes": 326,
+      "sha256": "2564a5e8b0286f53a089a20fb784f15117c31c69886cd74b15a476d0da05ff52"
+    },
+    {
+      "source": ".tmp/b3-required-1.log",
+      "member": ".tmp/b3-required-1.log",
+      "bytes": 9689,
+      "sha256": "e97eec37492bfa4f69a586c2bbfd3dd093e22c88186ab575e40a259a6daefb92"
+    },
+    {
+      "source": ".tmp/b3-required-2.log",
+      "member": ".tmp/b3-required-2.log",
+      "bytes": 875,
+      "sha256": "0ec0e78406fcefc1fc1094c29e01d6732ec8c199278ba05d54e099884423f50a"
+    },
+    {
+      "source": ".tmp/b3-required-3.log",
+      "member": ".tmp/b3-required-3.log",
+      "bytes": 9320,
+      "sha256": "17c2dd4d500cc2d84d5438e847ca5ac04729ad0954ab97ba3e00a01ef36c1660"
+    },
+    {
+      "source": ".tmp/b3-route-check.log",
+      "member": ".tmp/b3-route-check.log",
+      "bytes": 188,
+      "sha256": "f3fa81e043ccc0cef55a60facecc990c8d2c7af76efa434884c1884c2de72a41"
+    },
+    {
+      "source": ".tmp/b3-route-generation-recheck.log",
+      "member": ".tmp/b3-route-generation-recheck.log",
+      "bytes": 183,
+      "sha256": "2db5800504027585d96fcef5c9e64f15f477daa22d762c39e6c70c2a7c5b3415"
+    },
+    {
+      "source": ".tmp/b3-route-generation.log",
+      "member": ".tmp/b3-route-generation.log",
+      "bytes": 2831,
+      "sha256": "5d95ffc5c76e30473eb9216b686f830e7cc66c89ee07b1ed01c6942e148e3521"
+    },
+    {
+      "source": ".tmp/b3-sdk-tests.log",
+      "member": ".tmp/b3-sdk-tests.log",
+      "bytes": 335,
+      "sha256": "9601a5d4ac3ae483c2b18716fee34941ea1d4fd6058475452c9cb87e2a65dcba"
+    },
+    {
+      "source": ".tmp/b3-typecheck-recheck.log",
+      "member": ".tmp/b3-typecheck-recheck.log",
+      "bytes": 624,
+      "sha256": "6bd97110e0ea21e37ac3825d3cfe0d98a11f10ec5d45320aaf52fccfa25ceb65"
+    },
+    {
+      "source": ".tmp/b3-typecheck.log",
+      "member": ".tmp/b3-typecheck.log",
+      "bytes": 860,
+      "sha256": "dcf86d35eb2e3b2b64fff431ff01dc8c4a4eb2a1f9d468e926f7dee215f990e3"
+    },
+    {
+      "source": "docs/reviews/b3/first-failure-temp-cleanup.json",
+      "member": "docs/reviews/b3/first-failure-temp-cleanup.json",
+      "bytes": 17986,
+      "sha256": "b4ccfc509eb42282e01f8c1b5087ab4be664758dabde75b31a1faa9491a16721"
+    },
+    {
+      "source": "docs/reviews/b3/first-failure-temp-precheck.json",
+      "member": "docs/reviews/b3/first-failure-temp-precheck.json",
+      "bytes": 23246,
+      "sha256": "4b19b6893897150f94588885c69b76d5fdb40391e89b3d2c7c201f98d73e471e"
+    },
+    {
+      "source": "docs/reviews/b3/first-failure-temp-time-check.json",
+      "member": "docs/reviews/b3/first-failure-temp-time-check.json",
+      "bytes": 484,
+      "sha256": "b8ca987c3614501835ca47a33ba3254fa59f2f92b8a47fb62cb5280a7cf7bf9b"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-1/artifact-bucket.log",
+      "member": "docs/reviews/b3/local-required-1/artifact-bucket.log",
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-1/examples.log",
+      "member": "docs/reviews/b3/local-required-1/examples.log",
+      "bytes": 885,
+      "sha256": "3400cd30420ca56fd82c66d11593f2b070a8e8f7df8242a86d19d4c9d19e3523"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-1/lint.log",
+      "member": "docs/reviews/b3/local-required-1/lint.log",
+      "bytes": 5636,
+      "sha256": "f87718be6213b0a45b041bc3a32f23888ffd3a5e1c3ed78ea1768360bfe854cb"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-1/results.json",
+      "member": "docs/reviews/b3/local-required-1/results.json",
+      "bytes": 3371,
+      "sha256": "92f30328153af03f6242e8ff0d38c3c2c7ed7d3321ea2bedd8064bb8a6c08a18"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-1/test.log",
+      "member": "docs/reviews/b3/local-required-1/test.log",
+      "bytes": 25804,
+      "sha256": "ed14a630bfbdf600c17baa2802d306d8aef8dfab207cfe8ff804819a70c54cc7"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-1/typecheck.log",
+      "member": "docs/reviews/b3/local-required-1/typecheck.log",
+      "bytes": 6160,
+      "sha256": "f0edd29cbaab456a0109d9b7a197438b100fee985063a51a41bb12b752defffc"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-2/examples.log",
+      "member": "docs/reviews/b3/local-required-2/examples.log",
+      "bytes": 885,
+      "sha256": "bcb2e6e3c42dd76f18ab498e6cd8217972fcdf8890de96bac198ca0f52ba41d2"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-2/results.json",
+      "member": "docs/reviews/b3/local-required-2/results.json",
+      "bytes": 2086,
+      "sha256": "17a3c6d8399565d1c855719399a5dc3aec2508aeabb4b10a88524252d0bba59d"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-3/artifact-bucket.log",
+      "member": "docs/reviews/b3/local-required-3/artifact-bucket.log",
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-3/examples.log",
+      "member": "docs/reviews/b3/local-required-3/examples.log",
+      "bytes": 885,
+      "sha256": "8903c825ec573b227cf1eb465cad8c4ea4c07f7f534913eccee8ee1f0ace3b21"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-3/lint.log",
+      "member": "docs/reviews/b3/local-required-3/lint.log",
+      "bytes": 5648,
+      "sha256": "52468582f726fed0f2689975b6a78abd72a2a683ce929b51361f35978b65619e"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-3/results.json",
+      "member": "docs/reviews/b3/local-required-3/results.json",
+      "bytes": 3371,
+      "sha256": "8d12a087b4eefc48255870491c01760379b6f684d193311012f97458c756b461"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-3/test.log",
+      "member": "docs/reviews/b3/local-required-3/test.log",
+      "bytes": 94296,
+      "sha256": "33d02be184d5410d43cf69ded8b4005200d53bb60e6fed4bdc40015484b296aa"
+    },
+    {
+      "source": "docs/reviews/b3/local-required-3/typecheck.log",
+      "member": "docs/reviews/b3/local-required-3/typecheck.log",
+      "bytes": 6172,
+      "sha256": "edbbf9e3f014373157e84f20fda4a7586c00948a4182118d0fc54e88a6012682"
+    }
+  ]
+}

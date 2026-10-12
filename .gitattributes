@@ -30,3 +30,6 @@ docs/reviews/b1-b2/blueberry-recovery/ci*-artifacts/*/connector-cleanup.json -te
 # 开发镜像构建登记/清理原件同样保持原字节，仅允许真实CR行尾。
 docs/reviews/b1-b2/blueberry-recovery/development-images/wm-connector-dev-*/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/reviews/b1-b2/blueberry-recovery/ci*-development-artifacts/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# B3 运行原件压缩包保持准确字节，不转换换行。
+docs/reviews/b3/*.zip -text

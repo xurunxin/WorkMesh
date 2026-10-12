@@ -3,6 +3,7 @@ import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { Pool, PoolClient } from 'pg'
 import {
   agentConnectionCreateInputSchema,
+  agentConnectionSupportedClients,
   agentConnectionPatchInputSchema,
   agentConnectionRedeemInputSchema,
   agentConnectionCurrentIdentitySchema,
@@ -394,7 +395,7 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
 
   app.get('/.well-known/workmesh-agent', async () => agentWellKnownResponseSchema.parse({
     protocolVersion: 'v1', mcpUrl: endpointUrls.mcpUrl, wellKnownUrl: endpointUrls.wellKnownUrl,
-    apiVersion: 'v1', supportedClients: ['codex', 'opencode', 'pi', 'generic_mcp'], skill,
+    apiVersion: 'v1', supportedClients: agentConnectionSupportedClients, skill,
   }))
 
   app.get('/api/v1/agent-connections', async request => {
@@ -522,7 +523,9 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       if (pairing.consumed_at) throw new DomainError('AGENT_CONNECTION_PAIRING_CONSUMED', 'Pairing code was already consumed')
       if (pairing.expires_at.getTime() <= Date.now()) throw new DomainError('AGENT_CONNECTION_PAIRING_EXPIRED', 'Pairing code expired')
       if (pairing.expected_agent_slug !== body.agentSlug || pairing.expected_client_type !== body.client.type) {
-        throw new DomainError('AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', 'Pairing identity does not match its envelope')
+        throw new DomainError('AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', 'Pairing identity does not match its envelope', {
+          reason: pairing.expected_agent_slug !== body.agentSlug ? 'agent_slug_mismatch' : 'client_type_mismatch',
+        })
       }
       let row = one((await tx.query<ConnectionRow>('SELECT * FROM agent_connections WHERE id=$1 FOR UPDATE', [pairing.connection_id])).rows)
       if (row.status === 'revoked') throw new DomainError('AGENT_CONNECTION_REVOKED', 'Connection is revoked')
@@ -871,7 +874,9 @@ export function registerAgentConnectionRoutes(app: FastifyInstance, input: {
       if (policy.redemption_count >= policy.max_redemptions)
         throw new DomainError('AGENT_ENROLLMENT_POLICY_EXHAUSTED', 'Enrollment policy has no remaining uses')
       if (!policy.allowed_client_types.includes(body.client.type))
-        throw new DomainError('AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', 'Client type is not allowed by this enrollment policy')
+        throw new DomainError('AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', 'Client type is not allowed by this enrollment policy', {
+          reason: 'enrollment_client_type_denied',
+        })
       const outsideCeiling = body.requestedCapabilities.filter(capability => !policy.capability_ceiling.includes(capability))
       if (outsideCeiling.length)
         throw new DomainError('CAPABILITY_DENIED', 'Requested capabilities exceed the enrollment policy ceiling', { capabilities: outsideCeiling })

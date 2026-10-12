@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import { agentConnectionErrorRecoverySchema, agentConnectionSupportedClients } from './agent-connection-errors.js'
+export * from './agent-connection-errors.js'
 export * from './optional-domain-contracts.js'
 import { childBudgetInputSchema } from './child-session-contracts.js'
 import { leaseResponseSchema } from './execution-contracts.js'
@@ -398,6 +400,18 @@ export const apiErrorCodeSchema = z.enum([
   'PROFILE_VERSION_UNSUPPORTED',
   'REALTIME_CAPACITY_EXCEEDED',
   'INTERNAL_ERROR',
+  'AUTH_RATE_LIMITED',
+  'AUTH_RATE_LIMIT_UNAVAILABLE',
+  'CAPABILITY_DENIED',
+  'RESOURCE_SCOPE_DENIED',
+  'SESSION_SCOPE_DENIED',
+  'AGENT_ENROLLMENT_POLICY_INVALID',
+  'AGENT_ENROLLMENT_POLICY_REVOKED',
+  'AGENT_ENROLLMENT_POLICY_EXPIRED',
+  'AGENT_ENROLLMENT_POLICY_EXHAUSTED',
+  'AGENT_ENROLLMENT_POLICY_NOT_FOUND',
+  'AGENT_SLUG_CONFLICT',
+  'INVALID_STATE_TRANSITION',
   // Stage 5 (v1.1) Agent Connection & Coordination MCP — folded into the
   // unified error contract. Plan §"测试与验收" requires that every error
   // response follows the {error:{code,message,details,correlationId}} shape,
@@ -437,7 +451,13 @@ export const apiErrorCodeSchema = z.enum([
   'LLM_CONNECTION_SECRET_UNRESOLVED',
   'LLM_MODEL_NOT_FOUND',
 ])
-export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1) }) })
+export const errorResponseSchema = z.object({ error: z.object({ code: apiErrorCodeSchema, message: z.string(), details: z.unknown().optional(), correlationId: z.string().min(1), ...agentConnectionErrorRecoverySchema.partial().shape }) })
+export const agentConnectionErrorResponseSchema = z.object({
+  error: errorResponseSchema.shape.error.extend(agentConnectionErrorRecoverySchema.shape),
+}).superRefine((value, ctx) => {
+  if (value.error.code === 'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH' && !value.error.supported_clients)
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['error', 'supported_clients'], message: '类型不匹配须返回部署支持类型' })
+})
 
 // Kept as a permissive helper so existing API error handling remains source-compatible.
 export const errorBody = (code: string, message: string, correlationId: string, details?: unknown) => ({ error: { code, message, details, correlationId } })
@@ -2728,7 +2748,7 @@ export type A2AProtocolVersion = '0.3'
 //     preserved. .passthrough() is never used, so undeclared secrets
 //     cannot leak through a Connection response.
 
-const agentConnectionClientTypeValues = ['codex', 'opencode', 'pi', 'generic_mcp'] as const
+const agentConnectionClientTypeValues = agentConnectionSupportedClients
 export const agentConnectionClientTypeSchema = z.enum(agentConnectionClientTypeValues)
 
 export const agentConnectionStatusSchema = z.enum(['pending', 'active', 'rotating', 'revoked'])

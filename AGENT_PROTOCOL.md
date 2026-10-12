@@ -194,6 +194,14 @@ UI 生成给 Human 复制给 Agent 的 handoff 必须是可执行的完整步骤
 
 正式配置归连接器所有，只保存系统秘密引用。Windows Credential Manager、macOS Keychain、Linux Secret Service 为唯一安装令牌持久化落点，后端不可用不降级。新增独有秘密引用并读回核对后，原子替换正式配置作为提交点：替换前失败/重启删除新增秘密，旧配置和旧引用保持完整；替换后重启校验新配置摘要及新引用再收尾。补偿失败保留提交记录并阻止新提交。启动入口只向子进程环境注入令牌，客户端片段无秘密。零数据库迁移、零凭据生命周期变更；发布与无源码安装另由 B-ship 验收。
 
+### 接入失败与恢复指令
+
+配对、enrollment 和当前连接身份验证错误携带 `error.next_action` 与 `error.human_action`。前者为客户端动作，后者为可转述的一项人工动作；无需人工时为“无需人工操作”。`AGENT_CONNECTION_CLIENT_TYPE_MISMATCH` 另返回 `error.supported_clients`，与 discovery 共用部署支持列表。该列表不授予 policy 权限，也不能修复 slug 绑定。
+
+`details.reason` 区分 `agent_slug_mismatch`、`client_type_mismatch` 和 `enrollment_client_type_denied`，同时不匹配时先报告 slug。wrong code 不增加合法配对 attempts；wrong slug 和已知错误类型增加 attempts，未知枚举在 Zod 输入校验拒绝且不增加。达到 8 次后仍按原锁定规则拒绝。
+
+恢复指令不得包含凭据或其他连接身份。SDK 保存在 `WorkMeshSdkError.recovery`，MCP 工具错误保留同一字段和既有 `safeNextAction`；CLI 只展示已知安全指令。旧错误形状兼容，不增加自动恢复或身份刷新。原 key/body/context 重放、429 Retry-After、store 故障失败关闭、凭据窗口及授权规则保持不变。当前使用步骤见 [API/MCP 接入恢复](docs/integration/troubleshooting.md)。
+
 ## 3.5 Coordination Session（v1.1）
 
 Installation Token 长期有效至撤销，但**不能**直接执行普通 mutation；它的全部工作流是**派生 Coordination Session**。

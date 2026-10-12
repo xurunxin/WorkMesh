@@ -3,6 +3,8 @@
 中文接入从 [API/MCP 手册](integration/README.md)开始。本文保留已有开发参考；
 当前凭据模式、纯后端配对和恢复分别见手册的 REST、MCP 与恢复章节。
 
+接入错误返回 `next_action`、`human_action` 和适用的 `supported_clients`。SDK 在 `WorkMeshSdkError.recovery` 保存这些字段，MCP 传给工具错误，连接器 CLI 展示安全指令。处理方式及真实示例见[错误与恢复](integration/troubleshooting.md)。原凭据、重试和 pending 规则保持。
+
 `@workmesh/agent-sdk` is the Native HTTP client for an external agent. Each public mutation gets a fresh UUID-derived idempotency key by default, while retries of that one request retain the same key; callers may supply an explicit stable operation key. It also sends optional correlation/revision headers and retries only network errors, `429`, and retryable `5xx` responses. A `409` is returned to the caller for a fresh read-and-merge; it is never retried automatically.
 
 Before work begins, read `getServerInfo()` and negotiate one advertised Client

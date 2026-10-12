@@ -2211,9 +2211,9 @@ paths:
     get: { x-workmesh-policy-id: route.listAgentConnections, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: listAgentConnections, description: "Workspace Admin collection for discovering existing Agent Connections without browser-local state. Active Connections sort first, followed by rotating, pending, and revoked records. Never returns plaintext credentials or pairing codes.", parameters: [{ $ref: "#/components/parameters/Cursor" }, { $ref: "#/components/parameters/Limit" }], responses: { "200": { $ref: "#/components/responses/AgentConnections" }, "403": { $ref: "#/components/responses/Forbidden" } } }
     post: { x-workmesh-policy-id: route.createAgentConnection, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: createAgentConnection, description: "Workspace Admin creates a pre-authorized Connection envelope. Returns the connect URL with the pairing code in the URL fragment; the plaintext code is shown only once and never logged.", parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionCreateInput" } } } }, responses: { "201": { description: Connection created, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionCreateResponse" } } } }, "400": { $ref: "#/components/responses/ValidationError" }, "403": { $ref: "#/components/responses/Forbidden" }, "409": { $ref: "#/components/responses/Conflict" } } }
   /api/v1/agent-connections/redeem:
-    post: { x-workmesh-policy-id: route.redeemAgentConnection, x-workmesh-actor-kinds: [], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, x-workmesh-auth-rate-limit: shared_redis, security: [], operationId: redeemAgentConnection, description: "Public endpoint hit by an Agent to exchange a one-time 10-minute pairing code for an Installation Token, MCP config, and pinned Skill bundle. 首次成功响应返回安装令牌，现有加密认证幂等机制保存十五分钟，以 idempotency_replay.replayable_until 为准；冲突身份保留二十四小时。客户端首次联网前必须原子持久化同一 Idempotency-Key、含完整配对码的精确 body、origin 和 user-agent；合法重放返回同体，新 key 不能恢复已消耗配对码。重放不重新验证撤权；连接器须完成 discovery、原始 Skill 字节/LF/哈希/签名和 initialize → verify_connection → get_workmesh_context 的实时身份、能力、profile 与当前 active authenticated_credential 验证后，才提交系统秘密存储和仅含秘密引用的正式配置。", parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemInput" } } } }, responses: { "200": { description: Redeem succeeded, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemResponse" } } } }, "400": { $ref: "#/components/responses/ValidationError" }, "404": { $ref: "#/components/responses/NotFound" }, "409": { description: Pairing code already consumed (different Idempotency-Key), content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }, "410": { description: Pairing code expired, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }, "423": { description: Pairing code locked by rate limiter, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
+    post: { x-workmesh-policy-id: route.redeemAgentConnection, x-workmesh-actor-kinds: [], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, x-workmesh-auth-rate-limit: shared_redis, security: [], operationId: redeemAgentConnection, description: "Public endpoint hit by an Agent to exchange a one-time 10-minute pairing code for an Installation Token, MCP config, and pinned Skill bundle. 首次成功响应返回安装令牌，现有加密认证幂等机制保存十五分钟，以 idempotency_replay.replayable_until 为准；冲突身份保留二十四小时。客户端首次联网前必须原子持久化同一 Idempotency-Key、含完整配对码的精确 body、origin 和 user-agent；合法重放返回同体，新 key 不能恢复已消耗配对码。重放不重新验证撤权；连接器须完成 discovery、原始 Skill 字节/LF/哈希/签名和 initialize → verify_connection → get_workmesh_context 的实时身份、能力、profile 与当前 active authenticated_credential 验证后，才提交系统秘密存储和仅含秘密引用的正式配置。", parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemInput" } } } }, responses: { "200": { description: Redeem succeeded, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemResponse" } } } }, "400": { $ref: "#/components/responses/AgentConnectionFailure" }, "404": { $ref: "#/components/responses/AgentConnectionFailure" }, "409": { description: Pairing code already consumed (different Idempotency-Key), content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionError" } } } }, "410": { description: Pairing code expired, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionError" } } } }, "423": { description: Pairing code locked by rate limiter, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionError" } } } }, "429": { $ref: "#/components/responses/AgentConnectionRateLimited" }, "503": { $ref: "#/components/responses/AgentConnectionRateLimitUnavailable" }, "default": { $ref: "#/components/responses/AgentConnectionFailure" } } }
   /api/v1/agent-connections/current-identity:
-    get: { x-workmesh-policy-id: route.getCurrentAgentConnectionIdentity, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ AgentConnectionInstallationToken: [] }], operationId: getCurrentAgentConnectionIdentity, description: "Return the live Connection and Coordination Session identity plus a redacted projection of the exact active or overlap credential that authenticated this request. Only X-WorkMesh-Installation-Token is accepted. The response never contains a credential ID, token, complete hash, or request header.", responses: { "200": { description: Current Coordination Connection identity, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionCurrentIdentity" } } } }, "401": { $ref: "#/components/responses/Unauthorized" } } }
+    get: { x-workmesh-policy-id: route.getCurrentAgentConnectionIdentity, x-workmesh-actor-kinds: [agent], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ AgentConnectionInstallationToken: [] }], operationId: getCurrentAgentConnectionIdentity, description: "Return the live Connection and Coordination Session identity plus a redacted projection of the exact active or overlap credential that authenticated this request. Only X-WorkMesh-Installation-Token is accepted. The response never contains a credential ID, token, complete hash, or request header.", responses: { "200": { description: Current Coordination Connection identity, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionCurrentIdentity" } } } }, "401": { $ref: "#/components/responses/AgentConnectionFailure" }, "default": { $ref: "#/components/responses/AgentConnectionFailure" } } }
   /api/v1/agent-connections/{id}:
     parameters: [{ $ref: "#/components/parameters/Id" }]
     get: { x-workmesh-policy-id: route.getAgentConnection, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: WORKMESH_BETA_COORDINATION_MCP, x-workmesh-feature-tier: beta, security: [{ SessionCookie: [] }], operationId: getAgentConnection, description: "Get one Agent Connection. The plaintext Installation Token is never returned; only a fingerprint prefix. The response carries an ETag header whose value is the Connection revision; clients must echo it back in If-Match for PATCH / DELETE / rotate.", responses: { "200": { description: Connection detail, headers: { ETag: { schema: { type: string }, description: "Revision ETag; clients echo this in If-Match on PATCH / DELETE / rotate." } }, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionResponse" } } } }, "404": { $ref: "#/components/responses/NotFound" } } }
@@ -2241,7 +2241,7 @@ paths:
   /api/v1/agent-enrollment-policies/{id}:
     delete: { x-workmesh-policy-id: route.revokeAgentEnrollmentPolicy, x-workmesh-actor-kinds: [human], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, security: [{ SessionCookie: [] }], operationId: revokeAgentEnrollmentPolicy, parameters: [{ $ref: "#/components/parameters/Id" }, { $ref: "#/components/parameters/IfMatch" }, { $ref: "#/components/parameters/IdempotencyKey" }], responses: { "204": { description: Enrollment policy revoked }, "409": { $ref: "#/components/responses/RevisionConflict" } } }
   /api/v1/agent-enrollments/redeem:
-    post: { x-workmesh-policy-id: route.redeemAgentEnrollment, x-workmesh-actor-kinds: [], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [], operationId: redeemAgentEnrollment, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentEnrollmentRedeemInput" } } } }, responses: { "200": { description: Agent enrolled, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemResponse" } } } }, "409": { $ref: "#/components/responses/Conflict" }, "429": { $ref: "#/components/responses/AuthRateLimited" }, "503": { $ref: "#/components/responses/AuthRateLimitUnavailable" } } }
+    post: { x-workmesh-policy-id: route.redeemAgentEnrollment, x-workmesh-actor-kinds: [], x-workmesh-feature-key: none, x-workmesh-feature-tier: stable, x-workmesh-auth-rate-limit: shared_redis, security: [], operationId: redeemAgentEnrollment, parameters: [{ $ref: "#/components/parameters/IdempotencyKey" }], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/AgentEnrollmentRedeemInput" } } } }, responses: { "200": { description: Agent enrolled, content: { application/json: { schema: { $ref: "#/components/schemas/AgentConnectionRedeemResponse" } } } }, "409": { $ref: "#/components/responses/AgentConnectionFailure" }, "429": { $ref: "#/components/responses/AgentConnectionRateLimited" }, "503": { $ref: "#/components/responses/AgentConnectionRateLimitUnavailable" }, "default": { $ref: "#/components/responses/AgentConnectionFailure" } } }
   /api/v1/workbench/runner/assignments:
     get:
       x-workmesh-policy-id: route.listWorkbenchRunnerAssignments
@@ -3552,6 +3552,27 @@ components:
                   message: { type: string }
                   details: {}
                   correlationId: { type: string, minLength: 1 }
+    AgentConnectionFailure:
+      description: 接入失败，保留原错误码和状态。双恢复指令不授予权限，不包含凭据。
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/AgentConnectionError" }
+    AgentConnectionRateLimited:
+      description: 接入准入拒绝；等待完整 Retry-After 后，在原预算内重放原请求身份。
+      headers:
+        Retry-After: { schema: { type: integer, minimum: 1 } }
+        RateLimit-Remaining: { schema: { type: integer, enum: [0] } }
+        RateLimit-Reset: { schema: { type: integer, minimum: 1 } }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/AgentConnectionError" }
+    AgentConnectionRateLimitUnavailable:
+      description: 认证限流存储故障；接入失败关闭，原请求身份和旧配置保持。
+      headers:
+        Retry-After: { schema: { type: integer, minimum: 1 } }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/AgentConnectionError" }
     AuthRateLimited:
       description: Authentication admission or progressive credential backoff rejected the request without executing authentication or business side effects.
       headers:
@@ -6285,6 +6306,24 @@ components:
             revision: { $ref: "#/components/schemas/Revision" },
           },
       }
+    AgentConnectionError:
+      description: 配对、enrollment 和当前连接身份验证的错误。next_action 为客户端动作，human_action 为人工的一项动作；无需人工时为“无需人工操作”。supported_clients 仅说明部署支持，不授予配对或 policy 权限，也不能修复 slug 绑定。
+      allOf:
+        - { $ref: "#/components/schemas/Error" }
+        - type: object
+          properties:
+            error:
+              type: object
+              required: [next_action, human_action]
+        - if:
+            properties:
+              error:
+                properties:
+                  code: { const: AGENT_CONNECTION_CLIENT_TYPE_MISMATCH }
+          then:
+            properties:
+              error:
+                required: [supported_clients]
     Error:
       {
         type: object,
@@ -6379,6 +6418,17 @@ components:
                             APPROVAL_CONSUME_CONFLICT,
                             ARTIFACT_UPLOAD_EXPIRED,
                             INTERNAL_ERROR,
+                            AUTH_RATE_LIMITED,
+                            AUTH_RATE_LIMIT_UNAVAILABLE,
+                            SESSION_SCOPE_DENIED,
+                            AGENT_ENROLLMENT_POLICY_INVALID,
+                            AGENT_ENROLLMENT_POLICY_REVOKED,
+                            AGENT_ENROLLMENT_POLICY_EXPIRED,
+                            AGENT_ENROLLMENT_POLICY_EXHAUSTED,
+                            AGENT_ENROLLMENT_POLICY_NOT_FOUND,
+                            AGENT_SLUG_CONFLICT,
+                            INVALID_STATE_TRANSITION,
+
                             AGENT_CONNECTION_PAIRING_INVALID,
                             AGENT_CONNECTION_PAIRING_EXPIRED,
                             AGENT_CONNECTION_PAIRING_CONSUMED,
@@ -6401,6 +6451,9 @@ components:
                           ],
                       },
                     message: { type: string },
+                    next_action: { type: string, minLength: 1, maxLength: 1000 },
+                    human_action: { type: string, minLength: 1, maxLength: 1000 },
+                    supported_clients: { type: array, minItems: 1, maxItems: 4, uniqueItems: true, items: { $ref: "#/components/schemas/AgentConnectionClientType" } },
                     details: {},
                     correlationId: { type: string },
                   },

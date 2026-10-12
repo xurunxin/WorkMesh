@@ -1,0 +1,383 @@
+{
+  "action": "只读复核，不执行删除",
+  "resources": [
+    {
+      "run": "local-required-1",
+      "owner": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5",
+      "kind": "container",
+      "id": "c9589b3102c0b04828510fa2bfcc3407cb35ff1719d4b819b6307f19b03d9a5a",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: c9589b3102c0b04828510fa2bfcc3407cb35ff1719d4b819b6307f19b03d9a5a",
+      "absent": true
+    },
+    {
+      "run": "local-required-1",
+      "owner": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5",
+      "kind": "container",
+      "id": "d6a9cd10431b1c82c5c647add0e5ca7fba8bf980b99da79ea32f3eac67ebedeb",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: d6a9cd10431b1c82c5c647add0e5ca7fba8bf980b99da79ea32f3eac67ebedeb",
+      "absent": true
+    },
+    {
+      "run": "local-required-1",
+      "owner": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5",
+      "kind": "container",
+      "id": "49065a4420fbd602b41474a08b31c3167752644a72b260dfa156ac62c3859eaf",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 49065a4420fbd602b41474a08b31c3167752644a72b260dfa156ac62c3859eaf",
+      "absent": true
+    },
+    {
+      "run": "local-required-1",
+      "owner": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5",
+      "kind": "volume",
+      "name": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5-pg-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-1",
+      "owner": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5",
+      "kind": "volume",
+      "name": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5-redis-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-1",
+      "owner": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5",
+      "kind": "volume",
+      "name": "workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5-s3-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-e57c3fbd-e6d6-43ab-b655-c21825e4e3a5-s3-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-2",
+      "owner": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44",
+      "kind": "container",
+      "id": "ed5e23dd7fecdda701bd9363a23090eca09d497b6d3066037dce5110954900ad",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: ed5e23dd7fecdda701bd9363a23090eca09d497b6d3066037dce5110954900ad",
+      "absent": true
+    },
+    {
+      "run": "local-required-2",
+      "owner": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44",
+      "kind": "container",
+      "id": "3664865ee8b2629eb022fadcb966ecb04d0441cb89b944df9a24681c60e3f15f",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 3664865ee8b2629eb022fadcb966ecb04d0441cb89b944df9a24681c60e3f15f",
+      "absent": true
+    },
+    {
+      "run": "local-required-2",
+      "owner": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44",
+      "kind": "container",
+      "id": "cb065bd4546a03e85c5a1498ad3145c28e3a885ba4fa34e590135690e6153a3d",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: cb065bd4546a03e85c5a1498ad3145c28e3a885ba4fa34e590135690e6153a3d",
+      "absent": true
+    },
+    {
+      "run": "local-required-2",
+      "owner": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44",
+      "kind": "volume",
+      "name": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-pg-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-2",
+      "owner": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44",
+      "kind": "volume",
+      "name": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-redis-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-2",
+      "owner": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44",
+      "kind": "volume",
+      "name": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-s3-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-s3-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-3",
+      "owner": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c",
+      "kind": "container",
+      "id": "f0aadcf0483088a5833bcbcd77426d000db6956fdbc46bb0abc2464ce022e6ea",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: f0aadcf0483088a5833bcbcd77426d000db6956fdbc46bb0abc2464ce022e6ea",
+      "absent": true
+    },
+    {
+      "run": "local-required-3",
+      "owner": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c",
+      "kind": "container",
+      "id": "b2345c62149931127cd7752d37f9dd172ad9ae00a3ff36ad5e00081c9b020ef3",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: b2345c62149931127cd7752d37f9dd172ad9ae00a3ff36ad5e00081c9b020ef3",
+      "absent": true
+    },
+    {
+      "run": "local-required-3",
+      "owner": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c",
+      "kind": "container",
+      "id": "0d7846abbf78fcc83c9d03947b692abff52c214d41626a6d23a3ab2b1d4d92fe",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 0d7846abbf78fcc83c9d03947b692abff52c214d41626a6d23a3ab2b1d4d92fe",
+      "absent": true
+    },
+    {
+      "run": "local-required-3",
+      "owner": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c",
+      "kind": "volume",
+      "name": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c-pg-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-3",
+      "owner": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c",
+      "kind": "volume",
+      "name": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c-redis-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-3",
+      "owner": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c",
+      "kind": "volume",
+      "name": "workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c-s3-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-33cc5124-cec9-440c-9706-4f159b0c235c-s3-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-4",
+      "owner": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8",
+      "kind": "container",
+      "id": "8275f59c02393f2fab55a138300bc587948fc0b16ee69b0db9b0aab45b1da64a",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 8275f59c02393f2fab55a138300bc587948fc0b16ee69b0db9b0aab45b1da64a",
+      "absent": true
+    },
+    {
+      "run": "local-required-4",
+      "owner": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8",
+      "kind": "container",
+      "id": "506bf38b7a906bca33160734ee229232996559306a20a0eb32ea9dd846892c3b",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 506bf38b7a906bca33160734ee229232996559306a20a0eb32ea9dd846892c3b",
+      "absent": true
+    },
+    {
+      "run": "local-required-4",
+      "owner": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8",
+      "kind": "container",
+      "id": "bc87d3b5c7535aa333eb6c7ace20ef204be6803facc5c88b9066665f5851bdd4",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: bc87d3b5c7535aa333eb6c7ace20ef204be6803facc5c88b9066665f5851bdd4",
+      "absent": true
+    },
+    {
+      "run": "local-required-4",
+      "owner": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8",
+      "kind": "volume",
+      "name": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8-pg-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-4",
+      "owner": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8",
+      "kind": "volume",
+      "name": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8-redis-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-required-4",
+      "owner": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8",
+      "kind": "volume",
+      "name": "workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8-s3-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-d6a9026a-7e10-461c-b19d-69b2d11321f8-s3-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-integration-5",
+      "owner": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5",
+      "kind": "container",
+      "id": "7ddb9babd30ab105c905c2f4d4fbc47e174ed61ff7b9d89fc63acc532c9b2b3f",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 7ddb9babd30ab105c905c2f4d4fbc47e174ed61ff7b9d89fc63acc532c9b2b3f",
+      "absent": true
+    },
+    {
+      "run": "local-integration-5",
+      "owner": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5",
+      "kind": "container",
+      "id": "8a008bed0d0b111f998889753aed6973465c5d8cb3b6687dfaec70be2d3192d2",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 8a008bed0d0b111f998889753aed6973465c5d8cb3b6687dfaec70be2d3192d2",
+      "absent": true
+    },
+    {
+      "run": "local-integration-5",
+      "owner": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5",
+      "kind": "container",
+      "id": "43eb14fe231a955e8d72fc6e86e043d675d6b027f3415fb9085906818b03508e",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 43eb14fe231a955e8d72fc6e86e043d675d6b027f3415fb9085906818b03508e",
+      "absent": true
+    },
+    {
+      "run": "local-integration-5",
+      "owner": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5",
+      "kind": "volume",
+      "name": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5-pg-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-integration-5",
+      "owner": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5",
+      "kind": "volume",
+      "name": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5-redis-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-integration-5",
+      "owner": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5",
+      "kind": "volume",
+      "name": "workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5-s3-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-fa537b5e-86ad-4273-a1c8-8202641060a5-s3-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-recovery",
+      "owner": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb",
+      "kind": "container",
+      "id": "364189647b99c8532d972015be707fd970c1e7c831fd3edc8bf87ac79f9dd556",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 364189647b99c8532d972015be707fd970c1e7c831fd3edc8bf87ac79f9dd556",
+      "absent": true
+    },
+    {
+      "run": "local-recovery",
+      "owner": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb",
+      "kind": "container",
+      "id": "f701d330a941544a821db79783f555b1acdc695aecb08fd67dae02e360add256",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: f701d330a941544a821db79783f555b1acdc695aecb08fd67dae02e360add256",
+      "absent": true
+    },
+    {
+      "run": "local-recovery",
+      "owner": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb",
+      "kind": "container",
+      "id": "39a36ab7df96e18cc2c2a28fa558c7d3dc7b5760135956473755736a5e44c0b6",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 39a36ab7df96e18cc2c2a28fa558c7d3dc7b5760135956473755736a5e44c0b6",
+      "absent": true
+    },
+    {
+      "run": "local-recovery",
+      "owner": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb",
+      "kind": "volume",
+      "name": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-pg-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-recovery",
+      "owner": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb",
+      "kind": "volume",
+      "name": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-redis-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-recovery",
+      "owner": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb",
+      "kind": "volume",
+      "name": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-s3-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-s3-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-recovery-2",
+      "owner": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab",
+      "kind": "container",
+      "id": "b37946ec9a9896d50a4b99eefd0082929e4032cfafab30560347345d8370181c",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: b37946ec9a9896d50a4b99eefd0082929e4032cfafab30560347345d8370181c",
+      "absent": true
+    },
+    {
+      "run": "local-recovery-2",
+      "owner": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab",
+      "kind": "container",
+      "id": "08d76a3d12d6bc4666a3d6d2ab0072d3982d00d4c30a64f73c4873e8e3690677",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: 08d76a3d12d6bc4666a3d6d2ab0072d3982d00d4c30a64f73c4873e8e3690677",
+      "absent": true
+    },
+    {
+      "run": "local-recovery-2",
+      "owner": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab",
+      "kind": "container",
+      "id": "d177a32720956059542d6b0ca9d330a3b222bca857d8a424fe23e2cf931bbeb9",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: No such container: d177a32720956059542d6b0ca9d330a3b222bca857d8a424fe23e2cf931bbeb9",
+      "absent": true
+    },
+    {
+      "run": "local-recovery-2",
+      "owner": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab",
+      "kind": "volume",
+      "name": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab-pg-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-recovery-2",
+      "owner": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab",
+      "kind": "volume",
+      "name": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab-redis-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "run": "local-recovery-2",
+      "owner": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab",
+      "kind": "volume",
+      "name": "workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab-s3-data",
+      "inspectExit": 1,
+      "error": "\nError response from daemon: get workmesh-docs-62ddae8c-ad88-4aac-a57f-99b5d39bc0ab-s3-data: no such volume",
+      "absent": true
+    }
+  ]
+}

@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { WorkMeshClient, WorkMeshSdkError } from '@workmesh/agent-sdk'
-import { agentConnectionCurrentIdentitySchema } from '@workmesh/contracts'
+import { agentConnectionCurrentIdentitySchema, readSafeAgentConnectionError } from '@workmesh/contracts'
 import { expectationSchema, type Expectation } from '../../../apps/connector/src/config.js'
 import { checkConnection, validateBootstrap } from '../../../apps/connector/src/protocol.js'
 
@@ -60,6 +60,14 @@ export async function runAgent(input: { expectation: Expectation; token: string 
   }
 }
 
+export function formatAgentFailure(error: unknown): string {
+  if (!(error instanceof WorkMeshSdkError)) return 'Agent 接入失败，请核清单、凭据和服务状态'
+  const safe = readSafeAgentConnectionError({ code: error.code, details: error.details, correlationId: error.correlationId, ...error.recovery })
+  if (!safe) return 'Agent 接入失败，请核清单、凭据和服务状态'
+  return `Agent 接入失败：${safe.code} HTTP ${error.status}`
+    + (safe.recovery ? `\n客户端动作：${safe.recovery.next_action}\n人工动作：${safe.recovery.human_action}` : '')
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
     const file = process.env.WORKMESH_EXPECTATION_FILE
@@ -69,7 +77,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     console.log(JSON.stringify(await runAgent({ expectation, token })))
   } catch (error) {
     // 原始验证错误可能包含输入，不输出对象或响应正文。
-    console.error(error instanceof WorkMeshSdkError ? `Agent 接入失败：${error.code} HTTP ${error.status}` : 'Agent 接入失败，请核清单、凭据和服务状态')
+    console.error(formatAgentFailure(error))
     process.exitCode = 1
   }
 }

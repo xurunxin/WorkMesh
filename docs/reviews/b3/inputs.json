@@ -1,0 +1,143 @@
+{
+  "task": "6EzX6xCA-_m72aQU1BEHX",
+  "approvedPlan": "docs/plan/b3-connection-error-recovery.md",
+  "approvedPlanSource": "用户本轮提供的完整方案正文；confirm阶段限制是历史规划记录，当前用户已授权执行",
+  "approvedPlanSha256": "7e72a9007a4ef1c624027686c0c5933ab9439dee586d70cdbb10f5d52b8e251d",
+  "initialHead": "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+  "remoteMain": "abf6813a439feab4b17b0602cc9295216634586e",
+  "remoteTree": "92da216d7f709e7ff11d7b82f3b70af527f8ca71",
+  "remoteParents": [
+    "9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0",
+    "b36c1ca176f6f2791a6005e72d774bdae9be61a7"
+  ],
+  "mainRead": "GitHub公共REST refs/heads/main；非origin/main或FETCH_HEAD",
+  "gitToolFailure": "共享缓存index.lock拒绝，原锁未删除",
+  "mainIntegration": "本机有准确源码tree及完整parents；GitHub verified签名payload重组后，Git SHA匹配才写本地缺失commit对象；当前会话分支ff-only至准确main，未改其他refs或共享index",
+  "dependencies": {
+    "61": "平台Done，main父链含PR222成果",
+    "62": "平台Done，当前main为PR223合并，tree与文档审核head一致"
+  },
+  "historicalSpec": "docs/plan/activation-task-specs/07.md",
+  "originalTests": "docs/reviews/r1/test-coverage.json",
+  "sources": [
+    {
+      "path": "CONTEXT.md",
+      "sha256": "d67c4bb38a57877354e8968747ad0ed3890108cb81feca53e24af97a4593f238"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "sha256": "3836495ed9355c19262de2eca2a0f0a02b9ca85e7d7bbc21b11aacd30784dd08"
+    },
+    {
+      "path": "docs/skills/zh-tech-writing/source.json",
+      "sha256": "c4fcb08cd6e65a95a15b03b8ce70897414b42b03ebded3880eb17eb57b785676"
+    }
+  ],
+  "mainSourceBindings": [
+    {
+      "path": "AGENTS.md",
+      "gitBlob": "213f085664c9351f5e9c9f951f3cfc85ac2efb67",
+      "bytes": 10218,
+      "sha256": "1f97afc22c36f0a912a1baee4c37c4583e34b901e4c99d1579cea730b4cc1906",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "gitBlob": "5c6715bf34c6c4a4639b8c926ed74a288b7768ac",
+      "bytes": 82174,
+      "sha256": "6de61ddd1d13149a4d692cd8a2e05729866d574876368f8c0b879c4c6467cef8",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "gitBlob": "17b102fef11efa2fd155ba13759ac57e17c22eb6",
+      "bytes": 573819,
+      "sha256": "bb76be54a36822f6cfbf9bb215213568cc1407785b4cb63dce04dfd5801849de",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/documentation-maintenance.md",
+      "gitBlob": "fbc6456823a9eeaa53dd53a97ffd3e79117f518c",
+      "bytes": 4624,
+      "sha256": "cc4b2ebe307c488630661c169d8817911818cfbc1e5fe75f70dd528179dd838a",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/07.md",
+      "gitBlob": "5ee4908819473e2300d92d4556984d713c38e19a",
+      "bytes": 3990,
+      "sha256": "ad6264cdfa1c7002b55d2add07d53038173dae63e04e912d512a80d2bed7a49a",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/reviews/r1/execution-inputs.json",
+      "gitBlob": "2ce665d39931c383c22dc1605ac15580c468107f",
+      "bytes": 328288,
+      "sha256": "069dfdc2c04103caba88817a25e77dfc4a148800a37ef077d1db2d045c9fc35c",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/reviews/r1/test-coverage.json",
+      "gitBlob": "97ba54f1e0b65c25f44546b61aeb269899522714",
+      "bytes": 477111,
+      "sha256": "27387687622a012314b879320f2645481aa23b6e036d21ed64c99ef0573326c5",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/plan/activation-task-specs/index.json",
+      "gitBlob": "daa2d0059564bdbcf712187a53cfe9e2b56c6af8",
+      "bytes": 107808,
+      "sha256": "6a9fa67a7741bd18f892dc666c56fc676d71813200a4402455b7a1f997256676",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/reviews/b1-b2/blueberry-recovery/review-handoff.md",
+      "gitBlob": "8e1de82715013ff4ce1dc99521f73002c2c005e7",
+      "bytes": 11685,
+      "sha256": "54ae3eead7a8dfecbb313f180eb787cb782c8ef8427b8d6a2e001fb31a33dc47",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/reviews/b1-b2/blueberry-recovery/development-images/review-fix.md",
+      "gitBlob": "911dc088d028b6ce009137a2d688737985f13710",
+      "bytes": 10322,
+      "sha256": "c8a6afa1d5bc097e08d7311e6120724ec6223fbb77595e9ce577a6cc5e81746c",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/handoff.md",
+      "gitBlob": "0346030d6be6ed6535b9a409bcb42e4708220724",
+      "bytes": 10195,
+      "sha256": "39e8f2a61e913a70e01a778388baca00a1de2891a89b399df0ec5a044165e34a",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/rebuild-rules.md",
+      "gitBlob": "7d888f97e651fa89f92294e77ec9a9b35b3a6cd4",
+      "bytes": 7412,
+      "sha256": "1a524e3fdc6de5e539cc8e3582f9591392058173502ba12a0134bd85b61ea07b",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/reviews/cleanup/2026-10-11-worktrees/post-m4/full-cleanup/new-machine-plan.py",
+      "gitBlob": "7cc89b96ef9004433ed4300364238beffb208625",
+      "bytes": 3488,
+      "sha256": "e716755d067ceef27f4a905a1743df09226169f91b7f90f5c632cab72936bbb1",
+      "source": "不可变 main Git blob 原字节"
+    },
+    {
+      "path": "docs/integration/README.md",
+      "gitBlob": "84bf76da509f22c87a58912925ac53837fb0c088",
+      "bytes": 2584,
+      "sha256": "c591dc0c25a29981989679df507540af43d7d0bf320ea4f534151dbcc690fb06",
+      "source": "不可变 main Git blob 原字节"
+    }
+  ],
+  "latestMainRecheck": {
+    "sha": "abf6813a439feab4b17b0602cc9295216634586e",
+    "method": "GitHub公共REST refs/heads/main",
+    "observedSameMain": true,
+    "checkedAtUtc": "2026-10-12T07:17:20.313131+00:00",
+    "note": "交接整理期间重新读取，仍与本轮整合的准确主线一致。"
+  }
+}

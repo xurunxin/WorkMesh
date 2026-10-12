@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { agentConnectionErrorRecovery } from '@workmesh/contracts'
 import { WorkMeshClient, WorkMeshCursorExpiredError, WorkMeshSdkError, iterateListPages, redactForLog, stableIdempotencyKey, verifyWebhook } from './index.js'
 import { createHmac } from 'node:crypto'
 import { createAgentCapabilityManifest, qualifyAgentCapabilityManifest, capabilitySchema, featureKeySchema } from '@workmesh/contracts'
@@ -910,5 +911,22 @@ describe('verifyWebhook', () => {
     const signature = createHmac('sha256', 'old').update(`${timestamp}.${raw}`).digest('hex')
     expect(verifyWebhook(raw, { 'WorkMesh-Timestamp': String(timestamp), 'WorkMesh-Signature': `v1=${signature}` }, { secrets: ['new', 'old'], now: new Date(timestamp * 1000) }).secretIndex).toBe(1)
     expect(() => verifyWebhook(raw, { 'WorkMesh-Timestamp': String(timestamp), 'WorkMesh-Signature': `v1=${signature}` }, { secrets: ['old'], now: new Date((timestamp + 301) * 1000) })).toThrow(WorkMeshSdkError)
+  })
+})
+
+
+describe('B3 SDK 恢复字段', () => {
+  it.each([true, false])('B3 恢复字段完整传递且旧错误兼容：%s', added => {
+    const recovery = agentConnectionErrorRecovery('AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', 'agent_slug_mismatch')
+    const payload = { error: { code: 'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', message: '拒绝', details: { reason: 'agent_slug_mismatch' }, correlationId: 'b3-sdk', ...(added ? recovery : {}) } }
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify(payload), { status: 400 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://api.test', fetch: fetcher, retry: { maxAttempts: 1 } })
+    return expect(client.getServerInfo()).rejects.toMatchObject({ code: payload.error.code, status: 400, correlationId: 'b3-sdk', details: payload.error.details, recovery: added ? recovery : undefined })
+  })
+  it('B3 非法恢复字段不覆盖原拒绝或触发新重试', async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ error: { code: 'FORBIDDEN', message: 'Denied', correlationId: 'b3-sdk', next_action: 'wmi_' + 'x'.repeat(43), human_action: '停止' } }), { status: 403 }))
+    const client = new WorkMeshClient({ baseUrl: 'https://api.test', fetch: fetcher })
+    await expect(client.getServerInfo()).rejects.toMatchObject({ code: 'FORBIDDEN', recovery: undefined })
+    expect(fetcher).toHaveBeenCalledTimes(1)
   })
 })

@@ -12,7 +12,7 @@
 | feature、功能状态、默认值 | 手册边界、配置表、环境样例与对应功能说明 |
 | 服务地址、镜像、CLI 命令 | README、部署文档、配置及快速上手 |
 
-入口在 [docs/integration/README.md](integration/README.md)。领域规则继续由现行协议、OpenAPI、Schema 和 Accepted ADR 决定；文档改动不授权修改 API 功能。#7 的 API＋最小 SDK/MCP/CLI 交付须继续更新本手册，B3 字段在实际实现前保持“未实现”。
+入口在 [docs/integration/README.md](integration/README.md)。领域规则继续由现行协议、OpenAPI、Schema 和 Accepted ADR 决定；文档改动不授权修改 API 功能。接口恢复字段的说明、共享契约和实际 SDK/MCP/CLI 消费须在同次交付核验；新增未实现能力继续明确标注。
 
 ## 每次交付的步骤
 

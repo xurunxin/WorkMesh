@@ -1,0 +1,41 @@
+{
+  "root": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-E5v7Hm",
+  "source": "local-required-3/test.log 中 config 后被杀用例的 created 登记",
+  "reason": "全仓测试因锁清单旧行号失败，Turbo 取消尚在执行的单元用例；最终单元已复验通过",
+  "sourceWindowUtc": [
+    "2026-10-12T06:17:07.495Z",
+    "2026-10-12T06:19:07.103Z"
+  ],
+  "activeFixtureWorkers": 0,
+  "store": "仅单元夹具的父进程 MemoryStore IPC，不是系统秘密存储",
+  "bodyRetention": "仅保留文件哈希和长度，不复制 pending 或 journal 正文",
+  "files": [
+    {
+      "path": "connector\\commit.json",
+      "bytes": 1694,
+      "sha256": "2c6e1a33bdee29c79f8e2afeaf1d27fe8007b8c5bf2bbe9dee0b52024afcd3c0"
+    },
+    {
+      "path": "connector\\config.json",
+      "bytes": 1492,
+      "sha256": "3cba26d77df64d5c79ee96a5454336171b662d0ba5c404135f88b12c12ac1c4c"
+    },
+    {
+      "path": "connector\\connector.lock",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "connector\\pending.json",
+      "bytes": 441,
+      "sha256": "5b6538e4abedcc0f3ee9046837448e5ea044edffab4c8cc5503f63e48472b28b"
+    },
+    {
+      "path": "connector\\skill-8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad.md",
+      "bytes": 12114,
+      "sha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad"
+    }
+  ],
+  "deleted": true,
+  "absent": true
+}

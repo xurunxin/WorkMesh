@@ -439,6 +439,7 @@ async function tool(call: () => Promise<unknown>) {
       details: upstreamDetails,
       ...(revision === undefined ? {} : { currentRevision: revision }),
       safeNextAction: safeNextAction(code, revision),
+      ...(error instanceof WorkMeshSdkError ? error.recovery : undefined),
     }
     return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify({ error: details }) }], structuredContent: { error: details } }
   }

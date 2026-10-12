@@ -24,7 +24,7 @@ WorkMesh 对外提供 REST API。API 的全称为 Application Programming Interf
 
 功能开关与授权分别生效。默认关闭的 Beta/Experimental 能力须由部署方显式启用；调用者还须拥有实时权限。工具出现在发现结果中，也须在调用时通过目标范围、revision、Lease 和批准检查。
 
-OpenAPI、共享 Zod 合同和已注册路由决定参数。历史 ADR 的页面流程按 [ADR 0087](../adr/0087-backend-only-service.md)退役；其领域规则仍须结合当前源码判断。后续 B3 的接入恢复字段尚未交付，本手册只描述已有错误字段与客户端行为。
+OpenAPI、共享 Zod 合同和已注册路由决定参数。历史 ADR 的页面流程按 [ADR 0087](../adr/0087-backend-only-service.md)退役；其领域规则仍须结合当前源码判断。接入拒绝的双恢复指令、支持类型和 SDK/MCP/CLI 消费方式见[错误与恢复](troubleshooting.md)。
 
 本机回环测试不能证明真实 GHCR 认证、低功耗设备、公网代理或通知厂商可用。设备与正式部署支持范围由部署方另行验证。原生连接器依赖系统秘密存储；仓库命令不等于已发行的独立安装包。
 

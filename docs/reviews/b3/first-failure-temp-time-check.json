@@ -1,0 +1,10 @@
+{
+  "result": "首条删除前的任务预检拒绝，零删除",
+  "reason": "PowerShell 将带 Z 的 [datetime] 转成本地时间，错误比较 UTC 对象；改用 DateTimeOffset.UtcDateTime，窗口来自原测试日志，不放宽范围",
+  "systemPermissionDenials": 0,
+  "originalRunLocalStart": "13:39:47",
+  "originalRunDurationMs": 272460,
+  "minimumUtc": "2026-10-12T05:39:47.0000000Z",
+  "maximumUtc": "2026-10-12T05:44:22.0000000Z",
+  "actualOutOfWindow": 0
+}

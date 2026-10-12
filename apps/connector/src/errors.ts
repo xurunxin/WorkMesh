@@ -1,5 +1,7 @@
+import type { AgentConnectionErrorRecovery } from '@workmesh/contracts'
+
 export class ConnectorError extends Error {
-  constructor(readonly code: string) { super(code); this.name = 'ConnectorError' }
+  constructor(readonly code: string, readonly recovery?: AgentConnectionErrorRecovery, readonly correlationId?: string) { super(code); this.name = 'ConnectorError' }
 }
 export function requireThat(condition: unknown, code: string): asserts condition {
   if (!condition) throw new ConnectorError(code)

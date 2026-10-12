@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { agentConnectionErrorRecovery } from '@workmesh/contracts'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { describe, expect, it, vi } from 'vitest'
@@ -1364,6 +1365,24 @@ describe('WorkMesh MCP adapter', () => {
       expect(updateMilestone).toHaveBeenCalledWith(milestoneId, { name: undefined, description: undefined, targetDate: '2026-09-01' }, { ifMatch: 1, idempotencyKey: 'milestone-update' })
       expect(createWorkItemRelation).toHaveBeenCalledWith(workItemId, { targetWorkItemId: artifactId, kind: 'blocks' }, { idempotencyKey: 'relation-add' })
       expect(deleteWorkItemRelation).toHaveBeenCalledWith(workItemId, relationId, { ifMatch: 1, idempotencyKey: 'relation-remove' })
+    } finally { await protocol.close(); await server.close() }
+  })
+})
+
+
+describe('B3 MCP 恢复字段', () => {
+  it.each([true, false])('B3 恢复字段完整传递且旧错误兼容：%s', async added => {
+    const recovery = agentConnectionErrorRecovery('UNAUTHENTICATED')
+    const getWorkItem = vi.fn().mockRejectedValue(new WorkMeshSdkError('Denied', { code: 'UNAUTHENTICATED', status: 401, correlationId: 'b3-mcp', details: { reason: 'inactive' }, recovery: added ? recovery : undefined }))
+    const api = { getWorkItem } as unknown as WorkMeshClient
+    const { server, protocol } = await connected('read-only', api)
+    try {
+      const result = await protocol.callTool({ name: 'get_work_item', arguments: { workItemId } })
+      expect(result.isError).toBe(true)
+      expect(result.structuredContent).toMatchObject({ error: { code: 'UNAUTHENTICATED', correlationId: 'b3-mcp', safeNextAction: expect.any(String), ...(added ? recovery : {}) } })
+      const text = result.content as Array<{ type: string; text?: string }>
+      expect(JSON.parse(text[0]!.text!)).toEqual(result.structuredContent)
+      expect(getWorkItem).toHaveBeenCalledTimes(1)
     } finally { await protocol.close(); await server.close() }
   })
 })

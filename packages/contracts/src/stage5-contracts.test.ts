@@ -1,4 +1,6 @@
 import { readFile } from 'node:fs/promises'
+import { parseDocument } from 'yaml'
+import { agentConnectionErrorResponseSchema, agentConnectionErrorRecovery, agentConnectionErrorRecoveryCatalog, readSafeAgentConnectionError, errorResponseSchema } from './index.js'
 import { describe, expect, it } from 'vitest'
 import {
   agentConnectionClientTypeSchema,
@@ -1178,3 +1180,52 @@ function makeRedeemResponse() {
     },
   }
 }
+
+
+describe('B3 接入恢复契约', () => {
+  it.each(Object.keys(agentConnectionErrorRecoveryCatalog))('B3 每个错误码具有安全双指令：%s', code => {
+    const recovery = agentConnectionErrorRecovery(code)
+    const wire = { error: { code, message: '公开说明', correlationId: 'b3-contract', ...recovery } }
+    expect(agentConnectionErrorResponseSchema.safeParse(wire).success).toBe(true)
+    expect(readSafeAgentConnectionError(wire.error)?.recovery).toEqual(recovery)
+  })
+  it('B3 类型列表只表示部署支持，三种身份原因分别指导恢复', () => {
+    const code = 'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH'
+    for (const reason of ['agent_slug_mismatch', 'client_type_mismatch', 'enrollment_client_type_denied']) {
+      const recovery = agentConnectionErrorRecovery(code, reason)
+      expect(agentConnectionErrorResponseSchema.safeParse({ error: { code, message: '拒绝', correlationId: 'b3', ...recovery } }).success).toBe(true)
+      expect(readSafeAgentConnectionError({ code, details: { reason }, ...recovery })?.recovery).toEqual(recovery)
+    }
+    expect(agentConnectionErrorRecovery(code, 'agent_slug_mismatch').next_action).toContain('不能修复')
+    expect(agentConnectionErrorRecovery(code, 'enrollment_client_type_denied').next_action).toContain('不表示当前 policy 允许')
+    expect(agentConnectionErrorResponseSchema.safeParse({ error: { code, message: '拒绝', correlationId: 'b3', next_action: '停止', human_action: '重新配对' } }).success).toBe(false)
+  })
+  it('B3 旧错误兼容，CLI 拒绝自由文本、凭据和终端控制符', () => {
+    const legacy = { code: 'FORBIDDEN', message: 'Denied', correlationId: 'b3-legacy' }
+    expect(errorResponseSchema.safeParse({ error: legacy }).success).toBe(true)
+    expect(agentConnectionErrorResponseSchema.safeParse({ error: legacy }).success).toBe(false)
+    const actual = agentConnectionErrorRecovery('FORBIDDEN')
+    for (const text of ['删除用户配置', 'wmi_' + 'x'.repeat(43), '\u001b[31m'])
+      expect(readSafeAgentConnectionError({ ...legacy, ...actual, next_action: text })?.recovery).toBeUndefined()
+    expect(readSafeAgentConnectionError({ ...legacy, ...actual, correlationId: 'wmp_' + 'x'.repeat(43) })?.correlationId).toBeUndefined()
+  })
+  it('B3 文档恢复示例符合接入错误契约', async () => {
+    const markdown = await readFile(new URL('../../../docs/integration/troubleshooting.md', import.meta.url), 'utf8')
+    const sample = markdown.split('<!-- b3-recovery-example -->')[1]?.match(/```json\s*([\s\S]*?)```/)
+    expect(sample).toBeDefined()
+    const wire = JSON.parse(sample![1]!)
+    expect(agentConnectionErrorResponseSchema.parse(wire).error.supported_clients).toEqual(['codex', 'opencode', 'pi', 'generic_mcp'])
+    expect(readSafeAgentConnectionError(wire.error)?.recovery).toBeDefined()
+  })
+  it('B3 OpenAPI 专用失败响应要求双指令并保留限流响应头', async () => {
+    const document = parseDocument(await readFile(new URL('../../../OPENAPI.yaml', import.meta.url), 'utf8'))
+    expect(document.errors).toEqual([])
+    const api = document.toJS() as { paths: Record<string, Record<string, { responses: Record<string, { $ref?: string }> }>>; components: { schemas: Record<string, { allOf?: unknown[] }>; responses: Record<string, { headers?: Record<string, unknown> }> } }
+    expect(api.components.schemas.AgentConnectionError?.allOf).toHaveLength(3)
+    for (const path of ['/api/v1/agent-connections/redeem', '/api/v1/agent-enrollments/redeem']) {
+      expect(api.paths[path]?.post?.responses['429']?.$ref).toBe('#/components/responses/AgentConnectionRateLimited')
+      expect(api.paths[path]?.post?.responses.default?.$ref).toBe('#/components/responses/AgentConnectionFailure')
+    }
+    expect(api.components.responses.AgentConnectionRateLimited?.headers).toHaveProperty('Retry-After')
+  })
+})

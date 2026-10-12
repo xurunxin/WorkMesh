@@ -1,4 +1,6 @@
 import { randomUUID } from 'node:crypto'
+import { agentConnectionErrorRecovery, readSafeAgentConnectionError } from '@workmesh/contracts'
+import { formatConnectionError } from './cli.js'
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -189,4 +191,30 @@ describe('真实客户端进程竞争与强制终止', () => {
       } finally { b.child.kill() }
     } finally { a.child.kill() }
   }, 30_000)
+})
+
+
+describe('B3 连接器恢复字段', () => {
+  it('B3 CLI 展示双指令且不泄密', async () => {
+    const f = await fixture(), dir = await directory(), store = new MemoryStore()
+    const code = 'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', reason = 'agent_slug_mismatch'
+    const recovery = agentConnectionErrorRecovery(code, reason)
+    const protocol = { ...f.protocol, fetch: (async (url, init) => String(url) === f.e.redeemUrl
+      ? new Response(JSON.stringify({ error: { code, details: { reason }, correlationId: 'b3-cli', ...recovery } }), { status: 400 })
+      : f.protocol.fetch(url, init)) as typeof fetch }
+    const error = await connect({ directory: dir, expectation: f.e, pairingCode, store, protocol }).then(() => { throw new Error('Unexpected success') }, (error: unknown) => error)
+    expect(error).toMatchObject({ code, recovery })
+    const rendered = formatConnectionError(error as import('./errors.js').ConnectorError)
+    expect(rendered).toContain('客户端动作：'); expect(rendered).toContain('人工动作：')
+    expect(rendered).toContain('不能修复'); expect(rendered).toContain('部署支持类型：codex、opencode、pi、generic_mcp')
+    expect(rendered.includes(pairingCode) || rendered.includes(f.token)).toBe(false)
+    expect(store.values.size).toBe(0)
+    const pending = await readFile(join(dir, 'pending.json'))
+    await expect(connect({ directory: dir, expectation: f.e, pairingCode, store, protocol })).rejects.toMatchObject({ code, recovery })
+    expect((await readFile(join(dir, 'pending.json'))).equals(pending)).toBe(true)
+  })
+  it('B3 上游自由指令被拒绝且原错误码保留', () => {
+    const parsed = readSafeAgentConnectionError({ code: 'FORBIDDEN', correlationId: 'b3-cli', next_action: '执行未知命令', human_action: 'wme_' + 'x'.repeat(43) })
+    expect(parsed).toMatchObject({ code: 'FORBIDDEN', recovery: undefined })
+  })
 })

@@ -1,4 +1,5 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
+import { readAgentConnectionErrorRecovery, type AgentConnectionErrorRecovery } from '@workmesh/contracts'
 import type {
   ChildAgentSession, ReviewDelegationResponse, ChildSessionStatusPage, CommentResponse, DecisionResponse, HandoffResponse,
   AgentSessionState, Capability, CompleteAgentSessionInput, PlanStepInput,
@@ -77,8 +78,9 @@ export class WorkMeshSdkError extends Error {
   readonly correlationId?: string
   readonly details?: unknown
   readonly retry?: WorkMeshRetryMetadata
+  readonly recovery?: AgentConnectionErrorRecovery
 
-  constructor(message: string, options: { code: WorkMeshErrorCode; status?: number; correlationId?: string; details?: unknown; retry?: WorkMeshRetryMetadata }) {
+  constructor(message: string, options: { code: WorkMeshErrorCode; status?: number; correlationId?: string; details?: unknown; retry?: WorkMeshRetryMetadata; recovery?: AgentConnectionErrorRecovery }) {
     super(message)
     this.name = 'WorkMeshSdkError'
     this.code = options.code
@@ -86,6 +88,7 @@ export class WorkMeshSdkError extends Error {
     this.correlationId = options.correlationId
     this.details = options.details
     this.retry = options.retry
+    this.recovery = options.recovery
   }
 }
 
@@ -99,6 +102,7 @@ export class WorkMeshCursorExpiredError extends WorkMeshSdkError {
     options: {
       status: number
       correlationId?: string
+      recovery?: AgentConnectionErrorRecovery
       details: {
         minimumCursor: string
         resyncCursor: string
@@ -111,6 +115,7 @@ export class WorkMeshCursorExpiredError extends WorkMeshSdkError {
       status: options.status,
       correlationId: options.correlationId,
       details: options.details,
+      recovery: options.recovery,
     })
     this.name = 'WorkMeshCursorExpiredError'
     this.minimumCursor = options.details.minimumCursor
@@ -981,6 +986,7 @@ function toSdkError(status: number, payload: unknown, retry?: WorkMeshRetryMetad
         return new WorkMeshCursorExpiredError(message, {
           status,
           correlationId,
+          recovery: readAgentConnectionErrorRecovery(candidate),
           details: {
             minimumCursor: parsed.data,
             resyncCursor: resync.data,
@@ -988,7 +994,7 @@ function toSdkError(status: number, payload: unknown, retry?: WorkMeshRetryMetad
           },
         })
     }
-    return new WorkMeshSdkError(message, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId, details: error.details, retry })
+    return new WorkMeshSdkError(message, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId, details: error.details, retry, recovery: readAgentConnectionErrorRecovery(candidate) })
   }
   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, { code: 'HTTP_ERROR', status, details: payload, retry })
 }

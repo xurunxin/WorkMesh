@@ -3,7 +3,7 @@ import { verify } from 'node:crypto'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { z } from 'zod'
-import { agentConnectionCurrentIdentitySchema, agentConnectionRedeemResponseSchema, agentWellKnownResponseSchema, agentCapabilityManifestResponseSchema, type AgentConnectionResponse } from '@workmesh/contracts'
+import { agentConnectionCurrentIdentitySchema, agentConnectionRedeemResponseSchema, agentWellKnownResponseSchema, agentCapabilityManifestResponseSchema, readSafeAgentConnectionError, type AgentConnectionResponse } from '@workmesh/contracts'
 import { type Expectation, type Pending, parse, sha256 } from './config.js'
 import { ConnectorError, requireThat } from './errors.js'
 
@@ -78,14 +78,18 @@ export async function bootstrapMcp(e: Expectation, token: string, fetcher: typeo
     await client.connect(transport)
     const data = async (name: string): Promise<unknown> => {
       const result = await client.callTool({ name, arguments: {} })
-      requireThat(!result.isError, 'CONNECTOR_MCP_VERIFICATION_FAILED')
+      if (result.isError) {
+        const failure = z.object({ error: z.unknown() }).safeParse(result.structuredContent)
+        const known = failure.success ? readSafeAgentConnectionError(failure.data.error) : undefined
+        throw new ConnectorError(known?.code ?? 'CONNECTOR_MCP_VERIFICATION_FAILED', known?.recovery, known?.correlationId)
+      }
       const wrapper = parse(z.object({ data: z.unknown() }).passthrough(), result.structuredContent)
       return wrapper.data
     }
     const verified = await data('verify_connection')
     const context = await data('get_workmesh_context')
     return { verify: verified, context }
-  } catch { throw new ConnectorError('CONNECTOR_MCP_VERIFICATION_FAILED') }
+  } catch (error) { throw error instanceof ConnectorError ? error : new ConnectorError('CONNECTOR_MCP_VERIFICATION_FAILED') }
   finally { await client.close().catch(() => {}); await transport.close().catch(() => {}) }
 }
 async function bytes(response: Response, allowError = false): Promise<Buffer> {
@@ -123,8 +127,9 @@ export async function verifyPairing(e: Expectation, pending: Pending, deps: Prot
   const response = await deps.fetch(pending.target, { method: 'POST', redirect: 'error', signal: AbortSignal.timeout(30_000),
     headers: { 'Content-Type': 'application/json', 'Idempotency-Key': pending.key, Origin: pending.origin, 'User-Agent': pending.userAgent }, body: pending.body })
   if (!response.ok) {
-    const known = z.object({ error: z.object({ code: z.enum(['IDEMPOTENCY_KEY_REUSED', 'IDEMPOTENCY_REPLAY_UNAVAILABLE', 'AGENT_CONNECTION_PAIRING_CONSUMED', 'AGENT_CONNECTION_PAIRING_EXPIRED', 'IDEMPOTENCY_REPLAY_EXPIRED', 'AGENT_CONNECTION_PAIRING_LOCKED']) }).passthrough() }).passthrough().safeParse(await json(response, true))
-    throw new ConnectorError(known.success ? known.data.error.code : 'CONNECTOR_REDEEM_REJECTED')
+    const failure = z.object({ error: z.unknown() }).safeParse(await json(response, true))
+    const known = failure.success ? readSafeAgentConnectionError(failure.data.error) : undefined
+    throw new ConnectorError(known?.code ?? 'CONNECTOR_REDEEM_REJECTED', known?.recovery, known?.correlationId)
   }
   const redeemed = parse(agentConnectionRedeemResponseSchema, await json(response))
   const fingerprint = sha256(redeemed.installation_token).slice(0, 12)

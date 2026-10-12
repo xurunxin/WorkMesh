@@ -8,13 +8,15 @@ import { createServer } from 'node:net'
 import { createServer as createHttpsServer } from 'node:https'
 import { request as requestHttp, type Server } from 'node:http'
 import { once } from 'node:events'
-import { WorkMeshClient } from '@workmesh/agent-sdk'
-import { agentWellKnownResponseSchema, agentConnectionCreateResponseSchema, agentConnectionRedeemResponseSchema, agentConnectionCurrentIdentitySchema } from '@workmesh/contracts'
+import { WorkMeshClient, WorkMeshSdkError } from '@workmesh/agent-sdk'
+import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+import { agentWellKnownResponseSchema, agentConnectionCreateResponseSchema, agentConnectionRedeemResponseSchema, agentConnectionCurrentIdentitySchema, agentConnectionErrorResponseSchema } from '@workmesh/contracts'
 import { applyMigrations, createDb } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
 import { expectationSchema } from '../../../apps/connector/src/config.js'
 import { createWorkMeshMcpHttpServer } from '../../../apps/mcp/src/http.js'
-import { runAgent } from './integration-agent.js'
+import { runAgent, formatAgentFailure } from './integration-agent.js'
 
 const databaseUrl = process.env.DATABASE_URL
 assert.equal(process.env.RUN_INTEGRATION, '1')
@@ -129,7 +131,27 @@ try {
     authorization: `Bearer ${redeemed.installation_token}`,
   } })
   assert.equal(bearerIdentity.status, 401)
-  assert.equal((await bearerIdentity.json() as { error: { code: string } }).error.code, 'UNAUTHENTICATED')
+  assert.equal(agentConnectionErrorResponseSchema.parse(await bearerIdentity.json()).error.code, 'UNAUTHENTICATED')
+  const invalidToken = 'wmi_' + 'z'.repeat(43)
+  const invalidSdk = new WorkMeshClient({ baseUrl: origin, coordinationToken: invalidToken })
+  const sdkFailure = await invalidSdk.getCurrentAgentConnectionIdentity().then(() => null, (error: unknown) => error)
+  assert.ok(sdkFailure instanceof WorkMeshSdkError)
+  assert.equal(sdkFailure.code, 'UNAUTHENTICATED')
+  assert.ok(sdkFailure.recovery?.next_action)
+  assert.equal(formatAgentFailure(sdkFailure).includes(invalidToken), false)
+  assert.equal(formatAgentFailure(sdkFailure).includes('人工动作：'), true)
+  const refusedMcp = new Client({ name: 'b3-documentation-error', version: '1.0.0' })
+  try {
+    await refusedMcp.connect(new StreamableHTTPClientTransport(new URL(mcpOrigin + '/mcp'), {
+      requestInit: { headers: { 'X-WorkMesh-Installation-Token': invalidToken } },
+      fetch: (url, init) => fetch(url, { ...init, redirect: 'error' }),
+    }))
+    const result = await refusedMcp.callTool({ name: 'verify_connection', arguments: {} })
+    assert.equal(result.isError, true)
+    const error = agentConnectionErrorResponseSchema.parse(result.structuredContent).error
+    assert.equal(error.code, 'UNAUTHENTICATED'); assert.deepEqual(error.next_action, sdkFailure.recovery.next_action)
+    assert.equal(JSON.stringify(result).includes(invalidToken), false)
+  } finally { await refusedMcp.close() }
   const download = new URL(redeemed.skill.download_url)
   assert.equal(download.origin, origin)
   assert.equal(download.pathname, '/skills/workmesh-1.1.0.md')
@@ -168,7 +190,7 @@ try {
     anonymousDenied: true, pairingReplayIdentical: true, signedSkillBytes: bytes.length, mixedCredentialDenied: true,
     wrongExpectationDenied: true, readCapabilityWriteDenied: true, humanCliVerified: true, agentCliVerified: true,
     trustedTlsVerified: true, distinctApiMcpOrigins: true, directCoordinationRestVerified: true,
-    coordinationBearerDenied: true, externalProviderCalls: 0 }))
+    coordinationBearerDenied: true, b3RestRecovery: true, b3SdkRecovery: true, b3McpRecovery: true, b3SafeExampleOutput: true, externalProviderCalls: 0 }))
 } finally {
   for (const proxy of proxies.reverse()) {
     proxy.closeAllConnections()

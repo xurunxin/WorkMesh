@@ -1,4 +1,5 @@
 import { createServer } from 'node:http'
+import { agentConnectionErrorRecovery } from '@workmesh/contracts'
 import { spawn } from 'node:child_process'
 import { once } from 'node:events'
 import { stripVTControlCharacters } from 'node:util'
@@ -94,5 +95,57 @@ it('实际 CLI 单次完整验证、系统存储、无秘密片段与启动注�
       console.log(JSON.stringify({ resource: 'httpService', address: origin, state: 'closed' }))
       await cleanupDirectory(parent)
     }
+  }
+}, 30_000)
+
+
+it('B3 实际 CLI 展示恢复指令、保留 pending 且拒绝秘密文本', async () => {
+  const parent = await temporaryDirectory('cli-recovery'), directory = join(parent, 'connector')
+  const base = await fixture()
+  let origin = '', unsafe = false, redeemCount = 0
+  const code = 'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH', reason = 'agent_slug_mismatch'
+  const recovery = agentConnectionErrorRecovery(code, reason)
+  const server = createServer(async (request, response) => {
+    if (request.url === '/api/v1/agent-connections/redeem') {
+      redeemCount++
+      response.writeHead(400, { 'Content-Type': 'application/json' })
+      response.end(JSON.stringify({ error: { code, details: { reason }, correlationId: 'b3-native-cli', ...recovery,
+        ...(unsafe ? { next_action: base.token, human_action: '\u001b[31m' + pairingCode } : {}) } })); return
+    }
+    const result = await base.protocol.fetch('https://workmesh.example' + request.url)
+    const body = JSON.parse(await result.text())
+    if (request.url === '/.well-known/workmesh-agent') { body.wellKnownUrl = origin + request.url; body.mcpUrl = origin + '/mcp' }
+    response.writeHead(result.status, { 'Content-Type': 'application/json' }); response.end(JSON.stringify(body))
+  })
+  server.listen(0, '127.0.0.1'); await once(server, 'listening')
+  const address = server.address(); if (!address || typeof address === 'string') throw new Error('Invalid fixture address')
+  origin = `http://127.0.0.1:${address.port}`
+  const expected = join(parent, 'expectation.json')
+  await writeFile(expected, serialize({ ...base.e, deploymentUrl: origin, discoveryUrl: origin + '/.well-known/workmesh-agent', redeemUrl: origin + '/api/v1/agent-connections/redeem', mcpUrl: origin + '/mcp', skillUrl: origin + '/skills/workmesh-1.1.0.md' }))
+  const cli = async () => {
+    const child = spawn(process.execPath, ['--import', 'tsx', 'src/cli.ts', 'connect', '--expect', expected], {
+      env: { ...process.env, WORKMESH_CONNECTOR_DIRECTORY: directory }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true,
+    })
+    let output = ''
+    child.stdout.on('data', bytes => { output += bytes.toString() }); child.stderr.on('data', bytes => { output += bytes.toString() })
+    child.stdin.end(pairingCode + '\n'); const [exit] = await once(child, 'close')
+    expect(output.includes(base.token) || output.includes(pairingCode)).toBe(false)
+    expect(exit).toBe(1)
+    return output
+  }
+  try {
+    const output = await cli()
+    expect(output).toContain('客户端动作：'); expect(output).toContain('人工动作：')
+    expect(output).toContain('不能修复'); expect(output).toContain('部署支持类型：')
+    const pending = await readFile(join(directory, 'pending.json'))
+    unsafe = true
+    const rejected = await cli()
+    expect(rejected).toContain(code); expect(rejected).not.toContain('客户端动作：')
+    expect((await readFile(join(directory, 'pending.json'))).equals(pending)).toBe(true)
+    expect(redeemCount).toBe(2)
+    expect(await readPrivate(join(directory, 'config.json'))).toBeNull()
+  } finally {
+    server.close(); server.closeAllConnections(); await once(server, 'close')
+    await cleanupDirectory(parent)
   }
 }, 30_000)
