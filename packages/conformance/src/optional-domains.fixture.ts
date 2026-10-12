@@ -6,7 +6,7 @@ import { WorkMeshClient } from '@workmesh/agent-sdk'
 import { createWorkMeshMcpServer } from '../../../apps/mcp/src/index.js'
 import { createPlanningCollaborationFixture } from './planning-collaboration.fixture.js'
 
-export const optionalEvidenceRoot=resolve(import.meta.dirname,'../../../docs/plan/agent-mcp-m4/execution')
+export const optionalEvidenceRoot=resolve(process.env.WORKMESH_OPTIONAL_EVIDENCE_ROOT??resolve(import.meta.dirname,'../../../docs/plan/agent-mcp-m4/execution'))
 export const saveOptionalEvidence=(name:string,value:unknown)=>{
   const output=resolve(optionalEvidenceRoot,name)
   mkdirSync(resolve(output,'..'),{recursive:true})

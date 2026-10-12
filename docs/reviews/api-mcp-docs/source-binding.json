@@ -1,0 +1,73 @@
+{
+  "readAt": "2026-10-12T02:15:11.667349+00:00",
+  "mainRef": "refs/heads/main",
+  "mainSha": "9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0",
+  "mainTree": "9a563ac1d11a46e006a3772009ea4d451fe7e4a4",
+  "mainParents": [
+    "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+    "faf29b510363cfbc74b03d5491549a5429380564"
+  ],
+  "githubRefUrl": "https://api.github.com/repos/xurunxin/WorkMesh/git/ref/heads/main",
+  "localHead": "9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0",
+  "reviewedRetirementHead": "faf29b510363cfbc74b03d5491549a5429380564",
+  "reviewedToMainPaths": [],
+  "sharedGitRead": "index.lock refusal retained; no lock modification",
+  "inputs": [
+    {
+      "path": "CONTEXT.md",
+      "sha256": "d67c4bb38a57877354e8968747ad0ed3890108cb81feca53e24af97a4593f238"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "sha256": "6de61ddd1d13149a4d692cd8a2e05729866d574876368f8c0b879c4c6467cef8"
+    },
+    {
+      "path": "OPENAPI.yaml",
+      "sha256": "bb76be54a36822f6cfbf9bb215213568cc1407785b4cb63dce04dfd5801849de"
+    },
+    {
+      "path": "SCHEMA.sql",
+      "sha256": "3836495ed9355c19262de2eca2a0f0a02b9ca85e7d7bbc21b11aacd30784dd08"
+    },
+    {
+      "path": "docs/adr/0087-backend-only-service.md",
+      "sha256": "aad8e2e914dfdf9ea6d048305cbc0d9eac906c6626a3482295cfa53cd537ff3c"
+    },
+    {
+      "path": "apps/api/src/server.ts",
+      "sha256": "8f96abb0ed42da7e096b3390cb8838ed767ab18c63bde19e5d88751fd21320e6"
+    },
+    {
+      "path": "apps/api/src/agent-connections.ts",
+      "sha256": "72a4addca692ee331d2fd06573a1299e041cc3501fa407e862c32a296ef0f1ba"
+    },
+    {
+      "path": "apps/mcp/src/http.ts",
+      "sha256": "2460bfee36cf8d674320450d81c13e3b2f841ff78260c4947c7217f55f999ff9"
+    },
+    {
+      "path": "apps/mcp/src/index.ts",
+      "sha256": "a618885d4a265b83c9e4afb7ed21f08a82cc91b33a8222813f14aee17239ad55"
+    },
+    {
+      "path": "apps/mcp/src/discovery.ts",
+      "sha256": "ac10ab24cc3080f254deb6396b60d7c16b66a3afb7b9c43927db740f984fc9b9"
+    },
+    {
+      "path": "packages/agent-sdk/src/index.ts",
+      "sha256": "60c32eb1f30891aa393737c290edf10b754ceb7c4120f46f421f3d0a361ef850"
+    },
+    {
+      "path": "apps/connector/src/config.ts",
+      "sha256": "19aadc36155ea03ebc9e16a083749c393c09119abd0157c298ecece5cd754f49"
+    },
+    {
+      "path": "apps/connector/src/protocol.ts",
+      "sha256": "ba0bb1cb1d9ae905c549688baf70f2599064aebaa6efd9e19b5582372a132f5c"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "fc961994fc104070bd85470ed0b24b32528373e21c48b32cb3c48019de9b6859"
+    }
+  ]
+}

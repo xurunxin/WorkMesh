@@ -1,0 +1,25 @@
+{
+  "owner": "CmdFbMAsJnmQGBhXakJ7u",
+  "nodeVersion": "22.19.0",
+  "nodeSource": "docs/reviews/cleanup/2026-10-11-worktrees/continuation/node-v22.19.0-win-x64.zip",
+  "pnpmVersion": "9.15.4",
+  "pnpmSource": "https://registry.npmjs.org/pnpm/-/pnpm-9.15.4.tgz",
+  "sharedStore": "I:/.pnpm-store",
+  "importMethod": "copy",
+  "writableDependencies": "this worktree/node_modules",
+  "tools": [
+    {
+      "path": ".tmp\\api-docs-runtime\\node.exe",
+      "sha256": "995a3fb3cefad590cd3f4b321532a4b9582fb9c6575320ed2e3e894caac3e362"
+    },
+    {
+      "path": ".tmp\\api-docs-runtime\\pnpm\\package\\bin\\pnpm.cjs",
+      "sha256": "98e6b99a881d64a1cc982c3e60aa260bf02160386b12e74475e06486dc74b090"
+    },
+    {
+      "path": ".tmp\\api-docs-runtime\\pnpm.cmd",
+      "sha256": "2332a9a5701c8bec2b837c5c4ef29d21d4c8089f0227970965f2df831e42436c"
+    }
+  ],
+  "cleanup": "测试进程结束后定向收尾局部工具；私有依赖保留供独审，不删共享store或v11失败注册对象"
+}

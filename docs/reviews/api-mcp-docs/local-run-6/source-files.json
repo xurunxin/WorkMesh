@@ -1,0 +1,77 @@
+{
+  "at": "2026-10-12T02:27:22.406764+00:00",
+  "baseHead": "9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0",
+  "note": "本轮local-run-6与local-run-5使用相同示例/验证器源码；新增局部pnpm9 shim修正PATH。此清单复核准确运行文件字节。",
+  "files": [
+    {
+      "path": "scripts/verify-integration-examples.mjs",
+      "bytes": 7238,
+      "sha256": "b71200000a094384e197b829a2219c250ae9176ef062b277d594651eda31786a"
+    },
+    {
+      "path": "packages/conformance/examples/verify-integration.ts",
+      "bytes": 11453,
+      "sha256": "025191398169092f79c948fb961558e451a17753915a7c91d2ab7904e270b667"
+    },
+    {
+      "path": "packages/conformance/examples/integration-agent.ts",
+      "bytes": 4431,
+      "sha256": "5ad5981ba74b088e7c33431658880cd5d96b19803bc1c6439f3a79400c6daae3"
+    },
+    {
+      "path": "docs/integration/examples/human.mjs",
+      "bytes": 2367,
+      "sha256": "f7383b27655b22bb142966e5d649ef80f531e6490677b52e385a053bd0dc7f5f"
+    },
+    {
+      "path": "docs/integration/examples/human.d.mts",
+      "bytes": 159,
+      "sha256": "892e16da3d8edad78d783d44b55d5b82de6a4bdd8a87d8205f1c4c453742df1e"
+    },
+    {
+      "path": "scripts/check-integration-docs.mjs",
+      "bytes": 3028,
+      "sha256": "86868ff4e67e5251cce2457048ad94d68bd7a3dbe2fc7e6daf0c0a134f5ea89d"
+    },
+    {
+      "path": "scripts/ci-policy.mjs",
+      "bytes": 13930,
+      "sha256": "27012f121fb0e14d15ebef7bfd48d4b8e582850adb3fe6836a9e3f5afdc319c8"
+    },
+    {
+      "path": "scripts/ci-policy.test.mjs",
+      "bytes": 18381,
+      "sha256": "165976a09bc46ea2e3879bbcbcbf4324ab786e364b57b92528a7119e2392edf8"
+    },
+    {
+      "path": "scripts/ci-test-inputs.mjs",
+      "bytes": 1418,
+      "sha256": "5fb16b5cd48d1f46d152edcfd782cc91f3062c72f09894b8308a9a815d406026"
+    },
+    {
+      "path": "packages/conformance/package.json",
+      "bytes": 1054,
+      "sha256": "82144538dce9f09eae6d23fff53f23141c94ad4017a3cdad185720765e1d0256"
+    },
+    {
+      "path": "packages/conformance/tsconfig.json",
+      "bytes": 155,
+      "sha256": "2c64b548d00913650d5f7b7d9855d9ea5e928b23c3403ce212dc23f947b33884"
+    },
+    {
+      "path": "packages/conformance/tsconfig.build.json",
+      "bytes": 829,
+      "sha256": "26b544d86f58ac8a45002c20db4112a81bdd913ea050e4e3d81a7bc23a86f4ef"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "bytes": 183610,
+      "sha256": "07c3a7c7093d67f43a57a50a46897e78e170350f9fbc91794b636a96262ce8e0"
+    },
+    {
+      "path": "turbo.json",
+      "bytes": 9690,
+      "sha256": "74388c971c4d4b72f004a591d87fb7e03c12edc5df4068428be22c326797151b"
+    }
+  ]
+}

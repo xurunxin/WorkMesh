@@ -12,7 +12,7 @@ import type {Execution} from './mcp-coverage.fixture.js'
 
 export const deliveryCapabilities:Capability[]=['work:read','work:write','plan:write','artifact:write','message:write','repo:read','repo:write_branch','repo:open_pr','repo:merge','ci:run']
 export const saveDeliveryEvidence=(name:string,value:unknown)=>{
-  const root=resolve(import.meta.dirname,'../../../ci-logs/delivery-recovery');mkdirSync(root,{recursive:true})
+  const root=resolve(process.env.WORKMESH_DELIVERY_EVIDENCE_ROOT??resolve(import.meta.dirname,'../../../ci-logs/delivery-recovery'));mkdirSync(root,{recursive:true})
   writeFileSync(resolve(root,name),JSON.stringify(value,null,2).replace(/wm[ips]_[A-Za-z0-9_-]+/g,'[credential]')+'\n')
 }
 export const sha256=(text:string)=>`sha256:${createHash('sha256').update(text).digest('hex')}`

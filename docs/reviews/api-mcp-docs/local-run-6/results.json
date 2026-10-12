@@ -1,0 +1,99 @@
+{
+  "owner": "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de",
+  "sourceHead": "9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0",
+  "sourceBinding": "运行时使用当前工作树，文件哈希另由交付记录绑定",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "containers": [
+    {
+      "name": "pg",
+      "id": "dbd53a0dca729860c108e5cec3a31bc2533e26468154f3a7c72d775d5f245bb1",
+      "image": "postgres:16.9-alpine"
+    },
+    {
+      "name": "redis",
+      "id": "34ec0730dc76ba49ac4f42f659832a18e7fcfc391491546656cc431664803e7c",
+      "image": "redis:7.4.5-alpine"
+    },
+    {
+      "name": "s3",
+      "id": "dc125b3f6136e4e5fb70a6effaa545230d8a868f896ef196810eb8ee86728e20",
+      "image": "rustfs/rustfs:1.0.0"
+    }
+  ],
+  "volumes": [
+    "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de-pg-data",
+    "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de-redis-data",
+    "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de-s3-data"
+  ],
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-12T02:28:00.080Z",
+      "endedAt": "2026-10-12T02:28:23.800Z",
+      "exitCode": 0
+    },
+    {
+      "label": "lint",
+      "command": "pnpm lint",
+      "startedAt": "2026-10-12T02:28:25.497Z",
+      "endedAt": "2026-10-12T02:30:19.882Z",
+      "exitCode": 0
+    },
+    {
+      "label": "typecheck",
+      "command": "pnpm typecheck",
+      "startedAt": "2026-10-12T02:30:19.885Z",
+      "endedAt": "2026-10-12T02:32:13.658Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test",
+      "command": "pnpm test",
+      "startedAt": "2026-10-12T02:32:13.661Z",
+      "endedAt": "2026-10-12T02:43:35.673Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-12T02:43:35.676Z",
+      "endedAt": "2026-10-12T03:02:13.425Z",
+      "exitCode": 1
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "dc125b3f6136e4e5fb70a6effaa545230d8a868f896ef196810eb8ee86728e20",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "34ec0730dc76ba49ac4f42f659832a18e7fcfc391491546656cc431664803e7c",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "dbd53a0dca729860c108e5cec3a31bc2533e26468154f3a7c72d775d5f245bb1",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de-s3-data",
+      "absent": true
+    }
+  ]
+}

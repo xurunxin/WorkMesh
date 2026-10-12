@@ -1,0 +1,11 @@
+{
+  "command": "pnpm -C apps/api exec vitest run --config ../../vitest.integration.config.ts integration/workbench-runner.integration.test.ts --reporter=json --outputFile=<owned .tmp JSON>",
+  "source": "original test file unchanged",
+  "tests": 6,
+  "passed": 5,
+  "failed": 0,
+  "pending": 1,
+  "success": true,
+  "note": "单文件复验；原根集成首败原因未核定，不代全量通过",
+  "sourceSha256": "40a727ac1c62d910de1a8afd40229ab4ab842f7e572d09e8b8118a59d1b15c1a"
+}

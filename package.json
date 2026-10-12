@@ -7,6 +7,8 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
+    "check:integration-docs": "node scripts/check-integration-docs.mjs",
+    "verify:integration-examples": "node scripts/verify-integration-examples.mjs",
     "test": "turbo run test --concurrency=2",
     "test:integration": "pnpm test:integration:db && pnpm test:integration:api && pnpm test:conformance:integration && pnpm test:integration:worker && pnpm test:integration:recovery",
     "test:integration:db": "node scripts/require-integration-env.mjs && pnpm --filter @workmesh/db test:reset && pnpm --filter @workmesh/db test:integration",

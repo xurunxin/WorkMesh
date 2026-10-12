@@ -1,0 +1,29 @@
+{
+  "static": {
+    "command": "pnpm check:integration-docs",
+    "startedAt": "2026-10-12T04:33:11.779455+00:00",
+    "endedAt": "2026-10-12T04:33:13.876124+00:00",
+    "exitCode": 0,
+    "summary": {
+      "skillFiles": 4,
+      "localLinks": 66,
+      "restEndpoints": 35,
+      "mcpTools": 11,
+      "humanSyntax": "passed",
+      "scope": "静态检查；真实请求与中文语义须另验"
+    }
+  },
+  "typecheck": {
+    "command": "pnpm --filter @workmesh/conformance typecheck",
+    "execSession": 31375,
+    "exitCode": 0,
+    "actualScript": "tsc --noEmit",
+    "note": "前一已结束执行；不为记录重复运行"
+  },
+  "autocorrect": "Get-Command autocorrect -ErrorAction SilentlyContinue 未找到；按固定技能手检",
+  "committedWhitespace": {
+    "command": "git diff --check 9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0 e1f6f9149786302af22458ffbca3838a43007b26",
+    "exitCode": 0,
+    "includesNewFiles": true
+  }
+}

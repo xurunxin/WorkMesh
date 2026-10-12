@@ -1,0 +1,179 @@
+
+> workmesh@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933
+> turbo run lint
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/connector, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/worker
+   • Running lint in 17 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/git-provider:lint: cache miss, executing 9e8b769803047487
+@workmesh/artifact-storage:lint: cache miss, executing 0069da564259a382
+@workmesh/contracts:lint: cache miss, executing 85d8b5181c86452d
+@workmesh/observability:lint: cache miss, executing 2c6d9efc90b97c25
+@workmesh/artifact-storage:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/git-provider:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/contracts:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/observability:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/artifact-storage:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/git-provider:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/artifact-storage:lint: Scope: all 18 workspace projects
+@workmesh/git-provider:lint: Scope: all 18 workspace projects
+@workmesh/observability:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/contracts:lint: [WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+@workmesh/observability:lint: Scope: all 18 workspace projects
+@workmesh/contracts:lint: Scope: all 18 workspace projects
+@workmesh/artifact-storage:lint:
+@workmesh/artifact-storage:lint:    ╭────────────────────────────────────────────────────────────────────────╮
+@workmesh/artifact-storage:lint:    │                                                                        │
+@workmesh/artifact-storage:lint:    │                  Update available! 11.25.0 → 12.11.2.                  │
+@workmesh/artifact-storage:lint:    │                  Changelog: https://pnpm.io/v/12.11.2                  │
+@workmesh/artifact-storage:lint:    │   To update, run: Invoke-WebRequest https://get.pnpm.io/install.ps1    │
+@workmesh/artifact-storage:lint:    │                 -UseBasicParsing | Invoke-Expression                   │
+@workmesh/artifact-storage:lint:    │                                                                        │
+@workmesh/artifact-storage:lint:    ╰────────────────────────────────────────────────────────────────────────╯
+@workmesh/artifact-storage:lint:
+@workmesh/git-provider:lint:
+@workmesh/git-provider:lint:    ╭────────────────────────────────────────────────────────────────────────╮
+@workmesh/git-provider:lint:    │                                                                        │
+@workmesh/git-provider:lint:    │                  Update available! 11.25.0 → 12.11.2.                  │
+@workmesh/git-provider:lint:    │                  Changelog: https://pnpm.io/v/12.11.2                  │
+@workmesh/git-provider:lint:    │   To update, run: Invoke-WebRequest https://get.pnpm.io/install.ps1    │
+@workmesh/git-provider:lint:    │                 -UseBasicParsing | Invoke-Expression                   │
+@workmesh/git-provider:lint:    │                                                                        │
+@workmesh/git-provider:lint:    ╰────────────────────────────────────────────────────────────────────────╯
+@workmesh/git-provider:lint:
+@workmesh/observability:lint:
+@workmesh/observability:lint:    ╭────────────────────────────────────────────────────────────────────────╮
+@workmesh/observability:lint:    │                                                                        │
+@workmesh/observability:lint:    │                  Update available! 11.25.0 → 12.11.2.                  │
+@workmesh/observability:lint:    │                  Changelog: https://pnpm.io/v/12.11.2                  │
+@workmesh/observability:lint:    │   To update, run: Invoke-WebRequest https://get.pnpm.io/install.ps1    │
+@workmesh/observability:lint:    │                 -UseBasicParsing | Invoke-Expression                   │
+@workmesh/observability:lint:    │                                                                        │
+@workmesh/observability:lint:    ╰────────────────────────────────────────────────────────────────────────╯
+@workmesh/observability:lint:
+@workmesh/contracts:lint:
+@workmesh/contracts:lint:    ╭────────────────────────────────────────────────────────────────────────╮
+@workmesh/contracts:lint:    │                                                                        │
+@workmesh/contracts:lint:    │                  Update available! 11.25.0 → 12.11.2.                  │
+@workmesh/contracts:lint:    │                  Changelog: https://pnpm.io/v/12.11.2                  │
+@workmesh/contracts:lint:    │   To update, run: Invoke-WebRequest https://get.pnpm.io/install.ps1    │
+@workmesh/contracts:lint:    │                 -UseBasicParsing | Invoke-Expression                   │
+@workmesh/contracts:lint:    │                                                                        │
+@workmesh/contracts:lint:    ╰────────────────────────────────────────────────────────────────────────╯
+@workmesh/contracts:lint:
+@workmesh/artifact-storage:lint: [EBUSY] EBUSY: resource busy or locked, symlink 'I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/artifact-storage:lint:
+@workmesh/artifact-storage:lint: pnpm: EBUSY: resource busy or locked, symlink 'I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/artifact-storage:lint:     at async Object.symlink (node:internal/fs/promises:1059:10)
+@workmesh/artifact-storage:lint:     at async createSymlinkAsync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:51013:13)
+@workmesh/artifact-storage:lint:     at async forceSymlink (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:50933:7)
+@workmesh/artifact-storage:lint:     at async registerProject (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:184446:3)
+@workmesh/artifact-storage:lint:     at async getContext (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:185166:5)
+@workmesh/artifact-storage:lint:     at async mutateModules (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:217116:13)
+@workmesh/artifact-storage:lint:     at async recursive (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:223878:151)
+@workmesh/artifact-storage:lint:     at async recursiveInstallThenUpdateWorkspaceState (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225103:27)
+@workmesh/artifact-storage:lint:     at async Object.handler5 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225946:3)
+@workmesh/artifact-storage:lint:     at async file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:328619:19
+@workmesh/git-provider:lint: [EEXIST] EEXIST: file already exists, symlink '..\..\..\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/git-provider:lint:
+@workmesh/git-provider:lint: pnpm: EEXIST: file already exists, symlink '..\..\..\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/git-provider:lint:     at async Object.symlink (node:internal/fs/promises:1059:10)
+@workmesh/git-provider:lint:     at async createSymlinkAsync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:51008:11)
+@workmesh/git-provider:lint:     at async forceSymlink (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:50933:7)
+@workmesh/git-provider:lint:     at async registerProject (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:184446:3)
+@workmesh/git-provider:lint:     at async getContext (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:185166:5)
+@workmesh/git-provider:lint:     at async mutateModules (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:217116:13)
+@workmesh/git-provider:lint:     at async recursive (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:223878:151)
+@workmesh/git-provider:lint:     at async recursiveInstallThenUpdateWorkspaceState (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225103:27)
+@workmesh/git-provider:lint:     at async Object.handler5 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225946:3)
+@workmesh/contracts:lint: [EEXIST] EEXIST: file already exists, symlink '..\..\..\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/contracts:lint:
+@workmesh/contracts:lint: pnpm: EEXIST: file already exists, symlink '..\..\..\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/contracts:lint:     at async Object.symlink (node:internal/fs/promises:1059:10)
+@workmesh/contracts:lint:     at async createSymlinkAsync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:51008:11)
+@workmesh/contracts:lint:     at async forceSymlink (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:50933:7)
+@workmesh/contracts:lint:     at async registerProject (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:184446:3)
+@workmesh/contracts:lint:     at async getContext (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:185166:5)
+@workmesh/git-provider:lint:     at async file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:328619:19
+@workmesh/contracts:lint:     at async mutateModules (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:217116:13)
+@workmesh/contracts:lint:     at async recursive (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:223878:151)
+@workmesh/contracts:lint:     at async recursiveInstallThenUpdateWorkspaceState (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225103:27)
+@workmesh/contracts:lint:     at async Object.handler5 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225946:3)
+@workmesh/contracts:lint:     at async file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:328619:19
+@workmesh/observability:lint: [EEXIST] EEXIST: file already exists, symlink '..\..\..\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/observability:lint:
+@workmesh/observability:lint: pnpm: EEXIST: file already exists, symlink '..\..\..\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933' -> 'I:\.pnpm-store\v11\projects\401eec4f49dc06b3fa0c1eff209039bc'
+@workmesh/observability:lint:     at async Object.symlink (node:internal/fs/promises:1059:10)
+@workmesh/observability:lint:     at async createSymlinkAsync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:51008:11)
+@workmesh/observability:lint:     at async forceSymlink (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:50933:7)
+@workmesh/observability:lint:     at async registerProject (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:184446:3)
+@workmesh/observability:lint:     at async getContext (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:185166:5)
+@workmesh/observability:lint:     at async mutateModules (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:217116:13)
+@workmesh/observability:lint:     at async recursive (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:223878:151)
+@workmesh/observability:lint:     at async recursiveInstallThenUpdateWorkspaceState (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225103:27)
+@workmesh/observability:lint:     at async Object.handler5 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:225946:3)
+@workmesh/observability:lint:     at async file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:328619:19
+@workmesh/artifact-storage:lint: [ERROR] Command failed with exit code 4294963214: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/artifact-storage:lint:
+@workmesh/artifact-storage:lint: pnpm: Command failed with exit code 4294963214: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/artifact-storage:lint:     at getFinalError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:89986:14)
+@workmesh/artifact-storage:lint:     at makeError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:92293:21)
+@workmesh/artifact-storage:lint:     at getSyncResult (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94137:10)
+@workmesh/artifact-storage:lint:     at spawnSubprocessSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94097:14)
+@workmesh/artifact-storage:lint:     at execaCoreSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94027:23)
+@workmesh/artifact-storage:lint:     at callBoundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96555:23)
+@workmesh/artifact-storage:lint:     at boundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96532:49)
+@workmesh/artifact-storage:lint:     at sync2 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96691:10)
+@workmesh/artifact-storage:lint:     at runPnpmCli (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:276904:5)
+@workmesh/artifact-storage:lint:     at runDepsStatusCheck (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:278122:7)
+@workmesh/contracts:lint: [ERROR] Command failed with exit code 4294963221: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/contracts:lint:
+@workmesh/contracts:lint: pnpm: Command failed with exit code 4294963221: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/contracts:lint:     at getFinalError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:89986:14)
+@workmesh/contracts:lint:     at makeError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:92293:21)
+@workmesh/contracts:lint:     at getSyncResult (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94137:10)
+@workmesh/contracts:lint:     at spawnSubprocessSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94097:14)
+@workmesh/contracts:lint:     at execaCoreSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94027:23)
+@workmesh/contracts:lint:     at callBoundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96555:23)
+@workmesh/contracts:lint:     at boundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96532:49)
+@workmesh/contracts:lint:     at sync2 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96691:10)
+@workmesh/contracts:lint:     at runPnpmCli (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:276904:5)
+@workmesh/contracts:lint:     at runDepsStatusCheck (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:278122:7)
+@workmesh/git-provider:lint: [ERROR] Command failed with exit code 4294963221: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/git-provider:lint:
+@workmesh/git-provider:lint: pnpm: Command failed with exit code 4294963221: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/git-provider:lint:     at getFinalError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:89986:14)
+@workmesh/git-provider:lint:     at makeError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:92293:21)
+@workmesh/git-provider:lint:     at getSyncResult (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94137:10)
+@workmesh/git-provider:lint:     at spawnSubprocessSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94097:14)
+@workmesh/git-provider:lint:     at execaCoreSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94027:23)
+@workmesh/git-provider:lint:     at callBoundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96555:23)
+@workmesh/git-provider:lint:     at boundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96532:49)
+@workmesh/git-provider:lint:     at sync2 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96691:10)
+@workmesh/git-provider:lint:     at runPnpmCli (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:276904:5)
+@workmesh/git-provider:lint:     at runDepsStatusCheck (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:278122:7)
+@workmesh/observability:lint: [ERROR] Command failed with exit code 4294963221: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/observability:lint:
+@workmesh/observability:lint: pnpm: Command failed with exit code 4294963221: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+@workmesh/observability:lint:     at getFinalError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:89986:14)
+@workmesh/observability:lint:     at makeError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:92293:21)
+@workmesh/observability:lint:     at getSyncResult (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94137:10)
+@workmesh/observability:lint:     at spawnSubprocessSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94097:14)
+@workmesh/observability:lint:     at execaCoreSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94027:23)
+@workmesh/observability:lint:     at callBoundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96555:23)
+@workmesh/observability:lint:     at boundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96532:49)
+@workmesh/observability:lint:     at sync2 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96691:10)
+@workmesh/observability:lint:     at runPnpmCli (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:276904:5)
+@workmesh/observability:lint:     at runDepsStatusCheck (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:278122:7)
+@workmesh/artifact-storage#lint:  ERROR  command (I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\artifact-storage) C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback\pnpm.cmd run lint exited (1)
+
+ Tasks:    0 successful, 4 total
+Cached:    0 cached, 4 total
+  Time:    21.494s
+Failed:    @workmesh/artifact-storage#lint
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Command failed with exit code 1.

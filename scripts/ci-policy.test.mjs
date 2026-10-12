@@ -56,6 +56,7 @@ test('classification bootstrap locks only YAML and cannot bypass policy or evide
   assert.deepEqual(validateCiBootstrap(input), [])
   for (const mutate of [
     value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run = 'node --test scripts/ci-policy.test.mjs' },
+    value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run = value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run.replace('node scripts/check-integration-docs.mjs 2>&1 | tee ci-logs/integration-docs.log', '') },
     value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run = value.job.steps.find(step => step.name === 'Validate selection and required-result safety').run.replace('set -o pipefail', '') },
     value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety')['continue-on-error'] = true },
     value => { value.job.steps.find(step => step.name === 'Validate selection and required-result safety').if = 'false' },

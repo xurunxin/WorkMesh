@@ -1,0 +1,73 @@
+{
+  "at": "2026-10-12T04:30:27.020252+00:00",
+  "sourceHead": "9fee9858bdaa03693401159013055ebcf41a284a",
+  "dockerCompose": "Docker Compose version v5.5.1",
+  "sourceSha256": {
+    "docker-compose.production.yml": "dd1a9cf2c5cfff621ca1779297cca16425ca7c474713e8a6e9c56cee18d77c87",
+    "docker-compose.yml": "6a436a5dc5f2b1ecedb75f82f1adccc1df11b622b8cdfec867e0d7cbbcbe5395"
+  },
+  "checks": [
+    {
+      "file": "docker-compose.production.yml",
+      "inputFlag": "false",
+      "resolvedFlags": {
+        "api": "false",
+        "worker": "false",
+        "mcp": "false"
+      },
+      "staticCredentialsEmpty": true,
+      "exitCode": 0,
+      "commands": [
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.production.yml --profile agent config --quiet",
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.production.yml --profile agent config --format json"
+      ]
+    },
+    {
+      "file": "docker-compose.yml",
+      "inputFlag": "false",
+      "resolvedFlags": {
+        "api": null,
+        "worker": null,
+        "mcp": null
+      },
+      "staticCredentialsEmpty": true,
+      "exitCode": 0,
+      "commands": [
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.yml --profile agent config --quiet",
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.yml --profile agent config --format json"
+      ]
+    },
+    {
+      "file": "docker-compose.production.yml",
+      "inputFlag": "true",
+      "resolvedFlags": {
+        "api": "true",
+        "worker": "true",
+        "mcp": "true"
+      },
+      "staticCredentialsEmpty": true,
+      "exitCode": 0,
+      "commands": [
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.production.yml --profile agent config --quiet",
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.production.yml --profile agent config --format json"
+      ]
+    },
+    {
+      "file": "docker-compose.yml",
+      "inputFlag": "true",
+      "resolvedFlags": {
+        "api": null,
+        "worker": null,
+        "mcp": null
+      },
+      "staticCredentialsEmpty": true,
+      "exitCode": 0,
+      "commands": [
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.yml --profile agent config --quiet",
+        "docker compose --env-file I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\api-docs-review-runtime\\compose-test.env -f docker-compose.yml --profile agent config --format json"
+      ]
+    }
+  ],
+  "temporaryEnvRemoved": true,
+  "scope": "只验配置解析与开关传入；未拉取 GHCR、部署生产栈或测试公网代理"
+}

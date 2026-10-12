@@ -1,0 +1,47 @@
+{
+  "projection": "identity/image/ports only; no Env or Cmd",
+  "containers": [
+    {
+      "id": "dbd53a0dca729860c108e5cec3a31bc2533e26468154f3a7c72d775d5f245bb1",
+      "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "reference": "postgres:16.9-alpine",
+      "owner": "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de",
+      "publishedPorts": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "7264"
+          }
+        ]
+      }
+    },
+    {
+      "id": "34ec0730dc76ba49ac4f42f659832a18e7fcfc391491546656cc431664803e7c",
+      "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "reference": "redis:7.4.5-alpine",
+      "owner": "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de",
+      "publishedPorts": {
+        "6379/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "7266"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dc125b3f6136e4e5fb70a6effaa545230d8a868f896ef196810eb8ee86728e20",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "reference": "rustfs/rustfs:1.0.0",
+      "owner": "workmesh-docs-f7c912da-1b12-4db3-bb82-940d44f675de",
+      "publishedPorts": {
+        "9000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "7312"
+          }
+        ]
+      }
+    }
+  ]
+}

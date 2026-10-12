@@ -1,0 +1,40 @@
+{
+  "failedHead": "133560618f0946e120675425bc7cddb5ce20803d",
+  "runId": 38202739985,
+  "jobId": 114659472393,
+  "cause": "完整PR范围git diff --check拒绝5份新日志EOF空行；静态文档与策略测试已成功",
+  "rawArchive": "pre-whitespace-log-originals.zip",
+  "files": [
+    {
+      "path": "docs/reviews/api-mcp-docs/final-typecheck.log",
+      "originalSha256": "aacba3b27b7345df9fec0e2287602cc79bf28ff32c0b4a42601fff2520710657",
+      "readingViewSha256": "16057fdff58e5e29e9df1649607902f60d7baf800291dbf807bcf394d338c93d",
+      "change": "仅移除多余EOF空行；原字节保于ZIP"
+    },
+    {
+      "path": "docs/reviews/api-mcp-docs/integration-recheck/test-integration.log",
+      "originalSha256": "233f08eb685e5cad0c526e46121c74626eb1782ea5085d3c466ed86d63df04bf",
+      "readingViewSha256": "7f3fd24bda1935c49a067e4d5a9b38734586d9760b9a55e5a986bd6659fcc200",
+      "change": "仅移除多余EOF空行；原字节保于ZIP"
+    },
+    {
+      "path": "docs/reviews/api-mcp-docs/local-run-6/lint.log",
+      "originalSha256": "15976b8f671edada35b2477d45df7c8332f3f9a5399f3815f710a3f60cecf8bf",
+      "readingViewSha256": "e513369ec5edd5694501b2550cc7296166dd26810f1a31c576d8dd4954f9065f",
+      "change": "仅移除多余EOF空行；原字节保于ZIP"
+    },
+    {
+      "path": "docs/reviews/api-mcp-docs/local-run-6/typecheck.log",
+      "originalSha256": "56839ab528ec11a7f6c147bc88c7ca0b69ae0451030f9cdd458d23b710fc2e00",
+      "readingViewSha256": "e30e59091a3ff1b5165a533e65790a5fe00d00a0f269567882048902b749fd8c",
+      "change": "仅移除多余EOF空行；原字节保于ZIP"
+    },
+    {
+      "path": "docs/reviews/api-mcp-docs/recovery-recheck/test-integration-recovery.log",
+      "originalSha256": "55036bce3de46610209e52938fc9ae496837a9c731fe5d55cd725ab02d2b3dd9",
+      "readingViewSha256": "9d7e651a3575e13917523f217c863fe24eea11c3fc02f0158c79e7487a469781",
+      "change": "仅移除多余EOF空行；原字节保于ZIP"
+    }
+  ],
+  "gate": "不放宽空白规则；新提交触发正常CI，不重跑同一失败head"
+}

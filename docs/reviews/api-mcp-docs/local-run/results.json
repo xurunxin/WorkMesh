@@ -1,0 +1,55 @@
+{
+  "owner": "workmesh-docs-fd3343ca-f870-467f-9e2f-718fc737b7a9",
+  "sourceHead": "9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0",
+  "sourceBinding": "运行时使用当前工作树，文件哈希另由交付记录绑定",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "containers": [
+    {
+      "name": "pg",
+      "id": "1b50112ecfeb7922368e69bddcfe9442e4832168974b0f0ef0c5a1c70a93d2ef",
+      "image": "postgres:16.9-alpine"
+    },
+    {
+      "name": "redis",
+      "id": "129c27178929b0946e2c48b8d7f69f17726fd27fc7322dab843b10bcf910be65",
+      "image": "redis:7.4.5-alpine"
+    }
+  ],
+  "volumes": [
+    "workmesh-docs-fd3343ca-f870-467f-9e2f-718fc737b7a9-pg-data",
+    "workmesh-docs-fd3343ca-f870-467f-9e2f-718fc737b7a9-redis-data"
+  ],
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-12T02:19:11.111Z",
+      "endedAt": "2026-10-12T02:19:13.518Z",
+      "exitCode": 1
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "129c27178929b0946e2c48b8d7f69f17726fd27fc7322dab843b10bcf910be65",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "1b50112ecfeb7922368e69bddcfe9442e4832168974b0f0ef0c5a1c70a93d2ef",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-fd3343ca-f870-467f-9e2f-718fc737b7a9-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-fd3343ca-f870-467f-9e2f-718fc737b7a9-redis-data",
+      "absent": true
+    }
+  ]
+}

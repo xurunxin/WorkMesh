@@ -17,6 +17,7 @@ export function validateCiBootstrap({ job, manifest, lock, yamlVersion }) {
   const install = 'npm ci --prefix scripts/ci-bootstrap --ignore-scripts --no-audit --no-fund 2>&1 | tee ci-logs/ci-bootstrap.log'
   const test = 'node --test scripts/ci-policy.test.mjs 2>&1 | tee ci-logs/ci-policy.log'
   require(lines.includes(install) && lines.includes(test) && lines.indexOf(install) < lines.indexOf(test), 'Classification must install locked YAML before policy tests')
+  require(lines.includes('node scripts/check-integration-docs.mjs 2>&1 | tee ci-logs/integration-docs.log'), 'Classification must check integration documentation before selecting jobs')
   require(lines.includes('set -o pipefail') && !step?.['continue-on-error'] && !step?.if, 'Bootstrap and policy failures must propagate unconditionally')
   const nodeIndex = steps.findIndex(step => step.uses?.startsWith('actions/setup-node@') && step.with?.['node-version-file'] === '.node-version')
   require(nodeIndex >= 0 && index > nodeIndex && steps.findIndex(step => step.id === 'scope') > index, 'Bootstrap must follow Node setup and precede classification')

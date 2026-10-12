@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: 纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败
+ok 1 - 纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败
+  ---
+  duration_ms: 63.905
+  type: 'test'
+  ...
+# Subtest: 开发镜像构建接线不能被删除、跳过或吞掉失败
+ok 2 - 开发镜像构建接线不能被删除、跳过或吞掉失败
+  ---
+  duration_ms: 39.8894
+  type: 'test'
+  ...
+# Subtest: classification bootstrap locks only YAML and cannot bypass policy or evidence
+ok 3 - classification bootstrap locks only YAML and cannot bypass policy or evidence
+  ---
+  duration_ms: 251.5529
+  type: 'test'
+  ...
+# Subtest: YAML semantics preserve flow maps, aliases and literal command bodies
+ok 4 - YAML semantics preserve flow maps, aliases and literal command bodies
+  ---
+  duration_ms: 5.0147
+  type: 'test'
+  ...
+# Subtest: 连接器改动必须实际运行平台矩阵，失败/跳过不能放行
+ok 5 - 连接器改动必须实际运行平台矩阵，失败/跳过不能放行
+  ---
+  duration_ms: 0.8655
+  type: 'test'
+  ...
+# Subtest: known prose on PR and main avoids every install/service/test job
+ok 6 - known prose on PR and main avoids every install/service/test job
+  ---
+  duration_ms: 0.3261
+  type: 'test'
+  ...
+# Subtest: retired workspace paths fail closed to full without a browser check
+ok 7 - retired workspace paths fail closed to full without a browser check
+  ---
+  duration_ms: 0.3585
+  type: 'test'
+  ...
+# Subtest: backend assets and fake-agent changes require API checks
+ok 8 - backend assets and fake-agent changes require API checks
+  ---
+  duration_ms: 0.2212
+  type: 'test'
+  ...
+# Subtest: API and worker changes retain destructive recovery and real backend integration
+ok 9 - API and worker changes retain destructive recovery and real backend integration
+  ---
+  duration_ms: 0.685
+  type: 'test'
+  ...
+# Subtest: cross-workspace lock audits are selected without inventing runtime dependency cycles
+ok 10 - cross-workspace lock audits are selected without inventing runtime dependency cycles
+  ---
+  duration_ms: 1.1487
+  type: 'test'
+  ...
+# Subtest: upstream contracts/domain/db/config changes include transitive consumers
+ok 11 - upstream contracts/domain/db/config changes include transitive consumers
+  ---
+  duration_ms: 0.4854
+  type: 'test'
+  ...
+# Subtest: protocol changes retain SDK consumers, conformance and direct backend imports
+ok 12 - protocol changes retain SDK consumers, conformance and direct backend imports
+  ---
+  duration_ms: 0.1955
+  type: 'test'
+  ...
+# Subtest: root config, unknown/deleted workspaces and executable-looking docs fail closed to full
+ok 13 - root config, unknown/deleted workspaces and executable-looking docs fail closed to full
+  ---
+  duration_ms: 0.5554
+  type: 'test'
+  ...
+# Subtest: main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full
+ok 14 - main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full
+  ---
+  duration_ms: 0.4808
+  type: 'test'
+  ...
+# Subtest: PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full
+ok 15 - PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full
+  ---
+  duration_ms: 0.9596
+  type: 'test'
+  ...
+# Subtest: aggregate rejects failure, cancellation and accidental skips for every required job
+ok 16 - aggregate rejects failure, cancellation and accidental skips for every required job
+  ---
+  duration_ms: 0.5122
+  type: 'test'
+  ...
+# Subtest: aggregate only accepts planned skips and rejects incomplete/malformed decisions
+ok 17 - aggregate only accepts planned skips and rejects incomplete/malformed decisions
+  ---
+  duration_ms: 0.4486
+  type: 'test'
+  ...
+# Subtest: MCP discovery consumers require real conformance and propagate failed or skipped job
+ok 18 - MCP discovery consumers require real conformance and propagate failed or skipped job
+  ---
+  duration_ms: 0.5582
+  type: 'test'
+  ...
+# Subtest: real workflow semantic mutations cannot silently omit MCP conformance
+ok 19 - real workflow semantic mutations cannot silently omit MCP conformance
+  ---
+  duration_ms: 29.4273
+  type: 'test'
+  ...
+# Subtest: controlled CRLF evidence preserves bytes and all other whitespace gates
+ok 20 - controlled CRLF evidence preserves bytes and all other whitespace gates
+  ---
+  duration_ms: 1972.2534
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2710.7065

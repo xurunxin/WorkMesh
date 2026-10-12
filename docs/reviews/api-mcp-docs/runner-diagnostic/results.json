@@ -1,0 +1,55 @@
+{
+  "owner": "workmesh-docs-13bcd1eb-6948-4550-8bd9-cb191281cb4f",
+  "sourceHead": "9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0",
+  "sourceBinding": "运行时使用当前工作树，文件哈希另由交付记录绑定",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "containers": [
+    {
+      "name": "pg",
+      "id": "d536abb26fa85f9bdbfa81511b873864ab399d58ade4df20b5446c8b12d44b08",
+      "image": "postgres:16.9-alpine"
+    },
+    {
+      "name": "redis",
+      "id": "5f6343571ba9638b4a44046dd2d8bc72766b98988106948b321f5c15dc67fe3a",
+      "image": "redis:7.4.5-alpine"
+    }
+  ],
+  "volumes": [
+    "workmesh-docs-13bcd1eb-6948-4550-8bd9-cb191281cb4f-pg-data",
+    "workmesh-docs-13bcd1eb-6948-4550-8bd9-cb191281cb4f-redis-data"
+  ],
+  "checks": [
+    {
+      "label": "runner-diagnostic",
+      "command": "pnpm -C apps/api exec vitest run --config ../../vitest.integration.config.ts integration/workbench-runner.integration.test.ts --reporter=json --outputFile=I:\\tds_workspace\\workspaces\\01a12dcd-2746-75df-b468-8c4022c5a933\\.tmp\\runner-diagnostic.json",
+      "startedAt": "2026-10-12T03:08:47.493Z",
+      "endedAt": "2026-10-12T03:09:24.966Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "5f6343571ba9638b4a44046dd2d8bc72766b98988106948b321f5c15dc67fe3a",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "d536abb26fa85f9bdbfa81511b873864ab399d58ade4df20b5446c8b12d44b08",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-13bcd1eb-6948-4550-8bd9-cb191281cb4f-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-13bcd1eb-6948-4550-8bd9-cb191281cb4f-redis-data",
+      "absent": true
+    }
+  ]
+}
