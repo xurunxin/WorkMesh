@@ -9,7 +9,7 @@ import { createServer as createHttpsServer } from 'node:https'
 import { request as requestHttp, type Server } from 'node:http'
 import { once } from 'node:events'
 import { WorkMeshClient } from '@workmesh/agent-sdk'
-import { agentWellKnownResponseSchema, agentConnectionCreateResponseSchema, agentConnectionRedeemResponseSchema } from '@workmesh/contracts'
+import { agentWellKnownResponseSchema, agentConnectionCreateResponseSchema, agentConnectionRedeemResponseSchema, agentConnectionCurrentIdentitySchema } from '@workmesh/contracts'
 import { applyMigrations, createDb } from '@workmesh/db'
 import { loadFeatureConfig } from '@workmesh/config'
 import { expectationSchema } from '../../../apps/connector/src/config.js'
@@ -112,6 +112,24 @@ try {
   const raw = await redemption.text()
   assert.equal(await (await redeem()).text(), raw)
   const redeemed = agentConnectionRedeemResponseSchema.parse(JSON.parse(raw))
+  const identityPath = origin + '/api/v1/agent-connections/current-identity'
+  const directIdentity = await fetch(identityPath, { redirect: 'error', headers: {
+    'X-WorkMesh-Installation-Token': redeemed.installation_token,
+  } })
+  assert.equal(directIdentity.status, 200)
+  const identity = agentConnectionCurrentIdentitySchema.parse(await directIdentity.json())
+  assert.equal(identity.connection.id, redeemed.connection.id)
+  assert.equal(identity.agent_actor_id, redeemed.connection.agent_actor_id)
+  assert.equal(identity.team_id, teamId)
+  assert.equal(identity.principal_human_actor_id, actorId)
+  assert.deepEqual(identity.granted_capabilities, ['work:read'])
+  assert.equal(identity.authenticated_credential.fingerprint_prefix,
+    createHash('sha256').update(redeemed.installation_token).digest('hex').slice(0, 12))
+  const bearerIdentity = await fetch(identityPath, { redirect: 'error', headers: {
+    authorization: `Bearer ${redeemed.installation_token}`,
+  } })
+  assert.equal(bearerIdentity.status, 401)
+  assert.equal((await bearerIdentity.json() as { error: { code: string } }).error.code, 'UNAUTHENTICATED')
   const download = new URL(redeemed.skill.download_url)
   assert.equal(download.origin, origin)
   assert.equal(download.pathname, '/skills/workmesh-1.1.0.md')
@@ -149,7 +167,8 @@ try {
   console.log(JSON.stringify({ human: humanResult, agent: agentResult, projectIdempotency: true, revisionConflict: true,
     anonymousDenied: true, pairingReplayIdentical: true, signedSkillBytes: bytes.length, mixedCredentialDenied: true,
     wrongExpectationDenied: true, readCapabilityWriteDenied: true, humanCliVerified: true, agentCliVerified: true,
-    trustedTlsVerified: true, distinctApiMcpOrigins: true, externalProviderCalls: 0 }))
+    trustedTlsVerified: true, distinctApiMcpOrigins: true, directCoordinationRestVerified: true,
+    coordinationBearerDenied: true, externalProviderCalls: 0 }))
 } finally {
   for (const proxy of proxies.reverse()) {
     proxy.closeAllConnections()

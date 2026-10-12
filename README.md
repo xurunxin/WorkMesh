@@ -68,11 +68,25 @@ pnpm validate:production-images --env-file=.env.production
 docker compose --env-file .env.production -f docker-compose.production.yml config --quiet
 ```
 
-MCP 按部署选择 Coordination 或静态 Session 模式。Coordination 在 API/MCP 启用
-`WORKMESH_BETA_COORDINATION_MCP=true`，清空静态凭据，并使用逐请求安装 header。
-静态模式配置准确 Session Token 和独立 MCP access token。通过
-`docker compose --profile agent up -d mcp` 启动；默认绑定
-`127.0.0.1:${MCP_HOST_PORT:-3002}`。详见[MCP 接入](docs/integration/mcp.md)。
+默认开发 `docker-compose.yml` 未向 API/MCP 传入 Coordination 开关。
+其中 `docker compose --profile agent up -d mcp` 只适用于配置了准确 Session Token
+和独立 MCP access token 的静态模式；在 `.env` 设置 Coordination 开关不会切换该配置。
+
+Coordination 镜像部署使用 `docker-compose.production.yml`。先按[生产部署](docs/production-deployment.md)
+准备私有 `.env.production`、同源提交的三个完整镜像引用、build SHA 和所需秘密。
+配置 `WEB_ORIGIN` 为对外 HTTPS API origin，`PUBLIC_MCP_ORIGIN` 为独立 HTTPS MCP origin。
+在同一环境文件设置 `WORKMESH_BETA_COORDINATION_MCP=true`，清空
+`WORKMESH_SESSION_TOKEN` 和 `WORKMESH_MCP_ACCESS_TOKEN`，再执行：
+
+```powershell
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent config --quiet
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent pull api worker mcp
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240 api worker mcp
+```
+
+生产配置向 API、worker 和 MCP 传入该开关，MCP 使用逐请求安装 header。
+默认绑定 `127.0.0.1:${MCP_HOST_PORT:-3002}`。从旧栈升级时沿用原 Compose project，
+先按生产部署执行旧 Web 退役与适用迁移屏障。详见[MCP 接入](docs/integration/mcp.md)。
 
 ## Container deployment security
 

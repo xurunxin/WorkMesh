@@ -22,7 +22,7 @@
 
 本轮锁定 Node 22.19.0、pnpm 9.15.4。Node 从仓库已保全且核哈希的官方 ZIP 提取；pnpm 为任务目录局部运行，不修改全局版本。安装使用共享 `I:/.pnpm-store` 与 `--package-import-method copy`，工作树拥有独立可写依赖。准确命令、结果与资源收尾见下方最终汇总及逐轮 results.json。
 
-静态检查入口为 `pnpm check:integration-docs`。当前正例核 4 份技能原件、64 个本地链接、35 处 REST 方法/路径引用与 11 个显式 MCP 注册。真实示例入口为 `pnpm verify:integration-examples`，执行文件为 `packages/conformance/examples/verify-integration.ts`。该入口创建本人独有 PG/Redis 容器与卷，真实启动 API/MCP，运行 Human 与 SDK/MCP 示例，并核 Project 幂等、revision 冲突、配对重放、签名 Skill 和身份/能力拒绝。默认不访问第三方。配对合同要求 HTTPS，验收用已有测试 CA 和两个独有 TLS 入口，保持证书校验。
+静态检查入口为 `pnpm check:integration-docs`。初版正例核 4 份技能原件、64 个本地链接、35 处 REST 方法/路径引用与 11 个显式 MCP 注册。真实示例入口为 `pnpm verify:integration-examples`，执行文件为 `packages/conformance/examples/verify-integration.ts`。该入口创建本人独有 PG/Redis 容器与卷，真实启动 API/MCP，运行 Human 与 SDK/MCP 示例，并核 Project 幂等、revision 冲突、配对重放、签名 Skill 和身份/能力拒绝。默认不访问第三方。配对合同要求 HTTPS，验收用已有测试 CA 和两个独有 TLS 入口，保持证书校验。
 
 首次静态检查在依赖安装未结束时因缺 `yaml` 退出，未进入文档校验，不计通过。完整安装后复验；原摘要保留。最终结果须以本轮实际记录为准，不沿用 #61 测试结果充数。
 
@@ -79,3 +79,7 @@
 ## CI 首败
 
 PR 223 的 CI 475（run 38202739985）静态文档和 20 项 CI 策略测试成功，分类随后被完整提交区间的空白门禁拒绝。五份新日志有额外 EOF 空行；此前本机只核工作树 diff，漏掉新增文件。`pre-whitespace-log-originals.zip` 保全原字节，阅读副本仅修 EOF 空行，哈希差异见 `ci-whitespace-correction.json`。门禁保持，新提交正常触发复验；该首败的跳过 job 不计通过。
+
+## 成果独审修订
+
+对 head `9fee9858bdaa03693401159013055ebcf41a284a` 的独审指出两项 blocking：REST Coordination header 说明相反，以及 README 错将默认开发 Compose 用于 Coordination。两项已修订并实际复验，详见[修订验证记录](review-fixes/README.md)。原独审意见和初版结果仍保留；修订后的成果须复审及最新 Required CI，不以生产者自查宣布审查闭合。

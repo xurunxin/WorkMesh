@@ -41,7 +41,17 @@ node docs/integration/examples/human.mjs
 
 ## 配对 Agent
 
-部署方先在 API 与 HTTP MCP 同时启用 Coordination，并清空静态 MCP 的两项凭据。源码部署可在独立终端运行 `pnpm --filter @workmesh/mcp dev`；镜像部署用对应 Compose 的 `--profile agent up -d mcp`。后续查看日志或停止服务仍须带同一 profile。
+部署方先在 API 与 HTTP MCP 同时启用 Coordination，并清空 `WORKMESH_SESSION_TOKEN` 和 `WORKMESH_MCP_ACCESS_TOKEN`。源码部署须向 API/MCP 进程提供 `WORKMESH_BETA_COORDINATION_MCP=true`，再在独立终端运行 `pnpm --filter @workmesh/mcp dev`。
+
+默认开发 `docker-compose.yml` 不传入 Coordination 开关；在 `.env` 设置为 `true` 也不会切换模式。Coordination 镜像部署使用现有生产配置。先按[生产部署](../production-deployment.md)准备私有 `.env.production`，填写同源提交的三个完整镜像引用、build SHA、所需秘密和两个 HTTPS origin。设置 Coordination 开关并清空上述静态凭据，然后执行：
+
+```powershell
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent config --quiet
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent pull api worker mcp
+docker compose --env-file .env.production -f docker-compose.production.yml --profile agent up -d --wait --wait-timeout 240 api worker mcp
+```
+
+生产配置将开关传入 API、worker 和 MCP。后续查看日志或停止服务仍须带同一环境文件、`-f docker-compose.production.yml` 和 `--profile agent`。已有部署沿用原 Compose project；从旧栈升级先执行旧 Web 退役与适用迁移屏障。
 
 Workspace Admin 按 [REST 配对步骤](rest.md)创建 Connection。管理员通过可信渠道交付完整配对码，以及不含秘密的预期清单。清单须由管理员批准，不从公开 discovery 自动生成信任事实。
 

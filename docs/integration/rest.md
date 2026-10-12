@@ -76,9 +76,27 @@ HTTP 200 响应含 `installation_token`、`connection`、`mcp`、`skill`、`prin
 
 ## Agent REST 身份
 
-Coordination 的 SDK 使用 `coordinationToken` 与 `installationToken`，通过 `Authorization: Bearer <wmi_>` 调用 API。MCP 边界使用的专用 header 不能直接替代 REST Bearer。
+Coordination（C 身份）使用 `X-WorkMesh-Installation-Token: <wmi_>` 调用 REST 和 MCP。SDK 的 `coordinationToken` 对应此 header；普通 C 请求不配置 `sessionToken`。
 
-执行 Session 使用准确 Session Bearer。创建或认领返回的 `exchangeToken` 须与有效安装凭据一起兑换；它本身不能鉴权。原生安装凭据与 Connection 安装凭据的授权路径各有约束，不能因名称相近互换。SDK `exchangeSessionToken`、`exchangeClaimedSessionToken` 和 `refreshSessionToken` 封装对应端点。
+直接读取当前 Connection 时，秘密管理器向进程注入安装令牌，然后执行：
+
+```powershell
+$identity = Invoke-RestMethod "$env:WORKMESH_API_URL/api/v1/agent-connections/current-identity" -Headers @{
+  'X-WorkMesh-Installation-Token' = $env:WORKMESH_INSTALLATION_TOKEN
+}
+$identity.connection.id
+```
+
+预期 HTTP 200，并返回当前 Connection、Actor、Team、能力与凭据指纹。仅向终端输出 Connection ID，再按已批准清单核响应身份。此端点要求专用 header；改用 `Authorization: Bearer <wmi_>` 会返回 HTTP 401。
+
+执行 Session（E 身份）使用 `Authorization: Bearer <Session Token>`。创建或认领返回的 `exchangeToken` 须与有效安装凭据一起兑换；它本身不能鉴权。
+
+安装用途端点另核安装凭据。以下两个端点要求安装 Bearer：
+
+- `POST /api/v1/agent-sessions/{id}/token/exchange`
+- `POST /api/v1/agent-sessions/{id}/token/refresh`
+
+SDK 的 `installationToken` 用于这些安装操作。普通 C 请求的 header 来自 `coordinationToken`。原生安装凭据与 Connection 安装凭据各有授权范围，不能因名称相近互换。SDK `exchangeSessionToken`、`exchangeClaimedSessionToken` 和 `refreshSessionToken` 封装对应端点。
 
 执行流程为 queued → ACK → planning/executing，实际转换遵守服务端状态机。写请求仍核 Delegation、能力、范围、批准、Lease、revision 和幂等。工作项工作流状态与 Session 执行状态分别管理。具名操作和参数见[参考](reference.md)及 [AGENT_PROTOCOL.md](../../AGENT_PROTOCOL.md)。
 
