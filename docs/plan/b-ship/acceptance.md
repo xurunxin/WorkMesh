@@ -1,6 +1,6 @@
 # B-ship 无源码安装验收设计
 
-本文件定义单独放行后的必需验收。本轮只准备方案；新发行物、新安装命令和 `apps/connector/test/install.integration.test.ts` 均未实现、未运行。已有源码测试和历史 CI 不证明本组合成功。
+本文件定义单独放行后的产品必需验收。当前允许[TCG 可行性研究](tcg/current-spec.md)，其完整 guest、真实秘密存储与恢复窗口探测按[研究计划](tcg/research-plan.md)单列结果；研究不代最终发行安装验收。新发行物、新安装命令和 `apps/connector/test/install.integration.test.ts` 仍未实现，原断言不降级。
 
 ## 输入、执行者与结果规则
 

@@ -1,0 +1,78 @@
+name: B-ship TCG feasibility
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/b-ship-tcg.yml'
+      - 'docs/reviews/b-ship/tcg/tools/**'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: TCG full guest (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Check out exact research head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - name: Bind actual source and experiment inputs
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          mkdir ci-tcg
+          git show -s --format='%H %T %P' HEAD > ci-tcg/source.txt
+          sha256sum docs/reviews/b-ship/tcg/tools/* > ci-tcg/input-sha256.txt
+          printf '%s %s %s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_ARCH" > ci-tcg/run.txt
+          docker build --label workmesh.owner=b-ship-tcg --tag workmesh-b-ship-tcg:research --file docs/reviews/b-ship/tcg/tools/Dockerfile docs/reviews/b-ship/tcg/tools > ci-tcg/build.log 2>&1
+          docker image inspect workmesh-b-ship-tcg:research --format '{{.Id}} {{.Architecture}}' > ci-tcg/image.txt
+      - name: Execute isolated full guest research
+        env:
+          PROBE_ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          mkdir ci-tcg/data
+          docker run --name "workmesh-tcg-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$PROBE_ARCH" --label workmesh.owner=b-ship-tcg --cpus 2 --memory 3g --mount "type=bind,source=$PWD/docs/reviews/b-ship/tcg/tools,target=/probe,readonly" --mount "type=bind,source=$PWD/ci-tcg/data,target=/data" workmesh-b-ship-tcg:research --arch "$PROBE_ARCH" --source "$(git rev-parse HEAD)" 2>&1 | tee ci-tcg/probe.log
+      - name: Preserve bounded research evidence and clean owned guest
+        if: ${{ always() }}
+        env:
+          PROBE_ARCH: ${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          name="workmesh-tcg-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$PROBE_ARCH"
+          if docker container inspect "$name" > /dev/null 2>&1; then
+            test "$(docker container inspect "$name" --format '{{index .Config.Labels "workmesh.owner"}}')" = b-ship-tcg
+            docker stop "$name" > ci-tcg/stop.txt
+            docker rm "$name" > ci-tcg/remove.txt
+          fi
+          if test -d "ci-tcg/data/$PROBE_ARCH"; then
+            mkdir -p ci-tcg/receipts
+            cp "ci-tcg/data/$PROBE_ARCH/result.json" ci-tcg/receipts/ || true
+            cp "ci-tcg/data/$PROBE_ARCH/qemu-stderr.log" ci-tcg/receipts/ || true
+            cp "ci-tcg/data/$PROBE_ARCH/serial.log" ci-tcg/receipts/ || true
+          fi
+      - name: Upload research receipts even on first failure
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: tcg-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ci-tcg/*.txt
+            ci-tcg/*.log
+            ci-tcg/receipts
+          if-no-files-found: error
+          retention-days: 14
