@@ -131,6 +131,8 @@ sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.loc
 
 共用 pnpm CAS、工具和镜像缓存只读借用；任务 virtual store、node_modules、build 输出、DB、D-Bus、keyring 和目标磁盘私有。构建至少计入依赖副本、bundle、SEA blob、ELF、归档与清单；安装剩余空间须覆盖压缩归档、解压暂存、新版、当前版与回退版。2 GiB 是测量起点，实际预检按文件实长和可用磁盘拒绝，不借其他任务空间承诺成功。
 
+### 历史 KVM 资源条款（保留来源，本研究不执行）
+
 验收目标由两架构原生 Linux runner 创建独有、可重启的 KVM 虚拟机，客户机不挂载仓库。amd64 使用 `ubuntu-24.04` 并实际预检 KVM；ARM64 使用专用自托管原生 runner，labels 固定为 `[self-hosted, linux, ARM64, workmesh-connector-kvm]`。不再选择 ARM64 hosted runner：其宿主不提供 `/dev/kvm`，安装软件无法补齐。[GitHub 官方说明](https://github.com/actions/runner-images/issues/14062)、[自托管 labels](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/use-in-a-workflow)
 
 ARM64 资源取得是后续实施前置条件。Chief 先落实专用原生 ARM64 裸机来源、owner 和隔离额度；仓库管理员在该主机准备 Ubuntu 24.04、可用 `/dev/kvm` 及同架构 guest，并实测 KVM 启动和完整重启，再通过已有受控管理面注册仓库专用 ephemeral runner、赋予上述 labels。主机只承接 WorkMesh 受信任分支任务，执行后恢复干净环境；注册凭据留管理员侧，不进入本任务文件或测试 job。缺现成设备或注册授权时，先另批资源/凭据，ARM64 实施不得放行；本轮没有取得或注册该设备。
@@ -144,6 +146,14 @@ guest 采用上表系统。每个 job 启动前确认宿主实际架构、`/dev/
 上面的 KVM 资源段是前次独审闭合后的产品方案；本次不取得裸机或注册 runner。TCG 实验使用现有 hosted 双架构资源，显式禁用 KVM，验证完整 guest 重启、真实 Secret Service 持久性和原加密重放窗口。研究结果单独归档，供 Chief 裁定后续路线；只读技术原理、普通容器 restart 或源码探测都不能解除最终安装门禁。
 
 原生 node-pty 构建、SEA 实际加载、完整 API/MCP/Skill 校验、秘密边界、升级与卸载断言继续保留。研究通过也不等于这些产品断言已通过；旧 saved plan 仅作为下面的历史原件保留。
+
+### 据实证提出的 TCG 方案（Proposed，待 Chief 裁定）
+
+[研究报告](../../reviews/b-ship/tcg/report.md)和原件证明：现有原生 `ubuntu-24.04`、`ubuntu-24.04-arm` 能以 TCG 运行完整 guest，两架构真实 Secret Service 跨完整 OS reboot 持久，原 900 秒加密重放窗口内得到相同 API 响应。建议最终安装验收采用这两项原生 hosted runner 加 TCG guest，不取得新裸机或注册 runner。Chief 裁定后才更新产品执行规格，不能把本节 Proposed 当已批准替换旧方案。
+
+原生构建仍在宿主进行，guest 最终只接收已验证归档、manifest、安装器及许可，不挂仓库、不安装 Node/pnpm/workspace。基础盘按内容摘要只读复用；overlay、seed、固件变量、同用户 D-Bus/keyring、DB 和日志独有。至少按本次实测约 3 GiB 模拟器峰值另计构建与服务内存，并把两份约 0.6 GiB 基础盘、每个约 1.1～1.3 GiB 实际 overlay、产物/暂存/回退空间纳入预检；这些是测量与预算依据，不是 Lite 最低环境。
+
+建议每个 `connector-install` leg 设 90 分钟 job 总预算，包含原生编译、完整协议/错误/恢复、安装升级及完整 guest reboot；依据是 ARM64 仅当前冷研究已有约 48 分钟，新增产品组合耗时仍须实测。原领域 900 秒窗口、各既有断言与其超时保持。研究中两架构一次通过不证明产品全部组合或持续 CI 稳定；缺 guest/秘密后端/回执、意外 skip、错来源及超预算仍不能放行。
 
 ## 已确认的文档准备计划原文
 

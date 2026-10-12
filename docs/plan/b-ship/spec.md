@@ -4,6 +4,8 @@
 
 ## 来源与保留方式
 
+本次研究结果见 [TCG 报告](../../reviews/b-ship/tcg/report.md)，原生双架构的完整 guest、系统秘密跨 reboot 和原 API 重放窗口已取得分项实证。产品方案提出 hosted＋TCG 建议供 Chief 裁定；最终无源码安装、SEA/native 和完整连接器组合仍未测，产品门禁不变。原完整规格原件未改。
+
 - 平台卡片：[#20](todo:JfGwKk3prfIie6X2u2J51)。文档准备阶段通过 `tds.todos(id)` 完整读取当时的 `Spec`，`Saved plan` 尾部截断。本次研究读取新增阶段成功，但工具在历史正文末段截断；完整当前规格来源为本会话用户全文和保留的历史原件，见 [TCG 规格](tcg/current-spec.md)。
 - 完整 saved plan：`doc:Sq2Il0gKZRLrp-8L4RFk3`。本会话用户重新提供的完整原文保存在 [实施方案](implementation-plan.md#已确认的文档准备计划原文)；不补造工具截断部分。
 - 问题卡：`doc:q-rojM7Z-OYYSGaTPRD04Td`；真实答复见下表及本会话。稳定引用、正文摘要和读取事实见[方案证据](../../reviews/b-ship/planning-evidence.md)。

@@ -47,3 +47,6 @@ Node SEA、esbuild、postject 与同架构原生依赖归档是执行者提出�
 本次仅增加必要隔离实验、探测 workflow、测量和方案/证据修订。完整 guest OS、真实同用户 D-Bus/Secret Service、完整系统重启、原加密重放窗口和全部最终安装断言保持。普通容器 restart、源码探测、时间容量测量或历史绿色 CI 都不能代替最终无源码安装验收。
 
 不获取新机器、注册 runner、增加凭据或付费资源，不做连接器产品、安装器或发行物实现。TCG 是否取代历史 KVM 产品方案，由 Chief 根据本次实测另行裁定；研究交付不倒填 Accepted，也不解除产品实施门禁。
+
+
+本次研究 run `38301479837`、attempt 1、HEAD `df26e18864b34638fce0a25751c7060f249d1a3f` 的双架构原件已交叉复核：完整 guest、实际 OS reboot、同用户真实 Secret Service 和原 900 秒加密 API 重放均取得实证。重启至重放分别为 123.52 秒和 576.14 秒；源码连接器/SEA/native/最终安装组合仍未测。[研究报告](../b-ship/tcg/report.md)保存原件、首败、预算与剩余条件。实施/验收方案提出原生 hosted＋TCG、90 分钟产品 leg 总预算的 Proposed 建议；Chief 尚未裁定路线或批准产品，不改原窗口、秘密和最终全部断言。

@@ -1,20 +1,87 @@
 {
+  "scope": "仅研究；产品路线待 Chief 裁定",
   "sourceBaseHead": "2daa8b2537a3082f459ea38c2da9a82c52d4d3f2",
   "mainRef": "f6faf54f80850ecee9118d87401e6b5ce73216f1",
-  "successfulResearchHead": "2c4d7dcca6a0975e6b5842fe22eadf65a5ac5376",
-  "successfulResearchRun": "38296559927",
+  "successfulResearchHead": "df26e18864b34638fce0a25751c7060f249d1a3f",
+  "successfulResearchRun": "38301479837",
+  "attempt": 1,
   "completedArchitectures": [
-    "amd64"
-  ],
-  "pendingArchitectures": [
+    "amd64",
     "arm64"
   ],
-  "historicalSpecAndSavedPlanMarkersUnchanged": true,
+  "pendingArchitectures": [],
+  "measurements": {
+    "amd64": {
+      "sourceHead": "df26e18864b34638fce0a25751c7060f249d1a3f",
+      "arch": "amd64",
+      "hostArch": "x86_64",
+      "startedUtc": 1791835405.6517484,
+      "endedUtc": 1791835943.2745676,
+      "totalSeconds": 537.622825233,
+      "rebootSeconds": 123.51685296599999,
+      "qemuPeakRssBytes": 2944602112,
+      "overlayAllocatedBytes": 1128493056,
+      "imageSha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2",
+      "realApiReplay": {
+        "exactRequestMatches": true,
+        "replayResponseMatches": true,
+        "replayStatus": 200,
+        "expiredStatus": 409,
+        "expiryMethod": "dedicated-test-row-expired",
+        "remainingSeconds": 775.305028,
+        "originalWindowSeconds": 900,
+        "firstRedeemUtc": "2026-10-12T20:09:57.040Z"
+      },
+      "beforeHostElapsed": 392.58402666300003,
+      "guestComposition": "not-tested",
+      "finalNoSourceInstallation": "not-tested"
+    },
+    "arm64": {
+      "sourceHead": "df26e18864b34638fce0a25751c7060f249d1a3f",
+      "arch": "arm64",
+      "hostArch": "aarch64",
+      "startedUtc": 1791835379.3815632,
+      "endedUtc": 1791838239.832985,
+      "totalSeconds": 2860.451431527,
+      "rebootSeconds": 576.1416273039999,
+      "qemuPeakRssBytes": 3068121088,
+      "overlayAllocatedBytes": 1289375744,
+      "imageSha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+      "realApiReplay": {
+        "exactRequestMatches": true,
+        "replayResponseMatches": true,
+        "replayStatus": 200,
+        "expiredStatus": 409,
+        "expiryMethod": "dedicated-test-row-expired",
+        "remainingSeconds": 321.696958,
+        "originalWindowSeconds": 900,
+        "firstRedeemUtc": "2026-10-12T20:39:53.919Z"
+      },
+      "beforeHostElapsed": 2216.7412321,
+      "guestComposition": "not-tested",
+      "finalNoSourceInstallation": "not-tested"
+    }
+  },
+  "historicalMarkers": {
+    "docs/plan/b-ship/spec.md": {
+      "unchanged": true,
+      "markerBytes": 13464,
+      "markerSha256": "adc96a7688e61ff18391862527b679e61aad3cc0657061c078a556c7de0362e4"
+    },
+    "docs/plan/b-ship/implementation-plan.md": {
+      "unchanged": true,
+      "markerBytes": 5334,
+      "markerSha256": "c5df61ebb01720cf5e2faea2375fc5e3397bc7a257f8d918b093428ced31cc75"
+    }
+  },
+  "currentSpecFileSha256": "618ae72e6538b4711b916df11705b370abf45079d486630cb94215585c4a7884",
   "artifacts": [
     {
       "file": "raw/ci-38293580676-amd64.zip",
       "bytes": 59840,
       "sha256": "8883839ef1f58330ffeb9e1c005ef1261dcd74b145ceb9e90a611edac012ad24",
+      "memberCount": 10,
+      "expandedBytes": 257089,
       "githubArtifact": {
         "created_at": "2026-10-12T19:14:20Z",
         "digest": "sha256:8883839ef1f58330ffeb9e1c005ef1261dcd74b145ceb9e90a611edac012ad24",
@@ -22,12 +89,15 @@
         "id": 11768607444,
         "name": "tcg-amd64-38293580676-1",
         "size_in_bytes": 59840
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38293580676-arm64.zip",
       "bytes": 27606,
       "sha256": "883f8e724da6a4f26f72ccde3e3b37b1832af4bac20509bdb89d72c6f5d76869",
+      "memberCount": 10,
+      "expandedBytes": 124846,
       "githubArtifact": {
         "created_at": "2026-10-12T19:14:21Z",
         "digest": "sha256:883f8e724da6a4f26f72ccde3e3b37b1832af4bac20509bdb89d72c6f5d76869",
@@ -35,12 +105,15 @@
         "id": 11767658244,
         "name": "tcg-arm64-38293580676-1",
         "size_in_bytes": 27606
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38294333061-amd64.zip",
       "bytes": 61824,
       "sha256": "53fa1fd57f411c8df9a32c5d8f4f81b0722890c0afb23059ddb001827840be0d",
+      "memberCount": 13,
+      "expandedBytes": 264556,
       "githubArtifact": {
         "created_at": "2026-10-12T19:14:49Z",
         "digest": "sha256:53fa1fd57f411c8df9a32c5d8f4f81b0722890c0afb23059ddb001827840be0d",
@@ -48,12 +121,15 @@
         "id": 11768442765,
         "name": "tcg-amd64-38294333061-1",
         "size_in_bytes": 61824
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38294333061-arm64.zip",
       "bytes": 29316,
       "sha256": "2cf8929b89fb4fea58761d53aac983b7eb4ae100fc41960eba68a42f11ffbdf6",
+      "memberCount": 13,
+      "expandedBytes": 133364,
       "githubArtifact": {
         "created_at": "2026-10-12T19:14:52Z",
         "digest": "sha256:2cf8929b89fb4fea58761d53aac983b7eb4ae100fc41960eba68a42f11ffbdf6",
@@ -61,12 +137,15 @@
         "id": 11768023093,
         "name": "tcg-arm64-38294333061-1",
         "size_in_bytes": 29316
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38295082254-amd64.zip",
       "bytes": 43455,
       "sha256": "435b53ca528591067a2ad61146b9342e23cc019a870d1f370c8d9f7e64f5c7e7",
+      "memberCount": 14,
+      "expandedBytes": 192370,
       "githubArtifact": {
         "created_at": "2026-10-12T19:12:41Z",
         "digest": "sha256:435b53ca528591067a2ad61146b9342e23cc019a870d1f370c8d9f7e64f5c7e7",
@@ -74,12 +153,15 @@
         "id": 11767738075,
         "name": "tcg-amd64-38295082254-1",
         "size_in_bytes": 43455
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38295082254-arm64.zip",
       "bytes": 28255,
       "sha256": "6f0d0587c8b9b546b3b59046354976179004469ae2a6c9024661614b3ba422f8",
+      "memberCount": 13,
+      "expandedBytes": 127254,
       "githubArtifact": {
         "created_at": "2026-10-12T19:15:11Z",
         "digest": "sha256:6f0d0587c8b9b546b3b59046354976179004469ae2a6c9024661614b3ba422f8",
@@ -87,12 +169,15 @@
         "id": 11768827688,
         "name": "tcg-arm64-38295082254-1",
         "size_in_bytes": 28255
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38296334308-amd64.zip",
       "bytes": 25869,
       "sha256": "4f00c6bdeeec8c70b33fe76bf29ee99dccbbd979d1b5b7a9c8f83c71f700749a",
+      "memberCount": 14,
+      "expandedBytes": 95645,
       "githubArtifact": {
         "created_at": "2026-10-12T19:17:25Z",
         "digest": "sha256:4f00c6bdeeec8c70b33fe76bf29ee99dccbbd979d1b5b7a9c8f83c71f700749a",
@@ -100,12 +185,15 @@
         "id": 11769002431,
         "name": "tcg-amd64-38296334308-1",
         "size_in_bytes": 25869
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38296334308-arm64.zip",
       "bytes": 21673,
       "sha256": "b13ca1642d2d52535c3dbab2ea462c2115c97eaf01e565da38b4472caa54da0b",
+      "memberCount": 14,
+      "expandedBytes": 79194,
       "githubArtifact": {
         "created_at": "2026-10-12T19:17:27Z",
         "digest": "sha256:b13ca1642d2d52535c3dbab2ea462c2115c97eaf01e565da38b4472caa54da0b",
@@ -113,12 +201,15 @@
         "id": 11767898602,
         "name": "tcg-arm64-38296334308-1",
         "size_in_bytes": 21673
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/ci-38296559927-amd64.zip",
       "bytes": 64955,
       "sha256": "d25207d714eaf487e3c102a4924cb2d33a3095d54e38b293f814580c5c8bd5ac",
+      "memberCount": 14,
+      "expandedBytes": 283344,
       "githubArtifact": {
         "created_at": "2026-10-12T19:28:46Z",
         "digest": "sha256:d25207d714eaf487e3c102a4924cb2d33a3095d54e38b293f814580c5c8bd5ac",
@@ -126,24 +217,81 @@
         "id": 11768394936,
         "name": "tcg-amd64-38296559927-1",
         "size_in_bytes": 64955
-      }
+      },
+      "kind": "GitHub 原始 zip"
+    },
+    {
+      "file": "raw/ci-38296559927-arm64.zip",
+      "bytes": 47825,
+      "sha256": "4f06f10c132fb2fd7048d425efe9629fae3f7d960e490a9be08feb20b1263ebd",
+      "memberCount": 14,
+      "expandedBytes": 229245,
+      "githubArtifact": {
+        "created_at": "2026-10-12T19:58:29Z",
+        "digest": "sha256:4f06f10c132fb2fd7048d425efe9629fae3f7d960e490a9be08feb20b1263ebd",
+        "expired": false,
+        "id": 11770780279,
+        "name": "tcg-arm64-38296559927-1",
+        "size_in_bytes": 47825
+      },
+      "kind": "GitHub 原始 zip"
+    },
+    {
+      "file": "raw/ci-38301479837-amd64.zip",
+      "bytes": 64857,
+      "sha256": "261dae8a06d54db4f067a9ee8d2dc78a9b89791c043c8797ffed2210917a4a16",
+      "memberCount": 14,
+      "expandedBytes": 283334,
+      "githubArtifact": {
+        "created_at": "2026-10-12T20:12:24Z",
+        "digest": "sha256:261dae8a06d54db4f067a9ee8d2dc78a9b89791c043c8797ffed2210917a4a16",
+        "expired": false,
+        "id": 11771177379,
+        "name": "tcg-amd64-38301479837-1",
+        "size_in_bytes": 64857
+      },
+      "kind": "GitHub 原始 zip"
+    },
+    {
+      "file": "raw/ci-38301479837-arm64.zip",
+      "bytes": 64430,
+      "sha256": "37905ebb02b8b028d23094282a29f01c56d396f507b7716d9830a5ad0e6d17b3",
+      "memberCount": 14,
+      "expandedBytes": 300070,
+      "githubArtifact": {
+        "created_at": "2026-10-12T20:50:40Z",
+        "digest": "sha256:37905ebb02b8b028d23094282a29f01c56d396f507b7716d9830a5ad0e6d17b3",
+        "expired": false,
+        "id": 11772982642,
+        "name": "tcg-arm64-38301479837-1",
+        "size_in_bytes": 64430
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/local-amd64-first-failure.zip",
       "bytes": 59556,
       "sha256": "51ffb03eb371a844578bfdc030a2438e98db66d7de452af1d970f961a881213b",
-      "githubArtifact": null
+      "memberCount": 6,
+      "expandedBytes": 235360,
+      "githubArtifact": null,
+      "kind": "本机派生 zip"
     },
     {
       "file": "raw/local-checks-and-cleanup.zip",
-      "bytes": 4499,
-      "sha256": "a6245bd598e1cdf8fac6b6e7a98e5b8683379cf2f3168e070e17268a7213e2bd",
-      "githubArtifact": null
+      "bytes": 6695,
+      "sha256": "0eb4e571c8e0c797ceb48009d2ac082965fc35ec173211a24b91372755ae0ab4",
+      "memberCount": 12,
+      "expandedBytes": 15268,
+      "githubArtifact": null,
+      "kind": "本机派生 zip"
     },
     {
       "file": "raw/required-ci-38296559920.zip",
       "bytes": 2329635,
       "sha256": "77eb09e717d02943056f7bdf63a4e7b5124aa6aeabe4423fe9978f6a351e5940",
+      "memberCount": 333,
+      "expandedBytes": 10458784,
       "githubArtifact": {
         "created_at": "2026-10-12T19:36:13Z",
         "digest": "sha256:77eb09e717d02943056f7bdf63a4e7b5124aa6aeabe4423fe9978f6a351e5940",
@@ -151,13 +299,17 @@
         "id": 11770236145,
         "name": "required-ci-raw-38296559920-1",
         "size_in_bytes": 2329635
-      }
+      },
+      "kind": "GitHub 原始 zip"
     },
     {
       "file": "raw/research-inputs.zip",
-      "bytes": 9266,
-      "sha256": "ad71fcac138c72f27d484209a788f164db3a7095955948d5a9637d0e0d5fce6f",
-      "githubArtifact": null
+      "bytes": 19651,
+      "sha256": "4d74a867b48f6478a9af3abe2055039b99c7e88a100af9901e6f0c29345c5261",
+      "memberCount": 25,
+      "expandedBytes": 33809,
+      "githubArtifact": null,
+      "kind": "本机派生 zip"
     }
   ]
 }

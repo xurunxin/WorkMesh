@@ -18,7 +18,9 @@
 
 [api-controller.mts](tools/api-controller.mts)复用 `buildApp`、`applyMigrations` 和 `loadFeatureConfig`，只接受独有 `workmesh_tcg_test` 数据库。安装、创建连接及兑换均走现有 API；依据 `apps/api/integration/stage5-connector.integration.test.ts` 的夹具方式调用 `app.inject`。第一次兑换后保留原 key/body/origin/user-agent，核 `auth_idempotency_records.replay_ciphertext`；guest 完整 reboot 后从真实秘密后端重取请求，核原身份重放返回完全相同响应及原十五分钟窗口剩余量。过期负例仅提前过期该测试回执行并验证 409，不冒称自然等待十五分钟，也不修改生产窗口。
 
-guest 使用 `systemctl reboot`，随后 `systemctl poweroff`；QMP `RESET`、`SHUTDOWN` 与两次 kernel 日志交叉核对。当前不执行 `SystemSecretStore`、连接器 `connect`/`recoverCommit` 或完整 API/MCP/Skill 黄金路径，这些产品断言继续保留为未测。
+guest 使用 `systemctl reboot`，随后 `systemctl poweroff`；QMP `RESET`、`SHUTDOWN` 与两次 kernel 日志交叉核对。TCG guest 没有执行 `SystemSecretStore`、连接器 `connect`/`recoverCommit` 或完整 API/MCP/Skill 黄金路径，这些 guest 组合的产品断言继续保留为未测。
+
+这里的“未测”指 TCG guest 内的连接器组合。既有 Required CI 仍执行连接器源码回归和系统秘密存储；研究宿主的 `pnpm install --frozen-lockfile` 也执行现有 node-pty 安装钩子。原件显示构建了 `Release/pty.node`，这属于既有源码依赖安装，不能写成本轮完全没有原生编译，也不能当拟议封装工具链、归档布局或安装后 SEA PTY 加载通过。没有新增依赖、改锁文件或生成连接器发行物。
 
 复现本轮修订后的 CI 输入须检出对应完整 HEAD，再由现有 PR workflow 执行。单个 Linux 宿主的原始步骤如下；API 控制器先按 workflow 启动独有 PostgreSQL/Redis、安装锁定源码依赖并就绪，再启动 guest。所有目录、名字及环境属于本次实验，不能改成共享数据库。
 
@@ -31,7 +33,7 @@ docker run --name "$PROBE_NAME" --label workmesh.owner=b-ship-tcg \
   --mount "type=bind,source=$PWD/docs/reviews/b-ship/tcg/tools,target=/probe,readonly" \
   --mount "type=bind,source=$PWD/ci-tcg/data,target=/data" \
   workmesh-b-ship-tcg:research --arch "$PROBE_ARCH" \
-  --source "$(git rev-parse HEAD)" --api-url http://127.0.0.1:18081
+  --source "$(git rev-parse HEAD)" --api-url http://127.0.0.1:18081 --deadline-seconds 3000
 ```
 
 ## 首败与修订
@@ -49,29 +51,35 @@ docker run --name "$PROBE_NAME" --label workmesh.owner=b-ship-tcg \
 
 ## 结果与路线门禁
 
-amd64 已取得完整研究实证。对应 [CI 原件](raw/ci-38296559927-amd64.zip)经 [verify.py](verify.py)交叉复核通过：同 UID 22020 的 gnome-keyring 服务完成跨完整 reboot 的秘密重读，原请求得到完全相同的 200 响应，原十五分钟窗口仍剩 754.80 秒；提前过期该独有测试行后返回 409。源码消费、SEA/原生加载、最终无源码安装、升级卸载和完整黄金路径均未测。ARM64 结果仍在收集，不把 amd64 成功投射到另一架构。
+两架构的核心研究项均取得可行实证。同一 [研究 run](https://github.com/xurunxin/WorkMesh/actions/runs/38301479837)、attempt 1、完整 HEAD `df26e18864b34638fce0a25751c7060f249d1a3f` 的 [amd64 原件](raw/ci-38301479837-amd64.zip)和 [ARM64 原件](raw/ci-38301479837-arm64.zip)均经 [verify.py](verify.py)复核通过。实际 checkout、源码 tree、runner 身份、输入摘要、QEMU/固件/镜像及 guest 回执一起绑定；不是只读 run 的 head_sha。
+
+两次 `boot_id` 不同，QMP RESET 位于两次秘密回执之间，serial 含两次完整 kernel 启动；同 UID 22020 的 gnome-keyring 进程完成重读，秘密摘要和持久身份相同。原 key/body/origin/user-agent 的真实 API 兑换重放均返回相同 200 响应，原十五分钟窗口分别剩 775.31 秒和 321.70 秒。提前过期该独有测试行后均返回 409，原窗口常量和 SQL 区间仍为 900 秒。
 
 | 测量 | amd64 | ARM64 |
 | --- | --- | --- |
-| 完整 guest 与 OS reboot | 可行，两次 kernel 和不同 boot_id | 待原件 |
-| 同用户真实秘密跨 reboot | 可行，服务进程与 UID 核实 | 待原件 |
-| 原窗口内真实 API 重放 | 可行，原请求与响应相同 | 待原件 |
-| 启动到首次秘密与兑换完成 | 451.37 秒，含下载与软件准备 | 未完成测量 |
-| reboot 到秘密重读及 API 重放 | 144.38 秒 | 未完成测量 |
-| 本次探测总耗时 | 617.77 秒 | 未完成测量 |
-| QEMU 峰值 RSS | 2,906,681,344 字节，约 2.71 GiB | 未完成测量 |
-| overlay 实际分配 | 1,115,897,856 字节，约 1.04 GiB | 未完成测量 |
+| 完整 guest 与 OS reboot | 可行，两次 kernel 和不同 boot_id | 可行，两次 kernel 和不同 boot_id |
+| 同用户真实秘密跨 reboot | 可行，服务进程与 UID 核实 | 可行，服务进程与 UID 核实 |
+| 原窗口内真实 API 重放 | 可行，原请求与响应相同 | 可行，原请求与响应相同 |
+| 启动到首次秘密与兑换完成 | 392.58 秒，含下载与软件准备 | 2216.74 秒，含下载与软件准备 |
+| reboot 到秘密重读及 API 重放 | 123.52 秒 | 576.14 秒 |
+| 本次探测总耗时 | 537.62 秒 | 2860.45 秒 |
+| QEMU 峰值 RSS | 2,944,602,112 字节，约 2.74 GiB | 3,068,121,088 字节，约 2.86 GiB |
+| overlay 实际分配 | 1,128,493,056 字节，约 1.05 GiB | 1,289,375,744 字节，约 1.20 GiB |
 
 峰值是模拟器宿主占用，不能写成 Lite 目标设备最低内存。测量起点、冷启动准备、真正重放窗口和最终发行安装分开记录。过期负例不是自然等待十五分钟的边界测试。
 
-历史 KVM 产品方案保持 Proposed。本研究只提供 TCG 路线的实证，Chief 据结果裁定后续方案与放行；不提前取得 ARM64 裸机，也不自动解除 runner 注册或最终产品门禁。
+这是各架构一次完整通过的测量，不能据此承诺稳定性、最差耗时或最低设备。冷准备对 ARM64 的总预算影响较大；本轮 50 分钟探测、55 分钟 job 能完成这些研究项，但尚未叠加原生发行构建、全部错误/恢复、完整协议与安装升级测试。
+
+建议后续方案统一采用两架构原生 hosted runner 构建，QEMU TCG 完整 guest 做安装/重启验收，无需新增 ARM64 KVM 主机或注册 runner。该建议保持 Proposed，Chief 据本次实证裁定；不把研究结果改成产品放行。TCG guest 内的源码 `SystemSecretStore`/连接器消费、SEA/native 加载、最终无源码安装、升级卸载和完整 API/MCP/Skill 黄金路径仍未测，全部原断言保留。
 
 ## 检查、空间与收尾
 
 使用固定 `zh-tech-writing` 来源及 SKILL、manual-structure、typography。原创段落按短句、主动语态、单位、全角标点和中英文空格手检；autocorrect 未安装，不改上游原件。`check:integration-docs`、`ci:validate` 和现有 CI policy 测试已经实际通过，研究脚本按原 classifier 触发 full，不增加 prose 豁免。全量 Required CI 与研究 workflow 分别记录，研究结果不能代既有门禁。
 
-研究代码 `2c4d7dcca6a0975e6b5842fe22eadf65a5ac5376` 的 [Required CI](https://github.com/xurunxin/WorkMesh/actions/runs/38296559920)已成功，十一项 job 全部通过，含三系统连接器存储、源检查、DB/API/worker 集成、完整灾难恢复及协议 smoke。对应 [原始汇总 artifact](raw/required-ci-38296559920.zip)和 [本机检查/收尾记录](raw/local-checks-and-cleanup.zip)保留。文档与后续证据提交还须按 PR 的最新 HEAD 完成适用门禁，不能将这个祖先 HEAD 的成功写为后续 HEAD 已检查。
+研究代码 `2c4d7d…` 的 [Required CI](https://github.com/xurunxin/WorkMesh/actions/runs/38296559920)及预算修订后的 `df26e18864b34638fce0a25751c7060f249d1a3f` 的 [Required CI](https://github.com/xurunxin/WorkMesh/actions/runs/38301479818)均成功，十一项 job 全部通过，含三系统连接器存储、源检查、DB/API/worker 集成、完整灾难恢复及协议 smoke。对应 [原始汇总 artifact](raw/required-ci-38296559920.zip)、[本机检查/收尾记录](raw/local-checks-and-cleanup.zip)及[证据索引](evidence-index.json)保留。文档与后续证据提交还须按 PR 的最新 HEAD 完成适用门禁，不能将祖先 HEAD 的成功写为后续 HEAD 已检查。
 
 本机仅运行一个 guest；原件保全后按准确容器 ID、owner 和 exited 状态移除两只本任务容器及无消费者的私有卷。删除卷同时收尾该轮未清除的实验 keyring；不操作共享 PostgreSQL/Redis、其他项目、原策略拒目标或默认 builder。公共基础镜像和构建缓存不 prune。CI 在各独有 job 中保存容器 stop/remove 回执，测试服务由原生 runner 的 job 收尾。
+
+临时依赖收尾被执行策略拒绝，返回只有 `blocked by policy`，命令/返回中段本身截断，没有完整拒绝理由。拒绝发生在 CreateProcess 前，没有执行删除。`node_modules/yaml` junction、root node_modules、`scripts/ci-bootstrap/node_modules` 和 `.tmp/b-ship-tcg` 保留；其均为本任务创建的临时对象，未重试、拆批、改 shell/路径或绕过。原拒绝可见片段与 retained 账本随检查 zip 保全；不把 Docker 已收尾写成所有临时对象已清空。
 
 工具和基础镜像可按内容摘要复用，overlay、seed、固件变量、keyring、数据库和日志必须独有。当前 workflow 为冷启动测量，每轮重新下载 guest；共享只读 guest 缓存尚未实现，不能声称本轮已节省这些重复字节。空间预检同时计算工具镜像、基础盘、私有 overlay 和输出；8 GiB 是逻辑上限，实际分配、峰值 RSS 和两架构耗时须按运行回执比较。

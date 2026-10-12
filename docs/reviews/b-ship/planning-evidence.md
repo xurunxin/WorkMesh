@@ -4,6 +4,8 @@
 
 ## 历史文档准备记录
 
+本次研究的准确 HEAD/run/attempt、实测、首败与取消缺件见 [TCG 报告](tcg/report.md)及 [证据索引](tcg/evidence-index.json)。本人做原件交叉核对，不冒称正式独审。既有 CI 源码依赖安装实际编译 node-pty；没有执行发行封装或最终 SEA/无源码安装验收。下文的“只有 Markdown、未运行 CI/guest”等句子属于当时历史。
+
 本轮只执行文档准备。当前状态为 Proposed，正式独审与 Chief 产品放行待完成。零数据库迁移、零 API/事件变化、零产品代码或 CI 工作流变化；没有构建连接器发行物、创建 Linux guest 或执行设备安装。
 
 ## 平台输入与原件
