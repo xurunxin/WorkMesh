@@ -26,6 +26,14 @@ Lite 与生产说明都先指向上述步骤，再要求沿用原 project。API 
 
 本机 `node --test scripts/retire-legacy-web.test.mjs` 的 8 项安全正反例通过。既有 CI policy 20 项通过；Lite 自检 18 种违反合同的变体全部拒绝。JavaScript 语法、CI workflow 与发布 workflow 校验通过，`git diff --check` 通过。
 
+本机 `pnpm ci:test` 的 28 项通过，`pnpm ci:validate` 通过。`legacy-web-local.json` 保存真实 Docker 的定向退役、同端口重新绑定和卷内标记保留；本轮替代进程及私有卷均已核归属并清理，后置不存在成立。该回执仅使用 BusyBox HTTP 传输夹具，不代替两类真实 API/worker/MCP 部署验收。
+
 被审提交的 CI `38185745002` 已完成成功。它不包含本轮修订，不作为冷缓存或升级验收结果。修订后的完整镜像、冷缓存 `--env-file` 与两类原栈升级测试交最新适用 Required CI 执行，实际结果另行追加，未执行不标通过。
+
+提交 `969d0df1f2877f892212cc429bafd914536cce78` 的运行 `38186988150` 因随后保留非 Linux 命令兼容的修订而取消，不计通过。取消时源码 job 尚未执行开发镜像和部署步骤，没有创建这些步骤的 Docker 测试资源。Linux 必需源码 job 继续完整执行冷 registry 夹具；其他宿主明确记录未在本机执行该夹具，不冒冷缓存通过。
+
+提交 `f05651b7b6483fe113e1b999bbe9c8d47223e0c8` 的运行 `38187274436` 在冷缓存子流程失败，Required CI 正确拒绝。原 ZIP `11720670386.zip` 与 `deployment-failure-471.json` 保留首败：Lite 和私有生产安装均完成旧 Web 退役、同端口 API 接管、SQL 标记保留及真实接口验证；冷缓存子流程尚未进入安装，不标通过。
+
+失败原因为固定静态模式负例继承了父进程的 Coordination 开关。修订将该固定 Compose 夹具明确设为 `WORKMESH_BETA_COORDINATION_MCP: 'false'`；既有 Coordination 正例和真实部署模式保持。未拉取的测试别名按“已不存在”记录，不发起无效删除；创建和清理的不存在证明均核对 Docker 明确错误，不以任意非零退出冒不存在。后续完整运行继续要求冷缓存三镜像拉取和真实部署成功。
 
 中文修订按固定 `ffda9353768dece8aabd26ccb3a4978025e9437c` 的 zh-tech-writing、manual-structure 和 typography 手检。来源与哈希沿用已审 `sources/writing-skill.json`；没有全局安装。成果须再次独审，最终 head 的最新 Required CI 成功及实际主线合入之前不 Done。

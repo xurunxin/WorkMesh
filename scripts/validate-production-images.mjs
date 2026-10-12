@@ -440,6 +440,9 @@ const apiEnvironment = {
 }
 const composeEnvironment = {
   ...process.env,
+  // This fixture exercises the legacy static-token mode. A caller's live
+  // Coordination setting must not change its empty-credential negative case.
+  WORKMESH_BETA_COORDINATION_MCP: 'false',
   WORKMESH_API_IMAGE: imageReference('api', shaTag),
   WORKMESH_WORKER_IMAGE: imageReference('worker', shaTag),
   WORKMESH_MCP_IMAGE: imageReference('mcp', shaTag),

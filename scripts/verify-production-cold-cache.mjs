@@ -12,10 +12,10 @@ if (process.platform !== 'linux') throw Error('Cold registry deployment rehearsa
 const root = resolve(import.meta.dirname, '..')
 const runId = `workmesh-cold-${randomUUID().slice(0, 8)}`
 const evidence = resolve(root, process.env.WORKMESH_VALIDATION_OUTPUT ?? 'docs/reviews/backend-retirement/runs', runId)
-const { mkdirSync } = await import('node:fs'); mkdirSync(evidence, { recursive: true })
-const directory = mkdtempSync(join(tmpdir(), `${runId}-`))
 const images = JSON.parse(process.env.WORKMESH_COLD_SOURCE_IMAGES ?? 'null')
 if (!images || ['api', 'worker', 'mcp'].some(name => !images[name])) throw Error('Exact private production source images required')
+const { mkdirSync } = await import('node:fs'); mkdirSync(evidence, { recursive: true })
+const directory = mkdtempSync(join(tmpdir(), `${runId}-`))
 const sha = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim()
 const realDocker = spawnSync('which', ['docker'], { encoding: 'utf8' }).stdout.trim()
 const server = net.createServer(); await new Promise(done => server.listen(0, '127.0.0.1', done))
@@ -32,6 +32,7 @@ const command = (args, env = process.env, executable = realDocker) => {
   return result
 }
 const must = (args, env, executable) => { const result = command(args, env, executable); if (result.status !== 0) throw Error(`Cold registry command failed: ${args[0]}`); return result.stdout.trim() }
+const absent = (result, kind) => result.status !== 0 && new RegExp(`no such (?:object|${kind})|not found`, 'i').test(`${result.stdout}${result.stderr}`)
 let containerId, volumeCreated = false
 const volume = `${runId}-registry`
 const mappedReferences = []
@@ -39,7 +40,7 @@ try {
   // Task-specific names are checked before creating anything; shared base images
   // are borrowed and are never removed by this test.
   if (must(['ps', '-aq', '--filter', `name=^/${runId}$`])) throw Error('Registry name already used')
-  if (command(['volume', 'inspect', volume]).status === 0) throw Error('Registry volume already used')
+  if (!absent(command(['volume', 'inspect', volume]), 'volume')) throw Error('Registry volume absence unconfirmed')
   must(['pull', 'registry:2.8.3'])
   must(['volume', 'create', '--label', `workmesh.task=${runId}`, volume]); volumeCreated = true
   containerId = must(['run', '-d', '--name', runId, '--label', `workmesh.task=${runId}`,
@@ -89,20 +90,27 @@ try {
 finally {
   // Remove only aliases in this run's loopback namespace, never source images.
   for (const reference of mappedReferences) {
+    const inspection = command(['image', 'inspect', '--format', '{{.Id}}', reference])
+    if (absent(inspection, 'image')) { receipt.cleanup.push({ type: 'image-alias', reference, absent: true, removed: false, reason: '引用尚未拉取或已不存在' }); continue }
+    const expected = receipt.images.find(image => image.local === reference)
+    if (inspection.status !== 0 || (expected && inspection.stdout.trim() !== expected.sourceId)) throw Error('Private image alias identity unconfirmed')
     const result = command(['image', 'rm', reference]); receipt.cleanup.push({ type: 'image-alias', reference, code: result.status })
     if (result.status !== 0) process.exitCode = 1
   }
   if (containerId) {
     if (must(['inspect', '--format', '{{ index .Config.Labels "workmesh.task" }}', containerId]) !== runId) throw Error('Registry owner changed')
     must(['logs', containerId]); const result = command(['rm', '-f', containerId])
-    receipt.cleanup.push({ type: 'container', id: containerId, code: result.status, absent: command(['inspect', containerId]).status !== 0 })
+    const gone = absent(command(['inspect', containerId]), 'container')
+    receipt.cleanup.push({ type: 'container', id: containerId, code: result.status, absent: gone })
+    if (!gone) process.exitCode = 1
     if (result.status !== 0) process.exitCode = 1
   }
   if (volumeCreated) {
     if (must(['volume', 'inspect', '--format', '{{ index .Labels "workmesh.task" }}', volume]) !== runId
       || must(['ps', '-aq', '--filter', `volume=${volume}`])) throw Error('Registry volume still referenced or owner changed')
-    const result = command(['volume', 'rm', volume]); receipt.cleanup.push({ type: 'volume', name: volume,
-      code: result.status, absent: command(['volume', 'inspect', volume]).status !== 0 })
+    const result = command(['volume', 'rm', volume]); const gone = absent(command(['volume', 'inspect', volume]), 'volume')
+    receipt.cleanup.push({ type: 'volume', name: volume, code: result.status, absent: gone })
+    if (!gone) process.exitCode = 1
     if (result.status !== 0) process.exitCode = 1
   }
   if (!relative(realpathSync(tmpdir()), realpathSync(directory)).startsWith(`${runId}-`)) throw Error('Private directory boundary mismatch')
