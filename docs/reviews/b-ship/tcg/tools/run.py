@@ -76,7 +76,7 @@ def main():
             value = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             allowed = {"bootId", "uid", "arch", "kernel", "guestUtc", "dbusSessionPresent",
                        "secretBackend", "phase", "firstReadMatches", "persistentIdentity",
-                       "secretDigest", "secretMatches", "bootIdChanged", "errorType", "apiReplay"}
+                       "secretDigest", "secretMatches", "bootIdChanged", "errorType", "apiReplay", "secretServiceExecutable", "secretServiceUid"}
             if not isinstance(value, dict) or set(value) - allowed:
                 self.send_error(400)
                 return
@@ -92,7 +92,7 @@ def main():
     try:
         image = root / (options.arch + ".img")
         expected, machine_arch = IMAGES[options.arch]
-        url = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-" + options.arch + ".img"
+        url = "https://cloud-images.ubuntu.com/noble/20260926/noble-server-cloudimg-" + options.arch + ".img"
         if not image.exists():
             urllib.request.urlretrieve(url, image)
         actual = sha(image)

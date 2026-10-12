@@ -4,6 +4,7 @@ import { createServer } from 'node:http'
 import { writeFileSync } from 'node:fs'
 import { applyMigrations, createDb } from '../../../../../packages/db/src/index.js'
 import { loadFeatureConfig } from '../../../../../packages/config/src/index.js'
+import { AUTH_REPLAY_WINDOW_MS } from '../../../../../apps/api/src/auth-idempotency.js'
 
 const url = process.env.DATABASE_URL
 if (!url || new URL(url).pathname !== '/workmesh_tcg_test') throw new Error('private test database required')
@@ -60,9 +61,10 @@ const server = createServer(async (incoming, outgoing) => {
       firstResponse = response.body
       const row = (await db.query<{ id: string; created_at: Date; seconds: number; encrypted: boolean }>(
         "SELECT id,created_at,extract(epoch from replay_expires_at-created_at)::float AS seconds,replay_ciphertext IS NOT NULL AS encrypted FROM auth_idempotency_records WHERE operation='redeemAgentConnection' ORDER BY created_at DESC LIMIT 1")).rows[0]!
-      if (!row.encrypted || row.seconds !== 900) throw new Error('original encrypted replay window mismatch')
-      replayId = row.id; firstUtc = row.created_at.toISOString(); windowSeconds = row.seconds
+      if (!row.encrypted || AUTH_REPLAY_WINDOW_MS !== 900_000) throw new Error('original encrypted replay window mismatch')
+      replayId = row.id; firstUtc = row.created_at.toISOString(); windowSeconds = AUTH_REPLAY_WINDOW_MS / 1000
       safeResults.push({ phase: 'first-redeem', status: 200, encrypted: true, windowSeconds, utc: firstUtc,
+        observedRowWindowSeconds: row.seconds,
         requestDigest: hash(JSON.stringify(saved)), responseDigest: hash(firstResponse) })
       outgoing.setHeader('content-type', 'application/json')
       outgoing.end(JSON.stringify({ request: saved, firstResponseDigest: hash(firstResponse) }))

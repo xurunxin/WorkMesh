@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import time
@@ -44,6 +45,16 @@ def main():
         "dbusSessionPresent": bool(os.environ.get("DBUS_SESSION_BUS_ADDRESS")),
         "secretBackend": "gnome-keyring/Secret Service",
     }
+    owner = command(["dbus-send", "--session", "--print-reply", "--dest=org.freedesktop.DBus",
+                     "/org/freedesktop/DBus", "org.freedesktop.DBus.GetConnectionUnixProcessID",
+                     "string:org.freedesktop.secrets"]).decode()
+    service_pid = int(re.search(r"uint32\s+(\d+)", owner).group(1))
+    service_exe = str((Path("/proc") / str(service_pid) / "exe").resolve())
+    if not service_exe.endswith("/gnome-keyring-daemon"):
+        raise RuntimeError("unexpected Secret Service owner")
+    if (Path("/proc") / str(service_pid)).stat().st_uid != os.getuid():
+        raise RuntimeError("Secret Service owner differs")
+    common.update(secretServiceExecutable=service_exe, secretServiceUid=os.getuid())
     if not MARKER.exists():
         secret = (json.dumps(api("start", {})).encode() if os.environ.get("TCG_API_PROBE") == "1"
                   else os.urandom(32).hex().encode())

@@ -40,3 +40,7 @@ docs/reviews/b3/sources/injected-source.jsonl -text
 docs/reviews/b3/sources/policy-rejection.jsonl -text
 docs/reviews/b3/sources/platform-todo-read.json -text
 docs/reviews/b3/product-revision/*.zip -text
+
+# TCG 研究运行原件与完整输入保持字节；不扩大源码空白豁免。
+docs/reviews/b-ship/tcg/raw/*.zip -text
+docs/plan/b-ship/tcg/current-spec.md -text
