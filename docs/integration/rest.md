@@ -107,3 +107,7 @@ SSE（Server-Sent Events，服务器发送事件）入口为 `GET /api/v1/events
 `CURSOR_EXPIRED` 或 resync 要求重新读取授权快照，再恢复监听。Webhook 接收器对原始请求字节核 HMAC 与时间窗口，及时 ACK，并持久去重 delivery ID。HMAC 的全称为 Hash-based Message Authentication Code，中文为“基于哈希的消息认证码”。不要等待模型执行才确认投递。
 
 通知链接使用 `GET /api/v1/human-attention/{id}` 或 `GET /api/v1/notifications`，返回实时 Human 鉴权的 JSON。链接不包含凭据，转发链接不授予读取权。Web Push 只保留服务端合同；外部客户端自行实现订阅消费。企业微信需要现有开关、Redis、HTTPS 和显式目标授权；正式外发另行批准。
+
+## 接入错误
+
+配对和 enrollment 兑换失败返回双恢复指令。`error.supported_clients` 只表示部署支持；slug 绑定和 policy 授权仍由服务端检查。类型不匹配保留原错误码，用 `details.reason` 区分原因。按[错误与恢复](troubleshooting.md)处理，不直接修改已冻结 pending。

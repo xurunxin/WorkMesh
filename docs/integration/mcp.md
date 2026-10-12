@@ -68,3 +68,7 @@ E 读取 Session 的 tool alias 为 `get_agent_session`、`get_session_context` 
 manifest 不可读时保留原拒绝，不用缓存降级。受保护 401/403、撤权、Stop 和角色拒绝不能靠刷新或换身份重试。`ack_agent_session`、`heartbeat` 与 `stop_ack` 有既有生命周期入口，详见[恢复说明](troubleshooting.md)。
 
 HTTP 每请求重建 client。C 在 Stop 后不能假定仍持有上次目标 E，也不能 refresh 出新 E。受控 Runner 持原有效 E Token 执行 Stop 清理协议。安装用途的 `get_session_execution_result` 用原 action/key 确认准确终态结果，不恢复执行。
+
+## 接入拒绝的恢复字段
+
+SDK 收到 API 的接入拒绝后，将双指令和支持类型保存在 `WorkMeshSdkError.recovery`。MCP 输出前再次按错误码、安全原因和本地目录核对字段。非法新增字段丢弃，原错误保留。MCP 工具失败把通过校验的字段放进 `structuredContent.error` 和文本错误，保留 `correlationId`、`details`、适用的 `currentRevision` 与原 `safeNextAction`。客户端先判断 `isError`，再按[恢复指令](troubleshooting.md)处理。旧响应缺字段时仍保留原拒绝；指令不触发身份刷新、自动恢复或新调用。

@@ -99,6 +99,7 @@
 | 0075 | Verifiable and simplified agent connection onboarding | Proposed | [`0075-verifiable-and-simplified-agent-connection-onboarding.md`](./0075-verifiable-and-simplified-agent-connection-onboarding.md) |
 | 0076 | China-ecosystem ingress, channel delivery contract, and model presets | Proposed | [`0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md`](./0076-china-ecosystem-ingress-channel-delivery-contract-and-model-presets.md) |
 | 0077 | Reference-derived visual system, card anatomy, and workbench layout | Proposed | [`0077-reference-derived-visual-system-and-workbench-layout.md`](./0077-reference-derived-visual-system-and-workbench-layout.md) |
+| 0088 | 接入错误恢复字段与客户端消费 | Accepted（正式方案复审及随后单独放行）（已确认方案，实施验收另核） | [`0088-agent-connection-error-recovery.md`](./0088-agent-connection-error-recovery.md) |
 
 ## 标记了继承/扩展关系的新 ADR
 

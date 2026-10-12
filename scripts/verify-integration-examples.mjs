@@ -65,6 +65,13 @@ const wait = async check => {
   }
   throw new Error('独有测试服务未 ready')
 }
+const objectStoreReady = async () => {
+  const controller = new AbortController()
+  // 保留有引用的截止计时器，避免冷启动 fetch 未完成时 Node 提前退出，跳过 finally 收尾。
+  const deadline = setTimeout(() => controller.abort(), 1_000)
+  try { return (await fetch(env.S3_ENDPOINT + '/health/ready', { signal: controller.signal })).ok }
+  finally { clearTimeout(deadline) }
+}
 const run = async (label, args) => {
   const begin = new Date().toISOString()
   const child = spawn(process.execPath, [pnpm, ...args], { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'] })
@@ -92,7 +99,7 @@ try {
     env.S3_ENDPOINT = `http://127.0.0.1:${s3.hostPort}`
     env.S3_BUCKET = 'workmesh-artifacts'; env.S3_REGION = 'us-east-1'; env.S3_ACCESS_KEY_ID = 'workmesh'
     env.S3_SECRET_ACCESS_KEY = s3Password; env.S3_FORCE_PATH_STYLE = 'true'
-    await wait(async () => (await fetch(env.S3_ENDPOINT + '/health/ready')).ok)
+    await wait(objectStoreReady)
     await run('artifact-bucket', ['-C', 'packages/artifact-storage', 'exec', 'node', '--input-type=module', '-e',
       'import {S3Client,CreateBucketCommand,HeadBucketCommand} from "@aws-sdk/client-s3"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log("owned artifact bucket ready");'])
     if (recovery) {

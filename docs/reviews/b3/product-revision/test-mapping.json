@@ -1,0 +1,178 @@
+{
+  "task": "6EzX6xCA-_m72aQU1BEHX",
+  "resultsArePerRun": "当前组合本地回归通过，准确命令、结果及 skip 见 verification-results.json；最终准确 head 的远端 CI 与成果独审待执行。",
+  "cases": [
+    {
+      "source": "todo-7-T1",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 接入错误逐码提供双恢复指令"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "todo-7-T2",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 ENDPOINT 桶按 operationId 隔离",
+        "B3 SUBJECT 桶按 operationId 隔离",
+        "B3 失败退避按 operationId 隔离"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "todo-7-T3",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 CLIENT_IP 桶同时限制两种兑换",
+        "B3 SOCKET 桶同时限制两种兑换"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "todo-7-T4",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 wrong code 分别核 attempts",
+        "B3 wrong slug 分别核 attempts",
+        "B3 known wrong type 分别核 attempts",
+        "B3 invalid enum 分别核 attempts",
+        "B3 第八次身份猜测后锁定，后续拒绝不再增加 attempts",
+        "B3 同时猜错 slug 和类型先报告 slug 且只增加一次 attempts"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "todo-7-T5",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 429 保留 Retry-After 与恢复指令，store 故障失败关闭且无兑换副作用"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "R1-7-2",
+      "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+      "caseNames": [
+        "B3 恢复信息不泄露凭据或其他连接身份"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "R1-7-4,R1-7-9",
+      "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+      "caseNames": [
+        "B3 同 key 同体重放保持原响应，同 key 异体拒绝且带恢复指令，API 重启后准确重放仍成立"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "R1-7-6",
+      "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+      "caseNames": [
+        "B3 兑换写入失败完整回滚并保留安全指令"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "client-sdk",
+      "file": "packages/agent-sdk/src/index.test.ts",
+      "caseNames": [
+        "B3 恢复字段完整传递且旧错误兼容：true",
+        "B3 恢复字段完整传递且旧错误兼容：false",
+        "B3 非法恢复字段不覆盖原拒绝或触发新重试"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "client-mcp",
+      "file": "apps/mcp/src/index.test.ts",
+      "caseNames": [
+        "B3 恢复字段完整传递且旧错误兼容：true",
+        "B3 恢复字段完整传递且旧错误兼容：false"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "client-cli",
+      "file": "apps/connector/src/connect.test.ts",
+      "caseNames": [
+        "B3 CLI 展示双指令且不泄密",
+        "B3 上游自由指令被拒绝且原错误码保留"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "client-native-cli",
+      "file": "apps/connector/integration/cli.test.ts",
+      "caseNames": [
+        "B3 实际 CLI 展示恢复指令、保留 pending 且拒绝秘密文本"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "documentation-contract",
+      "file": "packages/contracts/src/stage5-contracts.test.ts",
+      "caseNames": [
+        "B3 文档恢复示例符合接入错误契约",
+        "B3 OpenAPI 专用失败响应要求双指令并保留限流响应头"
+      ],
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "review-blocking-3",
+      "file": "packages/agent-sdk/src/index.test.ts",
+      "caseNames": [
+        "B3 合法原因与目录指令完整保留：%s",
+        "B3 目录外自由指令和控制串被拒绝且原错误保留：$name",
+        "B3 非法指令不改变 Retry-After 和原重试预算"
+      ],
+      "assertions": "自由指令、控制串、reason 错配、列表错配均不进入 recovery；code/message/details/correlationId/retry 和原预算保持。",
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "review-blocking-3",
+      "file": "apps/mcp/src/index.test.ts",
+      "caseNames": [
+        "B3 直接构造 SDK 异常也须核对恢复目录：$name",
+        "B3 普通业务拒绝继续使用 safeNextAction 与 currentRevision"
+      ],
+      "assertions": "文本和 structuredContent.error 都没有非法新增字段；safeNextAction/currentRevision 和原错误保留，合法指令一致。",
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "review-blocking-4",
+      "file": "apps/connector/src/connect.test.ts",
+      "caseNames": [
+        "B3 Retry-After 只接受安全秒数或规范 HTTP-date：%s",
+        "B3 终端只展示安全等待秒数，毫秒向上取整且非法值保持未知"
+      ],
+      "assertions": "固定时钟覆盖整数秒、GMT 日期、过期归零、缺失、负值、溢出和控制串；不回显非法头，不添加重试。",
+      "result": "本轮本地回归通过，verification-results.json 及 ZIP 中准确运行原件核验；不是远端 Required CI 或独审接受。"
+    },
+    {
+      "source": "review-blocking-4",
+      "file": "apps/connector/integration/cli.test.ts",
+      "caseNames": [
+        "B3 实际 CLI 429 展示有效等待、拒绝非法头且保留 pending",
+        "B3 实际 CLI 503 展示有效等待、拒绝非法头且保留 pending"
+      ],
+      "assertions": "真实子进程分别返回 429/503 和已知 Retry-After；输出实际等待秒数，无自动请求，pending/key/正文/上下文及旧配置字节不变；非法或缺失头明确停止重试。",
+      "result": "本机 Windows 实际 2/2 通过，完整 cli.test.ts 4/4 通过；系统矩阵待 Required CI"
+    }
+  ],
+  "nineCategories": {
+    "happy path": "todo-7-T1及客户端实收",
+    "unauthorized actor": "R1-7-2及capability拒绝",
+    "invalid state transition": "todo-7-T4及过期/已消费/锁定",
+    "duplicate idempotency key": "R1-7-4",
+    "stale revision": "不适用：没有新增revisioned资源",
+    "transaction failure": "R1-7-6和store故障",
+    "webhook/job replay": "不适用：没有新增job或webhook",
+    "concurrent request": "todo-7-T2/T3真实Redis跨实例并发",
+    "server restart/outbox recovery": "R1-7-9重启重放，R1-7-6事务outbox回滚"
+  },
+  "plan": "docs/plan/b3-connection-error-recovery-active.md",
+  "main": "abf6813a439feab4b17b0602cc9295216634586e",
+  "gate": "已获 Chief 产品修订放行；最终成果待独审与准确 head Required CI"
+}

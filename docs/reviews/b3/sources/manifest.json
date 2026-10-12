@@ -1,0 +1,42 @@
+{
+  "task": "6EzX6xCA-_m72aQU1BEHX",
+  "savedPlanDoc": "doc:jvYs_ntDOENgE2b43I54n",
+  "binding": "文档 ID 来自完整当前规格；正文来自本轮完整注入副本，原始用户记录逐字保全。不是截断的 todos Saved plan 前缀。平台未提供文档版本或上游哈希，不推断。",
+  "localRuntimeSource": "I:\\tds_workspace\\codex-home\\sessions\\2026\\10\\12\\rollout-2026-10-12T01-31-32-01a12c05-107a-7c51-814b-2be690f10195.jsonl",
+  "userRecordLine": 2062,
+  "policyRecordLines": [
+    1837,
+    1839
+  ],
+  "policyCallId": "call_6af6c866402249779b0c44aecc84cef2",
+  "policyReturnLimit": "原始返回自身含 2339 chars truncated 标记；底层未截断返回和具体策略理由不可得。保留实际返回，不补造。",
+  "currentSpecComparison": "平台 Spec 段等于注入正文加一个末尾 LF；正文逐字一致，两个原件均保留。",
+  "savedPlanComparison": "旧方案文件等于原正文加一个末尾 LF；原文件保留不变。",
+  "files": [
+    {
+      "path": "docs/reviews/b3/sources/current-spec.md",
+      "bytes": 13940,
+      "sha256": "0dfb84866d6e46dd60917b2a3fd7d1a981c3ad44868a6f9a290b3c3a8dc3379e"
+    },
+    {
+      "path": "docs/reviews/b3/sources/saved-plan-jvys.md",
+      "bytes": 10909,
+      "sha256": "926ff3262a7eb240282762080b86cf3de7f24d4fefba22d0645a6f98ed921cc9"
+    },
+    {
+      "path": "docs/reviews/b3/sources/injected-source.jsonl",
+      "bytes": 34790,
+      "sha256": "b33c1960eb36069413dddeafe2418962d24fd5a10b8b1182f97592ef03ec3ea5"
+    },
+    {
+      "path": "docs/reviews/b3/sources/policy-rejection.jsonl",
+      "bytes": 5097,
+      "sha256": "e83b5e3f9bc358d6480ac5af9bcaffbda8a721c08cd82ff726d51021c5c27dd1"
+    },
+    {
+      "path": "docs/reviews/b3/sources/platform-todo-read.json",
+      "bytes": 15241,
+      "sha256": "01175c37ca82692ac412d0ab672d6e08f4b3ae4ded58f2cec0555ce1dcc740f7"
+    }
+  ]
+}

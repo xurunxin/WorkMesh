@@ -1,0 +1,71 @@
+{
+  "owner": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44",
+  "sourceHead": "abf6813a439feab4b17b0602cc9295216634586e",
+  "sourceBinding": "运行时使用当前工作树，文件哈希另由交付记录绑定",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "containers": [
+    {
+      "name": "pg",
+      "id": "ed5e23dd7fecdda701bd9363a23090eca09d497b6d3066037dce5110954900ad",
+      "image": "postgres:16.9-alpine"
+    },
+    {
+      "name": "redis",
+      "id": "3664865ee8b2629eb022fadcb966ecb04d0441cb89b944df9a24681c60e3f15f",
+      "image": "redis:7.4.5-alpine"
+    },
+    {
+      "name": "s3",
+      "id": "cb065bd4546a03e85c5a1498ad3145c28e3a885ba4fa34e590135690e6153a3d",
+      "image": "rustfs/rustfs:1.0.0"
+    }
+  ],
+  "volumes": [
+    "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-pg-data",
+    "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-redis-data",
+    "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-s3-data"
+  ],
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-12T06:02:24.943Z",
+      "endedAt": "2026-10-12T06:02:47.622Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "cb065bd4546a03e85c5a1498ad3145c28e3a885ba4fa34e590135690e6153a3d",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "3664865ee8b2629eb022fadcb966ecb04d0441cb89b944df9a24681c60e3f15f",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "ed5e23dd7fecdda701bd9363a23090eca09d497b6d3066037dce5110954900ad",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-5199d2e2-6730-4461-8804-7d092e3ceb44-s3-data",
+      "absent": true
+    }
+  ]
+}

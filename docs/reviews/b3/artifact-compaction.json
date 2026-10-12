@@ -1,0 +1,49 @@
+{
+  "status": "工具策略拒绝，原目录保留",
+  "execution": "CreateProcess 阶段拒绝，删除命令未执行",
+  "reportedReason": "blocked by policy；原始返回自身含截断标记，具体策略理由未知。",
+  "deletedFiles": 0,
+  "retries": 0,
+  "permissionOrAttributeChanges": false,
+  "archives": [
+    "early-verification-originals.zip",
+    "runtime-originals.zip"
+  ],
+  "archiveIndexBytesVerified": true,
+  "archiveMembersVerified": true,
+  "retainedDirectories": [
+    "docs/reviews/b3/local-required-1",
+    "docs/reviews/b3/local-required-2",
+    "docs/reviews/b3/local-required-3",
+    "docs/reviews/b3/local-required-4",
+    "docs/reviews/b3/local-integration-5",
+    "docs/reviews/b3/local-recovery",
+    "docs/reviews/b3/local-recovery-2",
+    "packages/conformance/conformance-results"
+  ],
+  "safeDelivery": "提交 ZIP、逐成员原字节哈希和可审结果；仅用精确 ignore 规则排除已归档生成副本，不删除、移动、改权限或拆批重试。",
+  "ownershipCorrection": {
+    "path": "packages/conformance/conformance-results",
+    "trackedFiles": [
+      "junit.xml",
+      "report.json",
+      "transcript.md"
+    ],
+    "classification": "既有已跟踪成果，当前输出字节未改变；不是本人新增临时目录，不应列入删除清单",
+    "action": "保持原状"
+  },
+  "retainedOwnedRuntimeDirectories": [
+    "docs/reviews/b3/local-required-1",
+    "docs/reviews/b3/local-required-2",
+    "docs/reviews/b3/local-required-3",
+    "docs/reviews/b3/local-required-4",
+    "docs/reviews/b3/local-integration-5",
+    "docs/reviews/b3/local-recovery",
+    "docs/reviews/b3/local-recovery-2"
+  ],
+  "allFilesystemCleanupStoppedAfterPolicyRejection": true,
+  "rawEvidence": "sources/policy-rejection.jsonl",
+  "sourceBinding": "policy-rejection-source.json",
+  "originalReturnCompleteness": "工具实际返回完整保留；底层被截断的命令回显未补造。",
+  "amendment": "本文件更正历史记录并补充原始来源；final-audit.zip 内旧文件保留原字节，不覆盖历史归档。"
+}

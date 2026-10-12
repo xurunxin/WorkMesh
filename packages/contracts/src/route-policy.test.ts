@@ -216,11 +216,12 @@ describe('routePolicyManifest', () => {
           ]
         : securityFor(route.authentication))
       if (route.credentialRateLimit === 'shared_redis') {
+        const connectionIngress = ['redeemAgentConnection', 'redeemAgentEnrollment'].includes(route.operationId)
         expect(operation).toMatchObject({
           'x-workmesh-auth-rate-limit': 'shared_redis',
           responses: {
-            '429': { $ref: '#/components/responses/AuthRateLimited' },
-            '503': { $ref: '#/components/responses/AuthRateLimitUnavailable' },
+            '429': { $ref: connectionIngress ? '#/components/responses/AgentConnectionRateLimited' : '#/components/responses/AuthRateLimited' },
+            '503': { $ref: connectionIngress ? '#/components/responses/AgentConnectionRateLimitUnavailable' : '#/components/responses/AuthRateLimitUnavailable' },
           },
         })
       } else {

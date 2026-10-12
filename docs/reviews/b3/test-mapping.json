@@ -1,0 +1,147 @@
+{
+  "task": "6EzX6xCA-_m72aQU1BEHX",
+  "resultsArePerRun": "最终本地结果见 verification-results.json；原失败和复验分别保留，远端 CI/独审不预填通过",
+  "cases": [
+    {
+      "source": "todo-7-T1",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 接入错误逐码提供双恢复指令"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "todo-7-T2",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 ENDPOINT 桶按 operationId 隔离",
+        "B3 SUBJECT 桶按 operationId 隔离",
+        "B3 失败退避按 operationId 隔离"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "todo-7-T3",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 CLIENT_IP 桶同时限制两种兑换",
+        "B3 SOCKET 桶同时限制两种兑换"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "todo-7-T4",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 wrong code 分别核 attempts",
+        "B3 wrong slug 分别核 attempts",
+        "B3 known wrong type 分别核 attempts",
+        "B3 invalid enum 分别核 attempts",
+        "B3 第八次身份猜测后锁定，后续拒绝不再增加 attempts",
+        "B3 同时猜错 slug 和类型先报告 slug 且只增加一次 attempts"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "todo-7-T5",
+      "file": "apps/api/integration/auth-rate-limit.integration.test.ts",
+      "caseNames": [
+        "B3 429 保留 Retry-After 与恢复指令，store 故障失败关闭且无兑换副作用"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "R1-7-2",
+      "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+      "caseNames": [
+        "B3 恢复信息不泄露凭据或其他连接身份"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "R1-7-4,R1-7-9",
+      "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+      "caseNames": [
+        "B3 同 key 同体重放保持原响应，同 key 异体拒绝且带恢复指令，API 重启后准确重放仍成立"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "R1-7-6",
+      "file": "apps/api/integration/stage5-agent-connections.integration.test.ts",
+      "caseNames": [
+        "B3 兑换写入失败完整回滚并保留安全指令"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "client-sdk",
+      "file": "packages/agent-sdk/src/index.test.ts",
+      "caseNames": [
+        "B3 恢复字段完整传递且旧错误兼容：true",
+        "B3 恢复字段完整传递且旧错误兼容：false",
+        "B3 非法恢复字段不覆盖原拒绝或触发新重试"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "client-mcp",
+      "file": "apps/mcp/src/index.test.ts",
+      "caseNames": [
+        "B3 恢复字段完整传递且旧错误兼容：true",
+        "B3 恢复字段完整传递且旧错误兼容：false"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "client-cli",
+      "file": "apps/connector/src/connect.test.ts",
+      "caseNames": [
+        "B3 CLI 展示双指令且不泄密",
+        "B3 上游自由指令被拒绝且原错误码保留"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "client-native-cli",
+      "file": "apps/connector/integration/cli.test.ts",
+      "caseNames": [
+        "B3 实际 CLI 展示恢复指令、保留 pending 且拒绝秘密文本"
+      ],
+      "result": "当前 Windows 原生 CLI 定向 2/2 通过，完整系统矩阵待 Required CI",
+      "verification": "verification-results.json"
+    },
+    {
+      "source": "documentation-contract",
+      "file": "packages/contracts/src/stage5-contracts.test.ts",
+      "caseNames": [
+        "B3 文档恢复示例符合接入错误契约",
+        "B3 OpenAPI 专用失败响应要求双指令并保留限流响应头"
+      ],
+      "result": "本地已通过；按 verification-results.json 指向的实际单元、完整集成与示例原件核验",
+      "verification": "verification-results.json"
+    }
+  ],
+  "nineCategories": {
+    "happy path": "todo-7-T1及客户端实收",
+    "unauthorized actor": "R1-7-2及capability拒绝",
+    "invalid state transition": "todo-7-T4及过期/已消费/锁定",
+    "duplicate idempotency key": "R1-7-4",
+    "stale revision": "不适用：没有新增revisioned资源",
+    "transaction failure": "R1-7-6和store故障",
+    "webhook/job replay": "不适用：没有新增job或webhook",
+    "concurrent request": "todo-7-T2/T3真实Redis跨实例并发",
+    "server restart/outbox recovery": "R1-7-9重启重放，R1-7-6事务outbox回滚"
+  }
+}

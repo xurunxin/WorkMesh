@@ -27,3 +27,14 @@ test-results
 /backups/
 /workmesh-*.sql
 /acceptance-*-backup.sql
+
+# B3 运行原件已按成员哈希保全到 ZIP；策略拒绝收尾的本机副本保留。
+/docs/reviews/b3/local-required-[1-4]/**
+!/docs/reviews/b3/local-required-[1-4]/results.json
+/docs/reviews/b3/local-integration-5/**
+!/docs/reviews/b3/local-integration-5/results.json
+/docs/reviews/b3/local-recovery/**
+!/docs/reviews/b3/local-recovery/results.json
+/docs/reviews/b3/local-recovery-2/**
+!/docs/reviews/b3/local-recovery-2/results.json
+/docs/reviews/b3/product-revision/local-checks/*.log

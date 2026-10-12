@@ -1,0 +1,153 @@
+{
+  "baselineHead": "ad185621359282fae6a874939ef72d9424dc3864",
+  "sourceBinding": "运行当前工作树，准确产品 Git blob 见 source-files.json；baseline 仅是运行前已提交 head。",
+  "checks": [
+    {
+      "command": "pnpm lint",
+      "startedAt": "2026-10-12T09:49:35.5238266Z",
+      "finishedAt": "2026-10-12T09:51:21.1634448Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\lint.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm typecheck",
+      "startedAt": "2026-10-12T09:51:21.2437431Z",
+      "finishedAt": "2026-10-12T09:53:07.7836049Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\typecheck.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm test",
+      "startedAt": "2026-10-12T09:53:07.7914659Z",
+      "finishedAt": "2026-10-12T09:58:40.4888929Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\test.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm build",
+      "startedAt": "2026-10-12T09:58:40.4944315Z",
+      "finishedAt": "2026-10-12T09:59:05.3157699Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\build.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm check:integration-docs",
+      "startedAt": "2026-10-12T09:59:05.3238094Z",
+      "finishedAt": "2026-10-12T09:59:07.6608667Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\check-integration-docs.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm ci:test",
+      "startedAt": "2026-10-12T09:59:07.6687255Z",
+      "finishedAt": "2026-10-12T09:59:12.2734899Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\ci-test.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "startedAt": "2026-10-12T09:59:13.8171205Z",
+      "finishedAt": "2026-10-12T09:59:17.8047273Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\ci-validate.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm check:route-policy",
+      "startedAt": "2026-10-12T09:59:17.8122424Z",
+      "finishedAt": "2026-10-12T09:59:21.5567156Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\check-route-policy.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm smoke:agents:ci",
+      "startedAt": "2026-10-12T09:59:21.5642197Z",
+      "finishedAt": "2026-10-12T09:59:29.2493611Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\smoke-agents-ci.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    },
+    {
+      "command": "pnpm test:conformance",
+      "startedAt": "2026-10-12T09:59:29.2556354Z",
+      "finishedAt": "2026-10-12T09:59:33.0800915Z",
+      "exitCode": 0,
+      "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\test-conformance.log",
+      "node": "22.19.0",
+      "pnpm": "9.15.4"
+    }
+  ],
+  "integrationChecks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-12T09:52:09.557Z",
+      "endedAt": "2026-10-12T09:52:38.013Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-12T09:52:47.589Z",
+      "endedAt": "2026-10-12T09:52:49.153Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-12T09:52:49.155Z",
+      "endedAt": "2026-10-12T10:36:58.042Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-conformance",
+      "command": "pnpm test:conformance",
+      "startedAt": "2026-10-12T10:36:58.045Z",
+      "endedAt": "2026-10-12T10:37:10.372Z",
+      "exitCode": 0
+    }
+  ],
+  "nativeCli": {
+    "command": "pnpm --filter @workmesh/connector test:platform integration/cli.test.ts",
+    "exitCode": 0,
+    "testsPassed": 4,
+    "platform": "win32",
+    "matrix": "其余系统与完整 native 平台套件待准确 head Required CI"
+  },
+  "counts": {
+    "unitTasksSuccessful": 31,
+    "unitTasksTotal": 31,
+    "buildTasksSuccessful": 17,
+    "buildCacheHits": 14,
+    "dbIntegrationPassed": 81,
+    "apiIntegrationPassed": 320,
+    "apiIntegrationSkipped": 1,
+    "conformanceIntegrationPassed": 96,
+    "workerIntegrationPassed": 147,
+    "workerIntegrationSkipped": 1,
+    "recoveryIntegrationSkipped": 1,
+    "memoryConformance": "6/6 通过"
+  },
+  "firstFailure": "首次定向 270 通过/1 失败，JSON 缺失 reason 与显式 undefined 的新增断言不符；修正预期后全仓单元 31/31 成功。首败原件在 verification-originals.zip。",
+  "remoteCI": "待创建 PR 后在最终准确 head 执行 Required CI；该状态不等于完成。",
+  "cleanup": "cleanup.json",
+  "originals": "archive-manifest.json",
+  "unmeasured": "本地根 integration 的 recovery opt-in 跳过，如实保留；实际 Required recovery job 及完整 native OS 矩阵待远端 CI。",
+  "changes": "无迁移、DB/事件/job、限流架构、operationId/IP/socket 预算或服务端 replay 改动。"
+}

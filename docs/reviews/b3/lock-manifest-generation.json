@@ -1,0 +1,6 @@
+{
+  "generator": "UPDATE_AGENT_LOCK_MANIFEST=1 pnpm -C packages/db exec vitest run src/agent-lock-order-inventory.test.ts -t manifests",
+  "rankedStatements": 115,
+  "sqlHashesOwnersRanksExemptionsUnchanged": true,
+  "normalCheck": "见 .tmp/b3-lock-manifest-check.log；更新开关已移除"
+}

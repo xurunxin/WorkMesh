@@ -1,0 +1,25 @@
+{
+  "archive": "final-audit.zip",
+  "archiveSha256": "edce59228e595ef5be1b61e827c64527db235b432ca3a0186450681ead0eb03e",
+  "members": [
+    {
+      "source": ".tmp/b3-ci-validate-final.log",
+      "member": ".tmp/b3-ci-validate-final.log",
+      "bytes": 4601,
+      "sha256": "8982080c070fcc89c483b97c3f73e8fc0f1688d86ded16741fe45f03f32c1324"
+    },
+    {
+      "source": "docs/reviews/b3/docker-absence.json",
+      "member": "docs/reviews/b3/docker-absence.json",
+      "bytes": 17007,
+      "sha256": "13dc080c4b757f26bdb398aff7a2d7ef5bb4dee1105532fd0f0db531d6346572"
+    },
+    {
+      "source": "docs/reviews/b3/artifact-compaction.json",
+      "member": "docs/reviews/b3/artifact-compaction.json",
+      "bytes": 1750,
+      "sha256": "82b5eb4ed5772a48450fb625a348d05ac1414ffda3e62c8707779b6b92c005f9"
+    }
+  ],
+  "note": "最终 CI 配置复验、Docker 缺失证明和策略拒绝/归属纠正原件的准确字节。"
+}

@@ -1,0 +1,40 @@
+{
+  "owner": "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb",
+  "sourceHead": "abf6813a439feab4b17b0602cc9295216634586e",
+  "sourceBinding": "运行时使用当前工作树，文件哈希另由交付记录绑定",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "containers": [
+    {
+      "name": "pg",
+      "id": "364189647b99c8532d972015be707fd970c1e7c831fd3edc8bf87ac79f9dd556",
+      "image": "postgres:16.9-alpine"
+    },
+    {
+      "name": "redis",
+      "id": "f701d330a941544a821db79783f555b1acdc695aecb08fd67dae02e360add256",
+      "image": "redis:7.4.5-alpine"
+    },
+    {
+      "name": "s3",
+      "id": "39a36ab7df96e18cc2c2a28fa558c7d3dc7b5760135956473755736a5e44c0b6",
+      "image": "rustfs/rustfs:1.0.0"
+    }
+  ],
+  "volumes": [
+    "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-pg-data",
+    "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-redis-data",
+    "workmesh-docs-163c8371-7ad8-4b01-84db-f4cdb6cf06eb-s3-data"
+  ],
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-12T06:52:27.585Z",
+      "endedAt": "2026-10-12T06:52:52.541Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": []
+}

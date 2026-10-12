@@ -30,3 +30,13 @@ docs/reviews/b1-b2/blueberry-recovery/ci*-artifacts/*/connector-cleanup.json -te
 # 开发镜像构建登记/清理原件同样保持原字节，仅允许真实CR行尾。
 docs/reviews/b1-b2/blueberry-recovery/development-images/wm-connector-dev-*/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/reviews/b1-b2/blueberry-recovery/ci*-development-artifacts/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# B3 运行原件压缩包保持准确字节，不转换换行。
+docs/reviews/b3/*.zip -text
+# B3 来源原件按 UTF-8 原字节保全，末尾 LF 差异单独登记。
+docs/reviews/b3/sources/current-spec.md -text
+docs/reviews/b3/sources/saved-plan-jvys.md -text
+docs/reviews/b3/sources/injected-source.jsonl -text
+docs/reviews/b3/sources/policy-rejection.jsonl -text
+docs/reviews/b3/sources/platform-todo-read.json -text
+docs/reviews/b3/product-revision/*.zip -text

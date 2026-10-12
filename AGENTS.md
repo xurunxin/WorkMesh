@@ -52,6 +52,12 @@ pnpm test:conformance
 
 Do not claim completion while a required check is failing.
 
+## 审查范围
+
+方案与成果审查只检查、报告和推进 P0/P1 问题。P2 及更细节问题不作为审查建议、返工或合入阻断，不为其追加审查轮次。按具体影响判级，旧 blocking/high 标签不自动等同 P0/P1，资料或流程细节不能单独抬高等级。
+
+任务授权、必需 CI 和真实验收要求继续生效。只有符合 P0/P1 影响的问题才进入审查修复；必需检查失败或必需实测未完成，仍不能合入。
+
 ## Domain invariants
 
 - Humans, agents, and services are distinct actor kinds.

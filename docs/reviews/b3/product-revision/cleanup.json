@@ -1,0 +1,939 @@
+{
+  "owner": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361",
+  "dockerObjects": [
+    {
+      "kind": "container",
+      "identity": "8f76d21be64b93b9cabac75d1df1e8aea9fe90ccbba5cda111a0e61a4c2a3583",
+      "exitCode": 1,
+      "result": "error: no such object: 8f76d21be64b93b9cabac75d1df1e8aea9fe90ccbba5cda111a0e61a4c2a3583",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "identity": "62eb534e9e5271f7f816cb651707eff4517a74888a1fb29c357adca09c8f67d6",
+      "exitCode": 1,
+      "result": "error: no such object: 62eb534e9e5271f7f816cb651707eff4517a74888a1fb29c357adca09c8f67d6",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "identity": "08254a418a5e85ccfa0f2d760e90f22285f3c77099ee0f130fc742f20e804ba5",
+      "exitCode": 1,
+      "result": "error: no such object: 08254a418a5e85ccfa0f2d760e90f22285f3c77099ee0f130fc742f20e804ba5",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "identity": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-pg-data",
+      "exitCode": 1,
+      "result": "Error response from daemon: get workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-pg-data: no such volume",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "identity": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-redis-data",
+      "exitCode": 1,
+      "result": "Error response from daemon: get workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-redis-data: no such volume",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "identity": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-s3-data",
+      "exitCode": 1,
+      "result": "Error response from daemon: get workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-s3-data: no such volume",
+      "absent": true
+    }
+  ],
+  "temporaryPaths": [
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-wcreLx",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-Wazjui",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-jRzNCC",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-3466Bl",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-nvHg8m",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-hlXBqS",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-ri3tB4",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-gMwDu0",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-oQUe6w",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-XhyZHE",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-9NjDfU",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-1fGuD7",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-cvp5bK",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-fPzPcn",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-r6qv6O",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-4Nd55n",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-Pgi5kG",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-rAXYsN",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-eIctXk",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-kgJXQ5",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-P4opX9",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-m8DXlO",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-E6QtGR",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-dVD8Mj",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-gQ0S2S",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-ZCibm5",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-vN89Wm",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-77epBg",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-cniPPM",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-hgcHbW",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-7krUf5",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-7iX7Vu",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-ZnOkyd",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-HFhc4x",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-07ar18",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-4zTFgC",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-tz4i1t",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-CA02gO",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-yNpdff",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-3mEUTE",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-TqP92N",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-0WWRKa",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-ZmwLAT",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-YhXQiD",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-tzkXqO",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-3PcbzR",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-ol7DP8",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-bQogEt",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-0B9zHt",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-QwxvX2",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-k7A4YC",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-cli-Xokwqp",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-cli-recovery-nbD9c7",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-cli-retry-after-22QpVK",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-cli-retry-after-GhGafp",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-rZ6krR",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-P85UAG",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-SEhgT3",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-ZML3RR",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-Me79xi",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-A8Iltk",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-5ZACMO",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-qiqRZu",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-zuwJ6S",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-2iqw74",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-aTwbtO",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-dK3dyB",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-9d0Xl8",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-SzX02I",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-Q6G56Q",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-5jseVk",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-dFaGj9",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-517SdZ",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-0Zj6MU",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-SSpIWR",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-LM2fRn",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-bHUpqx",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-k2NnBA",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-ttgXtF",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-WScnzn",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-0HanIZ",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-2TGQxk",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-PV2H7H",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-FVPFb1",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-7sxiac",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-8Rc0jU",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-GAmiZp",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-kiCeAc",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-1aveMt",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-alqbpK",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-avJurR",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-Aoq9qM",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-U5brpJ",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-B92Jjq",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-bVPexj",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-9V6sI9",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-xJzvwT",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-jyooSo",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-APTeMH",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-PbVrvC",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-nEpK0t",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-V7vJVp",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-17ULjo",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-oSimZU",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-LEwnbj",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    },
+    {
+      "path": "C:\\Users\\xurx\\workmesh-b3-appdata-f408437a0b364c0b88e4e57c5c67b1fe\\workmesh-b1-b2-test-3HyNX9",
+      "events": [
+        "created",
+        "removed"
+      ],
+      "absent": true
+    }
+  ],
+  "httpServiceEvents": [
+    {
+      "resource": "httpService",
+      "address": "http://127.0.0.1:6178",
+      "state": "created"
+    },
+    {
+      "resource": "httpService",
+      "address": "http://127.0.0.1:6178",
+      "state": "closed"
+    },
+    {
+      "resource": "httpService",
+      "address": "http://127.0.0.1:6195",
+      "state": "created"
+    },
+    {
+      "resource": "httpService",
+      "address": "http://127.0.0.1:6195",
+      "state": "closed"
+    },
+    {
+      "resource": "httpService",
+      "address": "http://127.0.0.1:6206",
+      "state": "created"
+    },
+    {
+      "resource": "httpService",
+      "address": "http://127.0.0.1:6206",
+      "state": "closed"
+    }
+  ],
+  "systemSecretEvents": [
+    {
+      "resource": "systemSecret",
+      "reference": "0146422f-589c-40fe-9c70-98ca3c5f52cf",
+      "state": "removed"
+    }
+  ],
+  "firstReadFailure": "不存在核验首次只匹配大写 No such object，Docker 实际返回小写 error: no such object。已按准确返回大小写校验并核目标身份；全程只读，未新增删除操作。",
+  "retained": "私有依赖、APPDATA 父目录、原始日志和当前工作树保留供成果复审；未清共享 store、业务数据或旧8/195目标。",
+  "operations": "Docker 收尾由本轮独有环境脚本按 owner 完成；本回执只读核不存在。测试目录仅由本次登记的 owner helper 收尾，无旧目标重试。"
+}

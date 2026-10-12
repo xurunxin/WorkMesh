@@ -3,6 +3,8 @@
 中文接入从 [API/MCP 手册](integration/README.md)开始。本文保留已有开发参考；
 当前凭据模式、纯后端配对和恢复分别见手册的 REST、MCP 与恢复章节。
 
+接入错误返回 `next_action`、`human_action` 和适用的 `supported_clients`。SDK 在 `WorkMeshSdkError.recovery` 保存这些字段，MCP 传给工具错误，连接器 CLI 展示安全指令。处理方式及真实示例见[错误与恢复](integration/troubleshooting.md)。原凭据、重试和 pending 规则保持。
+
 `@workmesh/agent-sdk` is the Native HTTP client for an external agent. Each public mutation gets a fresh UUID-derived idempotency key by default, while retries of that one request retain the same key; callers may supply an explicit stable operation key. It also sends optional correlation/revision headers and retries only network errors, `429`, and retryable `5xx` responses. A `409` is returned to the caller for a fresh read-and-merge; it is never retried automatically.
 
 Before work begins, read `getServerInfo()` and negotiate one advertised Client
@@ -161,3 +163,5 @@ SDK 的 `createReviewDelegation` 接受可选 `budget`；REST、MCP `create_revi
 规划工具支持完整分页、层级／Milestone／relation；文档支持 history、指定 revision、diff、restore 新 revision、Markdown export 与 Guidance 读取。评论写、Decision finalize、Handoff accept、Guidance 发布维持 Human-only。Room 正文按本人 Inbox 合法 claim/read/ACK/reply 获取；导入仍逐实体对账。
 
 reviewer 不发布 Plan，必须本人 Room `review_result` 与本人 `code_review` Artifact；所有非 completed required child 保留准确阻父 IDs。实现和真实检查记录见 `docs/plan/agent-mcp-m2/product-report.md`，规划历史与产品结果分别保全。
+
+SDK 与 MCP 在各自边界按错误码、原因和恢复目录核验新增字段，丢弃自由文字、控制串及错配字段，保留原错误。CLI 从 429/503 的 `Retry-After` 展示安全等待秒数；头无效或缺失时明确停止重试，不回显原头，不新增自动重试，不改 pending。详见[恢复说明](integration/troubleshooting.md)。

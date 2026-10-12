@@ -1,0 +1,92 @@
+{
+  "owner": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361",
+  "sourceHead": "ad185621359282fae6a874939ef72d9424dc3864",
+  "sourceBinding": "运行时使用当前工作树，文件哈希另由交付记录绑定",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "containers": [
+    {
+      "name": "pg",
+      "id": "08254a418a5e85ccfa0f2d760e90f22285f3c77099ee0f130fc742f20e804ba5",
+      "image": "postgres:16.9-alpine"
+    },
+    {
+      "name": "redis",
+      "id": "62eb534e9e5271f7f816cb651707eff4517a74888a1fb29c357adca09c8f67d6",
+      "image": "redis:7.4.5-alpine"
+    },
+    {
+      "name": "s3",
+      "id": "8f76d21be64b93b9cabac75d1df1e8aea9fe90ccbba5cda111a0e61a4c2a3583",
+      "image": "rustfs/rustfs:1.0.0"
+    }
+  ],
+  "volumes": [
+    "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-pg-data",
+    "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-redis-data",
+    "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-s3-data"
+  ],
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-12T09:52:09.557Z",
+      "endedAt": "2026-10-12T09:52:38.013Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-12T09:52:47.589Z",
+      "endedAt": "2026-10-12T09:52:49.153Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-12T09:52:49.155Z",
+      "endedAt": "2026-10-12T10:36:58.042Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-conformance",
+      "command": "pnpm test:conformance",
+      "startedAt": "2026-10-12T10:36:58.045Z",
+      "endedAt": "2026-10-12T10:37:10.372Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "8f76d21be64b93b9cabac75d1df1e8aea9fe90ccbba5cda111a0e61a4c2a3583",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "62eb534e9e5271f7f816cb651707eff4517a74888a1fb29c357adca09c8f67d6",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "08254a418a5e85ccfa0f2d760e90f22285f3c77099ee0f130fc742f20e804ba5",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-2dd84ba8-f223-4d9d-b659-e78df6f27361-s3-data",
+      "absent": true
+    }
+  ]
+}

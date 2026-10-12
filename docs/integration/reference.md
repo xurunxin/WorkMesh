@@ -81,3 +81,16 @@ Project/Issue 文档、Milestone、relation、Inbox、Room、Approval、Artifact
 | [灾备](../operations/disaster-recovery.md) | PostgreSQL 与对象存储完整恢复 |
 
 通知、自动化、A2A、模型预置、Git provider 及其他可选能力依照各自 feature 与部署合同。`supportedClients` 声明协议类型，不证明某客户端版本、设备或所有联合链已经通过验收。
+
+## 接入恢复字段参考
+
+| 字段 | 含义 |
+| --- | --- |
+| `error.next_action` | 客户端可执行的恢复步骤 |
+| `error.human_action` | 需转述的一项人工动作；无需人工时为“无需人工操作” |
+| `error.supported_clients` | 类型不匹配时返回的部署支持列表；与 discovery 共用来源 |
+| `error.details.reason` | 区分 slug、客户端类型与 enrollment policy 不匹配 |
+| `WorkMeshSdkError.recovery` | SDK 按错误码、原因和目录核验的恢复字段；非法字段丢弃 |
+| `ConnectorError.retryAfterMs` | CLI 为 429/503 保存的安全等待毫秒数，未知时为 `undefined` |
+
+契约为 `AgentConnectionError` 与共享 `agentConnectionErrorResponseSchema`；完整例子见[错误与恢复](troubleshooting.md)。SDK 重试和服务端授权保持原规则。

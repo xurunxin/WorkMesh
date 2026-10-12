@@ -8,6 +8,7 @@ import {
   savedViewInputSchema, usageInputSchema, usageSummaryQuerySchema, optionalDomainCursorSchema,
   mcpPolicyBindings,
   workmeshSkillManifest,
+  readAgentConnectionErrorRecovery,
 } from '@workmesh/contracts'
 import { applyProjectImport, applyProjectImportSchema, getWorkMeshContext, prepareProjectImport, projectImportSchema, resolveIdentifier } from './coordination-product.js'
 import { installDiscovery, registerResourceReadTools, type PreparedDiscovery } from './discovery.js'
@@ -439,6 +440,9 @@ async function tool(call: () => Promise<unknown>) {
       details: upstreamDetails,
       ...(revision === undefined ? {} : { currentRevision: revision }),
       safeNextAction: safeNextAction(code, revision),
+      ...(error instanceof WorkMeshSdkError
+        ? readAgentConnectionErrorRecovery({ ...error.recovery, code, details: upstreamDetails })
+        : undefined),
     }
     return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify({ error: details }) }], structuredContent: { error: details } }
   }

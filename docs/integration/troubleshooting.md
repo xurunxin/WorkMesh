@@ -16,7 +16,52 @@ REST 错误形状如下，`details` 按错误类别变化。`currentRevision` �
 }
 ```
 
-SDK `WorkMeshSdkError` 保留 `code/message/status/details/correlationId` 和适用的 `retry` 元数据。MCP 另提供 `safeNextAction` 提示；该提示不授予权限。当前 SDK 不保证把任意 REST 顶层字段全部转交，客户端须按现有合同读取。B3 未实现字段不能作为恢复前提。
+SDK 和 MCP 在各自的消费边界核对错误码、安全原因、双指令及支持列表与本地恢复目录的一致性。目录外文字、控制串、秘密和原因或列表错配都会丢弃新增恢复字段，原错误仍保留。类型不匹配缺少合法 `details.reason` 时也丢弃恢复字段。
+
+SDK `WorkMeshSdkError` 保留 `code/message/status/details/correlationId` 和适用的 `retry` 元数据。接入错误的双恢复指令及支持类型另保存在 `recovery`。旧响应缺少恢复字段时，`recovery` 为 `undefined`，原错误仍保留。MCP 的 `safeNextAction` 保持原行为；恢复提示不授予权限。
+
+## 接入恢复指令
+
+配对、enrollment 和当前连接身份验证失败时，`error.next_action` 说明客户端动作，`error.human_action` 给出可直接转述的一项人工动作。无需人工介入时，后者为“无需人工操作”。其他 API 路由的安装 header 认证失败也返回这两个字段；其业务错误沿用原恢复规则。
+
+以下响应表示配对的 Agent slug 不匹配。`supported_clients` 与 discovery 的部署列表一致。它不能修复 slug 绑定，也不表示 enrollment policy 允许这些类型。
+
+<!-- b3-recovery-example -->
+```json
+{
+  "error": {
+    "code": "AGENT_CONNECTION_CLIENT_TYPE_MISMATCH",
+    "message": "Pairing identity does not match its envelope",
+    "details": { "reason": "agent_slug_mismatch" },
+    "correlationId": "b3-example",
+    "next_action": "停止兑换。配对的 Agent slug 绑定不一致，supported_clients 不能修复它；保留原 pending 和旧配置。",
+    "human_action": "请管理员签发与当前 Agent slug 匹配的新配对清单。",
+    "supported_clients": ["codex", "opencode", "pi", "generic_mcp"]
+  }
+}
+```
+
+`details.reason` 为 `agent_slug_mismatch`、`client_type_mismatch` 或 `enrollment_client_type_denied`。同时猜错 slug 和类型时，先报告 slug。未知类型枚举在输入校验时拒绝；返回 `VALIDATION_ERROR`，不会增加合法配对的 attempts。
+
+错误配对码不会增加合法配对的 attempts。已知配对的 wrong slug 或已知错误类型各增加一次；达到 8 次后，后续兑换返回 `AGENT_CONNECTION_PAIRING_LOCKED`，不再增加该计数。两个兑换操作的 endpoint、subject-client 和失败退避分别按 operationId 隔离；IP 和 socket 预算共享。
+
+连接器 CLI 显示“客户端动作”“人工动作”和适用的部署支持类型。429/503 还显示“等待时长：N 秒（Retry-After）”。CLI 只接纳本地目录中的指令，异常响应沿用安全提示；不打印服务端自由文本或秘密。失败保留 pending 和旧配置，指令不会自动改类型、换 key、刷新身份或重写配置。
+
+有原 pending 时，只重放原 key、精确正文及客户端上下文。取得新配对清单后，按连接器显式 `abandon-pending` 流程处理旧请求。支持类型列表供你核对真实客户端，不允许直接改写已冻结 pending。
+
+SDK 从 `error.recovery` 读取指令。MCP 工具失败将同一字段放进文本错误和 `structuredContent.error`，并保留原 `safeNextAction`。客户端先检查 `isError`，再读取 `next_action` 和 `human_action`。MCP HTTP 边界的凭据模式拒绝仍遵守原传输合同，不保证具有工具错误正文。
+
+CLI 只接受非负整数秒或规范 GMT HTTP-date。日期按收到响应时的时钟计算，过期日期为 0；展示秒数向上取整。负数、溢出、控制串、非法或缺失头不会回显到终端，CLI 显示“等待时长不可用，请停止重试并联系部署管理员”。CLI 本次命令退出失败，不自动等待或重试，pending 和旧配置保持。
+
+例如，429 响应头 `Retry-After: 7` 或 503 响应头 `Retry-After: 7` 都会显示：
+
+```text
+等待时长：7 秒（Retry-After）；本命令不会自动重试。
+```
+
+HTTP 429 保留 `Retry-After`、`RateLimit-Remaining` 和 `RateLimit-Reset`。等待完整的 `Retry-After`，按原预算重放原请求；SDK 的超预算抑制规则保持。限流存储故障返回 HTTP 503 和 `AUTH_RATE_LIMIT_UNAVAILABLE`，认证失败关闭。
+
+[可运行 Agent 示例](../../packages/conformance/examples/integration-agent.ts)保留 SDK/MCP 错误信息；[接入验收入口](../../packages/conformance/examples/verify-integration.ts)验证真实 API 拒绝、SDK 恢复字段和文档示例。运行 `pnpm verify:integration-examples`，记录在独有测试环境中的结果。
 
 ## 按原因处理
 

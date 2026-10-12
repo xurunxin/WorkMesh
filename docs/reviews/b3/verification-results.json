@@ -1,0 +1,213 @@
+{
+  "sourceBinding": "source-files.json；运行底座是 inputs.json 中的准确 main，正式 CI 须核实际实现提交。",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "checks": [
+    {
+      "command": "pnpm lint",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": "docs/reviews/b3/local-required-4/lint.log",
+      "detail": "完整根命令通过；单元为 31/31 Turbo 任务成功，保留原有跳过项。"
+    },
+    {
+      "command": "pnpm typecheck",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": "docs/reviews/b3/local-required-4/typecheck.log",
+      "detail": "完整根命令通过；单元为 31/31 Turbo 任务成功，保留原有跳过项。"
+    },
+    {
+      "command": "pnpm test",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": "docs/reviews/b3/local-required-4/test.log",
+      "detail": "完整根命令通过；单元为 31/31 Turbo 任务成功，保留原有跳过项。"
+    },
+    {
+      "command": "pnpm --filter @workmesh/api typecheck",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-api-final-typecheck.log",
+      "detail": "最终集成断言扩展后实际执行 tsc --noEmit；路径别名警告未使目标包跳过。"
+    },
+    {
+      "command": "pnpm build",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-build.log",
+      "detail": "17 个包实际构建，0 个缓存命中。"
+    },
+    {
+      "command": "pnpm ci:source build",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-ci-source-build.log",
+      "detail": "同一源码的 17 个包缓存复验。"
+    },
+    {
+      "command": "pnpm test:integration",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": "docs/reviews/b3/local-integration-5/test-integration.log",
+      "detail": "DB 81、API 320、真实客户端 conformance 96、worker 147 个用例通过；API/worker 各保留 1 个原有跳过项，默认灾备套件跳过，另显式执行。"
+    },
+    {
+      "command": "pnpm test:conformance",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": "docs/reviews/b3/local-integration-5/test-conformance.log",
+      "detail": "6/6 adapter/fixture runs 通过；不冒充全部原生客户端联合验收。"
+    },
+    {
+      "command": "pnpm verify:integration-examples -- --recovery-checks",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": "docs/reviews/b3/local-recovery-2/test-integration-recovery.log",
+      "detail": "显式灾备恢复套件 1 个用例通过，含中断恢复接续和全状态校验。"
+    },
+    {
+      "command": "pnpm --filter @workmesh/connector test:platform integration/cli.test.ts",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "early-verification-originals.zip",
+      "member": ".tmp/b3-cli-native.log",
+      "detail": "当前 Windows 原生系统存储与 PTY，2/2 用例通过；不是全平台矩阵。"
+    },
+    {
+      "command": "pnpm ci:test",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "early-verification-originals.zip",
+      "member": ".tmp/b3-ci-test.log",
+      "detail": "29 个策略用例通过。"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "early-verification-originals.zip",
+      "member": ".tmp/b3-ci-validate.log",
+      "detail": "工作流、发布、纯后端 Lite 及原件归档校验通过。"
+    },
+    {
+      "command": "pnpm check:route-policy",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "early-verification-originals.zip",
+      "member": ".tmp/b3-route-check.log",
+      "detail": "冻结路由策略生成产物无差异。"
+    },
+    {
+      "command": "pnpm smoke:agents:ci",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-agent-smoke.log",
+      "detail": "MCP 只读构造及 Fake Agent 签名投递去重通过。"
+    },
+    {
+      "command": "pnpm check:workmesh-skill",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-workmesh-skill.log",
+      "detail": "既有签名 Skill 生成检查通过。"
+    },
+    {
+      "command": "pnpm check:runner-skill",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-runner-skill.log",
+      "detail": "Runner Skill 生成检查通过。"
+    },
+    {
+      "command": "python -B scripts/test-agent-discovery-generation.py",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-discovery-generation.log",
+      "detail": "LF/CRLF 等价、真实改动及其余生成负例通过，原 capture 保持。"
+    },
+    {
+      "command": "pnpm check:integration-docs",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": ".tmp/b3-docs-final.log",
+      "detail": "4 个技能原件、72 条链接、35 个 REST 引用、11 个 MCP 引用及示例语法通过。"
+    },
+    {
+      "command": "pnpm verify:integration-examples -- --integration-checks",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "runtime-originals.zip",
+      "member": "docs/reviews/b3/local-integration-5/examples.log",
+      "detail": "实际 REST、SDK、MCP 恢复字段和安全示例输出全部为 true；TLS、配对重放等原示例通过，监听器和连接池关闭。"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "status": "通过",
+      "exitCode": 0,
+      "archive": "final-audit.zip",
+      "member": ".tmp/b3-ci-validate-final.log",
+      "detail": "最终 ignore/属性与证据交接调整后的完整复验。"
+    }
+  ],
+  "targetedApiSuites": {
+    "auth-rate-limit.integration.test.ts": {
+      "passed": 16,
+      "skipped": 0
+    },
+    "stage5-agent-connections.integration.test.ts": {
+      "passed": 33,
+      "skipped": 0
+    }
+  },
+  "pastFailures": [
+    {
+      "evidence": "early-verification-originals.zip",
+      "items": [
+        "缺少 CLI 脱敏器本地 import 的初始 typecheck；已修复",
+        "默认 APPDATA 的 MSIX 重定向与安全拒绝；使用新建且已验证的私有 profile 复验，未改安全规则",
+        "路径中的默认 pnpm 导致生成命令调用不匹配版本；改用本任务的固定工具 shim",
+        "旧路由失败响应断言；按新增契约扩展",
+        "SQL 锁清单旧行号；既有生成器更新，115 个语义条目一致",
+        "测试 S3 冷启动就绪超时；未运行的后续检查不填通过"
+      ]
+    },
+    {
+      "evidence": "runtime-originals.zip",
+      "items": [
+        "旧诊断错误对象严格断言未含双指令；已扩展并完整复验",
+        "旧就绪 fetch 的顶层 await 提前 exit 13；修复有引用的截止计时器，显式恢复复验通过"
+      ]
+    }
+  ],
+  "pending": [
+    {
+      "item": "当前提交的 Required CI 与完整 native test:platform 系统矩阵",
+      "status": "未运行，不填通过；通过平台分支 PR 的实际 head 核验"
+    },
+    {
+      "item": "正式独审、Chief 确认及实际 main 落地",
+      "status": "待执行；本轮不自行合入"
+    },
+    {
+      "item": "策略拒绝的生成目录收尾",
+      "status": "拒绝后停止，原目录保留；不换法或拆批重试"
+    }
+  ],
+  "documentation": "documentation-verification.md",
+  "cleanup": "cleanup.md"
+}

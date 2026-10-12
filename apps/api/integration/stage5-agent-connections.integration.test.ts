@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { agentConnectionErrorResponseSchema } from '@workmesh/contracts'
 import { once } from 'node:events'
 import { Writable } from 'node:stream'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
@@ -352,6 +353,7 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     const hiddenStates = await coordinator(token, 'GET', `/api/v1/teams/${otherTeamId}/states`)
     expect(hiddenStates.statusCode, hiddenStates.body).toBe(403)
     expect(hiddenStates.json<{ error: { code: string } }>().error.code).toBe('RESOURCE_SCOPE_DENIED')
+    expect(hiddenStates.json<{ error: object }>().error).not.toHaveProperty('next_action')
     const capabilities = await coordinator(token, 'GET', '/api/v1/agent-capabilities')
     expect(capabilities.statusCode, capabilities.body).toBe(200)
     const coordinationSessionId = capabilities.json<{ agent: { sessionId: string } }>().agent.sessionId
@@ -2686,6 +2688,8 @@ describe('Stage 5 Agent Connection lifecycle', () => {
           code: 'UNAUTHENTICATED',
           message: 'Installation Token is invalid or inactive',
           correlationId: expect.any(String),
+          next_action: '停止接入，核对凭据用途和当前有效性。不要把配对码当安装 Token，不因拒绝而刷新或更换身份。',
+          human_action: '请管理员核对当前 Connection 的授权与凭据状态。',
         })))
     } finally {
       await diagnosticApp.close()
@@ -3723,5 +3727,65 @@ describe('Stage 5 Agent Connection lifecycle', () => {
       headers: { cookie: `workmesh_session=${memberToken}` },
     })
     expect(forbidden.statusCode, forbidden.body).toBe(403)
+  })
+})
+
+
+describe('B3 配对事务与重启恢复', () => {
+  const envelope = async () => {
+    const slug = `b3-stage5-${randomUUID().slice(0, 8)}`
+    const created = await human('POST', '/api/v1/agent-connections', { name: 'B3 事务验收', agentSlug: slug, clientType: 'codex', teamId, principalHumanActorId: actorId, requestedCapabilities: ['work:read'], grantAgentDelegate: false })
+    expect(created.statusCode).toBe(201)
+    const result = created.json<{ connection: { id: string }; connect_url: string }>()
+    const code = new URL(result.connect_url).hash.slice(1)
+    return { connectionId: result.connection.id, code, body: { pairingCode: code, agentSlug: slug, client: { type: 'codex', version: 'test' } } }
+  }
+  const redeem = (body: object, key: string) => app.inject({ method: 'POST', url: '/api/v1/agent-connections/redeem', payload: body, headers: { 'idempotency-key': key, origin: 'http://b3.fixture', 'user-agent': 'b3-stage5' } })
+  it('B3 同 key 同体重放保持原响应，同 key 异体拒绝且带恢复指令，API 重启后准确重放仍成立', async () => {
+    const fixture = await envelope(), key = randomUUID()
+    const first = await redeem(fixture.body, key)
+    expect(first.statusCode).toBe(200)
+    const replay = await redeem(fixture.body, key)
+    expect(replay.body === first.body).toBe(true)
+    const refused = await redeem({ ...fixture.body, agentSlug: 'b3-changed-slug' }, key)
+    expect(refused.statusCode).toBe(409)
+    expect(agentConnectionErrorResponseSchema.parse(refused.json()).error.code).toBe('IDEMPOTENCY_KEY_REUSED')
+    await app.close(); app = buildApp({ features, logger: false }); await listenApi()
+    const restarted = await redeem(fixture.body, key)
+    expect(restarted.statusCode).toBe(200); expect(restarted.body === first.body).toBe(true)
+    expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM agent_connection_credentials WHERE connection_id=$1', [fixture.connectionId])).rows[0]?.count).toBe(1)
+    expect((await db.query<{ count: number }>("SELECT count(*)::int AS count FROM domain_events WHERE aggregate_id=$1 AND event_type='agent.connection.pairing_redeemed'", [fixture.connectionId])).rows[0]?.count).toBe(1)
+  })
+  it('B3 兑换写入失败完整回滚并保留安全指令', async () => {
+    const fixture = await envelope(), key = randomUUID()
+    const before = (await db.query('SELECT (SELECT count(*) FROM domain_events) AS events,(SELECT count(*) FROM outbox_events) AS outbox,(SELECT count(*) FROM auth_idempotency_records) AS receipts')).rows[0]
+    // 特权夹具只拒绝本连接的真实凭据 INSERT，随后核事务回滚和正常重试。
+    await db.query(`CREATE FUNCTION b3_pairing_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+      IF NEW.connection_id='${fixture.connectionId}'::uuid THEN RAISE EXCEPTION 'B3 controlled transaction failure'; END IF;
+      RETURN NEW; END $$`)
+    await db.query('CREATE TRIGGER b3_pairing_failure BEFORE INSERT ON agent_connection_credentials FOR EACH ROW EXECUTE FUNCTION b3_pairing_failure()')
+    try {
+      const failure = await redeem(fixture.body, key)
+      expect(failure.statusCode).toBe(500)
+      const error = agentConnectionErrorResponseSchema.parse(failure.json()).error
+      expect(error.code).toBe('INTERNAL_ERROR')
+      expect(failure.body.includes(fixture.code)).toBe(false)
+      expect((await db.query('SELECT consumed_at,attempts FROM agent_connection_pairings WHERE code_hash=$1', [tokenHash(fixture.code)])).rows[0]).toMatchObject({ consumed_at: null, attempts: 0 })
+      expect((await db.query('SELECT (SELECT count(*) FROM domain_events) AS events,(SELECT count(*) FROM outbox_events) AS outbox,(SELECT count(*) FROM auth_idempotency_records) AS receipts')).rows[0]).toEqual(before)
+      expect((await db.query<{ count: number }>('SELECT count(*)::int AS count FROM agent_connection_credentials WHERE connection_id=$1', [fixture.connectionId])).rows[0]?.count).toBe(0)
+    } finally {
+      await db.query('DROP TRIGGER b3_pairing_failure ON agent_connection_credentials')
+      await db.query('DROP FUNCTION b3_pairing_failure()')
+    }
+    expect((await redeem(fixture.body, key)).statusCode).toBe(200)
+  })
+  it('B3 恢复信息不泄露凭据或其他连接身份', async () => {
+    const fixture = await envelope()
+    const response = await app.inject({ method: 'GET', url: '/api/v1/agent-connections/current-identity', headers: { 'x-workmesh-installation-token': 'wmi_' + 'z'.repeat(43) } })
+    expect(response.statusCode).toBe(401)
+    const error = agentConnectionErrorResponseSchema.parse(response.json()).error
+    expect(error.code).toBe('UNAUTHENTICATED')
+    expect([fixture.connectionId, fixture.code, 'wmi_' + 'z'.repeat(43)].some(value => response.body.includes(value))).toBe(false)
+    expect((await db.query<{ attempts: number }>('SELECT attempts FROM agent_connection_pairings WHERE code_hash=$1', [tokenHash(fixture.code)])).rows[0]?.attempts).toBe(0)
   })
 })
