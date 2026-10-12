@@ -1,0 +1,84 @@
+{
+  "verifiedProductHead": "53149e845a49bdf5cd27ac0f4d9e706c76c8206d",
+  "tree": "08489dddce4bf3df0d890984c31ef69e4c9c08a8",
+  "branch": "tds/conv-01a12dcd-2746-75df-b468-8c4022c5a933",
+  "verifiedAt": "2026-10-12T04:10:19.605764+00:00",
+  "upstreamSkill": [
+    {
+      "path": "docs/skills/zh-tech-writing/upstream/LICENSE",
+      "gitBlob": "012e98bf03de57258be3d0d3eaec94993453213e",
+      "sha256": "57fa5a55341deff52f79073d97d0da231e0d83a45c2c9ff108eb09e750c7101c",
+      "sourceBytesEqual": true
+    },
+    {
+      "path": "docs/skills/zh-tech-writing/upstream/skills/zh-tech-writing/SKILL.md",
+      "gitBlob": "f0ef55c2e87e3c65463392b014a9e01850f527bd",
+      "sha256": "0db6adbc3d6c44c9de950444550b09496769c11f02ef17367d957027ad804e99",
+      "sourceBytesEqual": true
+    },
+    {
+      "path": "docs/skills/zh-tech-writing/upstream/skills/zh-tech-writing/references/manual-structure.md",
+      "gitBlob": "a5d829820b57846a7c7c6cbcfe62a138ec85a163",
+      "sha256": "91509b2c3e6b72ea87982824b01191f940f5c378eddef56530b746a17009f57c",
+      "sourceBytesEqual": true
+    },
+    {
+      "path": "docs/skills/zh-tech-writing/upstream/skills/zh-tech-writing/references/typography.md",
+      "gitBlob": "f51bc6aae51da4b5b49236e4b99d091716cf3625",
+      "sha256": "e5fa49bf3fe4ee9f55c7af76d008178a4a13d663c82266de037613463cab5cf4",
+      "sourceBytesEqual": true
+    }
+  ],
+  "finalSources": [
+    {
+      "path": "scripts/verify-integration-examples.mjs",
+      "gitBlob": "8866551a00dd57e45f9a9f65ae37b3282ba1bfc2",
+      "gitSha256": "c6a3bc4697eb864dcc8d6511042c43d13f7c1555b01dfdcb20c008ec3bbd186c",
+      "worktreeSha256": "c6a3bc4697eb864dcc8d6511042c43d13f7c1555b01dfdcb20c008ec3bbd186c",
+      "equivalence": "字节相同或仅CRLF/LF检出差异"
+    },
+    {
+      "path": "packages/conformance/src/delivery-recovery.fixture.ts",
+      "gitBlob": "620346a09ca7092c572f982f1f8cd64f7be62f03",
+      "gitSha256": "b17e1645c007f33808640e399a886514743bdd19a60ecd463796966d05939246",
+      "worktreeSha256": "b17e1645c007f33808640e399a886514743bdd19a60ecd463796966d05939246",
+      "equivalence": "字节相同或仅CRLF/LF检出差异"
+    },
+    {
+      "path": "packages/conformance/src/optional-domains.fixture.ts",
+      "gitBlob": "04dfee98cd8345fc47063b6ff997137d62172dc4",
+      "gitSha256": "1045dd2c8f1fac01c70008062f295aada5b398db9e6305e3f9fbc98f1861a1fc",
+      "worktreeSha256": "1045dd2c8f1fac01c70008062f295aada5b398db9e6305e3f9fbc98f1861a1fc",
+      "equivalence": "字节相同或仅CRLF/LF检出差异"
+    },
+    {
+      "path": "packages/conformance/examples/integration-agent.ts",
+      "gitBlob": "8b473acc18c2a3be2d84ecf0e21221839849e0b9",
+      "gitSha256": "5ad5981ba74b088e7c33431658880cd5d96b19803bc1c6439f3a79400c6daae3",
+      "worktreeSha256": "5ad5981ba74b088e7c33431658880cd5d96b19803bc1c6439f3a79400c6daae3",
+      "equivalence": "字节相同或仅CRLF/LF检出差异"
+    },
+    {
+      "path": "packages/conformance/examples/verify-integration.ts",
+      "gitBlob": "452f1dfc749042ceac46e3dda4163317ecf5dac1",
+      "gitSha256": "025191398169092f79c948fb961558e451a17753915a7c91d2ab7904e270b667",
+      "worktreeSha256": "025191398169092f79c948fb961558e451a17753915a7c91d2ab7904e270b667",
+      "equivalence": "字节相同或仅CRLF/LF检出差异"
+    },
+    {
+      "path": "docs/integration/examples/human.mjs",
+      "gitBlob": "33dcdecf61231ecb0903b2bd1e0509536183ea85",
+      "gitSha256": "f7383b27655b22bb142966e5d649ef80f531e6490677b52e385a053bd0dc7f5f",
+      "worktreeSha256": "f7383b27655b22bb142966e5d649ef80f531e6490677b52e385a053bd0dc7f5f",
+      "equivalence": "字节相同或仅CRLF/LF检出差异"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "gitBlob": "f1bb1a82a9270ee753bc91b19fae3b5d52d4114e",
+      "gitSha256": "07c3a7c7093d67f43a57a50a46897e78e170350f9fbc91794b636a96262ce8e0",
+      "worktreeSha256": "07c3a7c7093d67f43a57a50a46897e78e170350f9fbc91794b636a96262ce8e0",
+      "equivalence": "字节相同或仅CRLF/LF检出差异"
+    }
+  ],
+  "gate": "成果独审与最新交付head Required CI仍待完成；本回执不冒已合入"
+}
