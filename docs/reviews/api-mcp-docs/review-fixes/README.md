@@ -22,7 +22,7 @@ Windows 本机使用局部 Node 22.19.0 和 pnpm 9.15.4，复用现有可写依�
 
 真实请求日志见 [examples.log](examples/examples.log)，准确命令、UTC 时间、退出码及容器/卷不存在回执见 [results.json](examples/results.json)。Compose 只保存开关与静态凭据为空的投影，详见 [compose-results.json](compose-results.json)。临时测试环境文件已移除；未保存完整 Compose environment。
 
-记录中的 `sourceHead` 为修订前基线，运行时包含未提交修改。本次涉及文件的工作树原字节、LF 等价哈希与基线 Git blob 见 [source-files.json](source-files.json)，不能将这些修改冒作已经位于旧 head。
+记录中的 `sourceHead` 为修订前基线，运行时包含未提交修改。本次涉及文件的工作树原字节、LF 等价哈希与基线 Git blob 见 [source-files.json](source-files.json)，不能将这些修改冒作已经位于旧 head。提交后已逐文件核对 `e1f6f9149786302af22458ffbca3838a43007b26` 的 11 个运行/合同文件，仅接受 CRLF/LF 等价。完整 main 至该提交的空白检查通过；随后只补本段与两份验证回执，不改运行源码。
 
 ## 写作、资源与交付
 

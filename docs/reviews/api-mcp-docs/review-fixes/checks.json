@@ -20,5 +20,10 @@
     "actualScript": "tsc --noEmit",
     "note": "前一已结束执行；不为记录重复运行"
   },
-  "autocorrect": "Get-Command autocorrect -ErrorAction SilentlyContinue 未找到；按固定技能手检"
+  "autocorrect": "Get-Command autocorrect -ErrorAction SilentlyContinue 未找到；按固定技能手检",
+  "committedWhitespace": {
+    "command": "git diff --check 9dcc8c4c469997626ebb62fc12b8f8e7c1551dc0 e1f6f9149786302af22458ffbca3838a43007b26",
+    "exitCode": 0,
+    "includesNewFiles": true
+  }
 }
