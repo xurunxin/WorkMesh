@@ -1,0 +1,37 @@
+{"ownedListenersClosed":true,"apiClosed":true,"dbPoolClosed":true}
+file:///I:/tds_workspace/workspaces/01a12dcd-2746-75df-b468-8c4022c5a933/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39
+                const error = new ZodError(ctx.common.issues);
+                              ^
+
+ZodError: [
+  {
+    "code": "custom",
+    "message": "connect_url must be an HTTPS redeem locator with a wmp_ fragment (legacy /connect locators are accepted for exact receipt replay); userinfo, query/path credentials, and malformed fragments are rejected",
+    "path": [
+      "connect_url"
+    ]
+  }
+]
+    at get error (file:///I:/tds_workspace/workspaces/01a12dcd-2746-75df-b468-8c4022c5a933/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:39:31)
+    at ZodObject.parse (file:///I:/tds_workspace/workspaces/01a12dcd-2746-75df-b468-8c4022c5a933/node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js:114:22)
+    at <anonymous> (I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\conformance\examples\verify-integration.ts:89:55)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  issues: [
+    {
+      code: 'custom',
+      message: 'connect_url must be an HTTPS redeem locator with a wmp_ fragment (legacy /connect locators are accepted for exact receipt replay); userinfo, query/path credentials, and malformed fragments are rejected',
+      path: [ 'connect_url' ]
+    }
+  ],
+  addIssue: [Function (anonymous)],
+  addIssues: [Function (anonymous)],
+  errors: [
+    {
+      code: 'custom',
+      message: 'connect_url must be an HTTPS redeem locator with a wmp_ fragment (legacy /connect locators are accepted for exact receipt replay); userinfo, query/path credentials, and malformed fragments are rejected',
+      path: [ 'connect_url' ]
+    }
+  ]
+}
+
+Node.js v22.19.0

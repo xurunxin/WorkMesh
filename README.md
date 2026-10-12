@@ -1,5 +1,9 @@
 # WorkMesh 1.0
 
+中文接口接入从 [API/MCP 接入手册](docs/integration/README.md)开始。
+Human 登录、Agent 配对、MCP 身份、可运行示例和恢复均以纯后端入口说明。
+接口或功能变更按[文档同步规则](docs/documentation-maintenance.md)同次更新。
+
 WorkMesh is a self-hosted collaboration control plane for humans and external
 coding agents. Version 1.0 has a Stable core for work management, scoped Agent
 execution, human-visible collaboration, and governed Git delivery. Optional
@@ -36,8 +40,8 @@ conditional on feature flags.
 Planning (including notifications), Templates, Costs, Gitea, and the Operations
 UI are Beta. Automation, Agent Loops, A2A, and external outbound webhooks are
 Experimental. The multi-runtime flag is reserved and has no shipped runtime
-path. The Operations UI flag controls only the UI surface; each API and worker
-path remains gated by its own capability.
+path. `WORKMESH_BETA_OPERATIONS_UI` is a retained configuration name; the built-in
+UI is retired. Each API and worker path remains gated by its own capability.
 
 See [Version and support policy](docs/VERSION_POLICY.md) for the complete
 Stable/Beta/Experimental capability boundary, compatibility guarantees, flags,
@@ -51,7 +55,7 @@ evidence, limitations, and GA criteria.
 2. Run `pnpm install`.
 3. Start dependencies: `docker compose up -d postgres redis minio`.
 4. Run `pnpm db:migrate`, then call the installation API with the bootstrap token as described in [Backend deployment](docs/backend-only-deployment.md), or run `pnpm db:seed` after setting both `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD` to unique values of at least 12 characters. Seeding fails closed when either variable is missing or invalid; it never uses a default password. Clean installs and supported pre-v1 upgrades use the atomic, checksummed runner described in [Database migrations](docs/operations/migrations.md).
-5. Run `pnpm dev`; API readiness is `http://localhost:3001/readyz`.
+5. 先运行 `pnpm --filter @workmesh/api dev`，在 `http://localhost:3001/readyz` 核就绪。后台任务与 MCP 按各自配置单独启动；根 `pnpm dev` 要求所有 workspace 的运行配置已就绪。
 
 For a source-built local container stack, copy `.env.example` to `.env`, replace every `CHANGE_ME` value (including a generated `WORKMESH_BOOTSTRAP_TOKEN`, the 32-byte webhook-encryption key, and both seed admin variables if you intend to seed), then run `docker compose up --build`. The local Compose file runs the one-shot `migrate` service before API/worker and does not seed data automatically. Complete first install through the API, or run the explicit `pnpm db:seed` command when seed data is desired. API readiness is available at `http://localhost:3001/readyz`.
 
@@ -64,7 +68,11 @@ pnpm validate:production-images --env-file=.env.production
 docker compose --env-file .env.production -f docker-compose.production.yml config --quiet
 ```
 
-The MCP HTTP adapter is session scoped and therefore opt-in. After creating an Agent Session, set `WORKMESH_SESSION_TOKEN` and `WORKMESH_MCP_ACCESS_TOKEN`, then start it with `docker compose --profile agent up -d mcp`. It binds to `127.0.0.1:${MCP_HOST_PORT:-3002}` and supports `WORKMESH_MCP_MODE=read-only|read-write`. See `docs/agent-integration.md` for MCP Inspector and fake-agent flows.
+MCP 按部署选择 Coordination 或静态 Session 模式。Coordination 在 API/MCP 启用
+`WORKMESH_BETA_COORDINATION_MCP=true`，清空静态凭据，并使用逐请求安装 header。
+静态模式配置准确 Session Token 和独立 MCP access token。通过
+`docker compose --profile agent up -d mcp` 启动；默认绑定
+`127.0.0.1:${MCP_HOST_PORT:-3002}`。详见[MCP 接入](docs/integration/mcp.md)。
 
 ## Container deployment security
 
@@ -110,4 +118,4 @@ REST clients read humans, projects, work items, comments and saved/built-in view
 
 项目长期对外交付 API/MCP。内置 WebUI 和 Service Worker 已退役，Human 仍使用 Cookie 与 CSRF，Web Push 的订阅注册、撤销及 worker 投递合同保留。通知链接返回鉴权 JSON，不包含凭据或登录页面。后续功能以 API/MCP 及必要后端测试验收，并在接口或功能变更时同步文档。
 
-[纯后端部署说明](docs/backend-only-deployment.md)记录安装及入口；[后续逐卡去向](docs/plan/backend-only/followup-impact.md)保留来源和待实施范围。当前退役交付完成审查和最新适用 CI 后才合入，随后交付接入文档初版，再继续已批准的功能。既有 Beta/Experimental 默认关闭及授权边界保持不变。
+[纯后端部署说明](docs/backend-only-deployment.md)记录安装及入口；[后续逐卡去向](docs/plan/backend-only/followup-impact.md)保留来源和待实施范围。退役已由 PR 222 合入，接入手册沿当前主线编写。后续功能继续按已批准顺序实施。既有 Beta/Experimental 默认关闭及授权边界保持不变。

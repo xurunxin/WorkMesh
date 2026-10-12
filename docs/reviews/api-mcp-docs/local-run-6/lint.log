@@ -1,0 +1,100 @@
+
+> workmesh@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933
+> turbo run lint
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/connector, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/worker
+   • Running lint in 17 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/contracts:lint: cache miss, executing 85d8b5181c86452d
+@workmesh/artifact-storage:lint: cache miss, executing 0069da564259a382
+@workmesh/git-provider:lint: cache miss, executing 9e8b769803047487
+@workmesh/observability:lint: cache miss, executing 2c6d9efc90b97c25
+@workmesh/contracts:lint:
+@workmesh/contracts:lint: > @workmesh/contracts@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\contracts
+@workmesh/contracts:lint: > tsc --noEmit
+@workmesh/contracts:lint:
+@workmesh/artifact-storage:lint:
+@workmesh/artifact-storage:lint: > @workmesh/artifact-storage@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\artifact-storage
+@workmesh/artifact-storage:lint: > tsc --noEmit
+@workmesh/artifact-storage:lint:
+@workmesh/observability:lint:
+@workmesh/observability:lint: > @workmesh/observability@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\observability
+@workmesh/observability:lint: > tsc --noEmit
+@workmesh/observability:lint:
+@workmesh/git-provider:lint:
+@workmesh/git-provider:lint: > @workmesh/git-provider@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\git-provider
+@workmesh/git-provider:lint: > tsc --noEmit
+@workmesh/git-provider:lint:
+@workmesh/domain:lint: cache miss, executing c34ad85f19575029
+@workmesh/connector:lint: cache miss, executing 8b10a00760c31474
+@workmesh/agent-sdk:lint: cache miss, executing 797b237f11067491
+@workmesh/agent-runner:lint: cache miss, executing 94fd98c1c00c1220
+@workmesh/config:lint: cache miss, executing f5ee38b12a82f07f
+@workmesh/a2a-adapter:lint: cache miss, executing ba35e0517455fcdc
+@workmesh/domain:lint:
+@workmesh/domain:lint: > @workmesh/domain@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\domain
+@workmesh/domain:lint: > tsc --noEmit
+@workmesh/domain:lint:
+@workmesh/connector:lint:
+@workmesh/connector:lint: > @workmesh/connector@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\apps\connector
+@workmesh/connector:lint: > tsc --noEmit
+@workmesh/connector:lint:
+@workmesh/agent-sdk:lint:
+@workmesh/agent-sdk:lint: > @workmesh/agent-sdk@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\agent-sdk
+@workmesh/agent-sdk:lint: > tsc --noEmit
+@workmesh/agent-sdk:lint:
+@workmesh/agent-runner:lint:
+@workmesh/agent-runner:lint: > @workmesh/agent-runner@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\apps\agent-runner
+@workmesh/agent-runner:lint: > tsc --noEmit
+@workmesh/agent-runner:lint:
+@workmesh/config:lint:
+@workmesh/config:lint: > @workmesh/config@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\config
+@workmesh/config:lint: > tsc --noEmit
+@workmesh/config:lint:
+@workmesh/a2a-adapter:lint:
+@workmesh/a2a-adapter:lint: > @workmesh/a2a-adapter@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\a2a-adapter
+@workmesh/a2a-adapter:lint: > tsc --noEmit
+@workmesh/a2a-adapter:lint:
+@workmesh/db:lint: cache miss, executing 716892613eec0de3
+@workmesh/db:lint:
+@workmesh/db:lint: > @workmesh/db@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\db
+@workmesh/db:lint: > tsc --noEmit
+@workmesh/db:lint:
+@workmesh/mcp:lint: cache miss, executing eb03e20695cc5aff
+@workmesh/fake-agent:lint: cache miss, executing 79a8b1b783088c67
+@workmesh/mcp:lint:
+@workmesh/mcp:lint: > @workmesh/mcp@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\apps\mcp
+@workmesh/mcp:lint: > tsc --noEmit
+@workmesh/mcp:lint:
+@workmesh/fake-agent:lint:
+@workmesh/fake-agent:lint: > @workmesh/fake-agent@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\apps\fake-agent
+@workmesh/fake-agent:lint: > tsc --noEmit
+@workmesh/fake-agent:lint:
+@workmesh/recovery:lint: cache miss, executing 3bfe2ae6509bb43f
+@workmesh/worker:lint: cache miss, executing 01c9154083f711db
+@workmesh/recovery:lint:
+@workmesh/recovery:lint: > @workmesh/recovery@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\recovery
+@workmesh/recovery:lint: > tsc --noEmit
+@workmesh/recovery:lint:
+@workmesh/worker:lint:
+@workmesh/worker:lint: > @workmesh/worker@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\apps\worker
+@workmesh/worker:lint: > tsc --noEmit
+@workmesh/worker:lint:
+@workmesh/api:lint: cache miss, executing 78948cf7d5debe23
+@workmesh/api:lint:
+@workmesh/api:lint: > @workmesh/api@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\apps\api
+@workmesh/api:lint: > tsc --noEmit
+@workmesh/api:lint:
+@workmesh/conformance:lint: cache miss, executing afa18d3dca705a4b
+@workmesh/conformance:lint:
+@workmesh/conformance:lint: > @workmesh/conformance@ lint I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\conformance
+@workmesh/conformance:lint: > tsc --noEmit
+@workmesh/conformance:lint:
+
+ Tasks:    17 successful, 17 total
+Cached:    0 cached, 17 total
+  Time:    1m52.929s
+

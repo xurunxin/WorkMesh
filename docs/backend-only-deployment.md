@@ -10,10 +10,10 @@ WorkMesh 的对外入口为 API 与 MCP。内置页面和 Service Worker 已退�
 pnpm install --frozen-lockfile
 docker compose up -d postgres redis minio
 pnpm db:migrate
-pnpm dev
+pnpm --filter @workmesh/api dev
 ```
 
-API 在 `http://localhost:3001` 提供 `/livez`、`/readyz` 与 REST/SSE。开发 Compose 直接发布 API 端口。`pnpm dev` 不启动页面。修改源码后从本地接口验证实际结果，不用历史 UI 截图代验。
+API 在 `http://localhost:3001` 提供 `/livez`、`/readyz` 与 REST/SSE。开发 Compose 直接发布 API 端口。需要后台任务时，在另一终端运行 `pnpm --filter @workmesh/worker dev`。MCP 配好凭据模式后再单独启动；根 `pnpm dev` 会并行启动所有 workspace，须先满足各服务配置。修改源码后从本地接口验证实际结果，不用历史 UI 截图代验。
 
 ## Human 安装和管理
 
@@ -70,4 +70,4 @@ Web Push 的 config、订阅注册/撤销及 worker 投递接口保持。外部�
 
 恢复诊断中的 Run、Work Item、Agent 和过期 Approval 读取定位符同样使用现有 `/api/v1/` 路径，返回鉴权 JSON。读取定位符不授予恢复或重新审批权限；原动作门禁继续适用。
 
-接口或功能更新须同次维护说明、配置和示例；完整接入手册初版属于后续文档任务。本次没有增加数据库迁移、领域能力或自动恢复。历史 UI、首败和独审原件保持，当前验收记录区分通过、失败与未测。
+接口接入见 [API/MCP 手册](integration/README.md)。接口或功能更新按[同步规则](documentation-maintenance.md)同次维护说明、配置和示例。本次退役没有增加数据库迁移、领域能力或自动恢复。历史 UI、首败和独审原件保持，验收记录区分通过、失败与未测。

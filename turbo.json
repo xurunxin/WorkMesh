@@ -248,6 +248,34 @@
         "$TURBO_ROOT$/apps/api/assets/skills/**",
         "$TURBO_ROOT$/skills/workmesh/public-key.pem"
       ]
+    },
+    "@workmesh/conformance#lint": {
+      "dependsOn": [
+        "^lint"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/api/src/**",
+        "$TURBO_ROOT$/apps/mcp/src/**",
+        "$TURBO_ROOT$/apps/connector/src/**",
+        "$TURBO_ROOT$/docs/integration/examples/**",
+        "$TURBO_ROOT$/packages/*/src/**",
+        "$TURBO_ROOT$/packages/*/package.json"
+      ]
+    },
+    "@workmesh/conformance#typecheck": {
+      "dependsOn": [
+        "^typecheck"
+      ],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/api/src/**",
+        "$TURBO_ROOT$/apps/mcp/src/**",
+        "$TURBO_ROOT$/apps/connector/src/**",
+        "$TURBO_ROOT$/docs/integration/examples/**",
+        "$TURBO_ROOT$/packages/*/src/**",
+        "$TURBO_ROOT$/packages/*/package.json"
+      ]
     }
   },
   "globalPassThroughEnv": [

@@ -1,0 +1,11 @@
+{"ownedListenersClosed":true,"apiClosed":true,"dbPoolClosed":true}
+file:///I:/tds_workspace/workspaces/01a12dcd-2746-75df-b468-8c4022c5a933/docs/integration/examples/human.mjs:33
+    assert.equal(me.actor.id, login.actor.id)
+                                          ^
+
+TypeError: Cannot read properties of undefined (reading 'id')
+    at runHuman (file:///I:/tds_workspace/workspaces/01a12dcd-2746-75df-b468-8c4022c5a933/docs/integration/examples/human.mjs:33:43)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async <anonymous> (I:\tds_workspace\workspaces\01a12dcd-2746-75df-b468-8c4022c5a933\packages\conformance\examples\verify-integration.ts:59:23)
+
+Node.js v22.19.0

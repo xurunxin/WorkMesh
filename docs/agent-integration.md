@@ -1,5 +1,8 @@
 # Agent SDK, MCP, and Fake Agent
 
+中文接入从 [API/MCP 手册](integration/README.md)开始。本文保留已有开发参考；
+当前凭据模式、纯后端配对和恢复分别见手册的 REST、MCP 与恢复章节。
+
 `@workmesh/agent-sdk` is the Native HTTP client for an external agent. Each public mutation gets a fresh UUID-derived idempotency key by default, while retries of that one request retain the same key; callers may supply an explicit stable operation key. It also sends optional correlation/revision headers and retries only network errors, `429`, and retryable `5xx` responses. A `409` is returned to the caller for a fresh read-and-merge; it is never retried automatically.
 
 Before work begins, read `getServerInfo()` and negotiate one advertised Client

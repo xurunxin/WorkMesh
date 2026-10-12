@@ -1,5 +1,10 @@
 # Continuous integration
 
+中文接入手册的同步规则见 [documentation-maintenance.md](documentation-maintenance.md)。
+`changes` 在分类前执行 `node scripts/check-integration-docs.mjs`，包括纯 Markdown 变更。
+静态检查核相对链接、参考端点、技能原件与示例语法；真实示例另用
+`pnpm verify:integration-examples` 验证，不能以静态成功冒实际调用通过。
+
 The foundational workflow is both the pull-request verification boundary and a
 reusable release gate. Release publication is implemented separately so that
 ordinary CI retains read-only repository permissions.
