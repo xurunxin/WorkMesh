@@ -35,6 +35,7 @@ def main():
     parser.add_argument("--arch", required=True, choices=IMAGES)
     parser.add_argument("--root", default="/data")
     parser.add_argument("--source", required=True)
+    parser.add_argument("--api-url")
     parser.add_argument("--deadline-seconds", type=int, default=2400)
     options = parser.parse_args()
     root = Path(options.root).resolve()
@@ -56,13 +57,26 @@ def main():
 
     class Handler(BaseHTTPRequestHandler):
         def do_POST(self):
-            if self.path != "/receipt" or int(self.headers.get("Content-Length", "0")) > 4096:
+            size = int(self.headers.get("Content-Length", "0"))
+            if self.path in {"/api/start", "/api/replay"} and options.api_url and size <= 32768:
+                request = urllib.request.Request(options.api_url + self.path[4:], self.rfile.read(size),
+                                                 {"Content-Type": "application/json"})
+                try:
+                    with urllib.request.urlopen(request, timeout=120) as response:
+                        data = response.read(32768)
+                    self.send_response(200)
+                    self.end_headers()
+                    self.wfile.write(data)
+                except Exception:
+                    self.send_error(502, "private API probe failed")
+                return
+            if self.path != "/receipt" or size > 4096:
                 self.send_error(400)
                 return
             value = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             allowed = {"bootId", "uid", "arch", "kernel", "guestUtc", "dbusSessionPresent",
                        "secretBackend", "phase", "firstReadMatches", "persistentIdentity",
-                       "secretDigest", "secretMatches", "bootIdChanged", "errorType"}
+                       "secretDigest", "secretMatches", "bootIdChanged", "errorType", "apiReplay"}
             if not isinstance(value, dict) or set(value) - allowed:
                 self.send_error(400)
                 return
@@ -90,13 +104,14 @@ def main():
         guest = Path("/probe/guest.py").read_bytes()
         wrapper = '''#!/bin/sh
 set -eu
-runuser -u wmprobe -- dbus-run-session -- python3 /opt/tcg/guest.py
+runuser -u wmprobe -- env TCG_API_PROBE=API_ENABLED dbus-run-session -- python3 /opt/tcg/guest.py
 if grep -q '"phase": "reboot"' /home/wmprobe/.local/share/tcg-probe/state.json; then
   systemctl --no-block reboot
 else
   systemctl --no-block poweroff
 fi
 '''
+        wrapper = wrapper.replace("API_ENABLED", "1" if options.api_url else "0")
         service = '''[Unit]
 Description=WorkMesh TCG research only
 After=cloud-final.service network-online.target
@@ -184,7 +199,7 @@ WantedBy=multi-user.target
                         withinExistingReplayWindow=elapsed < 15 * 60,
                         qemuPeakRssBytes=peak_rss, qemuExitCode=process.returncode,
                         overlayAllocatedBytes=overlay.stat().st_blocks * 512,
-                        realApiReplay="not-tested", sourceConnectorConsumer="not-tested",
+                        realApiReplay=after[0].get("apiReplay") or "not-tested", sourceConnectorConsumer="not-tested",
                         finalNoSourceInstallation="not-tested")
     except Exception as error:
         manifest.update(status="failed", errorType=type(error).__name__, safeError=str(error))

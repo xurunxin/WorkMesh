@@ -27,6 +27,13 @@ def report(value):
             raise RuntimeError("receipt rejected")
 
 
+def api(path, value):
+    request = urllib.request.Request("http://10.0.2.2:18080/api/" + path,
+                                     json.dumps(value).encode(), {"Content-Type": "application/json"})
+    with urllib.request.urlopen(request, timeout=120) as response:
+        return json.load(response)
+
+
 def main():
     command(["gnome-keyring-daemon", "--unlock", "--components=secrets"],
             data=b"tcg-research-fixture-only\n")
@@ -38,7 +45,8 @@ def main():
         "secretBackend": "gnome-keyring/Secret Service",
     }
     if not MARKER.exists():
-        secret = os.urandom(32).hex().encode()
+        secret = (json.dumps(api("start", {})).encode() if os.environ.get("TCG_API_PROBE") == "1"
+                  else os.urandom(32).hex().encode())
         digest = hashlib.sha256(secret).hexdigest()
         command(["secret-tool", "store", "--label=TCG research fixture",
                  "application", "workmesh-tcg-research", "slot", "reboot"], data=secret)
@@ -61,9 +69,10 @@ def main():
                       "slot", "reboot"]).strip()
     matches = hashlib.sha256(loaded).hexdigest() == state["digest"]
     changed = common["bootId"] != state["firstBootId"]
+    replay = api("replay", json.loads(loaded)["request"]) if os.environ.get("TCG_API_PROBE") == "1" else None
     report({**common, "phase": "after-reboot", "secretMatches": matches,
             "bootIdChanged": changed, "persistentIdentity": state["identity"],
-            "secretDigest": hashlib.sha256(loaded).hexdigest()})
+            "secretDigest": hashlib.sha256(loaded).hexdigest(), "apiReplay": replay})
     if not matches or not changed:
         raise RuntimeError("reboot invariant failed")
     state["phase"] = "complete"

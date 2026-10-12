@@ -14,6 +14,21 @@ jobs:
     name: TCG full guest (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 55
+    env:
+      DATABASE_URL: postgres://tcg:tcg-research-fixture@127.0.0.1:5432/workmesh_tcg_test
+      REDIS_URL: redis://127.0.0.1:6379
+    services:
+      postgres:
+        image: postgres:16.9-alpine
+        env:
+          POSTGRES_DB: workmesh_tcg_test
+          POSTGRES_USER: tcg
+          POSTGRES_PASSWORD: tcg-research-fixture
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U tcg" --health-interval 10s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7.4.5-alpine
+        ports: ['6379:6379']
     strategy:
       fail-fast: false
       matrix:
@@ -40,13 +55,31 @@ jobs:
           printf '%s %s %s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_ARCH" > ci-tcg/run.txt
           docker build --label workmesh.owner=b-ship-tcg --tag workmesh-b-ship-tcg:research --file docs/reviews/b-ship/tcg/tools/Dockerfile docs/reviews/b-ship/tcg/tools > ci-tcg/build.log 2>&1
           docker image inspect workmesh-b-ship-tcg:research --format '{{.Id}} {{.Architecture}}' > ci-tcg/image.txt
+      - name: Set up source-only API research fixture
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Install locked source dependencies and start private API
+        run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm install --frozen-lockfile > ci-tcg/source-install.log 2>&1
+          pnpm exec tsx docs/reviews/b-ship/tcg/tools/api-controller.mts > ci-tcg/api-process.log 2>&1 &
+          echo "$!" > ci-tcg/api-pid
+          for attempt in $(seq 1 180); do
+            if test -f ci-tcg/api-ready; then exit 0; fi
+            kill -0 "$(cat ci-tcg/api-pid)"
+            sleep 1
+          done
+          exit 1
       - name: Execute isolated full guest research
         env:
           PROBE_ARCH: ${{ matrix.arch }}
         run: |
           set -euo pipefail
           mkdir ci-tcg/data
-          docker run --name "workmesh-tcg-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$PROBE_ARCH" --label workmesh.owner=b-ship-tcg --cpus 2 --memory 3g --mount "type=bind,source=$PWD/docs/reviews/b-ship/tcg/tools,target=/probe,readonly" --mount "type=bind,source=$PWD/ci-tcg/data,target=/data" workmesh-b-ship-tcg:research --arch "$PROBE_ARCH" --source "$(git rev-parse HEAD)" 2>&1 | tee ci-tcg/probe.log
+          docker run --name "workmesh-tcg-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$PROBE_ARCH" --label workmesh.owner=b-ship-tcg --network host --cpus 2 --memory 3g --mount "type=bind,source=$PWD/docs/reviews/b-ship/tcg/tools,target=/probe,readonly" --mount "type=bind,source=$PWD/ci-tcg/data,target=/data" workmesh-b-ship-tcg:research --arch "$PROBE_ARCH" --source "$(git rev-parse HEAD)" --api-url http://127.0.0.1:18081 2>&1 | tee ci-tcg/probe.log
       - name: Preserve bounded research evidence and clean owned guest
         if: ${{ always() }}
         env:
@@ -65,6 +98,12 @@ jobs:
             cp "ci-tcg/data/$PROBE_ARCH/qemu-stderr.log" ci-tcg/receipts/ || true
             cp "ci-tcg/data/$PROBE_ARCH/serial.log" ci-tcg/receipts/ || true
           fi
+          if test -f ci-tcg/api-pid; then
+            pid="$(cat ci-tcg/api-pid)"
+            if kill -0 "$pid" 2>/dev/null; then
+              kill -TERM "$pid"
+            fi
+          fi
       - name: Upload research receipts even on first failure
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -73,6 +112,7 @@ jobs:
           path: |
             ci-tcg/*.txt
             ci-tcg/*.log
+            ci-tcg/api-receipt.json
             ci-tcg/receipts
           if-no-files-found: error
           retention-days: 14
