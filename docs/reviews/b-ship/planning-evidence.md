@@ -113,3 +113,24 @@
 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:conformance`、双架构发行/设备验收和真实接入示例均未在本轮执行；这不是通过记录。当前只有 Markdown，必须按原 CI 分类检查适用门禁，不扩大 prose 豁免；产品实施时保留全部必需检查。
 
 本人仅核方案与输入的一致性。正式独审仍须在任务 review 进行，仅报告 P0/P1；方案准备不等于 ADR Accepted、安装成功或产品放行。交付通过本会话分支及正常 review 流程，不创建其他分支、不对外发布。人工清单只检查这批方案是否准确表达用户已确认目标和授权边界，不要求用户执行尚不存在的安装器。
+
+## P1 反馈修订与复核
+
+本次依据用户转交的正式独审反馈，修订两项 P1 方案问题。开始时工作树干净，HEAD 与 PR225 head 均为 `259da4d232ad75f630a3ae3757af54a4afd97fe0`；GitHub API 独立读取真实 `refs/heads/main` 仍为 `f6faf54f80850ecee9118d87401e6b5ce73216f1`。本轮只修改实施方案、验收设计和本证据文件，当前 spec、saved plan 归档与 R1 历史追加保持。
+
+| 问题 | 新依据与修订 |
+| --- | --- |
+| ARM64 hosted 环境不能提供 KVM | 独立读取 [GitHub 官方说明](https://github.com/actions/runner-images/issues/14062)，确认是宿主限制。方案改用 `[self-hosted, linux, ARM64, workmesh-connector-kvm]`，明确 Chief 落实专用裸机、管理员受控注册、KVM/guest 重启预检和未就绪时不放行。Required CI 须绑定同一 run/attempt 的两架构回执、准确源码及受测产物；不以 skip 或容器重启代验收。资源尚未取得，本轮没有新增 runner/凭据。 |
+| Linux node-pty 必须在构建机编译 | 读取官方 npm 归档并校验完整 integrity，列出 286 成员，无 Linux `.node`。已将 hook/node-gyp 禁令限定在目标安装/运行，构建机两架构执行源构建，锁定 Node/headers、node-gyp、node-addon-api 和工具链；收录 `build/Release/pty.node` 并要求 SEA 实际 PTY 加载。 |
+
+node-pty 归档来源为 `https://registry.npmjs.org/node-pty/-/node-pty-1.1.0.tgz`，15,468,777 字节，SHA-256 `c7517f19083ddcb05f276904680eb2b11a6b5ecab778b8e4e5685a6d645b3f60`。实际 SHA-512 integrity 与官方 metadata 相等：`sha512-20JqtutY6JPXTUnL0ij1uad7Qe1baT46lyolh2sSENDd4sTzKZ4nmAFkeAARDKwmlLjPx6XKRlwRUxwjOy+lUg==`。仅列成员并从归档 stdout 读取 `package.json`、prebuild/postinstall 脚本、`binding.gyp` 和 loader；未安装该包或执行构建钩子。
+
+上游 install 是 `node scripts/prebuild.js || node-gyp rebuild`。`binding.gyp` 的 Linux target 生成 `pty.node`；`spawn-helper` target 仅 macOS，修订中不把该 helper 当 Linux 必需产物。当前 lock 中 node-addon-api 为 7.1.1；node-gyp 11.4.2 是后续拟锁定的构建工具，本轮没有添加依赖或改锁文件。[上游 package.json](https://raw.githubusercontent.com/microsoft/node-pty/v1.1.0/package.json)、[node-gyp 要求](https://github.com/nodejs/node-gyp#installation) 与[自托管标签语义](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/use-in-a-workflow)均已独立核读。
+
+继续使用同一固定写作技能和两篇 references，autocorrect 缺失时手检。本轮在被引位置直接复读修改后段落：实施方案第 50 行已将禁令限定为目标安装/运行，52～56 行补编译、headers 和 SEA 加载；原 runner 段落已改为 134～138 行的 ARM64 自托管与资源前置，验收设计 105～109 行同步 matrix 和 Required CI 回执。没有仅靠关键词搜索声称旧段落已移除。
+
+本轮以独有 `.tmp/b-ship-review-checks/` 的官方 Node 22.19.0、已有管理器实际选出的 pnpm 9.15.4，运行 `pnpm check:integration-docs` 和 `pnpm ci:validate`，均 exit 0；文档检查为 4 个技能原件、72 个链接、35 个 REST 端点、11 个 MCP 工具，CI 结构及 24 项已有测试通过。两个检查本轮首次执行通过；没有新增测试或修改门禁。
+
+独有只读脚本再核：只改三个允许文档，11 个本地链接/锚点有效，两处被引段落及验收同步符合修订，Spec/saved plan 原区间与 R1 文件不变，CI 分类仍为 docs，完整秘密形态为 0，exit 0。`git diff --check` 通过。本轮源码、workflow、依赖锁和产品均未修改；原生编译、SEA 加载与 KVM 设备验收保持未运行，修订方案不等于问题已经实测或获产品实施批准。
+
+本轮临时目录、bootstrap node_modules 与 root YAML junction 均按真实工作树边界登记。收尾前确认无任务 Node 进程、删除树无 reparse，先删 junction 本体并确认目标 YAML 仍在，再移除本任务依赖与工具树。root node_modules、bootstrap node_modules 和 `.tmp/b-ship-review-checks/` 的不存在证明均为 true，系统 Node 仍为 `v25.4.0`。只读归档副本和临时校验脚本随工具树收尾，未清理公共缓存或其他任务资源。人工清单 c2/c3 已改为两项 P1 修订的审阅结果，c1 的授权边界保持。

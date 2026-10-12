@@ -47,7 +47,13 @@ Status：Proposed。当前仅获准准备仓库方案文件；下面的产品文
 
 SEA 的内置 `require` 只加载 Node 内置模块。bundle 的启动 banner 建立以真实 `process.execPath` 为锚点的 `createRequire`，用它加载发行物内的原生包；不从当前工作目录、`NODE_PATH` 或 workspace 查找原生依赖。目标程序启动时清理会改变模块加载的继承环境，保留现有客户端启动行为的受控环境边界。
 
-三个原生包保持官方 loader 和匹配的 `.node`/helper 文件布局，作为随归档携带的 sidecar。只收录该架构的运行必需文件及许可证，禁止调用安装生命周期脚本、node-gyp 或网络临时补件。构建时核 ELF 架构、动态库、包版本及锁文件 integrity；原生库损坏或缺失必须失败。
+三个原生包保持官方 loader 和匹配的 `.node`/helper 文件布局，作为随归档携带的 sidecar。只收录该架构的运行必需文件及许可证；目标设备安装和运行阶段禁止调用安装生命周期脚本、node-gyp 或网络临时补件。构建机阶段必须执行下面的 node-pty 原生编译，构建禁令不适用于它。构建时核 ELF 架构、动态库、包版本及锁文件 integrity；原生库损坏或缺失必须失败。
+
+node-pty 1.1.0 官方归档没有 Linux amd64/arm64 `.node`；其 [安装入口](https://raw.githubusercontent.com/microsoft/node-pty/v1.1.0/package.json) 为 `node scripts/prebuild.js || node-gyp rebuild`。两架构各自在同架构 Linux 构建机编译，不能仅复制上游 prebuilds。构建前从受核来源准备 GCC/G++、Make、Python 3、锁定的 node-gyp 11.4.2 和 lock 中的 node-addon-api 7.1.1；记录工具链实际版本、系统包来源及架构。Python 和编译器仅属于构建机，不成为目标安装前置。[node-gyp 构建要求](https://github.com/nodejs/node-gyp#installation)
+
+Node 执行程序和 headers 都使用 `.node-version` 的准确版本。headers 从 `https://nodejs.org/dist/v22.19.0/node-v22.19.0-headers.tar.gz` 取得，按同版本官方 `SHASUMS256.txt` 核摘要；解压到本任务独有 header 目录。在无公共 CAS 硬链接的私有 node-pty 源码副本中，以锁定 Node 执行上游 install/postinstall，设置 `npm_config_build_from_source=true`、`npm_config_nodedir=<verified-header-root>` 和 `npm_config_python=<verified-python>`，PATH 指向锁定 node-gyp。编译期间阻断自动下载，缺 headers 或工具立即失败。强制源构建可能删除私有 prebuilds，因此不得在共享缓存副本执行。
+
+将产出的 `build/Release/pty.node` 放入归档的 `node_modules/node-pty/build/Release/`，保留上游 `lib/` loader 和许可证。上游 `binding.gyp` 的 Linux target 生成 `pty.node`，`spawn-helper` target 仅属于 macOS；Linux 归档不要求这个 macOS helper。逐文件摘要与 ELF 架构、动态库要求、Node ABI、headers 摘要、工具链和原始编译日志进入 manifest/构建回执；构建源码、headers、编译器和 node-gyp 不随目标发行物交付。每架构必须在无源码/宿主 Node 的 guest 中，通过已安装 SEA 的 `run` 实际建立 PTY 并加载该 `pty.node`，检查交互和退出；单独编译成功或 `--version` 不算加载验收。
 
 `cli.ts` 的 ESM 自动启动判断不进入 SEA bundle。抽取共享命令模块，源码入口保留自动启动与公开重导出，发行入口显式调用 `main` 并复用退出、信号和脱敏收尾。`protocol.ts` 改为调用可信公钥读取函数；源码函数保留原文件来源，发行构建通过 esbuild 插件替换该模块为 `node:sea.getAsset` 实现。避免 CommonJS bundle 运行时求值 `import.meta.url`，不得静默换用网络公钥。
 
@@ -104,11 +110,11 @@ sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.loc
 | `apps/connector/src/release-entry.ts` | 显式 SEA 启动、发行版本输出、受控模块加载环境 |
 | `apps/connector/src/trusted-key.ts`、`release-trusted-key.ts` | 源码文件公钥读取与 SEA 资产读取，发行时替换模块 |
 | `apps/connector/src/protocol.ts` | 仅接入可信公钥读取函数；保留全部验证和现有协议客户端标识 |
-| `apps/connector/scripts/build-release.mjs` | 严格元数据、原生依赖闭包、esbuild、SEA、postject、归档及清单；拒绝错误版本/架构 |
+| `apps/connector/scripts/build-release.mjs` | 严格元数据、两架构 node-pty 原生编译与 headers/工具链回执、原生依赖闭包、esbuild、SEA、postject、归档及清单；拒绝错误版本/架构 |
 | `apps/connector/scripts/install.sh`、`install-entry.ts`、`uninstall.sh` | 自包含 SEA 安装助手与 shell 引导；严格归档解析、受保护暂存、OS 锁、原子切换、回退和归属卸载 |
 | `apps/connector/test/install.integration.test.ts`、`vitest.install.config.ts` | 只测安装后的入口，非空且串行；把服务端夹具与目标设备分开 |
 | `apps/connector/test-support/install-server.ts`、`install-driver.mjs` | 在测试控制端启动真实 API/MCP，向目标以 stdin 传测试配对码，绑定准确产物路径 |
-| `apps/connector/package.json`、`tsconfig.json`、`tsconfig.build.json`、`pnpm-lock.yaml` | 锁定 esbuild/postject/tar 与发行元数据，添加 build/release/install 验收入口，测试夹具排除生产构建 |
+| `apps/connector/package.json`、`tsconfig.json`、`tsconfig.build.json`、`pnpm-lock.yaml` | 锁定 esbuild/postject/tar/node-gyp 与发行元数据，添加 build/release/install 验收入口，测试夹具排除生产构建 |
 | `scripts/verify-connector-install.mjs` | 创建隔离目标、运行两架构安装、重启与收尾，拒绝宿主源码和 Node 可见 |
 | `.github/workflows/ci.yml`、`scripts/ci-policy.mjs`、`ci-policy.test.mjs`、`validate-ci.mjs` | 新双架构原生产物＋安装验收纳入 Required CI；保留三系统 native storage |
 | `scripts/ci-test-inputs.mjs`、`turbo.json` | 声明新服务端夹具实际消费的跨包源码，防缓存漏检 |
@@ -125,7 +131,11 @@ sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.loc
 
 共用 pnpm CAS、工具和镜像缓存只读借用；任务 virtual store、node_modules、build 输出、DB、D-Bus、keyring 和目标磁盘私有。构建至少计入依赖副本、bundle、SEA blob、ELF、归档与清单；安装剩余空间须覆盖压缩归档、解压暂存、新版、当前版与回退版。2 GiB 是测量起点，实际预检按文件实长和可用磁盘拒绝，不借其他任务空间承诺成功。
 
-验收目标由两架构原生 Linux runner 创建独有、可重启的 KVM 虚拟机，客户机不挂载仓库。runner label 固定为 `ubuntu-24.04` 与 `ubuntu-24.04-arm`，guest 采用上表系统；启动前确认 `/dev/kvm`、镜像来源、架构、RAM、磁盘和同用户秘密后端。缺能力是环境未满足，不以 QEMU 用户态仿真或容器重启冒设备重启。保存 guest 镜像身份、runner 实际系统、kernel、glibc、libstdc++ 与软件包版本；不把标签当运行原件。
+验收目标由两架构原生 Linux runner 创建独有、可重启的 KVM 虚拟机，客户机不挂载仓库。amd64 使用 `ubuntu-24.04` 并实际预检 KVM；ARM64 使用专用自托管原生 runner，labels 固定为 `[self-hosted, linux, ARM64, workmesh-connector-kvm]`。不再选择 ARM64 hosted runner：其宿主不提供 `/dev/kvm`，安装软件无法补齐。[GitHub 官方说明](https://github.com/actions/runner-images/issues/14062)、[自托管 labels](https://docs.github.com/en/actions/how-tos/manage-runners/self-hosted-runners/use-in-a-workflow)
+
+ARM64 资源取得是后续实施前置条件。Chief 先落实专用原生 ARM64 裸机来源、owner 和隔离额度；仓库管理员在该主机准备 Ubuntu 24.04、可用 `/dev/kvm` 及同架构 guest，并实测 KVM 启动和完整重启，再通过已有受控管理面注册仓库专用 ephemeral runner、赋予上述 labels。主机只承接 WorkMesh 受信任分支任务，执行后恢复干净环境；注册凭据留管理员侧，不进入本任务文件或测试 job。缺现成设备或注册授权时，先另批资源/凭据，ARM64 实施不得放行；本轮没有取得或注册该设备。
+
+guest 采用上表系统。每个 job 启动前确认宿主实际架构、`/dev/kvm` 访问、KVM 加速 guest 启动、镜像来源、RAM、磁盘和同用户秘密后端；labels 不代能力实测。缺能力必须失败或保持未执行，不能用 skip、x64 模拟 ARM64 或容器重启代替。保存 guest 镜像身份、runner 实际系统、kernel、glibc、libstdc++ 与软件包版本，并按[验收设计](acceptance.md#必需检查与-ci)将两架构同一 run/attempt 的回执绑定 Required CI。
 
 创建前记录 owner、准确目录、VM/进程/卷 ID、秘密引用与服务端测试库。收尾只操作这些对象，先核活动和身份，再保存停止、删除与不存在回执。遇到真实权限拒绝不绕过、不扩大删除范围；共享缓存和其他任务数据保留。独审、最新适用 Required CI、双架构真实安装验收和 Chief 确认都完成后，才能交产品成果验收。外部发布仍需单独批准。
 
