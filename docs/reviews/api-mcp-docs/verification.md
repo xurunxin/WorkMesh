@@ -75,3 +75,7 @@
 最终证据目录正例通过：实际调用两份夹具的 save 函数，只在指定目录生成 probe/ledger，未写历史路径。最后 conformance typecheck、CI 校验、策略回归、静态链接/来源及四项拒绝例再次通过。
 
 本轮资源最终收尾见 `cleanup.json`。所有执行与校验进程结束后，核专用 APPDATA 为空并移除；核局部 Node/pnpm/shim 原 SHA 后定向移除；重复生成的模型与历史覆写暂存原件在保索引后收尾。私有可写依赖保留供成果独审，未删除共享 store、v11 首败注册对象或历史 195 个拒绝目录。各轮容器与卷按完整 ID/owner label 定向清理，回执只投影必要身份，不保存 Env/Cmd。
+
+## CI 首败
+
+PR 223 的 CI 475（run 38202739985）静态文档和 20 项 CI 策略测试成功，分类随后被完整提交区间的空白门禁拒绝。五份新日志有额外 EOF 空行；此前本机只核工作树 diff，漏掉新增文件。`pre-whitespace-log-originals.zip` 保全原字节，阅读副本仅修 EOF 空行，哈希差异见 `ci-whitespace-correction.json`。门禁保持，新提交正常触发复验；该首败的跳过 job 不计通过。

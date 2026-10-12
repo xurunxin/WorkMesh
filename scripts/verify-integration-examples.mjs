@@ -74,7 +74,7 @@ const run = async (label, args) => {
   child.stderr.on('data', bytes => { log += bytes.toString() })
   const exitCode = await new Promise((done, reject) => { child.on('error', reject); child.on('close', done) })
   const safe = sanitize(log)
-  writeFileSync(resolve(output, `${label}.log`), safe.replace(/\r\n/g, '\n').replace(/[ \t]+$/gm, ''))
+  writeFileSync(resolve(output, `${label}.log`), safe.replace(/\r\n/g, '\n').replace(/[ \t]+$/gm, '').replace(/\n+$/, '') + '\n')
   checks.push({ label, command: `pnpm ${args.join(' ')}`, startedAt: begin, endedAt: new Date().toISOString(), exitCode }); save()
   console.log(`${label}: exit=${exitCode}`)
   if (exitCode !== 0) { console.error(safe.slice(-8000)); throw new Error(`${label} failed`) }

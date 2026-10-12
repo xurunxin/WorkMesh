@@ -1,9 +1,9 @@
 {
-  "note": "最后验收工具/示例字节；运行原件各自绑定旧版本，提交后另核Git blob",
+  "note": "最后文件复核；日志写入器在CI首败后仅修EOF空行。先前实际运行按逐轮source/ZIP及提交53149绑定。",
   "files": [
     {
       "path": "scripts/verify-integration-examples.mjs",
-      "sha256": "c6a3bc4697eb864dcc8d6511042c43d13f7c1555b01dfdcb20c008ec3bbd186c"
+      "sha256": "8a89aff185962979d4021ac9e161ae40564d634e8e4047a92e9205960344ed31"
     },
     {
       "path": "packages/conformance/src/delivery-recovery.fixture.ts",
