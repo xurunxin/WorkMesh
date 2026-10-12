@@ -2,9 +2,11 @@
 
 Status
 
-Proposed（方案独审前实施已构成阶段偏差；本次审查不补写为事前批准，产品修订须 Chief 单独放行）
+Accepted（活动方案于 17:25 正式复审接受，Chief 于 17:26 单独放行产品修订；最终成果验收仍待独审及必需 CI）
 
 Context
+
+13:12 仅批准方案文档准备。先前方案独审前实施的阶段偏差保持真实记录，不追认为事前批准。当前状态依据本次正式方案复审及随后单独放行，准确规格来源见 `docs/reviews/b3/product-revision/authorization-read.json`。
 
 接入失败原来只提供错误码和通用提示。客户端需要知道可执行的恢复步骤，也需要能直接转述给管理员的一项人工动作。用户已选择 API 加最小 SDK、MCP 和 CLI 适配，项目继续作为纯后端服务交付。
 
@@ -18,7 +20,9 @@ REST 接入错误在原 `error` 对象中增加非空的 `next_action` 和 `huma
 
 保留 `AGENT_CONNECTION_CLIENT_TYPE_MISMATCH`。`details.reason` 区分 slug 不匹配、类型不匹配及 enrollment policy 拒绝。同时不匹配时先报告 slug。该错误返回 `supported_clients`，与 discovery 共用来源。列表不能修复 slug 绑定，也不代表 policy 允许其中的类型。
 
-SDK 独立校验并保留可选的 `recovery`，缺失或非法的新字段不覆盖原错误。MCP 将恢复字段传到文本和结构化错误，保留原 `safeNextAction`。CLI 只展示本地目录中核验过的指令、已知客户端类型及安全追踪信息，继续使用既有脱敏器。
+SDK 按错误码、安全原因及目录校验并保留可选的 `recovery`，缺失或非法的新字段不覆盖原错误。MCP 输出前独立核对同一目录，再将合法字段传到文本和结构化错误，保留原 `safeNextAction`。CLI 只展示本地目录中核验过的指令、已知客户端类型及安全追踪信息，继续使用既有脱敏器。
+
+CLI 安全解析 429/503 的 `Retry-After`，在异常中保留等待毫秒数，终端展示向上取整的秒数。非法或缺失时停止重试，不回显原头。
 
 本决定不新增恢复授权。客户端继续保留原 pending、key、正文和上下文，不自动换类型、改写请求身份或刷新凭据。普通 MCP 业务拒绝沿用既有合同；HTTP 边界拒绝不伪装成工具结果。
 

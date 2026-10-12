@@ -16,6 +16,8 @@ REST 错误形状如下，`details` 按错误类别变化。`currentRevision` �
 }
 ```
 
+SDK 和 MCP 在各自的消费边界核对错误码、安全原因、双指令及支持列表与本地恢复目录的一致性。目录外文字、控制串、秘密和原因或列表错配都会丢弃新增恢复字段，原错误仍保留。类型不匹配缺少合法 `details.reason` 时也丢弃恢复字段。
+
 SDK `WorkMeshSdkError` 保留 `code/message/status/details/correlationId` 和适用的 `retry` 元数据。接入错误的双恢复指令及支持类型另保存在 `recovery`。旧响应缺少恢复字段时，`recovery` 为 `undefined`，原错误仍保留。MCP 的 `safeNextAction` 保持原行为；恢复提示不授予权限。
 
 ## 接入恢复指令
@@ -43,11 +45,19 @@ SDK `WorkMeshSdkError` 保留 `code/message/status/details/correlationId` 和适
 
 错误配对码不会增加合法配对的 attempts。已知配对的 wrong slug 或已知错误类型各增加一次；达到 8 次后，后续兑换返回 `AGENT_CONNECTION_PAIRING_LOCKED`，不再增加该计数。两个兑换操作的 endpoint、subject-client 和失败退避分别按 operationId 隔离；IP 和 socket 预算共享。
 
-连接器 CLI 显示“客户端动作”“人工动作”和适用的部署支持类型。CLI 只接纳本地目录中的指令，异常响应沿用安全提示；不打印服务端自由文本或秘密。失败保留 pending 和旧配置，指令不会自动改类型、换 key、刷新身份或重写配置。
+连接器 CLI 显示“客户端动作”“人工动作”和适用的部署支持类型。429/503 还显示“等待时长：N 秒（Retry-After）”。CLI 只接纳本地目录中的指令，异常响应沿用安全提示；不打印服务端自由文本或秘密。失败保留 pending 和旧配置，指令不会自动改类型、换 key、刷新身份或重写配置。
 
 有原 pending 时，只重放原 key、精确正文及客户端上下文。取得新配对清单后，按连接器显式 `abandon-pending` 流程处理旧请求。支持类型列表供你核对真实客户端，不允许直接改写已冻结 pending。
 
 SDK 从 `error.recovery` 读取指令。MCP 工具失败将同一字段放进文本错误和 `structuredContent.error`，并保留原 `safeNextAction`。客户端先检查 `isError`，再读取 `next_action` 和 `human_action`。MCP HTTP 边界的凭据模式拒绝仍遵守原传输合同，不保证具有工具错误正文。
+
+CLI 只接受非负整数秒或规范 GMT HTTP-date。日期按收到响应时的时钟计算，过期日期为 0；展示秒数向上取整。负数、溢出、控制串、非法或缺失头不会回显到终端，CLI 显示“等待时长不可用，请停止重试并联系部署管理员”。CLI 本次命令退出失败，不自动等待或重试，pending 和旧配置保持。
+
+例如，429 响应头 `Retry-After: 7` 或 503 响应头 `Retry-After: 7` 都会显示：
+
+```text
+等待时长：7 秒（Retry-After）；本命令不会自动重试。
+```
 
 HTTP 429 保留 `Retry-After`、`RateLimit-Remaining` 和 `RateLimit-Reset`。等待完整的 `Retry-After`，按原预算重放原请求；SDK 的超预算抑制规则保持。限流存储故障返回 HTTP 503 和 `AUTH_RATE_LIMIT_UNAVAILABLE`，认证失败关闭。
 

@@ -1,7 +1,12 @@
 import type { AgentConnectionErrorRecovery } from '@workmesh/contracts'
 
 export class ConnectorError extends Error {
-  constructor(readonly code: string, readonly recovery?: AgentConnectionErrorRecovery, readonly correlationId?: string) { super(code); this.name = 'ConnectorError' }
+  readonly retryAfterMs?: number
+  constructor(readonly code: string, readonly recovery?: AgentConnectionErrorRecovery, readonly correlationId?: string,
+    retryAfterMs?: number, readonly status?: number) {
+    super(code); this.name = 'ConnectorError'
+    this.retryAfterMs = typeof retryAfterMs === 'number' && Number.isSafeInteger(retryAfterMs) && retryAfterMs >= 0 ? retryAfterMs : undefined
+  }
 }
 export function requireThat(condition: unknown, code: string): asserts condition {
   if (!condition) throw new ConnectorError(code)

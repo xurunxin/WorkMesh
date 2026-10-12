@@ -974,6 +974,7 @@ function toSdkError(status: number, payload: unknown, retry?: WorkMeshRetryMetad
     const error = candidate as { code?: unknown; message?: unknown; correlationId?: unknown; details?: unknown }
     const message = typeof error.message === 'string' ? error.message : `WorkMesh request failed (${status})`
     const correlationId = typeof error.correlationId === 'string' ? error.correlationId : undefined
+    const recovery = readAgentConnectionErrorRecovery(candidate)
     if (
       error.code === 'CURSOR_EXPIRED'
       && error.details
@@ -986,7 +987,7 @@ function toSdkError(status: number, payload: unknown, retry?: WorkMeshRetryMetad
         return new WorkMeshCursorExpiredError(message, {
           status,
           correlationId,
-          recovery: readAgentConnectionErrorRecovery(candidate),
+          recovery,
           details: {
             minimumCursor: parsed.data,
             resyncCursor: resync.data,
@@ -994,7 +995,7 @@ function toSdkError(status: number, payload: unknown, retry?: WorkMeshRetryMetad
           },
         })
     }
-    return new WorkMeshSdkError(message, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId, details: error.details, retry, recovery: readAgentConnectionErrorRecovery(candidate) })
+    return new WorkMeshSdkError(message, { code: typeof error.code === 'string' ? error.code : 'HTTP_ERROR', status, correlationId, details: error.details, retry, recovery })
   }
   return new WorkMeshSdkError(`WorkMesh request failed (${status})`, { code: 'HTTP_ERROR', status, details: payload, retry })
 }

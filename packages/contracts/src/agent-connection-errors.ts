@@ -89,22 +89,25 @@ export function agentConnectionErrorRecovery(code: string, reason?: unknown): Ag
 
 export function readAgentConnectionErrorRecovery(value: unknown): AgentConnectionErrorRecovery | undefined {
   const parsed = agentConnectionErrorRecoverySchema.safeParse(value)
-  return parsed.success ? parsed.data : undefined
+  const identity = z.object({ code: z.string().regex(/^[A-Z][A-Z0-9_]{0,99}$/), details: z.unknown().optional() }).safeParse(value)
+  if (!parsed.success || !identity.success) return undefined
+  const details = identity.data.details
+  const reason = details && typeof details === 'object' && 'reason' in details ? details.reason : undefined
+  if (identity.data.code === 'AGENT_CONNECTION_CLIENT_TYPE_MISMATCH' && !agentConnectionErrorReasonSchema.safeParse(reason).success)
+    return undefined
+  const expected = agentConnectionErrorRecovery(identity.data.code, reason)
+  return parsed.data.next_action === expected.next_action && parsed.data.human_action === expected.human_action
+    && JSON.stringify(parsed.data.supported_clients) === JSON.stringify(expected.supported_clients) ? parsed.data : undefined
 }
 
-// CLI 只展示本地已知指令，避免把上游自由文本、秘密或终端控制符带到输出。
+// 每个消费者都核对本地目录，避免上游自由指令、秘密或终端控制符进入恢复字段。
 export function readSafeAgentConnectionError(value: unknown): { code: string; recovery?: AgentConnectionErrorRecovery; correlationId?: string } | undefined {
   const parsed = z.object({ code: z.string().regex(/^[A-Z][A-Z0-9_]{0,99}$/),
     details: z.unknown().optional(),
     correlationId: z.unknown().optional(),
   }).safeParse(value)
   if (!parsed.success) return undefined
-  const details = parsed.data.details
-  const reason = details && typeof details === 'object' && 'reason' in details ? details.reason : undefined
-  const expected = agentConnectionErrorRecovery(parsed.data.code, reason)
-  const actual = readAgentConnectionErrorRecovery(value)
-  const recovery = actual && actual.next_action === expected.next_action && actual.human_action === expected.human_action
-    && JSON.stringify(actual.supported_clients) === JSON.stringify(expected.supported_clients) ? actual : undefined
+  const recovery = readAgentConnectionErrorRecovery(value)
   const trace = z.string().regex(/^[A-Za-z0-9._:/-]{1,200}$/).safeParse(parsed.data.correlationId)
   const correlationId = trace.success && !/wm[ipes]_[A-Za-z0-9_-]{43}/.test(trace.data) ? trace.data : undefined
   return { code: parsed.data.code, recovery, correlationId }

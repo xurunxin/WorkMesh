@@ -1,0 +1,92 @@
+[
+  {
+    "command": "pnpm lint",
+    "startedAt": "2026-10-12T09:49:35.5238266Z",
+    "finishedAt": "2026-10-12T09:51:21.1634448Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\lint.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm typecheck",
+    "startedAt": "2026-10-12T09:51:21.2437431Z",
+    "finishedAt": "2026-10-12T09:53:07.7836049Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\typecheck.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm test",
+    "startedAt": "2026-10-12T09:53:07.7914659Z",
+    "finishedAt": "2026-10-12T09:58:40.4888929Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\test.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm build",
+    "startedAt": "2026-10-12T09:58:40.4944315Z",
+    "finishedAt": "2026-10-12T09:59:05.3157699Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\build.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm check:integration-docs",
+    "startedAt": "2026-10-12T09:59:05.3238094Z",
+    "finishedAt": "2026-10-12T09:59:07.6608667Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\check-integration-docs.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm ci:test",
+    "startedAt": "2026-10-12T09:59:07.6687255Z",
+    "finishedAt": "2026-10-12T09:59:12.2734899Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\ci-test.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm ci:validate",
+    "startedAt": "2026-10-12T09:59:13.8171205Z",
+    "finishedAt": "2026-10-12T09:59:17.8047273Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\ci-validate.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm check:route-policy",
+    "startedAt": "2026-10-12T09:59:17.8122424Z",
+    "finishedAt": "2026-10-12T09:59:21.5567156Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\check-route-policy.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm smoke:agents:ci",
+    "startedAt": "2026-10-12T09:59:21.5642197Z",
+    "finishedAt": "2026-10-12T09:59:29.2493611Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\smoke-agents-ci.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  {
+    "command": "pnpm test:conformance",
+    "startedAt": "2026-10-12T09:59:29.2556354Z",
+    "finishedAt": "2026-10-12T09:59:33.0800915Z",
+    "exitCode": 0,
+    "log": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\product-revision\\local-checks\\test-conformance.log",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  }
+]

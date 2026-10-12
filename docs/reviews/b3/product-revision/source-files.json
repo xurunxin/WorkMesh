@@ -1,0 +1,144 @@
+{
+  "baselineHead": "ad185621359282fae6a874939ef72d9424dc3864",
+  "sourceBinding": "运行时产品字节与当前主线底座绑定；提交后核准确 Git blob。",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "runSha256": "d554056c5ca17ebefc8563316caa5eef9bf96520a9f36b0687276d5b4ba2939a",
+      "lfSha256": "d554056c5ca17ebefc8563316caa5eef9bf96520a9f36b0687276d5b4ba2939a",
+      "expectedGitBlob": "8869eb83d9a35f0fa864a94a40906e87df1a18c3"
+    },
+    {
+      "path": ".gitignore",
+      "runSha256": "573cbffa08a22a4506d22d4ce41b9863ebb166f253a91e111c2e3f469eb779f5",
+      "lfSha256": "573cbffa08a22a4506d22d4ce41b9863ebb166f253a91e111c2e3f469eb779f5",
+      "expectedGitBlob": "ba5a5ee32987a27e310596083b6971d4efc1e0dc"
+    },
+    {
+      "path": "AGENTS.md",
+      "runSha256": "938df4feb88826b91ad4da74771f93e767d26fc777756ea32af0de2b6907f3a8",
+      "lfSha256": "938df4feb88826b91ad4da74771f93e767d26fc777756ea32af0de2b6907f3a8",
+      "expectedGitBlob": "e82612872e4b3045e9f0d59383996fd42a521a19"
+    },
+    {
+      "path": "AGENT_PROTOCOL.md",
+      "runSha256": "f500db6b0e8d6a95ebfe383154b79e241a8c3a709460897df666d1998f2f8ac3",
+      "lfSha256": "f500db6b0e8d6a95ebfe383154b79e241a8c3a709460897df666d1998f2f8ac3",
+      "expectedGitBlob": "433a8e7cfc37f704111d695d3dc484b7f5aae201"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "runSha256": "2cb7f6d7b73ef932d4892ab2a183246455c3f621610e3a0db6dcbab15ecbb1fb",
+      "lfSha256": "2cb7f6d7b73ef932d4892ab2a183246455c3f621610e3a0db6dcbab15ecbb1fb",
+      "expectedGitBlob": "806bc39b43a7b2a0dfe0f02247d78c723818cb3b"
+    },
+    {
+      "path": "apps/connector/integration/cli.test.ts",
+      "runSha256": "6251a82885bb0372157a6c1de81f479eaec593be46374ef818d0f812ea5d0dd8",
+      "lfSha256": "6251a82885bb0372157a6c1de81f479eaec593be46374ef818d0f812ea5d0dd8",
+      "expectedGitBlob": "77bd1c081981abc54575ae3abe039e9372983d9d"
+    },
+    {
+      "path": "apps/connector/src/cli.ts",
+      "runSha256": "7f8946f77afd95d22850c27e6efe216255b2488da39dc206fd87cbbdf7d5ee77",
+      "lfSha256": "7f8946f77afd95d22850c27e6efe216255b2488da39dc206fd87cbbdf7d5ee77",
+      "expectedGitBlob": "50f757e71b589a2a4153b2152c9240e29f109e0a"
+    },
+    {
+      "path": "apps/connector/src/connect.test.ts",
+      "runSha256": "e663c68156b84be3f5818c6519e5c730f7ef636b4b3044abe31268328e91ba61",
+      "lfSha256": "e663c68156b84be3f5818c6519e5c730f7ef636b4b3044abe31268328e91ba61",
+      "expectedGitBlob": "69e39ebdc8db3308dee898a0dafcb1196c64b0ac"
+    },
+    {
+      "path": "apps/connector/src/errors.ts",
+      "runSha256": "e997a8fdbf718c09d02c1aabbb40af019b13e825d2d9cc8ec5b862772710474e",
+      "lfSha256": "e997a8fdbf718c09d02c1aabbb40af019b13e825d2d9cc8ec5b862772710474e",
+      "expectedGitBlob": "7e0beb8e55bf0af680d6dbcbeadda5e2d82fda44"
+    },
+    {
+      "path": "apps/connector/src/protocol.ts",
+      "runSha256": "2c08cb02aba4eaf3e99ef9d5604aef824e93924025c9956198bbcabde1a138f4",
+      "lfSha256": "2c08cb02aba4eaf3e99ef9d5604aef824e93924025c9956198bbcabde1a138f4",
+      "expectedGitBlob": "54e3f047e2b42dc33326dbf097215de55dca28b8"
+    },
+    {
+      "path": "apps/mcp/src/index.test.ts",
+      "runSha256": "b37d267713bbd6fc4a92c867120008e11993092707dfa3bc24f7b213e56d586e",
+      "lfSha256": "b37d267713bbd6fc4a92c867120008e11993092707dfa3bc24f7b213e56d586e",
+      "expectedGitBlob": "7cd8d08da4397195e7fa672483cfddd8d294caf6"
+    },
+    {
+      "path": "apps/mcp/src/index.ts",
+      "runSha256": "0e4ce3f296b5368592ccdb9000facdc0381ae1879de2d6c0b2671b63cedb76cf",
+      "lfSha256": "0e4ce3f296b5368592ccdb9000facdc0381ae1879de2d6c0b2671b63cedb76cf",
+      "expectedGitBlob": "33d39762a8de98f0f71c286d03435ebded6ab503"
+    },
+    {
+      "path": "docs/adr/0088-agent-connection-error-recovery.md",
+      "runSha256": "146d3ffa80941609afa8b0182ed6cad8fbc91a30c641d4c9be9e6700afde75f0",
+      "lfSha256": "146d3ffa80941609afa8b0182ed6cad8fbc91a30c641d4c9be9e6700afde75f0",
+      "expectedGitBlob": "9ffd32f230575a0d9a5d3ae30496c9fc4caaeb8c"
+    },
+    {
+      "path": "docs/adr/README.md",
+      "runSha256": "0efd0fa5dca154bd38fbb66e88ccf6a240aa6f65cc3675a0a7013d9358bc7857",
+      "lfSha256": "0efd0fa5dca154bd38fbb66e88ccf6a240aa6f65cc3675a0a7013d9358bc7857",
+      "expectedGitBlob": "45a02e5b499f2513563a51f1ba5f399a3a26249d"
+    },
+    {
+      "path": "docs/agent-integration.md",
+      "runSha256": "c2cdad69e20f77a8b93baab8f57d28200f2226cd503d4f67dd80ead582b948c1",
+      "lfSha256": "c2cdad69e20f77a8b93baab8f57d28200f2226cd503d4f67dd80ead582b948c1",
+      "expectedGitBlob": "e2d88c33449fb629f7de8ae246ebd2102a12cf3a"
+    },
+    {
+      "path": "docs/documentation-maintenance.md",
+      "runSha256": "1d6dd1bf6f7c781a4fd37cf02d0be9cec1e2fb6bc9c7e0071e45d02eda9fdccb",
+      "lfSha256": "1d6dd1bf6f7c781a4fd37cf02d0be9cec1e2fb6bc9c7e0071e45d02eda9fdccb",
+      "expectedGitBlob": "3442c63e0b6adfbb995e6a3e5337590b9f566568"
+    },
+    {
+      "path": "docs/integration/mcp.md",
+      "runSha256": "bd307d3ff089902b3461514f865e51f397c7ce44ea6dc36fe7c638e95e67e3b0",
+      "lfSha256": "bd307d3ff089902b3461514f865e51f397c7ce44ea6dc36fe7c638e95e67e3b0",
+      "expectedGitBlob": "299dc9f7cdbe0c77ffb3aa685abdb3bdc1b61d1a"
+    },
+    {
+      "path": "docs/integration/reference.md",
+      "runSha256": "78103a866358498f19cafc2c3480bee3efc5de4cd3d6bcd860ed18d7c17f48eb",
+      "lfSha256": "78103a866358498f19cafc2c3480bee3efc5de4cd3d6bcd860ed18d7c17f48eb",
+      "expectedGitBlob": "3bd8587cba5e9680ec1f04b30e4bd5dbd4817a05"
+    },
+    {
+      "path": "docs/integration/troubleshooting.md",
+      "runSha256": "d118dfc448c8cb54934ec0a83ce7c24dba44e0afae2450d84ed241512817b480",
+      "lfSha256": "d118dfc448c8cb54934ec0a83ce7c24dba44e0afae2450d84ed241512817b480",
+      "expectedGitBlob": "b98f129e7007153c1b33cb401a1ca13411c2d214"
+    },
+    {
+      "path": "docs/reviews/b3/README.md",
+      "runSha256": "42aa43751a5bb6466a6d2db4e36169b572c9ffda83b5b63a9f53cf7ffef707d2",
+      "lfSha256": "42aa43751a5bb6466a6d2db4e36169b572c9ffda83b5b63a9f53cf7ffef707d2",
+      "expectedGitBlob": "c74d20a507769ef56ca64da4cc3de568ed05f2f0"
+    },
+    {
+      "path": "packages/agent-sdk/src/index.test.ts",
+      "runSha256": "28b1f5892449a808791cdfc9746e348b8f079eaa7a96898fb2e9a605a51676ba",
+      "lfSha256": "28b1f5892449a808791cdfc9746e348b8f079eaa7a96898fb2e9a605a51676ba",
+      "expectedGitBlob": "fab26f8b9ed00f96614d51d7ac0da98e20fa5a21"
+    },
+    {
+      "path": "packages/agent-sdk/src/index.ts",
+      "runSha256": "edf8e70ed976fb79fd767d1d658858c2aa263f54ea6ab75945f8c32ec593fd5f",
+      "lfSha256": "edf8e70ed976fb79fd767d1d658858c2aa263f54ea6ab75945f8c32ec593fd5f",
+      "expectedGitBlob": "749b0ebc33c14a88a6b0c795eff823a03935642f"
+    },
+    {
+      "path": "packages/contracts/src/agent-connection-errors.ts",
+      "runSha256": "8452e89218f8a287b201101d41d216b66701ba3859089efe86a4e31c1ac5cff9",
+      "lfSha256": "8452e89218f8a287b201101d41d216b66701ba3859089efe86a4e31c1ac5cff9",
+      "expectedGitBlob": "2a8450f7b0c4631ff08cd74b186c52fd17dec703"
+    }
+  ]
+}

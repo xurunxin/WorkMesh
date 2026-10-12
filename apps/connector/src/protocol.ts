@@ -122,6 +122,19 @@ export async function validateCurrent(e: Expectation, token: string, fingerprint
   requireThat(/^wmi_[A-Za-z0-9_-]{43}$/.test(token) && sha256(token).slice(0, 12) === fingerprint, 'CONNECTOR_FINGERPRINT_MISMATCH')
   validateBootstrap(await deps.bootstrap(e, token, deps.fetch), e, fingerprint)
 }
+export function parseRetryAfter(header: string | null, nowMs = Date.now()): number | undefined {
+  if (!header || header.length > 128 || /[^\x20-\x7e]/.test(header)) return undefined
+  const value = header.trim()
+  if (/^\d+$/.test(value)) {
+    const milliseconds = Number(value) * 1_000
+    return Number.isSafeInteger(milliseconds) ? milliseconds : undefined
+  }
+  if (!/^[A-Za-z]{3}, \d{2} [A-Za-z]{3} \d{4} \d{2}:\d{2}:\d{2} GMT$/.test(value)) return undefined
+  const timestamp = Date.parse(value)
+  if (!Number.isFinite(timestamp) || new Date(timestamp).toUTCString() !== value) return undefined
+  const milliseconds = Math.max(0, timestamp - nowMs)
+  return Number.isSafeInteger(milliseconds) ? milliseconds : undefined
+}
 export async function verifyPairing(e: Expectation, pending: Pending, deps: ProtocolDependencies) {
   await discover(e, deps.fetch)
   const response = await deps.fetch(pending.target, { method: 'POST', redirect: 'error', signal: AbortSignal.timeout(30_000),
@@ -129,7 +142,8 @@ export async function verifyPairing(e: Expectation, pending: Pending, deps: Prot
   if (!response.ok) {
     const failure = z.object({ error: z.unknown() }).safeParse(await json(response, true))
     const known = failure.success ? readSafeAgentConnectionError(failure.data.error) : undefined
-    throw new ConnectorError(known?.code ?? 'CONNECTOR_REDEEM_REJECTED', known?.recovery, known?.correlationId)
+    const retryAfterMs = response.status === 429 || response.status === 503 ? parseRetryAfter(response.headers.get('retry-after')) : undefined
+    throw new ConnectorError(known?.code ?? 'CONNECTOR_REDEEM_REJECTED', known?.recovery, known?.correlationId, retryAfterMs, response.status)
   }
   const redeemed = parse(agentConnectionRedeemResponseSchema, await json(response))
   const fingerprint = sha256(redeemed.installation_token).slice(0, 12)

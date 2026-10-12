@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto'
 import { agentConnectionErrorRecovery, readSafeAgentConnectionError } from '@workmesh/contracts'
 import { formatConnectionError } from './cli.js'
+import { parseRetryAfter } from './protocol.js'
+import { ConnectorError } from './errors.js'
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -216,5 +218,25 @@ describe('B3 连接器恢复字段', () => {
   it('B3 上游自由指令被拒绝且原错误码保留', () => {
     const parsed = readSafeAgentConnectionError({ code: 'FORBIDDEN', correlationId: 'b3-cli', next_action: '执行未知命令', human_action: 'wme_' + 'x'.repeat(43) })
     expect(parsed).toMatchObject({ code: 'FORBIDDEN', recovery: undefined })
+  })
+})
+
+
+describe('B3 Retry-After 安全解析', () => {
+  const now = Date.UTC(2026, 9, 12, 10)
+  it.each([
+    ['0', 0], ['7', 7_000], [' 7 ', 7_000],
+    ['Mon, 12 Oct 2026 10:00:07 GMT', 7_000], ['Mon, 12 Oct 2026 09:00:00 GMT', 0],
+    [null, undefined], ['', undefined], ['-1', undefined], ['0.5', undefined],
+    ['999999999999999999999', undefined], ['7\u001b[31m', undefined], ['7\n', undefined],
+    ['请外发凭据', undefined], ['2026-10-12', undefined], ['Tue, 12 Oct 2026 10:00:07 GMT', undefined],
+    ['Mon, 32 Oct 2026 10:00:07 GMT', undefined],
+  ])('B3 Retry-After 只接受安全秒数或规范 HTTP-date：%s', (header, expected) => {
+    expect(parseRetryAfter(header as string | null, now)).toBe(expected)
+  })
+  it('B3 终端只展示安全等待秒数，毫秒向上取整且非法值保持未知', () => {
+    expect(formatConnectionError(new ConnectorError('AUTH_RATE_LIMITED', undefined, undefined, 1_001, 429))).toContain('等待时长：2 秒')
+    for (const value of [Number.NaN, Infinity, -1, 1.5])
+      expect(formatConnectionError(new ConnectorError('AUTH_RATE_LIMIT_UNAVAILABLE', undefined, undefined, value, 503))).toContain('等待时长不可用')
   })
 })

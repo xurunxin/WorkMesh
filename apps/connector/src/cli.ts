@@ -72,10 +72,16 @@ export async function finishClientProcess(code: number): Promise<never> {
   process.exit(code)
 }
 export function formatConnectionError(error: ConnectorError): string {
-  if (!error.recovery) return `${error.code}：连接未完成；保留旧配置。重试须使用原清单与原配对码，窗口外请管理员重新配对。\n`
+  const waiting = error.status === 429 || error.status === 503 || error.code === 'AUTH_RATE_LIMITED' || error.code === 'AUTH_RATE_LIMIT_UNAVAILABLE'
+    ? error.retryAfterMs === undefined
+      ? '等待时长不可用，请停止重试并联系部署管理员。\n'
+      : `等待时长：${Math.ceil(error.retryAfterMs / 1_000)} 秒（Retry-After）；本命令不会自动重试。\n`
+    : ''
+  if (!error.recovery) return `${error.code}：连接未完成；保留旧配置。重试须使用原清单与原配对码，窗口外请管理员重新配对。\n` + waiting
   return `${error.code}：连接未完成；保留旧配置。\n客户端动作：${error.recovery.next_action}\n人工动作：${error.recovery.human_action}\n`
     + (error.recovery.supported_clients ? `部署支持类型：${error.recovery.supported_clients.join('、')}\n` : '')
     + (error.correlationId ? `correlationId：${error.correlationId}\n` : '')
+    + waiting
 }
 if (process.argv[1] === fileURLToPath(import.meta.url)) main().then(async () => {
   if (process.argv[2] === 'run') await finishClientProcess(process.exitCode === undefined ? 0 : Number(process.exitCode))

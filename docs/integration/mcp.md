@@ -71,4 +71,4 @@ HTTP 每请求重建 client。C 在 Stop 后不能假定仍持有上次目标 E�
 
 ## 接入拒绝的恢复字段
 
-SDK 收到 API 的接入拒绝后，将双指令和支持类型保存在 `WorkMeshSdkError.recovery`。MCP 工具失败把它们放进 `structuredContent.error` 和文本错误，保留 `correlationId`、`details`、适用的 `currentRevision` 与原 `safeNextAction`。客户端先判断 `isError`，再按[恢复指令](troubleshooting.md)处理。旧响应缺字段时仍保留原拒绝；指令不触发身份刷新、自动恢复或新调用。
+SDK 收到 API 的接入拒绝后，将双指令和支持类型保存在 `WorkMeshSdkError.recovery`。MCP 输出前再次按错误码、安全原因和本地目录核对字段。非法新增字段丢弃，原错误保留。MCP 工具失败把通过校验的字段放进 `structuredContent.error` 和文本错误，保留 `correlationId`、`details`、适用的 `currentRevision` 与原 `safeNextAction`。客户端先判断 `isError`，再按[恢复指令](troubleshooting.md)处理。旧响应缺字段时仍保留原拒绝；指令不触发身份刷新、自动恢复或新调用。
