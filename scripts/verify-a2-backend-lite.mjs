@@ -219,9 +219,12 @@ try {
   receipts.skillBlob = { sha256: createHash('sha256').update(tracked.stdout).digest('hex'), imageId: image.id, assetPath }; save()
   env.WORKMESH_VERIFY_MCP = deploymentClass === 'production' ? 'true' : 'false'
   await must(process.execPath, [resolve(root, 'scripts/verify-a2-backend-lite-api.mjs')])
-  if (deploymentClass === 'production' && !services.some(service => process.env[`WORKMESH_${service.toUpperCase()}_IMAGE`]))
-    await must(process.execPath, [resolve(root, 'scripts/verify-production-cold-cache.mjs')], { env: { ...env,
-      WORKMESH_COLD_SOURCE_IMAGES: JSON.stringify(Object.fromEntries([...images].map(([service, value]) => [service, value.target]))) } })
+  if (deploymentClass === 'production' && !services.some(service => process.env[`WORKMESH_${service.toUpperCase()}_IMAGE`])) {
+    if (process.platform === 'linux')
+      await must(process.execPath, [resolve(root, 'scripts/verify-production-cold-cache.mjs')], { env: { ...env,
+        WORKMESH_COLD_SOURCE_IMAGES: JSON.stringify(Object.fromEntries([...images].map(([service, value]) => [service, value.target]))) } })
+    else { receipts.coldCacheVerification = { performedHere: false, reason: '冷 registry 包装器仅由必需 Linux CI 执行；本机不计冷缓存通过' }; save() }
+  }
   receipts.outcome = '本机无源码纯后端安装、真实 worker、TLS 和签名 Skill 通过；真实低功耗设备与真实厂商未测'
 } catch (error) { receipts.outcome = `失败或未验收：${redact(error)}`; console.error(receipts.outcome); process.exitCode = 1; save() }
 finally {
