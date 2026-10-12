@@ -4,7 +4,7 @@
 
 ## 来源与保留方式
 
-- 平台卡片：[#20](todo:JfGwKk3prfIie6X2u2J51)，本次通过 `tds.todos(id)` 完整读取 `Spec` 正文；工具返回的 `Saved plan` 尾部被截断。
+- 平台卡片：[#20](todo:JfGwKk3prfIie6X2u2J51)。文档准备阶段通过 `tds.todos(id)` 完整读取当时的 `Spec`，`Saved plan` 尾部截断。本次研究读取新增阶段成功，但工具在历史正文末段截断；完整当前规格来源为本会话用户全文和保留的历史原件，见 [TCG 规格](tcg/current-spec.md)。
 - 完整 saved plan：`doc:Sq2Il0gKZRLrp-8L4RFk3`。本会话用户重新提供的完整原文保存在 [实施方案](implementation-plan.md#已确认的文档准备计划原文)；不补造工具截断部分。
 - 问题卡：`doc:q-rojM7Z-OYYSGaTPRD04Td`；真实答复见下表及本会话。稳定引用、正文摘要和读取事实见[方案证据](../../reviews/b-ship/planning-evidence.md)。
 
@@ -14,6 +14,7 @@
 | --- | --- | --- |
 | 首批发行平台 | Linux amd64、arm64（推荐） | 首批双架构已确认；既有 Windows/macOS 安全回归保持 |
 | 无源码验收环境 | 独有干净虚拟机／原生 CI（推荐） | 环境类型已确认；尚未提供具体目标设备或系统版本 |
+| 本次研究路线 | 先验证无需 KVM 的路径（推荐） | 只放行 TCG 可行性实验；不批准替换最终验收路线或实施产品 |
 
 1 vCPU、1 GiB 内存和 2 GiB 可用磁盘只是测量起点建议。Node SEA、esbuild、postject 和同架构原生依赖归档是执行者提出的待审方案，不是用户已批准的产品实现。后续[验收设计](acceptance.md)中的新命令和新测试目前均未实现、未运行。
 

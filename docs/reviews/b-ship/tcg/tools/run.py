@@ -5,6 +5,7 @@ import hashlib
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 import os
+import signal
 from pathlib import Path
 import socket
 import subprocess
@@ -31,6 +32,10 @@ def execute(args):
 
 
 def main():
+    def interrupted(_signum, _frame):
+        raise InterruptedError("research canceled")
+    signal.signal(signal.SIGTERM, interrupted)
+    signal.signal(signal.SIGINT, interrupted)
     parser = argparse.ArgumentParser()
     parser.add_argument("--arch", required=True, choices=IMAGES)
     parser.add_argument("--root", default="/data")
@@ -121,7 +126,7 @@ Type=oneshot
 ExecStart=/opt/tcg/finish.sh
 TimeoutStartSec=600
 [Install]
-WantedBy=multi-user.target
+WantedBy=cloud-init.target
 '''
         files = [("/opt/tcg/guest.py", guest, "0644"),
                  ("/opt/tcg/finish.sh", wrapper.encode(), "0755"),
