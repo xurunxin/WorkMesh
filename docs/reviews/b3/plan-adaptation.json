@@ -1,0 +1,148 @@
+{
+  "savedPlanDoc": "doc:jvYs_ntDOENgE2b43I54n",
+  "original": "sources/saved-plan-jvys.md",
+  "previousCopy": "docs/plan/b3-connection-error-recovery.md",
+  "activePlan": "docs/plan/b3-connection-error-recovery-active.md",
+  "activePlanSha256": "2a1ca02e5acdda3c619f6945a17c2bd824c346ef55650865ad366df4e26a361e",
+  "main": "abf6813a439feab4b17b0602cc9295216634586e",
+  "mainRead": "本轮 GitHub 公共 REST /git/ref/heads/main 实际读回；不使用 origin/main 或共享 FETCH_HEAD。",
+  "mainSources": [
+    {
+      "path": "AGENTS.md",
+      "mainGitBlob": "213f085664c9351f5e9c9f951f3cfc85ac2efb67"
+    },
+    {
+      "path": "docs/documentation-maintenance.md",
+      "mainGitBlob": "fbc6456823a9eeaa53dd53a97ffd3e79117f518c"
+    },
+    {
+      "path": "docs/integration/README.md",
+      "mainGitBlob": "84bf76da509f22c87a58912925ac53837fb0c088"
+    },
+    {
+      "path": "docs/integration/rest.md",
+      "mainGitBlob": "a26e67e69a855daa21468e8badd032ac2ca1b8f3"
+    },
+    {
+      "path": "docs/integration/mcp.md",
+      "mainGitBlob": "f4603a07bd2f1910d9339bb803356543bb32a07d"
+    },
+    {
+      "path": "docs/integration/reference.md",
+      "mainGitBlob": "4bc041b3d949f4f299535165ad26b1cbfc9f1bb1"
+    },
+    {
+      "path": "docs/integration/troubleshooting.md",
+      "mainGitBlob": "2b011e364897978e7012288727a21e9682bf0819"
+    },
+    {
+      "path": "packages/conformance/examples/integration-agent.ts",
+      "mainGitBlob": "8b473acc18c2a3be2d84ecf0e21221839849e0b9"
+    },
+    {
+      "path": "packages/conformance/examples/verify-integration.ts",
+      "mainGitBlob": "c502a8efa0cd35bea16a76e9202a91c46f17a6e9"
+    },
+    {
+      "path": "apps/api/src/agent-connections.ts",
+      "mainGitBlob": "4eaf16a046bcf02809e8c5fb96730ee05d1744c2"
+    },
+    {
+      "path": "apps/api/src/auth-rate-limit/limiter.ts",
+      "mainGitBlob": "91ef5c0685861c95249caeee4d994e1a689a006c"
+    },
+    {
+      "path": "packages/agent-sdk/src/index.ts",
+      "mainGitBlob": "ab469ced19b3b9de674c5336bc21253250275200"
+    },
+    {
+      "path": "apps/mcp/src/index.ts",
+      "mainGitBlob": "fb1f32008389b965b08db9e8327978449c9ae22a"
+    },
+    {
+      "path": "apps/connector/src/protocol.ts",
+      "mainGitBlob": "a4f04fc2d38a8d4ecf1aa72443dbaea45dab1487"
+    }
+  ],
+  "changes": [
+    {
+      "oldLine": 5,
+      "old": "本轮只完成中文方案、测试映射和交接，止于 `confirm`，不实施、不合入。接续顺序为 [#61](todo:G9grPMcWhjVMFaEcNoVAG) 退役优先合入 → [#62](todo:CmdFbMAsJnmQGBhXakJ7u) 接入文档初版交付 → B3 实现。开工时整合准确的新 `main`，记录 SHA、任务规格和代码差异。核对 B1/B2 成果、退役后的检查入口和 #62 文档来源；共享缓存锁保持原状，不以共享 `FETCH_HEAD` 代替主线。",
+      "new": "本轮只交付方案与来源，停在 review，不编码、不合入。#61 退役和 #62 接入文档已入准确 main `abf6813a439feab4b17b0602cc9295216634586e`；B1/B2 成果也已纳入。正式方案独审通过且 Chief 随后单独放行，才允许产品实施和修订。既有产品 head `24666130705719094a7c0bd27d769a04909da117` 属于方案独审前实施，尚未验收。开工时重新核对准确主线与输入差异，保留共享缓存锁，不以共享 `FETCH_HEAD` 代替主线。",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 15,
+      "old": "- 接口或功能变更须在同次交付中更新接入文档、参考和示例。使用 `leter/zh-tech-writing` 的 `SKILL.md`、`references/manual-structure.md` 和 `references/typography.md`。本轮已读取上游固定提交 `ffda9353768dece8aabd26ccb3a4978025e9437c`，并核对 MIT 许可。接续时核对 #62 保存的技能来源，记录实际使用的提交和文件哈希，不声称已全局安装。",
+      "new": "- 接口或功能变更须在同次交付中更新接入文档、参考和示例。使用 `leter/zh-tech-writing` 的 `SKILL.md`、`references/manual-structure.md` 和 `references/typography.md`。已读取仓库固定上游提交 `ffda9353768dece8aabd26ccb3a4978025e9437c`，并核对 MIT 许可。接续时核对 #62 保存的技能来源，记录实际使用的提交和文件哈希，不声称已全局安装。",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 21,
+      "old": "| `packages/contracts/src/agent-connection-errors.ts`（新增） | 建立接入错误恢复目录及部署支持 client 常量。分别定义输入修正、绑定不匹配、凭据失效、重放拒绝、权限拒绝、限流和服务故障的指令；未知故障使用停止并报告安全追踪 ID 的兜底。 |",
+      "new": "| `packages/contracts/src/agent-connection-errors.ts`（新增） | 建立接入错误恢复目录及部署支持 client 常量；`readSafeAgentConnectionError` 按错误码、安全原因及目录逐字核对双指令与列表。分别定义输入修正、绑定不匹配、凭据失效、重放拒绝、权限拒绝、限流和服务故障的指令；未知故障使用停止并报告安全追踪 ID 的兜底。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 27,
+      "old": "| `packages/agent-sdk/src/index.ts` | 为 `WorkMeshSdkError` 增加可选的类型化 `recovery` 数据；`toSdkError` 校验并保留新增字段。继续保留 `details`、`correlationId` 和 retry 元数据，不改变重试预算或身份刷新规则。 |",
+      "new": "| `packages/agent-sdk/src/index.ts` | 为 `WorkMeshSdkError` 增加可选的类型化 `recovery` 数据；`toSdkError`（含 cursor 分支）使用目录校验器保留合法新增字段，丢弃目录外文字、原因错配、控制串和不符的类型列表。原错误及旧形状继续保留。继续保留 `details`、`correlationId` 和 retry 元数据，不改变重试预算或身份刷新规则。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 28,
+      "old": "| `apps/mcp/src/index.ts` | `tool` 将 SDK 的恢复数据传入文本内容和 `structuredContent.error`。保留现有 `safeNextAction`、`currentRevision`、发现及授权行为；接入恢复采用新增指令，不重做 MCP 恢复机制。 |",
+      "new": "| `apps/mcp/src/index.ts` | `tool` 在输出边界再次按 code、details.reason 和目录校验 SDK 的恢复数据，再传入文本内容和 `structuredContent.error`；即使调用者直接构造 SDK 异常，也拒绝自由文字和控制串。保留现有 `safeNextAction`、`currentRevision`、发现及授权行为；接入恢复采用新增指令，不重做 MCP 恢复机制。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 29,
+      "old": "| `apps/connector/src/protocol.ts` | `verifyPairing` 解析统一错误；`bootstrapMcp` 保留工具失败中的安全恢复数据，避免 catch 折叠成裸错误。异常旧响应继续使用本地安全兜底。 |",
+      "new": "| `apps/connector/src/protocol.ts` | `verifyPairing` 解析统一错误，并为 429/503 读取 `Retry-After`。在协议层新增纯解析函数：只接纳非负整数秒或规范 GMT HTTP-date，转换为非负安全整数毫秒；禁止控制字符及溢出。日期按接收时钟计算，过期日期归零；非法或缺失时保留未知，不回显原头。`bootstrapMcp` 保留工具失败中的安全恢复数据，避免 catch 折叠成裸错误。异常旧响应继续使用本地安全兜底。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 30,
+      "old": "| `apps/connector/src/errors.ts` | `ConnectorError` 保存经校验的恢复字段；仅接纳目录中的指令、已知 client 枚举和安全追踪信息，不携带服务端自由文本或正文。 |",
+      "new": "| `apps/connector/src/errors.ts` | `ConnectorError` 保存经校验的恢复字段和可选 `retryAfterMs`；仅接纳目录中的指令、已知 client 枚举和安全追踪信息，不携带服务端自由文本或正文。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 31,
+      "old": "| `apps/connector/src/cli.ts` | 分别展示客户端动作、人工动作及支持类型，复用现有输出脱敏器。保留失败退出码和旧配置；类型修正须遵守冻结 pending 的请求身份，不能根据列表直接改写它。 |",
+      "new": "| `apps/connector/src/cli.ts` | `formatConnectionError` 分别展示客户端动作、人工动作、支持类型和等待秒数（毫秒向上取整），复用现有输出脱敏器。429/503 没有有效时长时明确显示“等待时长不可用，请停止重试并联系部署管理员”，不自动安排请求。保留失败退出码和旧配置；类型修正须遵守冻结 pending 的请求身份，不能根据列表直接改写它。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 32,
+      "old": "| `AGENT_PROTOCOL.md`、`docs/agent-integration.md` | 通读 #62 初版后更新相关章节，并同步其引用的接入参考、配置说明和示例。面向接入开发者与 Agent 客户端，写清恢复字段位置、SDK `recovery`、MCP 错误内容和 CLI 输出。用实际响应说明原请求身份重放、slug 与类型区别、Retry-After 和人工动作边界。按指定技能写短句、主动语态及操作步骤；逐条自检文风和排版。只描述已实现能力，示例使用占位或测试身份，沿用纯后端流程。 |",
+      "new": "| `AGENT_PROTOCOL.md`、`docs/agent-integration.md`、`docs/integration/README.md`、`rest.md`、`mcp.md`、`reference.md`、`troubleshooting.md` 与 `packages/conformance/examples/integration-agent.ts`、`packages/conformance/examples/verify-integration.ts` | 以 #62 已合入手册为底座，同次更新上述相关章节和实际示例；部署和配置沿用现行规则，不因展示恢复字段新增开关。面向接入开发者与 Agent 客户端，写清恢复字段位置、SDK `recovery`、MCP 错误内容和 CLI 输出。用实际响应说明原请求身份重放、slug 与类型区别、Retry-After 和人工动作边界。按指定技能写短句、主动语态及操作步骤；逐条自检文风和排版。只描述已实现能力，示例使用占位或测试身份，沿用纯后端流程。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 34,
+      "old": "| `docs/plan/b3-connection-error-recovery.md`、`docs/reviews/b3/` | 保存可审完整方案及逐条测试映射。`test-mapping.json` 记录全部原验收和九类覆盖去向，未执行项标为未运行；`documentation-source.json` 记录技能仓库、准确提交、读取文件路径和 SHA-256，以及 #62 文档入口。实施交付再补真实结果、文档与接口核验记录和清理回执。保留原 R1 规格及历史证据，不回填通过。 |",
+      "new": "| `docs/plan/b3-connection-error-recovery.md`、`docs/reviews/b3/` | 保留旧方案、当前完整规格及准确来源，另存活动方案和逐条差异。`active-test-mapping.json` 记录全部原验收和九类覆盖去向，活动修订全部标为未运行；历史 `test-mapping.json` 与运行原件继续保留，不能当活动方案通过；`documentation-source.json` 记录技能仓库、准确提交、读取文件路径和 SHA-256，以及 #62 文档入口。实施交付再补真实结果、文档与接口核验记录和清理回执。保留原 R1 规格及历史证据，不回填通过。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 40,
+      "old": "以下映射在产品编码前落盘。A 为 `apps/api/integration/auth-rate-limit.integration.test.ts`，S 为 `apps/api/integration/stage5-agent-connections.integration.test.ts`。",
+      "new": "以下为待实施的验收要求，完整文件与用例名另见 `docs/reviews/b3/active-test-mapping.json`。既有 head 的历史运行不代表本活动方案通过。A 为 `apps/api/integration/auth-rate-limit.integration.test.ts`，S 为 `apps/api/integration/stage5-agent-connections.integration.test.ts`。",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 51,
+      "old": "| 客户端实收 | SDK/MCP 用例：`B3 恢复字段完整传递且旧错误兼容`；连接器用例：`B3 CLI 展示双指令且不泄密`。覆盖真实子进程输出、恶意字段拒绝、pending 保留、零新增自动恢复及既有重试行为。 |",
+      "new": "| 客户端实收 | SDK/MCP 用例：`B3 恢复字段完整传递且旧错误兼容`、`B3 目录外自由指令和控制串被拒绝且原错误保留`；MCP 另测直接构造 SDK 异常。连接器用例：`B3 CLI 展示双指令且不泄密`、`B3 实际 CLI 429 展示等待时长且不自动重试`、`B3 实际 CLI 503 展示等待时长且保留 pending`。协议单元覆盖整数秒、HTTP-date、过期日期、负值、超大值、控制串及缺失头。覆盖真实子进程输出、恶意字段拒绝、pending 保留、零新增自动恢复及既有重试行为。 |",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    },
+    {
+      "oldLine": 65,
+      "old": "- 按 #61 合入且 #62 初版交付后的实际 Required CI 核对最终准确 head，并核其保留的领域、权限、协议和恢复覆盖；不要求 WebUI、浏览器、截图或视觉验收。",
+      "new": "- 按已合入 #61/#62 的实际 Required CI 核对获得放行后的最终准确 head，并核其保留的领域、权限、协议和恢复覆盖；不要求 WebUI、浏览器、截图或视觉验收。",
+      "reason": "#61/#62 已合入、当前阶段门禁和评审阻断项；测试见 active-test-mapping.json"
+    }
+  ],
+  "addedConvention": "Coordination REST/MCP 使用 X-WorkMesh-Installation-Token；Session Bearer 与安装用途 Bearer 分开，权限不从恢复指令推断。"
+}

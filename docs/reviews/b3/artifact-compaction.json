@@ -1,7 +1,7 @@
 {
   "status": "工具策略拒绝，原目录保留",
   "execution": "CreateProcess 阶段拒绝，删除命令未执行",
-  "reportedReason": "blocked by policy；工具未返回更具体理由",
+  "reportedReason": "blocked by policy；原始返回自身含截断标记，具体策略理由未知。",
   "deletedFiles": 0,
   "retries": 0,
   "permissionOrAttributeChanges": false,
@@ -41,5 +41,9 @@
     "docs/reviews/b3/local-recovery",
     "docs/reviews/b3/local-recovery-2"
   ],
-  "allFilesystemCleanupStoppedAfterPolicyRejection": true
+  "allFilesystemCleanupStoppedAfterPolicyRejection": true,
+  "rawEvidence": "sources/policy-rejection.jsonl",
+  "sourceBinding": "policy-rejection-source.json",
+  "originalReturnCompleteness": "工具实际返回完整保留；底层被截断的命令回显未补造。",
+  "amendment": "本文件更正历史记录并补充原始来源；final-audit.zip 内旧文件保留原字节，不覆盖历史归档。"
 }

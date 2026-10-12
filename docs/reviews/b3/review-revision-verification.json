@@ -1,0 +1,94 @@
+{
+  "phase": "方案与来源修订；产品修订未获放行",
+  "reviewedProductHead": "24666130705719094a7c0bd27d769a04909da117",
+  "main": "abf6813a439feab4b17b0602cc9295216634586e",
+  "checks": [
+    {
+      "command": "pnpm check:integration-docs",
+      "node": "22.19.0",
+      "pnpm": "9.15.4",
+      "exitCode": 0,
+      "result": {
+        "skillFiles": 4,
+        "localLinks": 72,
+        "restEndpoints": 35,
+        "mcpTools": 11,
+        "humanSyntax": "passed"
+      }
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "Python 只读源字节、哈希和 Git filter 投影核验",
+      "exitCode": 0,
+      "result": {
+        "sourceFiles": 5,
+        "oldPlanUnchanged": true,
+        "historicalArchivesUnchanged": 3,
+        "policyTargets": 8,
+        "nineCategories": 9,
+        "plannedCases": 17,
+        "productChanges": 0
+      }
+    },
+    {
+      "command": "git diff --cached --check；暂存来源 blob 原字节核验",
+      "exitCode": 0,
+      "result": {
+        "sourceBytesMatched": 5,
+        "changedPlanningFiles": 18,
+        "productChanges": 0
+      }
+    }
+  ],
+  "observations": [
+    "首次来源比对因平台 Spec 段多一个末尾 LF 而拒绝；随后分别保全两份准确原件并登记该字节差异。",
+    "适配方案初次引用不存在的 verify-client.mjs，主线 Git blob 读取失败。已改用现行 packages/conformance/examples/integration-agent.ts 和 verify-integration.ts，并重新核全部 14 个主线文件。",
+    "首次合并命令的总退出码为 1，来源是缺失 autocorrect 的 Get-Command；文档检查自身打印成功。已单独重跑文档检查，准确退出码为 0。",
+    "修订说明核验发现 Required CI 一行匹配到两个前缀，导致 new 为空；已准确绑定“按已合入”行，13 项旧文/新文均完整。"
+  ],
+  "style": "已逐条对照固定技能 AI 腔清单和文风、排版规则。autocorrect 未安装，手检中英文空格、中文标点、引号、省略号和破折号；未安装全局工具。原件不按文风改写。",
+  "notRun": [
+    "本轮未运行产品测试及 Required CI，产品源未修改；活动测试全部未运行。"
+  ],
+  "resources": "本轮仅只读读取既有运行记录、公开 main ref 和仓库文件，写入方案与来源；未创建测试容器、卷或进程，未重试任何删除或权限操作。",
+  "unresolved": [
+    "评审阻断项 3：SDK/MCP 自由文字传播未修复。",
+    "评审阻断项 4：CLI 实际等待时长未修复。",
+    "原始策略返回自身含截断标记；底层完整回显与具体策略理由不可得。"
+  ],
+  "sourceHashes": [
+    {
+      "path": "docs/plan/b3-connection-error-recovery-active.md",
+      "bytes": 12933,
+      "sha256": "2a1ca02e5acdda3c619f6945a17c2bd824c346ef55650865ad366df4e26a361e"
+    },
+    {
+      "path": "docs/reviews/b3/active-test-mapping.json",
+      "bytes": 7324,
+      "sha256": "2df9d598d300335b20d8e37b631ec3da346b41d6cf8ea0c0ebc16cb4dddc52d3"
+    },
+    {
+      "path": "docs/reviews/b3/inputs.json",
+      "bytes": 6896,
+      "sha256": "1896200270b6aa68c16322ec1d5897cc3e912124bd5767578d843e0db544a11e"
+    },
+    {
+      "path": "docs/reviews/b3/plan-adaptation.json",
+      "bytes": 14695,
+      "sha256": "73443b6c7a1662a999376ecddff5d858699df7be1442c6c87fb8b60ff9a2a797"
+    },
+    {
+      "path": "docs/reviews/b3/sources/manifest.json",
+      "bytes": 1912,
+      "sha256": "03f9f0da2b945a9b31358ec18f0e870c9ccff4c27d206dd2e83c8419554cabc9"
+    },
+    {
+      "path": "docs/reviews/b3/policy-rejection-source.json",
+      "bytes": 1666,
+      "sha256": "9cc39eb3440cd4fcc8c2b5c51d4b8a17c5280911874ae27408df64a259c691df"
+    }
+  ]
+}

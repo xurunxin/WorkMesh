@@ -1,8 +1,13 @@
 {
   "task": "6EzX6xCA-_m72aQU1BEHX",
-  "approvedPlan": "docs/plan/b3-connection-error-recovery.md",
-  "approvedPlanSource": "用户本轮提供的完整方案正文；confirm阶段限制是历史规划记录，当前用户已授权执行",
-  "approvedPlanSha256": "7e72a9007a4ef1c624027686c0c5933ab9439dee586d70cdbb10f5d52b8e251d",
+  "savedPlanCopy": "docs/plan/b3-connection-error-recovery.md",
+  "savedPlanSource": "doc:jvYs_ntDOENgE2b43I54n；完整注入原件见 sources/saved-plan-jvys.md，准确来源及正文 UTF-8 哈希见 sources/manifest.json。不是产品实施批准。",
+  "savedPlanFileSha256": "7e72a9007a4ef1c624027686c0c5933ab9439dee586d70cdbb10f5d52b8e251d",
+  "currentSpec": "docs/reviews/b3/sources/current-spec.md",
+  "activePlan": "docs/plan/b3-connection-error-recovery-active.md",
+  "authorization": "13:12 confirm_builds 仅放行方案文档准备；功能范围确认不等于产品实施放行。",
+  "phaseDeviation": "方案独审前实施：审核 head 24666130705719094a7c0bd27d769a04909da117 已提交产品代码。本次审查不补写为事前批准。",
+  "nextGate": "文档准备完成停 review；正式方案独审通过且 Chief 随后单独放行，才允许产品修订。",
   "initialHead": "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
   "remoteMain": "abf6813a439feab4b17b0602cc9295216634586e",
   "remoteTree": "92da216d7f709e7ff11d7b82f3b70af527f8ca71",
@@ -139,5 +144,7 @@
     "observedSameMain": true,
     "checkedAtUtc": "2026-10-12T07:17:20.313131+00:00",
     "note": "交接整理期间重新读取，仍与本轮整合的准确主线一致。"
-  }
+  },
+  "activePlanSha256": "2a1ca02e5acdda3c619f6945a17c2bd824c346ef55650865ad366df4e26a361e",
+  "adaptation": "docs/reviews/b3/plan-adaptation.json"
 }

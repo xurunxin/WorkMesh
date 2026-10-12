@@ -33,3 +33,9 @@ docs/reviews/b1-b2/blueberry-recovery/ci*-development-artifacts/*.json -text whi
 
 # B3 运行原件压缩包保持准确字节，不转换换行。
 docs/reviews/b3/*.zip -text
+# B3 来源原件按 UTF-8 原字节保全，末尾 LF 差异单独登记。
+docs/reviews/b3/sources/current-spec.md -text
+docs/reviews/b3/sources/saved-plan-jvys.md -text
+docs/reviews/b3/sources/injected-source.jsonl -text
+docs/reviews/b3/sources/policy-rejection.jsonl -text
+docs/reviews/b3/sources/platform-todo-read.json -text

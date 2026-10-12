@@ -1,0 +1,21 @@
+{
+  "originalRecords": "sources/policy-rejection.jsonl",
+  "sha256": "e83b5e3f9bc358d6480ac5af9bcaffbda8a721c08cd82ff726d51021c5c27dd1",
+  "callId": "call_6af6c866402249779b0c44aecc84cef2",
+  "cwd": "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54",
+  "targets": [
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\local-required-1",
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\local-required-2",
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\local-required-3",
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\local-required-4",
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\local-integration-5",
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\local-recovery",
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\docs\\reviews\\b3\\local-recovery-2",
+    "I:\\tds_workspace\\workspaces\\01a12c00-1787-7983-b548-6aa804602e54\\packages\\conformance\\conformance-results"
+  ],
+  "phase": "CreateProcess 拒绝，未运行删除命令",
+  "reason": "blocked by policy；具体策略理由未知",
+  "returnLimit": "原返回包含 2339 chars truncated 标记；未截断的底层返回不可得，不补造。",
+  "afterRejection": "只读核验和文档归档；不重试删除、拆批、移动或改权限。",
+  "ownershipCorrection": "packages/conformance/conformance-results 是既有已跟踪结果，不应作为本人新增目录删除。"
+}
