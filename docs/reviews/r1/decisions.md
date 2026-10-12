@@ -38,3 +38,12 @@
 本次确认仅放行 [当前规格](../../plan/b-ship/spec.md)、[实施方案](../../plan/b-ship/implementation-plan.md)、[验收设计](../../plan/b-ship/acceptance.md) 和 [准备证据](../b-ship/planning-evidence.md) 的仓库准备。saved plan 稳定引用为 `doc:Sq2Il0gKZRLrp-8L4RFk3`，完整原文从本会话保全；平台读取 plan 的截断事实单列。
 
 Node SEA、esbuild、postject 与同架构原生依赖归档是执行者提出的待审封装方案。当前未批准产品、安装器、发行脚本、CLI 源码、产物构建、设备验收或 CI 工作流改动。方案完成后进入正式独审，仅处理 P0/P1；Chief 单独放行后才进入产品实现。外部发布、新凭据和真实外发继续另批，不把设备确认、方案文件存在或历史 CI 当安装验收成功。
+
+
+## B-ship 无需 KVM 研究授权
+
+用户在 Chief 路线问题中回答“先验证无需 KVM 的路径（推荐）”。当前执行[完整研究规格](../../plan/b-ship/tcg/current-spec.md)和[研究计划](../../plan/b-ship/tcg/research-plan.md)，原设备矩阵仍为 Linux amd64、arm64，环境类型仍为独有干净虚拟机／原生 CI。旧 saved plan 与上面的文档准备裁定保留为历史。
+
+本次仅增加必要隔离实验、探测 workflow、测量和方案/证据修订。完整 guest OS、真实同用户 D-Bus/Secret Service、完整系统重启、原加密重放窗口和全部最终安装断言保持。普通容器 restart、源码探测、时间容量测量或历史绿色 CI 都不能代替最终无源码安装验收。
+
+不获取新机器、注册 runner、增加凭据或付费资源，不做连接器产品、安装器或发行物实现。TCG 是否取代历史 KVM 产品方案，由 Chief 根据本次实测另行裁定；研究交付不倒填 Accepted，也不解除产品实施门禁。

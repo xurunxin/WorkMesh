@@ -1,4 +1,8 @@
-# B-ship 方案准备证据
+# B-ship 方案与研究证据
+
+当前增加用户允许的 [TCG 可行性研究](../../plan/b-ship/tcg/current-spec.md)，执行[研究计划](../../plan/b-ship/tcg/research-plan.md)。研究使用隔离工具、完整 guest 和专用探测 workflow；没有产品、安装器、SEA 发行物、迁移或 API/事件行为变更。下面文档准备及 P1 修订记录属于历史，不用其“没有创建 guest/改 workflow”描述本次实验。
+
+## 历史文档准备记录
 
 本轮只执行文档准备。当前状态为 Proposed，正式独审与 Chief 产品放行待完成。零数据库迁移、零 API/事件变化、零产品代码或 CI 工作流变化；没有构建连接器发行物、创建 Linux guest 或执行设备安装。
 
