@@ -373,10 +373,10 @@ export const resolveAgentConnectionEndpointUrls = (input: {
   const webOrigin = input.webOrigin.replace(/\/$/, '')
   const publicMcpOrigin = input.publicMcpOrigin.replace(/\/$/, '')
   return {
-    connectUrl: (code: string) => `${webOrigin}/connect#${code}`,
+    connectUrl: (code: string) => `${webOrigin}/api/v1/agent-connections/redeem#${code}`,
     mcpUrl: `${publicMcpOrigin}/mcp`,
     skillDownloadUrl: `${webOrigin}/skills/workmesh-1.1.0.md`,
-    wellKnownUrl: `${publicMcpOrigin}/.well-known/workmesh-agent`,
+    wellKnownUrl: `${webOrigin}/.well-known/workmesh-agent`,
   }
 }
 

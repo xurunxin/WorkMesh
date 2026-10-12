@@ -1,21 +1,7 @@
-/**
- * Lite image service dispatch.
- *
- * The Lite image ships the API, Worker, and Web runtimes in one filesystem
- * tree, so `WORKMESH_SERVICE` is the only input that decides what starts. The
- * production compose states the same decision as a per-service `command:`; this
- * table is the equivalent for one image serving four roles, and it is the only
- * place that records where a role's entry point lives in that image.
- *
- * Every role runs with its own tree root as the working directory. Next.js
- * standalone resolves its static assets from the working directory, so the Web
- * role must start from `/opt/workmesh/web` for the same reason the production
- * Web image starts from `/app`. Getting this wrong does not fail loudly: the
- * server starts and then 404s every asset.
- */
+/** Lite dispatch starts backend roles from their separate runtime trees. */
 
 /** Roles this image can start. MCP and the Agent Runner are deliberately absent. */
-export const liteServiceRoles = ['api', 'worker', 'web', 'migrate'] as const
+export const liteServiceRoles = ['api', 'worker', 'migrate'] as const
 
 export type LiteServiceRole = (typeof liteServiceRoles)[number]
 
@@ -46,11 +32,6 @@ export const liteServiceCommands: Readonly<Record<LiteServiceRole, LiteServiceCo
       role: 'worker',
       entry: `${liteServiceRoot}/worker/dist/index.js`,
       cwd: `${liteServiceRoot}/worker`,
-    }),
-    web: Object.freeze({
-      role: 'web',
-      entry: `${liteServiceRoot}/web/apps/web/server.js`,
-      cwd: `${liteServiceRoot}/web`,
     }),
   })
 

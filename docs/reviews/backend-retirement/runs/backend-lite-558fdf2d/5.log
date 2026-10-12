@@ -1,0 +1,113 @@
+阅读视图；原始字节：raw-logs/run-7b7ae9229768.zip 内 runs/backend-lite-558fdf2d/5.log；SHA-256：d1a0e14ac74ad7ea52b5c45662a569586a0a86c063e5e1c9027963031a9a93d5
+#0 building with "backend-lite-558fdf2d" instance using docker-container driver
+
+#1 [internal] load remote build context
+#1 DONE 2.3s
+
+#1 [internal] load remote build context
+#1 DONE 2.3s
+
+#2 copy /context /
+#2 DONE 0.1s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 4.7s
+
+#4 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e done
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0B / 11.98MB 0.2s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 1.05MB / 11.98MB 1.4s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 3.15MB / 11.98MB 1.7s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 6.29MB / 11.98MB 1.8s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 9.44MB / 11.98MB 2.0s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 2.1s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 2.1s done
+#4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0.1s done
+#4 DONE 2.3s
+
+#5 [internal] load metadata for docker.io/library/node:22.19.0-alpine3.21
+#5 DONE 1.9s
+
+#6 [runtime  1/11] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 resolve docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9 done
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 0B / 51.04MB 0.2s
+#6 sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 0B / 447B 0.2s
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 0B / 1.26MB 0.2s
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 0B / 3.64MB 0.2s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 4.19MB / 51.04MB 0.6s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 8.39MB / 51.04MB 0.8s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 12.58MB / 51.04MB 0.9s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 16.78MB / 51.04MB 1.1s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 19.92MB / 51.04MB 1.2s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 26.21MB / 51.04MB 1.5s
+#6 sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 447B / 447B 1.4s done
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 30.41MB / 51.04MB 1.7s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 33.55MB / 51.04MB 1.8s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 37.75MB / 51.04MB 2.0s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 41.94MB / 51.04MB 2.1s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 45.09MB / 51.04MB 2.3s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 49.28MB / 51.04MB 2.4s
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 1.05MB / 1.26MB 2.6s
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 1.26MB / 1.26MB 2.7s
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 1.05MB / 3.64MB 2.7s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 51.04MB / 51.04MB 2.9s done
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 1.26MB / 1.26MB 2.9s done
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 3.64MB / 3.64MB 2.9s done
+#6 extracting sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 0.1s done
+#6 DONE 3.1s
+
+#6 [runtime  1/11] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 extracting sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11
+#6 extracting sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 3.8s done
+#6 DONE 6.9s
+
+#6 [runtime  1/11] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 extracting sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 0.1s done
+#6 DONE 7.1s
+
+#6 [runtime  1/11] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 extracting sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 0.0s done
+#6 DONE 7.1s
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "323dbe76182eabad91c7cd905aeb6ea2e9053a50"     && echo "323dbe76182eabad91c7cd905aeb6ea2e9053a50" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 0.098 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#7 1.982 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#7 2.794 (1/10) Upgrading musl (1.2.5-r9 -> 1.2.5-r11)
+#7 3.009 (2/10) Upgrading busybox (1.37.0-r12 -> 1.37.0-r14)
+#7 3.231 Executing busybox-1.37.0-r14.post-upgrade
+#7 ...
+
+#8 [build  2/14] RUN corepack enable     && corepack prepare pnpm@9.15.4 --activate
+#8 0.319 Preparing pnpm@9.15.4 for immediate activation...
+#8 3.221 Internal Error: Error when performing the request to https://registry.npmjs.org/pnpm/-/pnpm-9.15.4.tgz; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting
+#8 3.221     at fetch (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22051:11)
+#8 3.221     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+#8 3.221     at async fetchUrlStream (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22081:20)
+#8 3.221     at async download (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22208:18)
+#8 3.221     at async installVersion (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22300:55)
+#8 3.221     at async Engine.ensurePackageManager (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22851:32)
+#8 3.221     at async PrepareCommand.execute (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:23579:27)
+#8 3.221     at async PrepareCommand.validateAndExecute (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:20258:22)
+#8 3.221     at async _Cli.run (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:21195:18)
+#8 3.221     at async Object.runMain (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:23654:19)
+#8 ERROR: process "/bin/sh -c corepack enable     && corepack prepare pnpm@9.15.4 --activate" did not complete successfully: exit code: 1
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "323dbe76182eabad91c7cd905aeb6ea2e9053a50"     && echo "323dbe76182eabad91c7cd905aeb6ea2e9053a50" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 4.544 (3/10) Upgrading busybox-binsh (1.37.0-r12 -> 1.37.0-r14)
+#7 CANCELED
+------
+ > [build  2/14] RUN corepack enable     && corepack prepare pnpm@9.15.4 --activate:
+3.221     at fetch (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22051:11)
+3.221     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+3.221     at async fetchUrlStream (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22081:20)
+3.221     at async download (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22208:18)
+3.221     at async installVersion (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22300:55)
+3.221     at async Engine.ensurePackageManager (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:22851:32)
+3.221     at async PrepareCommand.execute (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:23579:27)
+3.221     at async PrepareCommand.validateAndExecute (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:20258:22)
+3.221     at async _Cli.run (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:21195:18)
+3.221     at async Object.runMain (/usr/local/lib/node_modules/corepack/dist/lib/corepack.cjs:23654:19)
+------
+ERROR: failed to build: failed to solve: process "/bin/sh -c corepack enable     && corepack prepare pnpm@9.15.4 --activate" did not complete successfully: exit code: 1
+
+View build details: docker-desktop://dashboard/build/backend-lite-558fdf2d/backend-lite-558fdf2d0/7xkzgtegl0exmr2gqlfpe8kxd

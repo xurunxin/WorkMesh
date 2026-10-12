@@ -99,6 +99,7 @@ export type RoutePolicyFeatureResolver = (
 ) => Readonly<{ key: string; tier: RoutePolicyFeatureTier }> | undefined
 
 const publicOperations = new Set([
+  'downloadWorkMeshSkill',
   'listModelPresets',
   'live',
   'ready',

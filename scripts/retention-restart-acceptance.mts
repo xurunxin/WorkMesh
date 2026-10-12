@@ -143,7 +143,6 @@ const acceptanceEnv: NodeJS.ProcessEnv = {
   WORKMESH_WORKER_IMAGE: workerImage,
   // Compose interpolates optional services even though this gate never starts
   // them. Reusing supplied immutable images does not build or pull new ones.
-  WORKMESH_WEB_IMAGE: process.env.WORKMESH_WEB_IMAGE ?? apiImage,
   WORKMESH_MCP_IMAGE: process.env.WORKMESH_MCP_IMAGE ?? apiImage,
   WORKMESH_BUILD_SHA: buildSha,
   SESSION_SECRET: randomSecret(),
@@ -153,7 +152,6 @@ const acceptanceEnv: NodeJS.ProcessEnv = {
   PAGINATION_CURSOR_ACTIVE_KID: "retention-acceptance",
   AUTH_RATE_LIMIT_HMAC_KEY: randomSecret(),
   WEB_ORIGIN: apiUrl,
-  NEXT_PUBLIC_API_URL: apiUrl,
   WORKMESH_RETENTION_INTERVAL_SECONDS: "60",
   WORKMESH_RETENTION_IO_TIMEOUT_SECONDS: "30",
   WORKMESH_RETENTION_PROGRESS_STALE_SECONDS: "180",

@@ -19,11 +19,6 @@ const expected = {
     entry: '/opt/workmesh/worker/dist/index.js',
     cwd: '/opt/workmesh/worker',
   },
-  web: {
-    role: 'web',
-    entry: '/opt/workmesh/web/apps/web/server.js',
-    cwd: '/opt/workmesh/web',
-  },
   migrate: {
     role: 'migrate',
     entry: '/opt/workmesh/api/node_modules/@workmesh/db/dist/scripts/migrate.js',
@@ -32,8 +27,8 @@ const expected = {
 } as const
 
 describe('lite service dispatch', () => {
-  it('covers exactly the four roles the image installs', () => {
-    expect([...liteServiceRoles].sort()).toEqual(['api', 'migrate', 'web', 'worker'])
+  it('covers exactly the three roles the image installs', () => {
+    expect([...liteServiceRoles].sort()).toEqual(['api', 'migrate', 'worker'])
     expect(Object.keys(liteServiceCommands).sort()).toEqual([...liteServiceRoles].sort())
   })
 
@@ -50,7 +45,7 @@ describe('lite service dispatch', () => {
 
   it('fails closed on an unrecognised service instead of defaulting to a role', () => {
     expect(() => resolveServiceCommand({ WORKMESH_SERVICE: 'apiy' })).toThrow(
-      /must be one of api, worker, web, migrate/,
+      /must be one of api, worker, migrate/,
     )
   })
 
@@ -83,18 +78,9 @@ describe('lite service dispatch', () => {
     expect(liteServiceCommands.migrate.cwd).toBe(liteServiceCommands.api.cwd)
   })
 
-  it('starts the Web role from the standalone root, not the API tree', () => {
-    // Next.js standalone resolves .next/static and public from the working
-    // directory. A wrong cwd starts cleanly and then 404s every asset.
-    expect(liteServiceCommands.web.cwd).toBe(`${liteServiceRoot}/web`)
-    expect(liteServiceCommands.web.entry).toBe(
-      `${liteServiceRoot}/web/apps/web/server.js`,
-    )
-  })
-
   it('recognises exactly the roles it can start', () => {
     for (const role of liteServiceRoles) expect(isLiteServiceRole(role)).toBe(true)
-    for (const role of ['mcp', 'agent-runner', '', 'API', undefined]) {
+    for (const role of ['web', 'mcp', 'agent-runner', '', 'API', undefined]) {
       expect(isLiteServiceRole(role)).toBe(false)
     }
   })

@@ -140,6 +140,7 @@ services:
       AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS: ${AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS:-}
       SESSION_COOKIE_SECURE: "true"
       WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
+      PUBLIC_MCP_ORIGIN: ${PUBLIC_MCP_ORIGIN:-}
       WORKMESH_WEB_PUSH_PUBLIC_KEY: ${WORKMESH_WEB_PUSH_PUBLIC_KEY:-}
       WORKMESH_WEB_PUSH_PRIVATE_KEY: ${WORKMESH_WEB_PUSH_PRIVATE_KEY:-}
       WORKMESH_WEB_PUSH_SUBJECT: ${WORKMESH_WEB_PUSH_SUBJECT:-}
@@ -177,6 +178,7 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-workmesh}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-workmesh}
       REDIS_URL: redis://redis:6379
       WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN is required}
+      PUBLIC_MCP_ORIGIN: ${PUBLIC_MCP_ORIGIN:-}
       WORKMESH_REALTIME_REDIS_MAXLEN: ${WORKMESH_REALTIME_REDIS_MAXLEN:-100000}
       WORKMESH_IDEMPOTENCY_REPLAY_HOURS: ${WORKMESH_IDEMPOTENCY_REPLAY_HOURS:-24}
       WORKMESH_IDEMPOTENCY_CONFLICT_DAYS: ${WORKMESH_IDEMPOTENCY_CONFLICT_DAYS:-30}
@@ -263,27 +265,6 @@ services:
       WORKMESH_RUNNER_SERVICE_TOKEN: ${WORKMESH_RUNNER_SERVICE_TOKEN:-}
     depends_on:
       api: { condition: service_healthy }
-    restart: unless-stopped
-
-  web:
-    <<: *app-hardening
-    image: ${WORKMESH_WEB_IMAGE:?WORKMESH_WEB_IMAGE is required}
-    environment:
-      NODE_ENV: production
-      WORKMESH_SERVICE: web
-      WORKMESH_BUILD_SHA: ${WORKMESH_BUILD_SHA:?WORKMESH_BUILD_SHA is required}
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?NEXT_PUBLIC_API_URL must match the URL baked into the web image}
-      HOSTNAME: 0.0.0.0
-      PORT: 3000
-    ports:
-      - "${WORKMESH_BIND_ADDRESS:-127.0.0.1}:${WEB_HOST_PORT:-3000}:3000"
-    depends_on:
-      api: { condition: service_healthy }
-    healthcheck:
-      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3000/readyz"]
-      interval: 10s
-      timeout: 3s
-      retries: 12
     restart: unless-stopped
 
 volumes:

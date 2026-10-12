@@ -1,0 +1,648 @@
+{
+  "runId": 38178554946,
+  "runHead": "2ae14e25fcd5e8a5abfbf6079197cf6387d5c742",
+  "actualCheckout": "811b3cb356ba1688d784eb8eee6ee3f6782500d1",
+  "actualTree": "01dd9b8f73874e3d74094a0b326556e02c0e72cf",
+  "parents": [
+    "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+    "2ae14e25fcd5e8a5abfbf6079197cf6387d5c742"
+  ],
+  "sameTree": true,
+  "records": [
+    {
+      "artifactId": 11717163412,
+      "entry": "backend-deployment/backend-lite-e07a9c8f/receipts.json",
+      "rawSha256": "7c0ff5dd1327104ab5a91b7790213efe56c22b6ea4151995acb4477cd5586974",
+      "sha": "811b3cb356ba1688d784eb8eee6ee3f6782500d1",
+      "outcome": "本机无源码纯后端安装、真实 worker、TLS 和签名 Skill 通过；真实低功耗设备与真实厂商未测",
+      "deploymentClass": "lite",
+      "resources": [
+        {
+          "type": "directory",
+          "target": "/tmp/backend-lite-e07a9c8f",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:07:59.919Z",
+          "cleanup": {
+            "code": 0,
+            "output": ""
+          },
+          "realPath": "/tmp/backend-lite-e07a9c8f",
+          "created": true,
+          "preDelete": {
+            "paths": [
+              {
+                "path": "/tmp/backend-lite-e07a9c8f",
+                "type": "directory",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-lite-e07a9c8f/docker-compose.lite.yml",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-lite-e07a9c8f/provider.override.yml",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-lite-e07a9c8f/tls",
+                "type": "directory",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-lite-e07a9c8f/tls/ca.pem",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-lite-e07a9c8f/tls/key.pem",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-lite-e07a9c8f/workmesh-lite.tar",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              }
+            ],
+            "activity": "compose/provider/probe 收尾完成",
+            "at": "2026-10-11T22:11:45.518Z"
+          }
+        },
+        {
+          "type": "builder",
+          "target": "backend-lite-e07a9c8f",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:07:59.919Z",
+          "cleanup": {
+            "code": 0,
+            "output": "backend-lite-e07a9c8f removed\n"
+          },
+          "created": true,
+          "containerName": "buildx_buildkit_backend-lite-e07a9c8f0",
+          "containerId": "12a5b2aa258cc06bd89e55ab4dcca2506b0087dd9b859810df1dce11e2517fba",
+          "preDelete": {
+            "expectedId": "12a5b2aa258cc06bd89e55ab4dcca2506b0087dd9b859810df1dce11e2517fba",
+            "actualId": "12a5b2aa258cc06bd89e55ab4dcca2506b0087dd9b859810df1dce11e2517fba",
+            "code": 0,
+            "activity": "专用构建已结束；核对本人 builder 容器身份",
+            "at": "2026-10-11T22:11:40.089Z"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "target": "12a5b2aa258cc06bd89e55ab4dcca2506b0087dd9b859810df1dce11e2517fba",
+              "absent": true,
+              "code": 1
+            },
+            {
+              "kind": "volume",
+              "target": "buildx_buildkit_backend-lite-e07a9c8f0_state",
+              "absent": true,
+              "code": 1
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-lite:backend-lite-e07a9c8f",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:08:01.024Z",
+          "cleanup": {
+            "code": 0,
+            "output": "Untagged: workmesh-retirement-lite:backend-lite-e07a9c8f\nDeleted: sha256:b75a618dea485cd45f807e4a3a66c6680e1abca2ce136e28fe044d1e96480921\nDeleted: sha256:fad35c1bf11e7f58a76e7740f4f9c5d92896a5052f4654a4e67cb9cb1e160055\nDeleted: sha256:d8bd2c3684b91c503dc07ad52147e427d08a83600cab0b141a0316b7ebd86648\nDeleted: sha256:3237c09391ea1655fef61a838786e83884719f38655d362bdc08f25e99be09fe\nDeleted: sha256:4a2b4b03df3780f40c9773b4a6b3cd9a2096c2122ff4fd779b62982015649ac0\nDeleted: sha256:f0cfba5b9d5e4cf70aaff962d508513744e58865194f62c0099ef5b8e7afaedf\nDeleted: sha256:ef92f086a89a5660aacb6374a6e31a458b290b8e6ad6fb6a004aa8b6fd36fbc9\nDeleted: sha256:140d38d2fabf211c35d242b23197ed3e38a95eff240a0ef935abff46bb803a62\nDeleted: sha256:a7ca61a5ddccb8e0f7b5d82260ca100e7888cb8b5848302906c24995532c2217\nDeleted: sha256:ad9092a6d280125eae2579ede7882abeb65d0b42e6ec3202c55fb89210ebd55f\nDeleted: sha256:6fb6b4609d02e697e5b0727e198d99181b6be0e5dc262cd895d1ea9958913473\nDeleted: sha256:2f87ae30d1a6942b0171dad27ee9a3f2e63307f06b21d459cc534b7fced3ac76\nDeleted: sha256:d4e0a09f2455c1cc81b98f2e1c0f85b197924af6d8d86bfc0c50f47bb55d553c\nDeleted: sha256:595541efe3c6069e65b759c88f94825e10085e22594df87c10ed43e088b42d28\n"
+          },
+          "borrowed": false,
+          "id": "sha256:b75a618dea485cd45f807e4a3a66c6680e1abca2ce136e28fe044d1e96480921",
+          "preDelete": {
+            "owner": "backend-lite-e07a9c8f",
+            "id": "sha256:b75a618dea485cd45f807e4a3a66c6680e1abca2ce136e28fe044d1e96480921",
+            "referenceIds": [],
+            "activity": "核对专用镜像实际容器引用",
+            "at": "2026-10-11T22:11:39.001Z"
+          }
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-lite-e07a9c8f/workmesh-lite.tar",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:10:12.459Z",
+          "cleanup": null
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-e07a9c8f-probe-migrate",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:10:14.952Z",
+          "cleanup": {
+            "code": 0,
+            "output": "30f49a1247fdc215a2f8d1127628cc420e18214ed83b332ac329709d2979185a\n"
+          },
+          "id": "30f49a1247fdc215a2f8d1127628cc420e18214ed83b332ac329709d2979185a",
+          "preDelete": {
+            "owner": "backend-lite-e07a9c8f",
+            "code": 0,
+            "id": "30f49a1247fdc215a2f8d1127628cc420e18214ed83b332ac329709d2979185a",
+            "at": "2026-10-11T22:11:38.959Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-e07a9c8f-probe-api",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:10:27.456Z",
+          "cleanup": {
+            "code": 0,
+            "output": "f008a3fffade733efcd7a6d8898997356edc30a8e14ec870d7a99f113d7f5b15\n"
+          },
+          "id": "f008a3fffade733efcd7a6d8898997356edc30a8e14ec870d7a99f113d7f5b15",
+          "preDelete": {
+            "owner": "backend-lite-e07a9c8f",
+            "code": 0,
+            "id": "f008a3fffade733efcd7a6d8898997356edc30a8e14ec870d7a99f113d7f5b15",
+            "at": "2026-10-11T22:11:38.865Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-e07a9c8f-probe-worker",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:10:39.591Z",
+          "cleanup": {
+            "code": 0,
+            "output": "a3dee7887e52845277dc1f0f74080866abeb173b1858e2c5bb32b5322bcb8aee\n"
+          },
+          "id": "a3dee7887e52845277dc1f0f74080866abeb173b1858e2c5bb32b5322bcb8aee",
+          "preDelete": {
+            "owner": "backend-lite-e07a9c8f",
+            "code": 0,
+            "id": "a3dee7887e52845277dc1f0f74080866abeb173b1858e2c5bb32b5322bcb8aee",
+            "at": "2026-10-11T22:11:38.834Z"
+          }
+        },
+        {
+          "type": "volume",
+          "target": "backend-lite-e07a9c8f-ca",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:11:08.129Z",
+          "cleanup": {
+            "code": 0,
+            "output": "backend-lite-e07a9c8f-ca\n"
+          },
+          "created": true,
+          "preDelete": {
+            "owner": "backend-lite-e07a9c8f",
+            "referenceIds": [],
+            "activity": "compose 已结束，CA 装载容器已清理；核对外部测试卷引用",
+            "at": "2026-10-11T22:11:38.808Z"
+          }
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-e07a9c8f-ca-loader",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:11:08.167Z",
+          "cleanup": {
+            "code": 0,
+            "output": "df03d382bac71c614335683d2a2805649cb718ed59cad56cb8552ddcecd029b8\n"
+          },
+          "id": "df03d382bac71c614335683d2a2805649cb718ed59cad56cb8552ddcecd029b8",
+          "preDelete": {
+            "owner": "backend-lite-e07a9c8f",
+            "code": 0,
+            "id": "df03d382bac71c614335683d2a2805649cb718ed59cad56cb8552ddcecd029b8",
+            "at": "2026-10-11T22:11:38.766Z"
+          }
+        },
+        {
+          "type": "https-provider",
+          "target": "host.docker.internal:42577",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:11:08.407Z",
+          "cleanup": "已关闭"
+        },
+        {
+          "type": "compose-project",
+          "target": "backend-lite-e07a9c8f",
+          "owner": "backend-lite-e07a9c8f",
+          "createdAt": "2026-10-11T22:11:08.408Z",
+          "cleanup": {
+            "code": 0,
+            "output": " Container backend-lite-e07a9c8f-api-1  Stopping\n Container backend-lite-e07a9c8f-worker-1  Stopping\n Container backend-lite-e07a9c8f-worker-1  Stopped\n Container backend-lite-e07a9c8f-worker-1  Removing\n Container backend-lite-e07a9c8f-worker-1  Removed\n Container backend-lite-e07a9c8f-api-1  Stopped\n Container backend-lite-e07a9c8f-api-1  Removing\n Container backend-lite-e07a9c8f-api-1  Removed\n Container backend-lite-e07a9c8f-migrate-1  Stopping\n Container backend-lite-e07a9c8f-redis-1  Stopping\n Container backend-lite-e07a9c8f-minio-init-1  Stopping\n Container backend-lite-e07a9c8f-migrate-1  Stopped\n Container backend-lite-e07a9c8f-migrate-1  Removing\n Container backend-lite-e07a9c8f-minio-init-1  Stopped\n Container backend-lite-e07a9c8f-minio-init-1  Removing\n Container backend-lite-e07a9c8f-minio-init-1  Removed\n Container backend-lite-e07a9c8f-minio-1  Stopping\n Container backend-lite-e07a9c8f-migrate-1  Removed\n Container backend-lite-e07a9c8f-postgres-1  Stopping\n Container backend-lite-e07a9c8f-minio-1  Stopped\n Container backend-lite-e07a9c8f-minio-1  Removing\n Container backend-lite-e07a9c8f-minio-1  Removed\n Container backend-lite-e07a9c8f-postgres-1  Stopped\n Container backend-lite-e07a9c8f-postgres-1  Removing\n Container backend-lite-e07a9c8f-postgres-1  Removed\n Container backend-lite-e07a9c8f-redis-1  Stopped\n Container backend-lite-e07a9c8f-redis-1  Removing\n Container backend-lite-e07a9c8f-redis-1  Removed\n Volume backend-lite-e07a9c8f_lite-object-data  Removing\n Volume backend-lite-e07a9c8f_lite-redis-data  Removing\n Volume backend-lite-e07a9c8f_lite-postgres-data  Removing\n Network backend-lite-e07a9c8f_default  Removing\n Volume backend-lite-e07a9c8f_lite-redis-data  Removed\n Volume backend-lite-e07a9c8f_lite-object-data  Removed\n Network backend-lite-e07a9c8f_default  Removed\n Volume backend-lite-e07a9c8f_lite-postgres-data  Removed\n"
+          },
+          "preDelete": {
+            "projectName": "backend-lite-e07a9c8f",
+            "directory": "/tmp/backend-lite-e07a9c8f",
+            "resources": [
+              {
+                "kind": "container",
+                "id": "c4e370e92a10",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:37.961Z"
+              },
+              {
+                "kind": "container",
+                "id": "ae1ac76b3ef8",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:37.974Z"
+              },
+              {
+                "kind": "container",
+                "id": "f1565f960ff5",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:37.988Z"
+              },
+              {
+                "kind": "container",
+                "id": "42e7d6640df5",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.000Z"
+              },
+              {
+                "kind": "container",
+                "id": "dff6bf7e8748",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.014Z"
+              },
+              {
+                "kind": "container",
+                "id": "bf920546829d",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.027Z"
+              },
+              {
+                "kind": "container",
+                "id": "e0ebccf37fad",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.040Z"
+              },
+              {
+                "kind": "volume",
+                "id": "backend-lite-e07a9c8f_lite-object-data",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.064Z"
+              },
+              {
+                "kind": "volume",
+                "id": "backend-lite-e07a9c8f_lite-postgres-data",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.079Z"
+              },
+              {
+                "kind": "volume",
+                "id": "backend-lite-e07a9c8f_lite-redis-data",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.091Z"
+              },
+              {
+                "kind": "network",
+                "id": "4384d95fe70e",
+                "owner": "backend-lite-e07a9c8f",
+                "code": 0,
+                "at": "2026-10-11T22:11:38.116Z"
+              }
+            ],
+            "activity": "验收已结束，已保全 ps/logs，逐资源核对 project label",
+            "at": "2026-10-11T22:11:38.116Z"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "id": "c4e370e92a10",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.592Z"
+            },
+            {
+              "kind": "container",
+              "id": "ae1ac76b3ef8",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.611Z"
+            },
+            {
+              "kind": "container",
+              "id": "f1565f960ff5",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.629Z"
+            },
+            {
+              "kind": "container",
+              "id": "42e7d6640df5",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.648Z"
+            },
+            {
+              "kind": "container",
+              "id": "dff6bf7e8748",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.666Z"
+            },
+            {
+              "kind": "container",
+              "id": "bf920546829d",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.685Z"
+            },
+            {
+              "kind": "container",
+              "id": "e0ebccf37fad",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.703Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-e07a9c8f_lite-object-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.715Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-e07a9c8f_lite-postgres-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.727Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-e07a9c8f_lite-redis-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.740Z"
+            },
+            {
+              "kind": "network",
+              "id": "4384d95fe70e",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T22:11:38.752Z"
+            }
+          ]
+        }
+      ],
+      "skillBlob": {
+        "sha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "imageId": "sha256:b75a618dea485cd45f807e4a3a66c6680e1abca2ce136e28fe044d1e96480921",
+        "assetPath": "/opt/workmesh/api/assets/skills/workmesh-1.1.0.md"
+      },
+      "successfulVerificationCommands": [
+        {
+          "name": "sh",
+          "args": [
+            "/home/runner/work/WorkMesh/WorkMesh/infra/lite/verify-image-roles.sh",
+            "workmesh-retirement-lite:backend-lite-e07a9c8f"
+          ],
+          "pid": 12531,
+          "startedAt": "2026-10-11T22:10:51.725Z",
+          "endedAt": "2026-10-11T22:11:07.975Z",
+          "code": 0,
+          "log": "17.log"
+        },
+        {
+          "name": "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "args": [
+            "-e",
+            "fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})"
+          ],
+          "pid": 14750,
+          "startedAt": "2026-10-11T22:11:35.136Z",
+          "endedAt": "2026-10-11T22:11:35.196Z",
+          "code": 0,
+          "log": "32.log"
+        },
+        {
+          "name": "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "args": [
+            "/home/runner/work/WorkMesh/WorkMesh/scripts/verify-a2-backend-lite-api.mjs"
+          ],
+          "pid": 14823,
+          "startedAt": "2026-10-11T22:11:35.369Z",
+          "endedAt": "2026-10-11T22:11:37.753Z",
+          "code": 0,
+          "log": "35.log"
+        },
+        {
+          "name": "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "args": [
+            "-e",
+            "require('node:fs').rmSync(process.env.WORKMESH_A2_CLEANUP_PATH,{recursive:true})"
+          ],
+          "pid": 15731,
+          "startedAt": "2026-10-11T22:11:45.518Z",
+          "endedAt": "2026-10-11T22:11:45.559Z",
+          "code": 0,
+          "log": "82.log"
+        }
+      ]
+    },
+    {
+      "artifactId": 11717163412,
+      "entry": "backend-deployment/backend-production-4978c9fa/receipts.json",
+      "rawSha256": "50c045c0ae5134e44bc6466a533f33f1bc1642cd02e4bbd4c87315a59123d53e",
+      "sha": "811b3cb356ba1688d784eb8eee6ee3f6782500d1",
+      "outcome": "失败或未验收：Error: migrate 未成功加载入口",
+      "deploymentClass": "production",
+      "resources": [
+        {
+          "type": "directory",
+          "target": "/tmp/backend-production-4978c9fa",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:11:49.378Z",
+          "cleanup": {
+            "code": 0,
+            "output": ""
+          },
+          "realPath": "/tmp/backend-production-4978c9fa",
+          "created": true,
+          "preDelete": {
+            "paths": [
+              {
+                "path": "/tmp/backend-production-4978c9fa",
+                "type": "directory",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-production-4978c9fa/workmesh-api.tar",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-production-4978c9fa/workmesh-mcp.tar",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              },
+              {
+                "path": "/tmp/backend-production-4978c9fa/workmesh-worker.tar",
+                "type": "file",
+                "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+              }
+            ],
+            "activity": "compose/provider/probe 收尾完成",
+            "at": "2026-10-11T22:15:19.391Z"
+          }
+        },
+        {
+          "type": "builder",
+          "target": "backend-production-4978c9fa",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:11:49.378Z",
+          "cleanup": {
+            "code": 0,
+            "output": "backend-production-4978c9fa removed\n"
+          },
+          "created": true,
+          "containerName": "buildx_buildkit_backend-production-4978c9fa0",
+          "containerId": "59f12a75ca77ce479c8f686a265b7353da1b2273c9f015b2206096698ff4e798",
+          "preDelete": {
+            "expectedId": "59f12a75ca77ce479c8f686a265b7353da1b2273c9f015b2206096698ff4e798",
+            "actualId": "59f12a75ca77ce479c8f686a265b7353da1b2273c9f015b2206096698ff4e798",
+            "code": 0,
+            "activity": "专用构建已结束；核对本人 builder 容器身份",
+            "at": "2026-10-11T22:15:11.069Z"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "target": "59f12a75ca77ce479c8f686a265b7353da1b2273c9f015b2206096698ff4e798",
+              "absent": true,
+              "code": 1
+            },
+            {
+              "kind": "volume",
+              "target": "buildx_buildkit_backend-production-4978c9fa0_state",
+              "absent": true,
+              "code": 1
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-api:backend-production-4978c9fa",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:11:50.322Z",
+          "cleanup": {
+            "code": 0,
+            "output": "Untagged: workmesh-retirement-api:backend-production-4978c9fa\nDeleted: sha256:ed43dfc52ae18e7db188aa266d2842d02b5d417f6189cbbaf27e9a0c2c5ada72\nDeleted: sha256:b012507ceae178cebbaee66bd201fc2c040feb1c63afcc7497ec7b3b2dd559b1\nDeleted: sha256:6af8f4ef756bf054a45f0961cfe6333e08c55ba704f6b8b204e449dfb40e9927\nDeleted: sha256:ab929c927271cd29885b1af6f53518b55414adff55252b83b8dbf85084a32f93\nDeleted: sha256:002e02d94a80f0ce16f4f14cd7383ead3a820fd6c64362b808f34049285f43a9\nDeleted: sha256:8d65fd6feb612bbae52adaa92b9bc94a800c3f284b510453cf8d88cad8d5fb2e\nDeleted: sha256:39cebf189c4344d0938b5be0b33d62ada284a745111c2ce0b1c151d13ab87914\nDeleted: sha256:2f87ae30d1a6942b0171dad27ee9a3f2e63307f06b21d459cc534b7fced3ac76\nDeleted: sha256:d4e0a09f2455c1cc81b98f2e1c0f85b197924af6d8d86bfc0c50f47bb55d553c\nDeleted: sha256:595541efe3c6069e65b759c88f94825e10085e22594df87c10ed43e088b42d28\n"
+          },
+          "borrowed": false,
+          "id": "sha256:ed43dfc52ae18e7db188aa266d2842d02b5d417f6189cbbaf27e9a0c2c5ada72",
+          "preDelete": {
+            "owner": "backend-production-4978c9fa",
+            "id": "sha256:ed43dfc52ae18e7db188aa266d2842d02b5d417f6189cbbaf27e9a0c2c5ada72",
+            "referenceIds": [],
+            "activity": "核对专用镜像实际容器引用",
+            "at": "2026-10-11T22:15:10.335Z"
+          }
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-production-4978c9fa/workmesh-api.tar",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:13:19.604Z",
+          "cleanup": null
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-worker:backend-production-4978c9fa",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:13:21.462Z",
+          "cleanup": {
+            "code": 0,
+            "output": "Untagged: workmesh-retirement-worker:backend-production-4978c9fa\nDeleted: sha256:ff231da6cec0bdd35a00d461d660cc246a7002a19512374969d2e7682079f690\nDeleted: sha256:94c7c0ef405d64c0cf16077e96cc41e38d67e12564452a2bb77e2ecdaa577938\nDeleted: sha256:5e7bc2e77b7e9fb2b147b32ff9203f08e29520e5a07be308a30138f181e49e94\nDeleted: sha256:05c0891d66282a3f9c6fe35722082717e136a4cc5ce8fd60d24689f0cbb9b4d4\nDeleted: sha256:b929d165784abe0dcbed2110a8625721cfb7b9d2360ac56e44ed3f857a49a94b\nDeleted: sha256:3bc656714b4986dfe5b1bc9400dc11e913fc471178106720047d12e47ae907fa\nDeleted: sha256:1dabf67dd7f74dba81d1f19b8bc8c85e70502b3d0b155ad118dbed6d1addaa93\n"
+          },
+          "borrowed": false,
+          "id": "sha256:ff231da6cec0bdd35a00d461d660cc246a7002a19512374969d2e7682079f690",
+          "preDelete": {
+            "owner": "backend-production-4978c9fa",
+            "id": "sha256:ff231da6cec0bdd35a00d461d660cc246a7002a19512374969d2e7682079f690",
+            "referenceIds": [],
+            "activity": "核对专用镜像实际容器引用",
+            "at": "2026-10-11T22:15:09.882Z"
+          }
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-production-4978c9fa/workmesh-worker.tar",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:14:19.807Z",
+          "cleanup": null
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-mcp:backend-production-4978c9fa",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:14:21.468Z",
+          "cleanup": {
+            "code": 0,
+            "output": "Untagged: workmesh-retirement-mcp:backend-production-4978c9fa\nDeleted: sha256:fefe6ac1529aad78b3dc0ffd7d94c36f7650f6e4c527b8af7aa52511f9fb50a2\nDeleted: sha256:d3913e7fa4aa98c81ac3a50efa9d03e20ed6279412878ce0301bb046fc970f1b\nDeleted: sha256:92d55191df7fc13a6e5955d1f764c07f27fd715259d26e4b694dca45f1d76356\nDeleted: sha256:8c28e05b2805d3cb8890d65b9644b40557e6c7547b8ea9ff3ceb0ae28b66b738\nDeleted: sha256:ecde8f85f8ffeeb355994f1bb840f7cd370d94785e51a6b8cc56d902b8f57d99\n"
+          },
+          "borrowed": false,
+          "id": "sha256:fefe6ac1529aad78b3dc0ffd7d94c36f7650f6e4c527b8af7aa52511f9fb50a2",
+          "preDelete": {
+            "owner": "backend-production-4978c9fa",
+            "id": "sha256:fefe6ac1529aad78b3dc0ffd7d94c36f7650f6e4c527b8af7aa52511f9fb50a2",
+            "referenceIds": [],
+            "activity": "核对专用镜像实际容器引用",
+            "at": "2026-10-11T22:15:09.678Z"
+          }
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-production-4978c9fa/workmesh-mcp.tar",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:14:55.888Z",
+          "cleanup": null
+        },
+        {
+          "type": "container",
+          "target": "backend-production-4978c9fa-probe-migrate",
+          "owner": "backend-production-4978c9fa",
+          "createdAt": "2026-10-11T22:14:57.212Z",
+          "cleanup": {
+            "code": 0,
+            "output": "723e5ba5755052ff4959656fd852a00e50b11a9add6415ee123ce04dbd192ebf\n"
+          },
+          "id": "723e5ba5755052ff4959656fd852a00e50b11a9add6415ee123ce04dbd192ebf",
+          "preDelete": {
+            "owner": "backend-production-4978c9fa",
+            "code": 0,
+            "id": "723e5ba5755052ff4959656fd852a00e50b11a9add6415ee123ce04dbd192ebf",
+            "at": "2026-10-11T22:15:09.567Z"
+          }
+        }
+      ],
+      "skillBlob": null,
+      "successfulVerificationCommands": [
+        {
+          "name": "/opt/hostedtoolcache/node/22.19.0/x64/bin/node",
+          "args": [
+            "-e",
+            "require('node:fs').rmSync(process.env.WORKMESH_A2_CLEANUP_PATH,{recursive:true})"
+          ],
+          "pid": 18865,
+          "startedAt": "2026-10-11T22:15:19.391Z",
+          "endedAt": "2026-10-11T22:15:19.460Z",
+          "code": 0,
+          "log": "42.log"
+        }
+      ]
+    }
+  ]
+}

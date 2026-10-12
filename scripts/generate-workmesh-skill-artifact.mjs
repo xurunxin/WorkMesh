@@ -7,7 +7,7 @@ const check = process.argv.includes('--check')
 const skillPath = resolve(root, 'skills/workmesh/SKILL.md')
 const protocolPath = resolve(root, 'skills/workmesh/references/protocol.md')
 const clientsPath = resolve(root, 'skills/workmesh/references/clients.md')
-const artifactPath = resolve(root, 'apps/web/public/skills/workmesh-1.1.0.md')
+const artifactPath = resolve(root, 'apps/api/assets/skills/workmesh-1.1.0.md')
 const manifestPath = resolve(root, 'packages/contracts/src/workmesh-skill-manifest.ts')
 const publicKeyPath = resolve(root, 'skills/workmesh/public-key.pem')
 

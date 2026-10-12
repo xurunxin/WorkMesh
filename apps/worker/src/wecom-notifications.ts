@@ -106,10 +106,11 @@ export function wecomWebOrigin(raw: string): string {
 }
 
 export function wecomMarkdown(relativeHref: string, origin: string): string {
-  if (!relativeHref.startsWith('/?view=inbox&attentionSelected=') || /[\\\u0000-\u0020\u007f]/.test(relativeHref)) throw new Error('WECOM_LINK_INVALID')
+  if (!relativeHref.startsWith('/api/v1/human-attention/') || /[\\\u0000-\u0020\u007f]/.test(relativeHref)) throw new Error('WECOM_LINK_INVALID')
   const url = new URL(relativeHref, origin)
-  if (url.origin !== origin || url.hash || url.searchParams.size !== 2 || !/^v1:[a-z_]+:[a-f\d-]{36}$/.test(url.searchParams.get('attentionSelected') ?? '')) throw new Error('WECOM_LINK_INVALID')
-  const content = `WorkMesh 有待处理事项\n请登录 WorkMesh 查看并处理。\n[打开 WorkMesh](${url.href})`
+  const attentionId = decodeURIComponent(url.pathname.slice('/api/v1/human-attention/'.length))
+  if (url.origin !== origin || url.hash || url.search || !/^v1:[a-z_]+:[a-f\d-]{36}$/.test(attentionId) || relativeHref !== `/api/v1/human-attention/${encodeURIComponent(attentionId)}`) throw new Error('WECOM_LINK_INVALID')
+  const content = `WorkMesh 有待处理事项\n请通过鉴权 API 查看并处理。\n[查看待处理事项](${url.href})`
   if (Buffer.byteLength(content, 'utf8') > 4096) throw new Error('WECOM_PAYLOAD_TOO_LARGE')
   return content
 }

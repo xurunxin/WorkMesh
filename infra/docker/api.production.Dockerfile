@@ -9,10 +9,13 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.js
 COPY apps ./apps
 COPY packages ./packages
 COPY scripts ./scripts
+COPY skills/workmesh/SKILL.md skills/workmesh/public-key.pem ./skills/workmesh/
+COPY skills/workmesh/references/protocol.md skills/workmesh/references/clients.md ./skills/workmesh/references/
 COPY infra/docker/prepare-production-deploy.mjs ./infra/docker/prepare-production-deploy.mjs
 RUN --mount=type=cache,id=workmesh-production-pnpm,target=/pnpm/store,sharing=locked \
     pnpm install --frozen-lockfile --store-dir /pnpm/store
-RUN pnpm --filter @workmesh/config build \
+RUN pnpm check:workmesh-skill \
+    && pnpm --filter @workmesh/config build \
     && pnpm --filter @workmesh/api... build \
     && pnpm --filter @workmesh/api --prod deploy /out \
     && node infra/docker/prepare-production-deploy.mjs /out

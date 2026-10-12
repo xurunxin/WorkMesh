@@ -1,0 +1,856 @@
+{
+  "projectId": "DzkLDn6UW-IbfoTJzN9Ro",
+  "todoId": "G9grPMcWhjVMFaEcNoVAG",
+  "branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+  "sourceHead": "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+  "stage": "方案文档前置提交；非产品实施",
+  "currentPlan": {
+    "docId": "4L0f8ekmDAa144DUqvFlx",
+    "path": "docs/plan/backend-only/sources/plan-4L0f8ekmDAa144DUqvFlx.md",
+    "readMethod": "本轮平台消息注入的完整 Saved plan 副本；与实际 todos 返回的未截断前缀比对",
+    "upstreamBodyHash": "未返回",
+    "versionField": "未返回，不推测"
+  },
+  "historicalPlan": {
+    "docId": "eeEM_cmzdO-i7EqTiz7XF",
+    "path": "docs/plan/backend-only/sources/plan-eeEM_cmzdO-i7EqTiz7XF.md",
+    "readMethod": "此前 plan_revision 消息注入的完整 Saved plan 副本；逐段保全并核对仅五处修订差异",
+    "upstreamBodyHash": "未返回",
+    "versionField": "未返回，不推测"
+  },
+  "spec": {
+    "path": "docs/plan/backend-only/sources/spec.md",
+    "readMethod": "tds.todos(id) 实际返回中 Spec 至 Saved plan 的完整正文",
+    "returnedFields": {
+      "Phase": "building",
+      "Created": "2026-10-11T18:02:11.794Z by 总管 (agent)",
+      "Updated": "2026-10-11T18:55:37.504Z"
+    }
+  },
+  "decisions": {
+    "questionDocId": "q-bwbQs-MKcSBgx-HSvBCMB",
+    "path": "docs/plan/backend-only/sources/user-decisions.md",
+    "readMethod": "tds.conversation(id) 原 user/plan_revision 答复，逐字提取",
+    "answeredAt": "2026-10-11 18:42:54 UTC"
+  },
+  "textEncoding": "UTF-8，无 BOM；正文后额外保存一个 LF；正文哈希不含该 LF",
+  "gitBlobBinding": "文件 SHA-256 同时作为 Git blob 内容 SHA-256；gitBlob 为 Git 对象 ID，暂存和提交后逐字节复核",
+  "gaps": [
+    {
+      "source": "tds.todos #61",
+      "gap": "当前规格完整，附带方案截断；不用截断正文补齐方案"
+    },
+    {
+      "source": "tds.conversation #61",
+      "gap": "方案只有 doc 链接，没有全文"
+    },
+    {
+      "source": "tds.todos #7",
+      "gap": "当前规格完整，附带方案截断"
+    },
+    {
+      "source": "tds.git ls-remote origin refs/heads/main",
+      "gap": "共享缓存准备时 index.lock 阻塞；未取得最新主线 SHA，未删锁"
+    }
+  ],
+  "writingSkill": {
+    "repository": "https://github.com/leter/zh-tech-writing",
+    "commit": "ffda9353768dece8aabd26ccb3a4978025e9437c",
+    "files": [
+      {
+        "path": "SKILL.md",
+        "url": "https://raw.githubusercontent.com/leter/zh-tech-writing/ffda9353768dece8aabd26ccb3a4978025e9437c/skills/zh-tech-writing/SKILL.md",
+        "bytes": 6359,
+        "sha256": "0db6adbc3d6c44c9de950444550b09496769c11f02ef17367d957027ad804e99"
+      },
+      {
+        "path": "references/manual-structure.md",
+        "url": "https://raw.githubusercontent.com/leter/zh-tech-writing/ffda9353768dece8aabd26ccb3a4978025e9437c/skills/zh-tech-writing/references/manual-structure.md",
+        "bytes": 1362,
+        "sha256": "91509b2c3e6b72ea87982824b01191f940f5c378eddef56530b746a17009f57c"
+      },
+      {
+        "path": "references/typography.md",
+        "url": "https://raw.githubusercontent.com/leter/zh-tech-writing/ffda9353768dece8aabd26ccb3a4978025e9437c/skills/zh-tech-writing/references/typography.md",
+        "bytes": 2379,
+        "sha256": "e5fa49bf3fe4ee9f55c7af76d008178a4a13d663c82266de037613463cab5cf4"
+      }
+    ],
+    "installation": "not-installed",
+    "autocorrect": "not-found; manual-review"
+  },
+  "followupSpecs": [
+    {
+      "number": 4,
+      "todoId": "FX01PP879WjRSp0LVcoM2",
+      "path": "docs/plan/backend-only/sources/todos/04.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T08:52:50.226Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:46.251Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "a47aac1d7f0452dd6f71008c12ec495150f2610973b612da9826ae7432e5c12c",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 7,
+      "todoId": "6EzX6xCA-_m72aQU1BEHX",
+      "path": "docs/plan/backend-only/sources/todos/07.md",
+      "returnedFields": {
+        "Phase": "confirm",
+        "Created": "2026-10-07T08:52:53.243Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:12:25.780Z"
+      },
+      "specComplete": true,
+      "responseTruncated": true,
+      "specUtf8Sha256": "36929e36255872e1a7bf9839288573fa798de6e96e8260a816da80bfaba04660",
+      "savedPlanComplete": false
+    },
+    {
+      "number": 20,
+      "todoId": "JfGwKk3prfIie6X2u2J51",
+      "path": "docs/plan/backend-only/sources/todos/20.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T10:43:23.377Z by 总管 (agent)",
+        "Updated": "2026-10-11T18:05:47.048Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "d9b3e38d24cc538e337cc9ee229848b45f16fefcc0a1a475b2ec667b260b6316",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 23,
+      "todoId": "hHvBuVEpXQRQhVB12wRgu",
+      "path": "docs/plan/backend-only/sources/todos/23.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T13:17:38.972Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:48.040Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "27c09f6e23cdfbe00fc4fafe2db442adbcc977ef8a76563aecd185012490e385",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 24,
+      "todoId": "UQPSqKNzHK_mRc_1wOxBA",
+      "path": "docs/plan/backend-only/sources/todos/24.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T13:17:41.035Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:48.995Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "2cdf7cc2c7889751f21d4170c324f09686f26f0874f45c347a184d74af479e03",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 25,
+      "todoId": "edIZ0ybOGMRBI6aupNUhU",
+      "path": "docs/plan/backend-only/sources/todos/25.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T13:17:42.493Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:50.058Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "b1717ac6c515fdbfcbc2fd90ac72dc8885fcebbf537dbb467348dbc070a0f0e8",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 26,
+      "todoId": "GKJOdaKtOjiTwP637pyM-",
+      "path": "docs/plan/backend-only/sources/todos/26.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T13:17:43.489Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:51.124Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "830868915860a211636ed2b53c78019074507d0666885bfcd0a7fbc95e6d78bd",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 27,
+      "todoId": "89f9yFnmIg4nszXIBCByh",
+      "path": "docs/plan/backend-only/sources/todos/27.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T13:17:44.508Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:52.045Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "1f1bd79beb91e731fc2533ddccd2fb6cdd914aacdd2c5c72d154b7380f58a00b",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 28,
+      "todoId": "YtFHUCHv8l4JZcYd1qHAU",
+      "path": "docs/plan/backend-only/sources/todos/28.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T13:17:45.559Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:53.116Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "224ddfd35bdffaad0330e5d06da6c06680fb760c9c59ed6b968c9c9679680aeb",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 29,
+      "todoId": "RTVGtGBgj-BvazLLjiXKu",
+      "path": "docs/plan/backend-only/sources/todos/29.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-07T13:17:46.568Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:54.079Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "eea08a0b3fde3a1ded40f3b46b0ba8444407f4c0c317876d70b51b7ddb1159e8",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 32,
+      "todoId": "npcqX1i7vai8HivE61gCn",
+      "path": "docs/plan/backend-only/sources/todos/32.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:48:06.257Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:55.167Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "790b3553c5fc907643cbf20b0d9db59c0990e4150b95a2b55900e196197f9d9b",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 33,
+      "todoId": "zTp9s5nPMWiUfQ9Ju1TB_",
+      "path": "docs/plan/backend-only/sources/todos/33.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:48:07.792Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:56.194Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "73ef650a2f2d897fc6eef09ca44bf61735b2d59f1af635bec4695f17f7a849d3",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 34,
+      "todoId": "_ac4c_0tJUQUw0VpQZwHg",
+      "path": "docs/plan/backend-only/sources/todos/34.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:02.238Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:57.301Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "c1e4219e8dc2a179e0a39630ab637480de0a28614418d8b97874510308de34be",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 35,
+      "todoId": "RV7tsdWJpr7m2nJyv9nqR",
+      "path": "docs/plan/backend-only/sources/todos/35.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:04.503Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:58.200Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "7500d8cd2de9ec08f01ec9595024cd45389bdb4babf00d37ca0a08eb4447a9a4",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 36,
+      "todoId": "zMA4ndl8GbMiBKUGkVGCM",
+      "path": "docs/plan/backend-only/sources/todos/36.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:06.479Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:05:59.423Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "31ce805c19082f0d06077f02a073a2734d8627b0691a8133f38e9f54a6647e8c",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 37,
+      "todoId": "kRG30rKJKzHIJgViP0zG9",
+      "path": "docs/plan/backend-only/sources/todos/37.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:08.419Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:01.181Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "09fc35f6cab11e89f5db42c581ad46163c17ef1fdee7edbab5d96e4f8915acb1",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 38,
+      "todoId": "JSrBIuzweE0xbwHiRv6mg",
+      "path": "docs/plan/backend-only/sources/todos/38.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:10.411Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:02.350Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "7d9f3a6373ff483d603967a896d25e7268cce7224d1cb957d556b18ce645f659",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 39,
+      "todoId": "XMPk98TpHKV-PATSa73Ou",
+      "path": "docs/plan/backend-only/sources/todos/39.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:12.429Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:03.321Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "d88a41b844d9872e1a7c001ba6b1db8944b96f5ce306b080a2f1c3a1c14f36d3",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 40,
+      "todoId": "lWvlZxnqQ2iv7pO6CcR0i",
+      "path": "docs/plan/backend-only/sources/todos/40.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:14.468Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:04.281Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "2ea8e1c51de3b603009d9dfdaa095f16915de64616cf4f131e79f8bdc0cb8918",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 41,
+      "todoId": "_dNeLJHtlGTC0GLyGqPXT",
+      "path": "docs/plan/backend-only/sources/todos/41.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:16.464Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:05.362Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "8dbb52a3c4cb95965dacf20cd16d3d64cb603536d373d8fd1966ed94ff93700f",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 42,
+      "todoId": "MC5STj7Q-EsuofkAYn8zW",
+      "path": "docs/plan/backend-only/sources/todos/42.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:18.465Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:06.423Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "1017749ab2a912fdf5247e716a8193525b2acd4708b75dd5b8d1fe135c64f37f",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 43,
+      "todoId": "DHwpmz2ar59DF-6StD_pC",
+      "path": "docs/plan/backend-only/sources/todos/43.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:20.515Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:07.290Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "6a0223a1de1eeaa7bbc851bf54d5bd35513d7003d3f4bcadbc0e29e3f9d2ef5f",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 44,
+      "todoId": "JIdLcnMp1BqD3AWhMTDI4",
+      "path": "docs/plan/backend-only/sources/todos/44.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:22.514Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:08.479Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "8115321cb6230328e9c8a1ce121aca29f52a4efbe688786cbc5c63c294908806",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 45,
+      "todoId": "lMa3hSLBuGfOfo4OabuP_",
+      "path": "docs/plan/backend-only/sources/todos/45.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:24.535Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:09.374Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "b6343aca02d284f378eaa1d9bbe36800df73d611b5c9e54cd4c5dfcbcbd43d1b",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 46,
+      "todoId": "OvaPkm5SFS9vjgHkT3cdf",
+      "path": "docs/plan/backend-only/sources/todos/46.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:26.567Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:10.471Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "4a79eb576596de85c4c24961b852f3cbdaa76669f8d681954b2041bc5b2438ea",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 47,
+      "todoId": "4ptxymMDb7DC8b1PrWD-E",
+      "path": "docs/plan/backend-only/sources/todos/47.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:28.539Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:11.739Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "c0dfd7a0fff3d2c213b69b00034e994a4a7ce7e46c454929f4fea2d2e2a17310",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 48,
+      "todoId": "2PTT2HTip1ZINl8wkzZVt",
+      "path": "docs/plan/backend-only/sources/todos/48.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:30.560Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:13.257Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "ed131dd2229c61595ede5b0a1f00d6d687afbe8725503012404f2600ab5b8400",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 49,
+      "todoId": "aRkCvNmh7KfPhK5XYsvdn",
+      "path": "docs/plan/backend-only/sources/todos/49.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:32.596Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:14.380Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "a53ee739c5826f1e25882d7381ef7505ad4a9aa6bd729803a731ea1bb64e379d",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 50,
+      "todoId": "KyWJA_B67Q0199sK7VnTh",
+      "path": "docs/plan/backend-only/sources/todos/50.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:34.630Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:15.495Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "d84c041d1d87ab99d02bbda67dd153a2b2c24d11f87e19cf8b3c0d8ff4f772ac",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 51,
+      "todoId": "Yzn_YDQ55aKdtijocMDnZ",
+      "path": "docs/plan/backend-only/sources/todos/51.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-08T06:49:36.641Z by RunXin Xu (user)",
+        "Updated": "2026-10-11T18:06:16.464Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "4c2fa72e962685b6f1d14f697db1c411decbcb25e9bf13bad14f77763109a68a",
+      "savedPlanComplete": null
+    },
+    {
+      "number": 62,
+      "todoId": "CmdFbMAsJnmQGBhXakJ7u",
+      "path": "docs/plan/backend-only/sources/todos/62.md",
+      "returnedFields": {
+        "Phase": "todo",
+        "Created": "2026-10-11T18:04:21.247Z by 总管 (agent)",
+        "Updated": "2026-10-11T18:04:21.247Z"
+      },
+      "specComplete": true,
+      "responseTruncated": false,
+      "specUtf8Sha256": "a839ae0e84af828422fdccb9d9259777829cde0aa06a5a86265e87f9397a9f2b",
+      "savedPlanComplete": null
+    }
+  ],
+  "files": [
+    {
+      "path": "docs/plan/backend-only/followup-impact.md",
+      "bytes": 8327,
+      "fileSha256": "45adfe84c0536b04fb269a048e6fe923f4a82ebed7fb3f2f37d70818575dfd4e",
+      "gitBlob": "3bc3430542f3de489339ca1bba290861861bf874"
+    },
+    {
+      "path": "docs/plan/backend-only/path-impact.md",
+      "bytes": 6125,
+      "fileSha256": "82ebae72c2d8e71b69b03d10f317aecf93227d23aba10d63443b3eefbf5e15f4",
+      "gitBlob": "20770dd71c0013b5258891d2287a49e51659595f"
+    },
+    {
+      "path": "docs/plan/backend-only/prepare-inventory.py",
+      "bytes": 14713,
+      "fileSha256": "a9fa7570a49a406e76b4ec8b601ceddb13f50a6cff7e56024ed788430429fe71",
+      "gitBlob": "d98873adaab8b7da8fb2ff825070713ef1da88f9"
+    },
+    {
+      "path": "docs/plan/backend-only/README.md",
+      "bytes": 4228,
+      "fileSha256": "f2f6416161c22857922a4d8b0a0e892f841a23a177e0f3eba083b377bf6dcc72",
+      "gitBlob": "281d1c8d5455fa79ccebb65a0a7cc394b7fc5045"
+    },
+    {
+      "path": "docs/plan/backend-only/review-corrections.json",
+      "bytes": 1345,
+      "fileSha256": "f3f44b9e66ab00afc0a1b68e26df64e7171b7c94c77b94c17414947fc8b33775",
+      "gitBlob": "bdb0b8554d1b04432e831206d1c32cfe01e3a081"
+    },
+    {
+      "path": "docs/plan/backend-only/review-corrections.md",
+      "bytes": 2964,
+      "fileSha256": "1fc12ae7c14802ed97217f8910126a92f17176b0d14dd0775bd03e3a0ffe46c9",
+      "gitBlob": "d162f7feffc4b6b53474d74a796584339f4ed601"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/conversation-response.json",
+      "bytes": 8527,
+      "fileSha256": "9e38aeb423caf8d153329f91aed4121dea43b5deb6aa874d3139455fd2970dbc",
+      "gitBlob": "b7d837c11c51eec0cb753ffd4a92e33e7da9e904"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/document-check-first-failure.json",
+      "bytes": 383,
+      "fileSha256": "198310a3db18b54d7653faa8c8b4e4b0c6f245845722954ad8af74df8ae782b1",
+      "gitBlob": "363103173b134ad6e2e11c4e0da1c611a04fc21e"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/expected-bodies.json",
+      "bytes": 27592,
+      "fileSha256": "4e963281ad00fb79db2af86fd46075bdc181b645f7eacd86855ef31ff6ad0fb6",
+      "gitBlob": "aa52868a4b53f0804a396097e868d17b591db880"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/main-read.txt",
+      "bytes": 418,
+      "fileSha256": "e3e6ff5822a9f9772ed06e782fb99cdf13dda132a093587d1beda15285070a27",
+      "gitBlob": "4f90b9e801bbc71080e287c1ed494bdacfc1fa6e"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/plan-4L0f8ekmDAa144DUqvFlx.md",
+      "bytes": 11063,
+      "fileSha256": "24ea6e17a0f73697bc7842c2186c398b011c5d48698772621c2c43146c8942b0",
+      "gitBlob": "25048d1456636993995fd3bf930b1789d766a608",
+      "bodySha256": "d86e17307c4d2a490e939863f5be3d42cfdfaf8c6e9cc90158fd6796b3194574",
+      "bodyBytes": 11062
+    },
+    {
+      "path": "docs/plan/backend-only/sources/plan-eeEM_cmzdO-i7EqTiz7XF.md",
+      "bytes": 8161,
+      "fileSha256": "5f77567921417246c61bbd826a15bfd703280e0ed42c69ca55a471eb2580fca5",
+      "gitBlob": "31e80361491025c4e1fbf156fef4e387ed89b793",
+      "bodySha256": "7774801f387eb03cf66a21372adbc05e3dafcdd48e04615b195ad4c4064ab6d6",
+      "bodyBytes": 8160
+    },
+    {
+      "path": "docs/plan/backend-only/sources/spec.md",
+      "bytes": 7775,
+      "fileSha256": "574b1884ba5021db780cae387e888f064c02b337c09b3ba3e113266775f799cb",
+      "gitBlob": "bb1dfe7c534d50f9f35673ca32d9fa89b8711457",
+      "bodySha256": "ccc9f9d27c7a4111c0e3e217e749d2bcb15b0cabfd605d99ed21be81df6b3bcc",
+      "bodyBytes": 7774
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/04.md",
+      "bytes": 7765,
+      "fileSha256": "8d026226da4956ea3bef17b0e738b33047e9f332c386bee26da5c83913f77b0d",
+      "gitBlob": "0f563449e1db1bc0ddeb2553f27c63d0b415ff71"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/07.md",
+      "bytes": 14848,
+      "fileSha256": "afd762069ba4e349733f469729b5456348e1dcfc881e9803e34f1f7c02cbb2eb",
+      "gitBlob": "8a19ba261ec6cf7499658d7d39a7965f9add0f54"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/20.md",
+      "bytes": 9215,
+      "fileSha256": "f84b4559448ed9bc812c897d3e26b0e57208f5e54f411ce14f2145769dfe34f1",
+      "gitBlob": "5025667d473a249668816b415fc3022e2d374e1b"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/23.md",
+      "bytes": 8636,
+      "fileSha256": "39b2c560cd940f6c1c3014dca8b995aa0cc0fbe4fa44e71efbb703acfdea6891",
+      "gitBlob": "5e3904f32b76beb0932fdb37aa0da1a2e06a1d86"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/24.md",
+      "bytes": 8183,
+      "fileSha256": "3fae3c690cd292ad568def2fb20fe248f45eda8077ff03764fccc85154a31ddb",
+      "gitBlob": "1aaa9992bad4d4102b2eb7fe99cc06fe0e1daf60"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/25.md",
+      "bytes": 9209,
+      "fileSha256": "06ec541d5ae739b9f3aa125e01a5cdf2427d54414cab32c0cea94a667b567642",
+      "gitBlob": "334d4726ea02fcc97a94c54cb6070e014b5ba519"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/26.md",
+      "bytes": 8167,
+      "fileSha256": "7ab61805735aab9c4108ef3d7d143dcb0a27d39fb7d3456109afc31a4ff4fe93",
+      "gitBlob": "599c26f014222a29e90dd8469d2f3a83a0469276"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/27.md",
+      "bytes": 8803,
+      "fileSha256": "961a4932fdfc954395214ad46f3dbacba5af7aeb6735e23f198da30bd067c6ba",
+      "gitBlob": "2b744599521043362fb8c2ed958ac14b3fe8e8f2"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/28.md",
+      "bytes": 8569,
+      "fileSha256": "5ba8e5446a1969e36136f51a358673d1756cf8c6d60e60b3a72a1baf3b617571",
+      "gitBlob": "23cbd2ee4ff5dbcb33a55c68a881bd43656aedd8"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/29.md",
+      "bytes": 10022,
+      "fileSha256": "b2430479800bfdd4df4707f6171a6db0a72b935eaadd44b5ace921d85aa09505",
+      "gitBlob": "274f082b2dd30709864eb6be9e53d3d0386cb667"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/32.md",
+      "bytes": 8746,
+      "fileSha256": "bdc3c78b1cf5f784a06e6f7d6d78018b3284662450abb1fefe71caa01ff56b82",
+      "gitBlob": "3f3c86fe5189578d8b12156db99bfd4ca4d13713"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/33.md",
+      "bytes": 9004,
+      "fileSha256": "c6180b6fe7976b20e9de5d7f6552e4e4191e0be1cf579aff7d597d6b32cd34f7",
+      "gitBlob": "5da127d6bcff1f61057758cf97424b758ccd5039"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/34.md",
+      "bytes": 9052,
+      "fileSha256": "447d44c72a19e00b4ada2e6e801ae3ac6bc1619cc7d840e8719c7932f944b349",
+      "gitBlob": "014e683244772998355b9753c426caa9f31d25ca"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/35.md",
+      "bytes": 9721,
+      "fileSha256": "266249420544509d7dbe7fb33b29fcd7ec2360dc695e7c6d5bc92fb839e46206",
+      "gitBlob": "911b4957b816a66d7d70e55b184d221f2228bec1"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/36.md",
+      "bytes": 9116,
+      "fileSha256": "36ff78bba5f9ad843a07f9ee7469001ea710b6852057447d38a980611946d03e",
+      "gitBlob": "9e303c216a286fb5c6a3a424304dd86cd4da4574"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/37.md",
+      "bytes": 9490,
+      "fileSha256": "88ddf0c0124d1e7f9839c795b9eede0ebbc5e6e2c1a413b7934bb86a6490729d",
+      "gitBlob": "34658040aca6f745056caddf2240404d4dc712f3"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/38.md",
+      "bytes": 9145,
+      "fileSha256": "043c5cf9a683f32adbef0aef2784411abea94a65b9e3eb2e3c51d15bd6fc5938",
+      "gitBlob": "22dac24caa9a6e5f2be4640b54f35f9eb0f72399"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/39.md",
+      "bytes": 9213,
+      "fileSha256": "55cfc172e118f9f2a38cb21db4031281dee0701f84868c86c1dd42afc060b717",
+      "gitBlob": "2ded2c4a4983377d02b26e481ce8d0d7e70dd67a"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/40.md",
+      "bytes": 8974,
+      "fileSha256": "04181c965d1077795efd52f8107c371f9dcb60778d794fc813a3a6e576bacbd1",
+      "gitBlob": "6ae548829d6c11fcc4086bd3865d0c724ee3ea52"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/41.md",
+      "bytes": 8873,
+      "fileSha256": "bcc3e0543102091e1ca6298079a6e5c439b55d6d507dcb82d6a7286562f63427",
+      "gitBlob": "62044bcf92d1c466239ac39f4f8cd92ac9b739f7"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/42.md",
+      "bytes": 8881,
+      "fileSha256": "cf8b9f8b1d0c0e19f6d310b572a994f3151defa713c049b9cacb6ab142c8ebd3",
+      "gitBlob": "945b18f2067ac4288a7841c464400fe0386d5704"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/43.md",
+      "bytes": 9031,
+      "fileSha256": "737dfad62a1254a063d51e43d4fa213a129630d22bc3289f737b5a90a47d0c26",
+      "gitBlob": "ff46649b8445028e33841a8318c81d014e0adba1"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/44.md",
+      "bytes": 9119,
+      "fileSha256": "b99c5859a71f012914a7ed5f812202f51d02f94cce7affbc1fe47dd5c955c7d8",
+      "gitBlob": "8f758fa5ccceaab40714cffea1ca8f6098e17146"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/45.md",
+      "bytes": 9144,
+      "fileSha256": "6635827822f0b3d5d462d1b9138e569f4f0c2bbd3239c0e2c7078657ebfae67b",
+      "gitBlob": "c5f34c390c9982913789c42e981059c17ce9e5c6"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/46.md",
+      "bytes": 9019,
+      "fileSha256": "b059e6848292d13b1fd81dce7f58f4fe3f3deec5c690f96c8afd5807ae3893fa",
+      "gitBlob": "8f76497083cebbb0e33730c87a4a3af278ed847c"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/47.md",
+      "bytes": 9395,
+      "fileSha256": "2a7fe93255faa4359f67ae91c62727a2c23d870167166fd9ec9a2a7ec0318f4e",
+      "gitBlob": "1c910234b4c0e24846f26eae8d14862c96b2c434"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/48.md",
+      "bytes": 9135,
+      "fileSha256": "2eb0c3b0554a470f571bd25831bffb57eead8869173198930e2b5e4da4123eb3",
+      "gitBlob": "4e87244d0723293d6460910c15bc5d75b8182297"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/49.md",
+      "bytes": 8593,
+      "fileSha256": "1c92cc8d5284ca3c591c7474cdab2f387ab825fddab9cbded95e5b704d5e41d5",
+      "gitBlob": "06e2d25b4ba02c1fac2fbfa44eecf62c282ec0f0"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/50.md",
+      "bytes": 9142,
+      "fileSha256": "0894a4edba1f3f6036f322d74c6ee7727c388549fb13b58942b0faaf8f2b93b7",
+      "gitBlob": "faaabb97aa1112806cab1f68374e8cf38ea02aa1"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/51.md",
+      "bytes": 10661,
+      "fileSha256": "45c763a534fa470dd8947d7fec6ebe798b7e4b154f450f60a006a08287a4485c",
+      "gitBlob": "4e174fcbf4b7f0e73487acf7cf1c0d4395e8e231"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos/62.md",
+      "bytes": 3414,
+      "fileSha256": "9853b39eef82649ad40a4615271dbb5fbaaa95ec60303142e581c9923bea17c9",
+      "gitBlob": "0739e69c3976bce39a07abd2bec40a441c13e280"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/todos-response.txt",
+      "bytes": 15610,
+      "fileSha256": "20af122d314b5235f83ae39308a2a5dc4c0c679daadab01ce1a54f003839a608",
+      "gitBlob": "766bd2862c61b975ed8818d170a43159eb8a207b"
+    },
+    {
+      "path": "docs/plan/backend-only/sources/user-decisions.md",
+      "bytes": 405,
+      "fileSha256": "04d67dcc282f8ad6840fe4e48daaabd88c4af51cca03d137fc077e0177d25f3a",
+      "gitBlob": "29acad9726cf623269eca53ddf8b02c708cc5c39",
+      "bodySha256": "0e68e9c349a34333d91ebe1c52bf8abbabee3811c9ae8aeaf8d8f49184cb28e2",
+      "bodyBytes": 404
+    },
+    {
+      "path": "docs/plan/backend-only/sources/writing-skill.json",
+      "bytes": 1156,
+      "fileSha256": "93c14555705b5e7702205851a0238aba37046055248c2b8bf00c7195ff9dda4f",
+      "gitBlob": "cfb58174db607652f0944b15fb0337e63a1a60a3"
+    },
+    {
+      "path": "docs/plan/backend-only/test-impact.md",
+      "bytes": 27328,
+      "fileSha256": "f3b4a1f1256051f8fa891850e8ee5a82030430713cfe857dd44b3c59db6cbbf1",
+      "gitBlob": "5e7a38fbc2b0e329ce147a2354f683ff5271009f"
+    },
+    {
+      "path": "docs/plan/backend-only/test-inventory.json",
+      "bytes": 1223273,
+      "fileSha256": "9f26d331d3397f184c57418510c402602c96e2f00840d3c71b1fccb7a6a0b29c",
+      "gitBlob": "18f6db0cfe28f28621a4cf08adca7c9d751bad69"
+    },
+    {
+      "path": "docs/plan/backend-only/verification.md",
+      "bytes": 5945,
+      "fileSha256": "cd10303fcca01e68813e313c4d0a61cc5677d6d98a04082f766a15e7c4b1dd82",
+      "gitBlob": "c08b5120491570d66779eb5cb552853b8aa047f1"
+    },
+    {
+      "path": "docs/plan/backend-only/verify-documents.py",
+      "bytes": 4035,
+      "fileSha256": "2cab9f5275b461a4af0bb9ae88f0ccd6133f403bf2d592104e9b968cd7a357d0",
+      "gitBlob": "e24db1cf38a5807ba36a4c5e2a29be94d99995d5"
+    },
+    {
+      "path": "docs/plan/backend-only.md",
+      "bytes": 11452,
+      "fileSha256": "bbbfd322451278b347a068d0dfd08970bd053da0525536dd099efbff2366c0f6",
+      "gitBlob": "212df0f055dc38e45330607d5acf956d1c651ef1",
+      "bodySha256": "43e68a74319267dd870a469f117253e74e6c5670bf7e13ea3a301f21a632210d",
+      "bodyBytes": 11451
+    }
+  ],
+  "selfHash": "清单不含自身哈希，交接提交固定清单本身",
+  "rawConversation": {
+    "path": "docs/plan/backend-only/sources/conversation-response.json",
+    "field": "text",
+    "decodedUtf8Sha256": "7c6483f153bec25f7a26e22ad801ca8b0bf6f37fd989c513dc86eabb45a09e27",
+    "encodingNote": "JSON 解码后逐字保留原返回；文件本身的字节哈希另列"
+  },
+  "reviewCorrections": {
+    "reviewedHead": "69fa7f4f196c6cef74a792054400530420c705dc",
+    "activePlanPath": "docs/plan/backend-only.md",
+    "editsPath": "docs/plan/backend-only/review-corrections.json",
+    "explanationPath": "docs/plan/backend-only/review-corrections.md",
+    "sourcePolicy": "Saved plan 原件、当前规格、问答及后续卡来源未变；活动方案单独记录修订后哈希；不推测平台新版本"
+  }
+}

@@ -1,28 +1,34 @@
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
-import { createRequire } from 'node:module'
-import { resolve } from 'node:path'
+import { verifyBackendSkill } from './verify-backend-skill.mjs'
 
-// 真实 Web 私网代理、安装认证和部署 Worker；测试供应商仅提供固定 HTTPS 仓库原件。
-const require = createRequire(resolve(import.meta.dirname, '../apps/web/package.json'))
-const { chromium, request } = require('@playwright/test')
-const origin = process.env.WEB_ORIGIN
-const client = await request.newContext({ baseURL: origin })
-let browser
+// Exercise the deployed API and worker without a browser or Web proxy.
+const origin = new URL(process.env.WEB_ORIGIN).origin
+const cookies = new Map()
+const call = async (path, options = {}) => {
+  const response = await fetch(new URL(path, origin), { method: options.data === undefined ? 'GET' : 'POST',
+    redirect: 'error', signal: AbortSignal.timeout(30000), headers: {
+      'content-type': 'application/json', cookie: [...cookies].map(([k, v]) => `${k}=${v}`).join('; '),
+      ...(options.headers ?? {}),
+    }, ...(options.data === undefined ? {} : { body: JSON.stringify(options.data) }) })
+  for (const value of response.headers.getSetCookie()) {
+    const first = value.split(';')[0], split = first.indexOf('=')
+    cookies.set(first.slice(0, split), first.slice(split + 1))
+  }
+  return { status: () => response.status, json: () => response.json(), text: () => response.text() }
+}
+const client = { get: path => call(path), post: (path, options) => call(path, options) }
 let csrf
 try {
-  const installPage = await client.get('/install')
-  assert.equal(installPage.status(), 200)
-  assert.match(await installPage.text(), /WorkMesh/)
   const password = `a2-${randomUUID()}`
   const installed = await client.post('/api/v1/auth/install', { headers: { 'Idempotency-Key': randomUUID(), 'X-WorkMesh-Bootstrap-Token': process.env.WORKMESH_BOOTSTRAP_TOKEN },
     data: { name: 'A2 Backend Lite', slug: `a2-${randomUUID().slice(0, 8)}`, adminName: 'A2', email: 'a2@example.test', password } })
   assert.equal(installed.status(), 200, `安装失败：HTTP ${installed.status()}`)
   csrf = (await installed.json()).csrfToken
   assert.equal(typeof csrf, 'string')
-  const api = async (path, data, key = randomUUID()) => {
+  const api = async (path, data, key = randomUUID(), expectedStatus = 200) => {
     const response = data === undefined ? await client.get(path) : await client.post(path, { data, headers: { 'X-CSRF-Token': csrf, 'Idempotency-Key': key } })
-    assert.equal(response.status(), 200, `${path} HTTP ${response.status()}`)
+    assert.equal(response.status(), expectedStatus, `${path} HTTP ${response.status()}`)
     return response.json()
   }
   const actor = (await api('/api/v1/auth/me')).actor
@@ -59,19 +65,9 @@ try {
   assert.equal(context.base_sha, body.baseSha)
   assert.deepEqual(context.permissions, ['read'])
   assert.equal(context.guidance[0].content, '# 固定测试仓库指导原件\n')
-  browser = await chromium.launch()
-  const browserContext = await browser.newContext({ storageState: await client.storageState() })
-  const page = await browserContext.newPage()
-  const errors = []
-  page.on('pageerror', error => errors.push(error.message))
-  await page.goto(`${origin}/workbench`)
-  await page.getByTestId('conversation-workbench').waitFor({ state: 'visible' })
-  assert.match(await page.locator('body').innerText(), /WorkMesh/)
-  assert.equal(await page.locator('[data-testid="configuration-readiness"]').count(), 0)
-  assert.deepEqual(errors, [])
-  console.log(JSON.stringify({ installViaWebProxy: true, authenticatedRead: true, existingMainWeb: true, connectionReplay: true,
-    contextAction: action.id, contextId: context.id, exactContextConfirmed: true, providerTls: true, newUiAcceptance: '延期，未验收' }))
+  const skill = await verifyBackendSkill({ origin, api, teamId: team.id, principalId: actor.id })
+  console.log(JSON.stringify({ installViaApi: true, authenticatedRead: true, connectionReplay: true,
+    contextAction: action.id, contextId: context.id, exactContextConfirmed: true, providerTls: true, ...skill }))
 } finally {
-  if (browser) await browser.close()
-  await client.dispose()
+  cookies.clear()
 }

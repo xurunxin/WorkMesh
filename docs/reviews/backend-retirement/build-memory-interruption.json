@@ -1,0 +1,9 @@
+{
+  "command": "docker build --progress=plain --label workmesh.task=backend-lite-af2fb988 --build-arg WORKMESH_BUILD_SHA=13709aaf66a30c83edec6c732c35b76ba2235aea -t workmesh-retirement-lite:backend-lite-af2fb988 -f infra/docker/lite.Dockerfile -",
+  "sharedDockerRestarted": false,
+  "parent": 13516,
+  "action": "stop owned build request for memory pressure",
+  "source": "13709aaf66a30c83edec6c732c35b76ba2235aea",
+  "pid": 34332,
+  "sharedCleanup": false
+}

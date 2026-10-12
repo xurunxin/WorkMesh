@@ -1,0 +1,22 @@
+阅读视图；原始字节：raw-logs/run-994c174498b9.zip 内 lite-self-test.log；SHA-256：d8069fffa4225b20520c458134d6fdc6623982d5f5ffef8d50fae5a046f73d50
+
+> workmesh@ validate:lite:self-test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> node scripts/validate-lite-compose.mjs --self-test
+
+  self-test rejected: uncapped service
+  self-test rejected: heap above the container limit
+  self-test rejected: unbounded log
+  self-test rejected: literal application image
+  self-test rejected: role selected by compose command
+  self-test rejected: root user instead of the fixed identity
+  self-test rejected: writable root filesystem
+  self-test rejected: Agent Runner added to the Lite device
+  self-test rejected: PostgreSQL durability disabled
+  self-test rejected: Redis memory capped
+  self-test rejected: Redis AOF re-enabled
+  self-test rejected: PostgreSQL published to the LAN
+  self-test rejected: required secret given a default
+  self-test rejected: bootstrap loopback escape hatch
+  self-test rejected: compose variable missing from the example
+  self-test rejected: example variable the compose never reads
+Lite compose self-test passed (16 violating variants rejected)

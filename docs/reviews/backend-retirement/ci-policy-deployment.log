@@ -1,0 +1,33 @@
+阅读视图；原始字节：raw-logs/run-9fdd09982c86.zip 内 ci-policy-deployment.log；SHA-256：c6b3e5495d8e5618e7fae75ce809b0440eee7a8bf6ed10bb97f748104af39e8a
+
+> workmesh@ ci:test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> node --test scripts/ci-policy.test.mjs
+
+✔ 纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败 (49.6946ms)
+✔ 开发镜像构建接线不能被删除、跳过或吞掉失败 (26.8355ms)
+✔ classification bootstrap locks only YAML and cannot bypass policy or evidence (219.3383ms)
+✔ YAML semantics preserve flow maps, aliases and literal command bodies (3.9369ms)
+✔ 连接器改动必须实际运行平台矩阵，失败/跳过不能放行 (0.6257ms)
+✔ known prose on PR and main avoids every install/service/test job (0.3059ms)
+✔ retired workspace paths fail closed to full without a browser check (0.2418ms)
+✔ backend assets and fake-agent changes require API checks (0.248ms)
+✔ API and worker changes retain destructive recovery and real backend integration (0.2868ms)
+✔ cross-workspace lock audits are selected without inventing runtime dependency cycles (0.6897ms)
+✔ upstream contracts/domain/db/config changes include transitive consumers (0.3454ms)
+✔ protocol changes retain SDK consumers, conformance and direct backend imports (0.2323ms)
+✔ root config, unknown/deleted workspaces and executable-looking docs fail closed to full (0.4155ms)
+✔ main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full (0.8619ms)
+✔ PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full (0.8281ms)
+✔ aggregate rejects failure, cancellation and accidental skips for every required job (0.4142ms)
+✔ aggregate only accepts planned skips and rejects incomplete/malformed decisions (0.3324ms)
+✔ MCP discovery consumers require real conformance and propagate failed or skipped job (0.4298ms)
+✔ real workflow semantic mutations cannot silently omit MCP conformance (22.4577ms)
+✔ controlled CRLF evidence preserves bytes and all other whitespace gates (1971.1206ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4797.8686

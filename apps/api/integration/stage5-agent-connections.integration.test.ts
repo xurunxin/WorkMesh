@@ -324,7 +324,7 @@ describe('Stage 5 Agent Connection lifecycle', () => {
     const created = await human('POST', '/api/v1/agent-connections', { name: 'Codex coordinator', agentSlug: 'codex-coordinator', clientType: 'codex', teamId, principalHumanActorId: actorId, requestedCapabilities: ['work:read','work:write','comment:write','message:write','plan:write'], grantAgentDelegate: false })
     expect(created.statusCode, created.body).toBe(201)
     const envelope = created.json<{ connection: { id: string; revision: number }; connect_url: string; skill: { sha256: string; signature: string } }>()
-    expect(envelope.connect_url).toMatch(/\/connect#wmp_[A-Za-z0-9_-]{43}$/); expect(envelope.skill.sha256).toMatch(/^sha256:[a-f0-9]{64}$/); expect(envelope.skill.signature).toMatch(/^ed25519:/)
+    expect(envelope.connect_url).toMatch(/\/api\/v1\/agent-connections\/redeem#wmp_[A-Za-z0-9_-]{43}$/); expect(envelope.skill.sha256).toMatch(/^sha256:[a-f0-9]{64}$/); expect(envelope.skill.signature).toMatch(/^ed25519:/)
     const pairingCode = new URL(envelope.connect_url).hash.slice(1); const replayKey = randomUUID()
     expect(pairingCode).toMatch(/^wmp_[A-Za-z0-9_-]{43}$/)
     const mismatch = await app.inject({ method: 'POST', url: '/api/v1/agent-connections/redeem', payload: { pairingCode, agentSlug: 'wrong-agent', client: { type: 'codex', version: '1.0.0' } }, headers: { 'idempotency-key': randomUUID() } })

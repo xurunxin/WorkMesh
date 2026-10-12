@@ -17,7 +17,7 @@ class GeneratorCheckoutTests(unittest.TestCase):
         binding = json.loads((ROOT / decision['registrationSourceBinding']).read_bytes())
         capture_path = decision['registrationEvidence']
         capture = json.loads((ROOT / capture_path).read_bytes())
-        paths = [DECISION, capture_path, decision['registrationSourceBinding'], 'OPENAPI.yaml',
+        paths = ['docs/plan/backend-only/skill-discovery-decisions.json', DECISION, capture_path, decision['registrationSourceBinding'], 'OPENAPI.yaml',
                  'scripts/generate-agent-discovery.py', 'scripts/agent_discovery_source_binding.py',
                  'packages/contracts/src/agent-discovery-rules.ts', 'packages/contracts/src/route-policy.ts']
         paths += [f'docs/plan/agent-mcp-{batch}/{name}' for batch, name in [

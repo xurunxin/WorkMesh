@@ -63,6 +63,21 @@ describe('production runtime secrets', () => {
       }),
     ).not.toThrow()
   })
+
+  it('uses Installation authentication in Coordination MCP and keeps static credentials exclusive', () => {
+    const mcp = { ...runtimeEnvironment, WORKMESH_SERVICE: 'mcp', WORKMESH_API_URL: 'http://api:3001' }
+    const coordination = { ...mcp, WORKMESH_BETA_COORDINATION_MCP: 'true', WORKMESH_SESSION_TOKEN: '', WORKMESH_MCP_ACCESS_TOKEN: '' }
+    expect(() => validateRuntimeEnvironment(coordination)).not.toThrow()
+    expect(() => validateRuntimeEnvironment({ ...coordination, WORKMESH_API_URL: '' })).toThrow(/WORKMESH_API_URL is required/)
+    expect(() => validateRuntimeEnvironment({ ...coordination, WORKMESH_API_URL: 'invalid' })).toThrow()
+    for (const name of ['WORKMESH_SESSION_TOKEN', 'WORKMESH_MCP_ACCESS_TOKEN'])
+      for (const value of ['s'.repeat(40), ' '])
+        expect(() => validateRuntimeEnvironment({ ...coordination, [name]: value })).toThrow(/must not be mixed/)
+    expect(() => validateRuntimeEnvironment({ ...coordination, WORKMESH_BETA_COORDINATION_MCP: 'false' })).toThrow(/WORKMESH_SESSION_TOKEN is required/)
+    const staticMcp = { ...mcp, WORKMESH_SESSION_TOKEN: 's'.repeat(40), WORKMESH_MCP_ACCESS_TOKEN: 'a'.repeat(40) }
+    expect(() => validateRuntimeEnvironment(staticMcp)).not.toThrow()
+    expect(() => validateRuntimeEnvironment({ ...staticMcp, WORKMESH_MCP_ACCESS_TOKEN: staticMcp.WORKMESH_SESSION_TOKEN })).toThrow(/must not reuse/)
+  })
 })
 
 describe('release and feature configuration', () => {
@@ -414,58 +429,8 @@ describe('release and feature configuration', () => {
   })
 })
 
-describe('Web runtime public API URL requirement', () => {
-  const webEnvironment = {
-    NODE_ENV: 'production',
-    WORKMESH_SERVICE: 'web',
-    WORKMESH_BUILD_SHA: 'a'.repeat(40),
-  }
-
-  it('requires an absolute public API URL when the Web server does not proxy the API', () => {
-    expect(() => validateRuntimeEnvironment({ ...webEnvironment })).toThrow(
-      /NEXT_PUBLIC_API_URL is required/,
-    )
-    expect(() =>
-      validateRuntimeEnvironment({
-        ...webEnvironment,
-        NEXT_PUBLIC_API_URL: 'https://workmesh.test/api',
-      }),
-    ).not.toThrow()
-  })
-
-  it('allows a relative base when the Web server declares an API upstream to proxy to', () => {
-    // This is the Lite topology: a device reached by LAN address, hostname, or
-    // tunnel name, none of which are knowable when the bundle is built.
-    expect(() =>
-      validateRuntimeEnvironment({
-        ...webEnvironment,
-        NEXT_API_UPSTREAM: 'http://api:3001',
-        NEXT_PUBLIC_API_URL: '',
-      }),
-    ).not.toThrow()
-  })
-
-  it('still validates a public API URL that is supplied alongside the proxy', () => {
-    expect(() =>
-      validateRuntimeEnvironment({
-        ...webEnvironment,
-        NEXT_API_UPSTREAM: 'http://api:3001',
-        NEXT_PUBLIC_API_URL: 'https://change-me.example.com/api',
-      }),
-    ).toThrow(/NEXT_PUBLIC_API_URL must not contain placeholder material/)
-  })
-
-  it('leaves every other service requirement untouched', () => {
-    // The Web relaxation is scoped to service `web`. Migrate still enforces the
-    // PostgreSQL password even when a Web-style proxy variable is present.
-    expect(() =>
-      validateRuntimeEnvironment({
-        NODE_ENV: 'production',
-        WORKMESH_SERVICE: 'migrate',
-        WORKMESH_BUILD_SHA: 'a'.repeat(40),
-        DATABASE_URL: 'postgres://workmesh:too-short@postgres/workmesh',
-        NEXT_API_UPSTREAM: 'http://api:3001',
-      }),
-    ).toThrow(/at least 32 characters/)
+describe('retired Web runtime', () => {
+  it('rejects web instead of starting a retired role', () => {
+    expect(() => validateRuntimeEnvironment({ NODE_ENV: 'production', WORKMESH_SERVICE: 'web', WORKMESH_BUILD_SHA: 'a'.repeat(40) })).toThrow()
   })
 })

@@ -1,0 +1,16 @@
+[
+  {
+    "pid": 27632,
+    "reason": "preserve observed setup timeouts and reduce concurrent IO; no pass claimed",
+    "action": "stop-own-provisional-check",
+    "parent": 46324,
+    "command": "I:\\tds_workspace\\workspaces\\01a12c22-01d6-7eb1-a3c1-592edda7d055\\node_modules\\.pnpm\\@turbo+windows-64@2.10.6\\node_modules\\@turbo\\windows-64\\bin\\turbo.exe run test --concurrency=2"
+  },
+  {
+    "pid": 32128,
+    "reason": "preserve observed setup timeouts and reduce concurrent IO; no pass claimed",
+    "action": "stop-own-provisional-check",
+    "parent": 25800,
+    "command": "C:\\nvm4w\\nodejs\\node.exe --conditions node --conditions development I:\\tds_workspace\\workspaces\\01a12c22-01d6-7eb1-a3c1-592edda7d055\\node_modules\\.pnpm\\tinypool@1.1.1\\node_modules\\tinypool\\dist\\entry\\process.js"
+  }
+]

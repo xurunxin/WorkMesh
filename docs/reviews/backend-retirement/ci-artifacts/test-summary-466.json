@@ -1,0 +1,447 @@
+{
+  "runId": 38182180394,
+  "runHead": "0041fc38b854c7d12b32873f70db80f63d743b19",
+  "result": "failure: production MCP runtime preflight required static credentials contrary to existing Coordination transport",
+  "assertions": [
+    {
+      "artifactId": 11718154852,
+      "entry": "api-integration.log",
+      "rawSha256": "4f581fa764aa087ab3add0528664e028c25ac093668a4b42d843a86862a32f9c",
+      "summaries": [
+        "Test Files  29 passed (29)",
+        "Tests  304 passed | 1 skipped (305)"
+      ],
+      "skippedNotPassed": true
+    },
+    {
+      "artifactId": 11718154852,
+      "entry": "mcp-coverage/conformance.log",
+      "rawSha256": "71c5fb1632f65d2208d52c4d80a812257dfd05a54b98e99dc4eba6f14eae00c5",
+      "summaries": [
+        "Test Files  6 passed (6)",
+        "Tests  96 passed (96)"
+      ],
+      "skippedNotPassed": true
+    },
+    {
+      "artifactId": 11718710080,
+      "entry": "worker-integration.log",
+      "rawSha256": "0df370335dbcaea14297e2c7b9f31f116ac7bc92f332dda05c5188eaab5ddded",
+      "summaries": [
+        "Test Files  7 passed | 2 skipped (9)",
+        "Tests  146 passed | 2 skipped (148)"
+      ],
+      "skippedNotPassed": true
+    },
+    {
+      "artifactId": 11717523095,
+      "entry": "db-integration.log",
+      "rawSha256": "2fcf2fb565558869daf103230af7246656375e9ab3d5166b326978519a717a22",
+      "summaries": [
+        "Test Files  17 passed (17)",
+        "Tests  81 passed (81)"
+      ],
+      "skippedNotPassed": true
+    },
+    {
+      "artifactId": 11718617414,
+      "entry": "backend-deployment/backend-lite-2779c0e7/receipts.json",
+      "rawSha256": "706e21f1472dac8053949f263dd5576496e2ad2bd2aedaa016b72a71ba942f7b",
+      "actualCheckout": "424442c54b72c0f9c266a8e1c7133e82bf5e353e",
+      "deploymentClass": "lite",
+      "outcome": "本机无源码纯后端安装、真实 worker、TLS 和签名 Skill 通过；真实低功耗设备与真实厂商未测",
+      "resources": [
+        {
+          "type": "directory",
+          "target": "/tmp/backend-lite-2779c0e7",
+          "cleanup": {
+            "code": 0,
+            "output": ""
+          }
+        },
+        {
+          "type": "builder",
+          "target": "backend-lite-2779c0e7",
+          "cleanup": {
+            "code": 0,
+            "output": "backend-lite-2779c0e7 removed\n"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "target": "dbdf412e9318e4cc329a97674224cb248f15dd2755f893051994f47447c71cdc",
+              "absent": true,
+              "code": 1
+            },
+            {
+              "kind": "volume",
+              "target": "buildx_buildkit_backend-lite-2779c0e70_state",
+              "absent": true,
+              "code": 1
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-lite:backend-lite-2779c0e7",
+          "cleanup": {
+            "code": 0,
+            "output": "Untagged: workmesh-retirement-lite:backend-lite-2779c0e7\nDeleted: sha256:3307e450faba9c20dccf8490eb6a8960905feeabb0482dce38e712b1f9e468bf\nDeleted: sha256:6e0a9441fec14c85e1900f3d1bf49623ab5ede4ca363857814b6000528d54e37\nDeleted: sha256:c6e09d662376fac62de161287538043546fc3925dcb56f77f68cb468bc276295\nDeleted: sha256:3890247086f24584e7b23162855713dc03e678e69ed16c164b133fbb32bed1e2\nDeleted: sha256:07b93ae7cb254602b011c3b8de884481cf991ca0cee357bb49d5b26de25875dc\nDeleted: sha256:ddb101b5ea22dff3098da029c76ab37e35236d8245e01129af2b39de46f5b7b6\nDeleted: sha256:e87c668713cd51c6718a8059b3b8b5ea0974ac4e3c02a10c44b8c299e14f241c\nDeleted: sha256:9ff5af81e48c0904f12b3226d96b669c1f1c31deb8da5f786816b4ad558a9a91\nDeleted: sha256:12a615a53f1065bd2c3d9bbc7bbe0b33180fa6f48e81308276d9ed8b869e8d8a\nDeleted: sha256:a9a18e0e1b275f9a48a40ced616511e55129c064ae410efb38fc445d5369d0b3\nDeleted: sha256:8c2fbfdd6e731e3be3d4f88a7504badefdd0a5ebcf98141f41b3cf61e642f8eb\nDeleted: sha256:2f87ae30d1a6942b0171dad27ee9a3f2e63307f06b21d459cc534b7fced3ac76\nDeleted: sha256:d4e0a09f2455c1cc81b98f2e1c0f85b197924af6d8d86bfc0c50f47bb55d553c\nDeleted: sha256:595541efe3c6069e65b759c88f94825e10085e22594df87c10ed43e088b42d28\n"
+          },
+          "id": "sha256:3307e450faba9c20dccf8490eb6a8960905feeabb0482dce38e712b1f9e468bf"
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-lite-2779c0e7/workmesh-lite.tar",
+          "cleanup": null
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-2779c0e7-probe-migrate",
+          "cleanup": {
+            "code": 0,
+            "output": "60f6f22eb2ceb6f2f4fd2df9cdf9f3fbdf06dd0eea65f371d801b7f409fab9e9\n"
+          },
+          "id": "60f6f22eb2ceb6f2f4fd2df9cdf9f3fbdf06dd0eea65f371d801b7f409fab9e9"
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-2779c0e7-probe-api",
+          "cleanup": {
+            "code": 0,
+            "output": "ff478716efb1373019c3408616f47bc7e4865487a2c110131dad434e9108ecf9\n"
+          },
+          "id": "ff478716efb1373019c3408616f47bc7e4865487a2c110131dad434e9108ecf9"
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-2779c0e7-probe-worker",
+          "cleanup": {
+            "code": 0,
+            "output": "f5da9da6d05e98d7714aab01d9568d1275c315ad2de833528fdd39891db3d906\n"
+          },
+          "id": "f5da9da6d05e98d7714aab01d9568d1275c315ad2de833528fdd39891db3d906"
+        },
+        {
+          "type": "volume",
+          "target": "backend-lite-2779c0e7-ca",
+          "cleanup": {
+            "code": 0,
+            "output": "backend-lite-2779c0e7-ca\n"
+          }
+        },
+        {
+          "type": "container",
+          "target": "backend-lite-2779c0e7-ca-loader",
+          "cleanup": {
+            "code": 0,
+            "output": "c0109ec15ea254435b99557e9812dbdfc865367ffdfacf522d8aa75e59656982\n"
+          },
+          "id": "c0109ec15ea254435b99557e9812dbdfc865367ffdfacf522d8aa75e59656982"
+        },
+        {
+          "type": "https-provider",
+          "target": "host.docker.internal:40975",
+          "cleanup": "已关闭"
+        },
+        {
+          "type": "compose-project",
+          "target": "backend-lite-2779c0e7",
+          "cleanup": {
+            "code": 0,
+            "output": " Container backend-lite-2779c0e7-worker-1  Stopping\n Container backend-lite-2779c0e7-api-1  Stopping\n Container backend-lite-2779c0e7-worker-1  Stopped\n Container backend-lite-2779c0e7-worker-1  Removing\n Container backend-lite-2779c0e7-worker-1  Removed\n Container backend-lite-2779c0e7-api-1  Stopped\n Container backend-lite-2779c0e7-api-1  Removing\n Container backend-lite-2779c0e7-api-1  Removed\n Container backend-lite-2779c0e7-redis-1  Stopping\n Container backend-lite-2779c0e7-minio-init-1  Stopping\n Container backend-lite-2779c0e7-migrate-1  Stopping\n Container backend-lite-2779c0e7-minio-init-1  Stopped\n Container backend-lite-2779c0e7-minio-init-1  Removing\n Container backend-lite-2779c0e7-migrate-1  Stopped\n Container backend-lite-2779c0e7-migrate-1  Removing\n Container backend-lite-2779c0e7-migrate-1  Removed\n Container backend-lite-2779c0e7-postgres-1  Stopping\n Container backend-lite-2779c0e7-minio-init-1  Removed\n Container backend-lite-2779c0e7-minio-1  Stopping\n Container backend-lite-2779c0e7-minio-1  Stopped\n Container backend-lite-2779c0e7-minio-1  Removing\n Container backend-lite-2779c0e7-minio-1  Removed\n Container backend-lite-2779c0e7-postgres-1  Stopped\n Container backend-lite-2779c0e7-postgres-1  Removing\n Container backend-lite-2779c0e7-redis-1  Stopped\n Container backend-lite-2779c0e7-redis-1  Removing\n Container backend-lite-2779c0e7-postgres-1  Removed\n Container backend-lite-2779c0e7-redis-1  Removed\n Volume backend-lite-2779c0e7_lite-redis-data  Removing\n Volume backend-lite-2779c0e7_lite-object-data  Removing\n Volume backend-lite-2779c0e7_lite-postgres-data  Removing\n Network backend-lite-2779c0e7_default  Removing\n Volume backend-lite-2779c0e7_lite-redis-data  Removed\n Volume backend-lite-2779c0e7_lite-object-data  Removed\n Network backend-lite-2779c0e7_default  Removed\n Volume backend-lite-2779c0e7_lite-postgres-data  Removed\n"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "id": "6488ea0e16c4",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.367Z"
+            },
+            {
+              "kind": "container",
+              "id": "2665f1bdaf75",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.387Z"
+            },
+            {
+              "kind": "container",
+              "id": "0def0227e158",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.407Z"
+            },
+            {
+              "kind": "container",
+              "id": "e3e3ef56d419",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.425Z"
+            },
+            {
+              "kind": "container",
+              "id": "db946999c329",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.444Z"
+            },
+            {
+              "kind": "container",
+              "id": "c16704229523",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.512Z"
+            },
+            {
+              "kind": "container",
+              "id": "276c4f353abb",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.531Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-2779c0e7_lite-object-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.545Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-2779c0e7_lite-postgres-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.557Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-lite-2779c0e7_lite-redis-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.569Z"
+            },
+            {
+              "kind": "network",
+              "id": "bcdf2b62800e",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:06:09.581Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifactId": 11718617414,
+      "entry": "backend-deployment/backend-production-cfcb5ba9/receipts.json",
+      "rawSha256": "1b4c50aed9229b73ad2b8df87b59675b50ec1f70b0552316bcea974f2649a831",
+      "actualCheckout": "424442c54b72c0f9c266a8e1c7133e82bf5e353e",
+      "deploymentClass": "production",
+      "outcome": "失败或未验收：Error: docker 退出 1",
+      "resources": [
+        {
+          "type": "directory",
+          "target": "/tmp/backend-production-cfcb5ba9",
+          "cleanup": "保留：仍有服务引用或收尾未确认"
+        },
+        {
+          "type": "builder",
+          "target": "backend-production-cfcb5ba9",
+          "cleanup": {
+            "code": 0,
+            "output": "backend-production-cfcb5ba9 removed\n"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "target": "74b2f0a5326d50667b7edfd73c0299e9d14681c63d04181b3e2ad1e3c1a6d81c",
+              "absent": true,
+              "code": 1
+            },
+            {
+              "kind": "volume",
+              "target": "buildx_buildkit_backend-production-cfcb5ba90_state",
+              "absent": true,
+              "code": 1
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-api:backend-production-cfcb5ba9",
+          "cleanup": "归属或活动引用未确认，保留",
+          "id": "sha256:22892944151a7ca644e02ea92739fea7a43a138da8ab1a828ea7349ce6e65d1a"
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-production-cfcb5ba9/workmesh-api.tar",
+          "cleanup": null
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-worker:backend-production-cfcb5ba9",
+          "cleanup": "归属或活动引用未确认，保留",
+          "id": "sha256:c7b8c453c1f8d9e8bfb81417ebe956e24f52278a0bee6dc75a7bfde9dcd31320"
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-production-cfcb5ba9/workmesh-worker.tar",
+          "cleanup": null
+        },
+        {
+          "type": "image",
+          "target": "workmesh-retirement-mcp:backend-production-cfcb5ba9",
+          "cleanup": "归属或活动引用未确认，保留",
+          "id": "sha256:bd8e5847b240327a994f6ce72e9c409f0d7766478af22d5356e7442e62d50551"
+        },
+        {
+          "type": "file",
+          "target": "/tmp/backend-production-cfcb5ba9/workmesh-mcp.tar",
+          "cleanup": null
+        },
+        {
+          "type": "container",
+          "target": "backend-production-cfcb5ba9-probe-migrate",
+          "cleanup": {
+            "code": 0,
+            "output": "609db76fa25a7ffa545a7e7461b36d6f9fe70da07a32cd837201ea0511a36867\n"
+          },
+          "id": "609db76fa25a7ffa545a7e7461b36d6f9fe70da07a32cd837201ea0511a36867"
+        },
+        {
+          "type": "container",
+          "target": "backend-production-cfcb5ba9-probe-api",
+          "cleanup": {
+            "code": 0,
+            "output": "7fa35c6c8193b6d78fee60ea2848229136b41b79d5702dd0787c8cc6df542eef\n"
+          },
+          "id": "7fa35c6c8193b6d78fee60ea2848229136b41b79d5702dd0787c8cc6df542eef"
+        },
+        {
+          "type": "container",
+          "target": "backend-production-cfcb5ba9-probe-worker",
+          "cleanup": {
+            "code": 0,
+            "output": "ffcff0a88d4fdf5e5c1312dad5e842b0adc66ad0fb5b44bd3df5d1ddf158aeb3\n"
+          },
+          "id": "ffcff0a88d4fdf5e5c1312dad5e842b0adc66ad0fb5b44bd3df5d1ddf158aeb3"
+        },
+        {
+          "type": "volume",
+          "target": "backend-production-cfcb5ba9-ca",
+          "cleanup": "归属或活动引用未确认，保留"
+        },
+        {
+          "type": "container",
+          "target": "backend-production-cfcb5ba9-ca-loader",
+          "cleanup": {
+            "code": 0,
+            "output": "af839103350668f35d19f17d57501643faa9d615de9e10a843577b2addeab39e\n"
+          },
+          "id": "af839103350668f35d19f17d57501643faa9d615de9e10a843577b2addeab39e"
+        },
+        {
+          "type": "https-provider",
+          "target": "host.docker.internal:34561",
+          "cleanup": "已关闭"
+        },
+        {
+          "type": "compose-project",
+          "target": "backend-production-cfcb5ba9",
+          "cleanup": {
+            "code": 0,
+            "output": " Container backend-production-cfcb5ba9-worker-1  Stopping\n Container backend-production-cfcb5ba9-api-1  Stopping\n Container backend-production-cfcb5ba9-worker-1  Stopped\n Container backend-production-cfcb5ba9-worker-1  Removing\n Container backend-production-cfcb5ba9-worker-1  Removed\n Container backend-production-cfcb5ba9-api-1  Stopped\n Container backend-production-cfcb5ba9-api-1  Removing\n Container backend-production-cfcb5ba9-api-1  Removed\n Container backend-production-cfcb5ba9-redis-1  Stopping\n Container backend-production-cfcb5ba9-minio-init-1  Stopping\n Container backend-production-cfcb5ba9-migrate-1  Stopping\n Container backend-production-cfcb5ba9-minio-init-1  Stopped\n Container backend-production-cfcb5ba9-minio-init-1  Removing\n Container backend-production-cfcb5ba9-migrate-1  Stopped\n Container backend-production-cfcb5ba9-migrate-1  Removing\n Container backend-production-cfcb5ba9-migrate-1  Removed\n Container backend-production-cfcb5ba9-minio-init-1  Removed\n Container backend-production-cfcb5ba9-postgres-1  Stopping\n Container backend-production-cfcb5ba9-minio-1  Stopping\n Container backend-production-cfcb5ba9-redis-1  Stopped\n Container backend-production-cfcb5ba9-redis-1  Removing\n Container backend-production-cfcb5ba9-redis-1  Removed\n Container backend-production-cfcb5ba9-postgres-1  Stopped\n Container backend-production-cfcb5ba9-postgres-1  Removing\n Container backend-production-cfcb5ba9-minio-1  Stopped\n Container backend-production-cfcb5ba9-minio-1  Removing\n Container backend-production-cfcb5ba9-postgres-1  Removed\n Container backend-production-cfcb5ba9-minio-1  Removed\n Volume backend-production-cfcb5ba9_redis-production-data  Removing\n Volume backend-production-cfcb5ba9_postgres-production-data  Removing\n Volume backend-production-cfcb5ba9_minio-production-data  Removing\n Network backend-production-cfcb5ba9_default  Removing\n Volume backend-production-cfcb5ba9_redis-production-data  Removed\n Network backend-production-cfcb5ba9_default  Removed\n Volume backend-production-cfcb5ba9_postgres-production-data  Removed\n Volume backend-production-cfcb5ba9_minio-production-data  Removed\n"
+          },
+          "postDelete": [
+            {
+              "kind": "container",
+              "id": "1e252e1c1c5f",
+              "code": 0,
+              "absent": false,
+              "at": "2026-10-11T23:10:39.296Z"
+            },
+            {
+              "kind": "container",
+              "id": "34ea69531570",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.316Z"
+            },
+            {
+              "kind": "container",
+              "id": "9551d3e90979",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.337Z"
+            },
+            {
+              "kind": "container",
+              "id": "6995abba0cc8",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.357Z"
+            },
+            {
+              "kind": "container",
+              "id": "9e65db27e08c",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.377Z"
+            },
+            {
+              "kind": "container",
+              "id": "6ed90a0d768e",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.399Z"
+            },
+            {
+              "kind": "container",
+              "id": "01d27a56d90a",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.418Z"
+            },
+            {
+              "kind": "container",
+              "id": "12ea3ca2a8e6",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.441Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-production-cfcb5ba9_minio-production-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.455Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-production-cfcb5ba9_postgres-production-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.468Z"
+            },
+            {
+              "kind": "volume",
+              "id": "backend-production-cfcb5ba9_redis-production-data",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.483Z"
+            },
+            {
+              "kind": "network",
+              "id": "1c40ab6c9799",
+              "code": 1,
+              "absent": true,
+              "at": "2026-10-11T23:10:39.501Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

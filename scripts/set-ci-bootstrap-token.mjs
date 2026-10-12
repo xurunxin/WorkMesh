@@ -6,7 +6,6 @@ const allowedScopes = new Set([
   'db-integration',
   'api-integration',
   'worker-integration',
-  'e2e',
   'recovery-integration',
 ])
 const scope = process.argv[2]

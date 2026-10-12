@@ -1,0 +1,502 @@
+阅读视图；原始字节：raw-logs/run-ea0211e15101.zip 内 runs/backend-lite-47db4f07/5.log；SHA-256：08378949f8880b66f40aea9f9cb8982c318d003d884d2019c5cd672547a546c2
+#0 building with "backend-lite-47db4f07" instance using docker-container driver
+
+#1 [internal] load remote build context
+#1 DONE 2.8s
+
+#1 [internal] load remote build context
+#1 DONE 2.8s
+
+#2 copy /context /
+#2 DONE 0.1s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 5.3s
+
+#4 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e done
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0B / 11.98MB 0.2s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 1.05MB / 11.98MB 1.5s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 2.10MB / 11.98MB 1.7s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 5.24MB / 11.98MB 1.8s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 8.39MB / 11.98MB 2.0s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 2.1s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 3.2s done
+#4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416
+#4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0.2s done
+#4 DONE 3.6s
+
+#5 [internal] load metadata for docker.io/library/node:22.19.0-alpine3.21
+#5 DONE 2.7s
+
+#6 [build  1/14] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 resolve docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9 done
+#6 sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 0B / 447B 0.2s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 0B / 51.04MB 0.2s
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 0B / 3.64MB 0.2s
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 0B / 1.26MB 0.2s
+#6 sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 447B / 447B 0.5s
+#6 sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 447B / 447B 0.5s done
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 3.15MB / 51.04MB 0.8s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 8.39MB / 51.04MB 1.1s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 12.58MB / 51.04MB 1.2s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 16.78MB / 51.04MB 1.4s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 22.02MB / 51.04MB 1.5s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 27.26MB / 51.04MB 1.8s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 30.41MB / 51.04MB 2.0s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 34.60MB / 51.04MB 2.1s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 37.75MB / 51.04MB 2.3s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 41.94MB / 51.04MB 2.4s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 45.09MB / 51.04MB 2.6s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 49.28MB / 51.04MB 2.7s
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 1.05MB / 3.64MB 3.0s
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 1.26MB / 1.26MB 3.0s
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 3.64MB / 3.64MB 3.2s
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 51.04MB / 51.04MB 7.8s
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 1.26MB / 1.26MB 8.1s
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 3.64MB / 3.64MB 8.3s
+#6 sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 3.64MB / 3.64MB 12.3s done
+#6 sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 51.04MB / 51.04MB 12.3s done
+#6 sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 1.26MB / 1.26MB 12.3s done
+#6 extracting sha256:0368fd46e3c6d237d81390ff086f93aee216df5cfa814041a491453fb0932a12 0.1s done
+#6 DONE 12.4s
+
+#6 [build  1/14] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 extracting sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11
+#6 extracting sha256:b28513d6198922deeede9578b2af2e26ee1d820204b54d6009285e5c24927a11 16.1s done
+#6 DONE 28.5s
+
+#6 [build  1/14] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 extracting sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86
+#6 extracting sha256:d47cf426aea3f6df33ffac400bade08d95d948f9493798673acfc1c6ebab1c86 0.7s done
+#6 DONE 29.2s
+
+#6 [build  1/14] FROM docker.io/library/node:22.19.0-alpine3.21@sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9
+#6 extracting sha256:56e51cbf72b7cc889a00727036211fe407e20605e93be86f599d9bc73f190c03 0.0s done
+#6 DONE 29.3s
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "7209be0641cc224b19b88bc36b0d3a03996b0b63"     && echo "7209be0641cc224b19b88bc36b0d3a03996b0b63" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 0.113 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#7 1.936 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#7 3.035 (1/10) Upgrading musl (1.2.5-r9 -> 1.2.5-r11)
+#7 3.249 (2/10) Upgrading busybox (1.37.0-r12 -> 1.37.0-r14)
+#7 3.502 Executing busybox-1.37.0-r14.post-upgrade
+#7 3.535 (3/10) Upgrading busybox-binsh (1.37.0-r12 -> 1.37.0-r14)
+#7 3.744 (4/10) Upgrading alpine-release (3.21.4-r0 -> 3.21.8-r0)
+#7 4.413 (5/10) Upgrading ca-certificates-bundle (20250619-r0 -> 20260909-r0)
+#7 4.705 (6/10) Upgrading libcrypto3 (3.3.4-r0 -> 3.3.7-r2)
+#7 5.424 (7/10) Upgrading libssl3 (3.3.4-r0 -> 3.3.7-r2)
+#7 5.640 (8/10) Upgrading ssl_client (1.37.0-r12 -> 1.37.0-r14)
+#7 5.861 (9/10) Upgrading zlib (1.3.1-r2 -> 1.3.2-r1)
+#7 ...
+
+#8 [build  2/14] RUN corepack enable     && corepack prepare pnpm@9.15.4 --activate
+#8 0.332 Preparing pnpm@9.15.4 for immediate activation...
+#8 DONE 5.9s
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "7209be0641cc224b19b88bc36b0d3a03996b0b63"     && echo "7209be0641cc224b19b88bc36b0d3a03996b0b63" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 6.055 (10/10) Upgrading musl-utils (1.2.5-r9 -> 1.2.5-r11)
+#7 ...
+
+#9 [build  3/14] RUN apk add --no-cache python3 make g++
+#9 0.088 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#9 2.046 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#9 3.066 (1/30) Upgrading musl (1.2.5-r9 -> 1.2.5-r11)
+#9 3.515 (2/30) Installing libstdc++-dev (14.2.0-r4)
+#9 4.167 (3/30) Installing jansson (2.14-r4)
+#9 4.374 (4/30) Installing zstd-libs (1.5.6-r2)
+#9 4.582 (5/30) Installing binutils (2.43.1-r3)
+#9 5.008 (6/30) Installing libgomp (14.2.0-r4)
+#9 5.209 (7/30) Installing libatomic (14.2.0-r4)
+#9 5.406 (8/30) Installing gmp (6.3.0-r2)
+#9 5.608 (9/30) Installing isl26 (0.26-r1)
+#9 5.828 (10/30) Installing mpfr4 (4.2.1-r0)
+#9 6.031 (11/30) Installing mpc1 (1.3.1-r1)
+#9 6.232 (12/30) Installing gcc (14.2.0-r4)
+#9 ...
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "7209be0641cc224b19b88bc36b0d3a03996b0b63"     && echo "7209be0641cc224b19b88bc36b0d3a03996b0b63" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 6.248 Executing busybox-1.37.0-r14.trigger
+#7 6.253 OK: 10 MiB in 17 packages
+#7 6.380 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#7 8.258 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#7 9.084 (1/8) Installing postgresql-common (1.2-r1)
+#7 9.273 Executing postgresql-common-1.2-r1.pre-install
+#7 10.43 (2/8) Installing lz4-libs (1.10.0-r0)
+#7 10.62 (3/8) Installing libpq (17.11-r0)
+#7 10.82 (4/8) Installing ncurses-terminfo-base (6.5_p20241006-r3)
+#7 11.01 (5/8) Installing libncursesw (6.5_p20241006-r3)
+#7 11.21 (6/8) Installing readline (8.2.13-r0)
+#7 11.41 (7/8) Installing zstd-libs (1.5.6-r2)
+#7 11.62 (8/8) Installing postgresql16-client (16.15-r0)
+#7 11.88 Executing busybox-1.37.0-r14.trigger
+#7 11.89 Executing postgresql-common-1.2-r1.trigger
+#7 11.90 * Setting postgresql16 as the default version
+#7 12.15 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.21/main: No such file or directory
+#7 12.15 WARNING: opening from cache https://dl-cdn.alpinelinux.org/alpine/v3.21/community: No such file or directory
+#7 12.16 OK: 15 MiB in 25 packages
+#7 ...
+
+#9 [build  3/14] RUN apk add --no-cache python3 make g++
+#9 9.357 (13/30) Installing musl-dev (1.2.5-r11)
+#9 12.28 (14/30) Installing g++ (14.2.0-r4)
+#9 13.64 (15/30) Installing make (4.4.1-r2)
+#9 13.85 (16/30) Installing libexpat (2.8.4-r0)
+#9 14.05 (17/30) Installing libbz2 (1.0.8-r6)
+#9 14.52 (18/30) Installing libffi (3.4.7-r0)
+#9 14.74 (19/30) Installing gdbm (1.24-r0)
+#9 14.98 (20/30) Installing xz-libs (5.8.4-r0)
+#9 15.30 (21/30) Installing mpdecimal (4.0.0-r0)
+#9 15.51 (22/30) Installing ncurses-terminfo-base (6.5_p20241006-r3)
+#9 ...
+
+#7 [runtime  2/11] RUN apk upgrade --no-cache     && apk add --no-cache postgresql16-client     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg     && test -n "7209be0641cc224b19b88bc36b0d3a03996b0b63"     && echo "7209be0641cc224b19b88bc36b0d3a03996b0b63" | grep -Eq '^[0-9a-f]{40}$'     && addgroup -S -g 10001 workmesh     && adduser -S -D -H -u 10001 -G workmesh workmesh     && mkdir -p /opt/workmesh     && chown 10001:10001 /opt/workmesh
+#7 DONE 21.9s
+
+#9 [build  3/14] RUN apk add --no-cache python3 make g++
+#9 16.17 (23/30) Installing libncursesw (6.5_p20241006-r3)
+#9 16.40 (24/30) Installing libpanelw (6.5_p20241006-r3)
+#9 16.60 (25/30) Installing readline (8.2.13-r0)
+#9 16.93 (26/30) Installing sqlite-libs (3.48.0-r4)
+#9 ...
+
+#10 [runtime  3/11] WORKDIR /opt/workmesh/api
+#10 DONE 0.7s
+
+#9 [build  3/14] RUN apk add --no-cache python3 make g++
+#9 17.63 (27/30) Installing python3 (3.12.15-r0)
+#9 19.01 (28/30) Installing python3-pycache-pyc0 (3.12.15-r0)
+#9 19.76 (29/30) Installing pyc (3.12.15-r0)
+#9 19.76 (30/30) Installing python3-pyc (3.12.15-r0)
+#9 19.76 Executing busybox-1.37.0-r12.trigger
+#9 19.78 OK: 269 MiB in 46 packages
+#9 DONE 24.8s
+
+#11 [build  4/14] WORKDIR /workspace
+#11 DONE 0.1s
+
+#12 [build  5/14] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
+#12 DONE 0.1s
+
+#13 [build  6/14] COPY apps ./apps
+#13 DONE 0.5s
+
+#14 [build  7/14] COPY packages ./packages
+#14 DONE 0.6s
+
+#15 [build  8/14] COPY scripts ./scripts
+#15 DONE 4.8s
+
+#16 [build  9/14] COPY skills/workmesh/SKILL.md skills/workmesh/public-key.pem ./skills/workmesh/
+#16 DONE 0.0s
+
+#17 [build 10/14] COPY skills/workmesh/references/protocol.md skills/workmesh/references/clients.md ./skills/workmesh/references/
+#17 DONE 0.1s
+
+#18 [build 11/14] COPY infra/docker/prepare-production-deploy.mjs ./infra/docker/prepare-production-deploy.mjs
+#18 DONE 0.0s
+
+#19 [build 12/14] RUN --mount=type=cache,id=workmesh-lite-pnpm,target=/pnpm/store,sharing=locked     pnpm install --frozen-lockfile --store-dir /pnpm/store
+#19 0.852 Scope: all 18 workspace projects
+#19 1.640 Lockfile is up to date, resolution step is skipped
+#19 1.719 Progress: resolved 1, reused 0, downloaded 0, added 0
+#19 2.164 Packages: +447
+#19 2.164 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#19 2.827 Progress: resolved 447, reused 0, downloaded 0, added 0
+#19 3.658
+#19 3.658    ╭───────────────────────────────────────────────────────────────────╮
+#19 3.658    │                                                                   │
+#19 3.658    │                Update available! 9.15.4 → 12.11.2.                │
+#19 3.658    │   Changelog: https://github.com/pnpm/pnpm/releases/tag/v12.11.2   │
+#19 3.658    │         Run "corepack install -g pnpm@12.11.2" to update.         │
+#19 3.658    │                                                                   │
+#19 3.658    ╰───────────────────────────────────────────────────────────────────╯
+#19 3.658
+#19 3.833 Progress: resolved 447, reused 0, downloaded 5, added 3
+#19 4.833 Progress: resolved 447, reused 0, downloaded 92, added 92
+#19 5.602  WARN  GET https://registry.npmjs.org/@humanfs/node/-/node-0.16.8.tgz error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#19 5.656  WARN  GET https://registry.npmjs.org/@humanfs/core/-/core-0.19.2.tgz error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#19 5.836 Progress: resolved 447, reused 0, downloaded 164, added 159
+#19 6.836 Progress: resolved 447, reused 0, downloaded 199, added 191
+#19 9.781 Progress: resolved 447, reused 0, downloaded 200, added 191
+#19 10.78 Progress: resolved 447, reused 0, downloaded 244, added 235
+#19 11.78 Progress: resolved 447, reused 0, downloaded 256, added 247
+#19 13.24  WARN  GET https://registry.npmjs.org/on-finished/-/on-finished-2.4.1.tgz error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#19 13.36 Progress: resolved 447, reused 0, downloaded 256, added 248
+#19 14.36 Progress: resolved 447, reused 0, downloaded 281, added 252
+#19 15.36 Progress: resolved 447, reused 0, downloaded 313, added 300
+#19 17.30 Progress: resolved 447, reused 0, downloaded 314, added 300
+#19 18.30 Progress: resolved 447, reused 0, downloaded 333, added 313
+#19 19.30 Progress: resolved 447, reused 0, downloaded 341, added 319
+#19 20.30 Progress: resolved 447, reused 0, downloaded 351, added 329
+#19 22.53 Progress: resolved 447, reused 0, downloaded 352, added 329
+#19 23.53 Progress: resolved 447, reused 0, downloaded 378, added 346
+#19 24.53 Progress: resolved 447, reused 0, downloaded 388, added 347
+#19 25.53 Progress: resolved 447, reused 0, downloaded 393, added 359
+#19 26.53 Progress: resolved 447, reused 0, downloaded 417, added 381
+#19 27.54 Progress: resolved 447, reused 0, downloaded 417, added 388
+#19 28.54 Progress: resolved 447, reused 0, downloaded 436, added 401
+#19 29.54 Progress: resolved 447, reused 0, downloaded 440, added 405
+#19 30.54 Progress: resolved 447, reused 0, downloaded 440, added 421
+#19 31.54 Progress: resolved 447, reused 0, downloaded 440, added 423
+#19 33.13 Progress: resolved 447, reused 0, downloaded 440, added 424
+#19 34.13 Progress: resolved 447, reused 0, downloaded 440, added 425
+#19 38.43 Progress: resolved 447, reused 0, downloaded 440, added 426
+#19 39.43 Progress: resolved 447, reused 0, downloaded 443, added 428
+#19 40.76 Progress: resolved 447, reused 0, downloaded 444, added 428
+#19 41.76 Progress: resolved 447, reused 0, downloaded 446, added 432
+#19 42.76 Progress: resolved 447, reused 0, downloaded 446, added 433
+#19 44.13 Progress: resolved 447, reused 0, downloaded 446, added 434
+#19 46.43 Progress: resolved 447, reused 0, downloaded 446, added 435
+#19 47.43 Progress: resolved 447, reused 0, downloaded 447, added 435
+#19 58.43 Progress: resolved 447, reused 0, downloaded 447, added 436
+#19 60.89 Progress: resolved 447, reused 0, downloaded 447, added 437
+#19 61.89 Progress: resolved 447, reused 0, downloaded 447, added 440
+#19 62.89 Progress: resolved 447, reused 0, downloaded 447, added 441
+#19 63.89 Progress: resolved 447, reused 0, downloaded 447, added 445
+#19 65.02 Progress: resolved 447, reused 0, downloaded 447, added 446
+#19 65.28 Progress: resolved 447, reused 0, downloaded 447, added 447, done
+#19 65.64 .../node_modules/protobufjs postinstall$ node scripts/postinstall
+#19 65.64 .../node-pty@1.1.0/node_modules/node-pty install$ node scripts/prebuild.js || node-gyp rebuild
+#19 65.64 .../.pnpm/koffi@3.3.2/node_modules/koffi install$ node ./cnoke.cjs -P . -D src/koffi --prebuild --release
+#19 65.70 .../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+#19 65.72 .../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+#19 65.72 .../node_modules/protobufjs postinstall: Done
+#19 65.74 .../node-pty@1.1.0/node_modules/node-pty install: [32m> Checking prebuilds...[0m
+#19 65.74 .../node-pty@1.1.0/node_modules/node-pty install: [33m> Rebuilding because directory /workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/prebuilds/linux-x64 does not exist[0m
+#19 65.79 .../node-pty@1.1.0/node_modules/node-pty install: gyp info it worked if it ends with ok
+#19 65.79 .../node-pty@1.1.0/node_modules/node-pty install: gyp info using node-gyp@10.3.1
+#19 65.79 .../node-pty@1.1.0/node_modules/node-pty install: gyp info using node@22.19.0 | linux | x64
+#19 65.79 .../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+#19 65.81 .../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+#19 65.82 .../.pnpm/koffi@3.3.2/node_modules/koffi install: Done
+#19 65.86 .../argon2@0.41.1/node_modules/argon2 install$ node-gyp-build
+#19 65.93 .../node-pty@1.1.0/node_modules/node-pty install: gyp info find Python using Python version 3.12.15 found at "/usr/bin/python3"
+#19 65.97 .../argon2@0.41.1/node_modules/argon2 install: Done
+#19 66.17 .../node-pty@1.1.0/node_modules/node-pty install: gyp http GET https://unofficial-builds.nodejs.org/download/release/v22.19.0/node-v22.19.0-headers.tar.gz
+#19 67.35 .../node-pty@1.1.0/node_modules/node-pty install: gyp http 200 https://unofficial-builds.nodejs.org/download/release/v22.19.0/node-v22.19.0-headers.tar.gz
+#19 71.47 .../node-pty@1.1.0/node_modules/node-pty install: gyp http GET https://unofficial-builds.nodejs.org/download/release/v22.19.0/SHASUMS256.txt
+#19 71.70 .../node-pty@1.1.0/node_modules/node-pty install: gyp http 200 https://unofficial-builds.nodejs.org/download/release/v22.19.0/SHASUMS256.txt
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn /usr/bin/python3
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args [
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/gyp/gyp_main.py',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args 'binding.gyp',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-f',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args 'make',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-I',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/build/config.gypi',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-I',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp/addon.gypi',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-I',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '/root/.cache/node-gyp/22.19.0/include/node/common.gypi',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dlibrary=shared_library',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dvisibility=default',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_root_dir=/root/.cache/node-gyp/22.19.0',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_gyp_dir=/opt/corepack/v1/pnpm/9.15.4/dist/node_modules/node-gyp',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_lib_file=/root/.cache/node-gyp/22.19.0/<(target_arch)/node.lib',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dmodule_root_dir=/workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Dnode_engine=v8',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '--depth=.',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '--no-parallel',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '--generator-output',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args 'build',
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args '-Goutput_dir=.'
+#19 71.71 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args ]
+#19 77.70 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn make
+#19 77.70 .../node-pty@1.1.0/node_modules/node-pty install: gyp info spawn args [ 'BUILDTYPE=Release', '-C', 'build' ]
+#19 77.70 .../node-pty@1.1.0/node_modules/node-pty install: make: Entering directory '/workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/build'
+#19 77.71 .../node-pty@1.1.0/node_modules/node-pty install:   TOUCH Release/obj.target/../../../node-addon-api@7.1.1/node_modules/node-addon-api/node_addon_api_except.stamp
+#19 77.75 .../node-pty@1.1.0/node_modules/node-pty install:   CXX(target) Release/obj.target/pty/src/unix/pty.o
+#19 81.78 .../node-pty@1.1.0/node_modules/node-pty install:   SOLINK_MODULE(target) Release/obj.target/pty.node
+#19 81.82 .../node-pty@1.1.0/node_modules/node-pty install:   COPY Release/pty.node
+#19 81.82 .../node-pty@1.1.0/node_modules/node-pty install: make: Leaving directory '/workspace/node_modules/.pnpm/node-pty@1.1.0/node_modules/node-pty/build'
+#19 81.82 .../node-pty@1.1.0/node_modules/node-pty install: gyp info ok
+#19 81.84 .../node-pty@1.1.0/node_modules/node-pty install: Done
+#19 81.84 .../node-pty@1.1.0/node_modules/node-pty postinstall$ node scripts/post-install.js
+#19 81.89 .../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Cleaning release folder...[0m
+#19 81.90 .../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Moving conpty.dll...[0m
+#19 81.90 .../node-pty@1.1.0/node_modules/node-pty postinstall:   SKIPPED (not Windows)
+#19 81.91 .../node-pty@1.1.0/node_modules/node-pty postinstall: Done
+#19 84.94 .../node_modules/@google/genai preinstall$ echo 'preinstall: no-op'
+#19 84.97 .../node_modules/@google/genai preinstall: preinstall: no-op
+#19 84.97 .../node_modules/@google/genai preinstall: Done
+#19 85.30
+#19 85.30 devDependencies:
+#19 85.30 + @types/node 22.20.1
+#19 85.30 + eslint 9.39.5
+#19 85.30 + prettier 3.9.6
+#19 85.30 + tsx 4.23.1
+#19 85.30 + turbo 2.10.6
+#19 85.30 + typescript 5.9.3
+#19 85.30 + vitest 3.2.7
+#19 85.30 + yaml 2.9.0
+#19 85.30
+#19 85.36 apps/connector postinstall$ node scripts/prepare-native.mjs
+#19 85.42 apps/connector postinstall: Done
+#19 85.48 Done in 1m 25.2s
+#19 DONE 86.5s
+
+#20 [build 13/14] RUN pnpm check:workmesh-skill     && pnpm --filter @workmesh/config build     && pnpm --filter @workmesh/api... build     && pnpm --filter @workmesh/worker... build
+#20 2.801
+#20 2.801 > workmesh@ check:workmesh-skill /workspace
+#20 2.801 > node scripts/generate-workmesh-skill-artifact.mjs --check
+#20 2.801
+#20 2.857 sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad verified
+#20 3.416
+#20 3.416 > @workmesh/config@ build /workspace/packages/config
+#20 3.416 > tsc -p tsconfig.json
+#20 3.416
+#20 131.3 Scope: 11 of 18 workspace projects
+#20 131.3 packages/contracts build$ tsc -p tsconfig.build.json
+#20 131.3 packages/artifact-storage build$ tsc -p tsconfig.json
+#20 131.3 packages/git-provider build$ tsc -p tsconfig.json
+#20 131.3 packages/observability build$ tsc -p tsconfig.json
+#20 299.3 packages/contracts build: Done
+#20 315.1 packages/observability build: Done
+#20 317.3 packages/git-provider build: Done
+#20 327.0 packages/artifact-storage build: Done
+#20 327.0 packages/a2a-adapter build$ tsc -p tsconfig.json
+#20 327.0 packages/config build$ tsc -p tsconfig.json
+#20 327.0 packages/domain build$ tsc -p tsconfig.json
+#20 327.0 apps/connector build$ tsc -p tsconfig.build.json
+#20 336.3 packages/a2a-adapter build: Done
+#20 343.6 packages/config build: Done
+#20 344.1 packages/domain build: Done
+#20 344.5 apps/connector build: Done
+#20 344.5 packages/db build$ tsc -p tsconfig.json
+#20 369.5 packages/db build: Done
+#20 370.0 packages/recovery build$ tsc -p tsconfig.build.json
+#20 559.9 packages/recovery build: Done
+#20 560.7 apps/api build$ tsc -p tsconfig.build.json
+#20 702.2 apps/api build: Done
+#20 703.0 Scope: 7 of 18 workspace projects
+#20 703.0 packages/artifact-storage build$ tsc -p tsconfig.json
+#20 703.0 packages/contracts build$ tsc -p tsconfig.build.json
+#20 703.0 packages/git-provider build$ tsc -p tsconfig.json
+#20 708.1 packages/git-provider build: Done
+#20 709.5 packages/artifact-storage build: Done
+#20 715.8 packages/contracts build: Done
+#20 715.8 packages/domain build$ tsc -p tsconfig.json
+#20 715.8 packages/config build$ tsc -p tsconfig.json
+#20 725.9 packages/config build: Done
+#20 725.9 packages/domain build: Done
+#20 725.9 packages/db build$ tsc -p tsconfig.json
+#20 751.9 packages/db build: Done
+#20 751.9 apps/worker build$ tsc -p tsconfig.build.json
+#20 778.5 apps/worker build: Done
+#20 DONE 778.5s
+
+#21 [build 14/14] RUN pnpm --filter @workmesh/api --prod deploy /out-api     && node infra/docker/prepare-production-deploy.mjs /out-api     && pnpm --filter @workmesh/worker --prod deploy /out-worker     && node infra/docker/prepare-production-deploy.mjs /out-worker
+#21 0.863 Packages are copied from the content-addressable store to the virtual store.
+#21 0.863   Content-addressable store is at: /root/.local/share/pnpm/store/v3
+#21 0.863   Virtual store is at:             ../out-api/node_modules/.pnpm
+#21 0.998 Progress: resolved 1, reused 0, downloaded 0, added 0
+#21 2.009 Progress: resolved 10, reused 10, downloaded 0, added 0
+#21 3.009 Progress: resolved 14, reused 10, downloaded 4, added 0
+#21 3.576 .                                        |  WARN  deprecated eslint@9.39.5
+#21 4.009 Progress: resolved 23, reused 10, downloaded 13, added 0
+#21 4.265  WARN  GET https://registry.npmjs.org/@fastify/cors/-/cors-11.3.0.tgz error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#21 5.011 Progress: resolved 24, reused 10, downloaded 14, added 0
+#21 16.99  WARN  GET https://registry.npmjs.org/@fastify/cors/-/cors-11.3.0.tgz error (ECONNRESET). Will retry in 1 minute. 1 retries left.
+#21 78.21 Progress: resolved 24, reused 10, downloaded 15, added 0
+#21 79.22 Progress: resolved 26, reused 10, downloaded 15, added 0
+#21 80.22 Progress: resolved 54, reused 10, downloaded 33, added 0
+#21 81.22 Progress: resolved 131, reused 10, downloaded 106, added 0
+#21 81.56  WARN  GET https://registry.npmjs.org/koffi error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#21 81.57  WARN  GET https://registry.npmjs.org/@turbo%2Fdarwin-64 error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#21 82.22 Progress: resolved 203, reused 10, downloaded 162, added 0
+#21 83.22 Progress: resolved 291, reused 10, downloaded 222, added 0
+#21 84.22 Progress: resolved 318, reused 10, downloaded 255, added 0
+#21 93.11 Progress: resolved 319, reused 10, downloaded 255, added 0
+#21 94.11 Progress: resolved 322, reused 10, downloaded 257, added 0
+#21 95.11 Progress: resolved 365, reused 10, downloaded 268, added 0
+#21 96.11  WARN  GET https://registry.npmjs.org/pkce-challenge error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#21 96.11 Progress: resolved 365, reused 10, downloaded 272, added 0
+#21 107.2 Progress: resolved 366, reused 10, downloaded 272, added 0
+#21 108.2 Progress: resolved 374, reused 10, downloaded 274, added 0
+#21 109.2 Progress: resolved 412, reused 10, downloaded 307, added 0
+#21 110.2 Progress: resolved 428, reused 10, downloaded 334, added 0
+#21 111.2 Progress: resolved 454, reused 10, downloaded 349, added 0
+#21 112.3 Progress: resolved 466, reused 10, downloaded 370, added 0
+#21 112.3 .                                        | +121 ++++++++++++
+#21 113.3 Progress: resolved 466, reused 10, downloaded 372, added 120
+#21 113.8 Progress: resolved 466, reused 10, downloaded 372, added 121, done
+#21 113.8 .../argon2@0.41.1/node_modules/argon2 install$ node-gyp-build
+#21 114.0 .../argon2@0.41.1/node_modules/argon2 install: Done
+#21 114.1  WARN  Failed to create bin at /workspace/apps/out-api/node_modules/.bin/vite. ENOENT: no such file or directory, open '/out-api/node_modules/.pnpm/vite@7.3.6_@types+node@22.20.1_jiti@2.7.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/bin/vite.js'
+#21 114.1  WARN  Failed to create bin at /workspace/apps/out-api/node_modules/.bin/yaml. ENOENT: no such file or directory, open '/out-api/node_modules/.pnpm/yaml@2.9.0/node_modules/yaml/bin.mjs'
+#21 114.1  WARN  Failed to create bin at /workspace/apps/out-api/node_modules/.bin/jiti. ENOENT: no such file or directory, open '/out-api/node_modules/.pnpm/jiti@2.7.0/node_modules/jiti/lib/jiti-cli.mjs'
+#21 115.4 Packages are copied from the content-addressable store to the virtual store.
+#21 115.4   Content-addressable store is at: /root/.local/share/pnpm/store/v3
+#21 115.4   Virtual store is at:             ../out-worker/node_modules/.pnpm
+#21 115.5 Progress: resolved 1, reused 0, downloaded 0, added 0
+#21 116.0 .                                        |  WARN  deprecated eslint@9.39.5
+#21 116.5 Progress: resolved 18, reused 18, downloaded 0, added 0
+#21 119.2 Progress: resolved 18, reused 18, downloaded 1, added 0
+#21 120.2 Progress: resolved 231, reused 175, downloaded 2, added 0
+#21 121.2 Progress: resolved 239, reused 178, downloaded 6, added 0
+#21 122.2 Progress: resolved 244, reused 178, downloaded 6, added 0
+#21 128.6  WARN  GET https://registry.npmjs.org/@aws-sdk%2Fcredential-provider-node error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#21 128.6  WARN  GET https://registry.npmjs.org/@smithy%2Fnode-http-handler error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+#21 128.6 Progress: resolved 244, reused 179, downloaded 6, added 0
+#21 129.6 Progress: resolved 253, reused 192, downloaded 7, added 0
+#21 130.6 Progress: resolved 264, reused 196, downloaded 14, added 0
+#21 139.7 Progress: resolved 265, reused 196, downloaded 14, added 0
+#21 140.7 Progress: resolved 265, reused 197, downloaded 14, added 0
+#21 141.7 Progress: resolved 268, reused 200, downloaded 14, added 0
+#21 142.7 Progress: resolved 275, reused 205, downloaded 14, added 0
+#21 143.7 Progress: resolved 276, reused 205, downloaded 14, added 0
+#21 144.7 Progress: resolved 286, reused 216, downloaded 14, added 0
+#21 145.8 Progress: resolved 295, reused 216, downloaded 14, added 0
+#21 146.8 Progress: resolved 311, reused 216, downloaded 14, added 0
+#21 147.8 Progress: resolved 313, reused 217, downloaded 14, added 0
+#21 148.8 Progress: resolved 315, reused 233, downloaded 14, added 0
+#21 151.2 Progress: resolved 315, reused 234, downloaded 14, added 0
+#21 151.2 .                                        |  +82 ++++++++
+#21 152.2 Progress: resolved 315, reused 246, downloaded 14, added 69
+#21 152.4 Progress: resolved 315, reused 246, downloaded 14, added 82, done
+#21 152.5  WARN  Failed to create bin at /workspace/apps/out-worker/node_modules/.bin/vite. ENOENT: no such file or directory, open '/out-worker/node_modules/.pnpm/vite@7.3.6_@types+node@22.20.1_jiti@2.7.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/bin/vite.js'
+#21 152.5  WARN  Failed to create bin at /workspace/apps/out-worker/node_modules/.bin/jiti. ENOENT: no such file or directory, open '/out-worker/node_modules/.pnpm/jiti@2.7.0/node_modules/jiti/lib/jiti-cli.mjs'
+#21 152.5  WARN  Failed to create bin at /workspace/apps/out-worker/node_modules/.bin/yaml. ENOENT: no such file or directory, open '/out-worker/node_modules/.pnpm/yaml@2.9.0/node_modules/yaml/bin.mjs'
+#21 DONE 155.8s
+
+#22 [runtime  4/11] COPY --from=build --chown=10001:10001 /out-api /opt/workmesh/api
+#22 DONE 7.7s
+
+#23 [runtime  5/11] COPY --from=build --chown=10001:10001 /out-worker /opt/workmesh/worker
+#23 DONE 6.5s
+
+#24 [runtime  6/11] COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs
+#24 DONE 0.1s
+
+#25 [runtime  7/11] COPY --chown=10001:10001 infra/docker/runtime-guard.mjs ./runtime-guard.mjs
+#25 DONE 0.0s
+
+#26 [runtime  8/11] COPY --chown=10001:10001 infra/docker/lite-dispatch.mjs ./lite-dispatch.mjs
+#26 DONE 0.0s
+
+#27 [runtime  9/11] COPY --chown=10001:10001 infra/docker/lite-entrypoint.sh ./entrypoint.sh
+#27 DONE 0.0s
+
+#28 [runtime 10/11] COPY --chown=10001:10001 infra/docker/healthcheck.mjs ./healthcheck.mjs
+#28 DONE 0.0s
+
+#29 [runtime 11/11] RUN sed -i 's/\r$//' /opt/workmesh/api/entrypoint.sh     && chmod 0555 /opt/workmesh/api/entrypoint.sh
+#29 DONE 0.1s
+
+#30 exporting to oci image format
+#30 exporting layers
+#30 exporting layers 4.9s done
+#30 exporting manifest sha256:68c5e92feb8ba0c0f5f1ef2df2e2dd86ed51c298bbdd5d50ab3246ebc98e76c4 done
+#30 exporting config sha256:832e7ed2fa39feae497e26627a68bf1eac3134a5d9585bdf2631b3a329b84ac5 done
+#30 sending tarball
+#30 ...
+
+#31 importing to docker
+#31 DONE 0.0s
+
+#30 exporting to oci image format
+#30 sending tarball 13.9s done
+#30 DONE 18.8s
+
+View build details: docker-desktop://dashboard/build/backend-lite-47db4f07/backend-lite-47db4f070/wrggz3iu0mcnpi4rpmgr7ln2q

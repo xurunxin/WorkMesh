@@ -1,0 +1,22 @@
+阅读视图；原始字节：raw-logs/run-ea0211e15101.zip 内 runs/backend-lite-47db4f07/34.log；SHA-256：446dd70e43860a13537dfaba4c5a7a9a668d71a3392874a1b3e28ea550f6b0d7
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: /api/v1/agent-connections HTTP 201
+
+201 !== 200
+
+    at api (file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/verify-a2-backend-lite-api.mjs:31:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async verifyBackendSkill (file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/verify-backend-skill.mjs:12:19)
+    at async file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/verify-a2-backend-lite-api.mjs:68:17 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 201,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v25.4.0

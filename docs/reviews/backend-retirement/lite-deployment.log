@@ -1,0 +1,7 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 lite-deployment.log；SHA-256：1ecf810edd3b7c523eb8c703e8778155fd196a7e1bcd51bbfdae78c28d273881
+
+{"name":"docker","args":["image","inspect","workmesh-retirement-lite:backend-lite-73936be5"],"code":1,"log":"0.log"}
+{"name":"docker","args":["build","--progress=plain","--label","workmesh.task=backend-lite-73936be5","--build-arg","WORKMESH_BUILD_SHA=7fbea7ddc3833ce7c661a9b049c721666de36541","-t","workmesh-retirement-lite:backend-lite-73936be5","-f","infra/docker/lite.Dockerfile","-"],"code":4294967295,"log":"1.log"}
+失败或未验收：Error: docker 退出 4294967295
+{"name":"powershell.exe","args":["-NoProfile","-Command","$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message}; break } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"],"code":0,"log":"2.log"}
+证据：I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\docs\reviews\backend-retirement\runs\backend-lite-73936be5

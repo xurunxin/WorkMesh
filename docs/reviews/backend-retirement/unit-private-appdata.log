@@ -1,0 +1,967 @@
+阅读视图；原始字节：raw-logs/run-79423eed938c.zip 内 unit-private-appdata.log；SHA-256：6bb879dfb9c097b57d36b1ca2664a2c1ffbc9363d3bf0114b22ad6bd19f49c3a
+
+> workmesh@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> turbo run test --concurrency=2
+
+• turbo 2.10.6
+
+   • Packages in scope: @workmesh/a2a-adapter, @workmesh/agent-runner, @workmesh/agent-sdk, @workmesh/api, @workmesh/artifact-storage, @workmesh/config, @workmesh/conformance, @workmesh/connector, @workmesh/contracts, @workmesh/db, @workmesh/domain, @workmesh/fake-agent, @workmesh/git-provider, @workmesh/mcp, @workmesh/observability, @workmesh/recovery, @workmesh/worker
+   • Running test in 17 packages
+   • Remote caching disabled, using shared worktree cache
+
+@workmesh/git-provider:test: cache miss, executing 787af504d1fed8f8
+@workmesh/observability:build: cache miss, executing 1b0747340b61da78
+@workmesh/observability:build:
+@workmesh/observability:build: > @workmesh/observability@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\observability
+@workmesh/observability:build: > tsc -p tsconfig.json
+@workmesh/observability:build:
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: > @workmesh/git-provider@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\git-provider
+@workmesh/git-provider:test: > vitest run
+@workmesh/git-provider:test:
+@workmesh/git-provider:test:
+@workmesh/git-provider:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/git-provider
+@workmesh/git-provider:test:
+@workmesh/git-provider:test:  ✓ src/gitea.test.ts (1 test) 5ms
+@workmesh/git-provider:test:  ✓ src/index.test.ts (14 tests) 160ms
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/refs"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"branch","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits","PATCH:/repos/acme/workmesh/git/refs/heads/workmesh/test"],"readCount":2,"guards":3}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":1,"actualWrites":[],"readCount":2,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":2,"actualWrites":["POST:/repos/acme/workmesh/git/trees"],"readCount":2,"guards":2}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"commit","denyAt":3,"actualWrites":["POST:/repos/acme/workmesh/git/trees","POST:/repos/acme/workmesh/git/commits"],"readCount":2,"guards":3}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/pulls"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"open","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":0,"actualWrites":["PUT:/repos/acme/workmesh/pulls/71/merge"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":0,"actualWrites":["POST:/repos/acme/workmesh/check-runs/42/rerequest"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"retry","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > github所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"github","kind":"context","denyAt":0,"actualWrites":[],"readCount":3,"guards":0}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/branches"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"branch","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":0,"actualWrites":["PUT:/api/v1/repos/acme/workmesh/contents/src/test.ts"],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"commit_update","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls"],"readCount":0,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"open","denyAt":1,"actualWrites":[],"readCount":0,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":0,"actualWrites":["POST:/api/v1/repos/acme/workmesh/pulls/71/merge"],"readCount":2,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"merge","denyAt":1,"actualWrites":[],"readCount":1,"guards":1}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"retry","denyAt":0,"actualWrites":[],"readCount":0,"guards":0}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test: stdout | src/mutation-http.test.ts > M3 provider每次写HTTP许可的本机真实传输窗口 > gitea所有受支持写窗口逐个拒绝；GET不领取写许可
+@workmesh/git-provider:test: {"m3ProviderWindow":{"provider":"gitea","kind":"context","denyAt":0,"actualWrites":[],"readCount":2,"guards":0}}
+@workmesh/git-provider:test:
+@workmesh/git-provider:test:  ✓ src/mutation-http.test.ts (2 tests) 323ms
+@workmesh/git-provider:test:
+@workmesh/git-provider:test:  Test Files  3 passed (3)
+@workmesh/git-provider:test:       Tests  17 passed (17)
+@workmesh/git-provider:test:    Start at  05:39:07
+@workmesh/git-provider:test:    Duration  5.88s (transform 620ms, setup 0ms, collect 2.85s, tests 489ms, environment 1ms, prepare 8.72s)
+@workmesh/git-provider:test:
+@workmesh/observability:test: cache miss, executing 42b2036e452d6e4d
+@workmesh/observability:test:
+@workmesh/observability:test: > @workmesh/observability@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\observability
+@workmesh/observability:test: > vitest run
+@workmesh/observability:test:
+@workmesh/observability:test:
+@workmesh/observability:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/observability
+@workmesh/observability:test:
+@workmesh/observability:test:  ✓ src/index.test.ts (3 tests) 10ms
+@workmesh/observability:test:  ✓ src/workbench-slo.test.ts (13 tests) 13ms
+@workmesh/observability:test:
+@workmesh/observability:test:  Test Files  2 passed (2)
+@workmesh/observability:test:       Tests  16 passed (16)
+@workmesh/observability:test:    Start at  05:39:15
+@workmesh/observability:test:    Duration  1.13s (transform 192ms, setup 0ms, collect 298ms, tests 24ms, environment 1ms, prepare 506ms)
+@workmesh/observability:test:
+@workmesh/contracts:build: cache miss, executing 257122adc035bde7
+@workmesh/contracts:build:
+@workmesh/contracts:build: > @workmesh/contracts@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\contracts
+@workmesh/contracts:build: > tsc -p tsconfig.build.json
+@workmesh/contracts:build:
+@workmesh/artifact-storage:build: cache miss, executing bc508be73c4f6d51
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:build: > @workmesh/artifact-storage@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\artifact-storage
+@workmesh/artifact-storage:build: > tsc -p tsconfig.json
+@workmesh/artifact-storage:build:
+@workmesh/artifact-storage:test: cache miss, executing 9f9e30282f6f3739
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test: > @workmesh/artifact-storage@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\artifact-storage
+@workmesh/artifact-storage:test: > vitest run
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/artifact-storage
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:  ✓ src/retention-upgrade.test.ts (3 tests) 11ms
+@workmesh/artifact-storage:test:  ✓ src/index.test.ts (19 tests) 64ms
+@workmesh/artifact-storage:test:
+@workmesh/artifact-storage:test:  Test Files  2 passed (2)
+@workmesh/artifact-storage:test:       Tests  22 passed (22)
+@workmesh/artifact-storage:test:    Start at  05:39:35
+@workmesh/artifact-storage:test:    Duration  14.39s (transform 550ms, setup 0ms, collect 25.95s, tests 75ms, environment 0ms, prepare 392ms)
+@workmesh/artifact-storage:test:
+@workmesh/contracts:test: cache miss, executing 001a1d8b64a563a5
+@workmesh/contracts:test:
+@workmesh/contracts:test: > @workmesh/contracts@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\contracts
+@workmesh/contracts:test: > vitest run
+@workmesh/contracts:test:
+@workmesh/contracts:test:
+@workmesh/contracts:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/contracts
+@workmesh/contracts:test:
+@workmesh/contracts:test:  ✓ src/pagination-contract.test.ts (2 tests) 2479ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > declares the common cursor and limit on every paged collection  1613ms
+@workmesh/contracts:test:    ✓ pagination OpenAPI contract > keeps durable event cursors separate and documents generic cursor failures  864ms
+@workmesh/contracts:test:  ✓ src/runtime-reliability-openapi.test.ts (2 tests) 2512ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > keeps the new response models in schemas and every local reference resolvable  1630ms
+@workmesh/contracts:test:    ✓ runtime reliability OpenAPI contract > documents the dedicated identity credential and every execution-capacity conflict  879ms
+@workmesh/contracts:test:  ✓ src/planning-domain-parity-contract.test.ts (5 tests) 833ms
+@workmesh/contracts:test:    ✓ planning domain parity public contract > keeps the OpenAPI schemas and complete REST surface aligned with Zod  822ms
+@workmesh/contracts:test:  ✓ src/agent-discovery.test.ts (21 tests) 1539ms
+@workmesh/contracts:test:    ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  821ms
+@workmesh/contracts:test:  ✓ src/stage0-route-manifest.test.ts (6 tests) 1987ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > keeps parsed OpenAPI cursor boundaries in parity with runtime  1085ms
+@workmesh/contracts:test:    ✓ Stage 0 transport contract manifest > documents and validates the backward-compatible Run Explanation keyset cursor  872ms
+@workmesh/contracts:test:  ✓ src/configuration-readiness-contracts.test.ts (4 tests) 808ms
+@workmesh/contracts:test:    ✓ 配置就绪契约 > OpenAPI、清单与 Human-only 只读策略一致，拒绝审计保留  796ms
+@workmesh/contracts:test:  ✓ src/recovery-contract.test.ts (2 tests) 815ms
+@workmesh/contracts:test:    ✓ Recovery Center public contract > publishes list/detail operations and resolvable Recovery schemas  808ms
+@workmesh/contracts:test:  ✓ src/route-policy.test.ts (14 tests) 4034ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions  1401ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > matches OpenAPI operation IDs and feature tiers  874ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > documents bootstrap authentication failures as a structured 401 response  712ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > keeps deployment feature discovery authenticated for humans and agents  679ms
+@workmesh/contracts:test:    ✓ routePolicyManifest > keeps the generated Markdown matrix in parity  319ms
+@workmesh/contracts:test:  ✓ src/stage5-contracts.test.ts (67 tests) 951ms
+@workmesh/contracts:test:    ✓ Stage 5 (v1.1) Agent Connection & Coordination MCP contracts > ADR-0043 has every required section (AGENTS.md ADR format)  362ms
+@workmesh/contracts:test:  ✓ src/release-manifest.test.ts (2 tests) 303ms
+@workmesh/contracts:test:  ✓ src/release-contract.test.ts (1 test) 1567ms
+@workmesh/contracts:test:    ✓ 1.0 release contract documentation > keeps OpenAPI, protocol, README, and environment flags aligned  1566ms
+@workmesh/contracts:test:  ✓ src/client-profile-contract.test.ts (3 tests) 43ms
+@workmesh/contracts:test:  ✓ src/stage1-contracts.test.ts (10 tests) 33ms
+@workmesh/contracts:test:  ✓ src/stage4-contracts.test.ts (8 tests) 31ms
+@workmesh/contracts:test:  ✓ src/stage3-contracts.test.ts (8 tests) 19ms
+@workmesh/contracts:test:  ✓ src/pi-workbench-contracts.test.ts (27 tests) 24ms
+@workmesh/contracts:test:  ✓ src/stage2-contracts.test.ts (4 tests) 14ms
+@workmesh/contracts:test:  ✓ src/control-plane-contracts.test.ts (5 tests) 15ms
+@workmesh/contracts:test:  ✓ src/delivery-contracts.test.ts (2 tests) 10ms
+@workmesh/contracts:test:  ✓ src/child-session-contracts.test.ts (4 tests) 11ms
+@workmesh/contracts:test:  ✓ src/human-attention-contract.test.ts (3 tests) 10ms
+@workmesh/contracts:test:  ✓ src/agent-response-contract.test.ts (1 test) 9ms
+@workmesh/contracts:test:  ✓ src/approval-contract.test.ts (4 tests) 10ms
+@workmesh/contracts:test:  ✓ src/execution-waits.test.ts (4 tests) 10ms
+@workmesh/contracts:test:  ✓ src/autonomous-control-contracts.test.ts (3 tests) 8ms
+@workmesh/contracts:test:  ✓ src/guidance-contract.test.ts (2 tests) 8ms
+@workmesh/contracts:test:  ✓ src/active-executor-contract.test.ts (2 tests) 10ms
+@workmesh/contracts:test:  ✓ src/auth-idempotency.test.ts (2 tests) 8ms
+@workmesh/contracts:test:  ✓ src/repository-configuration-contracts.test.ts (1 test) 7ms
+@workmesh/contracts:test:
+@workmesh/contracts:test:  Test Files  29 passed (29)
+@workmesh/contracts:test:       Tests  219 passed (219)
+@workmesh/contracts:test:    Start at  05:39:52
+@workmesh/contracts:test:    Duration  32.90s (transform 4.38s, setup 0ms, collect 92.48s, tests 18.11s, environment 7ms, prepare 4.96s)
+@workmesh/contracts:test:
+@workmesh/git-provider:build: cache miss, executing aabc09236fe096b0
+@workmesh/git-provider:build:
+@workmesh/git-provider:build: > @workmesh/git-provider@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\git-provider
+@workmesh/git-provider:build: > tsc -p tsconfig.json
+@workmesh/git-provider:build:
+@workmesh/a2a-adapter:build: cache miss, executing a28d86978e991792
+@workmesh/agent-sdk:test: cache miss, executing 798d322d94fae7b5
+@workmesh/agent-sdk:test:
+@workmesh/agent-sdk:test: > @workmesh/agent-sdk@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\agent-sdk
+@workmesh/agent-sdk:test: > vitest run
+@workmesh/agent-sdk:test:
+@workmesh/a2a-adapter:build:
+@workmesh/a2a-adapter:build: > @workmesh/a2a-adapter@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\a2a-adapter
+@workmesh/a2a-adapter:build: > tsc -p tsconfig.json
+@workmesh/a2a-adapter:build:
+@workmesh/agent-runner:test: cache miss, executing 80a366a1a085597f
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: > @workmesh/agent-runner@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\agent-runner
+@workmesh/agent-runner:test: > vitest run
+@workmesh/agent-runner:test:
+@workmesh/agent-sdk:test:
+@workmesh/agent-sdk:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/agent-sdk
+@workmesh/agent-sdk:test:
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/agent-runner
+@workmesh/agent-runner:test:
+@workmesh/agent-sdk:test:  ✓ src/optional-domains.test.ts (3 tests) 26ms
+@workmesh/agent-sdk:test:  ✓ src/execution-adapters.test.ts (10 tests) 35ms
+@workmesh/agent-sdk:test:  ✓ src/discovery.test.ts (8 tests) 358ms
+@workmesh/agent-sdk:test:  ✓ src/index.test.ts (35 tests) 467ms
+@workmesh/agent-sdk:test:
+@workmesh/agent-sdk:test:  Test Files  4 passed (4)
+@workmesh/agent-sdk:test:       Tests  56 passed (56)
+@workmesh/agent-sdk:test:    Start at  05:40:55
+@workmesh/agent-sdk:test:    Duration  2.46s (transform 1.37s, setup 0ms, collect 3.78s, tests 885ms, environment 1ms, prepare 1.36s)
+@workmesh/agent-sdk:test:
+@workmesh/domain:test: cache miss, executing 6c61aed1be217cd2
+@workmesh/domain:test:
+@workmesh/domain:test: > @workmesh/domain@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\domain
+@workmesh/domain:test: > vitest run
+@workmesh/domain:test:
+@workmesh/domain:test:
+@workmesh/domain:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/domain
+@workmesh/domain:test:
+@workmesh/domain:test:  ✓ src/session-budget.test.ts (10 tests) 9ms
+@workmesh/domain:test:  ✓ src/stage3-delivery.test.ts (3 tests) 22ms
+@workmesh/domain:test:  ✓ src/stage2-collaboration.test.ts (3 tests) 24ms
+@workmesh/domain:test:  ✓ src/stage4.test.ts (9 tests) 28ms
+@workmesh/domain:test:  ✓ src/stage1-agent.test.ts (8 tests) 10ms
+@workmesh/domain:test:  ✓ src/approval.test.ts (19 tests) 7ms
+@workmesh/domain:test:  ✓ src/index.test.ts (6 tests) 7ms
+@workmesh/domain:test:  ✓ src/authorization.test.ts (5 tests) 6ms
+@workmesh/domain:test:  ✓ src/planning-domain-parity.test.ts (2 tests) 4ms
+@workmesh/domain:test:
+@workmesh/domain:test:  Test Files  9 passed (9)
+@workmesh/domain:test:       Tests  65 passed (65)
+@workmesh/domain:test:    Start at  05:41:00
+@workmesh/domain:test:    Duration  3.30s (transform 1.03s, setup 0ms, collect 1.89s, tests 118ms, environment 2ms, prepare 1.49s)
+@workmesh/domain:test:
+@workmesh/domain:build: cache miss, executing ae72bb931489bae1
+@workmesh/domain:build:
+@workmesh/domain:build: > @workmesh/domain@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\domain
+@workmesh/domain:build: > tsc -p tsconfig.json
+@workmesh/domain:build:
+@workmesh/agent-runner:build: cache miss, executing 168fa7ddd3ce1672
+@workmesh/agent-runner:build:
+@workmesh/agent-runner:build: > @workmesh/agent-runner@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\agent-runner
+@workmesh/agent-runner:build: > tsc -p tsconfig.json
+@workmesh/agent-runner:build:
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-6OIdwN","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-6OIdwN","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"retained"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"turnId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"failed","code":"RUNNER_SCRATCH_CLEANUP_FAILED"}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-6OIdwN","status":"removed_after_injected_failure"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-pEE5Gu","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-pEE5Gu","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"retained"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stderr | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"turnId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"failed","code":"RUNNER_SCRATCH_CLEANUP_FAILED"}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stdout | src/run-session-cleanup.test.ts > 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-pEE5Gu","status":"removed_after_injected_failure"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  ✓ src/run-session-cleanup.test.ts (2 tests) 2208ms
+@workmesh/agent-runner:test:    ✓ 模型 Stop 后 scratch 失败仍执行专用 finally，且不普通 settle/release/Activity  1131ms
+@workmesh/agent-runner:test:    ✓ 模型 Stop 后 idle 失败仍执行专用 finally，且不普通 settle/release/Activity  1076ms
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"fake_model_http","host":"127.0.0.1","port":9275,"status":"created"}}
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-fsMNMd","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"created"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > M2计划评论/提案/context delta固定自身身份，验证来源并复用同调用幂等包装
+@workmesh/agent-runner:test: {"tool":"workmesh_propose_plan_step_assignment","stage":"input_validation","paths":[""]}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > validates the document base and refuses a stale or malformed write before any API mutation
+@workmesh/agent-runner:test: {"tool":"workmesh_update_document","stage":"input_validation","paths":["baseContentHash"]}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stderr | src/workmesh-tools.test.ts > Pi WorkMesh tools > releases only a versioned lease through the exact Session API authority
+@workmesh/agent-runner:test: {"tool":"workmesh_release_lease","stage":"input_validation","paths":["ifMatch"]}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  ✓ src/workmesh-tools.test.ts (26 tests) 1372ms
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerResource":{"kind":"scratch","path":"D:\\Cache\\TEMP\\workmesh-runner-fsMNMd","sessionId":"11111111-1111-4111-8111-111111111111","attemptId":"11111111-1111-4111-8111-111111111111","status":"removed"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test: stdout | src/wait-pi.test.ts > 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待
+@workmesh/agent-runner:test: {"runnerTestResource":{"kind":"fake_model_http","status":"closed"}}
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  ✓ src/wait-pi.test.ts (1 test) 10557ms
+@workmesh/agent-runner:test:    ✓ 真实Pi等待工具停止模型和后续工具，不用RUNNER_ABORTED丢弃公开等待  10555ms
+@workmesh/agent-runner:test: stderr | src/model-errors.test.ts > W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns invalidJson
+@workmesh/agent-runner:test: Could not parse message into JSON: {not json at all
+@workmesh/agent-runner:test: From chunk: [ 'data: {not json at all' ]
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  ✓ src/delivery-transfer.test.ts (1 test) 88ms
+@workmesh/agent-runner:test:  ✓ src/model-errors.test.ts (6 tests) 11024ms
+@workmesh/agent-runner:test:    ✓ W08 error matrix: upstream failures must not publish an answer > leaves no publishable answer when the upstream returns status500  10211ms
+@workmesh/agent-runner:test:  ✓ src/model-wire.test.ts (6 tests) 11134ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > reassembles a tool call whose arguments arrive in arbitrary fragments  10207ms
+@workmesh/agent-runner:test:    ✓ W08 wire fixtures against the real Pi SDK > drives the responses protocol through the same configuration path  302ms
+@workmesh/config:build: cache miss, executing dab71efa2190ed35
+@workmesh/agent-runner:test:  ✓ src/permission-matrix.test.ts (6 tests) 699ms
+@workmesh/agent-runner:test:    ✓ W11 permission-denial matrix > refuses every tool when the capability manifest is not from an executing session  335ms
+@workmesh/config:build:
+@workmesh/config:build: > @workmesh/config@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\config
+@workmesh/config:build: > tsc -p tsconfig.json
+@workmesh/config:build:
+@workmesh/agent-sdk:build: cache miss, executing 471f8691879a51db
+@workmesh/agent-sdk:build:
+@workmesh/agent-sdk:build: > @workmesh/agent-sdk@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\agent-sdk
+@workmesh/agent-sdk:build: > tsc -p tsconfig.json
+@workmesh/agent-sdk:build:
+@workmesh/agent-runner:test:  ✓ src/workbench-skill.test.ts (2 tests) 73ms
+@workmesh/agent-runner:test:  ✓ src/execution-lifecycle.test.ts (9 tests) 13ms
+@workmesh/agent-runner:test:  ✓ src/isolation.test.ts (9 tests) 16ms
+@workmesh/agent-runner:test:  ✓ src/runner-api.test.ts (35 tests) 62ms
+@workmesh/agent-runner:test:  ✓ src/model-config.test.ts (2 tests) 3ms
+@workmesh/agent-runner:test:  ✓ src/configured-model.test.ts (1 test) 5ms
+@workmesh/config:test: cache miss, executing 320ae9d73b026c3d
+@workmesh/config:test:
+@workmesh/config:test: > @workmesh/config@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\config
+@workmesh/config:test: > vitest run
+@workmesh/config:test:
+@workmesh/config:test:
+@workmesh/config:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/config
+@workmesh/config:test:
+@workmesh/config:test:  ✓ src/service-command.test.ts (11 tests) 8ms
+@workmesh/config:test:  ✓ src/index.test.ts (18 tests) 43ms
+@workmesh/config:test:
+@workmesh/config:test:  Test Files  2 passed (2)
+@workmesh/config:test:       Tests  29 passed (29)
+@workmesh/config:test:    Start at  05:43:46
+@workmesh/config:test:    Duration  1.76s (transform 703ms, setup 0ms, collect 999ms, tests 51ms, environment 0ms, prepare 358ms)
+@workmesh/config:test:
+@workmesh/agent-runner:test:  ✓ src/egress-policy.test.ts (6 tests) 8ms
+@workmesh/agent-runner:test:
+@workmesh/agent-runner:test:  Test Files  14 passed (14)
+@workmesh/agent-runner:test:       Tests  112 passed (112)
+@workmesh/agent-runner:test:    Start at  05:40:56
+@workmesh/agent-runner:test:    Duration  172.07s (transform 2.85s, setup 0ms, collect 593.43s, tests 37.26s, environment 3ms, prepare 9.25s)
+@workmesh/agent-runner:test:
+@workmesh/connector:build: cache miss, executing 6a984d6e5adf9f9b
+@workmesh/connector:test: cache miss, executing 20e3ff0700193227
+@workmesh/connector:build:
+@workmesh/connector:build: > @workmesh/connector@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\connector
+@workmesh/connector:build: > tsc -p tsconfig.build.json
+@workmesh/connector:build:
+@workmesh/connector:test:
+@workmesh/connector:test: > @workmesh/connector@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\connector
+@workmesh/connector:test: > vitest run
+@workmesh/connector:test:
+@workmesh/connector:test:
+@workmesh/connector:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/connector
+@workmesh/connector:test:
+@workmesh/connector:test:  ✓ src/path-policy.test.ts (3 tests) 8ms
+@workmesh/connector:test: stdout | src/client-process.test.ts > 管道子进程看到提示后才发送输入并正常退出
+@workmesh/connector:test: {"resource":"testProcess","pid":19272,"state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/client-process.test.ts > 管道子进程看到提示后才发送输入并正常退出
+@workmesh/connector:test: {"resource":"testProcess","pid":19272,"state":"closed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/client-process.test.ts > 真实嵌套终端保留 TTY、交互、尺寸变化及 Ctrl-C，输出仍脱敏
+@workmesh/connector:test: {"resource":"testProcess","pid":31276,"state":"created"}
+@workmesh/connector:test:
+@workmesh/a2a-adapter:test: cache miss, executing 5dd24d6941532b3a
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test: > @workmesh/a2a-adapter@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\a2a-adapter
+@workmesh/a2a-adapter:test: > vitest run
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/a2a-adapter
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test:  ✓ src/index.test.ts (4 tests) 314ms
+@workmesh/a2a-adapter:test:    ✓ A2A v0.3 conformance boundary > keeps the runtime and OpenAPI task-id limit at 500 characters  305ms
+@workmesh/a2a-adapter:test:
+@workmesh/a2a-adapter:test:  Test Files  1 passed (1)
+@workmesh/a2a-adapter:test:       Tests  4 passed (4)
+@workmesh/a2a-adapter:test:    Start at  05:44:18
+@workmesh/a2a-adapter:test:    Duration  3.01s (transform 71ms, setup 0ms, collect 81ms, tests 314ms, environment 0ms, prepare 168ms)
+@workmesh/a2a-adapter:test:
+@workmesh/db:test: cache miss, executing d7f644e7f81cde2a
+@workmesh/db:test:
+@workmesh/db:test: > @workmesh/db@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\db
+@workmesh/db:test: > vitest run
+@workmesh/db:test:
+@workmesh/connector:test: stdout | src/client-process.test.ts > 真实嵌套终端保留 TTY、交互、尺寸变化及 Ctrl-C，输出仍脱敏
+@workmesh/connector:test: {"resource":"testProcess","pid":31276,"state":"closed"}
+@workmesh/connector:test:
+@workmesh/connector:test:  ❯ src/client-process.test.ts (19 tests | 2 failed) 34207ms
+@workmesh/connector:test:    ✓ 安全提示立即输出，每个秘密切分位置均脱敏 13ms
+@workmesh/connector:test:    ✓ ANSI 'wmi_' 控制 +0：每个插入位置和 chunk 边界均脱敏  356ms
+@workmesh/connector:test:    ✓ ANSI 'wmi_' 控制 1：每个插入位置和 chunk 边界均脱敏 285ms
+@workmesh/connector:test:    ✓ ANSI 'wmi_' 控制 2：每个插入位置和 chunk 边界均脱敏  353ms
+@workmesh/connector:test:    ✓ ANSI 'wmi_' 控制 3：每个插入位置和 chunk 边界均脱敏 282ms
+@workmesh/connector:test:    ✓ ANSI 'wmi_' 控制 4：每个插入位置和 chunk 边界均脱敏 282ms
+@workmesh/connector:test:    ✓ ANSI 'wmi_' 控制 5：每个插入位置和 chunk 边界均脱敏 228ms
+@workmesh/connector:test:    ✓ ANSI 'wmi_' 控制 6：每个插入位置和 chunk 边界均脱敏 217ms
+@workmesh/connector:test:    ✓ ANSI 'wmp_' 控制 +0：每个插入位置和 chunk 边界均脱敏  326ms
+@workmesh/connector:test:    ✓ ANSI 'wmp_' 控制 1：每个插入位置和 chunk 边界均脱敏  381ms
+@workmesh/connector:test:    ✓ ANSI 'wmp_' 控制 2：每个插入位置和 chunk 边界均脱敏  477ms
+@workmesh/connector:test:    ✓ ANSI 'wmp_' 控制 3：每个插入位置和 chunk 边界均脱敏  413ms
+@workmesh/connector:test:    ✓ ANSI 'wmp_' 控制 4：每个插入位置和 chunk 边界均脱敏  372ms
+@workmesh/connector:test:    ✓ ANSI 'wmp_' 控制 5：每个插入位置和 chunk 边界均脱敏  334ms
+@workmesh/connector:test:    ✓ ANSI 'wmp_' 控制 6：每个插入位置和 chunk 边界均脱敏  330ms
+@workmesh/connector:test:    ✓ ANSI 控制载荷内的两种凭据均脱敏 0ms
+@workmesh/connector:test:    × 管道子进程看到提示后才发送输入并正常退出 10197ms
+@workmesh/connector:test:      → expected false to be true // Object.is equality
+@workmesh/connector:test:    ✓ ANSI 结束字节不能吞掉凭据前缀：原字节与可见路径、全部 chunk 边界及 OSC 载荷 212ms
+@workmesh/connector:test:    × 真实嵌套终端保留 TTY、交互、尺寸变化及 Ctrl-C，输出仍脱敏 19141ms
+@workmesh/connector:test:      → expected null to be +0 // Object.is equality
+@workmesh/db:test:
+@workmesh/db:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/db
+@workmesh/db:test:
+@workmesh/db:test:  ✓ src/agent-concurrency-inventory.test.ts (3 tests) 735ms
+@workmesh/db:test:    ✓ Agent execution-capacity admission inventory > routes every Session-producing subsystem through the locked shared assertion  394ms
+@workmesh/db:test:    ✓ Agent execution-capacity admission inventory > persists and resumes only scheduled Loop capacity deferrals  338ms
+@workmesh/db:test:  ✓ src/agent-concurrency.test.ts (3 tests) 8ms
+@workmesh/db:test:  ✓ src/migrations.test.ts (3 tests) 2112ms
+@workmesh/db:test:    ✓ v1 migration manifest > pins the immutable pre-v1 inventory in deterministic order  1030ms
+@workmesh/db:test:    ✓ v1 migration manifest > pins the v1 baseline and all five supported atomic upgrade bundles  1080ms
+@workmesh/db:test:  ✓ src/event-resources.test.ts (4 tests) 5ms
+@workmesh/db:test:  ✓ src/event-writer-inventory.test.ts (3 tests) 5215ms
+@workmesh/db:test:    ✓ durable domain-event writer inventory > rejects production SQL writes outside the central persistence module  4353ms
+@workmesh/db:test:    ✓ durable domain-event writer inventory > requires every production aggregate literal to have a resolver  853ms
+@workmesh/db:test:  ✓ src/agent-lock-order-inventory.test.ts (8 tests) 6510ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > manifests every production file with ranked locking or writes  4593ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > manifests every ranked SQL statement with its transaction owner and rank sequence  816ms
+@workmesh/db:test:    ✓ Agent authority lock-order inventory > rejects unsafe production ordering and proves the negative fixtures  1070ms
+@workmesh/db:test:  ✓ scripts/seed.test.ts (3 tests) 4ms
+@workmesh/db:test:  ✓ src/index.test.ts (1 test) 3ms
+@workmesh/db:test:
+@workmesh/db:test:  Test Files  8 passed (8)
+@workmesh/db:test:       Tests  28 passed (28)
+@workmesh/db:test:    Start at  05:44:31
+@workmesh/db:test:    Duration  20.02s (transform 2.29s, setup 0ms, collect 14.65s, tests 14.59s, environment 2ms, prepare 1.33s)
+@workmesh/db:test:
+@workmesh/db:build: cache miss, executing d7f9c28148c27512
+@workmesh/db:build:
+@workmesh/db:build: > @workmesh/db@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\db
+@workmesh/db:build: > tsc -p tsconfig.json
+@workmesh/db:build:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 全部校验完成后才提交，成功重跑只校验当前身份，秘密不进入配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-C5Ogml","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 全部校验完成后才提交，成功重跑只校验当前身份，秘密不进入配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-C5Ogml","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 断网和丢响应后保存并精确重放 key/body/context，pending ACL 实际受保护
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-mcA4fW","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 断网和丢响应后保存并精确重放 key/body/context，pending ACL 实际受保护
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-mcA4fW","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > pending 已存在时拒绝异体或异清单，不更换请求身份；损坏记录不重建
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-jDo6bn","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > pending 已存在时拒绝异体或异清单，不更换请求身份；损坏记录不重建
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-jDo6bn","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > fingerprint 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-wk2Aea","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > fingerprint 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-wk2Aea","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > Team 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-BF7l8O","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > Team 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-BF7l8O","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > principal 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-gOgbTM","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > principal 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-gOgbTM","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > actor 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-gjLA6E","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > actor 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-gjLA6E","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > connection 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-D1tClF","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > connection 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-D1tClF","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > profile 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RM0Sbb","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > profile 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RM0Sbb","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > context profile 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-uQyD4z","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > context profile 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-uQyD4z","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > manifest capability 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-eXhazG","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > manifest capability 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-eXhazG","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > context capability 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Gjl5sr","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > context capability 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Gjl5sr","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > credential fingerprint 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-lEoMO9","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > credential fingerprint 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-lEoMO9","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > overlap 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-cXeoAA","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > overlap 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-cXeoAA","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > revoked 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Uu2ziH","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > revoked 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Uu2ziH","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > expired 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-YDCdoA","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > expired 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-YDCdoA","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > Skill bytes 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-MbI11d","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > Skill bytes 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-MbI11d","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > Skill signature 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-qwcFhS","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > Skill signature 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-qwcFhS","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > download endpoint 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-xtlxPE","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > download endpoint 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-xtlxPE","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > context Team 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-jS0fRO","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > context Team 失败零正式写入并保留旧配置
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-jS0fRO","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > put 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RpfflK","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > put 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RpfflK","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > readback 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-V93wNS","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > readback 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-V93wNS","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > rename 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-l9pz0K","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > rename 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-l9pz0K","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > delete 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-V9zjXp","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > delete 失败补偿且旧引用不变
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-V9zjXp","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 秘密引用冲突不能让补偿删除既有秘密
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-g6uZC1","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 秘密引用冲突不能让补偿删除既有秘密
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-g6uZC1","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 清单可明确批准不同 origin 的 MCP 和 Skill，令牌只交给批准的 MCP
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Nnebvd","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 连接器完整验证与原子提交 > 清单可明确批准不同 origin 的 MCP 和 Skill，令牌只交给批准的 MCP
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Nnebvd","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 1 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-a2mHJK","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 1 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-a2mHJK","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 2 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Esko9C","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 2 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Esko9C","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 3 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RQF2LO","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 3 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RQF2LO","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 4 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-StXjTO","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 4 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-StXjTO","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 5 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-v6WT5p","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 5 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-v6WT5p","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 6 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-T8ZvB8","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 6 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-T8ZvB8","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 7 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-EPOA1E","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 7 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-EPOA1E","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 8 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-8JeC8V","state":"created"}
+@workmesh/connector:test:
+@workmesh/mcp:test: cache miss, executing 5a8a5611a93cd03c
+@workmesh/mcp:test:
+@workmesh/mcp:test: > @workmesh/mcp@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\mcp
+@workmesh/mcp:test: > vitest run
+@workmesh/mcp:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 8 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-8JeC8V","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 9 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-g8PL8K","state":"created"}
+@workmesh/connector:test:
+@workmesh/mcp:test:
+@workmesh/mcp:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/mcp
+@workmesh/mcp:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 9 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-g8PL8K","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 10 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Y2OPq2","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 10 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-Y2OPq2","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 11 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-C5Nkpj","state":"created"}
+@workmesh/connector:test:
+@workmesh/mcp:test:  ✓ src/http.test.ts (9 tests) 145ms
+@workmesh/mcp:test:  ✓ src/recovery.test.ts (9 tests) 364ms
+@workmesh/mcp:test:  ✓ src/execution-adapters.test.ts (4 tests) 393ms
+@workmesh/mcp:test:  ✓ src/index.test.ts (29 tests) 1339ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 11 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-C5Nkpj","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 12 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-ffJZ3h","state":"created"}
+@workmesh/connector:test:
+@workmesh/mcp:test:
+@workmesh/mcp:test:  Test Files  4 passed (4)
+@workmesh/mcp:test:       Tests  51 passed (51)
+@workmesh/mcp:test:    Start at  05:45:20
+@workmesh/mcp:test:    Duration  4.14s (transform 1.30s, setup 0ms, collect 6.20s, tests 2.24s, environment 1ms, prepare 858ms)
+@workmesh/mcp:test:
+@workmesh/mcp:build: cache miss, executing 9470209614f5ad4c
+@workmesh/mcp:build:
+@workmesh/mcp:build: > @workmesh/mcp@ build I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\mcp
+@workmesh/mcp:build: > tsc -p tsconfig.build.json
+@workmesh/mcp:build:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 12 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-ffJZ3h","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 13 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-AEyx6I","state":"created"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 13 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-AEyx6I","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 14 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RzKbJ4","state":"created"}
+@workmesh/connector:test:
+@workmesh/fake-agent:test: cache miss, executing 73f47db473514afb
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test: > @workmesh/fake-agent@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\fake-agent
+@workmesh/fake-agent:test: > vitest run
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/fake-agent
+@workmesh/fake-agent:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 14 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-RzKbJ4","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 15 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-HGCJR2","state":"created"}
+@workmesh/connector:test:
+@workmesh/fake-agent:test:  ✓ src/index.test.ts (4 tests) 32ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 15 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-HGCJR2","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 16 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-bnOP8f","state":"created"}
+@workmesh/connector:test:
+@workmesh/fake-agent:test:
+@workmesh/fake-agent:test:  Test Files  1 passed (1)
+@workmesh/fake-agent:test:       Tests  4 passed (4)
+@workmesh/fake-agent:test:    Start at  05:45:43
+@workmesh/fake-agent:test:    Duration  2.22s (transform 815ms, setup 0ms, collect 1.10s, tests 32ms, environment 0ms, prepare 191ms)
+@workmesh/fake-agent:test:
+@workmesh/worker:test: cache miss, executing b5c0c7019d1a1ed6
+@workmesh/worker:test:
+@workmesh/worker:test: > @workmesh/worker@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\worker
+@workmesh/worker:test: > vitest run
+@workmesh/worker:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 16 轮）
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-bnOP8f","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > pending 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-irVOVt","state":"created"}
+@workmesh/connector:test:
+@workmesh/worker:test:
+@workmesh/worker:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/worker
+@workmesh/worker:test:
+@workmesh/worker:test:  ✓ src/worker-runtime-identity.test.ts (8 tests) 271ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > pending 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-irVOVt","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > verified 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-lm4dHY","state":"created"}
+@workmesh/connector:test:
+@workmesh/worker:test:  ✓ src/retention-soak-credential.test.ts (13 tests) 156ms
+@workmesh/worker:test:  ✓ src/retention-soak-heartbeat.test.ts (7 tests) 144ms
+@workmesh/worker:test:  ✓ src/retention-soak-provision.test.ts (8 tests) 1602ms
+@workmesh/worker:test:  ✓ src/agent-webhook.test.ts (10 tests) 208ms
+@workmesh/worker:test:  ✓ src/runtime.test.ts (2 tests) 67ms
+@workmesh/worker:test:  ✓ src/retention-soak-provenance.test.ts (11 tests) 32ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > verified 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-lm4dHY","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > journal 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-NA9BsO","state":"created"}
+@workmesh/connector:test:
+@workmesh/worker:test:  ✓ src/retention-production-upgrade.test.ts (33 tests) 63ms
+@workmesh/worker:test:  ✓ src/wecom-notifications.test.ts (44 tests) 40ms
+@workmesh/worker:test:  ✓ src/retention-soak.test.ts (16 tests) 19ms
+@workmesh/worker:test:  ✓ src/retention-scheduler.test.ts (4 tests) 14ms
+@workmesh/worker:test:  ✓ src/retention-soak-lock.test.ts (10 tests | 1 skipped) 12ms
+@workmesh/worker:test:  ✓ src/retention-upgrade-barrier.test.ts (9 tests) 12ms
+@workmesh/worker:test:  ✓ src/dockerfile.test.ts (1 test) 143ms
+@workmesh/worker:test:  ✓ src/session-lifecycle.test.ts (7 tests) 9ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > journal 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-NA9BsO","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > secret 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-giQZb3","state":"created"}
+@workmesh/connector:test:
+@workmesh/worker:test:  ✓ src/retention-compose-json.test.ts (2 tests) 5ms
+@workmesh/worker:test:  ✓ src/retention-restart-archive-proof.test.ts (3 tests) 44ms
+@workmesh/worker:test:  ✓ src/retention-error.test.ts (4 tests) 5ms
+@workmesh/worker:test:  ✓ src/automation.test.ts (4 tests) 25ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > secret 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-giQZb3","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > secret_verified 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-kfuGO9","state":"created"}
+@workmesh/connector:test:
+@workmesh/worker:test:  ✓ src/retention-soak-formal-launch.test.ts (2 tests | 1 skipped) 5ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > secret_verified 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-kfuGO9","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > skill 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-1pbRgF","state":"created"}
+@workmesh/connector:test:
+@workmesh/worker:test:  ✓ src/realtime-redis.test.ts (10 tests) 143ms
+@workmesh/worker:test:  ✓ src/retention-inbox.test.ts (2 tests) 8ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > skill 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-1pbRgF","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > config 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-QrQrIJ","state":"created"}
+@workmesh/connector:test:
+@workmesh/worker:test:  ✓ src/provider-actions.test.ts (1 test) 4ms
+@workmesh/worker:test:  ✓ src/retention-acceptance-secrets.test.ts (1 test) 3ms
+@workmesh/worker:test:
+@workmesh/worker:test:  Test Files  24 passed (24)
+@workmesh/worker:test:       Tests  210 passed | 2 skipped (212)
+@workmesh/worker:test:    Start at  05:45:48
+@workmesh/worker:test:    Duration  17.75s (transform 4.89s, setup 0ms, collect 36.67s, tests 3.03s, environment 6ms, prepare 4.45s)
+@workmesh/worker:test:
+@workmesh/recovery:test: cache miss, executing 54eb1bc94d404c24
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > config 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-QrQrIJ","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > pending_removed 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-hdehsi","state":"created"}
+@workmesh/connector:test:
+@workmesh/recovery:test:
+@workmesh/recovery:test: > @workmesh/recovery@ test I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\packages\recovery
+@workmesh/recovery:test: > vitest run
+@workmesh/recovery:test:
+@workmesh/recovery:test:
+@workmesh/recovery:test:  RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/packages/recovery
+@workmesh/recovery:test:
+@workmesh/recovery:test:  ✓ src/recovery.test.ts (7 tests) 73ms
+@workmesh/connector:test: stdout | src/connect.test.ts > 真实客户端进程竞争与强制终止 > pending_removed 后被杀，重启恢复原子边界和身份
+@workmesh/connector:test: {"resource":"temporaryPath","path":"C:\\Users\\xurx\\workmesh-retirement-appdata-4079d7b8434a429abc2fb937f279f142\\workmesh-b1-b2-test-hdehsi","state":"removed"}
+@workmesh/connector:test:
+@workmesh/connector:test:  ✓ src/connect.test.ts (51 tests) 71514ms
+@workmesh/connector:test:    ✓ 连接器完整验证与原子提交 > 全部校验完成后才提交，成功重跑只校验当前身份，秘密不进入配置  755ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 1 轮）  5636ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 2 轮）  1755ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 3 轮）  1715ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 4 轮）  1695ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 5 轮）  1617ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 6 轮）  1565ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 7 轮）  1532ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 8 轮）  1692ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 9 轮）  1591ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 10 轮）  1819ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 11 轮）  1696ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 12 轮）  1885ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 13 轮）  3079ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 14 轮）  14524ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 15 轮）  1835ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > 两个进程竞争收敛同一请求和配置（第 16 轮）  1612ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > pending 后被杀，重启恢复原子边界和身份  3102ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > verified 后被杀，重启恢复原子边界和身份  2747ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > journal 后被杀，重启恢复原子边界和身份  2810ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > secret 后被杀，重启恢复原子边界和身份  2925ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > secret_verified 后被杀，重启恢复原子边界和身份  3114ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > skill 后被杀，重启恢复原子边界和身份  2991ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > config 后被杀，重启恢复原子边界和身份  2973ms
+@workmesh/connector:test:    ✓ 真实客户端进程竞争与强制终止 > pending_removed 后被杀，重启恢复原子边界和身份  2960ms
+@workmesh/recovery:test:
+@workmesh/recovery:test:  Test Files  1 passed (1)
+@workmesh/recovery:test:       Tests  7 passed (7)
+@workmesh/recovery:test:    Start at  05:46:10
+@workmesh/recovery:test:    Duration  1.13s (transform 204ms, setup 0ms, collect 306ms, tests 73ms, environment 0ms, prepare 189ms)
+@workmesh/recovery:test:
+@workmesh/connector:test:
+@workmesh/connector:test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+@workmesh/connector:test:
+@workmesh/connector:test:  FAIL  src/client-process.test.ts > 管道子进程看到提示后才发送输入并正常退出
+@workmesh/connector:test: AssertionError: expected false to be true // Object.is equality
+@workmesh/connector:test:
+@workmesh/connector:test: - Expected
+@workmesh/connector:test: + Received
+@workmesh/connector:test:
+@workmesh/connector:test: - true
+@workmesh/connector:test: + false
+@workmesh/connector:test:
+@workmesh/connector:test:  ❯ src/client-process.test.ts:61:21
+@workmesh/connector:test:      59|   try {
+@workmesh/connector:test:      60|     const [code] = await once(child, 'close')
+@workmesh/connector:test:      61|     expect(replied).toBe(true); expect(code).toBe(0)
+@workmesh/connector:test:        |                     ^
+@workmesh/connector:test:      62|     expect(stripVTControlCharacters(output)).toContain('[已隐藏]'); expec…
+@workmesh/connector:test:      63|     expect((stripVTControlCharacters(output + errors)).includes('wmi_'…
+@workmesh/connector:test:
+@workmesh/connector:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+@workmesh/connector:test:
+@workmesh/connector:test:  FAIL  src/client-process.test.ts > 真实嵌套终端保留 TTY、交互、尺寸变化及 Ctrl-C，输出仍脱敏
+@workmesh/connector:test: AssertionError: expected null to be +0 // Object.is equality
+@workmesh/connector:test:
+@workmesh/connector:test: - Expected:
+@workmesh/connector:test: 0
+@workmesh/connector:test:
+@workmesh/connector:test: + Received:
+@workmesh/connector:test: null
+@workmesh/connector:test:
+@workmesh/connector:test:  ❯ src/client-process.test.ts:101:26
+@workmesh/connector:test:      99|   try {
+@workmesh/connector:test:     100|     const [code] = await once(child, 'close')
+@workmesh/connector:test:     101|     expect(code, output).toBe(0)
+@workmesh/connector:test:        |                          ^
+@workmesh/connector:test:     102|     expect(output).toContain('"tty":true'); expect(output).toContain('…
+@workmesh/connector:test:     103|   } finally {
+@workmesh/connector:test:
+@workmesh/connector:test: ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+@workmesh/connector:test:
+@workmesh/connector:test:
+@workmesh/connector:test:  Test Files  1 failed | 2 passed (3)
+@workmesh/connector:test:       Tests  2 failed | 71 passed (73)
+@workmesh/connector:test:    Start at  05:43:52
+@workmesh/connector:test:    Duration  139.28s (transform 2.06s, setup 0ms, collect 70.81s, tests 105.73s, environment 1ms, prepare 714ms)
+@workmesh/connector:test:
+@workmesh/connector:test:  ELIFECYCLE  Test failed. See above for more details.
+@workmesh/recovery:build: cache miss, executing 71000debc39a586e
+@workmesh/connector#test:  ERROR  command (I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\connector) C:\Users\xurx\.tds\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\docs\reviews\backend-retirement\runtime-tools\pnpm.cmd run test exited (1)
+
+ Tasks:    25 successful, 28 total
+Cached:    0 cached, 28 total
+  Time:    12m25.316s
+Failed:    @workmesh/connector#test
+
+ WARNING  no output files found for task @workmesh/a2a-adapter#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/agent-runner#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/agent-sdk#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/artifact-storage#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/config#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/contracts#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/db#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/domain#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/fake-agent#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/git-provider#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/mcp#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/observability#test. Please check your `outputs` key in `turbo.json`
+ WARNING  no output files found for task @workmesh/worker#test. Please check your `outputs` key in `turbo.json`
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Test failed. See above for more details.

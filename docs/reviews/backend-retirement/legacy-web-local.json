@@ -1,0 +1,810 @@
+{
+  "task": "backend-web-upgrade-f10d4a3b",
+  "source": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+  "fixture": "busybox HTTP transport only; not an API/worker acceptance",
+  "commands": [
+    {
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "label=workmesh.task=backend-web-upgrade-f10d4a3b"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "volume",
+        "inspect",
+        "backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 1,
+      "stdout": "[]\n",
+      "stderr": "Error response from daemon: get backend-web-upgrade-f10d4a3b-business-data: no such volume\n"
+    },
+    {
+      "args": [
+        "volume",
+        "create",
+        "--label",
+        "workmesh.task=backend-web-upgrade-f10d4a3b",
+        "backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 0,
+      "stdout": "backend-web-upgrade-f10d4a3b-business-data\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "backend-web-upgrade-f10d4a3b-web",
+        "--label",
+        "workmesh.task=backend-web-upgrade-f10d4a3b",
+        "--label",
+        "com.docker.compose.project=backend-web-upgrade-f10d4a3b",
+        "--label",
+        "com.docker.compose.service=web",
+        "--label",
+        "com.docker.compose.project.config_files=/private/old-compose.yml",
+        "--label",
+        "com.docker.compose.project.working_dir=/private",
+        "--mount",
+        "type=volume,source=backend-web-upgrade-f10d4a3b-business-data,target=/data",
+        "-p",
+        "127.0.0.1::3000",
+        "busybox:1.36.1",
+        "sh",
+        "-c",
+        "echo preserved >/data/marker; echo legacy >/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp & wait"
+      ],
+      "status": 0,
+      "stdout": "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "inspect",
+        "--format",
+        "{{json .NetworkSettings.Ports}}",
+        "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+      ],
+      "status": 0,
+      "stdout": "{\"3000/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"5592\"}]}\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "ps",
+        "-aq",
+        "--no-trunc",
+        "--filter",
+        "label=com.docker.compose.project=backend-web-upgrade-f10d4a3b",
+        "--filter",
+        "label=com.docker.compose.service=web"
+      ],
+      "status": 0,
+      "stdout": "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "inspect",
+        "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+      ],
+      "status": 0,
+      "stdout": "[\n    {\n        \"Id\": \"2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\",\n        \"Created\": \"2026-10-12T00:16:20.9247721Z\",\n        \"Path\": \"sh\",\n        \"Args\": [\n            \"-c\",\n            \"echo preserved \\u003e/data/marker; echo legacy \\u003e/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp \\u0026 wait\"\n        ],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 62882,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-10-12T00:16:21.173042Z\",\n            \"FinishedAt\": \"0001-01-01T00:00:00Z\"\n        },\n        \"Image\": \"sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hosts\",\n        \"LogPath\": \"\",\n        \"Name\": \"/backend-web-upgrade-f10d4a3b-web\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": null,\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"local\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"bridge\",\n            \"PortBindings\": {\n                \"3000/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"\"\n                    }\n                ]\n            },\n            \"RestartPolicy\": {\n                \"Name\": \"no\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": null,\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": null,\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": false,\n            \"SecurityOpt\": null,\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 0,\n            \"NanoCpus\": 0,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": [],\n            \"BlkioDeviceReadBps\": [],\n            \"BlkioDeviceWriteBps\": [],\n            \"BlkioDeviceReadIOps\": [],\n            \"BlkioDeviceWriteIOps\": [],\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": [],\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 0,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": null,\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"Mounts\": [\n                {\n                    \"Type\": \"volume\",\n                    \"Source\": \"backend-web-upgrade-f10d4a3b-business-data\",\n                    \"Target\": \"/data\"\n                }\n            ],\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"volume\",\n                \"Name\": \"backend-web-upgrade-f10d4a3b-business-data\",\n                \"Source\": \"/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data\",\n                \"Destination\": \"/data\",\n                \"Driver\": \"local\",\n                \"Mode\": \"z\",\n                \"RW\": true,\n                \"Propagation\": \"\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"2301c2cf68ed\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": false,\n            \"AttachStderr\": false,\n            \"ExposedPorts\": {\n                \"3000/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n            ],\n            \"Cmd\": [\n                \"sh\",\n                \"-c\",\n                \"echo preserved \\u003e/data/marker; echo legacy \\u003e/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp \\u0026 wait\"\n            ],\n            \"Image\": \"busybox:1.36.1\",\n            \"Volumes\": null,\n            \"WorkingDir\": \"\",\n            \"Entrypoint\": null,\n            \"Labels\": {\n                \"com.docker.compose.project\": \"backend-web-upgrade-f10d4a3b\",\n                \"com.docker.compose.project.config_files\": \"/private/old-compose.yml\",\n                \"com.docker.compose.project.working_dir\": \"/private\",\n                \"com.docker.compose.service\": \"web\",\n                \"workmesh.task\": \"backend-web-upgrade-f10d4a3b\"\n            }\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"83731c7152328a4ba241b10f8c9a02429c23d3152c816ba75bd073aaed700d37\",\n            \"SandboxKey\": \"/var/run/docker/netns/83731c715232\",\n            \"Ports\": {\n                \"3000/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"5592\"\n                    }\n                ]\n            },\n            \"Networks\": {\n                \"bridge\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": null,\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"a3fe1eac4d59569e930fde57853410354b5c5173166a6a1123d1e13a73a95697\",\n                    \"EndpointID\": \"780d1240fc46702ba500d8c7e72a65f4312254773ad88602f0db1dc23f0b706b\",\n                    \"Gateway\": \"172.17.0.1\",\n                    \"IPAddress\": \"172.17.0.2\",\n                    \"MacAddress\": \"fe:86:ed:37:20:18\",\n                    \"IPPrefixLen\": 16,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": null\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:b7f3d86d6e84fc17718c48bcde1450807faa2d56704205c697b4bd5df7b9e29f\",\n            \"size\": 610,\n            \"annotations\": {\n                \"com.docker.official-images.bashbrew.arch\": \"amd64\",\n                \"org.opencontainers.image.base.name\": \"scratch\",\n                \"org.opencontainers.image.created\": \"2026-03-18T22:39:12Z\",\n                \"org.opencontainers.image.revision\": \"c1375496373e76f680b1ef5f713500e98921a45c\",\n                \"org.opencontainers.image.source\": \"https://github.com/docker-library/busybox.git\",\n                \"org.opencontainers.image.url\": \"https://hub.docker.com/_/busybox\",\n                \"org.opencontainers.image.version\": \"1.36.1-glibc\"\n            },\n            \"platform\": {\n                \"architecture\": \"amd64\",\n                \"os\": \"linux\"\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "volume",
+        "inspect",
+        "backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 0,
+      "stdout": "[\n    {\n        \"CreatedAt\": \"2026-10-12T00:16:20Z\",\n        \"Driver\": \"local\",\n        \"Labels\": {\n            \"workmesh.task\": \"backend-web-upgrade-f10d4a3b\"\n        },\n        \"Mountpoint\": \"/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data\",\n        \"Name\": \"backend-web-upgrade-f10d4a3b-business-data\",\n        \"Options\": null,\n        \"Scope\": \"local\"\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "inspect",
+        "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+      ],
+      "status": 0,
+      "stdout": "[\n    {\n        \"Id\": \"2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\",\n        \"Created\": \"2026-10-12T00:16:20.9247721Z\",\n        \"Path\": \"sh\",\n        \"Args\": [\n            \"-c\",\n            \"echo preserved \\u003e/data/marker; echo legacy \\u003e/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp \\u0026 wait\"\n        ],\n        \"State\": {\n            \"Status\": \"running\",\n            \"Running\": true,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 62882,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-10-12T00:16:21.173042Z\",\n            \"FinishedAt\": \"0001-01-01T00:00:00Z\"\n        },\n        \"Image\": \"sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hosts\",\n        \"LogPath\": \"\",\n        \"Name\": \"/backend-web-upgrade-f10d4a3b-web\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": null,\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"local\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"bridge\",\n            \"PortBindings\": {\n                \"3000/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"\"\n                    }\n                ]\n            },\n            \"RestartPolicy\": {\n                \"Name\": \"no\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": null,\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": null,\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": false,\n            \"SecurityOpt\": null,\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 0,\n            \"NanoCpus\": 0,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": [],\n            \"BlkioDeviceReadBps\": [],\n            \"BlkioDeviceWriteBps\": [],\n            \"BlkioDeviceReadIOps\": [],\n            \"BlkioDeviceWriteIOps\": [],\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": [],\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 0,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": null,\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"Mounts\": [\n                {\n                    \"Type\": \"volume\",\n                    \"Source\": \"backend-web-upgrade-f10d4a3b-business-data\",\n                    \"Target\": \"/data\"\n                }\n            ],\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"volume\",\n                \"Name\": \"backend-web-upgrade-f10d4a3b-business-data\",\n                \"Source\": \"/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data\",\n                \"Destination\": \"/data\",\n                \"Driver\": \"local\",\n                \"Mode\": \"z\",\n                \"RW\": true,\n                \"Propagation\": \"\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"2301c2cf68ed\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": false,\n            \"AttachStderr\": false,\n            \"ExposedPorts\": {\n                \"3000/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n            ],\n            \"Cmd\": [\n                \"sh\",\n                \"-c\",\n                \"echo preserved \\u003e/data/marker; echo legacy \\u003e/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp \\u0026 wait\"\n            ],\n            \"Image\": \"busybox:1.36.1\",\n            \"Volumes\": null,\n            \"WorkingDir\": \"\",\n            \"Entrypoint\": null,\n            \"Labels\": {\n                \"com.docker.compose.project\": \"backend-web-upgrade-f10d4a3b\",\n                \"com.docker.compose.project.config_files\": \"/private/old-compose.yml\",\n                \"com.docker.compose.project.working_dir\": \"/private\",\n                \"com.docker.compose.service\": \"web\",\n                \"workmesh.task\": \"backend-web-upgrade-f10d4a3b\"\n            }\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"83731c7152328a4ba241b10f8c9a02429c23d3152c816ba75bd073aaed700d37\",\n            \"SandboxKey\": \"/var/run/docker/netns/83731c715232\",\n            \"Ports\": {\n                \"3000/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"5592\"\n                    }\n                ]\n            },\n            \"Networks\": {\n                \"bridge\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": null,\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"a3fe1eac4d59569e930fde57853410354b5c5173166a6a1123d1e13a73a95697\",\n                    \"EndpointID\": \"780d1240fc46702ba500d8c7e72a65f4312254773ad88602f0db1dc23f0b706b\",\n                    \"Gateway\": \"172.17.0.1\",\n                    \"IPAddress\": \"172.17.0.2\",\n                    \"MacAddress\": \"fe:86:ed:37:20:18\",\n                    \"IPPrefixLen\": 16,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": null\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:b7f3d86d6e84fc17718c48bcde1450807faa2d56704205c697b4bd5df7b9e29f\",\n            \"size\": 610,\n            \"annotations\": {\n                \"com.docker.official-images.bashbrew.arch\": \"amd64\",\n                \"org.opencontainers.image.base.name\": \"scratch\",\n                \"org.opencontainers.image.created\": \"2026-03-18T22:39:12Z\",\n                \"org.opencontainers.image.revision\": \"c1375496373e76f680b1ef5f713500e98921a45c\",\n                \"org.opencontainers.image.source\": \"https://github.com/docker-library/busybox.git\",\n                \"org.opencontainers.image.url\": \"https://hub.docker.com/_/busybox\",\n                \"org.opencontainers.image.version\": \"1.36.1-glibc\"\n            },\n            \"platform\": {\n                \"architecture\": \"amd64\",\n                \"os\": \"linux\"\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "stop",
+        "--time",
+        "35",
+        "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+      ],
+      "status": 0,
+      "stdout": "Flag --time has been deprecated, use --timeout instead\n2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "inspect",
+        "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+      ],
+      "status": 0,
+      "stdout": "[\n    {\n        \"Id\": \"2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\",\n        \"Created\": \"2026-10-12T00:16:20.9247721Z\",\n        \"Path\": \"sh\",\n        \"Args\": [\n            \"-c\",\n            \"echo preserved \\u003e/data/marker; echo legacy \\u003e/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp \\u0026 wait\"\n        ],\n        \"State\": {\n            \"Status\": \"exited\",\n            \"Running\": false,\n            \"Paused\": false,\n            \"Restarting\": false,\n            \"OOMKilled\": false,\n            \"Dead\": false,\n            \"Pid\": 0,\n            \"ExitCode\": 0,\n            \"Error\": \"\",\n            \"StartedAt\": \"2026-10-12T00:16:21.173042Z\",\n            \"FinishedAt\": \"2026-10-12T00:16:23.3322858Z\"\n        },\n        \"Image\": \"sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662\",\n        \"ResolvConfPath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/resolv.conf\",\n        \"HostnamePath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hostname\",\n        \"HostsPath\": \"/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hosts\",\n        \"LogPath\": \"\",\n        \"Name\": \"/backend-web-upgrade-f10d4a3b-web\",\n        \"RestartCount\": 0,\n        \"Driver\": \"overlayfs\",\n        \"Platform\": \"linux\",\n        \"MountLabel\": \"\",\n        \"ProcessLabel\": \"\",\n        \"AppArmorProfile\": \"\",\n        \"ExecIDs\": null,\n        \"HostConfig\": {\n            \"Binds\": null,\n            \"ContainerIDFile\": \"\",\n            \"LogConfig\": {\n                \"Type\": \"local\",\n                \"Config\": {}\n            },\n            \"NetworkMode\": \"bridge\",\n            \"PortBindings\": {\n                \"3000/tcp\": [\n                    {\n                        \"HostIp\": \"127.0.0.1\",\n                        \"HostPort\": \"\"\n                    }\n                ]\n            },\n            \"RestartPolicy\": {\n                \"Name\": \"no\",\n                \"MaximumRetryCount\": 0\n            },\n            \"AutoRemove\": false,\n            \"VolumeDriver\": \"\",\n            \"VolumesFrom\": null,\n            \"ConsoleSize\": [\n                0,\n                0\n            ],\n            \"CapAdd\": null,\n            \"CapDrop\": null,\n            \"CgroupnsMode\": \"private\",\n            \"Dns\": null,\n            \"DnsOptions\": [],\n            \"DnsSearch\": [],\n            \"ExtraHosts\": null,\n            \"GroupAdd\": null,\n            \"IpcMode\": \"private\",\n            \"Cgroup\": \"\",\n            \"Links\": null,\n            \"OomScoreAdj\": 0,\n            \"PidMode\": \"\",\n            \"Privileged\": false,\n            \"PublishAllPorts\": false,\n            \"ReadonlyRootfs\": false,\n            \"SecurityOpt\": null,\n            \"UTSMode\": \"\",\n            \"UsernsMode\": \"\",\n            \"ShmSize\": 67108864,\n            \"Runtime\": \"runc\",\n            \"Isolation\": \"\",\n            \"CpuShares\": 0,\n            \"Memory\": 0,\n            \"NanoCpus\": 0,\n            \"CgroupParent\": \"\",\n            \"BlkioWeight\": 0,\n            \"BlkioWeightDevice\": [],\n            \"BlkioDeviceReadBps\": [],\n            \"BlkioDeviceWriteBps\": [],\n            \"BlkioDeviceReadIOps\": [],\n            \"BlkioDeviceWriteIOps\": [],\n            \"CpuPeriod\": 0,\n            \"CpuQuota\": 0,\n            \"CpuRealtimePeriod\": 0,\n            \"CpuRealtimeRuntime\": 0,\n            \"CpusetCpus\": \"\",\n            \"CpusetMems\": \"\",\n            \"Devices\": [],\n            \"DeviceCgroupRules\": null,\n            \"DeviceRequests\": null,\n            \"MemoryReservation\": 0,\n            \"MemorySwap\": 0,\n            \"MemorySwappiness\": null,\n            \"OomKillDisable\": null,\n            \"PidsLimit\": null,\n            \"Ulimits\": null,\n            \"CpuCount\": 0,\n            \"CpuPercent\": 0,\n            \"IOMaximumIOps\": 0,\n            \"IOMaximumBandwidth\": 0,\n            \"Mounts\": [\n                {\n                    \"Type\": \"volume\",\n                    \"Source\": \"backend-web-upgrade-f10d4a3b-business-data\",\n                    \"Target\": \"/data\"\n                }\n            ],\n            \"MaskedPaths\": [\n                \"/proc/acpi\",\n                \"/proc/asound\",\n                \"/proc/interrupts\",\n                \"/proc/kcore\",\n                \"/proc/keys\",\n                \"/proc/latency_stats\",\n                \"/proc/sched_debug\",\n                \"/proc/scsi\",\n                \"/proc/timer_list\",\n                \"/proc/timer_stats\",\n                \"/sys/devices/virtual/powercap\",\n                \"/sys/firmware\"\n            ],\n            \"ReadonlyPaths\": [\n                \"/proc/bus\",\n                \"/proc/fs\",\n                \"/proc/irq\",\n                \"/proc/sys\",\n                \"/proc/sysrq-trigger\"\n            ]\n        },\n        \"Storage\": {\n            \"RootFS\": {\n                \"Snapshot\": {\n                    \"Name\": \"overlayfs\"\n                }\n            }\n        },\n        \"Mounts\": [\n            {\n                \"Type\": \"volume\",\n                \"Name\": \"backend-web-upgrade-f10d4a3b-business-data\",\n                \"Source\": \"/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data\",\n                \"Destination\": \"/data\",\n                \"Driver\": \"local\",\n                \"Mode\": \"z\",\n                \"RW\": true,\n                \"Propagation\": \"\"\n            }\n        ],\n        \"Config\": {\n            \"Hostname\": \"2301c2cf68ed\",\n            \"Domainname\": \"\",\n            \"User\": \"\",\n            \"AttachStdin\": false,\n            \"AttachStdout\": false,\n            \"AttachStderr\": false,\n            \"ExposedPorts\": {\n                \"3000/tcp\": {}\n            },\n            \"Tty\": false,\n            \"OpenStdin\": false,\n            \"StdinOnce\": false,\n            \"Env\": [\n                \"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n            ],\n            \"Cmd\": [\n                \"sh\",\n                \"-c\",\n                \"echo preserved \\u003e/data/marker; echo legacy \\u003e/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp \\u0026 wait\"\n            ],\n            \"Image\": \"busybox:1.36.1\",\n            \"Volumes\": null,\n            \"WorkingDir\": \"\",\n            \"Entrypoint\": null,\n            \"Labels\": {\n                \"com.docker.compose.project\": \"backend-web-upgrade-f10d4a3b\",\n                \"com.docker.compose.project.config_files\": \"/private/old-compose.yml\",\n                \"com.docker.compose.project.working_dir\": \"/private\",\n                \"com.docker.compose.service\": \"web\",\n                \"workmesh.task\": \"backend-web-upgrade-f10d4a3b\"\n            }\n        },\n        \"NetworkSettings\": {\n            \"SandboxID\": \"\",\n            \"SandboxKey\": \"\",\n            \"Ports\": {},\n            \"Networks\": {\n                \"bridge\": {\n                    \"IPAMConfig\": null,\n                    \"Links\": null,\n                    \"Aliases\": null,\n                    \"DriverOpts\": null,\n                    \"GwPriority\": 0,\n                    \"NetworkID\": \"a3fe1eac4d59569e930fde57853410354b5c5173166a6a1123d1e13a73a95697\",\n                    \"EndpointID\": \"\",\n                    \"Gateway\": \"\",\n                    \"IPAddress\": \"\",\n                    \"MacAddress\": \"\",\n                    \"IPPrefixLen\": 0,\n                    \"IPv6Gateway\": \"\",\n                    \"GlobalIPv6Address\": \"\",\n                    \"GlobalIPv6PrefixLen\": 0,\n                    \"DNSNames\": null\n                }\n            }\n        },\n        \"ImageManifestDescriptor\": {\n            \"mediaType\": \"application/vnd.oci.image.manifest.v1+json\",\n            \"digest\": \"sha256:b7f3d86d6e84fc17718c48bcde1450807faa2d56704205c697b4bd5df7b9e29f\",\n            \"size\": 610,\n            \"annotations\": {\n                \"com.docker.official-images.bashbrew.arch\": \"amd64\",\n                \"org.opencontainers.image.base.name\": \"scratch\",\n                \"org.opencontainers.image.created\": \"2026-03-18T22:39:12Z\",\n                \"org.opencontainers.image.revision\": \"c1375496373e76f680b1ef5f713500e98921a45c\",\n                \"org.opencontainers.image.source\": \"https://github.com/docker-library/busybox.git\",\n                \"org.opencontainers.image.url\": \"https://hub.docker.com/_/busybox\",\n                \"org.opencontainers.image.version\": \"1.36.1-glibc\"\n            },\n            \"platform\": {\n                \"architecture\": \"amd64\",\n                \"os\": \"linux\"\n            }\n        }\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rm",
+        "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+      ],
+      "status": 0,
+      "stdout": "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "ps",
+        "-aq",
+        "--no-trunc",
+        "--filter",
+        "label=com.docker.compose.project=backend-web-upgrade-f10d4a3b",
+        "--filter",
+        "label=com.docker.compose.service=web"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "inspect",
+        "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+      ],
+      "status": 1,
+      "stdout": "[]\n",
+      "stderr": "error: no such object: 2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56\n"
+    },
+    {
+      "args": [
+        "volume",
+        "inspect",
+        "backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 0,
+      "stdout": "[\n    {\n        \"CreatedAt\": \"2026-10-12T00:16:20Z\",\n        \"Driver\": \"local\",\n        \"Labels\": {\n            \"workmesh.task\": \"backend-web-upgrade-f10d4a3b\"\n        },\n        \"Mountpoint\": \"/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data\",\n        \"Name\": \"backend-web-upgrade-f10d4a3b-business-data\",\n        \"Options\": null,\n        \"Scope\": \"local\"\n    }\n]\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "run",
+        "-d",
+        "--name",
+        "backend-web-upgrade-f10d4a3b-replacement",
+        "--label",
+        "workmesh.task=backend-web-upgrade-f10d4a3b",
+        "--mount",
+        "type=volume,source=backend-web-upgrade-f10d4a3b-business-data,target=/data",
+        "-p",
+        "127.0.0.1:5592:3000",
+        "busybox:1.36.1",
+        "sh",
+        "-c",
+        "cat /data/marker >/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp & wait"
+      ],
+      "status": 0,
+      "stdout": "18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "inspect",
+        "--format",
+        "{{index .Config.Labels \"workmesh.task\"}}",
+        "18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3"
+      ],
+      "status": 0,
+      "stdout": "backend-web-upgrade-f10d4a3b\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "stop",
+        "--time",
+        "35",
+        "18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3"
+      ],
+      "status": 0,
+      "stdout": "Flag --time has been deprecated, use --timeout instead\n18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rm",
+        "18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3"
+      ],
+      "status": 0,
+      "stdout": "18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "inspect",
+        "18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3"
+      ],
+      "status": 1,
+      "stdout": "[]\n",
+      "stderr": "error: no such object: 18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3\n"
+    },
+    {
+      "args": [
+        "volume",
+        "inspect",
+        "--format",
+        "{{index .Labels \"workmesh.task\"}}",
+        "backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 0,
+      "stdout": "backend-web-upgrade-f10d4a3b\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "ps",
+        "-aq",
+        "--filter",
+        "volume=backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "volume",
+        "rm",
+        "backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 0,
+      "stdout": "backend-web-upgrade-f10d4a3b-business-data\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "volume",
+        "inspect",
+        "backend-web-upgrade-f10d4a3b-business-data"
+      ],
+      "status": 1,
+      "stdout": "[]\n",
+      "stderr": "Error response from daemon: get backend-web-upgrade-f10d4a3b-business-data: no such volume\n"
+    }
+  ],
+  "cleanup": [
+    {
+      "id": "18e22f0879bf7bb668c3eb6321146b807cdbfd5211335454cef12e6cee75e9d3",
+      "absent": true
+    },
+    {
+      "volume": "backend-web-upgrade-f10d4a3b-business-data",
+      "absent": true
+    }
+  ],
+  "retired": {
+    "project": "backend-web-upgrade-f10d4a3b",
+    "containerIds": [
+      "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56"
+    ],
+    "configFile": "/private/old-compose.yml",
+    "workingDirectory": "/private",
+    "before": [
+      {
+        "Id": "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56",
+        "Created": "2026-10-12T00:16:20.9247721Z",
+        "Path": "sh",
+        "Args": [
+          "-c",
+          "echo preserved >/data/marker; echo legacy >/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp & wait"
+        ],
+        "State": {
+          "Status": "running",
+          "Running": true,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 62882,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-10-12T00:16:21.173042Z",
+          "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662",
+        "ResolvConfPath": "/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hostname",
+        "HostsPath": "/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hosts",
+        "LogPath": "",
+        "Name": "/backend-web-upgrade-f10d4a3b-web",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+          "Binds": null,
+          "ContainerIDFile": "",
+          "LogConfig": {
+            "Type": "local",
+            "Config": {}
+          },
+          "NetworkMode": "bridge",
+          "PortBindings": {
+            "3000/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": ""
+              }
+            ]
+          },
+          "RestartPolicy": {
+            "Name": "no",
+            "MaximumRetryCount": 0
+          },
+          "AutoRemove": false,
+          "VolumeDriver": "",
+          "VolumesFrom": null,
+          "ConsoleSize": [
+            0,
+            0
+          ],
+          "CapAdd": null,
+          "CapDrop": null,
+          "CgroupnsMode": "private",
+          "Dns": null,
+          "DnsOptions": [],
+          "DnsSearch": [],
+          "ExtraHosts": null,
+          "GroupAdd": null,
+          "IpcMode": "private",
+          "Cgroup": "",
+          "Links": null,
+          "OomScoreAdj": 0,
+          "PidMode": "",
+          "Privileged": false,
+          "PublishAllPorts": false,
+          "ReadonlyRootfs": false,
+          "SecurityOpt": null,
+          "UTSMode": "",
+          "UsernsMode": "",
+          "ShmSize": 67108864,
+          "Runtime": "runc",
+          "Isolation": "",
+          "CpuShares": 0,
+          "Memory": 0,
+          "NanoCpus": 0,
+          "CgroupParent": "",
+          "BlkioWeight": 0,
+          "BlkioWeightDevice": [],
+          "BlkioDeviceReadBps": [],
+          "BlkioDeviceWriteBps": [],
+          "BlkioDeviceReadIOps": [],
+          "BlkioDeviceWriteIOps": [],
+          "CpuPeriod": 0,
+          "CpuQuota": 0,
+          "CpuRealtimePeriod": 0,
+          "CpuRealtimeRuntime": 0,
+          "CpusetCpus": "",
+          "CpusetMems": "",
+          "Devices": [],
+          "DeviceCgroupRules": null,
+          "DeviceRequests": null,
+          "MemoryReservation": 0,
+          "MemorySwap": 0,
+          "MemorySwappiness": null,
+          "OomKillDisable": null,
+          "PidsLimit": null,
+          "Ulimits": null,
+          "CpuCount": 0,
+          "CpuPercent": 0,
+          "IOMaximumIOps": 0,
+          "IOMaximumBandwidth": 0,
+          "Mounts": [
+            {
+              "Type": "volume",
+              "Source": "backend-web-upgrade-f10d4a3b-business-data",
+              "Target": "/data"
+            }
+          ],
+          "MaskedPaths": [
+            "/proc/acpi",
+            "/proc/asound",
+            "/proc/interrupts",
+            "/proc/kcore",
+            "/proc/keys",
+            "/proc/latency_stats",
+            "/proc/sched_debug",
+            "/proc/scsi",
+            "/proc/timer_list",
+            "/proc/timer_stats",
+            "/sys/devices/virtual/powercap",
+            "/sys/firmware"
+          ],
+          "ReadonlyPaths": [
+            "/proc/bus",
+            "/proc/fs",
+            "/proc/irq",
+            "/proc/sys",
+            "/proc/sysrq-trigger"
+          ]
+        },
+        "Storage": {
+          "RootFS": {
+            "Snapshot": {
+              "Name": "overlayfs"
+            }
+          }
+        },
+        "Mounts": [
+          {
+            "Type": "volume",
+            "Name": "backend-web-upgrade-f10d4a3b-business-data",
+            "Source": "/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "z",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "Config": {
+          "Hostname": "2301c2cf68ed",
+          "Domainname": "",
+          "User": "",
+          "AttachStdin": false,
+          "AttachStdout": false,
+          "AttachStderr": false,
+          "ExposedPorts": {
+            "3000/tcp": {}
+          },
+          "Tty": false,
+          "OpenStdin": false,
+          "StdinOnce": false,
+          "Env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          ],
+          "Cmd": [
+            "sh",
+            "-c",
+            "echo preserved >/data/marker; echo legacy >/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp & wait"
+          ],
+          "Image": "busybox:1.36.1",
+          "Volumes": null,
+          "WorkingDir": "",
+          "Entrypoint": null,
+          "Labels": {
+            "com.docker.compose.project": "backend-web-upgrade-f10d4a3b",
+            "com.docker.compose.project.config_files": "/private/old-compose.yml",
+            "com.docker.compose.project.working_dir": "/private",
+            "com.docker.compose.service": "web",
+            "workmesh.task": "backend-web-upgrade-f10d4a3b"
+          }
+        },
+        "NetworkSettings": {
+          "SandboxID": "83731c7152328a4ba241b10f8c9a02429c23d3152c816ba75bd073aaed700d37",
+          "SandboxKey": "/var/run/docker/netns/83731c715232",
+          "Ports": {
+            "3000/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": "5592"
+              }
+            ]
+          },
+          "Networks": {
+            "bridge": {
+              "IPAMConfig": null,
+              "Links": null,
+              "Aliases": null,
+              "DriverOpts": null,
+              "GwPriority": 0,
+              "NetworkID": "a3fe1eac4d59569e930fde57853410354b5c5173166a6a1123d1e13a73a95697",
+              "EndpointID": "780d1240fc46702ba500d8c7e72a65f4312254773ad88602f0db1dc23f0b706b",
+              "Gateway": "172.17.0.1",
+              "IPAddress": "172.17.0.2",
+              "MacAddress": "fe:86:ed:37:20:18",
+              "IPPrefixLen": 16,
+              "IPv6Gateway": "",
+              "GlobalIPv6Address": "",
+              "GlobalIPv6PrefixLen": 0,
+              "DNSNames": null
+            }
+          }
+        },
+        "ImageManifestDescriptor": {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:b7f3d86d6e84fc17718c48bcde1450807faa2d56704205c697b4bd5df7b9e29f",
+          "size": 610,
+          "annotations": {
+            "com.docker.official-images.bashbrew.arch": "amd64",
+            "org.opencontainers.image.base.name": "scratch",
+            "org.opencontainers.image.created": "2026-03-18T22:39:12Z",
+            "org.opencontainers.image.revision": "c1375496373e76f680b1ef5f713500e98921a45c",
+            "org.opencontainers.image.source": "https://github.com/docker-library/busybox.git",
+            "org.opencontainers.image.url": "https://hub.docker.com/_/busybox",
+            "org.opencontainers.image.version": "1.36.1-glibc"
+          },
+          "platform": {
+            "architecture": "amd64",
+            "os": "linux"
+          }
+        }
+      }
+    ],
+    "stopped": [
+      {
+        "Id": "2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56",
+        "Created": "2026-10-12T00:16:20.9247721Z",
+        "Path": "sh",
+        "Args": [
+          "-c",
+          "echo preserved >/data/marker; echo legacy >/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp & wait"
+        ],
+        "State": {
+          "Status": "exited",
+          "Running": false,
+          "Paused": false,
+          "Restarting": false,
+          "OOMKilled": false,
+          "Dead": false,
+          "Pid": 0,
+          "ExitCode": 0,
+          "Error": "",
+          "StartedAt": "2026-10-12T00:16:21.173042Z",
+          "FinishedAt": "2026-10-12T00:16:23.3322858Z"
+        },
+        "Image": "sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662",
+        "ResolvConfPath": "/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hostname",
+        "HostsPath": "/var/lib/docker/containers/2301c2cf68ed6c93102ded6ebc0e8c5dd758d4afbca94e87d2ea7acf7dd50c56/hosts",
+        "LogPath": "",
+        "Name": "/backend-web-upgrade-f10d4a3b-web",
+        "RestartCount": 0,
+        "Driver": "overlayfs",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+          "Binds": null,
+          "ContainerIDFile": "",
+          "LogConfig": {
+            "Type": "local",
+            "Config": {}
+          },
+          "NetworkMode": "bridge",
+          "PortBindings": {
+            "3000/tcp": [
+              {
+                "HostIp": "127.0.0.1",
+                "HostPort": ""
+              }
+            ]
+          },
+          "RestartPolicy": {
+            "Name": "no",
+            "MaximumRetryCount": 0
+          },
+          "AutoRemove": false,
+          "VolumeDriver": "",
+          "VolumesFrom": null,
+          "ConsoleSize": [
+            0,
+            0
+          ],
+          "CapAdd": null,
+          "CapDrop": null,
+          "CgroupnsMode": "private",
+          "Dns": null,
+          "DnsOptions": [],
+          "DnsSearch": [],
+          "ExtraHosts": null,
+          "GroupAdd": null,
+          "IpcMode": "private",
+          "Cgroup": "",
+          "Links": null,
+          "OomScoreAdj": 0,
+          "PidMode": "",
+          "Privileged": false,
+          "PublishAllPorts": false,
+          "ReadonlyRootfs": false,
+          "SecurityOpt": null,
+          "UTSMode": "",
+          "UsernsMode": "",
+          "ShmSize": 67108864,
+          "Runtime": "runc",
+          "Isolation": "",
+          "CpuShares": 0,
+          "Memory": 0,
+          "NanoCpus": 0,
+          "CgroupParent": "",
+          "BlkioWeight": 0,
+          "BlkioWeightDevice": [],
+          "BlkioDeviceReadBps": [],
+          "BlkioDeviceWriteBps": [],
+          "BlkioDeviceReadIOps": [],
+          "BlkioDeviceWriteIOps": [],
+          "CpuPeriod": 0,
+          "CpuQuota": 0,
+          "CpuRealtimePeriod": 0,
+          "CpuRealtimeRuntime": 0,
+          "CpusetCpus": "",
+          "CpusetMems": "",
+          "Devices": [],
+          "DeviceCgroupRules": null,
+          "DeviceRequests": null,
+          "MemoryReservation": 0,
+          "MemorySwap": 0,
+          "MemorySwappiness": null,
+          "OomKillDisable": null,
+          "PidsLimit": null,
+          "Ulimits": null,
+          "CpuCount": 0,
+          "CpuPercent": 0,
+          "IOMaximumIOps": 0,
+          "IOMaximumBandwidth": 0,
+          "Mounts": [
+            {
+              "Type": "volume",
+              "Source": "backend-web-upgrade-f10d4a3b-business-data",
+              "Target": "/data"
+            }
+          ],
+          "MaskedPaths": [
+            "/proc/acpi",
+            "/proc/asound",
+            "/proc/interrupts",
+            "/proc/kcore",
+            "/proc/keys",
+            "/proc/latency_stats",
+            "/proc/sched_debug",
+            "/proc/scsi",
+            "/proc/timer_list",
+            "/proc/timer_stats",
+            "/sys/devices/virtual/powercap",
+            "/sys/firmware"
+          ],
+          "ReadonlyPaths": [
+            "/proc/bus",
+            "/proc/fs",
+            "/proc/irq",
+            "/proc/sys",
+            "/proc/sysrq-trigger"
+          ]
+        },
+        "Storage": {
+          "RootFS": {
+            "Snapshot": {
+              "Name": "overlayfs"
+            }
+          }
+        },
+        "Mounts": [
+          {
+            "Type": "volume",
+            "Name": "backend-web-upgrade-f10d4a3b-business-data",
+            "Source": "/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data",
+            "Destination": "/data",
+            "Driver": "local",
+            "Mode": "z",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "Config": {
+          "Hostname": "2301c2cf68ed",
+          "Domainname": "",
+          "User": "",
+          "AttachStdin": false,
+          "AttachStdout": false,
+          "AttachStderr": false,
+          "ExposedPorts": {
+            "3000/tcp": {}
+          },
+          "Tty": false,
+          "OpenStdin": false,
+          "StdinOnce": false,
+          "Env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          ],
+          "Cmd": [
+            "sh",
+            "-c",
+            "echo preserved >/data/marker; echo legacy >/tmp/index.html; trap 'exit 0' TERM; httpd -f -p 3000 -h /tmp & wait"
+          ],
+          "Image": "busybox:1.36.1",
+          "Volumes": null,
+          "WorkingDir": "",
+          "Entrypoint": null,
+          "Labels": {
+            "com.docker.compose.project": "backend-web-upgrade-f10d4a3b",
+            "com.docker.compose.project.config_files": "/private/old-compose.yml",
+            "com.docker.compose.project.working_dir": "/private",
+            "com.docker.compose.service": "web",
+            "workmesh.task": "backend-web-upgrade-f10d4a3b"
+          }
+        },
+        "NetworkSettings": {
+          "SandboxID": "",
+          "SandboxKey": "",
+          "Ports": {},
+          "Networks": {
+            "bridge": {
+              "IPAMConfig": null,
+              "Links": null,
+              "Aliases": null,
+              "DriverOpts": null,
+              "GwPriority": 0,
+              "NetworkID": "a3fe1eac4d59569e930fde57853410354b5c5173166a6a1123d1e13a73a95697",
+              "EndpointID": "",
+              "Gateway": "",
+              "IPAddress": "",
+              "MacAddress": "",
+              "IPPrefixLen": 0,
+              "IPv6Gateway": "",
+              "GlobalIPv6Address": "",
+              "GlobalIPv6PrefixLen": 0,
+              "DNSNames": null
+            }
+          }
+        },
+        "ImageManifestDescriptor": {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:b7f3d86d6e84fc17718c48bcde1450807faa2d56704205c697b4bd5df7b9e29f",
+          "size": 610,
+          "annotations": {
+            "com.docker.official-images.bashbrew.arch": "amd64",
+            "org.opencontainers.image.base.name": "scratch",
+            "org.opencontainers.image.created": "2026-03-18T22:39:12Z",
+            "org.opencontainers.image.revision": "c1375496373e76f680b1ef5f713500e98921a45c",
+            "org.opencontainers.image.source": "https://github.com/docker-library/busybox.git",
+            "org.opencontainers.image.url": "https://hub.docker.com/_/busybox",
+            "org.opencontainers.image.version": "1.36.1-glibc"
+          },
+          "platform": {
+            "architecture": "amd64",
+            "os": "linux"
+          }
+        }
+      }
+    ],
+    "retainedVolumes": [
+      {
+        "CreatedAt": "2026-10-12T00:16:20Z",
+        "Driver": "local",
+        "Labels": {
+          "workmesh.task": "backend-web-upgrade-f10d4a3b"
+        },
+        "Mountpoint": "/var/lib/docker/volumes/backend-web-upgrade-f10d4a3b-business-data/_data",
+        "Name": "backend-web-upgrade-f10d4a3b-business-data",
+        "Options": null,
+        "Scope": "local"
+      }
+    ],
+    "webAbsent": true,
+    "removedVolumes": []
+  },
+  "result": {
+    "webAbsent": true,
+    "samePortRebound": true,
+    "volumeMarkerPreserved": true,
+    "port": "5592"
+  }
+}

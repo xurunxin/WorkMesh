@@ -1,0 +1,56 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 unit-targeted-retry.log；SHA-256：cd4586b4a3d630fb3fc7ecc4c362f6cb094b73ba0d8fa018a44c523e227e48c6
+
+
+ RUN  v3.2.7 C:/Users/xurx/.tds/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055
+
+ ✓ packages/contracts/src/release-contract.test.ts (1 test) 19ms
+ ✓ apps/worker/src/retention-production-upgrade.test.ts (33 tests) 107ms
+ ✓ packages/contracts/src/agent-discovery.test.ts (21 tests) 1408ms
+   ✓ 已审发现规则的已知门禁和身份投影 > 与当前OpenAPI operation全集一致，不将计数作为验收  846ms
+ ❯ packages/contracts/src/route-policy.test.ts (14 tests | 1 failed) 4050ms
+   ✓ routePolicyManifest > 公开模型目录仅有受开关控制的只读路由 4ms
+   ✓ routePolicyManifest > declares the intended shared credential-rate-limit operations 1ms
+   × routePolicyManifest > is the unique serializable declaration for every runtime route 20ms
+     → expected Set{ …(281) } to deeply equal Set{ …(280) }
+   ✓ routePolicyManifest > restricts every C1 route to Human ownership commands and the channel feature gate 2ms
+   ✓ routePolicyManifest > keeps lease coordination separate from authorization 26ms
+   ✓ routePolicyManifest > parses OPENAPI.yaml as valid YAML before checking generated extensions  1182ms
+   ✓ routePolicyManifest > matches OpenAPI operation IDs and feature tiers  964ms
+   ✓ routePolicyManifest > uses only declared capabilities and preserves delivery route guards 5ms
+   ✓ routePolicyManifest > documents bootstrap authentication failures as a structured 401 response  920ms
+   ✓ routePolicyManifest > requires If-Match only where the handler revalidates a revision 1ms
+   ✓ routePolicyManifest > allows an ordinary Team member to contribute an independent Approval vote 0ms
+   ✓ routePolicyManifest > limits forced assignment to a Human Session or Coordination Connection 0ms
+   ✓ routePolicyManifest > keeps deployment feature discovery authenticated for humans and agents  912ms
+   ✓ routePolicyManifest > keeps the generated Markdown matrix in parity 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  packages/contracts/src/route-policy.test.ts > routePolicyManifest > is the unique serializable declaration for every runtime route
+AssertionError: expected Set{ …(281) } to deeply equal Set{ …(280) }
+
+- Expected
++ Received
+
+@@ -124,10 +124,11 @@
+    "GET /api/v1/workspaces/{id}/guidance/diff",
+    "GET /api/v1/workspaces/{id}/guidance/history",
+    "GET /health",
+    "GET /livez",
+    "GET /readyz",
++   "GET /skills/workmesh-1.1.0.md",
+    "PATCH /api/v1/agent-connections/{id}",
+    "PATCH /api/v1/agents/{id}",
+    "PATCH /api/v1/comments/{id}",
+    "PATCH /api/v1/documents/{id}",
+    "PATCH /api/v1/milestones/{id}",
+
+ ❯ packages/contracts/src/route-policy.test.ts:81:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 68 passed (69)
+   Start at  04:22:53
+   Duration  5.93s (transform 720ms, setup 0ms, collect 3.32s, tests 5.58s, environment 1ms, prepare 912ms)

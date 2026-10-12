@@ -1,0 +1,32 @@
+阅读视图；原始字节：raw-logs/run-9fdd09982c86.zip 内 ci-validate-deployment.log；SHA-256：0700e240a2312ec692c9f652651c1aa12611a821ff1e5e60374473c3de9cab35
+
+> workmesh@ ci:validate I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs
+
+[ci:validate] OK: 9 jobs, 36 immutable action references, Node 22.19.0, pnpm@9.15.4
+Release workflow validation passed.
+Lite compose validation passed (7 services; 3 roles from one image; 55 documented variables; published: minio, api)
+✔ 无Git/网络依赖读取双字节，精确旧路径/版本映射 (7.7912ms)
+✔ 相同字节共用member，所有逻辑版本保留 (1.2449ms)
+✔ 拒绝规范化后重复逻辑元组 (1.2046ms)
+✔ 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符 (0.5652ms)
+✔ 拒绝规范化后重复ZIP member (0.4401ms)
+✔ 拒绝索引缺项/多项 (1.7026ms)
+✔ 拒绝索引重复元组 (1.0163ms)
+✔ 拒绝归档hash不符 (1.0331ms)
+✔ 拒绝伪造来源blob ID (1.3315ms)
+✔ 拒绝member bytes/hash不符 (1.185ms)
+✔ 拒绝软链接 (0.7903ms)
+✔ 拒绝目录 (0.4633ms)
+✔ 拒绝设备 (0.4897ms)
+✔ 拒绝extra元数据/硬链接信息与加密flags (0.7585ms)
+✔ 拒绝本地路径不一致、重叠与解压超额 (1.2642ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 298.571
+{"entries":280,"members":61,"bytes":21268498,"errors":[]}

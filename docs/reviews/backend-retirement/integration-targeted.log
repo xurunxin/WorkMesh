@@ -1,0 +1,93 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 integration-targeted.log；SHA-256：bf1670bb65d7200471fa19ec8b68bc1dcd370c74d821faa0a65cf5fee55eb489
+
+
+> @workmesh/api@ test:integration I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\api
+> vitest run --config ../../vitest.integration.config.ts "backend-retirement.integration.test.ts" "wecom-notifications.integration.test.ts"
+
+
+ RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/api
+
+ ✓ integration/wecom-notifications.integration.test.ts (19 tests) 26061ms
+   ✓ C2 channel delivery with existing Redis integration fixture > 旧 request_hash 全字段匹配后发送新 API 链接，保留旧摘要；字段篡改零外发  508ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条  5106ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60  5276ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 changed 撤权先提交，真实授权锁后零 fake provider 调用  304ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用  471ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝  473ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK  420ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox  501ms
+{"level":30,"time":1791750076063,"pid":41476,"hostname":"Blueberry","msg":"Server listening at http://127.0.0.1:6458"}
+{"level":30,"time":1791750076092,"pid":41476,"hostname":"Blueberry","reqId":"5b830d26-4177-4567-90a5-083cc7455cc4","req":{"method":"POST","url":"/api/v1/auth/install","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076391,"pid":41476,"hostname":"Blueberry","reqId":"5b830d26-4177-4567-90a5-083cc7455cc4","event":"bootstrap.install_authorized","operationId":"installWorkspace","outcome":"accepted","mode":"token","msg":"Bootstrap installation authorized"}
+{"level":30,"time":1791750076401,"pid":41476,"hostname":"Blueberry","reqId":"5b830d26-4177-4567-90a5-083cc7455cc4","res":{"statusCode":200},"responseTime":308.8235000000004,"msg":"request completed"}
+{"level":30,"time":1791750076404,"pid":41476,"hostname":"Blueberry","reqId":"9947e580-a9c0-43a6-9ba6-4582b8990520","req":{"method":"GET","url":"/api/v1/auth/me","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076410,"pid":41476,"hostname":"Blueberry","reqId":"9947e580-a9c0-43a6-9ba6-4582b8990520","res":{"statusCode":200},"responseTime":5.951200000001336,"msg":"request completed"}
+{"level":30,"time":1791750076433,"pid":41476,"hostname":"Blueberry","reqId":"2815eedc-e2ea-4df4-9262-c74be61ed7fd","req":{"method":"GET","url":"/skills/workmesh-1.1.0.md","host":"127.0.0.1:6458","remoteAddress":"127.0.0.1","remotePort":6461},"msg":"incoming request"}
+{"level":30,"time":1791750076443,"pid":41476,"hostname":"Blueberry","reqId":"2815eedc-e2ea-4df4-9262-c74be61ed7fd","res":{"statusCode":401},"responseTime":9.274600000000646,"msg":"request completed"}
+{"level":30,"time":1791750076472,"pid":41476,"hostname":"Blueberry","reqId":"1f4c40d3-e8b5-4aeb-b5da-e13d11ecb703","req":{"method":"GET","url":"/api/v1/teams?limit=100","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076482,"pid":41476,"hostname":"Blueberry","reqId":"1f4c40d3-e8b5-4aeb-b5da-e13d11ecb703","res":{"statusCode":200},"responseTime":8.961999999999534,"msg":"request completed"}
+{"level":30,"time":1791750076483,"pid":41476,"hostname":"Blueberry","reqId":"27359739-762a-45cc-b648-c5d79a260d87","req":{"method":"GET","url":"/api/v1/teams/f85193d3-9b2e-4c29-8078-8cab51258a19/states?limit=100","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076497,"pid":41476,"hostname":"Blueberry","reqId":"27359739-762a-45cc-b648-c5d79a260d87","res":{"statusCode":200},"responseTime":14.118000000000393,"msg":"request completed"}
+{"level":30,"time":1791750076497,"pid":41476,"hostname":"Blueberry","reqId":"dcb7f706-cfba-452b-abff-b8932b69df32","req":{"method":"POST","url":"/api/v1/work-items","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076569,"pid":41476,"hostname":"Blueberry","reqId":"dcb7f706-cfba-452b-abff-b8932b69df32","res":{"statusCode":200},"responseTime":71.04150000000118,"msg":"request completed"}
+{"level":30,"time":1791750076569,"pid":41476,"hostname":"Blueberry","reqId":"8c94e016-dfa6-4168-8b25-79719afcc74c","req":{"method":"POST","url":"/api/v1/agents/register","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076630,"pid":41476,"hostname":"Blueberry","reqId":"8c94e016-dfa6-4168-8b25-79719afcc74c","res":{"statusCode":200},"responseTime":60.153299999999945,"msg":"request completed"}
+{"level":30,"time":1791750076630,"pid":41476,"hostname":"Blueberry","reqId":"c8178e4c-caae-4720-95e8-4caca50c70d5","req":{"method":"PUT","url":"/api/v1/agents/5eeb72c6-dfb9-4114-9be2-2b1f32603ee1/team-access/f85193d3-9b2e-4c29-8078-8cab51258a19","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076676,"pid":41476,"hostname":"Blueberry","reqId":"c8178e4c-caae-4720-95e8-4caca50c70d5","res":{"statusCode":200},"responseTime":46.00749999999971,"msg":"request completed"}
+{"level":30,"time":1791750076684,"pid":41476,"hostname":"Blueberry","reqId":"f290c8ec-6093-48d4-9451-936b8483e8b5","req":{"method":"POST","url":"/api/v1/agents/5eeb72c6-dfb9-4114-9be2-2b1f32603ee1/webhook-endpoints","host":"localhost:80","remoteAddress":"127.0.0.1"},"msg":"incoming request"}
+{"level":30,"time":1791750076692,"pid":41476,"hostname":"Blueberry","reqId":"f290c8ec-6093-48d4-9451-936b8483e8b5","res":{"statusCode":400},"responseTime":8.079100000000835,"msg":"request completed"}
+{"level":30,"time":1791750076697,"pid":41476,"hostname":"Blueberry","event":"auth.rate_limit.summary","intervalMs":60000,"counts":[{"endpointClass":"install","outcome":"allowed","count":1},{"endpointClass":"install","outcome":"credential_success","count":1}],"msg":"Authentication rate-limit interval summary"}
+ ❯ integration/backend-retirement.integration.test.ts (2 tests | 2 failed) 2784ms
+   × 固定 Skill 下载路径返回签名原字节，未声明路径和穿越请求拒绝 59ms
+     → expected 401 to be 200 // Object.is equality
+   × 审批要求由真实 worker 投递给 fake Agent，并进入完成结果和证据 224ms
+     → {"error":{"code":"VALIDATION_ERROR","message":"Private webhook targets are disabled","correlationId":"f290c8ec-6093-48d4-9451-936b8483e8b5"}}: expected 400 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/backend-retirement.integration.test.ts > 固定 Skill 下载路径返回签名原字节，未声明路径和穿越请求拒绝
+AssertionError: expected 401 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 401
+
+ ❯ integration/backend-retirement.integration.test.ts:43:27
+     41| it('固定 Skill 下载路径返回签名原字节，未声明路径和穿越请求拒绝', async () => {
+     42|   const response = await fetch(`${apiUrl}/skills/workmesh-1.1.0.md`)
+     43|   expect(response.status).toBe(200)
+       |                           ^
+     44|   expect(response.headers.get('content-type')).toContain('text/markdow…
+     45|   const bytes = Buffer.from(await response.arrayBuffer())
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  integration/backend-retirement.integration.test.ts > 审批要求由真实 worker 投递给 fake Agent，并进入完成结果和证据
+AssertionError: {"error":{"code":"VALIDATION_ERROR","message":"Private webhook targets are disabled","correlationId":"f290c8ec-6093-48d4-9451-936b8483e8b5"}}: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ call integration/backend-retirement.integration.test.ts:21:46
+     19|     cookie, 'x-csrf-token': csrf, 'idempotency-key': randomUUID(), ...…
+     20|   } })
+     21|   expect(response.statusCode, response.body).toBe(200)
+       |                                              ^
+     22|   return response.json<T>()
+     23| }
+ ❯ integration/backend-retirement.integration.test.ts:112:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 19 passed (21)
+   Start at  04:20:00
+   Duration  76.29s (transform 3.27s, setup 0ms, collect 46.12s, tests 28.85s, environment 1ms, prepare 360ms)
+
+ ELIFECYCLE  Command failed with exit code 1.

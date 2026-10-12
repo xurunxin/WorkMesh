@@ -3,19 +3,22 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto'
 import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:https'
 import net from 'node:net'
+import { parse } from 'yaml'
 import { tmpdir } from 'node:os'
 import { dirname, isAbsolute, relative, resolve } from 'node:path'
 import { StringDecoder } from 'node:string_decoder'
 
 // 只从精确 Git 提交构建；安装目录没有源码、node_modules 或源码挂载。
 const root = resolve(import.meta.dirname, '..')
-const runId = `a2-backend-lite-${randomUUID().slice(0, 8)}`
+const deploymentClass = process.env.WORKMESH_VALIDATION_CLASS === 'production' ? 'production' : 'lite'
+const composeFile = `docker-compose.${deploymentClass}.yml`
+const runId = `backend-${deploymentClass}-${randomUUID().slice(0, 8)}`
 const sha = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim()
 if (!/^[a-f0-9]{40}$/.test(sha)) throw Error('缺少精确 Git 提交')
-const evidence = resolve(root, 'docs/reviews/a2-backend/runs', runId)
+const evidence = resolve(root, process.env.WORKMESH_VALIDATION_OUTPUT ?? 'docs/reviews/backend-retirement/runs', runId)
 const installDir = resolve(tmpdir(), runId)
 mkdirSync(evidence, { recursive: true })
-const receipts = { runId, sha, environment: '工作站 Linux Docker；非真实低功耗设备', installDir, resources: [], results: [], outcome: '未运行' }
+const receipts = { runId, sha, deploymentClass, environment: `${process.env.GITHUB_ACTIONS === 'true' ? 'GitHub Actions' : '工作站'} ${process.platform} / Docker Linux；非真实低功耗设备`, node: process.version, installDir, resources: [], results: [], outcome: '未运行' }
 const writeEvidence = (path, bytes) => {
   for (let attempt = 0; ; attempt++) {
     try { writeFileSync(path, bytes); return } catch (error) {
@@ -30,17 +33,20 @@ const bootstrap = randomBytes(32).toString('base64url'); secretValues.push(boots
 const redact = value => secretValues.reduce((text, secret) => text.replaceAll(secret, '[REDACTED]'), String(value))
 const env = { ...process.env, WORKMESH_LITE_IMAGE: `workmesh-a2-lite:${runId}`, WORKMESH_BUILD_SHA: sha,
   POSTGRES_PASSWORD: secretValues[0], SESSION_SECRET: secretValues[1], WORKMESH_MASTER_KEY: secretValues[2], WORKMESH_BOOTSTRAP_TOKEN: bootstrap,
+  WORKMESH_SESSION_TOKEN: '', WORKMESH_MCP_ACCESS_TOKEN: '',
   PAGINATION_CURSOR_KEYS: `a2:${secretValues[3]}`, PAGINATION_CURSOR_ACTIVE_KID: 'a2', AUTH_RATE_LIMIT_HMAC_KEY: secretValues[4],
   MINIO_ROOT_USER: 'a2-lite', MINIO_ROOT_PASSWORD: secretValues[5], S3_ACCESS_KEY_ID: 'a2-lite', S3_SECRET_ACCESS_KEY: secretValues[5],
   S3_BUCKET: runId, S3_REGION: 'us-east-1', WORKMESH_BETA_GITEA: 'true', WORKMESH_BIND_ADDRESS: '127.0.0.1', POSTGRES_DB: 'workmesh_a2_lite_test' }
-// 测试仅显式开启固定 Gitea 夹具；不继承团队环境开启 C3 或其他域。
+// 仅开启本轮 Gitea 固定夹具和已存在的配对/MCP合同；其他领域保持关闭。
 const disabledFeatures = ['WORKMESH_BETA_PLANNING', 'WORKMESH_BETA_TEMPLATES', 'WORKMESH_BETA_COSTS',
   'WORKMESH_BETA_OPERATIONS_UI', 'WORKMESH_BETA_COORDINATION_MCP', 'WORKMESH_BETA_MODEL_PRESETS',
   'WORKMESH_EXPERIMENTAL_AUTOMATION', 'WORKMESH_EXPERIMENTAL_AGENT_LOOPS', 'WORKMESH_EXPERIMENTAL_A2A',
   'WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS', 'WORKMESH_EXPERIMENTAL_MULTI_RUNTIME', 'WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS']
 for (const feature of disabledFeatures) env[feature] = 'false'
+env.WORKMESH_BETA_COORDINATION_MCP = 'true'
 env.WORKMESH_MODEL_PRESETS_FILE = ''
-receipts.features = { ...Object.fromEntries(disabledFeatures.map(feature => [feature, false])), WORKMESH_BETA_GITEA: true }
+receipts.buildContext = { source: sha, paths: ['.dockerignore', '.node-version', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json', 'tsconfig.base.json', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md', 'README.md', 'AGENTS.md', 'CONTEXT.md', 'apps', 'packages', 'scripts', 'skills', 'infra'], reason: '历史证据保留在 Git，不复制进镜像构建上下文' }
+receipts.features = { ...Object.fromEntries(disabledFeatures.map(feature => [feature, false])), WORKMESH_BETA_GITEA: true, WORKMESH_BETA_COORDINATION_MCP: true }
 const command = (name, args, options = {}) => new Promise(resolveResult => {
   const startedAt = new Date().toISOString(); let output = ''
   const child = spawn(name, args, { cwd: root, env, windowsHide: true, ...options })
@@ -66,49 +72,82 @@ const pause = ms => new Promise(resolveWait => setTimeout(resolveWait, ms))
 const port = () => new Promise(resolvePort => { const server = net.createServer(); server.listen(0, '127.0.0.1', () => { const value = server.address().port; server.close(() => resolvePort(value)) }) })
 const register = (type, target) => { const value = { type, target, owner: runId, createdAt: new Date().toISOString(), cleanup: null }; receipts.resources.push(value); save(); return value }
 let provider
-const composeArgs = ['compose', '--project-name', runId, '-f', resolve(installDir, 'docker-compose.lite.yml'), '-f', resolve(installDir, 'provider.override.yml')]
+const composeArgs = ['compose', '--project-name', runId,
+  ...(deploymentClass === 'production' ? ['--profile', 'agent'] : []),
+  '-f', resolve(installDir, composeFile), '-f', resolve(installDir, 'provider.override.yml')]
 let composeStarted = false
 try {
   const directory = register('directory', installDir); mkdirSync(installDir); directory.realPath = realpathSync(installDir); directory.created = true; save()
-  const image = register('image', env.WORKMESH_LITE_IMAGE)
-  const previousImage = await command('docker', ['image', 'inspect', image.target])
-  if (previousImage.code === 0 || !/no such (image|object)/i.test(previousImage.output)) throw Error('专用镜像 tag 的不存在状态未确认；保留既有镜像')
-  // Windows archive otherwise expands core.autocrlf and changes signed inputs.
-  const archiveArgs = ['-c', 'core.autocrlf=false', 'archive', '--format=tar', sha]
-  const archive = spawn('git', archiveArgs, { cwd: root, windowsHide: true })
-  receipts.archive = { name: 'git', args: archiveArgs, pid: archive.pid, startedAt: new Date().toISOString(), code: null }; save()
-  let archiveError = ''; archive.stderr.on('data', value => { archiveError += value })
-  const archived = new Promise(resolveCode => archive.on('close', code => { receipts.archive.code = code; receipts.archive.endedAt = new Date().toISOString(); receipts.archive.stderr = redact(archiveError); save(); resolveCode(code) }))
-  try {
-    await must('docker', ['build', '--progress=plain', '--label', `workmesh.task=${runId}`, '--build-arg', `WORKMESH_BUILD_SHA=${sha}`, '-t', image.target, '-f', 'infra/docker/lite.Dockerfile', '-'], { input: archive.stdout })
-  } finally {
-    // A failed consumer must not leave our archive producer blocked on a pipe.
-    archive.stdout.destroy(); await archived
+  const builder = register('builder', runId)
+  const previousBuilder = await command('docker', ['buildx', 'inspect', runId])
+  if (previousBuilder.code === 0 || !/no builder|not found/i.test(previousBuilder.output)) throw Error('专用 builder 的不存在状态未确认')
+  await must('docker', ['buildx', 'create', '--name', runId, '--driver', 'docker-container', '--driver-opt', 'memory=4g', '--driver-opt', 'memory-swap=4g'])
+  builder.created = true
+  builder.containerName = `buildx_buildkit_${runId}0`
+  save()
+  await must('docker', ['buildx', 'inspect', '--bootstrap', runId])
+  builder.containerId = await must('docker', ['inspect', '--format', '{{.Id}}', builder.containerName])
+  save()
+  const services = deploymentClass === 'production' ? ['api', 'worker', 'mcp'] : ['lite']
+  const images = new Map()
+  for (const service of services) {
+    const variable = service === 'lite' ? 'WORKMESH_LITE_IMAGE' : `WORKMESH_${service.toUpperCase()}_IMAGE`
+    const supplied = deploymentClass === 'production' ? process.env[variable] : undefined
+    const image = register('image', supplied || `workmesh-retirement-${service}:${runId}`)
+    image.borrowed = Boolean(supplied)
+    env[variable] = image.target
+    if (supplied) {
+      // Release runners have no application images cached. Pull the exact
+      // provided reference before inspecting its identity or revision.
+      await must('docker', ['pull', supplied])
+      if (supplied.includes('@sha256:')) {
+        const digests = JSON.parse(await must('docker', ['image', 'inspect', '--format', '{{json .RepoDigests}}', supplied]))
+        if (!digests.some(value => value.endsWith(supplied.slice(supplied.indexOf('@sha256:'))))) throw Error('拉取镜像摘要与指定引用不符')
+      }
+    } else {
+      const previous = await command('docker', ['image', 'inspect', image.target])
+      if (previous.code === 0 || !/no such (image|object)/i.test(previous.output)) throw Error('专用镜像 tag 不存在状态未确认')
+      const archiveArgs = ['-c', 'core.autocrlf=false', 'archive', '--format=tar', sha, '.dockerignore', '.node-version', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json', 'tsconfig.base.json', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md', 'README.md', 'AGENTS.md', 'CONTEXT.md', 'apps', 'packages', 'scripts', 'skills', 'infra']
+      const archive = spawn('git', archiveArgs, { cwd: root, windowsHide: true })
+      let archiveError = ''
+      archive.stderr.on('data', value => { archiveError += value })
+      const archived = new Promise(done => archive.on('close', code => done(code)))
+      try {
+        await must('docker', ['buildx', 'build', '--builder', runId, '--load', '--progress=plain', '--label', `workmesh.task=${runId}`, '--build-arg', `WORKMESH_BUILD_SHA=${sha}`,
+          '-t', image.target, '-f', `infra/docker/${service === 'lite' ? 'lite' : service + '.production'}.Dockerfile`, '-'], { input: archive.stdout })
+      } finally { archive.stdout.destroy(); await archived }
+      if (await archived !== 0) throw Error(`Git archive 失败：${archiveError}`)
+    }
+    image.id = await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target])
+    const revision = await must('docker', ['image', 'inspect', '--format', '{{ index .Config.Labels "org.opencontainers.image.revision" }}', image.id])
+    if (revision !== sha) throw Error('镜像源提交与当前 HEAD 不一致')
+    images.set(service, image); save()
+    const tar = resolve(installDir, `workmesh-${service}.tar`); register('file', tar)
+    await must('docker', ['save', '-o', tar, image.target]); await must('docker', ['load', '-i', tar])
+    if (await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target]) !== image.id) throw Error('save/load 镜像身份变化')
   }
-  if (await archived !== 0) throw Error(`Git archive 失败：${archiveError}`)
-  image.id = await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target]); save()
+  const image = images.get(deploymentClass === 'production' ? 'api' : 'lite')
   const roleEnv = { ...env, DATABASE_URL: `postgres://workmesh:${secretValues[0]}@127.0.0.1:1/workmesh_a2_lite_test`,
-    REDIS_URL: 'redis://127.0.0.1:1', S3_ENDPOINT: 'http://127.0.0.1:1', WEB_ORIGIN: 'http://127.0.0.1:3000', NEXT_API_UPSTREAM: 'http://127.0.0.1:1', HOSTNAME: '0.0.0.0', PORT: '3000' }
+    REDIS_URL: 'redis://127.0.0.1:1', S3_ENDPOINT: 'http://127.0.0.1:1', WEB_ORIGIN: 'http://127.0.0.1:3001' }
   // Inherited team secrets do not belong in entrypoint probes.
-  const roleKeys = ['WORKMESH_BUILD_SHA', 'SESSION_SECRET', 'WORKMESH_MASTER_KEY', 'WORKMESH_BOOTSTRAP_TOKEN', 'PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID', 'AUTH_RATE_LIMIT_HMAC_KEY', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_BUCKET', 'S3_REGION', 'WORKMESH_BETA_GITEA', 'DATABASE_URL', 'REDIS_URL', 'S3_ENDPOINT', 'WEB_ORIGIN', 'NEXT_API_UPSTREAM', 'HOSTNAME', 'PORT']
-  for (const role of ['migrate', 'api', 'worker', 'web']) {
+  const roleKeys = ['WORKMESH_BUILD_SHA', 'SESSION_SECRET', 'WORKMESH_MASTER_KEY', 'WORKMESH_BOOTSTRAP_TOKEN', 'PAGINATION_CURSOR_KEYS', 'PAGINATION_CURSOR_ACTIVE_KID', 'AUTH_RATE_LIMIT_HMAC_KEY', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_BUCKET', 'S3_REGION', 'WORKMESH_BETA_GITEA', 'DATABASE_URL', 'REDIS_URL', 'S3_ENDPOINT', 'WEB_ORIGIN']
+  const topology = parse(readFileSync(resolve(root, composeFile), 'utf8'), { merge: true })
+  for (const role of ['migrate', 'api', 'worker']) {
+    // Production migration uses the Compose command; only Lite dispatches roles.
+    const roleCommand = deploymentClass === 'production' && role === 'migrate' ? topology.services.migrate.command : []
+    if (!Array.isArray(roleCommand) || roleCommand.some(argument => typeof argument !== 'string')) throw Error('迁移入口必须是实际 Compose 的命令数组')
     const container = register('container', `${runId}-probe-${role}`)
-    container.id = await must('docker', ['run', '-d', '--name', container.target, '--label', `workmesh.task=${runId}`, '-e', `WORKMESH_SERVICE=${role}`, ...roleKeys.flatMap(key => ['-e', key]), image.target], { env: roleEnv })
+    container.id = await must('docker', ['run', '-d', '--name', container.target, '--label', `workmesh.task=${runId}`, '-e', `WORKMESH_SERVICE=${role}`, ...roleKeys.flatMap(key => ['-e', key]), (images.get(role === 'migrate' ? 'api' : role) ?? image).target, ...roleCommand], { env: roleEnv })
     await pause(12000)
     const log = await must('docker', ['logs', container.id])
-    if (!log.includes(`role=${role} `) || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载入口`)
-    if (role === 'web') {
-      await must('docker', ['exec', container.id, 'node', '-e', "fetch('http://127.0.0.1:3000/readyz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"])
-      // Inspect the compiled artifact, not the runtime environment or source.
-      const manifest = await must('docker', ['exec', container.id, 'node', '-e', "const fs=require('node:fs');const m=JSON.parse(fs.readFileSync('/opt/workmesh/web/apps/web/.next/routes-manifest.json','utf8'));const rules=Array.isArray(m.rewrites)?m.rewrites:Object.values(m.rewrites).flat();const prefixes=['/api','/.well-known','/auth','/mcp','/sse'];const expected=prefixes.map(p=>({source:p+'/:path*',destination:'http://api:3001'+p+'/:path*'}));if(!expected.every(e=>rules.some(r=>r.source===e.source&&r.destination===e.destination)))throw Error('Lite compiled proxy does not match its private Compose address');process.stdout.write(JSON.stringify(expected))"])
-      receipts.compiledProxy = { imageId: image.id, rules: JSON.parse(manifest), at: new Date().toISOString() }; save()
-    }
+    const loaded = deploymentClass === 'lite' ? log.includes(`role=${role} `)
+      : role === 'migrate' ? /connect ECONNREFUSED/.test(log)
+        : role === 'api' ? /Server listening at http/.test(log) : /worker (?:identity initialization failed|readiness failed at startup)/.test(log)
+    if (!loaded || /Cannot find (module|package)|MODULE_NOT_FOUND|ENOENT/.test(log)) throw Error(`${role} 未成功加载实际入口`)
     save()
   }
-  const tar = resolve(installDir, 'workmesh-lite.tar'); register('file', tar)
-  await must('docker', ['save', '-o', tar, image.target]); await must('docker', ['load', '-i', tar])
-  if (await must('docker', ['image', 'inspect', '--format', '{{.Id}}', image.target]) !== image.id) throw Error('save/load 镜像身份变化')
-  copyFileSync(resolve(root, 'docker-compose.lite.yml'), resolve(installDir, 'docker-compose.lite.yml'))
+  if (deploymentClass === 'lite') await must('sh', [resolve(root, 'infra/lite/verify-image-roles.sh'), image.target])
+  copyFileSync(resolve(root, composeFile), resolve(installDir, composeFile))
   const tls = resolve(installDir, 'tls'); mkdirSync(tls)
   await must('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', resolve(tls, 'key.pem'), '-out', resolve(tls, 'ca.pem'), '-days', '1', '-subj', '/CN=host.docker.internal', '-addext', 'subjectAltName=DNS:host.docker.internal,DNS:localhost,IP:127.0.0.1'])
   // Copy only the public CA through Docker's API; do not change host file sharing.
@@ -132,23 +171,61 @@ try {
   await new Promise(resolveListen => provider.listen(providerPort, '0.0.0.0', resolveListen))
   register('https-provider', `host.docker.internal:${providerPort}`)
   env.WORKMESH_A2_GITEA_URL = `https://host.docker.internal:${providerPort}`
-  env.WEB_HOST_PORT = String(await port()); env.S3_HOST_PORT = String(await port())
-  env.WEB_ORIGIN = `http://127.0.0.1:${env.WEB_HOST_PORT}`; env.S3_PUBLIC_ENDPOINT = `http://host.docker.internal:${env.S3_HOST_PORT}`
+  env.API_HOST_PORT = String(await port()); env.S3_HOST_PORT = String(await port()); env.MCP_HOST_PORT = String(await port())
+  env.PUBLIC_MCP_ORIGIN = `http://127.0.0.1:${env.MCP_HOST_PORT}`
+  env.WEB_ORIGIN = `http://127.0.0.1:${env.API_HOST_PORT}`; env.S3_PUBLIC_ENDPOINT = `http://host.docker.internal:${env.S3_HOST_PORT}`
   // 仅追加本测试 CA 和 feature；不修正原 Lite RustFS 凭证映射或其他安装合同。
-  writeFileSync(resolve(installDir, 'provider.override.yml'), `services:\n  worker:\n    environment:\n      NODE_EXTRA_CA_CERTS: /a2-ca/ca.pem\n    volumes:\n      - a2-test-ca:/a2-ca:ro\nvolumes:\n  a2-test-ca:\n    external: true\n    name: ${caVolume.target}\n`)
+  const providerHost = process.platform === 'linux' ? '    extra_hosts:\n      - "host.docker.internal:host-gateway"\n' : ''
+  writeFileSync(resolve(installDir, 'provider.override.yml'), `services:\n  worker:\n${providerHost}    environment:\n      NODE_EXTRA_CA_CERTS: /a2-ca/ca.pem\n    volumes:\n      - a2-test-ca:/a2-ca:ro\nvolumes:\n  a2-test-ca:\n    external: true\n    name: ${caVolume.target}\n`)
   register('compose-project', runId); composeStarted = true
-  await must('docker', [...composeArgs, 'up', '-d', '--wait', '--wait-timeout', '180'], { cwd: installDir })
+  // Rehearse an existing stack: the old web process owns the API's future port.
+  // Use actual data services and a durable SQL marker, never a business database.
+  await must('docker', [...composeArgs, 'up', '-d', '--wait', '--wait-timeout', '180', 'postgres', 'redis', 'minio'], { cwd: installDir })
+  const markerSql = "CREATE TABLE legacy_web_upgrade_marker (value text NOT NULL); INSERT INTO legacy_web_upgrade_marker VALUES ('preserved');"
+  await must('docker', [...composeArgs, 'exec', '-T', 'postgres', 'psql', '-U', 'workmesh', '-d', env.POSTGRES_DB, '-v', 'ON_ERROR_STOP=1', '-c', markerSql])
+  const dataVolumes = JSON.parse(await must('docker', ['inspect', '--format', '{{json .Mounts}}', await must('docker', [...composeArgs, 'ps', '-q', 'postgres'])]))
+    .filter(mount => mount.Type === 'volume').map(mount => mount.Name)
+  const oldWeb = register('container', `${runId}-legacy-web`)
+  oldWeb.id = await must('docker', ['run', '-d', '--name', oldWeb.target, '--label', `workmesh.task=${runId}`,
+    '--label', `com.docker.compose.project=${runId}`, '--label', 'com.docker.compose.service=web',
+    '--label', `com.docker.compose.project.config_files=${resolve(installDir, composeFile)}`,
+    '--label', `com.docker.compose.project.working_dir=${installDir}`,
+    '-p', `127.0.0.1:${env.API_HOST_PORT}:3000`, '--entrypoint', 'node', image.target, '-e',
+    "require('node:http').createServer((q,r)=>r.end('legacy web fixture')).listen(3000,'0.0.0.0');process.on('SIGTERM',()=>process.exit(0))"]); save()
+  await must(process.execPath, ['-e', "(async()=>{for(let n=0;n<50;n++){try{if(await(await fetch(process.env.WEB_ORIGIN)).text()==='legacy web fixture')return}catch{}await new Promise(r=>setTimeout(r,100))}throw Error('Legacy Web fixture not reachable')})().catch(e=>{console.error(e);process.exit(1)})"])
+  receipts.legacyWebRetirement = JSON.parse(await must(process.execPath, [resolve(root, 'scripts/retire-legacy-web.mjs'),
+    `--project=${runId}`, `--container=${oldWeb.id}`, `--config-file=${resolve(installDir, composeFile)}`, `--working-directory=${installDir}`]))
+  oldWeb.cleanup = { code: 0, reason: '已核归属的旧 Web 容器定向停止并移除', absent: true }
+  await must('docker', ['volume', 'inspect', ...dataVolumes])
+  receipts.legacyWebRetirement.dataVolumes = dataVolumes; save()
+  await must('docker', [...composeArgs, 'up', '-d', '--wait', '--wait-timeout', '180', 'api', 'worker', ...(deploymentClass === 'production' ? ['mcp'] : [])], { cwd: installDir })
+  const marker = await must('docker', [...composeArgs, 'exec', '-T', 'postgres', 'psql', '-U', 'workmesh', '-d', env.POSTGRES_DB, '-At', '-c', 'SELECT value FROM legacy_web_upgrade_marker'])
+  if (marker !== 'preserved') throw Error('旧 Web 退役后业务卷 SQL 标记丢失')
+  receipts.legacyWebRetirement.sqlMarkerPreserved = true; save()
   const containers = await must('docker', [...composeArgs, 'ps', '-q']); receipts.installationContainerIds = containers.split(/\r?\n/); save()
   for (const containerId of receipts.installationContainerIds) {
     const mounts = JSON.parse(await must('docker', ['inspect', '--format', '{{json .Mounts}}', containerId]))
     if (mounts.some(mount => mount.Type === 'bind')) throw Error('无源码安装不得包含主机绑定挂载')
     if (mounts.some(mount => mount.Destination === '/a2-ca' && (mount.Name !== caVolume.target || mount.RW))) throw Error('测试 CA 卷的归属或只读属性不符')
   }
-  // Exercise Web -> API before installation; /readyz only proves the Web role.
+  // Exercise the exposed API before installing the private test workspace.
   const installStatus = await must(process.execPath, ['-e', "fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})"])
-  receipts.preInstallProxy = { ...JSON.parse(installStatus), at: new Date().toISOString() }; save()
+  receipts.preInstallApi = { ...JSON.parse(installStatus), at: new Date().toISOString() }; save()
+  const apiContainer = await must('docker', [...composeArgs, 'ps', '-q', 'api'])
+  const assetPath = deploymentClass === 'production' ? '/app/assets/skills/workmesh-1.1.0.md' : '/opt/workmesh/api/assets/skills/workmesh-1.1.0.md'
+  const inImage = await must('docker', ['exec', apiContainer, 'node', '-e', `process.stdout.write(require('node:fs').readFileSync('${assetPath}').toString('base64'))`])
+  const tracked = spawnSync('git', ['cat-file', 'blob', `${sha}:apps/api/assets/skills/workmesh-1.1.0.md`], { cwd: root })
+  if (tracked.status !== 0 || !Buffer.from(inImage, 'base64').equals(tracked.stdout)) throw Error('实际 API 镜像 Skill 字节与提交 blob 不符')
+  receipts.skillBlob = { sha256: createHash('sha256').update(tracked.stdout).digest('hex'), imageId: image.id, assetPath }; save()
+  env.WORKMESH_VERIFY_MCP = deploymentClass === 'production' ? 'true' : 'false'
   await must(process.execPath, [resolve(root, 'scripts/verify-a2-backend-lite-api.mjs')])
-  receipts.outcome = '本机无源码 Lite 现有 Web/后端兼容通过；原新横幅 UI、真实设备与真实厂商未验收'
+  if (deploymentClass === 'production' && !services.some(service => process.env[`WORKMESH_${service.toUpperCase()}_IMAGE`])) {
+    if (process.platform === 'linux')
+      await must(process.execPath, [resolve(root, 'scripts/verify-production-cold-cache.mjs')], { env: { ...env,
+        WORKMESH_COLD_SOURCE_IMAGES: JSON.stringify(Object.fromEntries([...images].map(([service, value]) => [service, value.target]))) } })
+    else { receipts.coldCacheVerification = { performedHere: false, reason: '冷 registry 包装器仅由必需 Linux CI 执行；本机不计冷缓存通过' }; save() }
+  }
+  receipts.outcome = '本机无源码纯后端安装、真实 worker、TLS 和签名 Skill 通过；真实低功耗设备与真实厂商未测'
 } catch (error) { receipts.outcome = `失败或未验收：${redact(error)}`; console.error(receipts.outcome); process.exitCode = 1; save() }
 finally {
   let servicesStopped = true
@@ -184,7 +261,21 @@ finally {
   }
   if (provider) { await new Promise(resolveClose => provider.close(resolveClose)); receipts.resources.find(item => item.type === 'https-provider').cleanup = '已关闭'; save() }
   for (const resource of receipts.resources.toReversed()) {
-    if (resource.type === 'container' && resource.id) {
+    if (resource.type === 'builder' && resource.created) {
+      const identity = await command('docker', ['inspect', '--format', '{{.Id}}', resource.containerName])
+      resource.preDelete = { expectedId: resource.containerId, actualId: identity.output.trim(), code: identity.code, activity: '专用构建已结束；核对本人 builder 容器身份', at: new Date().toISOString() }; save()
+      resource.cleanup = identity.code === 0 && identity.output.trim() === resource.containerId ? await command('docker', ['buildx', 'rm', resource.target]) : 'builder 身份未知，保留'
+      if (typeof resource.cleanup !== 'object' || resource.cleanup.code !== 0) servicesStopped = false
+      resource.postDelete = []
+      for (const [kind, target] of [['container', resource.containerId], ['volume', `${resource.containerName}_state`]]) {
+        const result = await command('docker', [kind, 'inspect', target])
+        const absent = result.code !== 0 && /no such (object|container|volume)/i.test(result.output)
+        resource.postDelete.push({ kind, target, absent, code: result.code })
+        if (!absent) servicesStopped = false
+      }
+      save()
+    }
+    if (resource.type === 'container' && resource.id && !resource.cleanup?.absent) {
       const owner = await command('docker', ['inspect', '--format', '{{ index .Config.Labels "workmesh.task" }}', resource.id])
       resource.preDelete = { owner: owner.output.trim(), code: owner.code, id: resource.id, at: new Date().toISOString() }; save()
       resource.cleanup = owner.code === 0 && owner.output.trim() === runId ? await command('docker', ['rm', '-f', '-v', resource.id]) : '归属未知，保留'; save()
@@ -197,7 +288,7 @@ finally {
       resource.cleanup = servicesStopped && owner.code === 0 && owner.output.trim() === runId && references.code === 0 && !references.output.trim() ? await command('docker', ['volume', 'rm', resource.target]) : '归属或活动引用未确认，保留'; save()
       if (typeof resource.cleanup !== 'object' || resource.cleanup.code !== 0) servicesStopped = false
     }
-    if (resource.type === 'image' && resource.id) {
+    if (resource.type === 'image' && resource.id && !resource.borrowed) {
       const owner = await command('docker', ['image', 'inspect', '--format', '{{ index .Config.Labels "workmesh.task" }}', resource.id])
       const references = await command('docker', ['ps', '-aq', '--filter', `ancestor=${resource.id}`])
       resource.preDelete = { owner: owner.output.trim(), id: resource.id, referenceIds: references.output.trim().split(/\r?\n/).filter(Boolean), activity: '核对专用镜像实际容器引用', at: new Date().toISOString() }; save()
@@ -213,7 +304,7 @@ finally {
       walk(installDir); directory.preDelete = { paths, activity: 'compose/provider/probe 收尾完成', at: new Date().toISOString() }; save()
       const pathInventory = resolve(evidence, 'cleanup-paths.json')
       writeFileSync(pathInventory, JSON.stringify(paths.toReversed()))
-      directory.cleanup = process.platform === 'win32' ? await command('powershell.exe', ['-NoProfile', '-Command', "$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message} } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"], { env: { ...env, WORKMESH_A2_PATH_INVENTORY: pathInventory, WORKMESH_A2_PATH_RECEIPTS: resolve(evidence, 'cleanup-path-receipts.json') } })
+      directory.cleanup = process.platform === 'win32' ? await command('powershell.exe', ['-NoProfile', '-Command', "$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message}; break } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"], { env: { ...env, WORKMESH_A2_PATH_INVENTORY: pathInventory, WORKMESH_A2_PATH_RECEIPTS: resolve(evidence, 'cleanup-path-receipts.json') } })
         : await command(process.execPath, ['-e', "require('node:fs').rmSync(process.env.WORKMESH_A2_CLEANUP_PATH,{recursive:true})"], { env: { ...env, WORKMESH_A2_CLEANUP_PATH: installDir } })
     } catch (error) { directory.cleanup = `保留：${redact(error)}` }
   } else if (directory && existsSync(installDir)) directory.cleanup = '保留：仍有服务引用或收尾未确认'

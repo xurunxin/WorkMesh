@@ -1,0 +1,14 @@
+[
+  {
+    "reason": "exclude historical evidence from Docker context; preserve source archives and first failure",
+    "action": "cancel-owned-build-client",
+    "command": "docker build --progress=plain --label workmesh.task=backend-lite-73936be5 --build-arg WORKMESH_BUILD_SHA=7fbea7ddc3833ce7c661a9b049c721666de36541 -t workmesh-retirement-lite:backend-lite-73936be5 -f infra/docker/lite.Dockerfile -",
+    "pid": 2164
+  },
+  {
+    "reason": "exclude historical evidence from Docker context; preserve source archives and first failure",
+    "action": "cancel-owned-build-client",
+    "command": "docker buildx build --builder wm-connector-dev-b83833c7859b --platform linux/amd64 --progress=plain --no-cache --load --label com.workmesh.validation.owner=wm-connector-dev-b83833c7859b --label com.workmesh.validation.index-tree=e52bd5ced3480ee10cebc1f6271a5684b36951ff --tag wm-connector-dev-b83833c7859b:api --file infra/docker/api.Dockerfile -",
+    "pid": 26840
+  }
+]

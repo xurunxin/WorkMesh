@@ -17,7 +17,6 @@ Read these files before making changes:
 ## Repository layout
 
 ```text
-apps/web        Next.js UI
 apps/api        Fastify REST/SSE API
 apps/worker     BullMQ workers, outbox, stale/lease jobs
 apps/mcp        MCP server/adapter
@@ -25,7 +24,6 @@ packages/db     Drizzle schema, migrations, repositories
 packages/contracts Zod/OpenAPI/event contracts
 packages/domain Framework-independent commands and invariants
 packages/agent-sdk TypeScript agent SDK
-packages/ui     Shared UI
 packages/config Shared typed configuration
 packages/observability Logs, metrics, tracing
 ```
@@ -49,7 +47,7 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm test:integration
-pnpm test:e2e
+pnpm test:conformance
 ```
 
 Do not claim completion while a required check is failing.
@@ -254,3 +252,7 @@ At the end of a task, report:
 - demo steps;
 - known limitations;
 - any spec divergence.
+
+## 当前纯后端交付
+
+功能以 API/MCP 与必要后端测试验收，不再开发内置 WebUI。接口或功能变更须同次维护中文接入说明、配置与示例，按已记录的 zh-tech-writing 来源核写作规范。SDK、CLI、连接器和必要后台不因页面退役删除；历史规格和审查原件保持。

@@ -1,0 +1,35 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 integration-retirement-retry.log；SHA-256：0335928c3a392e11190fbd2499ba898f08e0a18aa9d1258733c910a94fad1521
+
+
+> @workmesh/api@ test:integration I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\api
+> vitest run --config ../../vitest.integration.config.ts "backend-retirement.integration.test.ts"
+
+
+ RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/api
+
+ ❯ integration/backend-retirement.integration.test.ts (2 tests | 1 failed) 6236ms
+   × 固定 Skill 下载路径返回签名原字节，未声明路径和穿越请求拒绝 69ms
+     → expected [ 401, 404 ] to include 403
+   ✓ 审批要求由真实 worker 投递给 fake Agent，并进入完成结果和证据  2265ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  integration/backend-retirement.integration.test.ts > 固定 Skill 下载路径返回签名原字节，未声明路径和穿越请求拒绝
+AssertionError: expected [ 401, 404 ] to include 403
+ ❯ integration/backend-retirement.integration.test.ts:60:24
+     58|   expect(verify(null, bytes, publicKey, Buffer.from(workmeshSkillManif…
+     59|   for (const path of ['/skills/unlisted.md', '/skills/%2e%2e%2fprivate…
+     60|     expect([401, 404]).toContain((await fetch(`${apiUrl}${path}`)).sta…
+       |                        ^
+     61| })
+     62|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  04:22:45
+   Duration  14.58s (transform 3.19s, setup 0ms, collect 6.68s, tests 6.24s, environment 0ms, prepare 233ms)
+
+ ELIFECYCLE  Command failed with exit code 1.

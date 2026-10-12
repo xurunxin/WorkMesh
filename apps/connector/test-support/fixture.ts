@@ -52,7 +52,7 @@ export async function fixture(token = 'wmi_' + 'b'.repeat(43), provided?: Expect
   const redeemed = { connection, installation_token: token, mcp: { transport: 'streamable_http', url: e.mcpUrl, auth: { type: 'installation_token', header: 'X-WorkMesh-Installation-Token' } },
     skill: { ...e.skill, download_url: e.skillUrl }, principal_human_actor_id: e.principalHumanActorId, team_id: e.teamId,
     idempotency_replay: { replayable_until: new Date(Date.now() + 900_000).toISOString(), replay_returns_identical_body: true } }
-  let skill = await readFile(new URL('../../web/public/skills/workmesh-1.1.0.md', import.meta.url))
+  let skill = await readFile(new URL('../../api/assets/skills/workmesh-1.1.0.md', import.meta.url))
   const requests: Array<{ url: string; init?: RequestInit }> = []
   const protocol: ProtocolDependencies = {
     fetch: async (input, init) => {

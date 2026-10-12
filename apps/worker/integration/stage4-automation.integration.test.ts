@@ -728,7 +728,7 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     )).rowCount).toBe(0)
   })
 
-  it('delivers generic browser push deep links and invalidates gone subscriptions', async () => {
+  it('delivers authenticated API browser push links and invalidates gone subscriptions', async () => {
     await db.query(
       `INSERT INTO notification_preferences(workspace_id,actor_id,channels)
        VALUES($1,$2,ARRAY['in_app','browser']::notification_channel[])
@@ -767,6 +767,7 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     const deliveredInputs: Array<Record<string, unknown>> = []
     const deliveryWorker = createBaseAutomationWorker({
       db,
+      apiOrigin: 'https://fixture-user:fixture-password@workmesh.example.test/old-page?credential=fixture#ignored',
       workerId: `browser-success-${randomUUID()}`,
       features: loadFeatureConfig({}),
       sink: {
@@ -784,7 +785,7 @@ describe('Stage 4 durable Automation and Loop runtime', () => {
     expect(deliveredInputs).toEqual([expect.objectContaining({
       title: 'Approval required',
       body: 'Open WorkMesh to review a pending approval.',
-      url: `/?view=inbox&attentionSelected=${encodeURIComponent(`v1:approval:${approvalId}`)}`,
+      url: `https://workmesh.example.test/api/v1/human-attention/${encodeURIComponent(`v1:approval:${approvalId}`)}`,
     })])
     expect(JSON.stringify(deliveredInputs[0])).not.toMatch(/reason|credential|payload/i)
     expect((await db.query<{ status: string; last_delivered_at: Date | null }>(

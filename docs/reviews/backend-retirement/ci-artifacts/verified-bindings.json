@@ -1,0 +1,80 @@
+{
+  "runId": 38176577167,
+  "runHead": "7209be0641cc224b19b88bc36b0d3a03996b0b63",
+  "actualCheckout": "47faa50156178fccebf3d6ea2db33c11550688f5",
+  "actualTree": "c84a252776f7e0c2f4b42a75ea7c9c386e43b87c",
+  "sourceTreeEqualsProductHead": true,
+  "mergeParents": [
+    "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+    "7209be0641cc224b19b88bc36b0d3a03996b0b63"
+  ],
+  "nativeBindings": [
+    {
+      "artifactId": 11715459494,
+      "platform": "win32",
+      "node": "v22.19.0",
+      "head": "47faa50156178fccebf3d6ea2db33c11550688f5",
+      "tree": "c84a252776f7e0c2f4b42a75ea7c9c386e43b87c",
+      "beforeSha256": "15e7f031d258aecba02d6a5eb41e4c001c698e9a50155072502e39f4327ec460",
+      "afterSha256": "06250a15f56ac1f7d21e736e70249680efde1fff6ad6128cf39672da811477a2"
+    },
+    {
+      "artifactId": 11716023317,
+      "platform": "darwin",
+      "node": "v22.19.0",
+      "head": "47faa50156178fccebf3d6ea2db33c11550688f5",
+      "tree": "c84a252776f7e0c2f4b42a75ea7c9c386e43b87c",
+      "beforeSha256": "ae8b2ba219aa5729c654481574d7e66863b555541774b6b61057041369981d6c",
+      "afterSha256": "87114085f6863f77795dbf142974845c194201c50b373a8711b59cd7a46ee3ff"
+    },
+    {
+      "artifactId": 11715309982,
+      "platform": "linux",
+      "node": "v22.19.0",
+      "head": "47faa50156178fccebf3d6ea2db33c11550688f5",
+      "tree": "c84a252776f7e0c2f4b42a75ea7c9c386e43b87c",
+      "beforeSha256": "08c22a038e8fb4741a8c980f204edae2828d300116ba2add503fbe446bfe9fde",
+      "afterSha256": "1d87b056e25173395872724666a30487bba98ccff26fdd2ddd8301059636e1f1"
+    }
+  ],
+  "developmentImages": {
+    "artifactId": 11715759459,
+    "head": "47faa50156178fccebf3d6ea2db33c11550688f5",
+    "indexTree": "c84a252776f7e0c2f4b42a75ea7c9c386e43b87c",
+    "images": [
+      {
+        "name": "api",
+        "imageId": "sha256:7d24b10756f7f20fa1545a16aaff45df28fa116ace945bda0830542cc7ce3107",
+        "logSha256": "6472d0cff337278023e802283d5313a587785d654320457af78a806a32d9029a"
+      },
+      {
+        "name": "worker",
+        "imageId": "sha256:80bde3857763e015f1c32a4a649fffec475f556c9e2ee216ce4351c354e08c2e",
+        "logSha256": "fca6427efb284341b42bb35fc0c315fe09c461885318a07933133c64c00d0b91"
+      },
+      {
+        "name": "mcp",
+        "imageId": "sha256:ff332ff981e1f356cd8011c96cebd8bfc02bc38dd3fa39d5fc4921c32c360b29",
+        "logSha256": "ba3c971bd4c37c213aaa7fc29fca684a2db1fc250cc5a1fe7304565bedbd6ded"
+      }
+    ]
+  },
+  "restoredServiceSmoke": {
+    "artifactId": 11715859114,
+    "reportSha256": "2a770584df95ceb86657fef9e3d2395b5e49e3a9bb6844f32cc582d1b06471d2",
+    "report": {
+      "schemaVersion": 1,
+      "status": "passed",
+      "startedAt": "2026-10-11T21:34:51.451Z",
+      "endedAt": "2026-10-11T21:34:51.608Z",
+      "checks": {
+        "apiReady": 200,
+        "workerReady": 200,
+        "mcpReady": 200,
+        "mcpInitialized": true,
+        "agentHeartbeat": 200,
+        "agentHeartbeatDurable": true
+      }
+    }
+  }
+}

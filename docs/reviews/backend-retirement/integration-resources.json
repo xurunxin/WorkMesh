@@ -1,0 +1,175 @@
+{
+  "owner": "retirement-004cf62e6c",
+  "resources": [
+    {
+      "role": "postgres",
+      "name": "retirement-004cf62e6c-postgres",
+      "id": "9aa12ab9a76c5f00408103e54aa7763e2779081aa24ea51f22bf29fc41fac101",
+      "imageId": "sha256:7c688148e5e156d0e86df7ba8ae5a05a2386aaec1e2ad8e6d11bdf10504b1fb7",
+      "owner": "retirement-004cf62e6c",
+      "port": "3352"
+    },
+    {
+      "role": "redis",
+      "name": "retirement-004cf62e6c-redis",
+      "id": "07158e61bd39651bf4b1a5767e3201ea1aeb1c03b98782a3a8b9f471275c465c",
+      "imageId": "sha256:bb186d083732f669da90be8b0f975a37812b15e913465bb14d845db72a4e3e08",
+      "owner": "retirement-004cf62e6c",
+      "port": "3355"
+    },
+    {
+      "role": "s3",
+      "name": "retirement-004cf62e6c-s3",
+      "id": "d5b207eb7e7666879e8596d1c0bbfc372e167df864e706f7981c90df431bf0d1",
+      "imageId": "sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff",
+      "owner": "retirement-004cf62e6c",
+      "port": "3356"
+    }
+  ],
+  "cleanup": "已核归属、零测试消费者与私有卷独占引用；三个容器及其卷实际移除后复核不存在",
+  "dedicatedDatabases": [
+    "workmesh_retirement_test",
+    "workmesh_retirement_targeted_test",
+    "workmesh_retirement_recovery_source_test",
+    "workmesh_retirement_recovery_target_test"
+  ],
+  "recoveryBuckets": [
+    "recovery-source-retirement-004cf62e6c",
+    "recovery-target-retirement-004cf62e6c"
+  ],
+  "preCleanup": {
+    "at": "2026-10-11T21:57:41.095429+00:00",
+    "testConsumers": [],
+    "containers": [
+      {
+        "id": "9aa12ab9a76c5f00408103e54aa7763e2779081aa24ea51f22bf29fc41fac101",
+        "name": "/retirement-004cf62e6c-postgres",
+        "owner": "retirement-004cf62e6c",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "240121dea6f24a35ee049959703ddb36e6a32beea30c1d901f1614f0daf016aa",
+            "referenceIds": [
+              "9aa12ab9a76c"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "07158e61bd39651bf4b1a5767e3201ea1aeb1c03b98782a3a8b9f471275c465c",
+        "name": "/retirement-004cf62e6c-redis",
+        "owner": "retirement-004cf62e6c",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "53d3afb80c460429ba4c0e18bde94d1c124d7e1dcd43af5b07e83eed3dedd789",
+            "referenceIds": [
+              "07158e61bd39"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "d5b207eb7e7666879e8596d1c0bbfc372e167df864e706f7981c90df431bf0d1",
+        "name": "/retirement-004cf62e6c-s3",
+        "owner": "retirement-004cf62e6c",
+        "mounts": [
+          {
+            "type": "volume",
+            "name": "5edd1a4be99002666b669602861f503d0e8d521416d6dbba15fdc79ca17fafe5",
+            "referenceIds": [
+              "d5b207eb7e76"
+            ]
+          }
+        ]
+      }
+    ],
+    "scope": "本轮独有 PG/Redis/S3 与其私有卷；不是共享服务或业务数据"
+  },
+  "cleanupResults": [
+    {
+      "id": "9aa12ab9a76c5f00408103e54aa7763e2779081aa24ea51f22bf29fc41fac101",
+      "command": [
+        "docker",
+        "rm",
+        "-f",
+        "-v",
+        "9aa12ab9a76c5f00408103e54aa7763e2779081aa24ea51f22bf29fc41fac101"
+      ],
+      "code": 0,
+      "stdout": "9aa12ab9a76c5f00408103e54aa7763e2779081aa24ea51f22bf29fc41fac101\n",
+      "stderr": "",
+      "at": "2026-10-11T21:58:09.415939+00:00",
+      "postDelete": [
+        {
+          "kind": "container",
+          "target": "9aa12ab9a76c5f00408103e54aa7763e2779081aa24ea51f22bf29fc41fac101",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "volume",
+          "target": "240121dea6f24a35ee049959703ddb36e6a32beea30c1d901f1614f0daf016aa",
+          "absent": true,
+          "code": 1
+        }
+      ]
+    },
+    {
+      "id": "07158e61bd39651bf4b1a5767e3201ea1aeb1c03b98782a3a8b9f471275c465c",
+      "command": [
+        "docker",
+        "rm",
+        "-f",
+        "-v",
+        "07158e61bd39651bf4b1a5767e3201ea1aeb1c03b98782a3a8b9f471275c465c"
+      ],
+      "code": 0,
+      "stdout": "07158e61bd39651bf4b1a5767e3201ea1aeb1c03b98782a3a8b9f471275c465c\n",
+      "stderr": "",
+      "at": "2026-10-11T21:58:11.833595+00:00",
+      "postDelete": [
+        {
+          "kind": "container",
+          "target": "07158e61bd39651bf4b1a5767e3201ea1aeb1c03b98782a3a8b9f471275c465c",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "volume",
+          "target": "53d3afb80c460429ba4c0e18bde94d1c124d7e1dcd43af5b07e83eed3dedd789",
+          "absent": true,
+          "code": 1
+        }
+      ]
+    },
+    {
+      "id": "d5b207eb7e7666879e8596d1c0bbfc372e167df864e706f7981c90df431bf0d1",
+      "command": [
+        "docker",
+        "rm",
+        "-f",
+        "-v",
+        "d5b207eb7e7666879e8596d1c0bbfc372e167df864e706f7981c90df431bf0d1"
+      ],
+      "code": 0,
+      "stdout": "d5b207eb7e7666879e8596d1c0bbfc372e167df864e706f7981c90df431bf0d1\n",
+      "stderr": "",
+      "at": "2026-10-11T21:58:13.505548+00:00",
+      "postDelete": [
+        {
+          "kind": "container",
+          "target": "d5b207eb7e7666879e8596d1c0bbfc372e167df864e706f7981c90df431bf0d1",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "volume",
+          "target": "5edd1a4be99002666b669602861f503d0e8d521416d6dbba15fdc79ca17fafe5",
+          "absent": true,
+          "code": 1
+        }
+      ]
+    }
+  ]
+}

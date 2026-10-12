@@ -21,12 +21,11 @@ Node is pinned to the exact patch in `.node-version`. Corepack activates the
 root `packageManager` value, `pnpm@9.15.4`, and installation always uses
 `pnpm install --frozen-lockfile`. Dependencies use pnpm's content addressed
 store. The source job also restores pure typecheck results from
-`.turbo/typecheck` and Next compiler intermediates from `apps/web/.next/cache`.
+`.turbo/typecheck`.
 Only main pushes that pass all source gates save these caches; PRs only restore.
 Keys bind platform, Node, lockfile and commit, with a same-toolchain/lockfile
-fallback. No `node_modules`, complete `.next`/`dist` artifacts or unit/integration/
-E2E results are persisted between runs. Next build still performs its own type
-validation, including generated route types.
+fallback. No `node_modules`, complete `dist` artifacts or unit/integration/
+protocol results are persisted between runs. 后端编译继续独立执行。
 
 ## Change selection and required job graph
 
@@ -38,9 +37,8 @@ dependencies. It produces a JSON plan and one explicit boolean per job.
 | Change | Checks |
 | --- | --- |
 | Known prose under `docs/`, root README/AGENTS/CONTRIBUTING/CHANGELOG/LICENSE | `changes` and `Required CI`; no dependency install, builds, unit suites or services |
-| Code PR in a workspace | Changed packages and transitive consumers; typecheck/build also include dependencies; relevant integration, E2E and protocol jobs |
-| UI/web PR | UI/web source checks and the complete existing browser suite; unrelated DB/API/worker/recovery/protocol suites are skipped |
-| API or worker PR | Relevant integration, complete browser acceptance and restored-production recovery; worker changes also run API integration because its fixtures import worker implementations |
+| Code PR in a workspace | Changed packages and transitive consumers; typecheck/build also include dependencies; relevant integration and protocol jobs |
+| API or worker PR | Relevant integration, backend acceptance and restored-production recovery; worker changes also run API integration because its fixtures import worker implementations |
 | Shared contracts, root/configuration/scripts/lockfile, unknown or removed workspace | Broad dependent checks or full acceptance; unknown paths always use full acceptance |
 | Main code push, manual, weekly, merge queue, release-candidate reuse | Full acceptance |
 
@@ -49,16 +47,13 @@ their workspace. An API/worker source PR therefore adds DB unit audits without
 inventing a reverse runtime dependency or selecting DB integration. The same
 inventory is validated against Turbo test inputs. Shared TypeScript/Vitest
 configuration participates in global inputs.
-Root scripts and Playwright configs are also global inputs because tests import
-them during typechecking. API/Web typecheck inputs cover their direct imports of
-worker, MCP, fake-agent and package source from integration/E2E fixtures.
+
+源码检查实际构建三个后端开发镜像，并执行无源码 Lite 与生产安装、镜像 save/load、Lite 角色脚本、测试 TLS、真实部署 worker 的精确上下文和 API 签名 Skill 下载；生产安装还验证 MCP 的真实初始化与身份查询。部署使用专用 builder、Compose 项目和测试凭据；验收及归属收尾原件进入 `ci-logs/backend-deployment`。移除或条件跳过该步骤、吞掉失败均使 CI 自检拒绝。
+Root scripts are also global inputs because tests import
+them during typechecking. API typecheck inputs cover their direct imports of
+worker, MCP, fake-agent and package source from integration fixtures.
 Typecheck also retains Turbo's upstream task hashes; its selected filters already
 include every prerequisite workspace, so this adds no duplicate checks.
-Browser preparation prioritizes the runner image's official Ubuntu HTTPS
-fallback mirrors after repeated Azure APT stalls. APT connections have 15-second
-timeouts and two retries; browser installation is limited to eight minutes and
-still installs required OS dependencies. A failed installation remains a failed
-check.
 Runtime environment variables are
 passed through globally but hashed by build/test tasks; changing a bootstrap
 credential does not invalidate pure `tsc --noEmit` checks.
@@ -70,22 +65,18 @@ Runtime Skills and assets never receive the prose exemption. Empty diffs,
 invalid event metadata and unavailable Git history fall back to full acceptance.
 
 All seven selected check jobs depend only on `changes`, so service setup and
-integration/browser tests can overlap typechecking, builds and unit tests:
+integration tests can overlap typechecking, builds and unit tests:
 
+- `source-gates` 执行选中的源码、生成合同、开发镜像及实际 Lite/生产部署检查。
+- `connector-platform` 在 Linux、macOS 与 Windows 使用锁定 Node 验证原生秘密存储和前后源码绑定。
 - `db-integration` uses its own PostgreSQL 16 test database.
 - `api-integration` uses its own PostgreSQL 16 test database plus isolated
   RustFS object storage and a signed-request bucket initialization step.
 - `worker-integration` uses its own PostgreSQL 16 test database. The current
   worker integration suites do not require Redis.
-- `e2e` runs two file shards on separate runners, each with its own PostgreSQL 16
-  test database, Redis, API and Web. Each shard installs Chromium and keeps one
-  browser worker. Before execution, collection checks prove the union matches
-  the complete acceptance suite and that only bootstrap repeats. Matrix
-  `fail-fast: false` preserves evidence from both shards. The logical job passes
-  only when both shards pass, which the strict Required CI aggregate requires.
 - `recovery-integration` uses isolated source and empty target PostgreSQL 16
   databases plus versioned RustFS buckets, restores a complete authenticated
-  bundle, and starts the restored API, Worker, and Web for an Agent heartbeat.
+  bundle, and starts the restored API、worker 和 MCP for an Agent heartbeat.
 - `agent-smoke` exercises SDK construction and protocol/adaptor smoke paths,
   then runs the Agent Collaboration Client Profile suite through Native HTTP
   and MCP reference drivers for Codex-, OpenCode-, and pi-style behaviors. It
@@ -96,8 +87,7 @@ integration/browser tests can overlap typechecking, builds and unit tests:
 It requires successful classification, `success` for every selected job, and
 `skipped` only for jobs explicitly excluded by the plan. A missing plan, missing
 result, failure, cancellation, or unplanned skip fails the gate, giving branch
-protection one stable aggregate check name when an administrator configures it.
-This repository change does not itself modify branch-protection settings.
+protection one stable aggregate check name. 已只读核对 GitHub main：strict 检查仅要求 `Required CI`，没有遗留浏览器 context；返回原件见 `reviews/backend-retirement/required-status-source.json`。本次没有修改远端保护设置。
 
 Workflow-level path filters are deliberately avoided: GitHub leaves their
 required checks pending when the workflow is skipped. See the official
@@ -110,14 +100,8 @@ typecheck: all current packages use `tsc --noEmit` for both, so CI executes that
 check once. Contracts and SDK unit tests run once in the selected unit suites;
 `smoke:agents:ci` retains both construction smoke commands and the conformance
 job retains all protocol drivers. Local `smoke:agents` keeps its self-contained
-SDK test. Theme E2E runs once in the authenticated project, so protected routes
-are actually checked instead of checking an anonymous redirect to login.
-SDK HTTP fixtures retain the real SDK and retry count with an in-memory 1ms
-backoff; production retry behavior is unchanged. Browser accessibility checks
-perform structural and keyboard assertions on each shared page navigation, at
-both existing viewports. The root E2E command selects the web workspace, avoiding
-synthetic E2E tasks and nine unrelated prerequisite builds. No behavioral
-assertions are deleted.
+SDK test. SDK HTTP fixtures retain the real SDK and retry count with an in-memory 1ms
+backoff; production retry behavior is unchanged. 纯页面、键盘与布局断言退役；仍属后端合同的断言及实际执行结果见后端化验收记录。根命令不再提供浏览器测试入口。
 
 `format:check` is deliberately absent: the repository has
 no accepted formatting baseline and introducing one would mechanically touch
@@ -133,10 +117,7 @@ original evidence.
 
 Raw command logs are uploaded with `always()` and retained for 14 days. Missing
 raw-log paths fail the upload step instead of producing a warning. Jobs with
-service containers also capture container logs on failure. E2E additionally
-uploads `playwright-report` and `test-results` for 14 days, and missing
-Playwright evidence also fails its upload step. Both raw logs and browser
-reports include the shard number in their artifact name to prevent collisions.
+service containers also capture container logs on failure. 浏览器报告及分片产物不再生成；现行后端原件按 run 和 attempt 区分，原始日志与部署/清理回执仍须上传。历史截图和基线保留在 `reviews/backend-retirement/webui-history/`。
 A dedicated failure-only service
 log upload may use `if-no-files-found: ignore`, because a failed setup can leave
 no service container to inspect. Artifact paths are allowlisted and never include
@@ -159,7 +140,7 @@ pnpm ci:source test
 scope; `CI_TEST_PACKAGES` supplies additional static test consumers when needed.
 Without them, `ci:source` selects all packages. `--dry-run` prints Turbo's
 actual task selection. The existing `lint`, `typecheck`, `test`, integration and
-E2E commands remain available as complete local checks.
+protocol commands remain available as complete local checks.
 
 The production Compose and runtime-startup contract requires a working Docker
 daemon and installed dependencies. It runs in the protected release preflight
@@ -184,7 +165,7 @@ The aggregate `pnpm test:integration` preserves the established order: database,
 API, worker, then recovery. Recovery uses separate source and empty target test
 databases plus a versioned object-store test bucket. The hosted
 `recovery-integration` job also builds and starts the restored API, Worker, and
-Web and performs a durable Agent Session heartbeat.
+MCP 并执行 a durable Agent Session heartbeat.
 
 ### Local integration prerequisites
 
@@ -239,7 +220,7 @@ separate from any development database.
 
 `.github/workflows/release-candidate.yml` accepts only a tag matching
 `v1.0.0-rc.N`. It calls this workflow first, then runs dependency, source,
-configuration, and secret scanning. Only after those gates pass may the four
+configuration, and secret scanning. Only after those gates pass may the three
 production images enter the protected `stable-release` environment. Every
 image is scanned before publication; High or Critical findings fail the run.
 
@@ -253,3 +234,7 @@ or Release creation. No job uses automatic retry or `continue-on-error`.
 signatures, SBOMs, and registry digests. It retags those exact manifests as
 `v1.0.0`, compares every observed digest, and contains no build or dependency
 installation command. See [Release operations](operations/releases.md).
+
+## 浏览器断言退役
+
+浏览器 job、分片、下载与 Next 缓存已移除。原页面与视觉断言记录为退役，原件保留；领域、鉴权、隔离、Stop、审批、撤销、幂等与恢复由 API/worker/协议和恢复套件承担。迁移索引见 `docs/reviews/backend-retirement/test-results.md`；其中未测不表示通过。目录外两份 Lite 脚本使用原生 HTTP，仍要求真实部署 worker、无源码安装、save/load 与 TLS。变更分类将 API Skill 和 fake-agent 源变更纳入 API 必需检查；Required CI 继续拒绝缺结果、失败、取消和非计划跳过。

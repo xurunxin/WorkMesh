@@ -48,8 +48,8 @@ const assert = (condition, message) => {
 
 const services = compose.services ?? {}
 const serviceNames = Object.keys(services)
-const appServices = ['migrate', 'api', 'worker', 'web']
-const nodeServices = ['api', 'worker', 'web']
+const appServices = ['migrate', 'api', 'worker']
+const nodeServices = ['api', 'worker']
 const dataServices = ['postgres', 'redis', 'minio', 'minio-init']
 
 for (const name of [...appServices, ...dataServices]) {
@@ -114,7 +114,7 @@ for (const name of appServices) {
   )
 }
 
-// One image, four roles: the Lite image cannot carry MCP or the Agent Runner, and
+// One image, three backend roles: the Lite image cannot carry MCP or the Agent Runner, and
 // a compose that tried to start them from it would fail at the dispatch table.
 for (const name of ['mcp', 'agent-runner']) {
   assert(!services[name], `the Lite compose must not define ${name}; it runs on the operator's machine`)
@@ -214,6 +214,13 @@ const documentedVariables = new Set(
     .map((line) => /^([A-Z][A-Z0-9_]*)=/u.exec(line)?.[1])
     .filter((name) => name !== undefined),
 )
+const exampleValues = Object.fromEntries(exampleSource.split(/\r?\n/u)
+  .flatMap(line => { const match = /^([A-Z][A-Z0-9_]*)=(.*)$/u.exec(line); return match ? [[match[1], match[2]]] : [] }))
+const exampleOrigin = new URL(exampleValues.WEB_ORIGIN.replace('CHANGE_ME_lan_address', 'lite.example'))
+assert(exampleOrigin.port === exampleValues.API_HOST_PORT,
+  'Lite example WEB_ORIGIN port must match API_HOST_PORT')
+assert(services.api.ports?.some(value => String(value).includes(`\${API_HOST_PORT:-${exampleValues.API_HOST_PORT}}:3001`)),
+  'Lite example API_HOST_PORT must match the Compose default')
 const composedVariables = new Set(
   [...source.matchAll(/\$\{([A-Z][A-Z0-9_]*)[:?]/gu)].map((match) => match[1]),
 )
@@ -244,6 +251,8 @@ if (arguments_.includes('--self-test')) {
   // Every mutation below is a realistic mistake. Each one must be rejected, and
   // with the specific message, so a passing validation means something.
   const cases = [
+    ['stale external API port', composeText, exampleText.replace(':3001\n', ':3000\n'), /WEB_ORIGIN port must match API_HOST_PORT/u],
+    ['stale published API port', composeText, exampleText.replace('API_HOST_PORT=3001', 'API_HOST_PORT=3000'), /WEB_ORIGIN port must match API_HOST_PORT/u],
     ['uncapped service', composeText.replace('    mem_limit: 640m\n', ''), null, /api must declare an explicit mem_limit/u],
     [
       'heap above the container limit',

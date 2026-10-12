@@ -1,0 +1,281 @@
+{
+  "runId": "backend-lite-558fdf2d",
+  "sha": "323dbe76182eabad91c7cd905aeb6ea2e9053a50",
+  "deploymentClass": "lite",
+  "environment": "工作站 Linux Docker；非真实低功耗设备",
+  "installDir": "D:\\Cache\\TEMP\\backend-lite-558fdf2d",
+  "resources": [
+    {
+      "type": "directory",
+      "target": "D:\\Cache\\TEMP\\backend-lite-558fdf2d",
+      "owner": "backend-lite-558fdf2d",
+      "createdAt": "2026-10-11T21:56:38.541Z",
+      "cleanup": {
+        "code": 0,
+        "output": ""
+      },
+      "realPath": "D:\\Cache\\TEMP\\backend-lite-558fdf2d",
+      "created": true,
+      "preDelete": {
+        "paths": [
+          {
+            "path": "D:\\Cache\\TEMP\\backend-lite-558fdf2d",
+            "type": "directory",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          }
+        ],
+        "activity": "compose/provider/probe 收尾完成",
+        "at": "2026-10-11T21:57:18.366Z"
+      }
+    },
+    {
+      "type": "builder",
+      "target": "backend-lite-558fdf2d",
+      "owner": "backend-lite-558fdf2d",
+      "createdAt": "2026-10-11T21:56:38.590Z",
+      "cleanup": {
+        "code": 0,
+        "output": "backend-lite-558fdf2d removed\n"
+      },
+      "created": true,
+      "containerName": "buildx_buildkit_backend-lite-558fdf2d0",
+      "containerId": "76226ce2180845fc7ae9b7c57db2ec7433ee1efcc45bbafb0ce4454a5db37b37",
+      "preDelete": {
+        "expectedId": "76226ce2180845fc7ae9b7c57db2ec7433ee1efcc45bbafb0ce4454a5db37b37",
+        "actualId": "76226ce2180845fc7ae9b7c57db2ec7433ee1efcc45bbafb0ce4454a5db37b37",
+        "code": 0,
+        "activity": "专用构建已结束；核对本人 builder 容器身份",
+        "at": "2026-10-11T21:57:14.113Z"
+      },
+      "postDelete": [
+        {
+          "kind": "container",
+          "target": "76226ce2180845fc7ae9b7c57db2ec7433ee1efcc45bbafb0ce4454a5db37b37",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "volume",
+          "target": "buildx_buildkit_backend-lite-558fdf2d0_state",
+          "absent": true,
+          "code": 1
+        }
+      ]
+    },
+    {
+      "type": "image",
+      "target": "workmesh-retirement-lite:backend-lite-558fdf2d",
+      "owner": "backend-lite-558fdf2d",
+      "createdAt": "2026-10-11T21:56:47.833Z",
+      "cleanup": null,
+      "borrowed": false
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "buildx",
+        "inspect",
+        "backend-lite-558fdf2d"
+      ],
+      "pid": 23780,
+      "startedAt": "2026-10-11T21:56:38.592Z",
+      "endedAt": "2026-10-11T21:56:39.950Z",
+      "code": 1,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "buildx",
+        "create",
+        "--name",
+        "backend-lite-558fdf2d",
+        "--driver",
+        "docker-container",
+        "--driver-opt",
+        "memory=4g",
+        "--driver-opt",
+        "memory-swap=4g"
+      ],
+      "pid": 7544,
+      "startedAt": "2026-10-11T21:56:39.954Z",
+      "endedAt": "2026-10-11T21:56:40.883Z",
+      "code": 0,
+      "log": "1.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "buildx",
+        "inspect",
+        "--bootstrap",
+        "backend-lite-558fdf2d"
+      ],
+      "pid": 17988,
+      "startedAt": "2026-10-11T21:56:40.888Z",
+      "endedAt": "2026-10-11T21:56:47.483Z",
+      "code": 0,
+      "log": "2.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "buildx_buildkit_backend-lite-558fdf2d0"
+      ],
+      "pid": 9292,
+      "startedAt": "2026-10-11T21:56:47.486Z",
+      "endedAt": "2026-10-11T21:56:47.827Z",
+      "code": 0,
+      "log": "3.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "workmesh-retirement-lite:backend-lite-558fdf2d"
+      ],
+      "pid": 44740,
+      "startedAt": "2026-10-11T21:56:47.836Z",
+      "endedAt": "2026-10-11T21:56:48.159Z",
+      "code": 1,
+      "log": "4.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "buildx",
+        "build",
+        "--builder",
+        "backend-lite-558fdf2d",
+        "--load",
+        "--progress=plain",
+        "--label",
+        "workmesh.task=backend-lite-558fdf2d",
+        "--build-arg",
+        "WORKMESH_BUILD_SHA=323dbe76182eabad91c7cd905aeb6ea2e9053a50",
+        "-t",
+        "workmesh-retirement-lite:backend-lite-558fdf2d",
+        "-f",
+        "infra/docker/lite.Dockerfile",
+        "-"
+      ],
+      "pid": 22392,
+      "startedAt": "2026-10-11T21:56:48.181Z",
+      "endedAt": "2026-10-11T21:57:13.685Z",
+      "code": 1,
+      "log": "5.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "buildx_buildkit_backend-lite-558fdf2d0"
+      ],
+      "pid": 50724,
+      "startedAt": "2026-10-11T21:57:13.723Z",
+      "endedAt": "2026-10-11T21:57:14.110Z",
+      "code": 0,
+      "log": "6.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "buildx",
+        "rm",
+        "backend-lite-558fdf2d"
+      ],
+      "pid": 32116,
+      "startedAt": "2026-10-11T21:57:14.115Z",
+      "endedAt": "2026-10-11T21:57:17.469Z",
+      "code": 0,
+      "log": "7.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "container",
+        "inspect",
+        "76226ce2180845fc7ae9b7c57db2ec7433ee1efcc45bbafb0ce4454a5db37b37"
+      ],
+      "pid": 38332,
+      "startedAt": "2026-10-11T21:57:17.473Z",
+      "endedAt": "2026-10-11T21:57:17.904Z",
+      "code": 1,
+      "log": "8.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "volume",
+        "inspect",
+        "buildx_buildkit_backend-lite-558fdf2d0_state"
+      ],
+      "pid": 29064,
+      "startedAt": "2026-10-11T21:57:17.909Z",
+      "endedAt": "2026-10-11T21:57:18.358Z",
+      "code": 1,
+      "log": "9.log"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message}; break } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"
+      ],
+      "pid": 41316,
+      "startedAt": "2026-10-11T21:57:18.415Z",
+      "endedAt": "2026-10-11T21:57:19.122Z",
+      "code": 0,
+      "log": "10.log"
+    }
+  ],
+  "outcome": "失败或未验收：Error: docker 退出 1",
+  "buildContext": {
+    "source": "323dbe76182eabad91c7cd905aeb6ea2e9053a50",
+    "paths": [
+      ".dockerignore",
+      ".node-version",
+      "package.json",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "turbo.json",
+      "tsconfig.base.json",
+      "OPENAPI.yaml",
+      "SCHEMA.sql",
+      "AGENT_PROTOCOL.md",
+      "README.md",
+      "AGENTS.md",
+      "CONTEXT.md",
+      "apps",
+      "packages",
+      "scripts",
+      "skills",
+      "infra"
+    ],
+    "reason": "历史证据保留在 Git，不复制进镜像构建上下文"
+  },
+  "features": {
+    "WORKMESH_BETA_PLANNING": false,
+    "WORKMESH_BETA_TEMPLATES": false,
+    "WORKMESH_BETA_COSTS": false,
+    "WORKMESH_BETA_OPERATIONS_UI": false,
+    "WORKMESH_BETA_COORDINATION_MCP": true,
+    "WORKMESH_BETA_MODEL_PRESETS": false,
+    "WORKMESH_EXPERIMENTAL_AUTOMATION": false,
+    "WORKMESH_EXPERIMENTAL_AGENT_LOOPS": false,
+    "WORKMESH_EXPERIMENTAL_A2A": false,
+    "WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS": false,
+    "WORKMESH_EXPERIMENTAL_MULTI_RUNTIME": false,
+    "WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS": false,
+    "WORKMESH_BETA_GITEA": true
+  }
+}

@@ -1,4 +1,4 @@
-"""构建四个真实开发镜像；使用独有 builder，保留原始日志并定向收尾。"""
+"""构建三个后端真实开发镜像；使用独有 builder，保留原始日志并定向收尾。"""
 import hashlib
 import argparse
 import json
@@ -26,7 +26,7 @@ def save(name, value):
 
 source_tree = command(["git", "write-tree"]).decode().strip()
 head = command(["git", "rev-parse", "HEAD"]).decode().strip()
-targets = ["api", "web", "worker", "mcp"]
+targets = ["api", "worker", "mcp"]
 tags = {name: owner + ":" + name for name in targets}
 baseline = {
     "images": command(["docker", "image", "ls", "--no-trunc", "--format", "{{json .}}"] ).decode(),
@@ -35,14 +35,14 @@ baseline = {
 }
 save("registration.json", {"owner": owner, "registeredAt": datetime.now(timezone.utc).isoformat(),
      "head": head, "indexTree": source_tree, "builder": owner, "tags": tags,
-     "context": "git archive准确index tree，二进制管道传入Docker；全部已跟踪文件，排除未跟踪本机环境/秘密，不创建额外工作树或上下文目录",
+     "context": "git archive准确index tree，二进制管道传入Docker；产品源码保留；准确归档Docker COPY所需产品路径及权威根合同；历史docs与未跟踪本机环境/秘密不进入上下文，不创建额外工作树或上下文目录",
      "dockerVersion": command(["docker", "version"]).decode(), "baseline": baseline})
 results = []
 cleanup = []
 created = False
 failed = False
 try:
-    command(["docker", "buildx", "create", "--name", owner, "--driver", "docker-container"])
+    command(["docker", "buildx", "create", "--name", owner, "--driver", "docker-container", "--driver-opt", "memory=4g", "--driver-opt", "memory-swap=4g"])
     created = True
     for name in targets:
         args = ["docker", "buildx", "build", "--builder", owner, "--platform", "linux/amd64",
@@ -51,7 +51,7 @@ try:
                 "--tag", tags[name], "--file", "infra/docker/" + name + ".Dockerfile", "-"]
         log_path = directory / (name + ".log")
         with log_path.open("wb") as log:
-            archive = subprocess.Popen(["git", "archive", "--format=tar", source_tree], stdout=subprocess.PIPE, stderr=log)
+            archive = subprocess.Popen(["git", "archive", "--format=tar", source_tree, ".dockerignore", ".node-version", "package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", "turbo.json", "tsconfig.base.json", "OPENAPI.yaml", "SCHEMA.sql", "AGENT_PROTOCOL.md", "README.md", "AGENTS.md", "CONTEXT.md", "apps", "packages", "scripts", "skills", "infra"], stdout=subprocess.PIPE, stderr=log)
             build = subprocess.Popen(args, stdin=archive.stdout, stdout=log, stderr=subprocess.STDOUT)
             archive.stdout.close()
             build_code = build.wait()
@@ -109,6 +109,6 @@ finally:
             failed = failed or not absent
     save("cleanup.json", {"owner": owner, "results": cleanup,
          "retained": "已有资源与共享node/buildkit基础镜像不删除；只移除准确本任务标签与builder自有缓存/卷，不做全局prune"})
-save("result.json", {"owner": owner, "passed": not failed and len(results) == 4,
+save("result.json", {"owner": owner, "passed": not failed and len(results) == 3,
                      "head": head, "indexTree": source_tree, "buildCount": len(results)})
-raise SystemExit(1 if failed or len(results) != 4 else 0)
+raise SystemExit(1 if failed or len(results) != 3 else 0)

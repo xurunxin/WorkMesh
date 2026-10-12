@@ -1,0 +1,31 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 docker-runtime-diagnostic.log；SHA-256：f0651a8380947e78edfa944d35888600665636815fde74acb43737205e8db4c5
+
+some avg10=0.53 avg60=1.10 avg300=0.40 total=1696665
+full avg10=0.53 avg60=1.10 avg300=0.40 total=1689706
+some avg10=0.00 avg60=0.00 avg300=0.00 total=0
+full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+[    6.862583] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    6.863485] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    6.864370] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    6.865337] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    6.866419] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    6.867363] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    6.868365] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    6.869302] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    7.310029] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[    7.694781] WSL (300) ERROR: CheckConnection: getaddrinfo() failed: -5
+[    7.724951] WSL (300) ERROR: CheckConnection: getaddrinfo() failed: -5
+[    7.772769] WSL (300) ERROR: CheckConnection: getaddrinfo() failed: -5
+[    9.397793] WSL (1 - init(docker-desktop)) ERROR: ConfigApplyWindowsLibPath:2251: open /etc/ld.so.conf.d/ld.wsl.conf failed 2
+[    9.427112] WSL (1 - init(docker-desktop)) WARNING: /usr/share/zoneinfo/Asia/Shanghai not found. Is the tzdata package installed?
+[   24.686036] WSL (1 - init()): Distribution docker-desktop init process 2 exited
+[   24.929294] EXT4-fs (sdd): unmounting filesystem b8d1e602-7e68-4453-a0f7-65882ef71fb6.
+[   48.702143] hv_balloon: Max. dynamic memory size: 16320 MB
+[   64.645392] EXT4-fs (sdd): mounted filesystem b8d1e602-7e68-4453-a0f7-65882ef71fb6 r/w with ordered data mode. Quota mode: none.
+[   65.369719] misc dxg: dxgk: dxgkio_is_feature_enabled: Ioctl failed: -22
+[   65.378458] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -22
+[   65.379618] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -22
+[   65.380928] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -22
+[   65.382128] misc dxg: dxgk: dxgkio_query_adapter_info: Ioctl failed: -2
+[   65.515067] WSL (1 - init(docker-desktop)) ERROR: ConfigApplyWindowsLibPath:2251: open /etc/ld.so.conf.d/ld.wsl.conf failed 2
+[   65.610265] WSL (1 - init(docker-desktop)) WARNING: /usr/share/zoneinfo/Asia/Shanghai not found. Is the tzdata package installed?

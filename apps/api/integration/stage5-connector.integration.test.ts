@@ -30,9 +30,7 @@ const listen = async (server: Server) => { server.listen(0, '127.0.0.1'); await 
 const close = async (server: Server) => { server.close(); server.closeAllConnections(); await once(server, 'close') }
 beforeAll(async () => {
   temp = await temporaryDirectory('api')
-  const skill = await readFile(new URL('../../web/public/skills/workmesh-1.1.0.md', import.meta.url))
   gateway = createServer((incoming, outgoing) => {
-    if (incoming.url === '/skills/workmesh-1.1.0.md') { outgoing.writeHead(200, { 'Content-Type': 'text/markdown' }); outgoing.end(skill); return }
     const target = new URL(incoming.url!, incoming.url?.startsWith('/mcp') ? mcpBase : apiBase)
     const upstream = httpRequest(target, { method: incoming.method, headers: incoming.headers }, response => {
       outgoing.writeHead(response.statusCode ?? 500, response.headers); response.pipe(outgoing)

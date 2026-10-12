@@ -1,0 +1,26 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 route-policy-generation.log；SHA-256：08d45dd744d4b24b782d8796aacba842376fa0f1bc93e096fdbd7ee2a32d49dd
+
+
+> workmesh@ generate:route-policy I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> pnpm -C apps/api exec tsx ../../scripts/generate-route-policy-artifacts.mts
+
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides". See https://pnpm.io/settings for the new home of each setting.
+Scope: all 18 workspace projects
+[ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY] Aborted removal of modules directory due to no TTY
+
+If you are running pnpm in CI, set the CI environment variable to "true", or set "confirmModulesPurge" to "false".
+[ERROR] Command failed with exit code 1: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+
+pnpm: Command failed with exit code 1: "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" "C:\Users\xurx\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\node_modules\pnpm\bin\pnpm.mjs" install
+    at getFinalError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:89986:14)
+    at makeError (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:92293:21)
+    at getSyncResult (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94137:10)
+    at spawnSubprocessSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94097:14)
+    at execaCoreSync (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:94027:23)
+    at callBoundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96555:23)
+    at boundExeca (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96532:49)
+    at sync2 (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:96691:10)
+    at runPnpmCli (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:276904:5)
+    at runDepsStatusCheck (file:///C:/Users/xurx/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pnpm/dist/pnpm.mjs:278122:7)
+ ELIFECYCLE  Command failed with exit code 1.

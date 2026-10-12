@@ -1,0 +1,420 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 install.log；SHA-256：c42b38d0e44f93aaa0ec53416a11cab79cd409a5430af347ba469c5de8823c80
+
+Scope: all 18 workspace projects
+(node:12112) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +446
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 446, reused 0, downloaded 0, added 0
+Progress: resolved 446, reused 0, downloaded 1, added 0
+Progress: resolved 446, reused 0, downloaded 21, added 6
+Progress: resolved 446, reused 0, downloaded 31, added 17
+Progress: resolved 446, reused 0, downloaded 38, added 25
+Progress: resolved 446, reused 0, downloaded 50, added 36
+Progress: resolved 446, reused 0, downloaded 60, added 43
+Progress: resolved 446, reused 0, downloaded 72, added 49
+Progress: resolved 446, reused 0, downloaded 78, added 66
+Progress: resolved 446, reused 0, downloaded 84, added 71
+Progress: resolved 446, reused 0, downloaded 92, added 73
+Progress: resolved 446, reused 0, downloaded 97, added 77
+Progress: resolved 446, reused 0, downloaded 97, added 78
+Progress: resolved 446, reused 0, downloaded 97, added 79
+Progress: resolved 446, reused 0, downloaded 97, added 80
+Progress: resolved 446, reused 0, downloaded 97, added 83
+Progress: resolved 446, reused 0, downloaded 102, added 89
+Progress: resolved 446, reused 0, downloaded 108, added 93
+Progress: resolved 446, reused 0, downloaded 112, added 94
+ WARN  GET https://registry.npmjs.org/tinyexec/-/tinyexec-0.3.2.tgz error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 446, reused 0, downloaded 112, added 95
+Progress: resolved 446, reused 0, downloaded 113, added 95
+Progress: resolved 446, reused 0, downloaded 116, added 97
+Progress: resolved 446, reused 0, downloaded 117, added 99
+Progress: resolved 446, reused 0, downloaded 119, added 104
+ WARN  GET https://registry.npmjs.org/esbuild/-/esbuild-0.28.2.tgz error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 446, reused 0, downloaded 123, added 105
+Progress: resolved 446, reused 0, downloaded 131, added 107
+Progress: resolved 446, reused 0, downloaded 133, added 109
+Progress: resolved 446, reused 0, downloaded 133, added 111
+Progress: resolved 446, reused 0, downloaded 135, added 113
+Progress: resolved 446, reused 0, downloaded 135, added 116
+Progress: resolved 446, reused 0, downloaded 136, added 118
+Progress: resolved 446, reused 0, downloaded 138, added 123
+Progress: resolved 446, reused 0, downloaded 138, added 124
+Progress: resolved 446, reused 0, downloaded 140, added 125
+Progress: resolved 446, reused 0, downloaded 142, added 127
+Progress: resolved 446, reused 0, downloaded 142, added 128
+Progress: resolved 446, reused 0, downloaded 143, added 128
+Progress: resolved 446, reused 0, downloaded 143, added 129
+Progress: resolved 446, reused 0, downloaded 144, added 129
+Progress: resolved 446, reused 0, downloaded 145, added 129
+Progress: resolved 446, reused 0, downloaded 145, added 130
+Progress: resolved 446, reused 0, downloaded 145, added 131
+Progress: resolved 446, reused 0, downloaded 145, added 132
+Progress: resolved 446, reused 0, downloaded 147, added 133
+Progress: resolved 446, reused 0, downloaded 148, added 133
+Progress: resolved 446, reused 0, downloaded 149, added 135
+Progress: resolved 446, reused 0, downloaded 151, added 136
+Progress: resolved 446, reused 0, downloaded 152, added 136
+Progress: resolved 446, reused 0, downloaded 153, added 136
+Progress: resolved 446, reused 0, downloaded 154, added 137
+Progress: resolved 446, reused 0, downloaded 155, added 137
+Progress: resolved 446, reused 0, downloaded 155, added 138
+Progress: resolved 446, reused 0, downloaded 156, added 138
+Progress: resolved 446, reused 0, downloaded 157, added 138
+Progress: resolved 446, reused 0, downloaded 157, added 139
+Progress: resolved 446, reused 0, downloaded 157, added 141
+Progress: resolved 446, reused 0, downloaded 157, added 142
+Progress: resolved 446, reused 0, downloaded 158, added 143
+Progress: resolved 446, reused 0, downloaded 159, added 143
+Progress: resolved 446, reused 0, downloaded 159, added 144
+Progress: resolved 446, reused 0, downloaded 160, added 145
+Progress: resolved 446, reused 0, downloaded 161, added 145
+Progress: resolved 446, reused 0, downloaded 161, added 147
+Progress: resolved 446, reused 0, downloaded 161, added 148
+Progress: resolved 446, reused 0, downloaded 163, added 148
+Progress: resolved 446, reused 0, downloaded 164, added 149
+Progress: resolved 446, reused 0, downloaded 166, added 149
+Progress: resolved 446, reused 0, downloaded 167, added 149
+Progress: resolved 446, reused 0, downloaded 167, added 150
+Progress: resolved 446, reused 0, downloaded 170, added 150
+Progress: resolved 446, reused 0, downloaded 171, added 150
+Progress: resolved 446, reused 0, downloaded 171, added 152
+Progress: resolved 446, reused 0, downloaded 173, added 152
+Progress: resolved 446, reused 0, downloaded 175, added 152
+Progress: resolved 446, reused 0, downloaded 175, added 154
+Progress: resolved 446, reused 0, downloaded 176, added 154
+Progress: resolved 446, reused 0, downloaded 176, added 156
+Progress: resolved 446, reused 0, downloaded 178, added 156
+Progress: resolved 446, reused 0, downloaded 179, added 156
+Progress: resolved 446, reused 0, downloaded 180, added 156
+Progress: resolved 446, reused 0, downloaded 180, added 159
+Progress: resolved 446, reused 0, downloaded 181, added 159
+Progress: resolved 446, reused 0, downloaded 182, added 160
+Progress: resolved 446, reused 0, downloaded 182, added 161
+Progress: resolved 446, reused 0, downloaded 182, added 162
+Progress: resolved 446, reused 0, downloaded 183, added 162
+Progress: resolved 446, reused 0, downloaded 183, added 163
+Progress: resolved 446, reused 0, downloaded 184, added 164
+Progress: resolved 446, reused 0, downloaded 184, added 165
+Progress: resolved 446, reused 0, downloaded 185, added 165
+Progress: resolved 446, reused 0, downloaded 186, added 165
+Progress: resolved 446, reused 0, downloaded 187, added 165
+Progress: resolved 446, reused 0, downloaded 189, added 166
+Progress: resolved 446, reused 0, downloaded 191, added 168
+Progress: resolved 446, reused 0, downloaded 192, added 169
+Progress: resolved 446, reused 0, downloaded 194, added 169
+Progress: resolved 446, reused 0, downloaded 196, added 170
+Progress: resolved 446, reused 0, downloaded 196, added 174
+Progress: resolved 446, reused 0, downloaded 200, added 174
+Progress: resolved 446, reused 0, downloaded 203, added 176
+Progress: resolved 446, reused 0, downloaded 205, added 179
+Progress: resolved 446, reused 0, downloaded 207, added 180
+Progress: resolved 446, reused 0, downloaded 210, added 183
+Progress: resolved 446, reused 0, downloaded 210, added 187
+Progress: resolved 446, reused 0, downloaded 210, added 188
+Progress: resolved 446, reused 0, downloaded 210, added 189
+Progress: resolved 446, reused 0, downloaded 211, added 190
+Progress: resolved 446, reused 0, downloaded 213, added 190
+Progress: resolved 446, reused 0, downloaded 214, added 191
+Progress: resolved 446, reused 0, downloaded 215, added 191
+Progress: resolved 446, reused 0, downloaded 216, added 191
+Progress: resolved 446, reused 0, downloaded 217, added 192
+Progress: resolved 446, reused 0, downloaded 217, added 193
+Progress: resolved 446, reused 0, downloaded 217, added 194
+Progress: resolved 446, reused 0, downloaded 217, added 195
+Progress: resolved 446, reused 0, downloaded 218, added 197
+Progress: resolved 446, reused 0, downloaded 220, added 197
+Progress: resolved 446, reused 0, downloaded 224, added 199
+Progress: resolved 446, reused 0, downloaded 226, added 201
+Progress: resolved 446, reused 0, downloaded 229, added 203
+Progress: resolved 446, reused 0, downloaded 231, added 206
+Progress: resolved 446, reused 0, downloaded 234, added 209
+Progress: resolved 446, reused 0, downloaded 238, added 211
+Progress: resolved 446, reused 0, downloaded 239, added 213
+Progress: resolved 446, reused 0, downloaded 240, added 214
+Progress: resolved 446, reused 0, downloaded 240, added 217
+Progress: resolved 446, reused 0, downloaded 241, added 219
+Progress: resolved 446, reused 0, downloaded 244, added 220
+Progress: resolved 446, reused 0, downloaded 245, added 222
+Progress: resolved 446, reused 0, downloaded 246, added 223
+Progress: resolved 446, reused 0, downloaded 247, added 225
+Progress: resolved 446, reused 0, downloaded 249, added 227
+Progress: resolved 446, reused 0, downloaded 249, added 228
+Progress: resolved 446, reused 0, downloaded 250, added 231
+Progress: resolved 446, reused 0, downloaded 252, added 232
+Progress: resolved 446, reused 0, downloaded 257, added 232
+Progress: resolved 446, reused 0, downloaded 261, added 232
+Progress: resolved 446, reused 0, downloaded 263, added 233
+Progress: resolved 446, reused 0, downloaded 265, added 236
+Progress: resolved 446, reused 0, downloaded 266, added 237
+Progress: resolved 446, reused 0, downloaded 267, added 240
+Progress: resolved 446, reused 0, downloaded 270, added 240
+Progress: resolved 446, reused 0, downloaded 272, added 241
+Progress: resolved 446, reused 0, downloaded 272, added 243
+Progress: resolved 446, reused 0, downloaded 273, added 243
+Progress: resolved 446, reused 0, downloaded 273, added 244
+Progress: resolved 446, reused 0, downloaded 274, added 248
+Progress: resolved 446, reused 0, downloaded 278, added 252
+Progress: resolved 446, reused 0, downloaded 279, added 254
+Progress: resolved 446, reused 0, downloaded 283, added 258
+Progress: resolved 446, reused 0, downloaded 285, added 260
+Progress: resolved 446, reused 0, downloaded 288, added 265
+Progress: resolved 446, reused 0, downloaded 291, added 267
+Progress: resolved 446, reused 0, downloaded 293, added 271
+Progress: resolved 446, reused 0, downloaded 293, added 273
+Progress: resolved 446, reused 0, downloaded 295, added 274
+Progress: resolved 446, reused 0, downloaded 295, added 275
+Progress: resolved 446, reused 0, downloaded 295, added 276
+Progress: resolved 446, reused 0, downloaded 296, added 276
+Progress: resolved 446, reused 0, downloaded 296, added 277
+Progress: resolved 446, reused 0, downloaded 298, added 277
+Progress: resolved 446, reused 0, downloaded 300, added 278
+Progress: resolved 446, reused 0, downloaded 300, added 279
+Progress: resolved 446, reused 0, downloaded 302, added 281
+Progress: resolved 446, reused 0, downloaded 302, added 282
+Progress: resolved 446, reused 0, downloaded 303, added 283
+Progress: resolved 446, reused 0, downloaded 304, added 283
+Progress: resolved 446, reused 0, downloaded 305, added 284
+Progress: resolved 446, reused 0, downloaded 306, added 285
+Progress: resolved 446, reused 0, downloaded 306, added 286
+Progress: resolved 446, reused 0, downloaded 306, added 287
+Progress: resolved 446, reused 0, downloaded 306, added 288
+Progress: resolved 446, reused 0, downloaded 307, added 289
+Progress: resolved 446, reused 0, downloaded 308, added 289
+Progress: resolved 446, reused 0, downloaded 309, added 289
+Progress: resolved 446, reused 0, downloaded 309, added 290
+Progress: resolved 446, reused 0, downloaded 312, added 291
+Progress: resolved 446, reused 0, downloaded 313, added 291
+Progress: resolved 446, reused 0, downloaded 314, added 291
+Progress: resolved 446, reused 0, downloaded 314, added 292
+Progress: resolved 446, reused 0, downloaded 314, added 293
+Progress: resolved 446, reused 0, downloaded 314, added 295
+Progress: resolved 446, reused 0, downloaded 314, added 296
+Progress: resolved 446, reused 0, downloaded 314, added 297
+Progress: resolved 446, reused 0, downloaded 318, added 300
+Progress: resolved 446, reused 0, downloaded 319, added 300
+Progress: resolved 446, reused 0, downloaded 320, added 301
+Progress: resolved 446, reused 0, downloaded 321, added 301
+Progress: resolved 446, reused 0, downloaded 323, added 301
+Progress: resolved 446, reused 0, downloaded 323, added 302
+Progress: resolved 446, reused 0, downloaded 325, added 302
+Progress: resolved 446, reused 0, downloaded 326, added 303
+Progress: resolved 446, reused 0, downloaded 326, added 306
+Progress: resolved 446, reused 0, downloaded 328, added 306
+Progress: resolved 446, reused 0, downloaded 329, added 306
+Progress: resolved 446, reused 0, downloaded 331, added 306
+Progress: resolved 446, reused 0, downloaded 331, added 308
+Progress: resolved 446, reused 0, downloaded 332, added 309
+Progress: resolved 446, reused 0, downloaded 333, added 309
+Progress: resolved 446, reused 0, downloaded 334, added 310
+Progress: resolved 446, reused 0, downloaded 335, added 312
+Progress: resolved 446, reused 0, downloaded 336, added 315
+Progress: resolved 446, reused 0, downloaded 337, added 315
+Progress: resolved 446, reused 0, downloaded 337, added 316
+Progress: resolved 446, reused 0, downloaded 338, added 317
+Progress: resolved 446, reused 0, downloaded 340, added 318
+Progress: resolved 446, reused 0, downloaded 341, added 320
+Progress: resolved 446, reused 0, downloaded 342, added 320
+Progress: resolved 446, reused 0, downloaded 343, added 320
+Progress: resolved 446, reused 0, downloaded 344, added 321
+Progress: resolved 446, reused 0, downloaded 347, added 323
+Progress: resolved 446, reused 0, downloaded 348, added 325
+Progress: resolved 446, reused 0, downloaded 350, added 325
+Progress: resolved 446, reused 0, downloaded 352, added 327
+Progress: resolved 446, reused 0, downloaded 353, added 328
+Progress: resolved 446, reused 0, downloaded 353, added 329
+Progress: resolved 446, reused 0, downloaded 354, added 329
+Progress: resolved 446, reused 0, downloaded 355, added 329
+Progress: resolved 446, reused 0, downloaded 355, added 330
+Progress: resolved 446, reused 0, downloaded 356, added 330
+Progress: resolved 446, reused 0, downloaded 357, added 330
+Progress: resolved 446, reused 0, downloaded 358, added 330
+Progress: resolved 446, reused 0, downloaded 360, added 331
+Progress: resolved 446, reused 0, downloaded 361, added 333
+Progress: resolved 446, reused 0, downloaded 363, added 334
+ WARN  GET https://registry.npmjs.org/@redis/time-series/-/time-series-1.1.0.tgz error (ECONNRESET). Will retry in 10 seconds. 2 retries left.
+Progress: resolved 446, reused 0, downloaded 365, added 336
+Progress: resolved 446, reused 0, downloaded 367, added 337
+Progress: resolved 446, reused 0, downloaded 367, added 338
+Progress: resolved 446, reused 0, downloaded 368, added 339
+Progress: resolved 446, reused 0, downloaded 368, added 340
+Progress: resolved 446, reused 0, downloaded 369, added 341
+Progress: resolved 446, reused 0, downloaded 370, added 341
+Progress: resolved 446, reused 0, downloaded 370, added 342
+Progress: resolved 446, reused 0, downloaded 371, added 342
+Progress: resolved 446, reused 0, downloaded 371, added 343
+Progress: resolved 446, reused 0, downloaded 371, added 344
+Progress: resolved 446, reused 0, downloaded 372, added 345
+Progress: resolved 446, reused 0, downloaded 372, added 346
+Progress: resolved 446, reused 0, downloaded 373, added 346
+Progress: resolved 446, reused 0, downloaded 373, added 347
+Progress: resolved 446, reused 0, downloaded 374, added 348
+Progress: resolved 446, reused 0, downloaded 374, added 349
+Progress: resolved 446, reused 0, downloaded 374, added 350
+Progress: resolved 446, reused 0, downloaded 375, added 350
+Progress: resolved 446, reused 0, downloaded 375, added 353
+Progress: resolved 446, reused 0, downloaded 377, added 353
+Progress: resolved 446, reused 0, downloaded 378, added 354
+Progress: resolved 446, reused 0, downloaded 378, added 356
+Progress: resolved 446, reused 0, downloaded 379, added 356
+Progress: resolved 446, reused 0, downloaded 379, added 358
+Progress: resolved 446, reused 0, downloaded 379, added 359
+Progress: resolved 446, reused 0, downloaded 379, added 361
+Progress: resolved 446, reused 0, downloaded 379, added 362
+Progress: resolved 446, reused 0, downloaded 381, added 362
+Progress: resolved 446, reused 0, downloaded 381, added 363
+Progress: resolved 446, reused 0, downloaded 383, added 365
+Progress: resolved 446, reused 0, downloaded 385, added 365
+Progress: resolved 446, reused 0, downloaded 387, added 365
+Progress: resolved 446, reused 0, downloaded 387, added 366
+Progress: resolved 446, reused 0, downloaded 387, added 367
+Progress: resolved 446, reused 0, downloaded 388, added 367
+Progress: resolved 446, reused 0, downloaded 388, added 368
+Progress: resolved 446, reused 0, downloaded 389, added 368
+Progress: resolved 446, reused 0, downloaded 389, added 369
+Progress: resolved 446, reused 0, downloaded 390, added 369
+Progress: resolved 446, reused 0, downloaded 392, added 370
+Progress: resolved 446, reused 0, downloaded 394, added 371
+Progress: resolved 446, reused 0, downloaded 395, added 371
+Progress: resolved 446, reused 0, downloaded 395, added 373
+Progress: resolved 446, reused 0, downloaded 396, added 374
+Progress: resolved 446, reused 0, downloaded 399, added 375
+Progress: resolved 446, reused 0, downloaded 401, added 375
+Progress: resolved 446, reused 0, downloaded 402, added 375
+Progress: resolved 446, reused 0, downloaded 403, added 375
+Progress: resolved 446, reused 0, downloaded 403, added 376
+Progress: resolved 446, reused 0, downloaded 404, added 376
+Progress: resolved 446, reused 0, downloaded 404, added 377
+Progress: resolved 446, reused 0, downloaded 406, added 378
+Progress: resolved 446, reused 0, downloaded 407, added 378
+Progress: resolved 446, reused 0, downloaded 408, added 378
+Progress: resolved 446, reused 0, downloaded 409, added 379
+Progress: resolved 446, reused 0, downloaded 410, added 379
+Progress: resolved 446, reused 0, downloaded 411, added 381
+Progress: resolved 446, reused 0, downloaded 412, added 382
+Progress: resolved 446, reused 0, downloaded 413, added 382
+Progress: resolved 446, reused 0, downloaded 413, added 383
+Progress: resolved 446, reused 0, downloaded 413, added 384
+Progress: resolved 446, reused 0, downloaded 413, added 385
+Progress: resolved 446, reused 0, downloaded 414, added 385
+Progress: resolved 446, reused 0, downloaded 415, added 385
+Progress: resolved 446, reused 0, downloaded 415, added 386
+Progress: resolved 446, reused 0, downloaded 415, added 387
+Progress: resolved 446, reused 0, downloaded 416, added 387
+Progress: resolved 446, reused 0, downloaded 416, added 388
+Progress: resolved 446, reused 0, downloaded 416, added 389
+Progress: resolved 446, reused 0, downloaded 416, added 390
+Progress: resolved 446, reused 0, downloaded 417, added 390
+Progress: resolved 446, reused 0, downloaded 418, added 390
+Progress: resolved 446, reused 0, downloaded 418, added 391
+Progress: resolved 446, reused 0, downloaded 419, added 391
+Progress: resolved 446, reused 0, downloaded 420, added 391
+Progress: resolved 446, reused 0, downloaded 420, added 392
+Progress: resolved 446, reused 0, downloaded 421, added 392
+Progress: resolved 446, reused 0, downloaded 422, added 392
+Progress: resolved 446, reused 0, downloaded 423, added 393
+Progress: resolved 446, reused 0, downloaded 425, added 394
+Progress: resolved 446, reused 0, downloaded 426, added 395
+Progress: resolved 446, reused 0, downloaded 427, added 396
+Progress: resolved 446, reused 0, downloaded 428, added 396
+Progress: resolved 446, reused 0, downloaded 429, added 396
+Progress: resolved 446, reused 0, downloaded 429, added 397
+Progress: resolved 446, reused 0, downloaded 429, added 398
+Progress: resolved 446, reused 0, downloaded 430, added 398
+Progress: resolved 446, reused 0, downloaded 430, added 399
+Progress: resolved 446, reused 0, downloaded 431, added 399
+Progress: resolved 446, reused 0, downloaded 433, added 399
+Progress: resolved 446, reused 0, downloaded 433, added 400
+Progress: resolved 446, reused 0, downloaded 433, added 401
+Progress: resolved 446, reused 0, downloaded 433, added 402
+Progress: resolved 446, reused 0, downloaded 433, added 405
+Progress: resolved 446, reused 0, downloaded 433, added 406
+Progress: resolved 446, reused 0, downloaded 433, added 408
+Progress: resolved 446, reused 0, downloaded 433, added 409
+Progress: resolved 446, reused 0, downloaded 433, added 410
+Progress: resolved 446, reused 0, downloaded 434, added 410
+Progress: resolved 446, reused 0, downloaded 434, added 411
+Progress: resolved 446, reused 0, downloaded 434, added 412
+Progress: resolved 446, reused 0, downloaded 434, added 414
+Progress: resolved 446, reused 0, downloaded 434, added 417
+Progress: resolved 446, reused 0, downloaded 434, added 418
+Progress: resolved 446, reused 0, downloaded 435, added 418
+Progress: resolved 446, reused 0, downloaded 435, added 420
+Progress: resolved 446, reused 0, downloaded 435, added 421
+Progress: resolved 446, reused 0, downloaded 436, added 421
+Progress: resolved 446, reused 0, downloaded 436, added 422
+Progress: resolved 446, reused 0, downloaded 436, added 423
+Progress: resolved 446, reused 0, downloaded 437, added 423
+Progress: resolved 446, reused 0, downloaded 437, added 424
+Progress: resolved 446, reused 0, downloaded 437, added 425
+Progress: resolved 446, reused 0, downloaded 438, added 425
+Progress: resolved 446, reused 0, downloaded 439, added 425
+Progress: resolved 446, reused 0, downloaded 439, added 426
+Progress: resolved 446, reused 0, downloaded 439, added 427
+Progress: resolved 446, reused 0, downloaded 439, added 428
+Progress: resolved 446, reused 0, downloaded 439, added 429
+Progress: resolved 446, reused 0, downloaded 440, added 429
+Progress: resolved 446, reused 0, downloaded 440, added 430
+Progress: resolved 446, reused 0, downloaded 440, added 431
+Progress: resolved 446, reused 0, downloaded 441, added 431
+Progress: resolved 446, reused 0, downloaded 441, added 432
+Progress: resolved 446, reused 0, downloaded 441, added 433
+Progress: resolved 446, reused 0, downloaded 441, added 434
+Progress: resolved 446, reused 0, downloaded 442, added 434
+Progress: resolved 446, reused 0, downloaded 442, added 435
+Progress: resolved 446, reused 0, downloaded 442, added 436
+Progress: resolved 446, reused 0, downloaded 442, added 437
+Progress: resolved 446, reused 0, downloaded 442, added 438
+Progress: resolved 446, reused 0, downloaded 443, added 438
+Progress: resolved 446, reused 0, downloaded 444, added 438
+Progress: resolved 446, reused 0, downloaded 444, added 439
+Progress: resolved 446, reused 0, downloaded 444, added 440
+Progress: resolved 446, reused 0, downloaded 444, added 441
+Progress: resolved 446, reused 0, downloaded 444, added 442
+Progress: resolved 446, reused 0, downloaded 445, added 442
+Progress: resolved 446, reused 0, downloaded 445, added 443
+Progress: resolved 446, reused 0, downloaded 446, added 443
+Progress: resolved 446, reused 0, downloaded 446, added 444
+Progress: resolved 446, reused 0, downloaded 446, added 445
+Progress: resolved 446, reused 0, downloaded 446, added 446
+Progress: resolved 446, reused 0, downloaded 446, added 446, done
+.../node_modules/protobufjs postinstall$ node scripts/postinstall
+.../.pnpm/koffi@3.3.2/node_modules/koffi install$ node ./cnoke.cjs -P . -D src/koffi --prebuild --release
+.../node-pty@1.1.0/node_modules/node-pty install$ node scripts/prebuild.js || node-gyp rebuild
+.../node-pty@1.1.0/node_modules/node-pty install: [32m> Checking prebuilds...[0m
+.../node_modules/protobufjs postinstall: Done
+.../node-pty@1.1.0/node_modules/node-pty install: Done
+.../node-pty@1.1.0/node_modules/node-pty postinstall$ node scripts/post-install.js
+.../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Cleaning release folder...[0m
+.../node-pty@1.1.0/node_modules/node-pty postinstall: [32m> Moving conpty.dll...[0m
+.../node-pty@1.1.0/node_modules/node-pty postinstall:   Using os.arch(): x64
+.../node-pty@1.1.0/node_modules/node-pty postinstall:   Found version 1.23.251008001
+.../node-pty@1.1.0/node_modules/node-pty postinstall:   Copying I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\node_modules\.pnpm\node-pty@1.1.0\node_modules\node-pty\third_party\conpty\1.23.251008001\win10-x64\conpty.dll -> I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\node_modules\.pnpm\node-pty@1.1.0\node_modules\node-pty\build\Release\conpty\conpty.dll
+.../node-pty@1.1.0/node_modules/node-pty postinstall:   Copying I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\node_modules\.pnpm\node-pty@1.1.0\node_modules\node-pty\third_party\conpty\1.23.251008001\win10-x64\OpenConsole.exe -> I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\node_modules\.pnpm\node-pty@1.1.0\node_modules\node-pty\build\Release\conpty\OpenConsole.exe
+.../node-pty@1.1.0/node_modules/node-pty postinstall: Done
+.../.pnpm/koffi@3.3.2/node_modules/koffi install: Done
+.../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+.../argon2@0.41.1/node_modules/argon2 install$ node-gyp-build
+.../argon2@0.41.1/node_modules/argon2 install: Done
+.../node_modules/@google/genai preinstall$ echo 'preinstall: no-op'
+.../node_modules/@google/genai preinstall: 'preinstall: no-op'
+.../node_modules/@google/genai preinstall: Done
+
+devDependencies:
++ @types/node 22.20.1
++ eslint 9.39.5
++ prettier 3.9.6
++ tsx 4.23.1
++ turbo 2.10.6
++ typescript 5.9.3
++ vitest 3.2.7
++ yaml 2.9.0
+
+apps/connector postinstall$ node scripts/prepare-native.mjs
+apps/connector postinstall: Done
+Done in 16m 30.1s

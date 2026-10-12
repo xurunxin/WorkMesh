@@ -1,0 +1,26 @@
+{
+  "source": "OPENAPI.yaml /skills/workmesh-1.1.0.md; route.downloadWorkMeshSkill public GET; reviewed backend-only migration",
+  "rules": [
+    {
+      "operationId": "downloadWorkMeshSkill",
+      "predicates": [
+        {
+          "fact": "credentialMode",
+          "allowed": [
+            "public",
+            "human_session",
+            "agent_session",
+            "coordination_connection"
+          ],
+          "reason": "CREDENTIAL_MODE_MISMATCH"
+        }
+      ],
+      "capabilities": [],
+      "feature": null,
+      "variants": [],
+      "write": false
+    }
+  ],
+  "bindings": [],
+  "scope": "只登记固定公开签名文件，不增 MCP tool，不改变旧规则或权限"
+}

@@ -1,0 +1,24 @@
+阅读视图；原始字节：raw-logs/run-efb5d82f41a6.zip 内 production-deployment.log；SHA-256：06d8dde36149713263c7434e5f40be450a31001183305adfde66ba3c6f0d4bcc
+
+
+> workmesh@ validate:production-images I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055
+> node -- scripts/validate-production-images.mjs
+
+(node:25904) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{"name":"docker","args":["image","inspect","workmesh-retirement-api:backend-production-70c7bea7"],"code":1,"log":"0.log"}
+{"name":"docker","args":["build","--progress=plain","--label","workmesh.task=backend-production-70c7bea7","--build-arg","WORKMESH_BUILD_SHA=7fbea7ddc3833ce7c661a9b049c721666de36541","-t","workmesh-retirement-api:backend-production-70c7bea7","-f","infra/docker/api.production.Dockerfile","-"],"code":4294967295,"log":"1.log"}
+失败或未验收：Error: docker 退出 4294967295
+{"name":"powershell.exe","args":["-NoProfile","-Command","$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message}; break } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"],"code":0,"log":"2.log"}
+证据：I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\docs\reviews\backend-retirement\runs\backend-production-70c7bea7
+file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/validate-production-images.mjs:48
+  if (!condition) throw new Error(message)
+                        ^
+
+Error: Production API deployment and signed Skill verification failed
+    at assert (file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/validate-production-images.mjs:48:25)
+    at validateProductionApiSkill (file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/validate-production-images.mjs:143:3)
+    at file:///I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/scripts/validate-production-images.mjs:1002:1
+
+Node.js v25.4.0
+ ELIFECYCLE  Command failed with exit code 1.

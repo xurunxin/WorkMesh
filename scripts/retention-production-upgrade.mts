@@ -49,11 +49,10 @@ const applicationImages = {
   api: "WORKMESH_API_IMAGE",
   worker: "WORKMESH_WORKER_IMAGE",
   mcp: "WORKMESH_MCP_IMAGE",
-  web: "WORKMESH_WEB_IMAGE",
 } as const;
 
 type Role = keyof typeof applicationImages;
-const coreApplicationRoles = ["api", "worker", "web"] as const;
+const coreApplicationRoles = ["api", "worker"] as const;
 type CoreApplicationRole = (typeof coreApplicationRoles)[number];
 type ImageInspection = Readonly<{
   id: string;
@@ -523,7 +522,7 @@ export async function runProductionRetentionUpgrade({
   const topology = Object.freeze<FrozenTopology>({
     mcpEnabled,
     applicationServices: Object.freeze<readonly Role[]>(
-      mcpEnabled ? ["api", "worker", "mcp", "web"] : ["api", "worker", "web"],
+      mcpEnabled ? ["api", "worker", "mcp"] : ["api", "worker"],
     ),
   });
   const sourceComposeBase = composeArgumentsForTopology(
@@ -565,12 +564,6 @@ export async function runProductionRetentionUpgrade({
       renderedCompose,
       service: "worker",
     }),
-    freezeRuntimePreflight({
-      comparisonEnvironment: coreDeploymentEnvironment,
-      expectedImage: images.web,
-      renderedCompose,
-      service: "web",
-    }),
   ]);
   const mcpRuntimePreflight = topology.mcpEnabled
     ? (() => {
@@ -591,8 +584,8 @@ export async function runProductionRetentionUpgrade({
     ...(mcpRuntimePreflight ? [mcpRuntimePreflight] : []),
   ]);
   const remainingServiceRoles = topology.mcpEnabled
-    ? (["api", "mcp", "web"] as const)
-    : (["api", "web"] as const);
+    ? (["api", "mcp"] as const)
+    : (["api"] as const);
   const remainingServices = Object.freeze(
     remainingServiceRoles.map((role) => {
       const image = role === "mcp" ? mcpImage : images[role];

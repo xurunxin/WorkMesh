@@ -11,12 +11,12 @@ afterEach(async () => {
 })
 
 describe('release artifact manifest', () => {
-  it('binds all four immutable image digests to the exact candidate source', async () => {
+  it('binds all three immutable image digests to the exact candidate source', async () => {
     const directory = await mkdtemp(path.join(tmpdir(), 'workmesh-release-manifest-'))
     temporaryDirectories.push(directory)
     const tag = 'v1.0.0-rc.7'
     const sourceSha = 'a'.repeat(40)
-    for (const [index, service] of ['api', 'mcp', 'web', 'worker'].entries()) {
+    for (const [index, service] of ['api', 'mcp', 'worker'].entries()) {
       const imageDirectory = path.join(directory, service)
       await mkdir(imageDirectory)
       await writeFile(path.join(imageDirectory, 'image.json'), JSON.stringify({
@@ -25,7 +25,7 @@ describe('release artifact manifest', () => {
         candidateTag: tag,
         image: `ghcr.io/xurunxin/workmesh-${service}`,
         digest: `sha256:${String(index + 1).repeat(64)}`,
-        webApiUrl: service === 'web' ? 'https://workmesh.example/api' : null,
+        webApiUrl: null,
         provenanceUrl: `https://github.example/attestations/${service}/provenance`,
         sbomAttestationUrl: `https://github.example/attestations/${service}/sbom`,
       }))
@@ -46,7 +46,7 @@ describe('release artifact manifest', () => {
       tier: feature.tier,
       defaultEnabled: false,
     })))
-    expect(Object.keys(manifest.images as object)).toEqual(['api', 'mcp', 'web', 'worker'])
+    expect(Object.keys(manifest.images as object)).toEqual(['api', 'mcp', 'worker'])
     expect(manifest.promotion).toEqual({
       targetTag: 'v1.0.0',
       rebuildAllowed: false,
@@ -63,6 +63,6 @@ describe('release artifact manifest', () => {
       sourceSha: 'b'.repeat(40),
       imagesDirectory: directory,
       runUrl: 'https://github.com/xurunxin/WorkMesh/actions/runs/456',
-    })).rejects.toThrow('Exactly four image records are required')
+    })).rejects.toThrow('Exactly three image records are required')
   })
 })

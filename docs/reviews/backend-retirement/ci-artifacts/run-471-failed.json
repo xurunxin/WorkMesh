@@ -1,0 +1,1963 @@
+{
+  "run": {
+    "id": 38187274436,
+    "name": "CI",
+    "node_id": "WFR_kwLOTgYEXc8AAAAI5COQxA",
+    "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+    "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+    "path": ".github/workflows/ci.yml",
+    "display_title": "refactor(backend): retire bundled web interface",
+    "run_number": 471,
+    "event": "pull_request",
+    "status": "completed",
+    "conclusion": "failure",
+    "workflow_id": 320938468,
+    "check_suite_id": 103459462922,
+    "check_suite_node_id": "CS_kwDOTgYEXc8AAAAYFqofCg",
+    "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+    "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436",
+    "pull_requests": [
+      {
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/pulls/222",
+        "id": 4822286236,
+        "number": 222,
+        "head": {
+          "ref": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+          "sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+          "repo": {
+            "id": 1309017181,
+            "url": "https://api.github.com/repos/xurunxin/WorkMesh",
+            "name": "WorkMesh"
+          }
+        },
+        "base": {
+          "ref": "main",
+          "sha": "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+          "repo": {
+            "id": 1309017181,
+            "url": "https://api.github.com/repos/xurunxin/WorkMesh",
+            "name": "WorkMesh"
+          }
+        }
+      }
+    ],
+    "created_at": "2026-10-12T00:14:58Z",
+    "updated_at": "2026-10-12T00:35:19Z",
+    "actor": {
+      "login": "todosdev[bot]",
+      "id": 290018542,
+      "node_id": "BOT_kgDOEUlU7g",
+      "avatar_url": "https://avatars.githubusercontent.com/in/3940636?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/todosdev%5Bbot%5D",
+      "html_url": "https://github.com/apps/todosdev",
+      "followers_url": "https://api.github.com/users/todosdev%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/todosdev%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/todosdev%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/todosdev%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/todosdev%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/todosdev%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/todosdev%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/todosdev%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/todosdev%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "run_attempt": 1,
+    "referenced_workflows": [],
+    "run_started_at": "2026-10-12T00:14:58Z",
+    "triggering_actor": {
+      "login": "todosdev[bot]",
+      "id": 290018542,
+      "node_id": "BOT_kgDOEUlU7g",
+      "avatar_url": "https://avatars.githubusercontent.com/in/3940636?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/todosdev%5Bbot%5D",
+      "html_url": "https://github.com/apps/todosdev",
+      "followers_url": "https://api.github.com/users/todosdev%5Bbot%5D/followers",
+      "following_url": "https://api.github.com/users/todosdev%5Bbot%5D/following{/other_user}",
+      "gists_url": "https://api.github.com/users/todosdev%5Bbot%5D/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/todosdev%5Bbot%5D/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/todosdev%5Bbot%5D/subscriptions",
+      "organizations_url": "https://api.github.com/users/todosdev%5Bbot%5D/orgs",
+      "repos_url": "https://api.github.com/users/todosdev%5Bbot%5D/repos",
+      "events_url": "https://api.github.com/users/todosdev%5Bbot%5D/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/todosdev%5Bbot%5D/received_events",
+      "type": "Bot",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "jobs_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436/jobs",
+    "logs_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436/logs",
+    "check_suite_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-suites/103459462922",
+    "artifacts_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436/artifacts",
+    "cancel_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436/cancel",
+    "rerun_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436/rerun",
+    "previous_attempt_url": null,
+    "workflow_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/workflows/320938468",
+    "head_commit": {
+      "id": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+      "tree_id": "668a78ab75118b161d31a4d8fd11431d91bbd9de",
+      "message": "fix(verification): keep non-linux production validation compatible",
+      "timestamp": "2026-10-12T00:14:41Z",
+      "author": {
+        "name": "Todos",
+        "email": "noreply@todos.dev"
+      },
+      "committer": {
+        "name": "Todos",
+        "email": "noreply@todos.dev"
+      }
+    },
+    "repository": {
+      "id": 1309017181,
+      "node_id": "R_kgDOTgYEXQ",
+      "name": "WorkMesh",
+      "full_name": "xurunxin/WorkMesh",
+      "private": false,
+      "owner": {
+        "login": "xurunxin",
+        "id": 4795359,
+        "node_id": "MDQ6VXNlcjQ3OTUzNTk=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/4795359?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/xurunxin",
+        "html_url": "https://github.com/xurunxin",
+        "followers_url": "https://api.github.com/users/xurunxin/followers",
+        "following_url": "https://api.github.com/users/xurunxin/following{/other_user}",
+        "gists_url": "https://api.github.com/users/xurunxin/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/xurunxin/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/xurunxin/subscriptions",
+        "organizations_url": "https://api.github.com/users/xurunxin/orgs",
+        "repos_url": "https://api.github.com/users/xurunxin/repos",
+        "events_url": "https://api.github.com/users/xurunxin/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/xurunxin/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "html_url": "https://github.com/xurunxin/WorkMesh",
+      "description": "自部署、面向个人/小团队的人类与 Coding Agent 协作平台  ",
+      "fork": false,
+      "url": "https://api.github.com/repos/xurunxin/WorkMesh",
+      "forks_url": "https://api.github.com/repos/xurunxin/WorkMesh/forks",
+      "keys_url": "https://api.github.com/repos/xurunxin/WorkMesh/keys{/key_id}",
+      "collaborators_url": "https://api.github.com/repos/xurunxin/WorkMesh/collaborators{/collaborator}",
+      "teams_url": "https://api.github.com/repos/xurunxin/WorkMesh/teams",
+      "hooks_url": "https://api.github.com/repos/xurunxin/WorkMesh/hooks",
+      "issue_events_url": "https://api.github.com/repos/xurunxin/WorkMesh/issues/events{/number}",
+      "events_url": "https://api.github.com/repos/xurunxin/WorkMesh/events",
+      "assignees_url": "https://api.github.com/repos/xurunxin/WorkMesh/assignees{/user}",
+      "branches_url": "https://api.github.com/repos/xurunxin/WorkMesh/branches{/branch}",
+      "tags_url": "https://api.github.com/repos/xurunxin/WorkMesh/tags",
+      "blobs_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/blobs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/tags{/sha}",
+      "git_refs_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/refs{/sha}",
+      "trees_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/trees{/sha}",
+      "statuses_url": "https://api.github.com/repos/xurunxin/WorkMesh/statuses/{sha}",
+      "languages_url": "https://api.github.com/repos/xurunxin/WorkMesh/languages",
+      "stargazers_url": "https://api.github.com/repos/xurunxin/WorkMesh/stargazers",
+      "contributors_url": "https://api.github.com/repos/xurunxin/WorkMesh/contributors",
+      "subscribers_url": "https://api.github.com/repos/xurunxin/WorkMesh/subscribers",
+      "subscription_url": "https://api.github.com/repos/xurunxin/WorkMesh/subscription",
+      "commits_url": "https://api.github.com/repos/xurunxin/WorkMesh/commits{/sha}",
+      "git_commits_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/commits{/sha}",
+      "comments_url": "https://api.github.com/repos/xurunxin/WorkMesh/comments{/number}",
+      "issue_comment_url": "https://api.github.com/repos/xurunxin/WorkMesh/issues/comments{/number}",
+      "contents_url": "https://api.github.com/repos/xurunxin/WorkMesh/contents/{+path}",
+      "compare_url": "https://api.github.com/repos/xurunxin/WorkMesh/compare/{base}...{head}",
+      "merges_url": "https://api.github.com/repos/xurunxin/WorkMesh/merges",
+      "archive_url": "https://api.github.com/repos/xurunxin/WorkMesh/{archive_format}{/ref}",
+      "downloads_url": "https://api.github.com/repos/xurunxin/WorkMesh/downloads",
+      "issues_url": "https://api.github.com/repos/xurunxin/WorkMesh/issues{/number}",
+      "pulls_url": "https://api.github.com/repos/xurunxin/WorkMesh/pulls{/number}",
+      "milestones_url": "https://api.github.com/repos/xurunxin/WorkMesh/milestones{/number}",
+      "notifications_url": "https://api.github.com/repos/xurunxin/WorkMesh/notifications{?since,all,participating}",
+      "labels_url": "https://api.github.com/repos/xurunxin/WorkMesh/labels{/name}",
+      "releases_url": "https://api.github.com/repos/xurunxin/WorkMesh/releases{/id}",
+      "deployments_url": "https://api.github.com/repos/xurunxin/WorkMesh/deployments"
+    },
+    "head_repository": {
+      "id": 1309017181,
+      "node_id": "R_kgDOTgYEXQ",
+      "name": "WorkMesh",
+      "full_name": "xurunxin/WorkMesh",
+      "private": false,
+      "owner": {
+        "login": "xurunxin",
+        "id": 4795359,
+        "node_id": "MDQ6VXNlcjQ3OTUzNTk=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/4795359?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/xurunxin",
+        "html_url": "https://github.com/xurunxin",
+        "followers_url": "https://api.github.com/users/xurunxin/followers",
+        "following_url": "https://api.github.com/users/xurunxin/following{/other_user}",
+        "gists_url": "https://api.github.com/users/xurunxin/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/xurunxin/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/xurunxin/subscriptions",
+        "organizations_url": "https://api.github.com/users/xurunxin/orgs",
+        "repos_url": "https://api.github.com/users/xurunxin/repos",
+        "events_url": "https://api.github.com/users/xurunxin/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/xurunxin/received_events",
+        "type": "User",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "html_url": "https://github.com/xurunxin/WorkMesh",
+      "description": "自部署、面向个人/小团队的人类与 Coding Agent 协作平台  ",
+      "fork": false,
+      "url": "https://api.github.com/repos/xurunxin/WorkMesh",
+      "forks_url": "https://api.github.com/repos/xurunxin/WorkMesh/forks",
+      "keys_url": "https://api.github.com/repos/xurunxin/WorkMesh/keys{/key_id}",
+      "collaborators_url": "https://api.github.com/repos/xurunxin/WorkMesh/collaborators{/collaborator}",
+      "teams_url": "https://api.github.com/repos/xurunxin/WorkMesh/teams",
+      "hooks_url": "https://api.github.com/repos/xurunxin/WorkMesh/hooks",
+      "issue_events_url": "https://api.github.com/repos/xurunxin/WorkMesh/issues/events{/number}",
+      "events_url": "https://api.github.com/repos/xurunxin/WorkMesh/events",
+      "assignees_url": "https://api.github.com/repos/xurunxin/WorkMesh/assignees{/user}",
+      "branches_url": "https://api.github.com/repos/xurunxin/WorkMesh/branches{/branch}",
+      "tags_url": "https://api.github.com/repos/xurunxin/WorkMesh/tags",
+      "blobs_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/blobs{/sha}",
+      "git_tags_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/tags{/sha}",
+      "git_refs_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/refs{/sha}",
+      "trees_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/trees{/sha}",
+      "statuses_url": "https://api.github.com/repos/xurunxin/WorkMesh/statuses/{sha}",
+      "languages_url": "https://api.github.com/repos/xurunxin/WorkMesh/languages",
+      "stargazers_url": "https://api.github.com/repos/xurunxin/WorkMesh/stargazers",
+      "contributors_url": "https://api.github.com/repos/xurunxin/WorkMesh/contributors",
+      "subscribers_url": "https://api.github.com/repos/xurunxin/WorkMesh/subscribers",
+      "subscription_url": "https://api.github.com/repos/xurunxin/WorkMesh/subscription",
+      "commits_url": "https://api.github.com/repos/xurunxin/WorkMesh/commits{/sha}",
+      "git_commits_url": "https://api.github.com/repos/xurunxin/WorkMesh/git/commits{/sha}",
+      "comments_url": "https://api.github.com/repos/xurunxin/WorkMesh/comments{/number}",
+      "issue_comment_url": "https://api.github.com/repos/xurunxin/WorkMesh/issues/comments{/number}",
+      "contents_url": "https://api.github.com/repos/xurunxin/WorkMesh/contents/{+path}",
+      "compare_url": "https://api.github.com/repos/xurunxin/WorkMesh/compare/{base}...{head}",
+      "merges_url": "https://api.github.com/repos/xurunxin/WorkMesh/merges",
+      "archive_url": "https://api.github.com/repos/xurunxin/WorkMesh/{archive_format}{/ref}",
+      "downloads_url": "https://api.github.com/repos/xurunxin/WorkMesh/downloads",
+      "issues_url": "https://api.github.com/repos/xurunxin/WorkMesh/issues{/number}",
+      "pulls_url": "https://api.github.com/repos/xurunxin/WorkMesh/pulls{/number}",
+      "milestones_url": "https://api.github.com/repos/xurunxin/WorkMesh/milestones{/number}",
+      "notifications_url": "https://api.github.com/repos/xurunxin/WorkMesh/notifications{?since,all,participating}",
+      "labels_url": "https://api.github.com/repos/xurunxin/WorkMesh/labels{/name}",
+      "releases_url": "https://api.github.com/repos/xurunxin/WorkMesh/releases{/id}",
+      "deployments_url": "https://api.github.com/repos/xurunxin/WorkMesh/deployments"
+    }
+  },
+  "jobs": {
+    "total_count": 11,
+    "jobs": [
+      {
+        "id": 114612418927,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar265bw",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612418927",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612418927",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:15:58Z",
+        "started_at": "2026-10-12T00:16:00Z",
+        "completed_at": "2026-10-12T00:16:47Z",
+        "name": "Classify changes and validate CI selection",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:01Z",
+            "completed_at": "2026-10-12T00:16:01Z"
+          },
+          {
+            "name": "Check out comparison history",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:02Z",
+            "completed_at": "2026-10-12T00:16:34Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:16:34Z",
+            "completed_at": "2026-10-12T00:16:41Z"
+          },
+          {
+            "name": "Validate selection and required-result safety",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:16:41Z",
+            "completed_at": "2026-10-12T00:16:42Z"
+          },
+          {
+            "name": "Select required jobs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:16:42Z",
+            "completed_at": "2026-10-12T00:16:42Z"
+          },
+          {
+            "name": "Upload change classification logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:16:42Z",
+            "completed_at": "2026-10-12T00:16:44Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:16:44Z",
+            "completed_at": "2026-10-12T00:16:44Z"
+          },
+          {
+            "name": "Post Check out comparison history",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-12T00:16:44Z",
+            "completed_at": "2026-10-12T00:16:44Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-12T00:16:44Z",
+            "completed_at": "2026-10-12T00:16:44Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612418927",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011021,
+        "runner_name": "GitHub Actions 1000011021",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578060,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnDA",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578060",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578060",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:48Z",
+        "completed_at": "2026-10-12T00:17:50Z",
+        "name": "Agent construction and protocol smoke",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:49Z",
+            "completed_at": "2026-10-12T00:16:50Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:17:30Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:17:30Z",
+            "completed_at": "2026-10-12T00:17:39Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:39Z",
+            "completed_at": "2026-10-12T00:17:40Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:40Z",
+            "completed_at": "2026-10-12T00:17:42Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:42Z",
+            "completed_at": "2026-10-12T00:17:44Z"
+          },
+          {
+            "name": "Construction and protocol smoke",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:17:44Z",
+            "completed_at": "2026-10-12T00:17:46Z"
+          },
+          {
+            "name": "Upload raw agent smoke logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-12T00:17:46Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578060",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011022,
+        "runner_name": "GitHub Actions 1000011022",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578065,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnEQ",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578065",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578065",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:49Z",
+        "completed_at": "2026-10-12T00:34:26Z",
+        "name": "Source gates",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:16:51Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:51Z",
+            "completed_at": "2026-10-12T00:17:27Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:17:27Z",
+            "completed_at": "2026-10-12T00:17:32Z"
+          },
+          {
+            "name": "Derive test-only bootstrap credential",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:32Z",
+            "completed_at": "2026-10-12T00:17:32Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:32Z",
+            "completed_at": "2026-10-12T00:17:33Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:33Z",
+            "completed_at": "2026-10-12T00:17:38Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:17:38Z",
+            "completed_at": "2026-10-12T00:17:40Z"
+          },
+          {
+            "name": "Restore trusted static and compiler caches",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-12T00:17:40Z",
+            "completed_at": "2026-10-12T00:17:40Z"
+          },
+          {
+            "name": "Validate CI policy",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:17:40Z",
+            "completed_at": "2026-10-12T00:17:42Z"
+          },
+          {
+            "name": "Lint",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-12T00:17:42Z",
+            "completed_at": "2026-10-12T00:17:43Z"
+          },
+          {
+            "name": "Typecheck",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:17:43Z",
+            "completed_at": "2026-10-12T00:19:17Z"
+          },
+          {
+            "name": "Verify generated route policy and signed WorkMesh Skill",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-12T00:19:17Z",
+            "completed_at": "2026-10-12T00:19:22Z"
+          },
+          {
+            "name": "Build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-12T00:19:22Z",
+            "completed_at": "2026-10-12T00:20:41Z"
+          },
+          {
+            "name": "Unit tests",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-12T00:20:41Z",
+            "completed_at": "2026-10-12T00:22:10Z"
+          },
+          {
+            "name": "Validate Compose",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15,
+            "started_at": "2026-10-12T00:22:10Z",
+            "completed_at": "2026-10-12T00:22:11Z"
+          },
+          {
+            "name": "Build all development images with normal lifecycle hooks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16,
+            "started_at": "2026-10-12T00:22:11Z",
+            "completed_at": "2026-10-12T00:24:37Z"
+          },
+          {
+            "name": "Verify backend Lite installation and signed Skill",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 17,
+            "started_at": "2026-10-12T00:24:37Z",
+            "completed_at": "2026-10-12T00:34:21Z"
+          },
+          {
+            "name": "Verify clean tracked tree",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 18,
+            "started_at": "2026-10-12T00:34:21Z",
+            "completed_at": "2026-10-12T00:34:21Z"
+          },
+          {
+            "name": "Save trusted static and compiler caches",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 19,
+            "started_at": "2026-10-12T00:34:21Z",
+            "completed_at": "2026-10-12T00:34:21Z"
+          },
+          {
+            "name": "Upload raw source logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 20,
+            "started_at": "2026-10-12T00:34:21Z",
+            "completed_at": "2026-10-12T00:34:23Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 38,
+            "started_at": "2026-10-12T00:34:23Z",
+            "completed_at": "2026-10-12T00:34:23Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 39,
+            "started_at": "2026-10-12T00:34:23Z",
+            "completed_at": "2026-10-12T00:34:23Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 40,
+            "started_at": "2026-10-12T00:34:23Z",
+            "completed_at": "2026-10-12T00:34:23Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 41,
+            "started_at": "2026-10-12T00:34:23Z",
+            "completed_at": "2026-10-12T00:34:23Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578065",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011024,
+        "runner_name": "GitHub Actions 1000011024",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578069,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnFQ",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578069",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578069",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:49Z",
+        "completed_at": "2026-10-12T00:20:30Z",
+        "name": "Database integration",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:16:51Z"
+          },
+          {
+            "name": "Initialize containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:51Z",
+            "completed_at": "2026-10-12T00:17:02Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:17:02Z",
+            "completed_at": "2026-10-12T00:17:42Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:42Z",
+            "completed_at": "2026-10-12T00:17:46Z"
+          },
+          {
+            "name": "Derive test-only bootstrap credential",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:46Z",
+            "completed_at": "2026-10-12T00:17:46Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:46Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:17:52Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-12T00:17:52Z",
+            "completed_at": "2026-10-12T00:17:54Z"
+          },
+          {
+            "name": "Run database integration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:17:54Z",
+            "completed_at": "2026-10-12T00:20:24Z"
+          },
+          {
+            "name": "Capture service logs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-12T00:20:24Z",
+            "completed_at": "2026-10-12T00:20:24Z"
+          },
+          {
+            "name": "Upload raw database logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:20:24Z",
+            "completed_at": "2026-10-12T00:20:26Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-10-12T00:20:26Z",
+            "completed_at": "2026-10-12T00:20:27Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 20,
+            "started_at": "2026-10-12T00:20:27Z",
+            "completed_at": "2026-10-12T00:20:27Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21,
+            "started_at": "2026-10-12T00:20:27Z",
+            "completed_at": "2026-10-12T00:20:27Z"
+          },
+          {
+            "name": "Stop containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22,
+            "started_at": "2026-10-12T00:20:27Z",
+            "completed_at": "2026-10-12T00:20:27Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23,
+            "started_at": "2026-10-12T00:20:27Z",
+            "completed_at": "2026-10-12T00:20:27Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578069",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011023,
+        "runner_name": "GitHub Actions 1000011023",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578081,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnIQ",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578081",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578081",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:49Z",
+        "completed_at": "2026-10-12T00:24:24Z",
+        "name": "Worker integration",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:16:51Z"
+          },
+          {
+            "name": "Initialize containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:51Z",
+            "completed_at": "2026-10-12T00:17:04Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:17:04Z",
+            "completed_at": "2026-10-12T00:17:32Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:32Z",
+            "completed_at": "2026-10-12T00:17:37Z"
+          },
+          {
+            "name": "Derive test-only bootstrap credential",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:37Z",
+            "completed_at": "2026-10-12T00:17:37Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:37Z",
+            "completed_at": "2026-10-12T00:17:38Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:17:38Z",
+            "completed_at": "2026-10-12T00:17:42Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-12T00:17:42Z",
+            "completed_at": "2026-10-12T00:17:45Z"
+          },
+          {
+            "name": "Run worker integration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:17:45Z",
+            "completed_at": "2026-10-12T00:24:18Z"
+          },
+          {
+            "name": "Capture service logs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-12T00:24:18Z",
+            "completed_at": "2026-10-12T00:24:18Z"
+          },
+          {
+            "name": "Upload raw worker logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:24:18Z",
+            "completed_at": "2026-10-12T00:24:20Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19,
+            "started_at": "2026-10-12T00:24:20Z",
+            "completed_at": "2026-10-12T00:24:20Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 20,
+            "started_at": "2026-10-12T00:24:20Z",
+            "completed_at": "2026-10-12T00:24:20Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21,
+            "started_at": "2026-10-12T00:24:20Z",
+            "completed_at": "2026-10-12T00:24:20Z"
+          },
+          {
+            "name": "Stop containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 22,
+            "started_at": "2026-10-12T00:24:20Z",
+            "completed_at": "2026-10-12T00:24:21Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23,
+            "started_at": "2026-10-12T00:24:21Z",
+            "completed_at": "2026-10-12T00:24:21Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578081",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011026,
+        "runner_name": "GitHub Actions 1000011026",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578098,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnMg",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578098",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578098",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:49Z",
+        "completed_at": "2026-10-12T00:33:26Z",
+        "name": "API integration",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:16:51Z"
+          },
+          {
+            "name": "Initialize containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:51Z",
+            "completed_at": "2026-10-12T00:17:08Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:17:08Z",
+            "completed_at": "2026-10-12T00:17:43Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:43Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Derive test-only bootstrap credential",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:17:49Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:17:49Z",
+            "completed_at": "2026-10-12T00:17:53Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-12T00:17:53Z",
+            "completed_at": "2026-10-12T00:17:56Z"
+          },
+          {
+            "name": "Start artifact storage",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:17:56Z",
+            "completed_at": "2026-10-12T00:18:04Z"
+          },
+          {
+            "name": "Initialize artifact bucket",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-12T00:18:04Z",
+            "completed_at": "2026-10-12T00:18:04Z"
+          },
+          {
+            "name": "Run API integration",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:18:04Z",
+            "completed_at": "2026-10-12T00:22:59Z"
+          },
+          {
+            "name": "Run real MCP and Pi conformance",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-12T00:22:59Z",
+            "completed_at": "2026-10-12T00:33:19Z"
+          },
+          {
+            "name": "Capture service logs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 13,
+            "started_at": "2026-10-12T00:33:19Z",
+            "completed_at": "2026-10-12T00:33:19Z"
+          },
+          {
+            "name": "Upload raw API logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-12T00:33:19Z",
+            "completed_at": "2026-10-12T00:33:22Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-12T00:33:22Z",
+            "completed_at": "2026-10-12T00:33:22Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-12T00:33:22Z",
+            "completed_at": "2026-10-12T00:33:22Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-12T00:33:22Z",
+            "completed_at": "2026-10-12T00:33:22Z"
+          },
+          {
+            "name": "Stop containers",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 28,
+            "started_at": "2026-10-12T00:33:22Z",
+            "completed_at": "2026-10-12T00:33:22Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 29,
+            "started_at": "2026-10-12T00:33:22Z",
+            "completed_at": "2026-10-12T00:33:23Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578098",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011027,
+        "runner_name": "GitHub Actions 1000011027",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578100,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnNA",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578100",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578100",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:49Z",
+        "completed_at": "2026-10-12T00:21:28Z",
+        "name": "Complete disaster recovery",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:49Z",
+            "completed_at": "2026-10-12T00:16:50Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:17:33Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:17:33Z",
+            "completed_at": "2026-10-12T00:17:42Z"
+          },
+          {
+            "name": "Derive test-only bootstrap credential",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:42Z",
+            "completed_at": "2026-10-12T00:17:42Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:42Z",
+            "completed_at": "2026-10-12T00:17:43Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:43Z",
+            "completed_at": "2026-10-12T00:17:45Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:17:45Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Start isolated recovery infrastructure",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:18:07Z"
+          },
+          {
+            "name": "Build restored production images",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:18:07Z",
+            "completed_at": "2026-10-12T00:21:14Z"
+          },
+          {
+            "name": "Run destructive recovery matrix",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-12T00:21:14Z",
+            "completed_at": "2026-10-12T00:21:20Z"
+          },
+          {
+            "name": "Start restored services and run Agent workflow smoke",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:21:20Z",
+            "completed_at": "2026-10-12T00:21:24Z"
+          },
+          {
+            "name": "Capture service logs",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-10-12T00:21:24Z",
+            "completed_at": "2026-10-12T00:21:24Z"
+          },
+          {
+            "name": "Upload raw recovery logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-12T00:21:24Z",
+            "completed_at": "2026-10-12T00:21:25Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-10-12T00:21:25Z",
+            "completed_at": "2026-10-12T00:21:25Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-10-12T00:21:25Z",
+            "completed_at": "2026-10-12T00:21:25Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-12T00:21:25Z",
+            "completed_at": "2026-10-12T00:21:26Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-12T00:21:26Z",
+            "completed_at": "2026-10-12T00:21:26Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578100",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011028,
+        "runner_name": "GitHub Actions 1000011028",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578152,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnaA",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578152",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578152",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:49Z",
+        "completed_at": "2026-10-12T00:19:39Z",
+        "name": "Connector native storage (windows-latest)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:16:51Z"
+          },
+          {
+            "name": "Enable Windows long paths before checkout",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:51Z",
+            "completed_at": "2026-10-12T00:16:52Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:16:52Z",
+            "completed_at": "2026-10-12T00:17:43Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:43Z",
+            "completed_at": "2026-10-12T00:17:52Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:52Z",
+            "completed_at": "2026-10-12T00:18:01Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:18:01Z",
+            "completed_at": "2026-10-12T00:18:11Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:18:11Z",
+            "completed_at": "2026-10-12T00:18:16Z"
+          },
+          {
+            "name": "Prepare Linux Secret Service",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-10-12T00:18:16Z",
+            "completed_at": "2026-10-12T00:18:16Z"
+          },
+          {
+            "name": "Bind native runtime source before checks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:18:16Z",
+            "completed_at": "2026-10-12T00:18:16Z"
+          },
+          {
+            "name": "Validate Linux native storage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-12T00:18:16Z",
+            "completed_at": "2026-10-12T00:18:16Z"
+          },
+          {
+            "name": "Validate macOS native storage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-10-12T00:18:16Z",
+            "completed_at": "2026-10-12T00:18:16Z"
+          },
+          {
+            "name": "Validate Windows native storage with temporary user",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-10-12T00:18:16Z",
+            "completed_at": "2026-10-12T00:19:33Z"
+          },
+          {
+            "name": "Bind native runtime source after checks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-12T00:19:33Z",
+            "completed_at": "2026-10-12T00:19:33Z"
+          },
+          {
+            "name": "Upload raw connector logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-12T00:19:33Z",
+            "completed_at": "2026-10-12T00:19:35Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-12T00:19:35Z",
+            "completed_at": "2026-10-12T00:19:35Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-12T00:19:35Z",
+            "completed_at": "2026-10-12T00:19:35Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 28,
+            "started_at": "2026-10-12T00:19:35Z",
+            "completed_at": "2026-10-12T00:19:37Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 29,
+            "started_at": "2026-10-12T00:19:37Z",
+            "completed_at": "2026-10-12T00:19:37Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578152",
+        "labels": [
+          "windows-latest"
+        ],
+        "runner_id": 1000011025,
+        "runner_name": "GitHub Actions 1000011025",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578158,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3Enbg",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578158",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578158",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:53Z",
+        "completed_at": "2026-10-12T00:18:35Z",
+        "name": "Connector native storage (macos-latest)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:54Z",
+            "completed_at": "2026-10-12T00:16:55Z"
+          },
+          {
+            "name": "Enable Windows long paths before checkout",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:55Z",
+            "completed_at": "2026-10-12T00:16:55Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:16:55Z",
+            "completed_at": "2026-10-12T00:17:45Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:45Z",
+            "completed_at": "2026-10-12T00:17:51Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:51Z",
+            "completed_at": "2026-10-12T00:17:52Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:52Z",
+            "completed_at": "2026-10-12T00:18:00Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:18:00Z",
+            "completed_at": "2026-10-12T00:18:06Z"
+          },
+          {
+            "name": "Prepare Linux Secret Service",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 8,
+            "started_at": "2026-10-12T00:18:06Z",
+            "completed_at": "2026-10-12T00:18:06Z"
+          },
+          {
+            "name": "Bind native runtime source before checks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:18:06Z",
+            "completed_at": "2026-10-12T00:18:06Z"
+          },
+          {
+            "name": "Validate Linux native storage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-10-12T00:18:06Z",
+            "completed_at": "2026-10-12T00:18:06Z"
+          },
+          {
+            "name": "Validate macOS native storage",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:18:06Z",
+            "completed_at": "2026-10-12T00:18:30Z"
+          },
+          {
+            "name": "Validate Windows native storage with temporary user",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-10-12T00:18:30Z",
+            "completed_at": "2026-10-12T00:18:30Z"
+          },
+          {
+            "name": "Bind native runtime source after checks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-12T00:18:30Z",
+            "completed_at": "2026-10-12T00:18:30Z"
+          },
+          {
+            "name": "Upload raw connector logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-12T00:18:30Z",
+            "completed_at": "2026-10-12T00:18:31Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-12T00:18:31Z",
+            "completed_at": "2026-10-12T00:18:31Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-12T00:18:31Z",
+            "completed_at": "2026-10-12T00:18:31Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 28,
+            "started_at": "2026-10-12T00:18:31Z",
+            "completed_at": "2026-10-12T00:18:32Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 29,
+            "started_at": "2026-10-12T00:18:32Z",
+            "completed_at": "2026-10-12T00:18:33Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578158",
+        "labels": [
+          "macos-latest"
+        ],
+        "runner_id": 1000011029,
+        "runner_name": "GitHub Actions 1000011029",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114612578216,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar3EnqA",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114612578216",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114612578216",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-10-12T00:16:47Z",
+        "started_at": "2026-10-12T00:16:49Z",
+        "completed_at": "2026-10-12T00:18:50Z",
+        "name": "Connector native storage (ubuntu-latest)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:16:50Z",
+            "completed_at": "2026-10-12T00:16:52Z"
+          },
+          {
+            "name": "Enable Windows long paths before checkout",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 2,
+            "started_at": "2026-10-12T00:16:52Z",
+            "completed_at": "2026-10-12T00:16:52Z"
+          },
+          {
+            "name": "Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:16:52Z",
+            "completed_at": "2026-10-12T00:17:32Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-10-12T00:17:32Z",
+            "completed_at": "2026-10-12T00:17:41Z"
+          },
+          {
+            "name": "Activate exact pnpm",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:17:41Z",
+            "completed_at": "2026-10-12T00:17:42Z"
+          },
+          {
+            "name": "Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-10-12T00:17:42Z",
+            "completed_at": "2026-10-12T00:17:45Z"
+          },
+          {
+            "name": "Install dependencies",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-10-12T00:17:45Z",
+            "completed_at": "2026-10-12T00:17:48Z"
+          },
+          {
+            "name": "Prepare Linux Secret Service",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-10-12T00:17:48Z",
+            "completed_at": "2026-10-12T00:18:12Z"
+          },
+          {
+            "name": "Bind native runtime source before checks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-10-12T00:18:12Z",
+            "completed_at": "2026-10-12T00:18:12Z"
+          },
+          {
+            "name": "Validate Linux native storage",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-12T00:18:12Z",
+            "completed_at": "2026-10-12T00:18:44Z"
+          },
+          {
+            "name": "Validate macOS native storage",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 11,
+            "started_at": "2026-10-12T00:18:44Z",
+            "completed_at": "2026-10-12T00:18:44Z"
+          },
+          {
+            "name": "Validate Windows native storage with temporary user",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 12,
+            "started_at": "2026-10-12T00:18:44Z",
+            "completed_at": "2026-10-12T00:18:44Z"
+          },
+          {
+            "name": "Bind native runtime source after checks",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 13,
+            "started_at": "2026-10-12T00:18:44Z",
+            "completed_at": "2026-10-12T00:18:44Z"
+          },
+          {
+            "name": "Upload raw connector logs",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 14,
+            "started_at": "2026-10-12T00:18:44Z",
+            "completed_at": "2026-10-12T00:18:46Z"
+          },
+          {
+            "name": "Post Restore pnpm store cache",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 26,
+            "started_at": "2026-10-12T00:18:46Z",
+            "completed_at": "2026-10-12T00:18:46Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 27,
+            "started_at": "2026-10-12T00:18:46Z",
+            "completed_at": "2026-10-12T00:18:46Z"
+          },
+          {
+            "name": "Post Check out source",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 28,
+            "started_at": "2026-10-12T00:18:46Z",
+            "completed_at": "2026-10-12T00:18:47Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 29,
+            "started_at": "2026-10-12T00:18:47Z",
+            "completed_at": "2026-10-12T00:18:47Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114612578216",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011030,
+        "runner_name": "GitHub Actions 1000011030",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 114616010737,
+        "run_id": 38187274436,
+        "workflow_name": "CI",
+        "head_branch": "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055",
+        "run_url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/runs/38187274436",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOTgYEXc8AAAAar6WH8Q",
+        "head_sha": "f05651b7b6483fe113e1b999bbe9c8d47223e0c8",
+        "url": "https://api.github.com/repos/xurunxin/WorkMesh/actions/jobs/114616010737",
+        "html_url": "https://github.com/xurunxin/WorkMesh/actions/runs/38187274436/job/114616010737",
+        "status": "completed",
+        "conclusion": "failure",
+        "created_at": "2026-10-12T00:34:26Z",
+        "started_at": "2026-10-12T00:34:28Z",
+        "completed_at": "2026-10-12T00:35:19Z",
+        "name": "Required CI",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-10-12T00:34:29Z",
+            "completed_at": "2026-10-12T00:34:30Z"
+          },
+          {
+            "name": "Check out aggregate policy",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-10-12T00:34:30Z",
+            "completed_at": "2026-10-12T00:35:08Z"
+          },
+          {
+            "name": "Set up exact Node",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-10-12T00:35:08Z",
+            "completed_at": "2026-10-12T00:35:14Z"
+          },
+          {
+            "name": "Aggregate required results",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 4,
+            "started_at": "2026-10-12T00:35:14Z",
+            "completed_at": "2026-10-12T00:35:14Z"
+          },
+          {
+            "name": "Upload raw aggregate log",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-10-12T00:35:14Z",
+            "completed_at": "2026-10-12T00:35:16Z"
+          },
+          {
+            "name": "Post Set up exact Node",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 9,
+            "started_at": "2026-10-12T00:35:16Z",
+            "completed_at": "2026-10-12T00:35:16Z"
+          },
+          {
+            "name": "Post Check out aggregate policy",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-10-12T00:35:16Z",
+            "completed_at": "2026-10-12T00:35:17Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-10-12T00:35:17Z",
+            "completed_at": "2026-10-12T00:35:17Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/xurunxin/WorkMesh/check-runs/114616010737",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000011031,
+        "runner_name": "GitHub Actions 1000011031",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      }
+    ]
+  }
+}

@@ -147,17 +147,17 @@ const action = (
 const actions = (row: RecoveryRow): RecoveryItem['actions'] => {
   const result = [
     action('refresh', 'refresh', 'Refresh recovery facts', 'GET', `/api/v1/recovery-items/v1:${row.condition}:${row.source_id}`, 'Keeps the current snapshot visible while revalidating this authorized source.', { dangerous: false, requiresCurrent: false, requiresReason: false }),
-    action('open_run', 'open_run', 'Open Run details', 'GET', `/agent-sessions/${row.session_id}`, 'Inspects the source Session and causal timeline without mutating it.', { dangerous: false, requiresCurrent: false, requiresReason: false }),
+    action('open_run', 'open_run', 'Open Run details', 'GET', `/api/v1/agent-sessions/${row.session_id}`, 'Inspects the source Session and causal timeline without mutating it.', { dangerous: false, requiresCurrent: false, requiresReason: false }),
   ]
-  if (row.work_item_id) result.push(action('open_work_item', 'open_work_item', 'Open Work Item', 'GET', `/?view=issues&workItem=${row.work_item_id}`, 'Returns to the responsible work context.', { dangerous: false, requiresCurrent: false, requiresReason: false }))
+  if (row.work_item_id) result.push(action('open_work_item', 'open_work_item', 'Open Work Item', 'GET', `/api/v1/work-items/${row.work_item_id}`, 'Returns to the responsible work context.', { dangerous: false, requiresCurrent: false, requiresReason: false }))
   if (row.lifecycle === 'resolved') return result
   if (['missing_first_heartbeat', 'heartbeat_timeout', 'session_stale', 'session_failed', 'session_canceled', 'session_blocked', 'assignment_without_active_executor', 'budget_exhausted', 'validation_attempts_exhausted'].includes(row.condition)) {
     result.push(action('retry', 'retry', 'Preview and Retry', 'POST', `/api/v1/agent-sessions/${row.session_id}/retry`, 'Creates a distinct linked Session; the source Session remains immutable.', { consequencePreviewPath: `/api/v1/agent-sessions/${row.session_id}/control-preview`, dangerous: true, requiresCurrent: true, requiresReason: true }))
     result.push(action('handoff', 'handoff', 'Preview Handoff', 'POST', '/api/v1/handoffs', 'Preserves the context/evidence packet while transferring remaining work through governed Handoff.', { consequencePreviewPath: `/api/v1/agent-sessions/${row.session_id}/control-preview`, dangerous: true, requiresCurrent: true, requiresReason: true }))
   }
   if (row.condition === 'lease_lost') result.push(action('reacquire_lease', 'reacquire_lease', 'Reacquire Lease', 'POST', '/api/v1/leases', 'Revalidates the Session, Delegation, resource scope, and current Lease owner before acquisition.', { dangerous: true, requiresCurrent: true, requiresReason: true }))
-  if (row.condition === 'approval_expired' && row.approval_id) result.push(action('renew_approval', 'renew_approval', 'Review and re-request Approval', 'GET', `/?view=inbox&queue=needs-you&attention=v1:approval:${row.approval_id}`, 'The expired Approval is not reused; the current payload and revision must be reviewed.', { dangerous: false, requiresCurrent: false, requiresReason: false }))
-  if (['missing_first_heartbeat', 'heartbeat_timeout'].includes(row.condition)) result.push(action('reconnect', 'reconnect', 'Inspect Agent connection', 'GET', `/agents/${row.agent_actor_id}`, 'Connection diagnostics may explain heartbeat loss without changing Session state.', { dangerous: false, requiresCurrent: false, requiresReason: false }))
+  if (row.condition === 'approval_expired' && row.approval_id) result.push(action('renew_approval', 'renew_approval', 'Review and re-request Approval', 'GET', `/api/v1/human-attention/${encodeURIComponent(`v1:approval:${row.approval_id}`)}`, 'The expired Approval is not reused; the current payload and revision must be reviewed.', { dangerous: false, requiresCurrent: false, requiresReason: false }))
+  if (['missing_first_heartbeat', 'heartbeat_timeout'].includes(row.condition)) result.push(action('reconnect', 'reconnect', 'Inspect Agent connection', 'GET', `/api/v1/agents/${row.agent_actor_id}`, 'Connection diagnostics may explain heartbeat loss without changing Session state.', { dangerous: false, requiresCurrent: false, requiresReason: false }))
   return result
 }
 

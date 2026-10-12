@@ -1,0 +1,1996 @@
+{
+  "reviewedInventorySource": "69fa7f4f196c6cef74a792054400530420c705dc",
+  "productHead": "7209be0641cc224b19b88bc36b0d3a03996b0b63",
+  "method": "按已审逐套件去向列出当前准确 Git blob 与测试声明；多行和动态用例仍需回查源码及运行日志，不声称是 AST 或逐实例结果",
+  "originalSources": [
+    {
+      "originalPath": "apps/web/e2e/actionable-collaboration-queues.spec.ts",
+      "originalBlob": "892145cca23c1c944e8957ca41c57c85f720c2ad",
+      "retainedContract": "H／C／E 分离、脱敏、队列计数与权限",
+      "disposition": "保留队列与隔离合同；响应式和页面 URL 退役",
+      "existingBackendTargets": [
+        "apps/api/integration/collaboration-queue-counts.integration.test.ts",
+        "apps/api/integration/human-attention.integration.test.ts",
+        "apps/api/integration/stage2-collaboration.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/agent-governed-controls.spec.ts",
+      "originalBlob": "cea89ff28f7f5899b3ed81866e21d5f7a2a666fd",
+      "retainedContract": "Stop、Plan revision、retry 新 Session、If-Match 与精确输入",
+      "disposition": "模拟安全语义用真实后端补缺；草稿、焦点和导航退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage1.integration.test.ts",
+        "apps/api/integration/autonomous-control-plane.integration.test.ts",
+        "apps/api/integration/execution-waits.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/agent-run-timeline.spec.ts",
+      "originalBlob": "b802eadeb4c42309f15aea96f3475c7858e98a9b",
+      "retainedContract": "因果组、不可变 Plan、证据来源与分页",
+      "disposition": "投影合同核后端，DOM 数量、键盘和 URL 状态退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage2-collaboration.integration.test.ts",
+        "apps/api/integration/stage3-delivery.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/approval-real-agent.spec.ts",
+      "originalBlob": "24b41f234a8e73514edd8768e40cad7f78959727",
+      "retainedContract": "审批产生、worker 投递、Agent 接收、审批后结果与证据",
+      "disposition": "完整纵向用例迁入退役集成套件，复用 FakeAgent、createFakeAgentServer 和 createAgentWebhookWorker",
+      "existingBackendTargets": [
+        "apps/api/integration/stage1.integration.test.ts",
+        "apps/api/integration/stage2-collaboration.integration.test.ts"
+      ],
+      "addedRetirementCases": [
+        "审批要求由真实 worker 投递给 fake Agent，并进入完成结果和证据"
+      ],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/attention-center.spec.ts",
+      "originalBlob": "eb7896e12413c7a76e8349f00ffc719602832224",
+      "retainedContract": "当前 scope、精确审批、逐项权限与 stale recovery 拒绝",
+      "disposition": "迁移必要后端负例；批量表单状态不增加新后端批量能力",
+      "existingBackendTargets": [
+        "apps/api/integration/human-attention.integration.test.ts",
+        "apps/api/integration/stage2-collaboration.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/collaboration-hub.spec.ts",
+      "originalBlob": "300b6eb5e5bca6f13e98f18597f2c24635d072aa",
+      "retainedContract": "attention 数据读取由后端承担",
+      "disposition": "桌面／手机可读性退役",
+      "existingBackendTargets": [
+        "apps/api/integration/human-attention.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/command-center.spec.ts",
+      "originalBlob": "1b56a905eedebfb903f54fc0059c61bc3c3ebd79",
+      "retainedContract": "已存在的查询和资源隔离",
+      "disposition": "搜索阈值和焦点退役，不新增搜索 API",
+      "existingBackendTargets": [
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/route-policy-authorization.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/connection-diagnostics.spec.ts",
+      "originalBlob": "5644c46c5dd75fdeebca6eb8af60ac99a3b59dff",
+      "retainedContract": "过期、rotation、撤销、scope、秘密脱敏",
+      "disposition": "复用真实凭据拒绝；页面状态和浏览器本地状态退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/api/integration/stage5-connector.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/documents.spec.ts",
+      "originalBlob": "7e97ab485ddb124d37ea2ba1af938fc301295ebe",
+      "retainedContract": "不可变版本、冲突、导出、恢复、归档和来源归属",
+      "disposition": "复用领域覆盖，编辑器呈现退役",
+      "existingBackendTargets": [
+        "apps/api/integration/documents.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/features-disabled.spec.ts",
+      "originalBlob": "27ad873b6ed891fea0f0270e3780a4e59cfcb8fe",
+      "retainedContract": "禁用功能不得入准入路径",
+      "disposition": "保持真实 FEATURE_DISABLED；导航和请求次数退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage4-operations.integration.test.ts",
+        "apps/api/integration/route-policy-authorization.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/frontend-unification.spec.ts",
+      "originalBlob": "1cbc8fa5676b6b4ce39d70a5691102be8b50dab7",
+      "retainedContract": "既有 Project、Issue、Agent 资源读取",
+      "disposition": "等高卡片、局部跳转和本地化退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage1.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/guidance.spec.ts",
+      "originalBlob": "f42c90be7c225b86bd911e22ab086bcd991af58c",
+      "retainedContract": "版本化 Guidance、scope、Session pin 与审计",
+      "disposition": "保持不可变版本；页面操作退役",
+      "existingBackendTargets": [
+        "apps/api/integration/guidance.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/human-control-plane-acceptance.test.ts",
+      "originalBlob": "00d7ff86ac4156ae4e85b7e528411357e7ec0462",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/human-reflow.spec.ts",
+      "originalBlob": "7fb5eb024fc9a15dd2b87f283cf8ffdfc753fc49",
+      "retainedContract": "无新增后端合同",
+      "disposition": "所有 reflow 断言退役，原截图保留",
+      "existingBackendTargets": [],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mcp-onboarding.spec.ts",
+      "originalBlob": "aeca5e66d5882063691e4232947ae8c5d639763f",
+      "retainedContract": "发现失败安全、client 合同、MCP 不泄露配对 fragment",
+      "disposition": "迁移发现、Skill、兑换及非法 client 的真实验证；复制按钮和几何退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/api/integration/stage5-connector.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/accessibility-keyboard.mocked.spec.ts",
+      "originalBlob": "681d731006cba115f17f40260ebeffe12338a693",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/agents-interactions.mocked.spec.ts",
+      "originalBlob": "404923116af7b635f683acff070cfd8bb0558541",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/agents-responsive.mocked.spec.ts",
+      "originalBlob": "1e26c47c7cbaee9fd2c51a6305360dab42c757f7",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/approval-human-agent-journey.mocked.spec.ts",
+      "originalBlob": "3f1dc89248615eaf0a534014c869f690a39c38d3",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/command-center-routes.mocked.spec.ts",
+      "originalBlob": "c617b5efe454939daf06514ff1d097ca902e75c9",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/connect-clients.mocked.spec.ts",
+      "originalBlob": "d5b653d38cd024d89f0237df1a8ce27fc297744d",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/d0-visual-baseline.mocked.spec.ts",
+      "originalBlob": "a1ae2f6eaa0fbf5e72ef4fec6d0715041fa0be05",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/final-tour-server-contract.test.ts",
+      "originalBlob": "022470a54f1a5db2430b6c1fb008be2342740612",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/final-visual-tour.mocked.spec.ts",
+      "originalBlob": "560dd5e9d773ca988f2a4b6cae54d4d2b638af71",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/large-list-pagination.mocked.spec.ts",
+      "originalBlob": "74db029b62e65128763127a20a11724a6b299555",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/loading-states.mocked.spec.ts",
+      "originalBlob": "031670982a15d4ba83cbf6049939def5ebe54d95",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/operations-settings.mocked.spec.ts",
+      "originalBlob": "4d95f72ce65070b707d21b9304127f0f85c3cab4",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/operations-ux.mocked.spec.ts",
+      "originalBlob": "cd6c340e2ce7901697c0d9c91bbf82f9207b2886",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/overlay-contract.mocked.spec.ts",
+      "originalBlob": "d9a65a722e12a44041e55d7f72f93b1ef701235c",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/page-hotkeys.mocked.spec.ts",
+      "originalBlob": "e2f0fd91ac313fd5b3f28478c7d7f2093f47d423",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/settings-workflow-colors.mocked.spec.ts",
+      "originalBlob": "43394bbd6a6d56ca077a7adb90afc920806c6fe9",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/mocked/toast-outcomes.mocked.spec.ts",
+      "originalBlob": "ed9355645713f9c963419922bb32123410258be0",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/notification-channels.spec.ts",
+      "originalBlob": "102756b9bffc38edec082371da2b6b639e7bde00",
+      "retainedContract": "目标 owner、秘密脱敏、禁用持久化、撤销及无探测",
+      "disposition": "复用 owner／隔离／撤销负例；浏览器秘密存储检查退役",
+      "existingBackendTargets": [
+        "apps/api/integration/notification-channels.integration.test.ts",
+        "apps/api/integration/wecom-notifications.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/pagination.spec.ts",
+      "originalBlob": "e11419deb2ab95afd33fb868f837036821f8dbf6",
+      "retainedContract": "opaque cursor、过滤 scope、去重与第二页可达",
+      "disposition": "保留服务端 cursor 绑定；页面晚响应和 Registry 交互退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/playwright-config-contract.test.ts",
+      "originalBlob": "add8611338a186803ba638b44c6d5d914f3c8e3d",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/playwright-run-directory.test.ts",
+      "originalBlob": "3923df212baef5999d999980bf145ac3efb408a9",
+      "retainedContract": "mock 数据与请求输入不构成服务端通过证据",
+      "disposition": "页面、布局、浏览器工具与截图断言退役；安全语义按真实后端合同核缺并迁入退役集成套件，保留历史原件",
+      "existingBackendTargets": [
+        "apps/api/integration/route-policy-authorization.integration.test.ts",
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/project-editor.spec.ts",
+      "originalBlob": "7e6421ab3d7b55939d256019f686647caafdcefe",
+      "retainedContract": "Project 创建和 revisioned 更新、Markdown 数据持久化",
+      "disposition": "核对数据往返和 stale revision；页面 URL 恢复退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage1.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/recovery-center.spec.ts",
+      "originalBlob": "9eefd6d525c331ece80d33facd07b8625a71c264",
+      "retainedContract": "恢复投影、最新 revision、保留证据及受控 retry",
+      "disposition": "缺失后端恢复负例迁入退役集成套件，页面几何与 URL 退役",
+      "existingBackendTargets": [
+        "apps/api/integration/workbench-recovery.integration.test.ts",
+        "apps/api/integration/stage5-agent-connections.integration.test.ts",
+        "apps/api/integration/execution-result.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/rich-content.spec.ts",
+      "originalBlob": "f419dc0dbfdcd6b2a5985a2d3868c3cdf66b9f3f",
+      "retainedContract": "Markdown 存取和附件鉴权",
+      "disposition": "Markdown／附件 REST 保留，HTML 惰性显示和键盘呈现退役",
+      "existingBackendTargets": [
+        "apps/api/integration/documents.integration.test.ts",
+        "apps/api/integration/stage3-delivery.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/stage0.spec.ts",
+      "originalBlob": "d299b1101ce25ae544df6a24ed22a930a8e3ef98",
+      "retainedContract": "安装登录、CSRF、幂等、revision、团队删除后拒写、SSE 接续",
+      "disposition": "跨 API 重启及 SSE 断线接续迁入退役集成套件",
+      "existingBackendTargets": [
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/bootstrap-install.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/stage1.spec.ts",
+      "originalBlob": "edf85eebb4eaad82e48b3817d2250e428337bfae",
+      "retainedContract": "原子委派启动、失败重试新 Session、非管理员权限",
+      "disposition": "核对原子启动与非管理员负例，补缺到退役集成套件",
+      "existingBackendTargets": [
+        "apps/api/integration/stage1.integration.test.ts",
+        "apps/api/integration/route-policy-authorization.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/stage2.spec.ts",
+      "originalBlob": "a11e64faefbd6ce7714dbe5c7fa7acd7124d82cc",
+      "retainedContract": "协作可见性、lease force release、Inbox、决策与审计",
+      "disposition": "真实事务／scope／force release 保留；卡片与布局退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage2-collaboration.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/stage4.spec.ts",
+      "originalBlob": "60c9fad765ce6d721911f0b78363e27653e08023",
+      "retainedContract": "规则操作、运行事实、模板、usage 与 feature gate",
+      "disposition": "领域控制保留，页面呈现退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/theme-unification.spec.ts",
+      "originalBlob": "eb5decd839128055b81b6dbbcfd4953749aad985",
+      "retainedContract": "无新增后端合同",
+      "disposition": "主题、CSS slot 与本地存储断言退役",
+      "existingBackendTargets": [],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/wecom-backend-compatibility.spec.ts",
+      "originalBlob": "c0b0f031afaabcfbe5ebcf623155f7e690f8140a",
+      "retainedContract": "本人可读、另一 Human 404、读取不新增决策事实、转发后实时鉴权",
+      "disposition": "改为 REST 链接并验证复合 ID、匿名和撤权；登录页面丢定位作为历史限制保留",
+      "existingBackendTargets": [
+        "apps/api/integration/human-attention.integration.test.ts",
+        "apps/api/integration/wecom-notifications.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/work-item-detail.spec.ts",
+      "originalBlob": "7e4bcb0c8d7b951b639ab66595f99561903aa210",
+      "retainedContract": "If-Match、幂等键、精确 mutation 输入",
+      "disposition": "保留后端输入与 stale revision；Sheet、焦点和草稿退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage1.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/work-surfaces.spec.ts",
+      "originalBlob": "4364ee4b6d54decd5df279e32d55a4a36feaf310",
+      "retainedContract": "稳定 revisioned mutation、Saved View 数据合同",
+      "disposition": "保留 mutation／View REST；布局、拖动、语言和客户端重试呈现退役",
+      "existingBackendTargets": [
+        "apps/api/integration/stage0.integration.test.ts",
+        "apps/api/integration/stage4-operations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/workbench-accessibility.spec.ts",
+      "originalBlob": "fded60293489debcc6921e914dad56153118afad",
+      "retainedContract": "API 返回 scope 由后端套件承担",
+      "disposition": "无障碍和几何断言退役，不冒后端已验收",
+      "existingBackendTargets": [
+        "apps/api/integration/workbench-conversations.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/workbench-conversation.spec.ts",
+      "originalBlob": "085c31cb7ca8e6ffb0e4f7f7babeb419e7f6ff72",
+      "retainedContract": "对话读取权限与服务配置入口",
+      "disposition": "保持对话和设置 REST；桌面／手机入口退役",
+      "existingBackendTargets": [
+        "apps/api/integration/workbench-conversations.integration.test.ts",
+        "apps/api/integration/configuration-readiness.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "apps/web/e2e/workbench-llm-settings.spec.ts",
+      "originalBlob": "30609bdcfe58a455cb26f46b6e3f5a2981c069fa",
+      "retainedContract": "预置可编辑后显式保存、模型连接注册撤销、凭据脱敏",
+      "disposition": "保留管理 REST 与秘密负例；表单退役",
+      "existingBackendTargets": [
+        "apps/api/integration/workbench-llm-connections.integration.test.ts",
+        "apps/api/integration/configuration-readiness.integration.test.ts"
+      ],
+      "addedRetirementCases": [],
+      "deploymentCommand": null,
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "scripts/verify-a2-backend-lite-api.mjs",
+      "originalBlob": "0baa7471f5bc75414c5c82873e34fcf3197bf11c",
+      "retainedContract": "安装认证、Cookie／CSRF、provider connection 与 context 动作幂等、精确 action/context 关联及 guidance 原件",
+      "disposition": "保留并改为 Node 原生 HTTP 直连 API；移除 Web workspace 的 Playwright、install 页面和 workbench 浏览器断言",
+      "existingBackendTargets": [
+        "apps/api/integration/bootstrap-install.integration.test.ts",
+        "apps/api/integration/stage3-delivery.integration.test.ts",
+        "apps/worker/integration/stage3-provider.integration.test.ts"
+      ],
+      "addedRetirementCases": [
+        "liteInstallCookieCsrf",
+        "liteProviderConnectionReplay 与 liteExactProjectContext",
+        "固定 Skill 下载路径返回签名原字节"
+      ],
+      "deploymentCommand": "node scripts/verify-a2-backend-lite-api.mjs（由隔离 Lite 外层脚本提供环境并调用）",
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    },
+    {
+      "originalPath": "scripts/verify-a2-backend-lite.mjs",
+      "originalBlob": "af3c1ac42742f63dbaddc02f3f5943989505b6d1",
+      "retainedContract": "api／worker／migrate 入口、save/load 镜像身份、无源码与无 bind mount、安装状态、部署 worker、TLS CA、归属日志及定向收尾",
+      "disposition": "保留部署验证入口；移除 web role、Next compiled proxy 和页面结论；启动后直接验证 API 并调用保留的内层脚本",
+      "existingBackendTargets": [],
+      "addedRetirementCases": [],
+      "deploymentCommand": "node scripts/verify-a2-backend-lite.mjs",
+      "owner": "#61",
+      "results": "查实际验证记录；源码声明和历史浏览器模拟不是通过证据"
+    }
+  ],
+  "backendTargets": {
+    "apps/api/integration/collaboration-queue-counts.integration.test.ts": {
+      "gitBlob": "440f39d6d7746bbbf384e302e4c256c11a01a835",
+      "sha256": "1bfc5cc4f60e09968ee5f4a7232beb486deee5f9ad67c96acee96f3ddbf07c26",
+      "declarations": [
+        {
+          "line": 7,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 35,
+          "source": "describe('collaboration queue counts', () => {"
+        },
+        {
+          "line": 52,
+          "source": "it('counts only what each reader may open, and agrees with the list it summarises', async () => {"
+        },
+        {
+          "line": 108,
+          "source": "it('refuses to count for an Agent principal', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/human-attention.integration.test.ts": {
+      "gitBlob": "600aa6e187045bd6a49d9ce3aa46db6ff92b0ac9",
+      "sha256": "ea3c756d41048505a71f59abb116f9e1ce59781a7a5250f4649200992fcecd83",
+      "declarations": [
+        {
+          "line": 18,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 66,
+          "source": "describe('Human Attention projection acceptance', () => {"
+        },
+        {
+          "line": 73,
+          "source": "it('rebuilds six typed kinds and keeps list/detail scope non-inferential', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/stage2-collaboration.integration.test.ts": {
+      "gitBlob": "6cb926b7fdbc159de9a2e721dfae2ae630375a4c",
+      "sha256": "727850c76cf637fe5072f1a0a2643a185395f084a26b969460de5c2267b322ae",
+      "declarations": [
+        {
+          "line": 11,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 2 API integration requires a dedicated *test* database.')"
+        },
+        {
+          "line": 289,
+          "source": "describe('Stage 2 collaboration API acceptance', () => {"
+        },
+        {
+          "line": 295,
+          "source": "it('M2默认父与step上限8：终态仍占父累计槽，第九次创建拒绝', async () => {"
+        },
+        {
+          "line": 312,
+          "source": "it('M2特权step限额夹具跨Plan版本按stable ID统计，两种创建均拒越界', async () => {"
+        },
+        {
+          "line": 334,
+          "source": "it('M2活跃legacy review无预留计预算，新review有预留只计一次；三方能力缺任一拒绝', async () => {"
+        },
+        {
+          "line": 367,
+          "source": "it('M2 nonrequired所有12种非completed状态不阻父，实际父完成正对照', async () => {"
+        },
+        {
+          "line": 383,
+          "source": "it('M2两创建旧Plan精确STALE_PLAN_VERSION且零业务事实', async () => {"
+        },
+        {
+          "line": 395,
+          "source": "it('M2 reviewer创建每阶段插入故障回滚Session/授权/预算/Lease/交付及事件', async () => {"
+        },
+        {
+          "line": 428,
+          "source": "it('M2 required child每个非completed状态以准确IDs阻父，旧Plan绑定可投影且父撤权拒读', async () => {"
+        },
+        {
+          "line": 458,
+          "source": "it('M2普通child与reviewer共用锁和累计预留，同key重放一份，outbox失败全回滚', async () => {"
+        },
+        {
+          "line": 485,
+          "source": "it('coordinates exclusive and shared leases, child budgets, and durable parent blocking', async () => {"
+        },
+        {
+          "line": 565,
+          "source": "it('M2 reviewer双证据不能使用父/他Actor/他Session/普通Activity替代', async () => {"
+        },
+        {
+          "line": 587,
+          "source": "it('M2 Plan发布竞创建、父完成竞子完成、review_shared竞exclusive均观察真实锁等待', async () => {"
+        },
+        {
+          "line": 615,
+          "source": "it('M2反向blocks与父层级真实竞争只有一个方向提交，reply竞Human resolve只一结算', async () => {"
+        },
+        {
+          "line": 646,
+          "source": "it('M2八HTTP图写先取workspace与规划图锁，真实Automation Worker事务同序，Team删除与workspace排他边界', async () => {"
+        },
+        {
+          "line": 706,
+          "source": "it('M2 reviewer本人Room、本人code_review分别不可豁免；structured review不替代双证据', async () => {"
+        },
+        {
+          "line": 735,
+          "source": "it('audits human-visible ask/answer, rejects hidden messages and cross-scope context deltas, and records force release', async () => {"
+        },
+        {
+          "line": 863,
+          "source": "it('supports project-linked Work Items through canonical executor and review delegation paths with exact or actor-targeted Inbox replies', async () => {"
+        },
+        {
+          "line": 2239,
+          "source": "it('derives legacy Human Inbox scope for current non-admin list and detail reads', async () => {"
+        },
+        {
+          "line": 2287,
+          "source": "it('revalidates claim, acknowledge, and reply idempotency replays against live scope', async () => {"
+        },
+        {
+          "line": 2451,
+          "source": "it('claims actor Inbox items once and keeps exact Session ask, review, blocker, and mention flows isolated', async () => {"
+        },
+        {
+          "line": 3059,
+          "source": "it('enforces cross-team collaboration boundaries and trusted context sources', async () => {"
+        },
+        {
+          "line": 3224,
+          "source": "it('projects body-redacted Agent Inbox delivery facts to authorized Humans', async () => {"
+        },
+        {
+          "line": 3316,
+          "source": "it('accepts, rolls back, and rejects handoffs atomically with durable events and outbox', async () => {"
+        },
+        {
+          "line": 3515,
+          "source": "it('projects authorized Recovery conditions from durable execution facts and resolves a failed source through a distinct retry', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/stage1.integration.test.ts": {
+      "gitBlob": "f50dd22d571d83401bbdbf400283caa061d067ef",
+      "sha256": "38e94d558aa975274c32cea92fcdd92f9cf5d68722b92a338e1a69245d646016",
+      "declarations": [
+        {
+          "line": 13,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error(\"Stage 1 integration requires a dedicated *test* database.\");"
+        },
+        {
+          "line": 114,
+          "source": "describe(\"Stage 1 agent API acceptance\", () => {"
+        },
+        {
+          "line": 130,
+          "source": "it(\"runs delegation, idempotent start, agent exchange, plan, question/answer, and completion evidence\", async () => {"
+        },
+        {
+          "line": 144,
+          "source": "it(\"rejects invalid transitions, writes after stop, expired session tokens, cross-team reads, and keeps one forced executor\", async () => {"
+        },
+        {
+          "line": 159,
+          "source": "it("
+        },
+        {
+          "line": 515,
+          "source": "it(\"restricts sanitized retention status to a Workspace administrator\", async () => {"
+        },
+        {
+          "line": 698,
+          "source": "it(\"keeps authenticated work, Agent writes, and an existing SSE stream available during limiter Redis outage\", async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/autonomous-control-plane.integration.test.ts": {
+      "gitBlob": "cf5707c110cd801882eeed4251ae4c8413516562",
+      "sha256": "c766ab2696ad7d2d630a3f41ffae0206981751039b89fdc08aa806c1ea1e6cb5",
+      "declarations": [
+        {
+          "line": 9,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 54,
+          "source": "describe('autonomous control plane, browser push, and Agent enrollment', () => {"
+        },
+        {
+          "line": 65,
+          "source": "it('auto-approves outside exclusions and keeps excluded approvals human-visible', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/execution-waits.integration.test.ts": {
+      "gitBlob": "3f474ea85c4f69ed1b4e2d2ff10de5490a9da9a5",
+      "sha256": "633cdf28d65cab0e068bd343495097b4406e7cd974c106923391fea2522b8179",
+      "declarations": [
+        {
+          "line": 9,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 54,
+          "source": "describe('persisted execution wait and Worker continuation', () => {"
+        },
+        {
+          "line": 89,
+          "source": "it.each(['awaiting_approval', 'awaiting_input', 'blocked'] as const)('settles %s publicly and resumes exactly once through live admission', async state => {"
+        },
+        {
+          "line": 145,
+          "source": "it('keeps pause ahead of a real prompt and only resumes after the Human control command', async () => {"
+        },
+        {
+          "line": 161,
+          "source": "it.each(['stop','revoke'] as const)('keeps %s ahead of a matching input trigger', async action => {"
+        },
+        {
+          "line": 191,
+          "source": "it('rejects another Session prompt, then accepts only the exact target prompt', async () => {"
+        },
+        {
+          "line": 208,
+          "source": "it('refuses a different well-formed approval hash without partially settling the Turn', async () => {"
+        },
+        {
+          "line": 230,
+          "source": "it('rolls back Session, public reply, Turn, Attempt, wait and receipt together when wait persistence fails', async () => {"
+        },
+        {
+          "line": 257,
+          "source": "it.each(['expired', 'rejected', 'missing_quorum'] as const)('does not continue an approval wait with %s', async rejection => {"
+        },
+        {
+          "line": 294,
+          "source": "it('enforces wait persistence shapes, uniqueness, exact prompt foreign keys and immutable origins in PostgreSQL', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/stage3-delivery.integration.test.ts": {
+      "gitBlob": "a1e648f2bc9da8568e6a78292993d43d1f6cf8bd",
+      "sha256": "6c98511ad7ae509e65bc541c7cdd37f4645ef90cb219f8555a611092dbe3b07c",
+      "declarations": [
+        {
+          "line": 15,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 3 API integration requires a dedicated *test* database.')"
+        },
+        {
+          "line": 220,
+          "source": "describe('Stage 3 delivery API', () => {"
+        },
+        {
+          "line": 225,
+          "source": "it('M3 exact action只读投影精确E/principal授权、隐藏payload/raw错误与撤权；不追加事实',async()=>{"
+        },
+        {
+          "line": 253,
+          "source": "it('M3精确action原principal成员删除隐藏，恢复与admin免成员正对照',async()=>{"
+        },
+        {
+          "line": 270,
+          "source": "it('M3 context耗尽过期claim准确停止scheduled，重启dead查询及合法checkpoint恢复',async()=>{"
+        },
+        {
+          "line": 288,
+          "source": "it('M3六kind五status真实GET白名单投影，合法checkpoint与未知效果分别确认且零业务写',async()=>{"
+        },
+        {
+          "line": 325,
+          "source": "it.each(['read','branch','path'] as const)('M3 exact action最终快照拒绝当前context的%s收窄且零副作用',async kind=>{"
+        },
+        {
+          "line": 340,
+          "source": "it('M3原principal Human可诊断终态Session action，普通terminal E仍拒绝',async()=>{"
+        },
+        {
+          "line": 411,
+          "source": "it.each(revocations)('解析期间撤权后无上下文发布：%s', async kind => {"
+        },
+        {
+          "line": 424,
+          "source": "it.each(revocations)('checkpoint 后撤权重启无上下文发布：%s', async kind => {"
+        },
+        {
+          "line": 436,
+          "source": "it('A2 仓库解析重放仅产生一份上下文', async () => {"
+        },
+        {
+          "line": 443,
+          "source": "it('撤权与上下文落库按持锁顺序串行', async () => {"
+        },
+        {
+          "line": 478,
+          "source": "it.each(['repository_contexts', 'repository_guidance_entries', 'domain_events', 'outbox_events'])('A2 配置事务失败无部分状态事件或outbox：%s', async table => {"
+        },
+        {
+          "line": 493,
+          "source": "it('仓库发布与 C1 事件快照共享事务兼容', async () => {"
+        },
+        {
+          "line": 500,
+          "source": "it('连接同文重放与旧脱敏指纹拒绝降级', async () => {"
+        },
+        {
+          "line": 524,
+          "source": "it.each(['webhookSecret', 'privateKey', 'accessToken'] as const)('连接同 key 仅改 webhookSecret/privateKey/accessToken 均冲突：%s', async field => {"
+        },
+        {
+          "line": 553,
+          "source": "it('authorizes before context disclosure and persists provider intent without provider I/O', async () => {"
+        },
+        {
+          "line": 634,
+          "source": "it('persists an exact-head, approval-bound CI retry through the provider action queue', async () => {"
+        },
+        {
+          "line": 707,
+          "source": "it('verifies exact raw GitHub bytes and makes duplicate deliveries a single durable effect', async () => {"
+        },
+        {
+          "line": 726,
+          "source": "it('uses one live exact-context predicate and revokes repository disclosure immediately', async () => {"
+        },
+        {
+          "line": 781,
+          "source": "it('rejects missing pinned review and merge permissions before PR evidence with zero residue', async () => {"
+        },
+        {
+          "line": 827,
+          "source": "it('rejects sensitive artifact content and rolls back artifact, event, and outbox writes', async () => {"
+        },
+        {
+          "line": 889,
+          "source": "it('requires current Team membership for human updates and serializes dependency cycles', async () => {"
+        },
+        {
+          "line": 924,
+          "source": "it('keeps agent project updates draft-only and makes publication and completion decisions human, revisioned, and replay-safe', async () => {"
+        },
+        {
+          "line": 1033,
+          "source": "it('commits upload expiry before returning a stable replay-safe error without publishing an artifact', async () => {"
+        },
+        {
+          "line": 1118,
+          "source": "it('requires project and completion evidence to be linked to the exact delivery target', async () => {"
+        },
+        {
+          "line": 1199,
+          "source": "it('runs branch, commit, PR, check, independent review, exact-head approval, merge, and suggestion', async () => {"
+        },
+        {
+          "line": 1492,
+          "source": "it('supports a Human-owned upload lifecycle with attribution, listing, download, and cancellation', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/stage0.integration.test.ts": {
+      "gitBlob": "cefa9c4d35f787502be6af01042c683f7eb45b71",
+      "sha256": "cafaf2c839b6aa787f20881dc6cf5ee7492325d6a58a735e77553ac6480d521f",
+      "declarations": [
+        {
+          "line": 47,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) {"
+        },
+        {
+          "line": 110,
+          "source": "describe(\"Stage 0 PostgreSQL API acceptance\", () => {"
+        },
+        {
+          "line": 159,
+          "source": "it(\"covers authentication, idempotency, revisions, nullable patches, filtering, comments, and SSE recovery\", async () => {"
+        },
+        {
+          "line": 432,
+          "source": "it(\"enforces membership and workspace isolation, deleted-team writes, and concurrent idempotency\", async () => {"
+        },
+        {
+          "line": 544,
+          "source": "it(\"updates workflow state names and colors with revisioned idempotent event delivery\", async () => {"
+        },
+        {
+          "line": 599,
+          "source": "it(\"protects the sole active team and lets admins recover zero-team workspaces\", async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/route-policy-authorization.integration.test.ts": {
+      "gitBlob": "96d3289a19e7587fabd30194e4aff910951e7962",
+      "sha256": "f02ed3679718083697c5506788b3d45fc97c3abd9d8a67a2ed16dc8591033c92",
+      "declarations": [
+        {
+          "line": 21,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 483,
+          "source": "describe('declarative route policy live authorization', () => {"
+        },
+        {
+          "line": 484,
+          "source": "it('rejects an ordinary execution Session from the Human-or-Coordination forced assignment route', async () => {"
+        },
+        {
+          "line": 519,
+          "source": "it('fails closed across principals, resources, audit, events, revocation, and feature gates', async () => {"
+        },
+        {
+          "line": 895,
+          "source": "it('does not widen multi-Team initiative or dependency events to unrelated humans', async () => {"
+        },
+        {
+          "line": 1112,
+          "source": "it('keeps current personal view and notification producers private across REST and SSE', async () => {"
+        },
+        {
+          "line": 1268,
+          "source": "it('returns a structured retryable response when realtime capacity is saturated', async () => {"
+        },
+        {
+          "line": 1298,
+          "source": "it('rechecks Team and session authorization between opaque cursor pages', async () => {"
+        },
+        {
+          "line": 1370,
+          "source": "it('rechecks live authority inside the final paged SQL after preflight', async () => {"
+        },
+        {
+          "line": 1929,
+          "source": "it('rechecks all remaining Agent-readable collection authority in final paged SQL', async () => {"
+        },
+        {
+          "line": 2237,
+          "source": "it('rechecks the six parameterized Agent collection routes in final paged SQL', async () => {"
+        },
+        {
+          "line": 2489,
+          "source": "it('conceals and deduplicates explicit unresolved Team targets without breaking body-owned collection writes', async () => {"
+        },
+        {
+          "line": 2585,
+          "source": "it('serializes delegation and Team-grant revocation with mutation authority', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/stage5-agent-connections.integration.test.ts": {
+      "gitBlob": "294c61fd0e04f156439aac7eac275826114c374a",
+      "sha256": "b677f800cdcbfa7822019c080e11c7f7d574ea4eee8843fbab35ae0bf7131ab6",
+      "declarations": [
+        {
+          "line": 14,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 5 integration requires a dedicated *test* database.')"
+        },
+        {
+          "line": 322,
+          "source": "describe('Stage 5 Agent Connection lifecycle', () => {"
+        },
+        {
+          "line": 323,
+          "source": "it('pairs once, replays safely, coordinates ordinary work, and revokes live authorization', async () => {"
+        },
+        {
+          "line": 675,
+          "source": "it('lazily reconciles existing Connection credentials and admits exactly one concurrent self-claim', async () => {"
+        },
+        {
+          "line": 933,
+          "source": "it('does not advertise claimable Issues when the live Connection lacks work:write', async () => {"
+        },
+        {
+          "line": 968,
+          "source": "it('keeps Human forced assignment authoritative before, during, and after self-claim and rolls back replacement failures', async () => {"
+        },
+        {
+          "line": 1206,
+          "source": "it('rolls back every self-claim write boundary and allows a clean retry', async () => {"
+        },
+        {
+          "line": 1420,
+          "source": "it('imports a prepared Project once and reconstructs the full mapping after API and MCP restart', async () => {"
+        },
+        {
+          "line": 1578,
+          "source": "it('keeps the old credential active when a rotation pairing is abandoned', async () => {"
+        },
+        {
+          "line": 1599,
+          "source": "it('allows an explicitly privileged coordinator to delegate an issue', async () => {"
+        },
+        {
+          "line": 1619,
+          "source": "it('preserves an existing Agent Team grant when creating a narrower Connection', async () => {"
+        },
+        {
+          "line": 1645,
+          "source": "it('rebinds the live coordination principal and durably records worker expiry', async () => {"
+        },
+        {
+          "line": 1832,
+          "source": "it('returns the exact active or overlap credential identity across rotation', async () => {"
+        },
+        {
+          "line": 2003,
+          "source": "it('rejects an existing Agent capability overgrant before creating durable pairing state', async () => {"
+        },
+        {
+          "line": 2057,
+          "source": "it('revokes a cross-Team backing without exposing Connection metadata to that Team', async () => {"
+        },
+        {
+          "line": 2141,
+          "source": "it('recovers terminal, invalid, expired, and concurrent Coordination backings atomically', async () => {"
+        },
+        {
+          "line": 2587,
+          "source": "it('rolls back close and event writes when Coordination recovery creation fails', async () => {"
+        },
+        {
+          "line": 2656,
+          "source": "it('keeps unknown credential diagnostics uniform and keyed without logging credential bytes', async () => {"
+        },
+        {
+          "line": 2703,
+          "source": "it('rejects stale Connection grants after Agent definition capabilities shrink', async () => {"
+        },
+        {
+          "line": 2729,
+          "source": "it('does not charge Coordination Sessions against execution admission capacity', async () => {"
+        },
+        {
+          "line": 2851,
+          "source": "it('recovers completed, failed, and canceled terminal-only assignments without rewriting history', async () => {"
+        },
+        {
+          "line": 3038,
+          "source": "it('converges concurrent terminal-only claims to one queued retry', async () => {"
+        },
+        {
+          "line": 3089,
+          "source": "it('keeps terminal-only recovery atomic when replacement admission fails', async () => {"
+        },
+        {
+          "line": 3152,
+          "source": "it('recovers one stale self-claim assignment atomically and converges concurrent claims', async () => {"
+        },
+        {
+          "line": 3287,
+          "source": "it('does not recover mixed stale and queued assignments or a stale assignment owned by another Agent', async () => {"
+        },
+        {
+          "line": 3400,
+          "source": "it('rolls back stale recovery mutations when replacement Session admission fails', async () => {"
+        },
+        {
+          "line": 3472,
+          "source": "it('requires an exact self-claim capability scope and rejects broad assignment scopes', async () => {"
+        },
+        {
+          "line": 3488,
+          "source": "it('rejects a stale self-claim when the assignment capability scope targets another Project', async () => {"
+        },
+        {
+          "line": 3517,
+          "source": "it('keeps generic stale state transitions inactive while dedicated ACK recovers and resolves the stale inbox', async () => {"
+        },
+        {
+          "line": 3577,
+          "source": "it('replays the same stale self-claim idempotency key with the same replacement Session and exchange token', async () => {"
+        },
+        {
+          "line": 3614,
+          "source": "it('resolves stale inbox and releases its lease when Human forced assignment replaces the same Agent', async () => {"
+        },
+        {
+          "line": 3673,
+          "source": "it('lists Connections for Workspace Admins with cursor pagination and no credential material', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/stage5-connector.integration.test.ts": {
+      "gitBlob": "f81e70b152a820e776f8971422b8e38edba22e35",
+      "sha256": "5bebcc3d711ea8d91f4a3027a96ee05d547454af4881c581ae74804c5d27b596",
+      "declarations": [
+        {
+          "line": 20,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !url || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(url).pathname.slice(1))) throw new Error('专用测试数据库必需')"
+        },
+        {
+          "line": 86,
+          "source": "describe('真实 API / MCP / Skill HTTP 的连接器纵向验收', () => {"
+        },
+        {
+          "line": 87,
+          "source": "it('丢响应后 API 和 MCP 重启，同 pending 获得同凭据并完成完整协议', async () => {"
+        },
+        {
+          "line": 114,
+          "source": "it('同 key 异体、新 key 和陌生 claimant 拒绝；擦除/窗口外拒绝', async () => {"
+        },
+        {
+          "line": 138,
+          "source": "it('兑换事务失败不消耗 pairing；同 pending 重试完整成功', async () => {"
+        },
+        {
+          "line": 158,
+          "source": "it.each(['revoked', 'expired', 'overlap'] as const)('重放仍返回旧令牌，但 %s 当前验证拒绝且零正式写入', async mode => {"
+        }
+      ]
+    },
+    "apps/api/integration/documents.integration.test.ts": {
+      "gitBlob": "3dfb51e56b305151a85ce3e09bb447ed00635f6c",
+      "sha256": "8db60ab5cce43ec41f24e8fde87b31697f49a6a2de6169f1de4963efcfb68efe",
+      "declarations": [
+        {
+          "line": 9,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 22,
+          "source": "describe('ordinary versioned Documents', () => {"
+        },
+        {
+          "line": 47,
+          "source": "it('keeps immutable history with idempotency, conflicts, export, restore and archive', async () => {"
+        },
+        {
+          "line": 107,
+          "source": "it('rejects cross-owner reads and records the real Agent actor on an Issue document', async () => {"
+        },
+        {
+          "line": 167,
+          "source": "it('rejects a cross-Team owner and rolls back a failed event write', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/stage4-operations.integration.test.ts": {
+      "gitBlob": "7026fab531c44e97b3602748b659a1e66337ba86",
+      "sha256": "3004e0c92b0b662c02804220f2d23df7b0e7cfa74862f4d40d52b56a2d3206fa",
+      "declarations": [
+        {
+          "line": 24,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 221,
+          "source": "describe(\"Stage 4 planning and operations API\", () => {"
+        },
+        {
+          "line": 310,
+          "source": "it('Human 可用仓库筛选在分页前排除关闭 provider 与其他 Team', async () => {"
+        },
+        {
+          "line": 329,
+          "source": "it('Human 仓库筛选游标绑定不允许换域续页', async () => {"
+        },
+        {
+          "line": 342,
+          "source": "it.each(['membership', 'team'] as const)('Human 仓库分页最终 SQL 重验预检后的撤权：%s', async kind => {"
+        },
+        {
+          "line": 362,
+          "source": "it('Agent 旧列表权限不变且拒绝 Human 新筛选参数', async () => {"
+        },
+        {
+          "line": 380,
+          "source": "it(\"publishes safe release metadata and discloses feature state only after authentication\", async () => {"
+        },
+        {
+          "line": 430,
+          "source": "it(\"returns FEATURE_DISABLED after normal authentication without admitting work\", async () => {"
+        },
+        {
+          "line": 645,
+          "source": "it(\"rejects manual trigger and dry-run before admission when a child action feature is disabled\", async () => {"
+        },
+        {
+          "line": 726,
+          "source": "it(\"serves Cycle carry-over, Initiative rollup, advanced View, and explainable health\", async () => {"
+        },
+        {
+          "line": 854,
+          "source": "it(\"persists immutable Rule dry-run traces with zero effects and inert Template imports\", async () => {"
+        },
+        {
+          "line": 975,
+          "source": "it(\"atomically applies sequenced A2A deliveries to one Session across outbound streaming\", async () => {"
+        },
+        {
+          "line": 1480,
+          "source": "it(\"applies A2A execution capacity only to a newly imported non-terminal task\", async () => {"
+        },
+        {
+          "line": 1768,
+          "source": "it(\"keeps mixed-currency usage separate and applies one notification preference path\", async () => {"
+        },
+        {
+          "line": 2262,
+          "source": "it(`M4 A2A ${identity} 扫描后原凭据到期：${mapped?'非空':'空映射'}页最终拒且无delivery/cursor`,async()=>{"
+        },
+        {
+          "line": 2282,
+          "source": "it(`M4 A2A 扫描后已提交撤Team grant：${mapped?'非空':'空映射'}页，默认repeatable-read连接被显式修复`,async()=>{"
+        },
+        {
+          "line": 2302,
+          "source": "it('M4 PG旧隔离与now时钟负例分列；冻结快照看不见已提交撤权或自然到期',async()=>{"
+        },
+        {
+          "line": 2325,
+          "source": "it('M4 A2A 同页并发与重复只有一份delivery；空映射推进扫描cursor',async()=>{"
+        },
+        {
+          "line": 2337,
+          "source": "it('M4 A2A guarded INSERT后真实SQL故障整事务回滚，重试可恢复',async()=>{"
+        },
+        {
+          "line": 2351,
+          "source": "it('M4 四读仅返回准确Session范围：非零rollup、币种unknown、本人run及Human对照', async () => {"
+        },
+        {
+          "line": 2398,
+          "source": "it('M4 最后读取快照重核principal与Team grant，不能以旧list或零聚合掩拒', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/guidance.integration.test.ts": {
+      "gitBlob": "b03b925aeb03abe45bbf25156ae1f7e83c88bf02",
+      "sha256": "405e7f6aa1f41ff0647eab3b4fd58f85811a1b56de481909a8fc05b2ab2fe650",
+      "declarations": [
+        {
+          "line": 10,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Guidance integration requires a dedicated *test* database.')"
+        },
+        {
+          "line": 23,
+          "source": "describe('versioned Guidance acceptance', () => {"
+        },
+        {
+          "line": 30,
+          "source": "it('publishes immutable scoped revisions, pins Session context, and audits pointer-only rollback', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/notification-channels.integration.test.ts": {
+      "gitBlob": "5dea16ff0fda65811d9760b73ae7b1cac2862e93",
+      "sha256": "017d1bebd6b04b7e58e5d48139147c150d644008ac860e3abd504b5c86e36838",
+      "declarations": [
+        {
+          "line": 21,
+          "source": "!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))"
+        },
+        {
+          "line": 68,
+          "source": "describe('C1 target ownership, redaction and reconciliation', () => {"
+        },
+        {
+          "line": 124,
+          "source": "it('creates a redacted target, replays the same body and rejects a changed body', async () => {"
+        },
+        {
+          "line": 169,
+          "source": "it('rejects another admin and anonymous access and validates HTTPS without performing any probe', async () => {"
+        },
+        {
+          "line": 210,
+          "source": "it('requires current revision, deduplicates update and returns paginated redacted results', async () => {"
+        },
+        {
+          "line": 260,
+          "source": "it('isolates targets and deliveries from a Human in another workspace', async () => {"
+        },
+        {
+          "line": 311,
+          "source": "it('rejects an otherwise valid active Agent bearer on every channel management route', async () => {"
+        },
+        {
+          "line": 411,
+          "source": "it('keeps Attention reads free of intent, delivery and checkpoint writes', async () => {"
+        },
+        {
+          "line": 425,
+          "source": "it('lets only the owner reconcile an uncertain result with revision and idempotency', async () => {"
+        },
+        {
+          "line": 508,
+          "source": "it('revokes configuration without returning secret material and rejects subsequent mutations', async () => {"
+        },
+        {
+          "line": 536,
+          "source": "it('partitions real Room source snapshots by exact Human audience without public payload leakage or duplicate intents', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/wecom-notifications.integration.test.ts": {
+      "gitBlob": "b3bbbb8995c8f3d6db58424bb8df76b3e06a4f06",
+      "sha256": "323bb1464573c548708293e9d92d05564f7fe92e3429ff6c032b95398e9b6853",
+      "declarations": [
+        {
+          "line": 12,
+          "source": "if(process.env.RUN_INTEGRATION!=='1'||!databaseUrl||!process.env.REDIS_URL||!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))throw new Error('C2 requires a dedicated integration test database and Redis')"
+        },
+        {
+          "line": 17,
+          "source": "describe('C2 channel delivery with existing Redis integration fixture',()=>{"
+        },
+        {
+          "line": 115,
+          "source": "it('旧 request_hash 全字段匹配后发送新 API 链接，保留旧摘要；字段篡改零外发', async () => {"
+        },
+        {
+          "line": 155,
+          "source": "describe('C2 fake provider 与真实 Redis Lua', () => {"
+        },
+        {
+          "line": 189,
+          "source": "it('实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条', async () => {"
+        },
+        {
+          "line": 204,
+          "source": "it('并发 Worker 原子额度上限；崩溃后仅 token 过期，额度仍保留至 D+60', async () => {"
+        },
+        {
+          "line": 220,
+          "source": "it('可信完成晚于发送截止上界：额度至少保留至完成后 60 秒，token 单独释放', async () => {"
+        },
+        {
+          "line": 232,
+          "source": "it('C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60', async () => {"
+        },
+        {
+          "line": 247,
+          "source": "it('Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送', async () => {"
+        },
+        {
+          "line": 255,
+          "source": "it('授权锁等待跨窗口，过期 permit 不提交 checkpoint、不外发、不消耗失败预算', async () => {"
+        },
+        {
+          "line": 268,
+          "source": "it.each(['disabled', 'inactive', 'revoked', 'membership', 'changed', 'muted'] as const)('当前 %s 撤权先提交，真实授权锁后零 fake provider 调用', async change => {"
+        },
+        {
+          "line": 290,
+          "source": "it('审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用', async () => {"
+        },
+        {
+          "line": 301,
+          "source": "it('同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝', async () => {"
+        },
+        {
+          "line": 317,
+          "source": "it('checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK', async () => {"
+        },
+        {
+          "line": 327,
+          "source": "it('真实 Redis TIME 与部分 bucket 丢失：旧许可失效，共同冷却不吞失败预算', async () => {"
+        },
+        {
+          "line": 334,
+          "source": "it('quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效', async () => {"
+        },
+        {
+          "line": 372,
+          "source": "it('网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/workbench-recovery.integration.test.ts": {
+      "gitBlob": "ce120c9c9c538e5bec9ad82c0601937a2c408b39",
+      "sha256": "1e3fd91aadb10dc7428e209fa1b8c57423dec9cb30efb039ac0824e02d4dedda",
+      "declarations": [
+        {
+          "line": 14,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 35,
+          "source": "describe('durable workbench conversation event recovery', () => {"
+        },
+        {
+          "line": 82,
+          "source": "it('replays every workbench event from cursor zero without duplicates', async () => {"
+        },
+        {
+          "line": 94,
+          "source": "it('resumes after a disconnect and delivers only the events after the last cursor', async () => {"
+        },
+        {
+          "line": 105,
+          "source": "it('returns a structured resync contract when the requested cursor has expired', async () => {"
+        },
+        {
+          "line": 121,
+          "source": "it('survives an API process restart: durable facts and cursors still answer', async () => {"
+        },
+        {
+          "line": 137,
+          "source": "it('admits an outbox replay exactly once without duplicating the turn', async () => {"
+        },
+        {
+          "line": 164,
+          "source": "it('keeps long conversations paginated without unbounded growth in one response', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/execution-result.integration.test.ts": {
+      "gitBlob": "491f025b893c5d2ab42491d05eefc9e69100e6f2",
+      "sha256": "98a98ec59cb0de6c08aab344c0bd2bb4ec359b657bf54bc73040053573b43839",
+      "declarations": [
+        {
+          "line": 8,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !url || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(url).pathname.slice(1)))"
+        },
+        {
+          "line": 48,
+          "source": "describe('exact execution confirmation', () => {"
+        },
+        {
+          "line": 70,
+          "source": "it('confirms a committed direct completion after lost response; terminal E and wrong origin stay closed, without business writes', async () => {"
+        },
+        {
+          "line": 90,
+          "source": "it('confirms only the exact Stop cleanup, and rechecks live authority after token retention changes', async () => {"
+        },
+        {
+          "line": 113,
+          "source": "it('rolls back state and all execution facts when provenance persistence fails', async () => {"
+        },
+        {
+          "line": 125,
+          "source": "it.each(['plan', 'lease', 'approval', 'complete', 'stop_ack'] as const)("
+        },
+        {
+          "line": 167,
+          "source": "it('rechecks principal, grant, exact scope and installation on every confirmation, with concurrent reads producing zero facts', async () => {"
+        },
+        {
+          "line": 200,
+          "source": "it('clears retained provenance when a rolling old producer reoccupies an expired key, while ordinary response updates keep proof', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/bootstrap-install.integration.test.ts": {
+      "gitBlob": "639bf541126eb37efbdb130f27c7cc6a3b731ed5",
+      "sha256": "d90e9d42f94426c264598eff9935ad06a4ee9e338ea7b8d44a0aed222647e2a0",
+      "declarations": [
+        {
+          "line": 9,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 146,
+          "source": "describe('authenticated single-use installation bootstrap', () => {"
+        },
+        {
+          "line": 187,
+          "source": "it('rejects remote, proxied, malformed, and wrong credentials before durable side effects', async () => {"
+        },
+        {
+          "line": 224,
+          "source": "it('installs once and exactly replays the encrypted cookie response only for the same credential, key, body, and client context', async () => {"
+        },
+        {
+          "line": 268,
+          "source": "it('returns the same result to 20 concurrent callers sharing one key', async () => {"
+        },
+        {
+          "line": 284,
+          "source": "it('allows exactly one of 20 concurrent distinct keys and permanently closes every loser', async () => {"
+        },
+        {
+          "line": 307,
+          "source": "it('rolls back the replay claim and partial installation writes, then permits the exact retry', async () => {"
+        },
+        {
+          "line": 362,
+          "source": "it('turns repeated bootstrap guessing into a uniform 429 without PostgreSQL audit or idempotency writes', async () => {"
+        },
+        {
+          "line": 394,
+          "source": "it('does not leak bootstrap, password, client, cookie, or idempotency values through logs, errors, or durable facts', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/workbench-conversations.integration.test.ts": {
+      "gitBlob": "0cd909fa8adad64858a34b85b11afe5a11bee828",
+      "sha256": "d514f96e317a9fd4ca3dcf7f4992aca72c3a8fa0bf8bc061939d65e9272d1117",
+      "declarations": [
+        {
+          "line": 7,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 16,
+          "source": "describe('durable workbench conversation admission', () => {"
+        },
+        {
+          "line": 35,
+          "source": "it('atomically persists a message, queued turn, and outbox intents; handles replay and stop', async () => {"
+        },
+        {
+          "line": 93,
+          "source": "it('keeps personal conversations private, including from another workspace admin', async () => {"
+        },
+        {
+          "line": 112,
+          "source": "it('exposes the recorded tool ledger on a turn and never across workspaces', async () => {"
+        },
+        {
+          "line": 201,
+          "source": "it('serializes concurrent sends and rolls back all facts when outbox insertion fails', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/configuration-readiness.integration.test.ts": {
+      "gitBlob": "95071a7717695b28c894fda4bb3a9ea9f4b2a395",
+      "sha256": "05b0a0760cd8c52bc1ba371632634e5bb2d5ed4c010bd0f9a7fe397a9541a441",
+      "declarations": [
+        {
+          "line": 12,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 114,
+          "source": "if (!/^[a-z0-9_]+$/.test(tablename)) throw new Error('Unexpected test table name')"
+        },
+        {
+          "line": 121,
+          "source": "describe('配置就绪只读投影', () => {"
+        },
+        {
+          "line": 137,
+          "source": "it('#8 原验收1：四项检查各自的 happy path', async () => {"
+        },
+        {
+          "line": 147,
+          "source": "it('#8 原验收2：跨 Team 与他人个人模型**不泄露存在性**', async () => {"
+        },
+        {
+          "line": 165,
+          "source": "it('#8 原验收3：**无 assignment 的空闲 Runner 不得被报成离线**（`unknown`）', async () => {"
+        },
+        {
+          "line": 190,
+          "source": "it('#8 原验收4：模型 disabled → `blocked`；模型属于他人 → 对该调用者 `blocked` 且不泄露', async () => {"
+        },
+        {
+          "line": 206,
+          "source": "it('#8 原验收5：非仓库工作 → `not_applicable` 而非 `blocked`', async () => {"
+        },
+        {
+          "line": 225,
+          "source": "it('#8 原验收6：断言**无状态/事件/outbox/receipt 写入**（不是「事务计数为 0」）', async () => {"
+        },
+        {
+          "line": 259,
+          "source": "it('#8 原验收7：路由策略矩阵用生成器重生成，不手改', async () => {"
+        },
+        {
+          "line": 268,
+          "source": "it.each(['首次', '已有会话', '过期会话'] as const)("
+        },
+        {
+          "line": 350,
+          "source": "it('R1-8-1 visible active模型+enabled model、active Agent及仓库上下文正确；Runner恒unknown', async () => {"
+        },
+        {
+          "line": 372,
+          "source": "it('R1-8-2 跨workspace/Team及personal模型不可见，不泄漏存在性', async () => {"
+        },
+        {
+          "line": 383,
+          "source": "it('R1-8-8 两个Team并行查询不串投影；撤权后下一次读按实时授权收敛', async () => {"
+        },
+        {
+          "line": 406,
+          "source": "it('空 base branch 与关闭的 Gitea 不被报告就绪', async () => {"
+        }
+      ]
+    },
+    "apps/api/integration/workbench-llm-connections.integration.test.ts": {
+      "gitBlob": "82aec7e18f9438194755ba7a39705c1d33f1c751",
+      "sha256": "db2151752fe6536e4cb88000968c85ee9526f114f135d8d419c2ceb73f2813ab",
+      "declarations": [
+        {
+          "line": 11,
+          "source": "if (process.env.RUN_INTEGRATION !== '1' || !databaseUrl || !/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1)))"
+        },
+        {
+          "line": 22,
+          "source": "describe('Workbench LLM connection settings', () => {"
+        },
+        {
+          "line": 38,
+          "source": "it('公开只读路由受功能开关约束且并发读取不改目录', async () => {"
+        },
+        {
+          "line": 52,
+          "source": "it('预置配置创建修订及重放零模型服务出站', async () => {"
+        },
+        {
+          "line": 78,
+          "source": "it('修改预置 URL 仍受安全策略约束', async () => {"
+        },
+        {
+          "line": 94,
+          "source": "it('stores encrypted secrets, guards revisions, replays idempotently, and revokes', async () => {"
+        },
+        {
+          "line": 147,
+          "source": "it('rejects unauthenticated access and unsafe personal URLs', async () => {"
+        },
+        {
+          "line": 157,
+          "source": "it('rotates the secret through PATCH so the previous credential stops authenticating model calls', async () => {"
+        },
+        {
+          "line": 191,
+          "source": "it('keeps personal connections private even from workspace admins and grants team members read-only access', async () => {"
+        }
+      ]
+    },
+    "apps/worker/integration/stage3-provider.integration.test.ts": {
+      "gitBlob": "c165fa9415b5a5f78ffcc87bc110489cac654adf",
+      "sha256": "77ed2b8fb2ec23d4fba7b24d6a2c8c1684c33a50a5533da0b021783b7d07c97d",
+      "declarations": [
+        {
+          "line": 13,
+          "source": "if (!/(^|[_-])test(?:[_-]|$)/i.test(new URL(databaseUrl).pathname.slice(1))) throw new Error('Stage 3 worker integration requires a dedicated *test* database.')"
+        },
+        {
+          "line": 316,
+          "source": "describe('Stage 3 provider webhook worker', () => {"
+        },
+        {
+          "line": 321,
+          "source": "it.each(['fake','github','gitea'] as const)('M3 %s所有五类无checkpoint旧领取停发，合法checkpoint本地恢复不构造provider',async provider=>{"
+        },
+        {
+          "line": 343,
+          "source": "it.each(['fake','github','gitea'] as const)('M3 %s逐kind合法checkpoint仅本地finish，纯读重领有界恢复',async provider=>{"
+        },
+        {
+          "line": 373,
+          "source": "it('M3真实GitHub rerequest成功后checkpoint前崩溃，跨真实租期重领HTTP写次数仍为一',async()=>{"
+        },
+        {
+          "line": 415,
+          "source": "it.each(['stop','revoke'] as const)('M3 %s事务先提交：观察真实锁等待，锁后重读拒绝零外发',async change=>{"
+        },
+        {
+          "line": 445,
+          "source": "it.each(['stop','revoke','context','default','membership'] as const)('M3发送许可先提交，%s在首个HTTP等待中提交，第二个仓库写零发送',async change=>{"
+        },
+        {
+          "line": 498,
+          "source": "it('M3逐次发送事务持authority锁时Stop实际阻塞，许可先提交仅当前tree在途随后写拒绝',async()=>{"
+        },
+        {
+          "line": 551,
+          "source": "it.each(['merge_pull_request','retry_ci_check'] as const)('M3 %s合法准入后pin收窄先提交，每次HTTP guard锁后拒绝',async kind=>{"
+        },
+        {
+          "line": 597,
+          "source": "it.each(['create_branch','create_commit','open_pull_request','merge_pull_request','retry_ci_check','membership'] as const)('M3当前默认分支或成员资格 %s 先提交，真实HTTP许可锁竞争零仓库写',async kind=>{"
+        },
+        {
+          "line": 635,
+          "source": "it('M3 context第八次claim崩溃后跨真实60秒重启终态CAS，无provider且不再排队',async()=>{"
+        },
+        {
+          "line": 653,
+          "source": "it('M3同worker attempt上限饱和，真实租期重领由claimed_at防ABA且合法checkpoint仅本地完成',async()=>{"
+        },
+        {
+          "line": 671,
+          "source": "it('M3完整authority真实锁等待跨默认60秒，锁后租期拒绝且无provider构造或外发',async()=>{"
+        },
+        {
+          "line": 700,
+          "source": "it('makes duplicate commit webhooks a single projection effect', async () => {"
+        },
+        {
+          "line": 715,
+          "source": "it('recovers a stale webhook claim after a worker dies', async () => {"
+        },
+        {
+          "line": 746,
+          "source": "it('does not claim or effect webhook deliveries from a disabled provider', async () => {"
+        },
+        {
+          "line": 792,
+          "source": "it('revalidates the provider allowlist before every provider access and never revives rejected actions', async () => {"
+        },
+        {
+          "line": 969,
+          "source": "it('reconciles a webhook-first provider PR, retries prerequisite deliveries, and preserves exact provenance through merge', async () => {"
+        },
+        {
+          "line": 1185,
+          "source": "it('dead-letters contradictory PR reconciliation and exhausted missing-PR delivery with audit outbox', async () => {"
+        },
+        {
+          "line": 1263,
+          "source": "it('recovers and idempotently projects provider reviews with exact head and author provenance', async () => {"
+        },
+        {
+          "line": 1303,
+          "source": "it('keeps pull request, check, review, and exact-head approval projections monotonic when old deliveries arrive late', async () => {"
+        },
+        {
+          "line": 1427,
+          "source": "it('rolls back and then emits exactly one claim-owned terminal event for action, webhook, and upload rejection', async () => {"
+        },
+        {
+          "line": 1521,
+          "source": "it('revalidates every queued provider mutation and audits revoked authority without a provider write', async () => {"
+        },
+        {
+          "line": 1704,
+          "source": "it('reconciles a checkpointed provider result after revocation without repeating the provider mutation', async () => {"
+        },
+        {
+          "line": 1780,
+          "source": "it('stops an unproven provider-merged webhook race after a crash without a second merge', async () => {"
+        },
+        {
+          "line": 1963,
+          "source": "it('expires a delayed merge approval without calling the provider', async () => {"
+        },
+        {
+          "line": 2038,
+          "source": "it('invalidates exact-head authority and terminally fails when the live provider head drifts', async () => {"
+        }
+      ]
+    }
+  },
+  "newSuite": "apps/api/integration/backend-retirement.integration.test.ts",
+  "executionRecords": "test-results.md；终端原字节在 raw-logs，真实部署及镜像身份在 runs"
+}

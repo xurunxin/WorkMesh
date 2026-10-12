@@ -1,0 +1,85 @@
+阅读视图；原始字节：raw-logs/run-ea0211e15101.zip 内 lite-bounded.log；SHA-256：3bdd98157bab3183c5259e7cb94befbb5fd118f9c314b8153793208142f5bc0c
+{"name":"docker","args":["buildx","inspect","backend-lite-47db4f07"],"code":1,"log":"0.log"}
+{"name":"docker","args":["buildx","create","--name","backend-lite-47db4f07","--driver","docker-container","--driver-opt","memory=4g","--driver-opt","memory-swap=4g"],"code":0,"log":"1.log"}
+{"name":"docker","args":["buildx","inspect","--bootstrap","backend-lite-47db4f07"],"code":0,"log":"2.log"}
+{"name":"docker","args":["inspect","--format","{{.Id}}","buildx_buildkit_backend-lite-47db4f070"],"code":0,"log":"3.log"}
+{"name":"docker","args":["image","inspect","workmesh-retirement-lite:backend-lite-47db4f07"],"code":1,"log":"4.log"}
+{"name":"docker","args":["buildx","build","--builder","backend-lite-47db4f07","--load","--progress=plain","--label","workmesh.task=backend-lite-47db4f07","--build-arg","WORKMESH_BUILD_SHA=7209be0641cc224b19b88bc36b0d3a03996b0b63","-t","workmesh-retirement-lite:backend-lite-47db4f07","-f","infra/docker/lite.Dockerfile","-"],"code":0,"log":"5.log"}
+{"name":"docker","args":["image","inspect","--format","{{.Id}}","workmesh-retirement-lite:backend-lite-47db4f07"],"code":0,"log":"6.log"}
+{"name":"docker","args":["image","inspect","--format","{{ index .Config.Labels \"org.opencontainers.image.revision\" }}","sha256:68c5e92feb8ba0c0f5f1ef2df2e2dd86ed51c298bbdd5d50ab3246ebc98e76c4"],"code":0,"log":"7.log"}
+{"name":"docker","args":["save","-o","D:\\Cache\\TEMP\\backend-lite-47db4f07\\workmesh-lite.tar","workmesh-retirement-lite:backend-lite-47db4f07"],"code":0,"log":"8.log"}
+{"name":"docker","args":["load","-i","D:\\Cache\\TEMP\\backend-lite-47db4f07\\workmesh-lite.tar"],"code":0,"log":"9.log"}
+{"name":"docker","args":["image","inspect","--format","{{.Id}}","workmesh-retirement-lite:backend-lite-47db4f07"],"code":0,"log":"10.log"}
+{"name":"docker","args":["run","-d","--name","backend-lite-47db4f07-probe-migrate","--label","workmesh.task=backend-lite-47db4f07","-e","WORKMESH_SERVICE=migrate","-e","WORKMESH_BUILD_SHA","-e","SESSION_SECRET","-e","WORKMESH_MASTER_KEY","-e","WORKMESH_BOOTSTRAP_TOKEN","-e","PAGINATION_CURSOR_KEYS","-e","PAGINATION_CURSOR_ACTIVE_KID","-e","AUTH_RATE_LIMIT_HMAC_KEY","-e","S3_ACCESS_KEY_ID","-e","S3_SECRET_ACCESS_KEY","-e","S3_BUCKET","-e","S3_REGION","-e","WORKMESH_BETA_GITEA","-e","DATABASE_URL","-e","REDIS_URL","-e","S3_ENDPOINT","-e","WEB_ORIGIN","workmesh-retirement-lite:backend-lite-47db4f07"],"code":0,"log":"11.log"}
+{"name":"docker","args":["logs","d2f677fd2f6207fd217a4c0eb89d489d4ca4f67816b4bfe1abad73f4d7d39b93"],"code":0,"log":"12.log"}
+{"name":"docker","args":["run","-d","--name","backend-lite-47db4f07-probe-api","--label","workmesh.task=backend-lite-47db4f07","-e","WORKMESH_SERVICE=api","-e","WORKMESH_BUILD_SHA","-e","SESSION_SECRET","-e","WORKMESH_MASTER_KEY","-e","WORKMESH_BOOTSTRAP_TOKEN","-e","PAGINATION_CURSOR_KEYS","-e","PAGINATION_CURSOR_ACTIVE_KID","-e","AUTH_RATE_LIMIT_HMAC_KEY","-e","S3_ACCESS_KEY_ID","-e","S3_SECRET_ACCESS_KEY","-e","S3_BUCKET","-e","S3_REGION","-e","WORKMESH_BETA_GITEA","-e","DATABASE_URL","-e","REDIS_URL","-e","S3_ENDPOINT","-e","WEB_ORIGIN","workmesh-retirement-lite:backend-lite-47db4f07"],"code":0,"log":"13.log"}
+{"name":"docker","args":["logs","6fdf792730d73522dc651bb6103c4d8cbf4e57e95a052db4d7dbd88261914055"],"code":0,"log":"14.log"}
+{"name":"docker","args":["run","-d","--name","backend-lite-47db4f07-probe-worker","--label","workmesh.task=backend-lite-47db4f07","-e","WORKMESH_SERVICE=worker","-e","WORKMESH_BUILD_SHA","-e","SESSION_SECRET","-e","WORKMESH_MASTER_KEY","-e","WORKMESH_BOOTSTRAP_TOKEN","-e","PAGINATION_CURSOR_KEYS","-e","PAGINATION_CURSOR_ACTIVE_KID","-e","AUTH_RATE_LIMIT_HMAC_KEY","-e","S3_ACCESS_KEY_ID","-e","S3_SECRET_ACCESS_KEY","-e","S3_BUCKET","-e","S3_REGION","-e","WORKMESH_BETA_GITEA","-e","DATABASE_URL","-e","REDIS_URL","-e","S3_ENDPOINT","-e","WEB_ORIGIN","workmesh-retirement-lite:backend-lite-47db4f07"],"code":0,"log":"15.log"}
+{"name":"docker","args":["logs","be4609cb93a1cd4995ed67b3dff521dd838896e745658b0b6cffce59375fc080"],"code":0,"log":"16.log"}
+{"name":"openssl","args":["req","-x509","-newkey","rsa:2048","-nodes","-keyout","D:\\Cache\\TEMP\\backend-lite-47db4f07\\tls\\key.pem","-out","D:\\Cache\\TEMP\\backend-lite-47db4f07\\tls\\ca.pem","-days","1","-subj","/CN=host.docker.internal","-addext","subjectAltName=DNS:host.docker.internal,DNS:localhost,IP:127.0.0.1"],"code":0,"log":"17.log"}
+{"name":"docker","args":["volume","inspect","backend-lite-47db4f07-ca"],"code":1,"log":"18.log"}
+{"name":"docker","args":["volume","create","--label","workmesh.task=backend-lite-47db4f07","backend-lite-47db4f07-ca"],"code":0,"log":"19.log"}
+{"name":"docker","args":["volume","inspect","--format","{{ index .Labels \"workmesh.task\" }}","backend-lite-47db4f07-ca"],"code":0,"log":"20.log"}
+{"name":"docker","args":["create","--name","backend-lite-47db4f07-ca-loader","--label","workmesh.task=backend-lite-47db4f07","--mount","type=volume,source=backend-lite-47db4f07-ca,target=/a2-ca","--entrypoint","node","workmesh-retirement-lite:backend-lite-47db4f07","-e","require('node:fs').readFileSync('/a2-ca/ca.pem'); console.log('test CA readable')"],"code":0,"log":"21.log"}
+{"name":"docker","args":["cp","D:\\Cache\\TEMP\\backend-lite-47db4f07\\tls\\ca.pem","5a4530d910b42e5ea338247e9e055b9d4e50b97a78c71e7ddee14364ab519e92:/a2-ca/ca.pem"],"code":0,"log":"22.log"}
+{"name":"docker","args":["start","-a","5a4530d910b42e5ea338247e9e055b9d4e50b97a78c71e7ddee14364ab519e92"],"code":0,"log":"23.log"}
+{"name":"docker","args":["compose","--project-name","backend-lite-47db4f07","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\docker-compose.lite.yml","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\provider.override.yml","up","-d","--wait","--wait-timeout","180","api","worker"],"code":0,"log":"24.log"}
+{"name":"docker","args":["compose","--project-name","backend-lite-47db4f07","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\docker-compose.lite.yml","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\provider.override.yml","ps","-q"],"code":0,"log":"25.log"}
+{"name":"docker","args":["inspect","--format","{{json .Mounts}}","d0529780e7caca0ce063be6e37158ed319f171dc6b235ed64bf198a822bd8643"],"code":0,"log":"26.log"}
+{"name":"docker","args":["inspect","--format","{{json .Mounts}}","e127dafa3f89f315952cc7787c1eb067b0f658c2239a819f541fdc6a1389313c"],"code":0,"log":"27.log"}
+{"name":"docker","args":["inspect","--format","{{json .Mounts}}","5d3bf8b1294b7eb203dbf42df78378ed9fa363cf621e73c037e9d1432e8f3f62"],"code":0,"log":"28.log"}
+{"name":"docker","args":["inspect","--format","{{json .Mounts}}","9841edd2af2f18a60de3548b0fbe6e114e003ddfcd77376dd666abfb843eebeb"],"code":0,"log":"29.log"}
+{"name":"docker","args":["inspect","--format","{{json .Mounts}}","78ac66ef7c62c46aa9a812753e1b7753568788d57a2122476577821b530a392e"],"code":0,"log":"30.log"}
+{"name":"C:\\nvm4w\\nodejs\\node.exe","args":["-e","fetch(process.env.WEB_ORIGIN+'/api/v1/install-status').then(async r=>{const body=await r.json();if(r.status!==200||body.installed!==false)throw Error('Fresh Lite installation status failed');process.stdout.write(JSON.stringify({status:r.status,body}))}).catch(e=>{console.error(e);process.exit(1)})"],"code":0,"log":"31.log"}
+{"name":"docker","args":["compose","--project-name","backend-lite-47db4f07","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\docker-compose.lite.yml","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\provider.override.yml","ps","-q","api"],"code":0,"log":"32.log"}
+{"name":"docker","args":["exec","d0529780e7caca0ce063be6e37158ed319f171dc6b235ed64bf198a822bd8643","node","-e","process.stdout.write(require('node:fs').readFileSync('/opt/workmesh/api/assets/skills/workmesh-1.1.0.md').toString('base64'))"],"code":0,"log":"33.log"}
+{"name":"C:\\nvm4w\\nodejs\\node.exe","args":["I:\\tds_workspace\\workspaces\\01a12c22-01d6-7eb1-a3c1-592edda7d055\\scripts\\verify-a2-backend-lite-api.mjs"],"code":1,"log":"34.log"}
+失败或未验收：Error: C:\nvm4w\nodejs\node.exe 退出 1
+{"name":"docker","args":["compose","--project-name","backend-lite-47db4f07","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\docker-compose.lite.yml","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\provider.override.yml","ps","-a","--format","json"],"code":0,"log":"35.log"}
+{"name":"docker","args":["compose","--project-name","backend-lite-47db4f07","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\docker-compose.lite.yml","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\provider.override.yml","logs","--no-color"],"code":0,"log":"36.log"}
+{"name":"docker","args":["ps","-aq","--filter","label=com.docker.compose.project=backend-lite-47db4f07"],"code":0,"log":"37.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"com.docker.compose.project\" }}","d0529780e7ca"],"code":0,"log":"38.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"com.docker.compose.project\" }}","78ac66ef7c62"],"code":0,"log":"39.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"com.docker.compose.project\" }}","1ef237d75b7d"],"code":0,"log":"40.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"com.docker.compose.project\" }}","94836df0e852"],"code":0,"log":"41.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"com.docker.compose.project\" }}","5d3bf8b1294b"],"code":0,"log":"42.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"com.docker.compose.project\" }}","9841edd2af2f"],"code":0,"log":"43.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"com.docker.compose.project\" }}","e127dafa3f89"],"code":0,"log":"44.log"}
+{"name":"docker","args":["volume","ls","-q","--filter","label=com.docker.compose.project=backend-lite-47db4f07"],"code":0,"log":"45.log"}
+{"name":"docker","args":["volume","inspect","--format","{{ index .Labels \"com.docker.compose.project\" }}","backend-lite-47db4f07_lite-object-data"],"code":0,"log":"46.log"}
+{"name":"docker","args":["volume","inspect","--format","{{ index .Labels \"com.docker.compose.project\" }}","backend-lite-47db4f07_lite-postgres-data"],"code":0,"log":"47.log"}
+{"name":"docker","args":["volume","inspect","--format","{{ index .Labels \"com.docker.compose.project\" }}","backend-lite-47db4f07_lite-redis-data"],"code":0,"log":"48.log"}
+{"name":"docker","args":["network","ls","-q","--filter","label=com.docker.compose.project=backend-lite-47db4f07"],"code":0,"log":"49.log"}
+{"name":"docker","args":["network","inspect","--format","{{ index .Labels \"com.docker.compose.project\" }}","50cffaca7e51"],"code":0,"log":"50.log"}
+{"name":"docker","args":["compose","--project-name","backend-lite-47db4f07","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\docker-compose.lite.yml","-f","D:\\Cache\\TEMP\\backend-lite-47db4f07\\provider.override.yml","down","--volumes","--remove-orphans"],"code":0,"log":"51.log"}
+{"name":"docker","args":["inspect","d0529780e7ca"],"code":1,"log":"52.log"}
+{"name":"docker","args":["inspect","78ac66ef7c62"],"code":1,"log":"53.log"}
+{"name":"docker","args":["inspect","1ef237d75b7d"],"code":1,"log":"54.log"}
+{"name":"docker","args":["inspect","94836df0e852"],"code":1,"log":"55.log"}
+{"name":"docker","args":["inspect","5d3bf8b1294b"],"code":1,"log":"56.log"}
+{"name":"docker","args":["inspect","9841edd2af2f"],"code":1,"log":"57.log"}
+{"name":"docker","args":["inspect","e127dafa3f89"],"code":1,"log":"58.log"}
+{"name":"docker","args":["volume","inspect","backend-lite-47db4f07_lite-object-data"],"code":1,"log":"59.log"}
+{"name":"docker","args":["volume","inspect","backend-lite-47db4f07_lite-postgres-data"],"code":1,"log":"60.log"}
+{"name":"docker","args":["volume","inspect","backend-lite-47db4f07_lite-redis-data"],"code":1,"log":"61.log"}
+{"name":"docker","args":["network","inspect","50cffaca7e51"],"code":1,"log":"62.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"workmesh.task\" }}","5a4530d910b42e5ea338247e9e055b9d4e50b97a78c71e7ddee14364ab519e92"],"code":0,"log":"63.log"}
+{"name":"docker","args":["rm","-f","-v","5a4530d910b42e5ea338247e9e055b9d4e50b97a78c71e7ddee14364ab519e92"],"code":0,"log":"64.log"}
+{"name":"docker","args":["volume","inspect","--format","{{ index .Labels \"workmesh.task\" }}","backend-lite-47db4f07-ca"],"code":0,"log":"65.log"}
+{"name":"docker","args":["ps","-aq","--filter","volume=backend-lite-47db4f07-ca"],"code":0,"log":"66.log"}
+{"name":"docker","args":["volume","rm","backend-lite-47db4f07-ca"],"code":0,"log":"67.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"workmesh.task\" }}","be4609cb93a1cd4995ed67b3dff521dd838896e745658b0b6cffce59375fc080"],"code":0,"log":"68.log"}
+{"name":"docker","args":["rm","-f","-v","be4609cb93a1cd4995ed67b3dff521dd838896e745658b0b6cffce59375fc080"],"code":0,"log":"69.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"workmesh.task\" }}","6fdf792730d73522dc651bb6103c4d8cbf4e57e95a052db4d7dbd88261914055"],"code":0,"log":"70.log"}
+{"name":"docker","args":["rm","-f","-v","6fdf792730d73522dc651bb6103c4d8cbf4e57e95a052db4d7dbd88261914055"],"code":0,"log":"71.log"}
+{"name":"docker","args":["inspect","--format","{{ index .Config.Labels \"workmesh.task\" }}","d2f677fd2f6207fd217a4c0eb89d489d4ca4f67816b4bfe1abad73f4d7d39b93"],"code":0,"log":"72.log"}
+{"name":"docker","args":["rm","-f","-v","d2f677fd2f6207fd217a4c0eb89d489d4ca4f67816b4bfe1abad73f4d7d39b93"],"code":0,"log":"73.log"}
+{"name":"docker","args":["image","inspect","--format","{{ index .Config.Labels \"workmesh.task\" }}","sha256:68c5e92feb8ba0c0f5f1ef2df2e2dd86ed51c298bbdd5d50ab3246ebc98e76c4"],"code":0,"log":"74.log"}
+{"name":"docker","args":["ps","-aq","--filter","ancestor=sha256:68c5e92feb8ba0c0f5f1ef2df2e2dd86ed51c298bbdd5d50ab3246ebc98e76c4"],"code":0,"log":"75.log"}
+{"name":"docker","args":["image","rm","workmesh-retirement-lite:backend-lite-47db4f07"],"code":0,"log":"76.log"}
+{"name":"docker","args":["inspect","--format","{{.Id}}","buildx_buildkit_backend-lite-47db4f070"],"code":0,"log":"77.log"}
+{"name":"docker","args":["buildx","rm","backend-lite-47db4f07"],"code":0,"log":"78.log"}
+{"name":"docker","args":["container","inspect","41a4b330342c6c792010f2ba5703ed2667b85b562a5d8976cc38d876ae5a0761"],"code":1,"log":"79.log"}
+{"name":"docker","args":["volume","inspect","buildx_buildkit_backend-lite-47db4f070_state"],"code":1,"log":"80.log"}
+{"name":"powershell.exe","args":["-NoProfile","-Command","$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message}; break } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"],"code":0,"log":"81.log"}
+证据：I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\docs\reviews\backend-retirement\runs\backend-lite-47db4f07

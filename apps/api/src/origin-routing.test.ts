@@ -82,24 +82,24 @@ describe('Browser CORS and public MCP origin routing', () => {
     expect(response.headers['access-control-allow-origin']).toBeUndefined()
   })
 
-  it('derives public discovery URLs from PUBLIC_MCP_ORIGIN', async () => {
+  it('keeps discovery on the API origin and MCP on PUBLIC_MCP_ORIGIN', async () => {
     const response = await app.inject({ method: 'GET', url: '/.well-known/workmesh-agent' })
     expect(response.statusCode).toBe(200)
     expect(response.json()).toMatchObject({
       mcpUrl: 'http://127.0.0.1:3301/mcp',
-      wellKnownUrl: 'http://127.0.0.1:3301/.well-known/workmesh-agent',
+      wellKnownUrl: 'http://127.0.0.1:3300/.well-known/workmesh-agent',
     })
   })
 
-  it('keeps Browser-delivered connect and Skill URLs on WEB_ORIGIN', () => {
+  it('keeps the redeem locator and signed Skill on the external API origin', () => {
     const urls = resolveAgentConnectionEndpointUrls({
       webOrigin: 'http://127.0.0.1:3300/',
       publicMcpOrigin: 'http://127.0.0.1:3301/',
     })
 
-    expect(urls.connectUrl('pairing-code')).toBe('http://127.0.0.1:3300/connect#pairing-code')
+    expect(urls.connectUrl('pairing-code')).toBe('http://127.0.0.1:3300/api/v1/agent-connections/redeem#pairing-code')
     expect(urls.skillDownloadUrl).toBe('http://127.0.0.1:3300/skills/workmesh-1.1.0.md')
     expect(urls.mcpUrl).toBe('http://127.0.0.1:3301/mcp')
-    expect(urls.wellKnownUrl).toBe('http://127.0.0.1:3301/.well-known/workmesh-agent')
+    expect(urls.wellKnownUrl).toBe('http://127.0.0.1:3300/.well-known/workmesh-agent')
   })
 })

@@ -1,0 +1,129 @@
+{
+  "runId": "backend-lite-af2fb988",
+  "sha": "13709aaf66a30c83edec6c732c35b76ba2235aea",
+  "deploymentClass": "lite",
+  "environment": "工作站 Linux Docker；非真实低功耗设备",
+  "installDir": "D:\\Cache\\TEMP\\backend-lite-af2fb988",
+  "resources": [
+    {
+      "type": "directory",
+      "target": "D:\\Cache\\TEMP\\backend-lite-af2fb988",
+      "owner": "backend-lite-af2fb988",
+      "createdAt": "2026-10-11T21:13:28.431Z",
+      "cleanup": {
+        "code": 0,
+        "output": ""
+      },
+      "realPath": "D:\\Cache\\TEMP\\backend-lite-af2fb988",
+      "created": true,
+      "preDelete": {
+        "paths": [
+          {
+            "path": "D:\\Cache\\TEMP\\backend-lite-af2fb988",
+            "type": "directory",
+            "reason": "本任务独有安装/归档/测试 TLS 原件，服务已停止"
+          }
+        ],
+        "activity": "compose/provider/probe 收尾完成",
+        "at": "2026-10-11T21:26:28.371Z"
+      }
+    },
+    {
+      "type": "image",
+      "target": "workmesh-retirement-lite:backend-lite-af2fb988",
+      "owner": "backend-lite-af2fb988",
+      "createdAt": "2026-10-11T21:13:46.870Z",
+      "cleanup": null,
+      "borrowed": false
+    }
+  ],
+  "results": [
+    {
+      "name": "docker",
+      "args": [
+        "image",
+        "inspect",
+        "workmesh-retirement-lite:backend-lite-af2fb988"
+      ],
+      "pid": 10412,
+      "startedAt": "2026-10-11T21:13:52.115Z",
+      "endedAt": "2026-10-11T21:13:54.984Z",
+      "code": 1,
+      "log": "0.log"
+    },
+    {
+      "name": "docker",
+      "args": [
+        "build",
+        "--progress=plain",
+        "--label",
+        "workmesh.task=backend-lite-af2fb988",
+        "--build-arg",
+        "WORKMESH_BUILD_SHA=13709aaf66a30c83edec6c732c35b76ba2235aea",
+        "-t",
+        "workmesh-retirement-lite:backend-lite-af2fb988",
+        "-f",
+        "infra/docker/lite.Dockerfile",
+        "-"
+      ],
+      "pid": 34332,
+      "startedAt": "2026-10-11T21:13:58.092Z",
+      "endedAt": "2026-10-11T21:26:27.815Z",
+      "code": 4294967295,
+      "log": "1.log"
+    },
+    {
+      "name": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-Command",
+        "$entries=Get-Content -LiteralPath $env:WORKMESH_A2_PATH_INVENTORY -Raw -Encoding UTF8 | ConvertFrom-Json; $receipts=@(); $failed=$false; foreach($entry in $entries) { try { Remove-Item -LiteralPath $entry.path -ErrorAction Stop; $receipts+=@{path=$entry.path;code=0;exists=(Test-Path -LiteralPath $entry.path)} } catch { $failed=$true; $receipts+=@{path=$entry.path;code=1;error=$_.Exception.Message}; break } }; ConvertTo-Json -InputObject $receipts -Depth 5 | Set-Content -LiteralPath $env:WORKMESH_A2_PATH_RECEIPTS -Encoding UTF8; if($failed) {exit 1}"
+      ],
+      "pid": 29728,
+      "startedAt": "2026-10-11T21:26:28.626Z",
+      "endedAt": "2026-10-11T21:26:30.356Z",
+      "code": 0,
+      "log": "2.log"
+    }
+  ],
+  "outcome": "失败或未验收：Error: docker 退出 4294967295",
+  "buildContext": {
+    "source": "13709aaf66a30c83edec6c732c35b76ba2235aea",
+    "paths": [
+      ".dockerignore",
+      ".node-version",
+      "package.json",
+      "pnpm-lock.yaml",
+      "pnpm-workspace.yaml",
+      "turbo.json",
+      "tsconfig.base.json",
+      "OPENAPI.yaml",
+      "SCHEMA.sql",
+      "AGENT_PROTOCOL.md",
+      "README.md",
+      "AGENTS.md",
+      "CONTEXT.md",
+      "apps",
+      "packages",
+      "scripts",
+      "skills",
+      "infra"
+    ],
+    "reason": "历史证据保留在 Git，不复制进镜像构建上下文"
+  },
+  "features": {
+    "WORKMESH_BETA_PLANNING": false,
+    "WORKMESH_BETA_TEMPLATES": false,
+    "WORKMESH_BETA_COSTS": false,
+    "WORKMESH_BETA_OPERATIONS_UI": false,
+    "WORKMESH_BETA_COORDINATION_MCP": true,
+    "WORKMESH_BETA_MODEL_PRESETS": false,
+    "WORKMESH_EXPERIMENTAL_AUTOMATION": false,
+    "WORKMESH_EXPERIMENTAL_AGENT_LOOPS": false,
+    "WORKMESH_EXPERIMENTAL_A2A": false,
+    "WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS": false,
+    "WORKMESH_EXPERIMENTAL_MULTI_RUNTIME": false,
+    "WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS": false,
+    "WORKMESH_BETA_GITEA": true
+  }
+}

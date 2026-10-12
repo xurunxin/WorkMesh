@@ -1,0 +1,80 @@
+#61 [后端化] 退役 WebUI、移除浏览器 CI 并统一后续纯后端范围 (id: G9grPMcWhjVMFaEcNoVAG)
+Project: WorkMesh
+Phase: building
+Created: 2026-10-11T18:02:11.794Z by 总管 (agent)
+Updated: 2026-10-11T18:55:37.504Z
+Assigned agent: iuKoX-czTc8kH_ERctdlM (thinking: high)
+Has a build — conversation(todoId) for its transcript. Branch: tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055. Files on its branch: https://todos.dev/app/project/DzkLDn6UW-IbfoTJzN9Ro/files?ref=tds%2Fconv-01a12c22-01d6-7eb1-a3c1-592edda7d055 — append &path=<repo-relative file> whenever the link text names one file, or it opens on the branch root with nothing selected
+Its code: git with projectId DzkLDn6UW-IbfoTJzN9Ro, ["fetch", "origin", "tds/conv-01a12c22-01d6-7eb1-a3c1-592edda7d055"], then read FETCH_HEAD.
+
+Spec:
+## 当前执行阶段：仅方案文档准备（2026-10-12 02:53关口）
+02:53生产者明确本平台规划回合的末尾指令要求“暂不修改文件”，故两次plan revision仅改平台计划，没有文件提交。这是规划阶段限制，不能通过再发消息要求其违背。现按用户已要求的仓库交付目标，Chief将用confirm_builds切换到允许文件交付的执行阶段；本次确认范围仅为方案文档、来源快照、测试/影响清单的前置提交与push，当前不授权产品编码、删除WebUI、变更CI/部署实现或改变通知行为。
+
+立即读取本轮实际注入的最新完整saved plan（doc:4L0f8ekmDAa144DUqvFlx），保存准确全文、UTF-8 SHA-256和来源，不用todos截断正文或聊天摘要补造。保全当前完整spec、两项原问题答复、逐卡影响与测试清单；版本缺口如实记录，旧plan来源区分。中文文件按既定目录习惯提交到当前分支并push，报告准确head/path/文件blob与方案来源，产品源码必须未变，必要文档检查与资源收尾如实留证。
+
+完成本次文档准备停在review，待Chief从该关口派正式方案独审。审查反馈仅允许修订方案文档；正式方案独审通过并由Chief后续单独放行本卡产品实施后才做退役/CI/API镜像及通知实现。本次前置文档执行不是产品实施已被批准通过独审，不直接merge文档或将整卡Done，不重开第三轮相同只读计划。用户两项通知选择已定，不再询问；真实新分歧保持门禁。
+
+## 原问题卡用户裁定与方案交接（2026-10-12）
+来源：本卡02:42用户在原问题卡明确选择“保留服务端合同（推荐）”和“改为鉴权API链接（推荐）”。保留Web Push现有REST合同、订阅注册/撤销、worker投递和历史数据，移除自带页面与Service Worker，不新增客户端；企业微信及Web Push新通知改为现有Human attention/notifications REST查询入口的鉴权链接，返回JSON，实时Human鉴权，链接不含凭据且不提供登录页面。不得再把这两项列为未答或重复请求同一许可。
+
+规划生产者02:47报告已读实际依赖：签名Skill原件须在API镜像实际可取且字节/签名不变；旧通知已保存request_hash，改链接需保持旧哈希校验及幂等边界，sending/uncertain不可作为可重发。以上为生产者发现及方案待独审验证，非Chief已核源码，不冒实施已过。
+
+完整方案及测试/影响清单必须提交仓库可读文件供正式独审使用：保存最新平台plan doc:4L0f8ekmDAa144DUqvFlx的准确完整正文，并区分先前doc:eeEM_cmzdO-i7EqTiz7XF历史版本、来源、UTF-8 hash（不能用聊天摘要/截断前缀冒全文），并保全当前完整任务规格及用户答复来源。允许仅方案/来源文档的前置提交与push；产品编码、退役删除和CI实现须待方案独审及实施确认。平台plan实际正文若无法获取，明确缺口并采用平台支持的准确读取，不能从Chief摘要补造。回复给准确branch/head、文件路径及记录，而非长篇重贴。
+
+## 文档随接口与功能维护（用户本会话最新补充）
+> 然后利用https://github.com/leter/zh-tech-writing 这个仓库提供的技能，编写api/mcp接入文档，之后工作项有接口和功能更新时均注意及时更新文档
+接入文档初版由[#62](todo:CmdFbMAsJnmQGBhXakJ7u)在#61实际合入后编写。此后本卡若改接口或功能，须在同次交付中更新相关API/MCP接入说明、参考、配置与示例，并核与实际源码/合同一致；未发布能力不写成已可用。写中文技术文档时读取并使用用户指定技能的SKILL.md及适用references，记录准确来源版本。文档及验证记录提交仓库，保留历史证据，禁止真实秘密入示例。仓库既有Agent/贡献约定按#62落实；不得以初版文档任务尚未完成为理由忽略本卡实际变更的文档更新。
+
+> 接下来我需要做一些退役目前webui的工作，项目只保留api/mcp服务接口，同时ci也移除webui相关的浏览器测试，优先合并这个更改，并调整后续跟进的功能开发不再需要开发webui相关功能，保持作为一个纯后端服务项目
+
+来源：用户2026-10-12 02:00（Asia/Shanghai）的最新指令。本卡优先于后续功能实现合入；新的长期项目定位为纯后端服务，替代此前“WebUI延期、以后重新设计”的执行安排。
+
+交付：退役当前WebUI，项目对外保留API/MCP服务接口；CI移除WebUI相关浏览器测试，并同步开发、构建、部署、脚本、依赖与仓库说明中的WebUI启动/交付路径，避免无效引用或仍要求构建WebUI。后续功能规划和验收采用API/MCP及必要后端测试，不再要求开发WebUI。
+本卡应先核实际仓库并提交可审的中文方案/影响清单，具体路径、依赖及命令由实际核查建立，不凭名称盲删。用户已明确实施及优先合并目标；范围内常规实现不需再次提同一范围选择，真实分歧才问用户。
+
+验收依据为用户上述目标。实施者核查退役过程中原浏览器测试承担了哪些后端领域/鉴权/隔离/撤销/恢复断言，将仍属于API/MCP合同的必要覆盖迁至适当后端测试，不能仅删除浏览器job后冒这些行为已验收。调整Required CI、变更分类/门禁自举和检查清单，使纯后端改动实际触发并执行所需检查，不保留死浏览器依赖，也不禁用其他检查凑通过。提供纯后端环境启动/部署与接口实际验证、适用lint/typecheck/unit/integration/协议/恢复及镜像验证的准确命令和结果，失败/未测如实记录。
+
+待实际核查问题：哪些WebUI资产/包/服务与后端共用、哪些现有鉴权/管理/设置能力依赖WebUI、哪些内部worker/数据库服务仍为API/MCP必要支撑？用户的“只保留API/MCP服务接口”描述对外交付，不能自行解释为删除支撑后端的领域逻辑、业务数据、鉴权机制或必需内部执行组件；若退役造成现有API/MCP能力丢失且没有等价接口、或需改变授权/数据/凭据等真实方案分歧，列具体影响请用户裁定。CLI连接器/SDK消费API/MCP不属于WebUI，不因退役盲删。
+
+来源与并行边界：#5已Done/PR221merged；主力#7正在规划，用户已在其原问题卡选择API＋最小客户端适配，保留SDK/MCP传递及CLI展示，不增加自动恢复。#7只整理方案停确认门，功能实现/合入等本卡优先合入后基于新主线接续，避免在本卡夹带B3实现。Chief将同步Todos后续卡纯后端范围；本卡同步仓库路线图/规格/开发部署文档，并提交逐卡影响与去向文件，不把未开发新功能说成完成，不覆盖旧独审/首败/源规格历史证据。已完成UI历史卡保留记录；未执行的纯UI卡不再实施；混合卡只继续后端/API/MCP部分，真实新增范围门禁保持。
+
+构建开工独立核最新远端main及准确SHA，不把共享FETCH_HEAD当main。Chief只读git目前受I:/tds_workspace缓存repo/index.lock阻塞，此为读取缺口，不授权擅删共享锁。代码、中文影响报告/新环境部署说明/验证与有归属清理回执提交并推送仓库，回复仅摘要。沿用用户共享store复用、任务可写依赖隔离与本人资源收尾要求；不删除业务数据/共享store/配置或绕历史受拒目标，不扩磁盘清理、不对外发布、不新授权凭据。独立审查闭blocking/high且最终head最新适用必需CI成功后，按本次用户“优先合并”授权条件合入，实际主线/PR落地才Done。
+
+Saved plan:
+## 背景
+
+WorkMesh 改为长期纯后端服务，对外提供 API/MCP。当前 WebUI 还承担 Lite 代理入口、签名 Skill 下载和部分后端验收；退役时同步迁移这些职责，消除发布、恢复和 Required CI 对 Web 的依赖。
+
+## 实施约定
+
+保留 worker、PostgreSQL、Redis、对象存储、外部 Runner、连接器和 SDK。Human 管理继续使用现有 REST、Cookie 和 CSRF；Agent 权限、功能开关默认值及业务数据保持原合同。本次不新增数据库迁移。
+
+沿用当前卡片明确的 Todos＋仓库记录方式。先单独提交并经平台推送方案、来源和测试影响文档，交接准确文件路径、分支和提交 SHA；产品编码、退役删除及 CI 实现须等待方案独审及实施确认。两项原问题已裁定：保留 Web Push 服务端合同，新通知改为鉴权 API 链接，不再重复询问。交付顺序为 #61 → #62 → #7 → #20。完整接入文档初版由 #62 承担；B3 编码、新功能、文档站和外部发布不在本卡范围内。
+
+## 文件改动
+
+- **`docs/plan/backend-only.md`、`docs/plan/backend-only/sources/plan-eeEM_cmzdO-i7EqTiz7XF.md`、`sources/spec.md`、`sources/user-decisions.md`、`source-manifest.json`、`test-impact.md`**（后四项位于 `docs/plan/backend-only/`）：前置文档提交保存可审完整方案、原平台方案逐字全文、本轮最新完整规格及两项准确问答。原方案从本轮平台注入的 Saved plan 完整副本保全；`todos` 的截断返回及 `conversation` 的仅链接返回单独记为读取缺口，不当全文。来源清单记录 doc／todo／问题卡 ID、实际读取方式、平台确实返回的字段、UTF-8 正文和提交 blob 的 SHA-256；不猜版本字段，不改写原件，不用摘要代全文。测试影响表逐套件列原路径和断言、已有后端覆盖、迁移目标、纯 UI 退役项及待执行验收，尚未执行不写通过。中文说明按固定写作规范来源手检，原件逐字保留。后续实施阶段新增 **`docs/adr/*-backend-only-service.md`**、逐卡去向、验证和资源清理记录。开工独立读取远端 `refs/heads/main`，绑定准确 SHA，与本会话分支比较；不将共享 `FETCH_HEAD` 当作主线，不删除共享锁。
+
+- **`apps/web/`、`packages/ui/`、`playwright*.ts`及专用 WebUI 验证脚本**：移除可运行页面、组件包、浏览器配置和测试入口。删除前逐项登记；签名 Skill 先迁移，截图、基线、首败和独审原件保留为历史证据，建立原路径、Git blob 和哈希索引。后端读取这些路径的合同测试同步改指现行资产或明确历史来源。
+
+- **`package.json`、`pnpm-lock.yaml`、`turbo.json`、`vitest.config.ts`**：移除 `test:e2e`、Playwright 和仅供已退役 workspace 使用的依赖、Next 输出及缓存输入。按剩余依赖闭包更新锁文件，不升级无关依赖。后端集成验收继续由 `test:integration` 执行。
+
+- **`apps/api/assets/skills/`、`apps/api/src/skill-download.ts`、`apps/api/src/server.ts`、`apps/api/src/agent-connections.ts`**：将签名 Markdown 原件迁入 API，新增固定路径下载处理器，禁止任意文件访问。复用 `buildApp` 和 `resolveAgentConnectionEndpointUrls`：发现与 Skill 使用 API origin，MCP 使用配置的 MCP origin；`connect_url` 保留 fragment 配对码和原字段，改为兑换接口定位符，供客户端提取，不再指向页面。原件字节、哈希、签名及兑换安全检查保持不变。
+
+- **`OPENAPI.yaml`、`AGENT_PROTOCOL.md`、`packages/contracts/src/route-policy*.ts`及生成产物**：先声明 Skill 下载合同，再通过现有 route-policy 生成器更新注册清单。同步配对定位符和纯后端入口说明，不增加凭据字段或授权。**`scripts/generate-workmesh-skill-artifact.mjs`、`.gitattributes`**同步迁移资产路径，并校验提交 blob 的 LF 字节和签名。
+
+- **`packages/db/src/channel-notifications.ts`、`apps/worker/src/automation.ts`、`apps/worker/src/wecom-notifications.ts`及对应测试**：复用 `prepareChannelSend`、`settleChannelSend` 和现有投递状态机。Human attention 来源改用 `/api/v1/human-attention/{id}`，其余通知指向 `/api/v1/notifications`；链接不携带凭据，查询实时鉴权。旧 `request_hash` 按原格式重建并严格校验，保留旧哈希；只有原状态机确认可发送的记录才渲染新链接，`sending`／`uncertain` 不自动重发。
+
+- **`docker-compose*.yml`、`.env.example`、`.env.lite.example`**：删除 Web 服务和 Web 镜像、端口、Next 配置要求。Lite 直接暴露 API，MCP 沿用独立镜像和现有 profile。`WEB_ORIGIN` 保留为兼容配置名，改指外部 API origin，继续约束 Human 请求及通知地址；同步反向代理路由、发现地址和配置示例。
+
+- **`infra/docker/`中后端 Dockerfile、`lite.Dockerfile`、`packages/config/src/service-command.ts`、`runtime-secrets.mjs`及对应测试**：删除 Web manifest 的安装前复制和 Web 运行角色。Lite 只打包 API、worker、migrate；保证生产及 Lite API 镜像包含 Skill 原件。保留非 root、只读文件系统、秘密预检、健康检查和退出约束。同步 `infra/lite/verify-image-roles.sh`。
+
+- **`.github/workflows/ci.yml`、发布候选及晋级 workflow、`scripts/ci-policy.mjs`、`ci-policy.test.mjs`、`ci-test-inputs.mjs`、`validate-ci.mjs`**：删除浏览器 job、分片、下载和 Next 缓存；更新 `checkIds`、`classifyChanges`、`evaluateResults` 和 Required CI 汇总。将迁入的后端断言纳入 API 必需检查，补齐 fake-agent 等直接测试消费者的触发关系。保留锁定 YAML 自举，以及缺历史全检、缺结果拒绝、失败传播和证据上传保护。
+
+- **镜像、发布和恢复验证文件**：同步 `scripts/validate-development-images.py`、`validate-production-images.mjs`、`validate-lite-compose.mjs`、`validate-release-workflows.mjs`、`create-release-manifest.mts`及相关合同测试。生产发布清单只要求 API、worker、MCP；恢复 CI 和 `packages/recovery/scripts/post-restore-smoke.ts`删除 Web 检查，继续验证恢复后的 API、worker、Agent 工作流，并增加 MCP 接口验证。保持扫描、来源证明、摘要固定和恢复门禁。
+
+- **`apps/api/integration/backend-retirement.integration.test.ts`（新增）及现有连接器集成夹具**：逐条核对原浏览器套件，将未被现有后端测试覆盖的领域、鉴权、隔离、撤销、审批、幂等、恢复及真实 worker→fake Agent 断言迁入新套件。连接器纵向测试改从真实 API 下载 Skill，取消夹具代替产品提供静态文件的做法；纯页面、布局和视觉断言登记为退役。
+
+- **`README.md`、`AGENTS.md`、`CONTEXT.md`、`docs/CI.md`、`docs/production-deployment.md`、`docs/agent-integration.md`、`deploy/lite/README.md`及现行发布、操作说明*
+…(truncated)

@@ -67,10 +67,9 @@ describe('pagination surface inventory', () => {
     expect(projections).toContain('ORDER BY event.cursor LIMIT 200')
   })
 
-  it('keeps REST, Web, SDK, MCP, and OpenAPI on the page envelope', () => {
+  it('keeps REST, SDK, MCP, and OpenAPI on the page envelope', () => {
     expect(read('OPENAPI.yaml')).toContain('PagedJson:')
     expect(read('packages/agent-sdk/src/index.ts')).toContain('iterateListPages')
     expect(read('apps/mcp/src/index.ts')).toContain('nextCursor back as cursor')
-    expect(read('apps/web/app/lib/api.ts')).toContain('apiListRequest')
   })
 })

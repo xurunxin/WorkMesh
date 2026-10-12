@@ -1,0 +1,7 @@
+{
+  "parent": 34332,
+  "action": "stop registered build plugin retaining inherited output pipe",
+  "sharedDockerRestarted": false,
+  "command": "\"C:\\Program Files\\Docker\\cli-plugins\\docker-buildx.exe\" buildx build --progress=plain --label workmesh.task=backend-lite-af2fb988 --build-arg WORKMESH_BUILD_SHA=13709aaf66a30c83edec6c732c35b76ba2235aea -t workmesh-retirement-lite:backend-lite-af2fb988 -f infra/docker/lite.Dockerfile -",
+  "pid": 35444
+}

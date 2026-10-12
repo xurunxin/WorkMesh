@@ -1,0 +1,47 @@
+阅读视图；原始字节：raw-logs/run-349a62eebe34.zip 内 retirement-pool-first-failure.log；SHA-256：0e8db94eeaf4ed5098a8be9ce77798d911ef6a960b7ef8cfaf08c4eb9bd08928
+No projects matched the filters "C:\Users\xurx\.tds\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055" in "I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055"
+
+ RUN  v3.2.7 I:/tds_workspace/workspaces/01a12c22-01d6-7eb1-a3c1-592edda7d055/apps/api
+
+ ✓ integration/wecom-notifications.integration.test.ts (19 tests) 105309ms
+   ✓ C2 channel delivery with existing Redis integration fixture > 旧 request_hash 全字段匹配后发送新 API 链接，保留旧摘要；字段篡改零外发  836ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 实际发送窗口：0 秒预留、4 秒发送，60 秒不释放额度，跨 Worker 不出现第 21 条  10266ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > C2 实际五秒 Abort 结束请求后进入 uncertain，不自动重送且额度保留 D+60  10256ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > Redis 状态丢失：共享冷却 120 秒，旧 token 不恢复发送  1637ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 授权锁等待跨窗口，过期 permit 不提交 checkpoint、不外发、不消耗失败预算  16002ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 disabled 撤权先提交，真实授权锁后零 fake provider 调用  6230ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 inactive 撤权先提交，真实授权锁后零 fake provider 调用  11808ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 revoked 撤权先提交，真实授权锁后零 fake provider 调用  1144ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 membership 撤权先提交，真实授权锁后零 fake provider 调用  3357ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 changed 撤权先提交，真实授权锁后零 fake provider 调用  2275ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 当前 muted 撤权先提交，真实授权锁后零 fake provider 调用  3564ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 审批 Stop 先提交，C1 当前授权重新检查后零 fake provider 调用  5862ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 同源重放去重，明确拒绝恢复复用 delivery；同 ACK 幂等、旧 fence 拒绝  5256ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > checkpoint 事务回滚不外发；发送后进程崩溃重启进入 uncertain，旧 fence 不 ACK  3758ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 真实 Redis TIME 与部分 bucket 丢失：旧许可失效，共同冷却不吞失败预算  2093ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > quota 丢失只触发一次冷却：多 Worker 重试不延期，120 秒后两个目标恢复且旧许可失效  3887ms
+   ✓ C2 channel delivery with existing Redis integration fixture > C2 fake provider 与真实 Redis Lua > 网络未知不自动重送；C1 显式对账复用原 delivery/fence，渠道零决策事件/outbox  5069ms
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯⎯ Unhandled Error ⎯⎯⎯⎯⎯⎯⎯
+Error: [vitest-worker]: Timeout calling "fetch" with "["/@vite/env","ssr"]"
+ ❯ Object.onTimeoutError ../../node_modules/.pnpm/vitest@3.2.7_@types+debug@4.1.13_@types+node@22.20.1_jiti@2.7.0_jsdom@30.0.1_tsx@4.23.1_yaml@2.9.0/node_modules/vitest/dist/chunks/rpc.-pEldfrD.js:53:10
+ ❯ Timeout._onTimeout ../../node_modules/.pnpm/vitest@3.2.7_@types+debug@4.1.13_@types+node@22.20.1_jiti@2.7.0_jsdom@30.0.1_tsx@4.23.1_yaml@2.9.0/node_modules/vitest/dist/chunks/index.B521nVV-.js:59:62
+ ❯ listOnTimeout node:internal/timers:605:17
+ ❯ process.processTimers node:internal/timers:541:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 passed (2)
+      Tests  19 passed (19)
+     Errors  1 error
+   Start at  05:12:34
+   Duration  285.65s (transform 107.23s, setup 0ms, collect 85.99s, tests 105.31s, environment 0ms, prepare 15.96s)
+
+undefined
+I:\tds_workspace\workspaces\01a12c22-01d6-7eb1-a3c1-592edda7d055\apps\api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run --config ../../vitest.integration.config.ts integration/backend-retirement.integration.test.ts integration/wecom-notifications.integration.test.ts

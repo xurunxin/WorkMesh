@@ -128,6 +128,14 @@ for binding in m4['bindings']:
     if binding['bindingId'] in historical_bindings and historical_bindings[binding['bindingId']] != binding:
         raise ValueError('M4不能改写旧binding/identityVariants：'+binding['bindingId'])
     binding_by_id[binding['bindingId']] = binding
+# Web 退役的公开签名下载合同：独立增量，不改历史 M0 或已审 MCP bindings。
+retirement = json.loads((root/'docs/plan/backend-only/skill-discovery-decisions.json').read_text(encoding='utf-8'))
+if retirement['bindings'] or len(retirement['rules']) != 1:
+    raise ValueError('Skill 下载不得增加 MCP 绑定')
+for rule in retirement['rules']:
+    if rule['operationId'] != 'downloadWorkMeshSkill' or rule['operationId'] not in known_operations or rule['write'] or rule['capabilities'] or rule['feature']:
+        raise ValueError('Skill 下载只允许现行公开只读合同')
+    rule_by_id[rule['operationId']] = rule
 rules = list(rule_by_id.values())
 bindings = list(binding_by_id.values())
 registered = set(m2['registeredBindingIds']) | set(m3['registeredBindingIds']) | actual
