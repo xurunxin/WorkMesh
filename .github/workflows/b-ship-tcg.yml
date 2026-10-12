@@ -13,7 +13,7 @@ jobs:
   probe:
     name: TCG full guest (${{ matrix.arch }})
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 55
+    timeout-minutes: 65
     env:
       DATABASE_URL: postgres://tcg:tcg-research-fixture@127.0.0.1:5432/workmesh_tcg_test
       REDIS_URL: redis://127.0.0.1:6379
@@ -79,7 +79,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir ci-tcg/data
-          docker run --name "workmesh-tcg-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$PROBE_ARCH" --label workmesh.owner=b-ship-tcg --network host --cpus 2 --memory 3g --mount "type=bind,source=$PWD/docs/reviews/b-ship/tcg/tools,target=/probe,readonly" --mount "type=bind,source=$PWD/ci-tcg/data,target=/data" workmesh-b-ship-tcg:research --arch "$PROBE_ARCH" --source "$(git rev-parse HEAD)" --api-url http://127.0.0.1:18081 --deadline-seconds 3000 2>&1 | tee ci-tcg/probe.log
+          docker run --name "workmesh-tcg-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$PROBE_ARCH" --label workmesh.owner=b-ship-tcg --network host --cpus 2 --memory 3g --mount "type=bind,source=$PWD/docs/reviews/b-ship/tcg/tools,target=/probe,readonly" --mount "type=bind,source=$PWD/ci-tcg/data,target=/data" workmesh-b-ship-tcg:research --arch "$PROBE_ARCH" --source "$(git rev-parse HEAD)" --api-url http://127.0.0.1:18081 --deadline-seconds 3300 2>&1 | tee ci-tcg/probe.log
       - name: Preserve bounded research evidence and clean owned guest
         if: ${{ always() }}
         env:

@@ -269,6 +269,38 @@
       "kind": "GitHub 原始 zip"
     },
     {
+      "file": "raw/ci-38308087947-amd64.zip",
+      "bytes": 64990,
+      "sha256": "7b1341fb4cc69e3a740eacd8d0fc216f98e7a26aa5209299ea5b48d5b7ffa79a",
+      "memberCount": 14,
+      "expandedBytes": 283360,
+      "githubArtifact": {
+        "created_at": "2026-10-12T21:15:14Z",
+        "digest": "sha256:7b1341fb4cc69e3a740eacd8d0fc216f98e7a26aa5209299ea5b48d5b7ffa79a",
+        "expired": false,
+        "id": 11773987602,
+        "name": "tcg-amd64-38308087947-1",
+        "size_in_bytes": 64990
+      },
+      "kind": "GitHub 原始 zip"
+    },
+    {
+      "file": "raw/ci-38308087947-arm64.zip",
+      "bytes": 64527,
+      "sha256": "59c44d484d75769028bc3aca6d3f52255f995c711463ca850dc0900693ae3447",
+      "memberCount": 14,
+      "expandedBytes": 303365,
+      "githubArtifact": {
+        "created_at": "2026-10-12T21:54:11Z",
+        "digest": "sha256:59c44d484d75769028bc3aca6d3f52255f995c711463ca850dc0900693ae3447",
+        "expired": false,
+        "id": 11775686745,
+        "name": "tcg-arm64-38308087947-1",
+        "size_in_bytes": 64527
+      },
+      "kind": "GitHub 原始 zip"
+    },
+    {
       "file": "raw/local-amd64-first-failure.zip",
       "bytes": 59556,
       "sha256": "51ffb03eb371a844578bfdc030a2438e98db66d7de452af1d970f961a881213b",
@@ -304,10 +336,10 @@
     },
     {
       "file": "raw/research-inputs.zip",
-      "bytes": 19651,
-      "sha256": "4d74a867b48f6478a9af3abe2055039b99c7e88a100af9901e6f0c29345c5261",
-      "memberCount": 25,
-      "expandedBytes": 33809,
+      "bytes": 20863,
+      "sha256": "2a4d7c935e15c4730ee041c6240a4c37ff6ba3565bfa4e1c4478077beacd1913",
+      "memberCount": 28,
+      "expandedBytes": 35332,
       "githubArtifact": null,
       "kind": "本机派生 zip"
     }

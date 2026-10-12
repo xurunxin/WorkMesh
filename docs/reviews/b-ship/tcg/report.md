@@ -33,7 +33,7 @@ docker run --name "$PROBE_NAME" --label workmesh.owner=b-ship-tcg \
   --mount "type=bind,source=$PWD/docs/reviews/b-ship/tcg/tools,target=/probe,readonly" \
   --mount "type=bind,source=$PWD/ci-tcg/data,target=/data" \
   workmesh-b-ship-tcg:research --arch "$PROBE_ARCH" \
-  --source "$(git rev-parse HEAD)" --api-url http://127.0.0.1:18081 --deadline-seconds 3000
+  --source "$(git rev-parse HEAD)" --api-url http://127.0.0.1:18081 --deadline-seconds 3300
 ```
 
 ## 首败与修订
@@ -50,6 +50,10 @@ docker run --name "$PROBE_NAME" --label workmesh.owner=b-ship-tcg \
 修订还加入 SIGTERM/SIGINT 的失败落盘，避免取消时丢失已经收到的回执。旧失败和取消记录保留，未改领域超时或必需断言。原始 zip 的 SHA-256 与成员身份由后续证据索引记录；GitHub 下载 zip 与官方 artifact digest 相符。
 
 ## 结果与路线门禁
+
+最新提交 `867fb96c…` 的重复探测中，[ARM64 原件](raw/ci-38308087947-arm64.zip)已完成不同 boot_id、同 UID 真实秘密重读及相同 API 200/过期 409；重启至重放约 627.96 秒，原窗口剩 270.01 秒。随后 `finalrd.service/stop` 正常关机未结束，3000 秒总预算到期，整个 job 失败。未将退出失败改为通过；下一轮只调总预算为 3300 秒、job 为 65 分钟，保留正常退出及全部原断言，原 900 秒窗口不变。此前 50 分钟完整通过不保证每次关机完成，当前预算仍待新运行复核。
+
+
 
 两架构的核心研究项均取得可行实证。同一 [研究 run](https://github.com/xurunxin/WorkMesh/actions/runs/38301479837)、attempt 1、完整 HEAD `df26e18864b34638fce0a25751c7060f249d1a3f` 的 [amd64 原件](raw/ci-38301479837-amd64.zip)和 [ARM64 原件](raw/ci-38301479837-arm64.zip)均经 [verify.py](verify.py)复核通过。实际 checkout、源码 tree、runner 身份、输入摘要、QEMU/固件/镜像及 guest 回执一起绑定；不是只读 run 的 head_sha。
 
@@ -68,7 +72,7 @@ docker run --name "$PROBE_NAME" --label workmesh.owner=b-ship-tcg \
 
 峰值是模拟器宿主占用，不能写成 Lite 目标设备最低内存。测量起点、冷启动准备、真正重放窗口和最终发行安装分开记录。过期负例不是自然等待十五分钟的边界测试。
 
-这是各架构一次完整通过的测量，不能据此承诺稳定性、最差耗时或最低设备。冷准备对 ARM64 的总预算影响较大；本轮 50 分钟探测、55 分钟 job 能完成这些研究项，但尚未叠加原生发行构建、全部错误/恢复、完整协议与安装升级测试。
+这是各架构一次完整通过的测量，不能据此承诺稳定性、最差耗时或最低设备。冷准备对 ARM64 的总预算影响较大；本轮 50 分钟探测、55 分钟 job 曾完整通过；重复时关机预算不足，现拟用 55 分钟探测、65 分钟 job 验证完整退出，但尚未叠加原生发行构建、全部错误/恢复、完整协议与安装升级测试。
 
 建议后续方案统一采用两架构原生 hosted runner 构建，QEMU TCG 完整 guest 做安装/重启验收，无需新增 ARM64 KVM 主机或注册 runner。该建议保持 Proposed，Chief 据本次实证裁定；不把研究结果改成产品放行。TCG guest 内的源码 `SystemSecretStore`/连接器消费、SEA/native 加载、最终无源码安装、升级卸载和完整 API/MCP/Skill 黄金路径仍未测，全部原断言保留。
 
