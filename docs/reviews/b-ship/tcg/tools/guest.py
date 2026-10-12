@@ -35,6 +35,19 @@ def api(path, value):
         return json.load(response)
 
 
+def secret_owner():
+    owner = command(["dbus-send", "--session", "--print-reply", "--dest=org.freedesktop.DBus",
+                     "/org/freedesktop/DBus", "org.freedesktop.DBus.GetConnectionUnixProcessID",
+                     "string:org.freedesktop.secrets"]).decode()
+    service_pid = int(re.search(r"uint32\s+(\d+)", owner).group(1))
+    service_exe = str((Path("/proc") / str(service_pid) / "exe").resolve())
+    if not service_exe.endswith("/gnome-keyring-daemon"):
+        raise RuntimeError("unexpected Secret Service owner")
+    if (Path("/proc") / str(service_pid)).stat().st_uid != os.getuid():
+        raise RuntimeError("Secret Service owner differs")
+    return {"secretServiceExecutable": service_exe, "secretServiceUid": os.getuid()}
+
+
 def main():
     command(["gnome-keyring-daemon", "--unlock", "--components=secrets"],
             data=b"tcg-research-fixture-only\n")
@@ -45,16 +58,6 @@ def main():
         "dbusSessionPresent": bool(os.environ.get("DBUS_SESSION_BUS_ADDRESS")),
         "secretBackend": "gnome-keyring/Secret Service",
     }
-    owner = command(["dbus-send", "--session", "--print-reply", "--dest=org.freedesktop.DBus",
-                     "/org/freedesktop/DBus", "org.freedesktop.DBus.GetConnectionUnixProcessID",
-                     "string:org.freedesktop.secrets"]).decode()
-    service_pid = int(re.search(r"uint32\s+(\d+)", owner).group(1))
-    service_exe = str((Path("/proc") / str(service_pid) / "exe").resolve())
-    if not service_exe.endswith("/gnome-keyring-daemon"):
-        raise RuntimeError("unexpected Secret Service owner")
-    if (Path("/proc") / str(service_pid)).stat().st_uid != os.getuid():
-        raise RuntimeError("Secret Service owner differs")
-    common.update(secretServiceExecutable=service_exe, secretServiceUid=os.getuid())
     if not MARKER.exists():
         secret = (json.dumps(api("start", {})).encode() if os.environ.get("TCG_API_PROBE") == "1"
                   else os.urandom(32).hex().encode())
@@ -63,6 +66,7 @@ def main():
                  "application", "workmesh-tcg-research", "slot", "reboot"], data=secret)
         loaded = command(["secret-tool", "lookup", "application", "workmesh-tcg-research",
                           "slot", "reboot"]).strip()
+        common.update(secret_owner())
         if hashlib.sha256(loaded).hexdigest() != digest:
             raise RuntimeError("first read mismatch")
         # 只持久化摘要和非秘密身份；不能把这个夹具当真实 pending/API 回执。
@@ -78,6 +82,7 @@ def main():
     state = json.loads(MARKER.read_text())
     loaded = command(["secret-tool", "lookup", "application", "workmesh-tcg-research",
                       "slot", "reboot"]).strip()
+    common.update(secret_owner())
     matches = hashlib.sha256(loaded).hexdigest() == state["digest"]
     changed = common["bootId"] != state["firstBootId"]
     replay = api("replay", json.loads(loaded)["request"]) if os.environ.get("TCG_API_PROBE") == "1" else None
@@ -97,5 +102,6 @@ if __name__ == "__main__":
         main()
     except Exception as error:
         # subprocess 的 stdout/stderr 可能含秘密；不打印 repr 或捕获输出。
-        report({"phase": "failure", "errorType": type(error).__name__, "uid": os.getuid()})
+        report({"phase": "failure", "errorType": type(error).__name__, "uid": os.getuid(),
+                "failedCommand": Path(error.cmd[0]).name if isinstance(error, subprocess.CalledProcessError) else None})
         raise SystemExit(1)

@@ -82,6 +82,7 @@ def main():
             allowed = {"bootId", "uid", "arch", "kernel", "guestUtc", "dbusSessionPresent",
                        "secretBackend", "phase", "firstReadMatches", "persistentIdentity",
                        "secretDigest", "secretMatches", "bootIdChanged", "errorType", "apiReplay", "secretServiceExecutable", "secretServiceUid"}
+            allowed.add("failedCommand")
             if not isinstance(value, dict) or set(value) - allowed:
                 self.send_error(400)
                 return
