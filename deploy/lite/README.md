@@ -32,6 +32,8 @@ Runner 使用 `WORKMESH_API_URL=https://<API origin>`，沿用安装凭据与服
 
 ## 升级和恢复
 
-导入通过验收的新镜像，更新 `WORKMESH_LITE_IMAGE` 和准确 `WORKMESH_BUILD_SHA`，运行同一 Compose 命令。migrate 完成后才启动 API/worker。更改 schema 的回退必须依据 [完整备份与恢复](../../docs/operations/disaster-recovery.md)；本次退役没有新增数据库迁移，不删除业务数据或重建业务卷。
+导入通过验收的新镜像，更新 `WORKMESH_LITE_IMAGE` 和准确 `WORKMESH_BUILD_SHA`。首次从含 Web 的旧栈升级时，先按 [旧 Web 容器退役](../../docs/backend-only-deployment.md#旧-web-容器退役)核对 project、service、配置路径和完整容器 ID，再定向停止、移除旧 Web。普通 `up` 会保留旧 Web 孤儿容器，不能用于这一步。
+
+保留原 Compose project 与业务卷，再运行同一安装命令。migrate 完成后才启动 API/worker。API 承接旧端口前须完成 Web 退役，并同步 `API_HOST_PORT` 和 `WEB_ORIGIN`。更改 schema 的回退必须依据 [完整备份与恢复](../../docs/operations/disaster-recovery.md)；本次退役没有新增数据库迁移，不删除业务数据或重建业务卷。
 
 三角色保留非 root、只读文件系统、capability drop、秘密预检、健康检查和退出约束。模型预置、领域 feature 和通知能力保持原默认值。`pnpm validate:lite:self-test` 校验 Compose 变量与硬化合同，不能代替真实安装验收。资源仅在归属、活动引用和清理范围确认后收尾，不清共享 store、配置或其他任务资源。

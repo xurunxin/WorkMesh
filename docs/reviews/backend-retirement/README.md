@@ -25,6 +25,7 @@ CI 删除浏览器 job 后保留七类必要检查，API 变更及 fake Agent/Sk
 - `required-status-source.json` 为 GitHub main 严格 `Required CI` 设置的实际读取原件，没有浏览器 context。
 
 - [资源收尾与保留](cleanup.md) 关联私有环境/shim、容器/卷、APPDATA、builder 的实际回执及测试清理边界拒绝目录；未删目标不写成已清除。
+- [成果独审部署修订](deployment-corrections.md) 记录准确镜像拉取、Lite origin 端口和旧 Web 容器定向退役。原栈业务卷、SQL 标记及冷缓存 `--env-file` 运行须以修订后实际验收为准。
 
 ## 当前关口
 

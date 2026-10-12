@@ -96,7 +96,15 @@ try {
     const image = register('image', supplied || `workmesh-retirement-${service}:${runId}`)
     image.borrowed = Boolean(supplied)
     env[variable] = image.target
-    if (!supplied) {
+    if (supplied) {
+      // Release runners have no application images cached. Pull the exact
+      // provided reference before inspecting its identity or revision.
+      await must('docker', ['pull', supplied])
+      if (supplied.includes('@sha256:')) {
+        const digests = JSON.parse(await must('docker', ['image', 'inspect', '--format', '{{json .RepoDigests}}', supplied]))
+        if (!digests.some(value => value.endsWith(supplied.slice(supplied.indexOf('@sha256:'))))) throw Error('拉取镜像摘要与指定引用不符')
+      }
+    } else {
       const previous = await command('docker', ['image', 'inspect', image.target])
       if (previous.code === 0 || !/no such (image|object)/i.test(previous.output)) throw Error('专用镜像 tag 不存在状态未确认')
       const archiveArgs = ['-c', 'core.autocrlf=false', 'archive', '--format=tar', sha, '.dockerignore', '.node-version', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'turbo.json', 'tsconfig.base.json', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md', 'README.md', 'AGENTS.md', 'CONTEXT.md', 'apps', 'packages', 'scripts', 'skills', 'infra']
@@ -170,7 +178,30 @@ try {
   const providerHost = process.platform === 'linux' ? '    extra_hosts:\n      - "host.docker.internal:host-gateway"\n' : ''
   writeFileSync(resolve(installDir, 'provider.override.yml'), `services:\n  worker:\n${providerHost}    environment:\n      NODE_EXTRA_CA_CERTS: /a2-ca/ca.pem\n    volumes:\n      - a2-test-ca:/a2-ca:ro\nvolumes:\n  a2-test-ca:\n    external: true\n    name: ${caVolume.target}\n`)
   register('compose-project', runId); composeStarted = true
+  // Rehearse an existing stack: the old web process owns the API's future port.
+  // Use actual data services and a durable SQL marker, never a business database.
+  await must('docker', [...composeArgs, 'up', '-d', '--wait', '--wait-timeout', '180', 'postgres', 'redis', 'minio'], { cwd: installDir })
+  const markerSql = "CREATE TABLE legacy_web_upgrade_marker (value text NOT NULL); INSERT INTO legacy_web_upgrade_marker VALUES ('preserved');"
+  await must('docker', [...composeArgs, 'exec', '-T', 'postgres', 'psql', '-U', 'workmesh', '-d', env.POSTGRES_DB, '-v', 'ON_ERROR_STOP=1', '-c', markerSql])
+  const dataVolumes = JSON.parse(await must('docker', ['inspect', '--format', '{{json .Mounts}}', await must('docker', [...composeArgs, 'ps', '-q', 'postgres'])]))
+    .filter(mount => mount.Type === 'volume').map(mount => mount.Name)
+  const oldWeb = register('container', `${runId}-legacy-web`)
+  oldWeb.id = await must('docker', ['run', '-d', '--name', oldWeb.target, '--label', `workmesh.task=${runId}`,
+    '--label', `com.docker.compose.project=${runId}`, '--label', 'com.docker.compose.service=web',
+    '--label', `com.docker.compose.project.config_files=${resolve(installDir, composeFile)}`,
+    '--label', `com.docker.compose.project.working_dir=${installDir}`,
+    '-p', `127.0.0.1:${env.API_HOST_PORT}:3000`, '--entrypoint', 'node', image.target, '-e',
+    "require('node:http').createServer((q,r)=>r.end('legacy web fixture')).listen(3000,'0.0.0.0');process.on('SIGTERM',()=>process.exit(0))"]); save()
+  await must(process.execPath, ['-e', "(async()=>{for(let n=0;n<50;n++){try{if(await(await fetch(process.env.WEB_ORIGIN)).text()==='legacy web fixture')return}catch{}await new Promise(r=>setTimeout(r,100))}throw Error('Legacy Web fixture not reachable')})().catch(e=>{console.error(e);process.exit(1)})"])
+  receipts.legacyWebRetirement = JSON.parse(await must(process.execPath, [resolve(root, 'scripts/retire-legacy-web.mjs'),
+    `--project=${runId}`, `--container=${oldWeb.id}`, `--config-file=${resolve(installDir, composeFile)}`, `--working-directory=${installDir}`]))
+  oldWeb.cleanup = { code: 0, reason: '已核归属的旧 Web 容器定向停止并移除', absent: true }
+  await must('docker', ['volume', 'inspect', ...dataVolumes])
+  receipts.legacyWebRetirement.dataVolumes = dataVolumes; save()
   await must('docker', [...composeArgs, 'up', '-d', '--wait', '--wait-timeout', '180', 'api', 'worker', ...(deploymentClass === 'production' ? ['mcp'] : [])], { cwd: installDir })
+  const marker = await must('docker', [...composeArgs, 'exec', '-T', 'postgres', 'psql', '-U', 'workmesh', '-d', env.POSTGRES_DB, '-At', '-c', 'SELECT value FROM legacy_web_upgrade_marker'])
+  if (marker !== 'preserved') throw Error('旧 Web 退役后业务卷 SQL 标记丢失')
+  receipts.legacyWebRetirement.sqlMarkerPreserved = true; save()
   const containers = await must('docker', [...composeArgs, 'ps', '-q']); receipts.installationContainerIds = containers.split(/\r?\n/); save()
   for (const containerId of receipts.installationContainerIds) {
     const mounts = JSON.parse(await must('docker', ['inspect', '--format', '{{json .Mounts}}', containerId]))
@@ -188,6 +219,9 @@ try {
   receipts.skillBlob = { sha256: createHash('sha256').update(tracked.stdout).digest('hex'), imageId: image.id, assetPath }; save()
   env.WORKMESH_VERIFY_MCP = deploymentClass === 'production' ? 'true' : 'false'
   await must(process.execPath, [resolve(root, 'scripts/verify-a2-backend-lite-api.mjs')])
+  if (deploymentClass === 'production' && !services.some(service => process.env[`WORKMESH_${service.toUpperCase()}_IMAGE`]))
+    await must(process.execPath, [resolve(root, 'scripts/verify-production-cold-cache.mjs')], { env: { ...env,
+      WORKMESH_COLD_SOURCE_IMAGES: JSON.stringify(Object.fromEntries([...images].map(([service, value]) => [service, value.target]))) } })
   receipts.outcome = '本机无源码纯后端安装、真实 worker、TLS 和签名 Skill 通过；真实低功耗设备与真实厂商未测'
 } catch (error) { receipts.outcome = `失败或未验收：${redact(error)}`; console.error(receipts.outcome); process.exitCode = 1; save() }
 finally {
@@ -238,7 +272,7 @@ finally {
       }
       save()
     }
-    if (resource.type === 'container' && resource.id) {
+    if (resource.type === 'container' && resource.id && !resource.cleanup?.absent) {
       const owner = await command('docker', ['inspect', '--format', '{{ index .Config.Labels "workmesh.task" }}', resource.id])
       resource.preDelete = { owner: owner.output.trim(), code: owner.code, id: resource.id, at: new Date().toISOString() }; save()
       resource.cleanup = owner.code === 0 && owner.output.trim() === runId ? await command('docker', ['rm', '-f', '-v', resource.id]) : '归属未知，保留'; save()

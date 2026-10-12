@@ -30,7 +30,9 @@ API 镜像在构建时用公开生成源与公钥执行 `pnpm check:workmesh-ski
 pnpm validate:production-images --env-file=<私有环境文件>
 ```
 
-该命令先核 Compose、镜像引用和启动合同，再创建本轮独有测试数据库、Compose 项目及本机 TLS 提供方夹具，使用真实 API/worker/MCP 验证安装、认证、provider 幂等、精确仓库上下文和配对下载。提供的生产镜像必须绑定当前 HEAD；测试副本执行 save/load，实际镜像文件与 Git blob、HTTP 响应及签名逐字节核对。测试不连接业务数据库，不向真实厂商外发，结束按资源归属清理并保存原日志。未提供环境文件时只构建本轮私有镜像。完整结果见本次交付的验收记录，不以静态合同通过代替运行成功。
+该命令先核 Compose、镜像引用和启动合同，再创建本轮独有测试数据库、Compose 项目及本机 TLS 提供方夹具，使用真实 API/worker/MCP 验证安装、认证、provider 幂等、精确仓库上下文和配对下载。提供的生产镜像先按准确引用拉取，再核摘要、镜像 ID 和当前 HEAD 的 OCI revision；冷缓存主机也执行这一步。
+
+测试副本执行 save/load，实际镜像文件与 Git blob、HTTP 响应及签名逐字节核对。测试不连接业务数据库，不向真实厂商外发，结束按资源归属清理并保存原日志。未提供环境文件时构建本轮私有镜像，并在 Linux 验收主机使用回环 registry 复验冷缓存 `--env-file` 部署。测试只映射独有 GHCR 命名空间，不向 GHCR 发布，不放宽生产镜像引用规则。完整结果见本次交付的验收记录。
 
 ### Coordination MCP pre-release deployment
 
@@ -54,6 +56,8 @@ Stable/default-on promotion is a release gate after that evidence passes and
 must not rebuild or substitute any image digest.
 
 ## Clean installation and upgrade
+
+首次从含 Web 的旧生产栈升级时，先执行 [旧 Web 容器退役](backend-only-deployment.md#旧-web-容器退役)。核对原 project、service、配置路径和完整 ID 后，定向停止、移除 Web，保留业务卷及其他服务。API 接管原 Web 端口前先释放端口；后续命令使用原 project，不创建另一套空业务卷。该步骤不替代下文已有数据库升级屏障。
 
 Authenticate to GHCR on the host, then pull and start the exact revision:
 
