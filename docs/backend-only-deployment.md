@@ -45,7 +45,8 @@ API origin 提供 `/.well-known/workmesh-agent` 和固定 `/skills/workmesh-1.1.
 
 ```sh
 docker ps -a --no-trunc --filter label=com.docker.compose.project=<原project> --filter label=com.docker.compose.service=web
-docker inspect <完整容器ID>
+docker inspect --format 'id={{.Id}} image={{.Image}} project={{index .Config.Labels "com.docker.compose.project"}} service={{index .Config.Labels "com.docker.compose.service"}} config={{index .Config.Labels "com.docker.compose.project.config_files"}} directory={{index .Config.Labels "com.docker.compose.project.working_dir"}}' <完整容器ID>
+docker inspect --format 'mounts={{json .Mounts}} ports={{json .NetworkSettings.Ports}}' <完整容器ID>
 docker volume ls --filter label=com.docker.compose.project=<原project>
 ```
 
@@ -56,6 +57,8 @@ node scripts/retire-legacy-web.mjs --project=<原project> --container=<完整容
 ```
 
 脚本执行 `docker stop --time 35 <完整容器ID>`，确认停止成功后执行 `docker rm <完整容器ID>`。它不使用 `-v`、强制删除或整栈 `down`。设备没有源码时，核对同样的身份后手工执行这两条 Docker 命令。停止异常时保留容器，先核失败原因，不改用强制删除。
+
+退役回执只保存必要身份、状态和挂载信息，不输出旧容器环境、启动参数、任意标签或卷驱动选项。不要将完整 inspect 的环境和秘密写入日志、聊天或仓库。
 
 重新按原 project/service 标签查询，预期结果为空；逐一确认旧 ID 已不存在，业务卷仍在。将 API 的发布端口和 `WEB_ORIGIN` 设为同一外部地址，再用 `--project-name <原project>` 启动新栈。通过 API 登录核对既有业务记录、发现与配对；原 Web 端口应由 API 承接或关闭。不要使用 `down -v`、`volume prune` 或通用孤儿删除来退役页面。生产数据库的既有升级屏障继续适用。
 

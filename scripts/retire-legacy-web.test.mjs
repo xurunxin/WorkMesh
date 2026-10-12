@@ -51,6 +51,20 @@ test('unlisted orphan refuses the entire operation', () => {
     ? { status: 0, stdout: `${id}\n${'b'.repeat(64)}` } : docker(args)), /INVENTORY_CHANGED/)
   assert.equal(state.commands.some(args => ['stop', 'rm'].includes(args[0])), false)
 })
+test('receipts exclude container credentials, commands, custom labels and volume driver options', () => {
+  const secret = 'fixture-secret-not-a-real-credential'
+  const { docker } = fixture(value => {
+    value.Config.Env = [`SESSION_SECRET=${secret}`]
+    value.Config.Cmd = [secret]
+    value.Config.Labels['private-label'] = secret
+  })
+  const receipt = retireLegacyWeb(options, args => args[0] === 'volume'
+    ? { status: 0, stdout: JSON.stringify([{ Name: 'business-data', Options: { password: secret }, Labels: { private: secret } }]) }
+    : docker(args))
+  assert.equal(JSON.stringify(receipt).includes(secret), false)
+  assert.equal(receipt.before[0].Config.Labels['com.docker.compose.project'], options.project)
+  assert.equal(receipt.retainedVolumes[0].Name, 'business-data')
+})
 test('failed graceful stop preserves the container', () => {
   const { state, docker } = fixture((value, current) => { if (current.stopped) value.State.ExitCode = 137 })
   assert.throws(() => retireLegacyWeb(options, docker), /STOP_UNCONFIRMED/)

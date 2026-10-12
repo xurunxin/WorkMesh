@@ -49,6 +49,12 @@
 
 ## 首败与复验来源
 
+成果独审后的部署修订另见 [完整修订与复验](deployment-corrections.md)。产品提交 `d0d78d408f2395f2dfebe8972710a6b635982ddf` 的 CI `38188956194` 全部 11 个 job 成功。`verified-deployment-472.json` 绑定准确 PR 合成检出、相同 tree、三平台源码原件和三个真实安装。
+
+本轮已实际覆盖冷缓存 `--env-file` 入口：借助仅绑定回环地址的 registry 和明确记录的测试命名空间映射，三个准确镜像引用从本地不存在到 pull/ID/digest 核验，再完成真实生产安装、save/load、worker、TLS、Skill 和 MCP。Lite 与两次生产运行都验证旧 Web 定向退役、同端口 API 接管及原 PostgreSQL 卷/SQL 标记保留。此测试不冒真实 GHCR 发布或认证通过。
+
+最后的回执遮蔽用例、本机真实 Docker 与 `pnpm ci:test` 29 项、`pnpm ci:validate` 均通过。所有旧首败、跳过和未测范围继续保留；最终交付 head 的最新 Required CI 及成果复审仍是关口。
+
 运行 `38176577167` 绑定产品提交 `7209be0641cc224b19b88bc36b0d3a03996b0b63`。实际 PR 合成检出 `47faa50156178fccebf3d6ea2db33c11550688f5` 的 tree 与分支提交相同；父提交、三平台前后源码绑定、开发镜像与恢复报告见 `ci-artifacts/verified-bindings.json`。API 29 文件通过、304 项通过/1 项跳过，DB 17 文件/81 项通过；MCP 真实集成协议 6 文件/96 项通过。源码、三平台原生连接器、三后端开发镜像无缓存构建、正常 postinstall 和完整灾备通过。恢复后 API、worker、MCP ready、真实 MCP 初始化与持久 Agent heartbeat 均通过。
 
 该次 worker 有一个 Web Push 完整 URL 断言首败，Required 失败；已按明确配置 API origin 修正，后续 CI `38178554946` 的 worker 检查通过。首败 ZIP 保留，见 `ci-artifacts/test-summary-7209.json`。取消的中间 CI 不当通过；最终 Required 仍须对最后交付 head 核验。

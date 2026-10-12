@@ -1,0 +1,595 @@
+{
+  "runId": 38188956194,
+  "productHead": "d0d78d408f2395f2dfebe8972710a6b635982ddf",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "id": 114617322637,
+      "name": "Classify changes and validate CI selection",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475104,
+      "name": "Worker integration",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475108,
+      "name": "API integration",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475109,
+      "name": "Agent construction and protocol smoke",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475113,
+      "name": "Source gates",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475123,
+      "name": "Connector native storage (macos-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475140,
+      "name": "Complete disaster recovery",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475159,
+      "name": "Database integration",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475161,
+      "name": "Connector native storage (windows-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114617475183,
+      "name": "Connector native storage (ubuntu-latest)",
+      "conclusion": "success"
+    },
+    {
+      "id": 114621160744,
+      "name": "Required CI",
+      "conclusion": "success"
+    }
+  ],
+  "native": [
+    {
+      "artifact": 11721185626,
+      "platform": "linux",
+      "actualCheckout": "241abaae6a7f3cdcac94b3709ad59dd16a92bd76",
+      "tree": "099f4e6a72a6b47adcd862efe3e6e03b61b0fa27",
+      "files": 651,
+      "node": "v22.19.0",
+      "beforeSha256": "fdfe8bcb9cd46632acaf9c27c42310a38fb25f1f5bf00593bdaf02bea7f3fd8b",
+      "afterSha256": "213aaae844deeaa7163aadfbd1b731ba5fe12085bea85c25f47cecac2e3f6560",
+      "rawAndCanonicalStable": true
+    },
+    {
+      "artifact": 11721165746,
+      "platform": "win32",
+      "actualCheckout": "241abaae6a7f3cdcac94b3709ad59dd16a92bd76",
+      "tree": "099f4e6a72a6b47adcd862efe3e6e03b61b0fa27",
+      "files": 651,
+      "node": "v22.19.0",
+      "beforeSha256": "d3a18504a933afd3d3cdef49e7b1c5404361159450097393d1cd20092cf7038e",
+      "afterSha256": "0a8da285ee7911ef4f0daeabffc5a74402e3db333a019f50fbb49ca8030075ed",
+      "rawAndCanonicalStable": true
+    },
+    {
+      "artifact": 11720676128,
+      "platform": "darwin",
+      "actualCheckout": "241abaae6a7f3cdcac94b3709ad59dd16a92bd76",
+      "tree": "099f4e6a72a6b47adcd862efe3e6e03b61b0fa27",
+      "files": 651,
+      "node": "v22.19.0",
+      "beforeSha256": "4577574a66f40ac7d491ad7864c5e74b3ba5d746939d252077ed9d2b858ae58f",
+      "afterSha256": "ee92249b351b66ed70e6d10240fb5ec5d4adc870c4986eba0cc1c8275d826008",
+      "rawAndCanonicalStable": true
+    }
+  ],
+  "deployments": [
+    {
+      "artifact": 11721436996,
+      "path": "backend-deployment/backend-lite-72a9a0f1/receipts.json",
+      "runId": "backend-lite-72a9a0f1",
+      "class": "lite",
+      "images": [
+        {
+          "target": "workmesh-retirement-lite:backend-lite-72a9a0f1",
+          "id": "sha256:d377bd011ca121bf21265993e2c1c3a4065c0ec8c1078f898a0eb950de2d0b93",
+          "borrowed": false
+        }
+      ],
+      "legacyWebAbsent": true,
+      "dataVolumes": [
+        "backend-lite-72a9a0f1_lite-postgres-data"
+      ],
+      "sqlMarkerPreserved": true,
+      "apiVerification": {
+        "installViaApi": true,
+        "authenticatedRead": true,
+        "connectionReplay": true,
+        "contextAction": "55a006ef-e27d-4b6f-9186-727351b90c71",
+        "contextId": "1b1d2ea5-8949-49e9-9216-04be065077ed",
+        "exactContextConfirmed": true,
+        "providerTls": true,
+        "skillSha256": "sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "signedBytes": 12114,
+        "downloadSource": "redeemed.skill.download_url",
+        "mcpVerified": false
+      },
+      "skillBlob": {
+        "sha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "imageId": "sha256:d377bd011ca121bf21265993e2c1c3a4065c0ec8c1078f898a0eb950de2d0b93",
+        "assetPath": "/opt/workmesh/api/assets/skills/workmesh-1.1.0.md"
+      },
+      "cleanedResourceCount": 11,
+      "postDeleteChecks": [
+        {
+          "kind": "container",
+          "target": "e487327c95f3fba7f21b51ff07a76e80eafc6cb6949f5ac671217eb23211cc0d",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "volume",
+          "target": "buildx_buildkit_backend-lite-72a9a0f10_state",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "container",
+          "id": "9684c60540fe",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.453Z"
+        },
+        {
+          "kind": "container",
+          "id": "4ce71a3ea901",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.550Z"
+        },
+        {
+          "kind": "container",
+          "id": "84db08ddda4b",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.613Z"
+        },
+        {
+          "kind": "container",
+          "id": "bed414edefc3",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.634Z"
+        },
+        {
+          "kind": "container",
+          "id": "b7c085a744b4",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.654Z"
+        },
+        {
+          "kind": "container",
+          "id": "a069224030fe",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.673Z"
+        },
+        {
+          "kind": "container",
+          "id": "e3d82b22375c",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.770Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-lite-72a9a0f1_lite-object-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.783Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-lite-72a9a0f1_lite-postgres-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.796Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-lite-72a9a0f1_lite-redis-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.808Z"
+        },
+        {
+          "kind": "network",
+          "id": "333f40711b8b",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T00:53:19.855Z"
+        }
+      ]
+    },
+    {
+      "artifact": 11721436996,
+      "path": "backend-deployment/backend-production-6d10adb9/receipts.json",
+      "runId": "backend-production-6d10adb9",
+      "class": "production",
+      "images": [
+        {
+          "target": "ghcr.io/workmesh-cold-47faf9ed/workmesh-api@sha256:1376de86a861cdd255a77b5ba82d9a5f0fb5eaac6285242dcaa757fb3834ca62",
+          "id": "sha256:80323c8eb78f8147fe648299f6c3616e2c72df9aa7984cb64cbdef1d38e86ca2",
+          "borrowed": true
+        },
+        {
+          "target": "ghcr.io/workmesh-cold-47faf9ed/workmesh-worker@sha256:a5ead94b9191e95cd7bd0e49cde7790d3b7eaa65352b14888b1eb6769587fa8a",
+          "id": "sha256:8ef080c8397781e1e06ba2fcce256210f0270898d9bc02d57cee5ad245d24715",
+          "borrowed": true
+        },
+        {
+          "target": "ghcr.io/workmesh-cold-47faf9ed/workmesh-mcp@sha256:52026cbf60f8195a1867372e0a9732f4b9cb8f95993daabbaac82a5cf384a53c",
+          "id": "sha256:43eb42f0c3b28de6c52e33591ce3238f4a1f5fadb9feba8bbe4e7367471d258f",
+          "borrowed": true
+        }
+      ],
+      "legacyWebAbsent": true,
+      "dataVolumes": [
+        "backend-production-6d10adb9_postgres-production-data"
+      ],
+      "sqlMarkerPreserved": true,
+      "apiVerification": {
+        "installViaApi": true,
+        "authenticatedRead": true,
+        "connectionReplay": true,
+        "contextAction": "149a84a1-bd66-4909-abc5-21c652af6bec",
+        "contextId": "35454808-c2e0-4fde-bdd9-891445e57867",
+        "exactContextConfirmed": true,
+        "providerTls": true,
+        "skillSha256": "sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "signedBytes": 12114,
+        "downloadSource": "redeemed.skill.download_url",
+        "mcpVerified": true
+      },
+      "skillBlob": {
+        "sha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "imageId": "sha256:80323c8eb78f8147fe648299f6c3616e2c72df9aa7984cb64cbdef1d38e86ca2",
+        "assetPath": "/app/assets/skills/workmesh-1.1.0.md"
+      },
+      "cleanedResourceCount": 10,
+      "postDeleteChecks": [
+        {
+          "kind": "container",
+          "target": "01ac4f95ddea10c850f755839634fe5e43af3fca2e8596f5b01762ebf3ddc562",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "volume",
+          "target": "buildx_buildkit_backend-production-6d10adb90_state",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "container",
+          "id": "aa574711e808",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.571Z"
+        },
+        {
+          "kind": "container",
+          "id": "9a7814090b6e",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.616Z"
+        },
+        {
+          "kind": "container",
+          "id": "93fa7954edbe",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.660Z"
+        },
+        {
+          "kind": "container",
+          "id": "51090ecb13fc",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.704Z"
+        },
+        {
+          "kind": "container",
+          "id": "a8a510094f18",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.752Z"
+        },
+        {
+          "kind": "container",
+          "id": "f1b240eb5061",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.797Z"
+        },
+        {
+          "kind": "container",
+          "id": "6850140633b6",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.842Z"
+        },
+        {
+          "kind": "container",
+          "id": "712f51877749",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.886Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-production-6d10adb9_minio-production-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.924Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-production-6d10adb9_postgres-production-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:04.962Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-production-6d10adb9_redis-production-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:05.012Z"
+        },
+        {
+          "kind": "network",
+          "id": "62ff8f6e88f5",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:05.051Z"
+        }
+      ]
+    },
+    {
+      "artifact": 11721436996,
+      "path": "backend-deployment/backend-production-7990e138/receipts.json",
+      "runId": "backend-production-7990e138",
+      "class": "production",
+      "images": [
+        {
+          "target": "workmesh-retirement-api:backend-production-7990e138",
+          "id": "sha256:80323c8eb78f8147fe648299f6c3616e2c72df9aa7984cb64cbdef1d38e86ca2",
+          "borrowed": false
+        },
+        {
+          "target": "workmesh-retirement-worker:backend-production-7990e138",
+          "id": "sha256:8ef080c8397781e1e06ba2fcce256210f0270898d9bc02d57cee5ad245d24715",
+          "borrowed": false
+        },
+        {
+          "target": "workmesh-retirement-mcp:backend-production-7990e138",
+          "id": "sha256:43eb42f0c3b28de6c52e33591ce3238f4a1f5fadb9feba8bbe4e7367471d258f",
+          "borrowed": false
+        }
+      ],
+      "legacyWebAbsent": true,
+      "dataVolumes": [
+        "backend-production-7990e138_postgres-production-data"
+      ],
+      "sqlMarkerPreserved": true,
+      "apiVerification": {
+        "installViaApi": true,
+        "authenticatedRead": true,
+        "connectionReplay": true,
+        "contextAction": "406b0b85-7812-46da-a907-a788ebb479c6",
+        "contextId": "f8a55820-ef6f-4214-a75c-5fbaf243e1b5",
+        "exactContextConfirmed": true,
+        "providerTls": true,
+        "skillSha256": "sha256:8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "signedBytes": 12114,
+        "downloadSource": "redeemed.skill.download_url",
+        "mcpVerified": true
+      },
+      "skillBlob": {
+        "sha256": "8dd4c67f92a758e3df2f82ea6c838a22b9db16dbb5e16d1c9b1f5dcd74a170ad",
+        "imageId": "sha256:80323c8eb78f8147fe648299f6c3616e2c72df9aa7984cb64cbdef1d38e86ca2",
+        "assetPath": "/app/assets/skills/workmesh-1.1.0.md"
+      },
+      "cleanedResourceCount": 13,
+      "postDeleteChecks": [
+        {
+          "kind": "container",
+          "target": "da0da08021339c2572d46b614a0cffb17e9c4895e14fbb81235620047c1c6519",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "volume",
+          "target": "buildx_buildkit_backend-production-7990e1380_state",
+          "absent": true,
+          "code": 1
+        },
+        {
+          "kind": "container",
+          "id": "4266dfc46724",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.713Z"
+        },
+        {
+          "kind": "container",
+          "id": "063b78c4202b",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.732Z"
+        },
+        {
+          "kind": "container",
+          "id": "ccc8a9159bcd",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.751Z"
+        },
+        {
+          "kind": "container",
+          "id": "575a373d4681",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.770Z"
+        },
+        {
+          "kind": "container",
+          "id": "5c3a3a0ffb05",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.789Z"
+        },
+        {
+          "kind": "container",
+          "id": "57beef24c318",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.808Z"
+        },
+        {
+          "kind": "container",
+          "id": "1d44c34cc8dd",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.828Z"
+        },
+        {
+          "kind": "container",
+          "id": "b67a155dce7c",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.869Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-production-7990e138_minio-production-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.883Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-production-7990e138_postgres-production-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.895Z"
+        },
+        {
+          "kind": "volume",
+          "id": "backend-production-7990e138_redis-production-data",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.908Z"
+        },
+        {
+          "kind": "network",
+          "id": "9bd890975d58",
+          "code": 1,
+          "absent": true,
+          "at": "2026-10-12T01:00:08.969Z"
+        }
+      ]
+    }
+  ],
+  "actualCheckout": "241abaae6a7f3cdcac94b3709ad59dd16a92bd76",
+  "actualTree": "099f4e6a72a6b47adcd862efe3e6e03b61b0fa27",
+  "parents": [
+    "f2591a3bebeca9640b0d828ac3ad07fb5daf8e3c",
+    "d0d78d408f2395f2dfebe8972710a6b635982ddf"
+  ],
+  "treeEqualsProductHead": true,
+  "coldCache": {
+    "artifact": 11721436996,
+    "path": "backend-deployment/workmesh-cold-47faf9ed/receipts.json",
+    "transport": "private loopback registry; test-only GHCR namespace mapping; no external publish",
+    "images": [
+      {
+        "name": "api",
+        "supplied": "ghcr.io/workmesh-cold-47faf9ed/workmesh-api@sha256:1376de86a861cdd255a77b5ba82d9a5f0fb5eaac6285242dcaa757fb3834ca62",
+        "local": "127.0.0.1:35255/workmesh-api@sha256:1376de86a861cdd255a77b5ba82d9a5f0fb5eaac6285242dcaa757fb3834ca62",
+        "sourceId": "sha256:80323c8eb78f8147fe648299f6c3616e2c72df9aa7984cb64cbdef1d38e86ca2",
+        "digest": "sha256:1376de86a861cdd255a77b5ba82d9a5f0fb5eaac6285242dcaa757fb3834ca62",
+        "coldReferenceAbsent": true,
+        "pulledIdMatches": true
+      },
+      {
+        "name": "worker",
+        "supplied": "ghcr.io/workmesh-cold-47faf9ed/workmesh-worker@sha256:a5ead94b9191e95cd7bd0e49cde7790d3b7eaa65352b14888b1eb6769587fa8a",
+        "local": "127.0.0.1:35255/workmesh-worker@sha256:a5ead94b9191e95cd7bd0e49cde7790d3b7eaa65352b14888b1eb6769587fa8a",
+        "sourceId": "sha256:8ef080c8397781e1e06ba2fcce256210f0270898d9bc02d57cee5ad245d24715",
+        "digest": "sha256:a5ead94b9191e95cd7bd0e49cde7790d3b7eaa65352b14888b1eb6769587fa8a",
+        "coldReferenceAbsent": true,
+        "pulledIdMatches": true
+      },
+      {
+        "name": "mcp",
+        "supplied": "ghcr.io/workmesh-cold-47faf9ed/workmesh-mcp@sha256:52026cbf60f8195a1867372e0a9732f4b9cb8f95993daabbaac82a5cf384a53c",
+        "local": "127.0.0.1:35255/workmesh-mcp@sha256:52026cbf60f8195a1867372e0a9732f4b9cb8f95993daabbaac82a5cf384a53c",
+        "sourceId": "sha256:43eb42f0c3b28de6c52e33591ce3238f4a1f5fadb9feba8bbe4e7367471d258f",
+        "digest": "sha256:52026cbf60f8195a1867372e0a9732f4b9cb8f95993daabbaac82a5cf384a53c",
+        "coldReferenceAbsent": true,
+        "pulledIdMatches": true
+      }
+    ],
+    "cleanup": [
+      {
+        "type": "image-alias",
+        "reference": "127.0.0.1:35255/workmesh-api@sha256:1376de86a861cdd255a77b5ba82d9a5f0fb5eaac6285242dcaa757fb3834ca62",
+        "code": 0
+      },
+      {
+        "type": "image-alias",
+        "reference": "127.0.0.1:35255/workmesh-worker@sha256:a5ead94b9191e95cd7bd0e49cde7790d3b7eaa65352b14888b1eb6769587fa8a",
+        "code": 0
+      },
+      {
+        "type": "image-alias",
+        "reference": "127.0.0.1:35255/workmesh-mcp@sha256:52026cbf60f8195a1867372e0a9732f4b9cb8f95993daabbaac82a5cf384a53c",
+        "code": 0
+      },
+      {
+        "type": "container",
+        "id": "4e0007b42b22cfffc4b11ce15fdfa65b971a0495e42d71eef0605f10f703f420",
+        "code": 0,
+        "absent": true
+      },
+      {
+        "type": "volume",
+        "name": "workmesh-cold-47faf9ed-registry",
+        "code": 0,
+        "absent": true
+      },
+      {
+        "type": "directory",
+        "path": "/tmp/workmesh-cold-47faf9ed-kCOI4J",
+        "removed": true
+      }
+    ],
+    "outcome": "冷引用缓存 --env-file、准确摘要拉取、真实 API/worker/MCP 部署通过",
+    "mappingSha256": "582a7e8127212789dcb0ecbc468a7988fe19148403880c87efe5629602a30241",
+    "actualDeployment": "backend-production-6d10adb9"
+  }
+}

@@ -13,3 +13,5 @@
 CI `38182180394` 的生产首败原件没有证明 MCP profile、测试 CA、三个镜像和安装目录完全清除；回执明确保留，不能以其他运行的清理成功代填。这些路径归属该轮 GitHub 临时 runner。后续验证使用明确的 `agent` profile 收集 MCP 日志并执行同 profile 的定向 down，再检查实际资源不存在。
 
 最终产品代码的 CI `38183774603` 中，`backend-lite-d67c3a45` 和 `backend-production-c3dba9cb` 全部 9/11 个受控资源清理命令成功，Compose 与 builder 的后置不存在检查全部成立；开发镜像 builder 也按本人归属收尾。原 ZIP `11718937953` 和 `verified-product-468.json` 记录准确目标与身份。这不补造 CI 首败或本机边界拒绝目标的清理结果。
+
+成果修订的 CI `38188956194` 中，Lite、私有生产及冷缓存生产的受控清理成功，Compose 和 builder 均有后置不存在证明。冷 registry 的三个独有镜像别名移除成功，registry 容器、私有卷及临时目录收尾见 `verified-deployment-472.json`；共享基础镜像保留。两份本机 Web 退役回执另核本人测试容器和卷不存在，不处理历史拒绝目录。

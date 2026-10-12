@@ -44,8 +44,20 @@ export function retireLegacyWeb({ project, containerIds, configFile, workingDire
   if (discover().length) throw Error('LEGACY_WEB_STILL_PRESENT')
   for (const id of containerIds) if (docker(['inspect', id]).status === 0) throw Error('LEGACY_WEB_STILL_PRESENT')
   if (JSON.stringify(volumes()) !== JSON.stringify(retainedVolumes)) throw Error('LEGACY_WEB_VOLUME_CHANGED')
-  return { project, containerIds, configFile, workingDirectory, before, stopped,
-    retainedVolumes, webAbsent: true, removedVolumes: [] }
+  // An operational receipt must not copy Config.Env, command arguments, custom
+  // labels or volume driver options: old deployments can contain credentials.
+  const identityLabels = labels => Object.fromEntries([
+    'com.docker.compose.project', 'com.docker.compose.service',
+    'com.docker.compose.project.config_files', 'com.docker.compose.project.working_dir',
+  ].filter(key => labels?.[key] !== undefined).map(key => [key, labels[key]]))
+  const snapshot = container => ({ Id: container.Id, Image: container.Image,
+    Config: { Labels: identityLabels(container.Config.Labels) },
+    State: { Running: container.State.Running, Restarting: container.State.Restarting, ExitCode: container.State.ExitCode },
+    Mounts: container.Mounts.map(({ Type, Name, Destination, RW }) => ({ Type, Name, Destination, RW })),
+    Ports: container.NetworkSettings?.Ports })
+  return { project, containerIds, configFile, workingDirectory, before: before.map(snapshot), stopped: stopped.map(snapshot),
+    retainedVolumes: retainedVolumes.map(({ Name, Driver, Scope, CreatedAt }) => ({ Name, Driver, Scope, CreatedAt })),
+    webAbsent: true, removedVolumes: [] }
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

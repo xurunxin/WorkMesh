@@ -345,12 +345,12 @@ services:
 
 当前 Human 通过既有通知渠道 REST 合同管理自己的目标，部署方先确认企业及目标群允许“消息推送（原群机器人）”。目标秘密沿用 C1 加密存储，不能写到配置样例、聊天、日志或证据；完整目标必须是 `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=<编码后的秘密>`，不接受其它主机、路径、参数、端口、凭据、fragment、重定向或私网 DNS。网络须允许该 HTTPS 主机并维持正常证书验证。
 
-消息只有固定通用提醒和 WorkMesh canonical 登录深链，Markdown 内容最多 4096 UTF-8 字节；不发送事项正文、人员信息、卡片决策或身份绑定。网页登录后按当前 Human 重新鉴权，转发不授予权限。授权撤销先于发送 checkpoint 提交时零外发，提交后的在途请求不能召回。
+消息只有固定通用提醒和既有 Human attention 的鉴权 API 链接，Markdown 内容最多 4096 UTF-8 字节；不发送事项正文、人员信息、卡片决策或身份绑定。链接不含凭据，查询返回 JSON，并重验当前 Human 权限。转发链接不授予权限；授权撤销先于发送 checkpoint 提交时零外发，提交后的在途请求不能召回。
 
-当前 main 的未登录消费者会跳到登录页，登录后回首页且不保留事项定位；登录后需重新打开消息链接。安全 returnTo、焦点/BackForward 和新视觉延后至 UI 重设计，未接受或计为本轮通过。本轮保留 HTTPS canonical URL 生成与现有页面/接口的当前 Human 授权兼容检查。
+当前服务不提供登录页面。客户端通过既有 Human 登录 REST 取得 Cookie，再查询链接；匿名、失权或无来源读取权限的请求拒绝。HTTPS canonical URL 与实时鉴权合同保持，旧页面及后续视觉开发已退役。原 C2 规格和历史审查证据按原件保留。
 
-频控按秘密 HMAC 指纹跨 Worker 与重复 target 共用 Redis Lua：最多 20 份额度、另有串行 token。额度至少保留至实际完成或安全终止后 60 秒；未知或崩溃保留至发送截止上界 D+60 秒。Redis 丢状态共同冷却至少 120 秒，Redis 不可用则停止准入。等待不消耗发送失败预算，也不阻止普通网页读取。不得删除频控 key 来加速重试。
+频控按秘密 HMAC 指纹跨 Worker 与重复 target 共用 Redis Lua：最多 20 份额度、另有串行 token。额度至少保留至实际完成或安全终止后 60 秒；未知或崩溃保留至发送截止上界 D+60 秒。Redis 丢状态共同冷却至少 120 秒，Redis 不可用则停止准入。等待不消耗发送失败预算，也不阻止普通 API 读取。不得删除频控 key 来加速重试。
 
-有效成功响应才记 delivered；提供方明确拒绝记安全错误码，已发出后的超时、断连或畸形响应进入 uncertain，不能自动重发。个人设置的既有投递对账入口由当前目标 owner 显式确认 delivered、retry 或 dead；retry 复用原 delivery/effectKey，仍重新准入和鉴权，至少一次不能保证外部恰好一次。
+有效成功响应才记 delivered；提供方明确拒绝记安全错误码，已发出后的超时、断连或畸形响应进入 uncertain，不能自动重发。既有投递对账 REST 由当前目标 owner 显式确认 delivered、retry 或 dead；retry 复用原 delivery/effectKey，仍重新准入和鉴权，至少一次不能保证外部恰好一次。
 
 协议核实及官方原始字节见 `docs/plan/c2-wecom/README.md`、`official/retrieval.json` 和无损归档。只出站没有入站签名、绑定或回调时窗依赖。本轮验收仅用 fake provider；真实外发须另获用户明确授权。
