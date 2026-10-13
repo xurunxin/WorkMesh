@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
-import { readFile, writeFile, mkdir, mkdtemp, readdir, readlink, lstat } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, mkdtemp, readdir, readlink, lstat, unlink } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { tmpdir } from 'node:os'
 import { beforeAll, describe, expect, it } from 'vitest'
@@ -41,6 +41,25 @@ describe('已构建 SEA 离线安装、完整性与保留边界', () => {
       .rejects.toMatchObject({ stderr: 'INSTALL_ARCHIVE_HASH\n' })
     expect(await readlink(join(prefix, 'lib/workmesh-connector/current'))).toBe(before)
     expect(await readFile(join(configRoot, 'marker'), 'utf8')).toBe(marker)
+  })
+  it('错误架构、穿越成员和重复成员均在写入前拒绝', async () => {
+    const original = JSON.parse(await readFile(manifest, 'utf8')) as { arch: string; files: Array<{ path: string }> }
+    const before = await readlink(join(prefix, 'lib/workmesh-connector/current'))
+    for (const [mutate, code] of [
+      [(m: typeof original) => { m.arch = m.arch === 'amd64' ? 'arm64' : 'amd64' }, 'INSTALL_ARCH_MISMATCH'],
+      [(m: typeof original) => { m.files[0]!.path = '../outside' }, 'INSTALL_UNSAFE_MEMBER'],
+      [(m: typeof original) => { m.files.push(m.files[0]!) }, 'INSTALL_DUPLICATE_MEMBER'],
+    ] as const) {
+      const candidate = structuredClone(original); mutate(candidate)
+      const candidatePath = join(distribution!, `test-manifest-${randomUUID()}.json`)
+      await writeFile(candidatePath, JSON.stringify(candidate), { mode: 0o600, flag: 'wx' })
+      try {
+        await expect(execute('sh', [join(distribution!, 'install.sh'), '--archive', archive, '--manifest', candidatePath, '--prefix', prefix]))
+          .rejects.toMatchObject({ stderr: code + '\n' })
+      } finally { await unlink(candidatePath) }
+      expect(await readlink(join(prefix, 'lib/workmesh-connector/current'))).toBe(before)
+      await expect(lstat(join(root, 'outside'))).rejects.toMatchObject({ code: 'ENOENT' })
+    }
   })
   it('真实第二版本原子升级，再回退原版本', async () => {
     if (!upgradeDistribution) throw new Error('Second version artifacts required; no skip')

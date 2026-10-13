@@ -1,0 +1,84 @@
+{
+  "scope": "当前产品运行原件；失败不是通过，辅助原生构建不是完整产品验收",
+  "archives": [
+    {
+      "path": "raw/build-first-amd64.zip",
+      "sha256": "f55f2c05384f1f193f1c78f5370ede9da7437d9e2dd56916df053eb20d8822f9",
+      "bytes": 768,
+      "members": 2,
+      "head": "06e01cb226b5350e6fe5ffbf55bb57840aa7fb0c",
+      "runId": 38341094507,
+      "attempt": 1,
+      "artifactId": 11786383707,
+      "arch": "amd64",
+      "status": "failed-before-build",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38341094507"
+    },
+    {
+      "path": "raw/build-first-arm64.zip",
+      "sha256": "08bc60d57279885567f0f3a55b275dbb6fae3c94401f40cce2a5eed0a79403a6",
+      "bytes": 768,
+      "members": 2,
+      "head": "06e01cb226b5350e6fe5ffbf55bb57840aa7fb0c",
+      "runId": 38341094507,
+      "attempt": 1,
+      "artifactId": 11786931351,
+      "arch": "arm64",
+      "status": "failed-before-build",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38341094507"
+    },
+    {
+      "path": "raw/product-first-amd64.zip",
+      "sha256": "824ffc04062d121b2aa11abe6fdde9ecf63baaddb09de61fb2772167aaa990b7",
+      "bytes": 2371804,
+      "members": 348,
+      "head": "0b3f1b2755ed5094e6c3c83f324a41cb6286ce30",
+      "runId": 38344079493,
+      "attempt": 1,
+      "artifactId": 11787813661,
+      "arch": "amd64",
+      "status": "failed-offline-service",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38344079493"
+    },
+    {
+      "path": "raw/product-fourth-amd64.zip",
+      "sha256": "b345481b93a480fe568e4acd6557826ed45f8fb5840732381817ba4d260fc3ef",
+      "bytes": 2371825,
+      "members": 348,
+      "head": "a4de1986ca15a52e957c6610f674da9735915586",
+      "runId": 38348959982,
+      "attempt": 1,
+      "artifactId": 11790601358,
+      "arch": "amd64",
+      "status": "failed-user-environment-guard",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38348959982"
+    },
+    {
+      "path": "raw/product-second-amd64.zip",
+      "sha256": "ba4a3554b669013f1398605d2758e9f142b19b225e43f0e769b8a27def0c532a",
+      "bytes": 2371970,
+      "members": 348,
+      "head": "45634e7f19839c2ac134839c14635f47d2fd847a",
+      "runId": 38345379545,
+      "attempt": 1,
+      "artifactId": 11788669477,
+      "arch": "amd64",
+      "status": "failed-offline-service",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38345379545"
+    },
+    {
+      "path": "raw/product-third-amd64.zip",
+      "sha256": "bd6fd88396a2b756172931946430676c1d959ac8f40f7d394f7ee4281b7eac45",
+      "bytes": 2372039,
+      "members": 348,
+      "head": "a73bae62331f4026de6133d1bec123f304fa3ca7",
+      "runId": 38347067626,
+      "attempt": 1,
+      "artifactId": 11788843614,
+      "arch": "amd64",
+      "status": "failed-offline-service-exit-one",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38347067626"
+    }
+  ],
+  "currentAcceptance": "awaiting-complete-native-and-tcg-results"
+}
