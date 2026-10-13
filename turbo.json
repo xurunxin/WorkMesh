@@ -276,6 +276,18 @@
         "$TURBO_ROOT$/packages/*/src/**",
         "$TURBO_ROOT$/packages/*/package.json"
       ]
+    },
+    "@workmesh/connector#typecheck": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/api/src/**",
+        "$TURBO_ROOT$/apps/mcp/src/**",
+        "$TURBO_ROOT$/packages/*/src/**",
+        "$TURBO_ROOT$/packages/*/package.json"
+      ],
+      "dependsOn": [
+        "^typecheck"
+      ]
     }
   },
   "globalPassThroughEnv": [

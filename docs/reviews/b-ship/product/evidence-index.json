@@ -1,0 +1,320 @@
+{
+  "scope": "当前产品运行原件；失败不是通过，辅助原生构建不是完整产品验收",
+  "archives": [
+    {
+      "path": "raw/build-first-amd64.zip",
+      "sha256": "f55f2c05384f1f193f1c78f5370ede9da7437d9e2dd56916df053eb20d8822f9",
+      "bytes": 768,
+      "members": 2,
+      "head": "06e01cb226b5350e6fe5ffbf55bb57840aa7fb0c",
+      "runId": 38341094507,
+      "attempt": 1,
+      "artifactId": 11786383707,
+      "arch": "amd64",
+      "status": "failed-before-build",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38341094507"
+    },
+    {
+      "path": "raw/build-first-arm64.zip",
+      "sha256": "08bc60d57279885567f0f3a55b275dbb6fae3c94401f40cce2a5eed0a79403a6",
+      "bytes": 768,
+      "members": 2,
+      "head": "06e01cb226b5350e6fe5ffbf55bb57840aa7fb0c",
+      "runId": 38341094507,
+      "attempt": 1,
+      "artifactId": 11786931351,
+      "arch": "arm64",
+      "status": "failed-before-build",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38341094507"
+    },
+    {
+      "path": "raw/product-first-amd64.zip",
+      "sha256": "824ffc04062d121b2aa11abe6fdde9ecf63baaddb09de61fb2772167aaa990b7",
+      "bytes": 2371804,
+      "members": 348,
+      "head": "0b3f1b2755ed5094e6c3c83f324a41cb6286ce30",
+      "runId": 38344079493,
+      "attempt": 1,
+      "artifactId": 11787813661,
+      "arch": "amd64",
+      "status": "failed-offline-service",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38344079493"
+    },
+    {
+      "path": "raw/product-fourth-amd64.zip",
+      "sha256": "b345481b93a480fe568e4acd6557826ed45f8fb5840732381817ba4d260fc3ef",
+      "bytes": 2371825,
+      "members": 348,
+      "head": "a4de1986ca15a52e957c6610f674da9735915586",
+      "runId": 38348959982,
+      "attempt": 1,
+      "artifactId": 11790601358,
+      "arch": "amd64",
+      "status": "failed-user-environment-guard",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38348959982"
+    },
+    {
+      "path": "raw/product-second-amd64.zip",
+      "sha256": "ba4a3554b669013f1398605d2758e9f142b19b225e43f0e769b8a27def0c532a",
+      "bytes": 2371970,
+      "members": 348,
+      "head": "45634e7f19839c2ac134839c14635f47d2fd847a",
+      "runId": 38345379545,
+      "attempt": 1,
+      "artifactId": 11788669477,
+      "arch": "amd64",
+      "status": "failed-offline-service",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38345379545"
+    },
+    {
+      "path": "raw/product-third-amd64.zip",
+      "sha256": "bd6fd88396a2b756172931946430676c1d959ac8f40f7d394f7ee4281b7eac45",
+      "bytes": 2372039,
+      "members": 348,
+      "head": "a73bae62331f4026de6133d1bec123f304fa3ca7",
+      "runId": 38347067626,
+      "attempt": 1,
+      "artifactId": 11788843614,
+      "arch": "amd64",
+      "status": "failed-offline-service-exit-one",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38347067626"
+    },
+    {
+      "path": "raw/product-cancelled-arm64.zip",
+      "sha256": "d18c1850247c973d1a1dc5410ae9b5d9dafa46d6f5392428b9f079a28b9e5c78",
+      "bytes": 2364727,
+      "members": 347,
+      "head": "5aabce3fea1496b29fd877244b63e48b029d0827",
+      "runId": 38350109341,
+      "attempt": 1,
+      "artifactId": 11791517520,
+      "arch": "arm64",
+      "status": "cancelled-before-product-receipts",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38350109341"
+    },
+    {
+      "path": "raw/product-passed-amd64.zip",
+      "sha256": "3cbaa7aa60a5a03c72279b0e55b97656df7db3f7ebefd475eda23cc83058697e",
+      "bytes": 2394155,
+      "members": 348,
+      "head": "5aabce3fea1496b29fd877244b63e48b029d0827",
+      "runId": 38350109341,
+      "attempt": 1,
+      "artifactId": 11790843181,
+      "arch": "amd64",
+      "status": "passed-complete-installed-guest",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38350109341"
+    },
+    {
+      "path": "raw/product-current-amd64.zip",
+      "sha256": "11e6092c15c16d969506400692786adfdc9da0e3410de3021e7da99994fdcad6",
+      "bytes": 2394318,
+      "members": 348,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885437,
+      "attempt": 1,
+      "artifactId": 11792915201,
+      "arch": "amd64",
+      "status": "passed-complete-installed-guest",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38352885437"
+    },
+    {
+      "path": "raw/product-first-arm64.zip",
+      "sha256": "f3a6ee080fa4009289c30bedf2cbe7bb4278482d8504621f142d3051bc7e8169",
+      "bytes": 2374315,
+      "members": 348,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885437,
+      "attempt": 1,
+      "artifactId": 11793186253,
+      "arch": "arm64",
+      "status": "failed-concurrent-connect-after-19-checks",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38352885437"
+    },
+    {
+      "path": "raw/product-ec3dafa-amd64.zip",
+      "sha256": "044d752b88028f46b11db873decda7d6d52ed4efb3231a4b4e544e096586f4f3",
+      "bytes": 2509577,
+      "members": 351,
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11794456390,
+      "arch": "amd64",
+      "status": "passed-complete-installed-guest-and-full-source-witness",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38358684140"
+    },
+    {
+      "path": "raw/product-ec3dafa-arm64.zip",
+      "sha256": "68e54f97fcdcb7f84dfab002a81f969737254cd44188edd01fa9b5772e4da893",
+      "bytes": 2510878,
+      "members": 351,
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11797245414,
+      "arch": "arm64",
+      "status": "passed-complete-installed-guest-and-full-source-witness",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38358684140"
+    }
+  ],
+  "currentAcceptance": "both-architectures-complete-passed-at-ec3dafa; final-document-head-ci-and-independent-product-review-required",
+  "distribution": [
+    {
+      "path": "artifacts/bc7002ed/amd64",
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885437,
+      "attempt": 1,
+      "artifactId": 11791834900,
+      "providerZipSha256": "2238e0b8e6375527911afba2333a8bf245bb1ecc45d52a560173443204d7f86f",
+      "downloadRule": "只下载五个交付成员，每个程序／助手归档按实际 guest manifest 的完整摘要验证；provider ZIP 整包未下载，不宣称已本地核整包摘要",
+      "manifestSha256": "bc55be5f99f79f8661483030fd1333280d13bca1c3fc45251b345ad3e960056e"
+    },
+    {
+      "path": "artifacts/bc7002ed/arm64",
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885451,
+      "attempt": 1,
+      "artifactId": 11791004540,
+      "providerZipSha256": "273f3177ceb286cbafb3f9c767148f30098a6a770f8f4bcc9fdd11e6e47f8306",
+      "downloadRule": "原 ZIP 完整摘要验证；五个成员与 Required CI 实际 ARM64 guest 的 manifest 完全相等；完整产品 guest 尚未通过",
+      "manifestSha256": "556733433e6306b6eea28c85ee60ebcf4c10af46821ee400ef5e9e069954b5c5"
+    },
+    {
+      "path": "artifacts/ec3dafa5/amd64",
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11794521141,
+      "providerZipSha256": "943af70e24bb6059373960eaca1525eda3f77581fe88a6f6717ac7610a4132f2",
+      "downloadRule": "只按成员下载五个交付文件；每个程序／助手归档完整摘要和所有成员匹配实际通过 guest 的 manifest，不冒称本地核过 provider 整包 ZIP",
+      "manifestSha256": "0ab1f61d52a4e8d6e5c3a43c91f787b902b3a55ecf30407d40d4ba66bb86efce"
+    },
+    {
+      "path": "artifacts/ec3dafa5/arm64",
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11797305153,
+      "providerZipSha256": "e0d62f9538d8db59e8545681bedeac4c4e1df634f56cacbe11419d866650c42e",
+      "downloadRule": "只按成员下载五个交付文件；每个程序／助手归档完整摘要和所有成员匹配实际通过 guest 的 manifest，不冒称本地核过 provider 整包 ZIP",
+      "manifestSha256": "1783f1ee9185e37f872bb9e9c028d05f881eed9301f1e6b26ac575b9d224c07a"
+    }
+  ],
+  "nativeBuildEvidence": [
+    {
+      "path": "raw/native-build-bc7002ed-amd64.zip",
+      "sha256": "fddd175649d348d17e47d0ec8f57e410fafebedb0f69b03519a91a3aa0db0117",
+      "rule": "保留原成员字节；此小 ZIP 为派生容器，不冒充 provider 原 ZIP",
+      "sourceProviderArtifactId": 11791159178,
+      "sourceProviderZipSha256": "0f62e17a16e655f6e8411ac5f57f8a82b24bd3bfe7740b56485530cc69ed1879",
+      "runId": 38352885451,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "arch": "amd64",
+      "members": [
+        {
+          "path": "ci-connector-release/source.txt",
+          "sha256": "ffad49b064676dff6b7a2b2ea938706d6999b97694b4a8d0f0c32e21ca02701e",
+          "bytes": 83
+        },
+        {
+          "path": "ci-connector-release/install.log",
+          "sha256": "5f56556b8a7314936f1f8b37aac1ffff9aaa4ca73f75b9e6653515595d642c9b",
+          "bytes": 1532
+        },
+        {
+          "path": "ci-connector-release/build.log",
+          "sha256": "c75b5d41a4eb570c3c60d64fd1a95279876b0031c43e254c91578881a272cef2",
+          "bytes": 1538
+        },
+        {
+          "path": ".tmp/connector-release/manifest.json",
+          "sha256": "bc55be5f99f79f8661483030fd1333280d13bca1c3fc45251b345ad3e960056e",
+          "bytes": 24312
+        },
+        {
+          "path": ".tmp/connector-release/native-build.log",
+          "sha256": "dee4e4224c2f20c6280b0f3c35916aec7f1c4e065d05988fe46150692607a671",
+          "bytes": 2266
+        }
+      ]
+    },
+    {
+      "path": "raw/native-build-bc7002ed-arm64.zip",
+      "sha256": "4f345fa957c56195f81b7e61a646bec9d94993e57cf43d48765599b19db65fb0",
+      "rule": "保留原成员字节；此小 ZIP 为派生容器，不冒充 provider 原 ZIP",
+      "sourceProviderArtifactId": 11791004540,
+      "sourceProviderZipSha256": "273f3177ceb286cbafb3f9c767148f30098a6a770f8f4bcc9fdd11e6e47f8306",
+      "runId": 38352885451,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "arch": "arm64",
+      "members": [
+        {
+          "path": "ci-connector-release/source.txt",
+          "sha256": "ffad49b064676dff6b7a2b2ea938706d6999b97694b4a8d0f0c32e21ca02701e",
+          "bytes": 83
+        },
+        {
+          "path": "ci-connector-release/install.log",
+          "sha256": "d871a1e929fc6f289e95a41588d28a8371413171047bba3ca6b971e00937bed9",
+          "bytes": 1532
+        },
+        {
+          "path": "ci-connector-release/build.log",
+          "sha256": "b8f9252f4820d8be0cc10abbfa6042facd0c8314c6e6206fb890224c0909960c",
+          "bytes": 1538
+        },
+        {
+          "path": ".tmp/connector-release/manifest.json",
+          "sha256": "556733433e6306b6eea28c85ee60ebcf4c10af46821ee400ef5e9e069954b5c5",
+          "bytes": 23963
+        },
+        {
+          "path": ".tmp/connector-release/native-build.log",
+          "sha256": "f0441abc38f041be258f2f60a3d569849e2cc3ae0936896a28703045bad28d90",
+          "bytes": 2268
+        }
+      ]
+    }
+  ],
+  "validatedSnapshot": {
+    "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+    "runId": 38358684140,
+    "requiredJobs": 13,
+    "allSucceeded": true,
+    "results": [
+      {
+        "arch": "amd64",
+        "sourceHead": "ec3dafa58e20b478137d2468e900cddb4205296a",
+        "runId": 38358684140,
+        "status": "passed",
+        "totalSeconds": 626.851418185,
+        "receiptIntervalAcrossRebootSeconds": 135.04884624299996,
+        "remainingAtSuccessfulReplaySeconds": 784.862823,
+        "qemuPeakRssBytes": 2940895232,
+        "overlayAllocatedBytes": 1678987264,
+        "bootIds": [
+          "65de4adc-67d1-4cf4-9ac9-67d43afa84df",
+          "8951c95d-403a-4cc1-a92c-11949f3f0c25"
+        ],
+        "sourceBeforeAfterVerified": true
+      },
+      {
+        "arch": "arm64",
+        "sourceHead": "ec3dafa58e20b478137d2468e900cddb4205296a",
+        "runId": 38358684140,
+        "status": "passed",
+        "totalSeconds": 3725.1668377339997,
+        "receiptIntervalAcrossRebootSeconds": 874.1005015400001,
+        "remainingAtSuccessfulReplaySeconds": 104.224927,
+        "qemuPeakRssBytes": 3066638336,
+        "overlayAllocatedBytes": 1850699776,
+        "bootIds": [
+          "f8c73441-aa37-45db-920a-9ac3829b6210",
+          "f86f33a7-e1ec-4712-b4a4-d29d997be5fd"
+        ],
+        "sourceBeforeAfterVerified": true
+      }
+    ]
+  }
+}

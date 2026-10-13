@@ -28,3 +28,29 @@
 本轮落实既有低敏范围的例行协议选择：群组消息推送 Webhook，普通 markdown 内容最多 4096 UTF-8 字节，每个目标最多 20 条/分钟；通用提醒和 canonical 登录深链，无决策/回调/身份绑定。错误及本部署尚未实测的群策略、网络、网页登录条件见 [产品方案](../../plan/c2-wecom/product-design.md)。无真实发送。
 
 仅文档归档已经计划复核允许；仓库完整产品方案仍待独审与 Chief 另行放行，不把本条追加或官方可读当产品验收成功。
+
+## B-ship 本轮矩阵确认与方案准备
+
+本节追加当前裁定，前面的历史建议和当时状态保留。用户在问题卡 `doc:q-rojM7Z-OYYSGaTPRD04Td` 及本会话确认首批 **Linux amd64、arm64**，验收环境为独有干净虚拟机／原生 CI。矩阵和环境类型不再是未答事项；Windows/macOS 仍保留既有原生存储与 CLI 安全回归，本批没有这两种系统的发行验收承诺。
+
+具体系统版本和最低硬件未由用户指定。Ubuntu LTS 验收基线、1 vCPU／1 GiB 内存／2 GiB 可用磁盘，以及由锁定 Node 与原生模块共同决定的软件下限都是执行者建议，尚未实测，不写为用户批准的最低环境。
+
+本次确认仅放行 [当前规格](../../plan/b-ship/spec.md)、[实施方案](../../plan/b-ship/implementation-plan.md)、[验收设计](../../plan/b-ship/acceptance.md) 和 [准备证据](../b-ship/planning-evidence.md) 的仓库准备。saved plan 稳定引用为 `doc:Sq2Il0gKZRLrp-8L4RFk3`，完整原文从本会话保全；平台读取 plan 的截断事实单列。
+
+Node SEA、esbuild、postject 与同架构原生依赖归档是执行者提出的待审封装方案。当前未批准产品、安装器、发行脚本、CLI 源码、产物构建、设备验收或 CI 工作流改动。方案完成后进入正式独审，仅处理 P0/P1；Chief 单独放行后才进入产品实现。外部发布、新凭据和真实外发继续另批，不把设备确认、方案文件存在或历史 CI 当安装验收成功。
+
+
+## B-ship 无需 KVM 研究授权
+
+用户在 Chief 路线问题中回答“先验证无需 KVM 的路径（推荐）”。当前执行[完整研究规格](../../plan/b-ship/tcg/current-spec.md)和[研究计划](../../plan/b-ship/tcg/research-plan.md)，原设备矩阵仍为 Linux amd64、arm64，环境类型仍为独有干净虚拟机／原生 CI。旧 saved plan 与上面的文档准备裁定保留为历史。
+
+本次仅增加必要隔离实验、探测 workflow、测量和方案/证据修订。完整 guest OS、真实同用户 D-Bus/Secret Service、完整系统重启、原加密重放窗口和全部最终安装断言保持。普通容器 restart、源码探测、时间容量测量或历史绿色 CI 都不能代替最终无源码安装验收。
+
+不获取新机器、注册 runner、增加凭据或付费资源，不做连接器产品、安装器或发行物实现。TCG 是否取代历史 KVM 产品方案，由 Chief 根据本次实测另行裁定；研究交付不倒填 Accepted，也不解除产品实施门禁。
+
+
+本次研究 run `38301479837`、attempt 1、HEAD `df26e18864b34638fce0a25751c7060f249d1a3f` 的双架构原件已交叉复核：完整 guest、实际 OS reboot、同用户真实 Secret Service 和原 900 秒加密 API 重放均取得实证。重启至重放分别为 123.52 秒和 576.14 秒；源码连接器/SEA/native/最终安装组合仍未测。[研究报告](../b-ship/tcg/report.md)保存原件、首败、预算与剩余条件。实施/验收方案提出原生 hosted＋TCG、90 分钟产品 leg 总预算的 Proposed 建议；Chief 尚未裁定路线或批准产品，不改原窗口、秘密和最终全部断言。
+
+## B-ship 产品阶段放行
+
+用户原答复：“采用 TCG 并开始产品实现（推荐）”。当前执行 [产品完整规格](../../plan/b-ship/product/current-spec.md)及[实施计划](../../plan/b-ship/product/implementation-plan.md)。现有 hosted 双架构＋TCG 替代历史 KVM 环境建议，正式放行既定仓库内 Node SEA、原生封装、安装升级卸载、B4 和无源码完整验收；历史研究原件保持。不新增设备、runner、凭据或外发。最终产品证据、最新必需 CI、P0/P1 成果独审与 PR ready 后才条件合入。

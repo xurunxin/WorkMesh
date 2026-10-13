@@ -1,0 +1,72 @@
+name: Connector release development
+
+on:
+  pull_request:
+    paths:
+      - 'apps/connector/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/connector-release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Native SEA build (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Check out exact product head
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Prepare native build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3 binutils
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+          pnpm install --frozen-lockfile
+      - name: Compile and build private self-contained release
+        run: |
+          set -euo pipefail
+          mkdir -p ci-connector-release .tmp
+          git show -s --format='%H %T %P' HEAD > ci-connector-release/source.txt
+          pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-release" 2>&1 | tee ci-connector-release/build.log
+          pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-upgrade" --release-version 0.1.0-upgrade.1 2>&1 | tee ci-connector-release/upgrade-build.log
+      - name: Run installed entry integrity and uninstall checks
+        env:
+          WORKMESH_CONNECTOR_ARTIFACTS: ${{ github.workspace }}/.tmp/connector-release
+          WORKMESH_CONNECTOR_UPGRADE_ARTIFACTS: ${{ github.workspace }}/.tmp/connector-upgrade
+        run: |
+          set -o pipefail
+          pnpm --filter @workmesh/connector test:install 2>&1 | tee ci-connector-release/install.log
+      - name: Preserve exact product artifacts and first failures
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: connector-release-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ci-connector-release
+            .tmp/connector-release/*.json
+            .tmp/connector-release/*.log
+            .tmp/connector-release/*.tar.gz
+            .tmp/connector-release/*.sh
+            .tmp/connector-release/SHA256SUMS
+            .tmp/connector-release/installer-*/
+          if-no-files-found: error
+          retention-days: 14

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint, validateBackendLiteEntrypoint } from './ci-policy.mjs'
+import { checkIds, classifyChanges, evaluateResults, planForEvent, readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint, validateBackendLiteEntrypoint, validateConnectorInstallEntrypoint } from './ci-policy.mjs'
 import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
@@ -10,6 +10,28 @@ import { parse } from './ci-bootstrap/yaml.mjs'
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('自包含双架构完整安装不可丢 leg、跳过或吞失败', () => {
+  const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['connector-install']
+  assert.deepEqual(validateConnectorInstallEntrypoint(job), [])
+  for (const mutate of [
+    value => { value.strategy.matrix.include.pop() },
+    value => { value.strategy.matrix.include[1].runner = 'ubuntu-24.04' },
+    value => { value.steps = value.steps.filter(step => step.name !== 'Execute full no-source product guest') },
+    value => { value.steps.find(step => step.name === 'Execute full no-source product guest').if = 'false' },
+    value => { value.steps.find(step => step.name === 'Run installed entry integrity checks')['continue-on-error'] = true },
+  ]) {
+    const candidate = structuredClone(job); mutate(candidate)
+    assert.ok(validateConnectorInstallEntrypoint(candidate).length > 0)
+  }
+  for (const path of ['apps/connector/scripts/install-entry.ts', 'apps/api/src/auth-idempotency.ts', 'apps/mcp/src/http.ts', 'packages/contracts/src/index.ts']) {
+    const plan = classify([path]); assert.equal(plan.checks['connector-install'], true)
+    for (const result of ['failure', 'skipped', 'cancelled']) {
+      const needs = results(plan); needs['connector-install'].result = result
+      assert.ok(evaluateResults(plan, needs).length > 0)
+    }
+  }
+})
 
 test('纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败', () => {
   const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['source-gates']

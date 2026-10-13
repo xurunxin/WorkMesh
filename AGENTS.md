@@ -275,3 +275,5 @@ At the end of a task, report:
 执行 `pnpm check:integration-docs`，并按改动运行真实示例、合同与集成检查。
 静态链接/端点检查不能代替实际鉴权、请求、响应与恢复验收。
 记录准确源码、命令、环境、首败、未测和本人资源收尾；后续 #7 同次维护初版手册。
+
+连接器发行构建：`pnpm --filter @workmesh/connector build:release -- --output <new-owned-output>`。仅同架构 Linux、锁定 Node 和已提交干净源码；目标不依赖宿主 Node。完整产品验收状态及命令见 `docs/integration/installation.md`。
