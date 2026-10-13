@@ -1,6 +1,6 @@
 # 文档专项复核
 
-在仓库根目录将下面脚本存入新的本人临时目录并执行 python；先暂存本卡文档。只读来源、Git 和暂存字节，不连接业务服务。秘密比对仅在本轮私有环境文件仍存在时另执行；归档哈希复核独立可跑。
+在仓库根目录将下面脚本存入新的本人临时目录并执行 python。只读来源、Git 及已提交或暂存字节，不连接业务服务。秘密比对仅在本轮私有环境文件仍存在时执行；归档哈希复核独立可跑。
 
 ```python
 from pathlib import Path
@@ -55,13 +55,14 @@ assert 'WORM' in (out/'guarantee-decisions.md').read_text(encoding='utf-8')
 for path in ['docs/adr/0071-lite-single-node-self-hosted-deployment.md','docs/adr/0072-redis-free-and-object-store-free-runtime-profiles.md']:
  assert 'Status: Proposed' in (root/path).read_text(encoding='utf-8')
 staged=git('diff','--cached','--name-only').decode().splitlines()
-assert staged and all(p.startswith('docs/plan/ta01-self-hosted-deployment/') and p.endswith('.md') for p in staged)
-for p in staged: assert (root/p).read_bytes()==git('show',':'+p),('暂存字节',p)
+checked=staged or git('diff','--name-only',base,'HEAD').decode().splitlines()
+assert checked and all(p.startswith('docs/plan/ta01-self-hosted-deployment/') and p.endswith('.md') for p in checked)
+for p in checked: assert (root/p).read_bytes()==git('show',(':' if staged else 'HEAD:')+p),('Git 字节',p)
 secretsFile=Path(__file__).parent/'private.env'
 if secretsFile.exists():
  sensitive={k:v for k,v in (l.split('=',1) for l in secretsFile.read_text(encoding='utf-8').splitlines()) if any(t in k for t in ['PASSWORD','SECRET','TOKEN','MASTER_KEY','HMAC_KEY','CURSOR_KEYS'])}
  for p in out.rglob('*.md'):
   text=p.read_text(encoding='utf-8')
   for k,value in sensitive.items(): assert value not in text,('秘密值泄漏',p,k)
-print(json.dumps({'platformSources':count,'gitOriginals':originals,'runtimeOriginals':logs,'links':links,'stagedFiles':len(staged),'allIndexBytesMatch':True,'nineTestClasses':True,'secretsCheck':True}))
+print(json.dumps({'platformSources':count,'gitOriginals':originals,'runtimeOriginals':logs,'links':links,'checkedFiles':len(checked),'allIndexBytesMatch':True,'nineTestClasses':True,'secretsCheck':secretsFile.exists()}))
 ```
