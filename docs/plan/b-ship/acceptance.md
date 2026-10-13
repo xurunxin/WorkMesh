@@ -81,7 +81,7 @@
 
 本轮包含产品代码与验收工作流；按真实变更运行完整适用必需检查及双架构安装验收，文档检查不能代替安装成功。
 
-后续实施的具体命令如下；带新增 script 的命令当前未实现。
+当前已添加下列入口；完整产品验收结果另列，不因命令存在填通过。
 
 ```sh
 pnpm check:integration-docs
@@ -102,7 +102,7 @@ pnpm verify:integration-examples
 
 根 integration 使用独有 test 数据库、Redis 和对象存储，保持 opt-in recovery 的显式实际执行要求，不能将被跳过用例写为通过。适用 conformance 保留真实 REST/SDK/MCP/Pi；不恢复浏览器检查。B4 随文示例按行为改动真实运行，静态链接检查不代替鉴权、响应与恢复。
 
-### 历史 KVM CI 条款（保留来源，待路线裁定）
+### 历史 KVM CI 条款（保留来源，已由 TCG 裁定覆盖）
 
 新增 `connector-install` job 的 matrix 固定两项：amd64 的 `runs-on` 为 `ubuntu-24.04`，ARM64 的 `runs-on` 为 `[self-hosted, linux, ARM64, workmesh-connector-kvm]`。每项在本架构 Linux 构建机准备 GCC/G++、Make、Python 3、锁定 node-gyp 和已核 Node headers，原生编译 node-pty，打入 `build/Release/pty.node` 与上游 loader 后运行隔离 KVM guest 安装。目标安装/运行不执行生命周期脚本、node-gyp 或补件下载；本轮不修改 workflow 或执行编译。
 
@@ -118,7 +118,7 @@ ARM64 runner 须由 Chief 落实专用裸机、管理员完成受控注册和 KV
 
 后续拟用 `ubuntu-24.04`、`ubuntu-24.04-arm` 两个原生构建 leg，各自启动 `-accel tcg` 完整 guest；90 分钟 job 总预算待方案裁定并用完整产品组合验证。按[研究报告](../../reviews/b-ship/tcg/report.md)已测的 OS reboot、同用户 D-Bus/Secret Service、原加密 API 重放方法设计安装验收，新增实际安装 SEA、`SystemSecretStore`、pending/journal、完整协议与全部错误/恢复断言，不能用研究 `secret-tool` 或私有 API 夹具替代这些组合。
 
-Required CI 仍须绑定同一 run/attempt 的两架构产物及实际 checkout/tree、输入/镜像/固件摘要、native/SEA 加载、两次 boot_id/kernel 和期间 QMP RESET。TCG job 没有 KVM 不构成失败条件；缺完整 guest reboot、真实秘密或全部必要回执仍拒绝。只在 Chief 裁定 TCG 路线并单独放行产品后，才将这些增量接入产品 workflow 和汇总。当前既有 Required CI 与三系统回归未改，上面的历史 KVM 条款不作为本次研究执行步骤。
+Required CI 仍须绑定同一 run/attempt 的两架构产物及实际 checkout/tree、输入/镜像/固件摘要、native/SEA 加载、两次 boot_id/kernel 和期间 QMP RESET。TCG job 没有 KVM 不构成失败条件；缺完整 guest reboot、真实秘密或全部必要回执仍拒绝。用户已采用 TCG 并放行实施，这些增量已接入 connector-install 与 Required CI 汇总。三系统回归保留，历史 KVM 条款不作为当前产品执行步骤。
 
 下面“五个文档路径齐备”是历史文档准备阶段的判定。本次研究另外交付完整当前规格、研究计划、可复现探测脚本、脱敏运行原件和结论；逐项报告完整 guest、实际 reboot、秘密持久性、时间容量及真实 API 重放。仍不填写产品 DoD 已通过，不把历史 KVM 资源取得作为本次实验授权，也不预先放行 TCG 产品路线。
 

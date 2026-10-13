@@ -30,3 +30,6 @@ CI483 之后的历史 Required CI 不代本轮：run38341429314 分类明确因 
 原生辅助 run38342942446 的 amd64 leg 已实际通过 SEA 构建与安装／完整性／卸载 3 项；ARM64 leg 尚待结果，不外推双架构通过。Required run38342942448 的两条产品 leg 在记录输入摘要时因本任务新生成的 __pycache__ 目录被当文件而失败，guest 未启动。已只删除本轮两份已识别 bytecode 和其空目录，加入精确 ignore，并将摘要限定实际源文件；未触碰原策略拒目标。类型和 Python 语法检查随后不生成仓库 bytecode。
 
 升级候选使用独立 prerelease 元数据，不改变协议身份；两次构建仅复用经官方摘要再次核对的任务私有 Node/header 下载。安装加入受保护切换 journal，锁内重启恢复旧入口；卸载和回退只处理账本与归属版本。完整 TCG 驱动新增第二版本、旧配置／秘密复用、跨版本 pending、过期重放负例和卸载真实 Secret Service 秘密保留断言。这些新增断言尚待实测，不倒填通过。
+
+
+最新原生辅助 run38344079595/head0b3f1b2755ed5094e6c3c83f324a41cb6286ce30 两架构均通过 SEA、安装完整性、真实第二版本升级回退及卸载 4 项。对应 Required run38344079493 的 amd64 完整 guest 已实际启动，但在准备／离线安装根包装器阶段失败，尚未进入 connect 或 reboot；原件 raw/product-first-amd64.zip，provider artifact11787813661，下载 SHA-256 824ffc04062d121b2aa11abe6fdde9ecf63baaddb09de61fb2772167aaa990b7 与 provider digest 一致。现原件只有 GuestServiceFailure 与串口 systemd 失败，不含具体命令错误；不猜根因。新增服务 journal+console 输出，仅输出无秘密安装和安全诊断，以复跑定位。ARM64 同轮仍在运行，结果另核。

@@ -73,7 +73,7 @@ SHA-256 证明完整性，不独自证明发布者身份。本批仅从受审构
 
 ## 安装、升级与卸载
 
-下面是待实现的安装样例，当前仓库不存在这些发行文件。`ARCHIVE` 和 `MANIFEST` 指向经受审来源取得的本地文件，不含真实秘密。
+下面是已实现脚本的安装样例，完整产品验收进行中，版本化产物以准确构建记录为准。`ARCHIVE` 和 `MANIFEST` 指向经受审来源取得的本地文件，不含真实秘密。
 
 ```sh
 sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.local"
@@ -117,7 +117,7 @@ sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.loc
 | `docs/adr/0089-connector-versioned-distribution.md`、`docs/adr/README.md` | 放行产品阶段前补 Proposed ADR，记录新封装依赖与安全边界，接受状态由正式裁定决定 |
 | `docs/reviews/b-ship/` | 后续准确产物、命令、目标条件、首败、原生验收和收尾证据 |
 
-构建与验收脚本固定仓库命令为 `pnpm --filter @workmesh/connector build:release -- --output <owned-output>` 和 `pnpm --filter @workmesh/connector test:install`；均待实现。新 devDependencies 的准确版本与 integrity 在实施开始时核官方元数据并锁定，不能用 `latest` 或临时 npx 安装。本轮只确定工具选择，不伪造未生成的 lock 条目。
+当前构建与验收脚本固定仓库命令为 `pnpm --filter @workmesh/connector build:release -- --output <owned-output>` 和 `pnpm --filter @workmesh/connector test:install`。构建依赖已核官方元数据并锁入 pnpm-lock.yaml：esbuild、postject、node-gyp 与 tar；不使用临时 npx 或 latest。源码和安装器入口已实现，完整产品验收结果另列。
 
 ## 秘密、资源与空间
 

@@ -132,6 +132,8 @@ After=cloud-final.service network-online.target
 Wants=network-online.target
 [Service]
 Type=oneshot
+StandardOutput=journal+console
+StandardError=journal+console
 ExecStart=/opt/connector-install/finish.sh
 TimeoutStartSec=1200
 [Install]
