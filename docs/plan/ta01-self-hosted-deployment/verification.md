@@ -57,3 +57,9 @@ Lite 构建的网络首败、夹具 bucket 命名错误、身份预检和复核�
 第一轮完整专项核验通过：9 份平台来源、14 份 Git 原件、12 份运行原件、88 个导航链接和九类测试承接；46 个暂存文件与工作树字节一致，生成测试秘密值没有进入归档。后加入的复核与收尾脚本文档在最终轮一并核验。
 
 实际 `classifyChanges` 为 `docs`，packages／testPackages 为空，八类产品检查均为 false。五项根产品检查本轮按既有分类不执行，不写通过。Node 运行时在实际应用镜像中读回 `v22.19.0`。提交前再次真实 main 查询仍为固定产品基线。
+
+48 个文件的第二轮专项核验通过，文件字节与实际 index 一致；已推送提交 `0320be7213040505a788ac5d8aff727b84a0b75f`，草稿 [PR #227](https://github.com/xurunxin/WorkMesh/pull/227) 已创建。该候选 [CI #507](https://github.com/xurunxin/WorkMesh/actions/runs/38406462337) 分类成功，八类产品检查按文档策略跳过；当前提交若继续增加收尾记录，最新 Required CI 须独立核，不沿用此候选结果。
+
+Docker 收尾预检首次误将默认短 ID 与完整账本比较，未派发删除；独立 `--no-trunc` 读回证明七个准确容器集合一致。第二次预检因 minio-init 的无 project 标签匿名 `/data` 卷停止，同样未派发删除。其镜像声明 VOLUME，未来部署需明确登记或隔离这类初始化挂载，避免重复产生无归属卷。
+
+实际收尾只删除已登记的七个容器、三个命名卷、一个网络及一个私有应用镜像，十二个对象各有明确不存在回执。匿名卷 `8cb9c40dd18ce0dbe135e4ba5186943cb684af64790072c28675a43650fd820e` 保留，不修改其标签，不再尝试删除。共享镜像、公共 build cache 和旧工具目录保持。原预检及最终回执见 [cleanup-receipts.md](sources/cleanup-receipts.md)，临时目录与本工作树 YAML 依赖的收尾另记实际结果。

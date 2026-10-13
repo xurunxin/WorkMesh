@@ -1,6 +1,6 @@
 # 本任务 Docker 收尾规则
 
-下面是本轮准确资源的受控收尾脚本原件，仅供审阅，不应重跑。它读取本轮临时账本，逐对象核身份、停止服务、检查外部引用并定向移除；首败即停。Config.Env、Cmd、私有标签和卷驱动选项不进入回执。
+这是本轮实际工具原件，仅供审阅，不应重跑。只删除明确归属且无外部引用的对象；无 project 标签的匿名卷保存，不重试删除。原始身份预检失败及实际回执见 [cleanup-receipts.md](cleanup-receipts.md)。只输出安全投影，不归档 Config.Env、Cmd、私有标签或卷驱动选项。
 
 ```python
 from pathlib import Path
@@ -20,7 +20,7 @@ def inspect(kind,id):
  if p.returncode: raise RuntimeError('身份读回失败：'+kind)
  return json.loads(p.stdout)[0]
 try:
- ids=run(['docker','ps','-aq','--filter','label=com.docker.compose.project='+owner]).stdout.splitlines()
+ ids=run(['docker','ps','-aq','--no-trunc','--filter','label=com.docker.compose.project='+owner]).stdout.splitlines()
  expected={x['id'] for x in r['resources']}
  if set(ids)!=expected: raise RuntimeError('当前容器集与运行账本不符')
  mounts=set();networks=set()
@@ -30,9 +30,12 @@ try:
   receipt['resources'].append({'kind':'container','id':id,'service':labels.get('com.docker.compose.service'),'statusBefore':d['State']['Status'],'mounts':[{'type':m['Type'],'name':m.get('Name'),'destination':m['Destination']} for m in d['Mounts']]})
   mounts.update(m['Name'] for m in d['Mounts'] if m['Type']=='volume')
   networks.update(d['NetworkSettings']['Networks'])
+ ownedMounts=set()
  for name in mounts:
   d=inspect('volume',name)
-  if d['Labels'].get('com.docker.compose.project')!=owner: raise RuntimeError('卷归属不符')
+  if (d.get('Labels') or {}).get('com.docker.compose.project')!=owner:
+   receipt.setdefault('preservedUnlabelledVolumes',[]).append({'name':name,'reason':'无 project 归属标签，保留；不重试删除'})
+  else: ownedMounts.add(name)
  for name in networks:
   d=inspect('network',name)
   if d['Labels'].get('com.docker.compose.project')!=owner or not set(d['Containers']).issubset(expected): raise RuntimeError('网络有外来引用')
@@ -43,7 +46,7 @@ try:
   d=inspect('container',id)
   if d['State']['Running'] or d['Config']['Labels'].get('workmesh.task')!=owner: raise RuntimeError('容器停机或身份不符')
   run(['docker','rm',id])
- for name in mounts:
+ for name in ownedMounts:
   if run(['docker','ps','-aq','--filter','volume='+name]).stdout.strip(): raise RuntimeError('卷仍有引用')
   if inspect('volume',name)['Labels'].get('com.docker.compose.project')!=owner: raise RuntimeError('卷身份变化')
   run(['docker','volume','rm',name]);receipt['resources'].append({'kind':'volume','id':name,'removed':True})
@@ -63,7 +66,7 @@ try:
   absent=p.returncode!=0 and any(t in p.stderr.lower() for t in ['no such','not found'])
   item['absent']=absent
   if not absent: raise RuntimeError('不存在证明未成立：'+kind)
- receipt['outcome']='独有容器、卷、网络和应用镜像收尾完成；共享镜像与 build cache 保留'
+ receipt['outcome']='独有容器、命名卷、网络和应用镜像收尾完成；无标签匿名卷、共享镜像与 build cache 保留'
 except Exception as error:
  receipt['outcome']=str(error)
 finally:
