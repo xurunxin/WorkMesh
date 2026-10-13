@@ -25,8 +25,22 @@ checks, samples, diagnostics = [], [], {}
 def command(args, *, expected=0, data=None, timeout=1800):
     result = subprocess.run(args, input=data, capture_output=True, timeout=timeout)
     if result.returncode != expected:
+        stderr = result.stderr.decode(errors='replace')
+        # Never export command arguments or raw stderr: either may contain keys.
+        categories = {
+            'imageMissing': ['No such image', 'Unable to find image'],
+            'daemonUnavailable': ['Cannot connect to the Docker daemon'],
+            'apiVersionMismatch': ['client version', 'minimum supported API version'],
+            'mountRejected': ['invalid mount config', 'bind source path does not exist'],
+            'entrypointRejected': ['exec format error', 'executable file not found', 'permission denied'],
+            'archiveRejected': ['docker-import-', 'archive/tar', 'invalid tar header'],
+            'networkUnavailable': ['network is unreachable'],
+        }
         diagnostics.update(exitCode=result.returncode,
-                           codes=sorted(set(re.findall(r'\b(?:INSTALL|DEPLOYMENT|RECOVERY)_[A-Z_]+', result.stderr.decode(errors='replace')))))
+                           command=args[0].rsplit('/', 1)[-1],
+                           stderrSha256=hashlib.sha256(result.stderr).hexdigest(),
+                           categories=[name for name, needles in categories.items() if any(needle in stderr for needle in needles)],
+                           codes=sorted(set(re.findall(r'\b(?:INSTALL|DEPLOYMENT|RECOVERY)_[A-Z_]+', stderr))))
         raise RuntimeError('installed command failed')
     return result.stdout.decode()
 
@@ -138,8 +152,8 @@ def measurement(prefix, phase):
               'state': [{'id': v['Id'], 'image': v['Image'], 'oom': v['State']['OOMKilled'], 'restarts': v['RestartCount'],
                          'memoryLimit': v['HostConfig']['Memory'], 'nanoCpus': v['HostConfig']['NanoCpus']} for v in infos],
               'disk': command(['df', '-B1', '--output=size,used,avail', str(prefix)]).splitlines()}
-    assert not any(v['oom'] for v in sample['state'])
     samples.append(sample)
+    assert not any(v['oom'] for v in sample['state'])
 
 
 class Client:
@@ -257,10 +271,15 @@ def journey(prefix, config, certificates):
         latencies.append(time.monotonic() - started)
         return result
     stopped = threading.Event()
+    measurement_errors = []
     def measure_load():
-        while not stopped.is_set():
-            measurement(prefix, 'concurrent-load')
-            stopped.wait(1)
+        try:
+            while not stopped.is_set():
+                measurement(prefix, 'concurrent-load')
+                stopped.wait(1)
+        except Exception as error:
+            measurement_errors.append(type(error).__name__)
+            stopped.set()
     monitor = threading.Thread(target=measure_load)
     monitor.start()
     with ThreadPoolExecutor(max_workers=4) as pool:
@@ -270,6 +289,8 @@ def journey(prefix, config, certificates):
             stopped.set()
             monitor.join()
     assert len(set(ids)) == 32
+    if measurement_errors:
+        raise RuntimeError('resource measurement failed')
     samples.append({'phase': 'concurrent-latency', 'count': 32, 'concurrency': 4, 'seconds': latencies})
     checks.append('concurrentRequests')
     return {'email': 'probe@example.test', 'password': password, 'itemId': item['id'], 'secondItemId': second['id'],
@@ -386,6 +407,14 @@ def main():
             if rebooted:
                 client = Client(certificates)
                 identity = saved['profiles'][index]['identity']
+                for attempt in range(120):
+                    try:
+                        client.request('https://10.0.2.15:' + str(api_port) + '/readyz')
+                        break
+                    except (AssertionError, OSError, ValueError):
+                        if attempt == 119:
+                            raise
+                        time.sleep(1)
                 result = client.request('https://10.0.2.15:' + str(api_port) + '/api/v1/auth/login', {'email': identity['email'], 'password': identity['password']})
                 client.csrf = result['csrfToken']
                 assert client.request('https://10.0.2.15:' + str(api_port) + '/api/v1/work-items/' + identity['itemId'])['id'] == identity['itemId']
@@ -438,7 +467,7 @@ def main():
             report({'phase': 'before-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
                     'profiles': profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
     except Exception as error:
-        report({'phase': 'failure', 'errorType': type(error).__name__, 'diagnostics': diagnostics, 'completedChecks': checks})
+        report({'phase': 'failure', 'errorType': type(error).__name__, 'diagnostics': diagnostics, 'completedChecks': checks, 'samples': samples})
         raise
     finally:
         for server in servers:

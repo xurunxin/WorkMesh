@@ -59,7 +59,7 @@ def main():
 
         def do_POST(self):
             size = int(self.headers.get("Content-Length", "0"))
-            if self.path != "/receipt" or size > 32768:
+            if self.path != "/receipt" or size > 1024 * 1024:
                 self.send_error(400)
                 return
             value = json.loads(self.rfile.read(size))

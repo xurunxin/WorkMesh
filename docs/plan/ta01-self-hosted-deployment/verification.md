@@ -116,3 +116,7 @@ CI #513／run 38443222251 的双架构安装器 7 项单元通过，构建前检
 CI #514 的 ARM 原返回证明 API／worker／MCP／Lite／installer 五镜像已构建，但候选未封包。随后 docker pull 成功，继承 stdout 的 execFileSync 返回 null，构建 wrapper 对 null 调用 trim 导致失败。已修正仅不捕获输出的成功命令返回处理；进程非零仍抛错，不吞失败。原返回见 [ARM 构建首败](sources/product-ci-arm-build-failure.md)，该结果不当 guest 或最终候选通过。
 
 CI #515 的分类 job 在完整历史 fetch 中耗尽 5 分钟预算并取消，源码与产品检查未执行。原返回见 [fetch 首败](sources/product-ci-history-fetch-failure.md)。仅将该基础资源预算调为有界 15 分钟，fetch-depth: 0、完整 diff、分类安全验证和失败传播继续；没有放宽领域测试或断言，也没有重跑健康结果。
+
+CI #516／run 38447218904 的 amd64 候选完成五镜像构建及封包，完整 guest 随后失败。准确受测 HEAD 为 b670f3d0a468aa51a75ccbf2b77ec8aba79a8c7d；固定 2 vCPU、4,096 MiB，执行 516.54 秒，仅完成 offlineNoDefaultRoute。后续命令退出 125，原回执没有 stderr，不能从退出码认定具体原因。原件与成员哈希见 [guest 首败索引](../../reviews/ta01-product/ci516-amd64-first-guest-failure.json)及[压缩原件](../../reviews/ta01-product/ci516-amd64-first-guest-failure.zip)。任何画像闭环、重启及新安装器恢复均未取得通过依据。
+
+独立源码核查发现 docker save 按镜像 ID 导出的归档不保证原标签存在，安装器仍将 PG／Redis／S3 的 Compose 镜像写成原标签。现统一使用清单中经校验的镜像 ID，包括 minio-init；这项修正尚不属于上述受测候选。guest 同时新增不含参数或原始 stderr 的固定错误分类及 stderr 哈希；OOM 样本先保全、后台测量错误传播、有界重启就绪等待和 1 MiB 回执上限一并待新候选复验，未改业务断言或保证。

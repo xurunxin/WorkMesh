@@ -72,6 +72,8 @@ async function render(config, manifest, bundle, prefix, authority, keys) {
   delete document.name
   for (const [name, service] of Object.entries(document.services)) {
     delete service.profiles
+    const dependencyRole = name === 'minio-init' ? 'minio' : name
+    if (['postgres', 'redis', 'minio'].includes(dependencyRole)) service.image = manifest.images[dependencyRole].id
     service.labels = { ...service.labels, 'io.workmesh.installation': config.installationId,
       'io.workmesh.installation-root': hash(Buffer.from(prefix)) }
     service.pull_policy = 'never'
