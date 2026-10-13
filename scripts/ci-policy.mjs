@@ -5,7 +5,23 @@ import { fileURLToPath } from 'node:url'
 import { testConsumers } from './ci-test-inputs.mjs'
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'recovery-integration', 'agent-smoke', 'connector-platform', 'connector-install']
+export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'recovery-integration', 'agent-smoke', 'connector-platform', 'connector-install', 'server-install']
+
+export function validateServerInstallEntrypoint(job) {
+  const failures = []
+  if (JSON.stringify(job?.strategy?.matrix?.include) !== JSON.stringify([
+    { arch: 'amd64', runner: 'ubuntu-24.04' }, { arch: 'arm64', runner: 'ubuntu-24.04-arm' }])
+    || job?.['runs-on'] !== '${{ matrix.runner }}' || job?.strategy?.['fail-fast'] !== false)
+    failures.push('server-install must retain both native hosted architectures')
+  for (const command of ['node --test scripts/server-distribution/install.test.mjs',
+    'node scripts/server-distribution/build.mjs --arch', 'python3 scripts/server-distribution/run.py --arch']) {
+    const steps = job?.steps?.filter(step => step.run?.includes(command)) ?? []
+    if (steps.length !== 1 || steps[0].if || steps[0]['continue-on-error']
+      || !steps[0].run.includes('set -euo pipefail') || steps[0].run.includes('|| true'))
+      failures.push(`server-install must execute ${command} without skipping or masking failure`)
+  }
+  return failures
+}
 
 export function validateConnectorInstallEntrypoint(job) {
   const failures = []
@@ -113,6 +129,7 @@ export function classifyChanges(paths, workspaces, { forceFull = false, mainPush
     'source-gates': full || runtime.length > 0,
     'connector-platform': full || has('connector'),
     'connector-install': full || ['connector', 'api', 'mcp', 'contracts', 'db', 'config', 'agent-sdk'].some(has),
+    'server-install': full || ['api', 'worker', 'mcp', 'contracts', 'db', 'config', 'recovery', 'artifact-storage'].some(has),
     'db-integration': full || has('db'),
     // API integration imports worker implementations directly in its fixtures.
     'api-integration': full || ['api', 'worker', 'fake-agent', 'mcp', 'agent-sdk', 'agent-runner', 'conformance'].some(has),

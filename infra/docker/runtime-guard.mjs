@@ -22,6 +22,7 @@ export const validateAuthoritativeRuntimeEnvironment = async (environment) => {
   const service = environment.WORKMESH_SERVICE
   if (service !== 'api' && service !== 'worker') return
   const config = await importAuthoritativeConfig()
+  config.loadDeploymentProfile(environment)
   if (service === 'api') {
     config.loadConfig(environment)
     config.loadFeatureConfig(environment)

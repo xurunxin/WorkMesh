@@ -1,4 +1,6 @@
 import { z } from 'zod'
+export { loadDeploymentProfile } from './deployment-profile.js'
+import { loadDeploymentProfile } from './deployment-profile.js'
 import net from 'node:net'
 import { randomBytes } from 'node:crypto'
 import { featureDefinitions, releaseMetadata, type FeatureKey } from '@workmesh/contracts'
@@ -237,6 +239,7 @@ const retentionEnvironmentSchema = z.object({
 })
 
 export const loadRetentionConfig = (env: NodeJS.ProcessEnv = process.env): RetentionConfig => {
+  loadDeploymentProfile(env)
   const value = retentionEnvironmentSchema.parse(env)
   return Object.freeze({
     genericReplayHours: value.WORKMESH_IDEMPOTENCY_REPLAY_HOURS,
@@ -324,6 +327,7 @@ function parsePaginationCursorKeys(
 }
 
 export const loadConfig = (env: NodeJS.ProcessEnv = process.env): Config => {
+  loadDeploymentProfile(env)
   const value = envSchema.parse(env)
   const bootstrapMaterial = value.WORKMESH_BOOTSTRAP_TOKEN
     ? decodeCanonicalBase64Url(value.WORKMESH_BOOTSTRAP_TOKEN)

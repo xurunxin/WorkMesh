@@ -151,3 +151,7 @@ PostgreSQL and MinIO, checks wrong keys, interruption/resume, complete restore,
 repeat validation, non-empty target rejection, missing/truncated payloads,
 object/version/checksum/lock metadata, and secret decryption. It then starts the
 restored API、worker 和 MCP and stores a machine-readable Agent smoke report.
+
+## 版本化服务端基础候选
+
+TA01 安装工具复用本页的配置及完整恢复合同。入口见 [服务端安装说明](../integration/server-installation.md)；当前新组合验收尚未完成。恢复继续认证所有对象版本和保留状态，只写独立空目标，不删除源数据卷。

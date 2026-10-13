@@ -354,3 +354,7 @@ services:
 有效成功响应才记 delivered；提供方明确拒绝记安全错误码，已发出后的超时、断连或畸形响应进入 uncertain，不能自动重发。既有投递对账 REST 由当前目标 owner 显式确认 delivered、retry 或 dead；retry 复用原 delivery/effectKey，仍重新准入和鉴权，至少一次不能保证外部恰好一次。
 
 协议核实及官方原始字节见 `docs/plan/c2-wecom/README.md`、`official/retrieval.json` 和无损归档。只出站没有入站签名、绑定或回调时窗依赖。本轮验收仅用 fake provider；真实外发须另获用户明确授权。
+
+## 版本化服务端基础候选
+
+TA01 安装工具复用本页的配置及完整恢复合同。入口见 [服务端安装说明](integration/server-installation.md)；当前新组合验收尚未完成。恢复继续认证所有对象版本和保留状态，只写独立空目标，不删除源数据卷。

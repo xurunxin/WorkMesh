@@ -99,6 +99,8 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
       S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
       S3_REGION: ${S3_REGION:-us-east-1}
+    tmpfs:
+      - /data:rw,nosuid,nodev,size=16m
     restart: "no"
 
   migrate:
