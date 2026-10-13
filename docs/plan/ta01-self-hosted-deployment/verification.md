@@ -110,3 +110,5 @@ Docker 收尾预检首次误将默认短 ID 与完整账本比较，未派发删
 CI #512 的分类及 API／DB／worker／recovery／agent-smoke 已成功；server-install 双架构在目录拒绝单元断言处失败，尚未执行构建或 guest。断言现同时接受明确 PATH／ANCESTOR 拒绝，拒绝实现保持。根门禁通过、旧 CI 或本机单元都不代当前 CLI 候选支持通过。
 
 CLI 当前另有健康后 pending／真实鉴权读取再 commit、持久安装 UUID、同 project 全局锁与卷名冲突拒绝、程序输入指纹和依赖镜像兼容条件。安装包中加入配置示例及实际工具版本。新接口只为安装工具，没有业务 REST／events／schema／ADR 状态变化；文档同步说明首次用户由既有 API 创建，安装器不自动命名用户。
+
+CI #513／run 38443222251 的双架构安装器 7 项单元通过，构建前检查因未跟踪的 ci-logs/server-install 输出目录失败。现仅给该明确运行输出及 Python __pycache__ 登记忽略，不改干净源码检查；未开始构建或 guest，不记为通过。
