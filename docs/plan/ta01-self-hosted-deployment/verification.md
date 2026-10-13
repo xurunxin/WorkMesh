@@ -94,3 +94,9 @@ Docker 收尾预检首次误将默认短 ID 与完整账本比较，未派发删
 锁定 Node 与 pnpm 沿已有 TA00 可读缓存复用。workspace 依赖本次新建，正常 lifecycle 已执行；实际 storeDir 为 I:\.pnpm-store\v3\v3，首装 510 个包全部下载，没有命中共享 store。此路径选取多加了一层 v3，未更改共享配置，后续沿该已产生缓存复用，不冒称本轮命中共享包缓存。历史被拒目录与无标签卷未重试处理。
 
 完整 guest 固定 2 vCPU、4,096 MiB 和 40 GiB 虚拟盘，仅作为受测条件，不作为最低配置。兼容升级夹具使用同源镜像的两个候选标识，不能冒充两个已发行历史程序版本；后续按实际结果记录该边界。
+
+## 首轮产品失败与纠正
+
+产品 HEAD 5ee89e6a3289dfebec375e163890e5d4c68f074e 的 CI #511／run 38431425238 失败。分类 job 的真实 range diff 拒绝两个新来源编码文件的末尾空行，产品 jobs 因分类失败未执行；Required CI 同样失败。工作树零 diff 检查曾漏过已提交范围，现改为核完整 main 至候选范围。编码尾部空白已纠正，原工具正文的 JSON 行数组内容不变，来源指纹随编码字节更新。实际 log tail 见 [原返回](sources/product-ci-first-failure.md)。
+
+本机候选首次构建失败于 Alpine community 仓库 IO ERROR，未跳过 apk 更新；根五门禁尝试在 lint 阶段找不到 pnpm PATH 入口，后续四项未执行。本次专用 pnpm.cmd 只引用已有锁定工具，不安装全局工具。原件及实际 3 个容器／3 个卷的归属收尾回执见 [首败索引](../../reviews/ta01-product/first-local-failures.json)与 [原日志压缩包](../../reviews/ta01-product/first-local-failures.zip)。

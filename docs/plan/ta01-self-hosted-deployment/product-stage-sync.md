@@ -41,7 +41,7 @@ Redis-free／filesystem 的原保证选项不删除、不实施；ADR 0071／007
 
 | 文件 | 原正文 SHA-256 | 文件 SHA-256 | 计算 Git blob |
 | --- | --- | --- | --- |
-| sources/exception-todo.md | d7dd371a77ffca5a8bf87b2bd9799e0bb046b8b79ecf996af09ae54fb869bd6a | 3e2b2230d0da848bac47fb69ead56994ba28aee6134ea998e6405da33977aa42 | 9154f484e230295184afcfa96aa269d53c208c81 |
-| sources/exception-conversation.md | c9f1997ec1ec4bf47b156898c10ecb25bb361016c1bd74c52ade342921be52b4 | 7a42776ca16ed8b0dd4b944e4ba4ff504a62a9ef9f477821fed15a4acef03fdb | edc1212a47b61362bbf42705ff086baeeba895e9 |
+| sources/exception-todo.md | d7dd371a77ffca5a8bf87b2bd9799e0bb046b8b79ecf996af09ae54fb869bd6a | 6d783b186e7ba9f42427c745735a232e7099641f779d1704bbbf82c7cb050145 | 69e43a87cbb86bb2fabafdbae41e0cdaf369fcc2 |
+| sources/exception-conversation.md | c9f1997ec1ec4bf47b156898c10ecb25bb361016c1bd74c52ade342921be52b4 | 569811f3af74060a58b4f5e2f09edd0fa470d8911b04d5f8056287706824058c | 2a11266c66eba1d3c474a12fe1e3b1281ce6e31d |
 
 当前 Spec SHA-256：77183e04c12c6f6113172a272273578a689ee923f3102b5045df2f5b3ac33ff2。当前执行计划 SHA-256：0ec0e49b2959c1323fc4009d982629bff890e409953eb68bc47f96a457253c28。

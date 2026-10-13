@@ -46,3 +46,7 @@ docs/reviews/b-ship/tcg/raw/*.zip -text
 docs/plan/b-ship/tcg/current-spec.md -text
 docs/reviews/b-ship/product/raw/*.zip -text
 docs/reviews/b-ship/product/artifacts/** -text
+
+# TA01 基础交付运行原件保持压缩包准确字节。
+docs/reviews/ta01-product/*.zip -text
+scripts/server-distribution/*.sh text eol=lf
