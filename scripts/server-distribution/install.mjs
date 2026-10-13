@@ -3,7 +3,8 @@ import { mkdir, readFile, writeFile, lstat, realpath, statfs, readdir } from 'no
 import path from 'node:path'
 import { randomUUID, randomBytes } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
-import { verifyBundle, hash, fail, assertCompatibleLedger } from './manifest.mjs'
+import https from 'node:https'
+import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgram, canonicalJson } from './manifest.mjs'
 import { atomicJson, privateDirectory, readState, validateJournal, withInstallLock } from './journal.mjs'
 
 const appConfig = () => import('/app/node_modules/@workmesh/config/dist/index.js')
@@ -71,14 +72,16 @@ async function render(config, manifest, bundle, prefix, authority, keys) {
   delete document.name
   for (const [name, service] of Object.entries(document.services)) {
     delete service.profiles
-    service.labels = { ...service.labels, 'io.workmesh.installation': config.project }
+    service.labels = { ...service.labels, 'io.workmesh.installation': config.installationId,
+      'io.workmesh.installation-root': hash(Buffer.from(prefix)) }
     service.pull_policy = 'never'
     if (name === 'minio-init') service.tmpfs = ['/data:rw,nosuid,nodev,size=16m']
     if (runtimeServices.includes(name)) {
       for (const key of profileNames) if (env[key] !== undefined) service.environment[key] = env[key]
       if (env.NODE_EXTRA_CA_CERTS) service.volumes = [...(service.volumes ?? []), {
-        type: 'bind', source: env.NODE_EXTRA_CA_CERTS, target: env.NODE_EXTRA_CA_CERTS, read_only: true,
+        type: 'bind', source: env.NODE_EXTRA_CA_CERTS, target: '/run/workmesh/private-ca.pem', read_only: true,
       }]
+      if (env.NODE_EXTRA_CA_CERTS) service.environment.NODE_EXTRA_CA_CERTS = '/run/workmesh/private-ca.pem'
       service.environment.SESSION_COOKIE_SECURE = 'true'
       if (name === 'mcp' && config.profile === 'personal') {
         service.mem_limit = '384m'; service.environment.NODE_OPTIONS = '--max-old-space-size=256'
@@ -120,9 +123,15 @@ async function importImages(bundle, manifest) {
       || (image.revision && inspected.Config.Labels?.['org.opencontainers.image.revision'] !== image.revision)) fail('INSTALL_IMAGE_IDENTITY_MISMATCH')
   }
 }
-function assertNoExistingDeployment(project) {
+function assertNoExistingDeployment(project, document) {
   for (const args of [['ps', '-aq'], ['volume', 'ls', '-q'], ['network', 'ls', '-q']]) {
     if (docker([...args, '--filter', `label=com.docker.compose.project=${project}`])) fail('INSTALL_PROJECT_ALREADY_EXISTS')
+  }
+  for (const volume of Object.values(document.volumes ?? {})) {
+    if (docker(['volume', 'ls', '-q', '--filter', `name=^${volume.name}$`])) fail('INSTALL_VOLUME_ALREADY_EXISTS')
+  }
+  for (const network of Object.values(document.networks ?? {})) {
+    if (docker(['network', 'ls', '-q', '--filter', `name=^${network.name}$`])) fail('INSTALL_NETWORK_ALREADY_EXISTS')
   }
 }
 function assertOwnedDeployment(release) {
@@ -130,7 +139,23 @@ function assertOwnedDeployment(release) {
   if (!ids.length) fail('INSTALL_DEPLOYMENT_MISSING')
   for (const id of ids) {
     const info = JSON.parse(docker(['inspect', id]))[0]
-    if (info.Config.Labels?.['io.workmesh.installation'] !== release.project) fail('INSTALL_DEPLOYMENT_OWNERSHIP_MISMATCH')
+    if (info.Config.Labels?.['io.workmesh.installation'] !== release.installationId
+      || info.Config.Labels?.['io.workmesh.installation-root'] !== release.rootHash) fail('INSTALL_DEPLOYMENT_OWNERSHIP_MISMATCH')
+  }
+}
+async function withProjectLock(identity, image, action) {
+  let id
+  try {
+    id = docker(['create', '--name', `workmesh-install-lock-${identity.project}`, '--network', 'none', '--read-only',
+      '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges:true', '--label', `io.workmesh.installation=${identity.id}`,
+      '--label', `io.workmesh.installation-root=${hash(Buffer.from(identity.root))}`, '--entrypoint', 'true', image])
+  } catch { fail('INSTALL_PROJECT_LOCKED') }
+  try { return await action() }
+  finally {
+    const info = JSON.parse(docker(['inspect', id]))[0]
+    if (info.State.Running || info.Config.Labels?.['io.workmesh.installation'] !== identity.id
+      || info.Config.Labels?.['io.workmesh.installation-root'] !== hash(Buffer.from(identity.root))) fail('INSTALL_LOCK_OWNERSHIP_MISMATCH')
+    docker(['rm', id])
   }
 }
 function ledger(release) {
@@ -160,6 +185,8 @@ async function oneShotRecovery(release, mode, directory, target = undefined) {
   const args = ['run', '--rm', '--pull', 'never', '--network', network, '--read-only', '--cap-drop', 'ALL',
     '--security-opt', 'no-new-privileges:true', '--tmpfs', '/tmp:rw,nosuid,nodev,size=256m',
     '--user', '0:0', '--env-file', envFile, '--mount', `type=bind,src=${mode === 'backup' ? path.dirname(directory) : directory},dst=${mode === 'backup' ? path.dirname(directory) : directory}`,
+    ...(api.volumes ?? []).filter(mount => mount.type === 'bind' && mount.target === '/run/workmesh/private-ca.pem')
+      .flatMap(mount => ['--mount', `type=bind,src=${mount.source},dst=${mount.target},readonly`]),
     '--workdir', containerRoot, '--entrypoint', 'node', document.services.api.image,
     'node_modules/@workmesh/recovery/dist/scripts/' + (mode === 'backup' ? 'backup.js' : 'restore.js'), directory]
   const output = docker(args)
@@ -173,12 +200,58 @@ async function recoverOld(previous, journal, journalFile) {
   journal.recovery = { status: 'previous-restored', migrationLedger: ledger(previous) }
   await atomicJson(journalFile, journal)
 }
+async function verifyBusinessRead(release, env, proofFile) {
+  const info = await lstat(proofFile)
+  if (!info.isFile() || info.isSymbolicLink() || (info.mode & 0o077)) fail('INSTALL_VALIDATION_PERMISSIONS_INVALID')
+  let proof
+  try { proof = JSON.parse(await readFile(proofFile, 'utf8')) } catch { fail('INSTALL_VALIDATION_INVALID') }
+  if (!proof || Object.keys(proof).sort().join(',') !== 'credential,workItemId'
+    || typeof proof.credential !== 'string' || proof.credential.length < 32 || proof.credential.length > 1024
+    || /\s/.test(proof.credential) || !/^[a-f0-9-]{36}$/.test(proof.workItemId)) fail('INSTALL_VALIDATION_INVALID')
+  const ca = env.NODE_EXTRA_CA_CERTS ? await readFile(env.NODE_EXTRA_CA_CERTS) : undefined
+  const post = (id, method, params) => new Promise((resolve, reject) => {
+    const body = JSON.stringify({ jsonrpc: '2.0', id, method, params })
+    const request = https.request(new URL('/mcp', env.PUBLIC_MCP_ORIGIN), {
+      method: 'POST', ca, timeout: 30_000, headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream',
+        'content-length': Buffer.byteLength(body), ...(env.WORKMESH_BETA_COORDINATION_MCP === 'true'
+          ? { 'X-WorkMesh-Installation-Token': proof.credential } : { authorization: `Bearer ${proof.credential}` }) },
+    }, response => {
+      let result = '', bytes = 0
+      response.on('data', block => { bytes += block.length; if (bytes > 1024 * 1024) request.destroy(); else result += block })
+      response.on('end', () => {
+        try {
+          if (response.statusCode !== 200) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
+          const data = result.startsWith('data:') || result.startsWith('event:')
+            ? result.split('\n').find(line => line.startsWith('data:'))?.slice(5) : result
+          const reply = JSON.parse(data)
+          if (reply.error || reply.result?.isError || reply.id !== id) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
+          resolve(reply.result)
+        } catch { reject(new Error('INSTALL_BUSINESS_VALIDATION_FAILED')) }
+      })
+      response.on('error', reject)
+    })
+    request.on('timeout', () => request.destroy(new Error('INSTALL_BUSINESS_VALIDATION_TIMEOUT')))
+    request.on('error', () => reject(new Error('INSTALL_BUSINESS_VALIDATION_FAILED')))
+    request.end(body)
+  })
+  await post(1, 'initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'workmesh-installer', version: '1.0.0' } })
+  const result = await post(2, 'tools/call', { name: 'get_work_item', arguments: { workItemId: proof.workItemId } })
+  const resource = result.structuredContent ?? JSON.parse(result.content.find(item => item.type === 'text').text)
+  if (resource.id !== proof.workItemId) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
+  assertCompatibleLedger(ledger(release), release.manifest.migrationLedger)
+  return { authenticatedMcpRead: true, workItemId: proof.workItemId, candidate: release.candidate }
+}
 
 export async function install(options, authority = undefined) {
   const { prefix, bundle, digest, configFile, action } = options
   await privateDirectory(prefix)
   const manifest = await verifyBundle(bundle, digest)
   const config = await readPrivateConfig(configFile)
+  const identityFile = path.join(prefix, 'installation.json')
+  const storedIdentity = await readState(identityFile)
+  const identity = storedIdentity ?? { format: 'workmesh-installation', id: randomUUID(), root: prefix, project: config.project }
+  if (identity.format !== 'workmesh-installation' || identity.root !== prefix || identity.project !== config.project
+    || !/^[a-f0-9-]{36}$/.test(identity.id)) fail('INSTALL_IDENTITY_INVALID')
   const keysFile = path.join(prefix, 'operator-keys.json')
   let keys = await readState(keysFile)
   const keysExisted = keys !== undefined
@@ -191,21 +264,50 @@ export async function install(options, authority = undefined) {
   }
   const arch = docker(['info', '--format', '{{.Architecture}}'])
   if ((manifest.arch === 'amd64' ? 'x86_64' : 'aarch64') !== arch) fail('INSTALL_WRONG_ARCHITECTURE')
-  const rendered = await render(config, manifest, bundle, prefix, authority ?? await appConfig(), keys)
-  const configHash = hash(Buffer.from(JSON.stringify(config)))
+  const rendered = await render({ ...config, installationId: identity.id }, manifest, bundle, prefix, authority ?? await appConfig(), keys)
+  const configHash = hash(Buffer.from(canonicalJson(config)))
   const fs = await statfs(prefix)
   const required = [...manifest.chunks, ...manifest.bootstrapChunks].reduce((sum, entry) => sum + entry.bytes, 0)
   if (Number(fs.bavail) * Number(fs.bsize) < Math.max(1024 ** 3, required * 2)) fail('INSTALL_INSUFFICIENT_SPACE')
   if (action === 'check') return { status: 'checked', profile: config.profile, release: manifest.release, candidate: digest }
-  if (!['install', 'upgrade', 'rollback', 'recover-old', 'restore-empty'].includes(action)) fail('INSTALL_ACTION_INVALID')
+  if (!['install', 'upgrade', 'rollback', 'recover-old', 'restore-empty', 'commit'].includes(action)) fail('INSTALL_ACTION_INVALID')
+  if (['upgrade', 'rollback'].includes(action) && !options.maintenanceConfirmed) fail('INSTALL_MAINTENANCE_CONFIRMATION_REQUIRED')
   return withInstallLock(prefix, async () => {
+    if (!storedIdentity) await atomicJson(identityFile, identity)
+    return withProjectLock(identity, manifest.installerImage, async () => {
     const currentFile = path.join(prefix, 'current.json'), journalFile = path.join(prefix, 'journal.json')
     const previous = await readState(currentFile), existing = await readState(journalFile)
+    if (previous && (previous.installationId !== identity.id || previous.rootHash !== hash(Buffer.from(prefix)))) fail('INSTALL_IDENTITY_INVALID')
     if (previous && !keysExisted) fail('INSTALL_OPERATOR_KEYS_MISSING')
     if (previous && (previous.project !== config.project || previous.configHash !== configHash)) fail('INSTALL_DEPLOYMENT_CONFIG_CHANGED')
     if (existing) validateJournal(existing)
+    const pendingFile = path.join(prefix, 'pending.json')
+    const pending = await readState(pendingFile)
+    if (action === 'commit') {
+      if (previous?.candidate === digest && existing?.stage === 'committed') return { status: 'already-installed', candidate: digest }
+      if (previous?.candidate === digest && existing?.stage === 'healthy' && existing.validation?.candidate === digest) {
+        assertOwnedDeployment(previous); assertCompatibleLedger(ledger(previous), previous.manifest.migrationLedger)
+        existing.stage = 'committed'; await atomicJson(journalFile, existing)
+        return { status: 'already-installed', candidate: digest }
+      }
+      if (!pending || pending.candidate !== digest || pending.configHash !== configHash || pending.installationId !== identity.id
+        || existing?.stage !== 'healthy' || existing.candidate !== digest || !options.validationFile) fail('INSTALL_VALIDATION_REQUIRED')
+      assertOwnedDeployment(pending)
+      const readIntent = { name: 'validate-business-read', status: 'intent', startedAt: new Date().toISOString() }
+      existing.actions.push(readIntent); await atomicJson(journalFile, existing)
+      try { existing.validation = await verifyBusinessRead(pending, rendered.env, options.validationFile); readIntent.status = 'completed' }
+      catch (error) { readIntent.status = 'failed'; await atomicJson(journalFile, existing); throw error }
+      const switchIntent = { name: 'switch-current', status: 'intent', startedAt: new Date().toISOString() }
+      existing.actions.push(switchIntent)
+      await atomicJson(journalFile, existing)
+      await atomicJson(currentFile, pending)
+      switchIntent.status = 'completed'
+      existing.stage = 'committed'; await atomicJson(journalFile, existing)
+      return { status: 'installed', candidate: digest, profile: pending.profile, journalId: existing.id, preservedVolumes: true }
+    }
     if (action === 'recover-old') {
       if (!existing || existing.stage === 'committed' || existing.recovery?.status === 'previous-restored') fail('INSTALL_NO_INTERRUPTED_UPGRADE')
+      if (pending && existing.stage === 'healthy') assertCompatibleProgram(previous.manifest, pending.manifest)
       await recoverOld(previous, existing, journalFile)
       return { status: 'previous-restored', preservedVolumes: true }
     }
@@ -221,11 +323,13 @@ export async function install(options, authority = undefined) {
       const report = await oneShotRecovery(previous, 'restore', options.restoreBundle, target.environment)
       return { status: 'restored-empty-target', report, preservedVolumes: true, switched: false }
     }
+    if (existing?.stage === 'healthy' && pending?.candidate === digest && pending.configHash === configHash)
+      return { status: 'awaiting-validation', candidate: digest, journalId: existing.id }
     if (existing && existing.stage !== 'committed' && existing.recovery?.status !== 'previous-restored') fail('INSTALL_INTERRUPTED_JOURNAL_RECOVERY_REQUIRED')
     if (previous?.candidate === digest) return { status: 'already-installed', candidate: digest }
     if (action === 'install' && previous) fail('INSTALL_ALREADY_INITIALIZED')
     if (action !== 'install' && !previous) fail('INSTALL_NO_PREVIOUS_RELEASE')
-    if (!previous) assertNoExistingDeployment(config.project)
+    if (!previous) assertNoExistingDeployment(config.project, rendered.document)
     else assertOwnedDeployment(previous)
     if (!keysExisted) await atomicJson(keysFile, keys)
     const releaseDir = path.join(prefix, 'releases', `${manifest.release}-${manifest.arch}`)
@@ -236,11 +340,13 @@ export async function install(options, authority = undefined) {
     if (!release) {
       await mkdir(releaseDir, { mode: 0o700 })
       release = { project: config.project, profile: config.profile, candidate: digest, configHash, manifest,
+        installationId: identity.id, rootHash: hash(Buffer.from(prefix)),
         composeFile: path.join(releaseDir, 'compose.json'), backupKey: rendered.env.WORKMESH_BACKUP_ENCRYPTION_KEY }
       await atomicJson(release.composeFile, rendered.document)
       await atomicJson(path.join(releaseDir, 'release.json'), release)
     }
     const journal = { format: 'workmesh-install-journal', id: randomUUID(), stage: 'verified', candidate: digest,
+      installationId: identity.id, root: prefix,
       configHash, project: config.project, previous: previous?.candidate ?? null, actions: [], migrationLedger: null }
     await atomicJson(journalFile, journal)
     const effect = async (name, callback) => {
@@ -253,7 +359,10 @@ export async function install(options, authority = undefined) {
         // Pre-migration failures and exactly compatible failures retain the old
         // release; an incompatible ledger remains stopped for empty-target restore.
         if (previous && name !== 'import-images') {
-          try { await recoverOld(previous, journal, journalFile) }
+          try {
+            if (name === 'verify-health-and-ledger') assertCompatibleProgram(previous.manifest, manifest)
+            await recoverOld(previous, journal, journalFile)
+          }
           catch { journal.recovery = { status: 'stopped-restore-required' }; await atomicJson(journalFile, journal) }
         }
         throw error
@@ -262,7 +371,7 @@ export async function install(options, authority = undefined) {
     const stage = async value => { journal.stage = value; await atomicJson(journalFile, journal) }
     await effect('import-images', () => importImages(bundle, manifest)); await stage('staged')
     if (previous) {
-      if (action === 'rollback') assertCompatibleLedger(ledger(previous), manifest.migrationLedger)
+      if (action === 'rollback') { assertCompatibleProgram(previous.manifest, manifest); assertCompatibleLedger(ledger(previous), manifest.migrationLedger) }
       await effect('drain-admission', () => compose(previous, ['stop', '-t', '35', ...runtimeServices]))
       const backupDirectory = path.join(prefix, 'backups', journal.id)
       await mkdir(path.dirname(backupDirectory), { mode: 0o700, recursive: true })
@@ -278,15 +387,17 @@ export async function install(options, authority = undefined) {
     journal.migrationLedger = ledger(release); assertCompatibleLedger(journal.migrationLedger, manifest.migrationLedger)
     await stage('migrated')
     await effect('verify-health-and-ledger', () => healthy(release)); await stage('healthy')
-    await effect('switch-current', () => atomicJson(currentFile, release)); await stage('committed')
-    return { status: 'installed', candidate: digest, profile: release.profile, journalId: journal.id, preservedVolumes: true }
+    await atomicJson(pendingFile, release)
+    return { status: 'awaiting-validation', candidate: digest, profile: release.profile, journalId: journal.id, preservedVolumes: true }
+    })
   })
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const option = name => { const index = process.argv.indexOf(`--${name}`); return index < 0 ? undefined : process.argv[index + 1] }
   try {
     const result = await install({ prefix: option('prefix'), bundle: option('bundle'), digest: option('digest'),
-      configFile: option('config'), action: option('action'), restoreBundle: option('restore-bundle'), targetFile: option('target') })
+      configFile: option('config'), action: option('action'), restoreBundle: option('restore-bundle'), targetFile: option('target'),
+      validationFile: option('validation'), maintenanceConfirmed: process.argv.includes('--maintenance-confirmed') })
     console.log(JSON.stringify(result))
   } catch (error) {
     const code = /^INSTALL_[A-Z_]+|^DEPLOYMENT_PROFILE_INVALID(?::[A-Z_,]+)?/.exec(error.message)?.[0] ?? 'INSTALL_PREFLIGHT_OR_OPERATION_FAILED'

@@ -11,6 +11,12 @@ const output = option('output'), release = option('release'), arch = option('arc
 if (!output || !release || !['amd64', 'arm64'].includes(arch)) fail('BUILD_ARGUMENTS_REQUIRED')
 if (run('git', ['status', '--porcelain'])) fail('BUILD_CLEAN_COMMITTED_SOURCE_REQUIRED')
 const source = { commit: run('git', ['rev-parse', 'HEAD']), tree: run('git', ['rev-parse', 'HEAD^{tree}']) }
+const runtimeFingerprint = hash(execFileSync('git', ['ls-tree', '-r', '-z', source.commit,
+  'apps', 'packages', 'skills', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.base.json',
+  '.node-version', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md',
+  'infra/docker/api.production.Dockerfile', 'infra/docker/worker.production.Dockerfile', 'infra/docker/mcp.production.Dockerfile',
+  'infra/docker/lite.Dockerfile', 'infra/docker/runtime-guard.mjs', 'infra/docker/prepare-production-deploy.mjs', 'infra/docker/healthcheck.mjs',
+  'infra/docker/entrypoint.sh', 'infra/docker/lite-entrypoint.sh', 'infra/docker/lite-dispatch.mjs'], { cwd: root }))
 if (!/^[a-z0-9][a-z0-9.-]{0,63}$/.test(release)) fail('BUILD_RELEASE_INVALID')
 const hostArch = run('docker', ['info', '--format', '{{.Architecture}}'])
 if ((arch === 'amd64' ? 'x86_64' : 'aarch64') !== hostArch) fail('BUILD_NATIVE_ARCH_REQUIRED')
@@ -74,8 +80,8 @@ const archive = async references => {
 const bootstrapChunks = await archive([images.installer.id])
 const chunks = await archive([...new Set(Object.values(images).filter(image => image.id !== images.installer.id).map(image => image.id))])
 const files = []
-for (const relative of ['docker-compose.lite.yml', 'docker-compose.production.yml', 'install.sh']) {
-  const from = relative === 'install.sh' ? path.join(root, 'scripts/server-distribution/install.sh') : path.join(root, relative)
+for (const relative of ['docker-compose.lite.yml', 'docker-compose.production.yml', 'install.sh', 'config.example.json']) {
+  const from = ['install.sh', 'config.example.json'].includes(relative) ? path.join(root, 'scripts/server-distribution', relative) : path.join(root, relative)
   // Normalize shell/Compose delivery rather than depending on the producer OS checkout EOL.
   const bytes = Buffer.from((await readFile(from, 'utf8')).replace(/\r\n/g, '\n'))
   await writeFile(path.join(directory, relative), bytes, { mode: 0o600 })
@@ -83,7 +89,12 @@ for (const relative of ['docker-compose.lite.yml', 'docker-compose.production.ym
 }
 const rawLedger = run('docker', ['run', '--rm', '--network', 'none', '--entrypoint', 'node', images.api.id, '--input-type=module', '-e',
   "const m=await import('./node_modules/@workmesh/db/dist/src/migration-manifest.js').catch(()=>import('./node_modules/@workmesh/db/dist/migration-manifest.js'));console.log(JSON.stringify(m.v1MigrationManifest.map(({version,checksumSha256})=>({version,checksumSha256}))))"])
+const versions = run('docker', ['run', '--rm', '--network', 'none', '--entrypoint', 'sh', images.installer.id,
+  '-ec', 'node --version; docker --version; docker compose version; pg_dump --version; pg_restore --version']).split('\n')
+if (versions.length !== 5) fail('BUILD_TOOL_INVENTORY_INVALID')
+const [installerNode, installerDocker, installerCompose, pgDump, pgRestore] = versions
+const tools = { producerNode: process.version, producerDocker: run('docker', ['--version']), installerNode, installerDocker, installerCompose, pgDump, pgRestore }
 const manifest = validateManifest({ format: 'workmesh-server-distribution', release, arch, source, images,
-  installerImage: images.installer.id, files, chunks, bootstrapChunks, migrationLedger: JSON.parse(rawLedger) })
+  installerImage: images.installer.id, files, chunks, bootstrapChunks, migrationLedger: JSON.parse(rawLedger), tools, runtimeFingerprint })
 await writeFile(path.join(directory, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n', { mode: 0o600 })
 console.log(JSON.stringify({ status: 'built', source, manifestSha256: await fileHash(path.join(directory, 'manifest.json')), output: directory }))

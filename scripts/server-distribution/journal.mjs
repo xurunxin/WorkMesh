@@ -5,7 +5,7 @@ import { fail } from './manifest.mjs'
 
 export const stages = ['verified', 'staged', 'backed_up', 'migrated', 'healthy', 'committed']
 export async function privateDirectory(directory, { create = false } = {}) {
-  if (!path.isAbsolute(directory) || /[\r\n\0]/.test(directory)) fail('INSTALL_UNSAFE_PATH')
+  if (!path.isAbsolute(directory) || /[,\r\n\0]/.test(directory)) fail('INSTALL_UNSAFE_PATH')
   if (create) await mkdir(directory, { recursive: false, mode: 0o700 })
   let cursor = directory
   while (true) {

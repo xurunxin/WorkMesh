@@ -10,8 +10,8 @@
 - scripts/server-distribution/install.mjs、install.sh 与 infra/docker/server-installer.Dockerfile：交付包含 Node、Docker CLI／Compose 的可信安装工具镜像及 sh 启动入口，目标不需要源码、workspace、宿主 Node／pnpm／Python。启动入口先核用户取得的可信 manifest 摘要，再验证和装载工具镜像；不自行安装 Docker 或修改宿主权限。安装目录在宿主和工具镜像使用同一准确绝对路径，避免 Compose bind mount 指向其他目录。
 - packages/config/src/deployment-profile.ts 与对应测试：固定 personal／team／enterprise 三画像，只有 Redis／S3 组合；拒绝未知画像、不支持后端、副本或角色、缺 CA／代理约束及不安全路径。沿 loadConfig、loadFeatureConfig、loadRealtimeRedisHintConfig、loadRetentionConfig 和 runtime-secrets 校验；可信工具镜像经摘要认证后先载入；配置预检先于其他应用镜像导入及业务服务启动，错误不包含秘密。
 - docker-compose.lite.yml、docker-compose.production.yml、配置 JSON 示例及 runtime-guard：安装工具对既有 Compose 生成受控 JSON，接入显式画像、只读 CA、回环发布和准确 feature／MCP 模式，保持正常服务非 root 与硬化。初始化镜像的临时 /data 使用显式独有挂载，不新增无归属匿名卷。Runner 外置；Lite 的 MCP 使用独立镜像。
-- 安装器使用独占锁、原子写入和写前 journal。阶段固定 verified、staged、backed_up、migrated、healthy、committed，绑定原 project、配置摘要、候选身份和账本；同版本异内容拒绝，损坏或不确定 journal 拒绝继续。排空 API／worker／MCP 后用旧工具完整备份，沿 applyMigrations 逐项 SQL／账本同事务迁移，再验证候选后切 current；不将整批升级说成单事务。
-- packages/recovery 的现有 createRecoveryBundle／restoreRecoveryBundle 由安装工具调用，保持加密、密钥分离、全部 S3 版本／Object Lock／legal hold、空目标和认证 journal。迁移前失败保旧，迁移后仅在真实账本符合旧候选明确兼容清单时允许程序回退；不兼容时保留原卷，恢复到独立空目标，数据损失与切换另取具体授权。基础范围不新增领域 schema／API／event。
+- 安装器使用独占锁、原子写入和写前 journal。阶段固定 verified、staged、backed_up、migrated、healthy、committed，绑定原 project、配置摘要、候选身份和账本；同版本异内容拒绝，损坏或不确定 journal 拒绝继续。排空 API／worker／MCP 后用旧工具完整备份，沿 applyMigrations 逐项 SQL／账本同事务迁移，再验证候选；首次用户沿现有 API 初始化账号及配对，commit 使用受保护凭据执行实际 MCP 读取后才切 current；不将整批升级说成单事务。
+- packages/recovery 的现有 createRecoveryBundle／restoreRecoveryBundle 由安装工具调用，保持加密、密钥分离、全部 S3 版本／Object Lock／legal hold、空目标和认证 journal。迁移前失败保旧，迁移后仅在真实账本、运行输入指纹和依赖镜像均符合旧候选兼容条件时允许程序回退；不兼容时保留原卷，恢复到独立空目标，数据损失与切换另取具体授权。基础范围不新增领域 schema／API／event。
 - docs/integration/README.md、reference.md、getting-started.md、installation.md、troubleshooting.md 及部署／恢复文档：同次维护服务端包、三画像、离线闭包、CA 和失败恢复的可运行示例，使用仓库固定 zh-tech-writing；支持声明仅覆盖实际通过组合。
 
 ## 验收与 CI

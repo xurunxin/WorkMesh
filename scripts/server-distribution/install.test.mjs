@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdtemp, realpath, readFile, writeFile, mkdir, chmod, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { hash, validateManifest, verifyBundle, assertCompatibleLedger } from './manifest.mjs'
+import { hash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram } from './manifest.mjs'
 import { privateDirectory, atomicJson, withInstallLock, readState, validateJournal } from './journal.mjs'
 
 const temporary = async () => realpath(await mkdtemp(path.join(tmpdir(), 'workmesh-server-unit-')))
@@ -13,8 +13,11 @@ const manifest = () => {
   const images = Object.fromEntries(roles.map((role, i) => [role, { id: 'sha256:' + String(i + 1).repeat(64),
     reference: `workmesh/${role}:candidate`, revision: ['postgres', 'redis', 'minio'].includes(role) ? '' : commit }]))
   return { format: 'workmesh-server-distribution', release: 'candidate', arch: 'amd64', source: { commit, tree: 'b'.repeat(40) },
+    runtimeFingerprint: 'c'.repeat(64),
+    tools: { producerNode: 'v22.19.0', producerDocker: 'Docker fixture', installerNode: 'v22.19.0', installerDocker: 'Docker fixture',
+      installerCompose: 'Compose fixture', pgDump: 'pg_dump 16', pgRestore: 'pg_restore 16' },
     images, installerImage: images.installer.id, migrationLedger: structuredClone(ledger),
-    files: ['docker-compose.lite.yml', 'docker-compose.production.yml', 'install.sh'].map(file => ({ path: file, sha256: hash(Buffer.from(file)), bytes: file.length })),
+    files: ['docker-compose.lite.yml', 'docker-compose.production.yml', 'install.sh', 'config.example.json'].map(file => ({ path: file, sha256: hash(Buffer.from(file)), bytes: file.length })),
     chunks: [{ path: 'chunks/main.tarpart', sha256: hash(Buffer.from('main')), bytes: 4 }],
     bootstrapChunks: [{ path: 'chunks/helper.tarpart', sha256: hash(Buffer.from('helper')), bytes: 6 }] }
 }
@@ -43,6 +46,14 @@ test('compatibleProgramRollback rejects prefix, unknown rows and changed checksu
     [...ledger, { version: 'unrecognized', checksumSha256: 'c'.repeat(64) }]])
     assert.throws(() => assertCompatibleLedger(rows, ledger), /INSTALL_INCOMPATIBLE_LEDGER_RESTORE_REQUIRED/)
 })
+test('same schema does not authorize rollback into changed program semantics', () => {
+  const original = manifest(), changed = manifest()
+  assert.doesNotThrow(() => assertCompatibleProgram(original, changed))
+  changed.runtimeFingerprint = 'd'.repeat(64)
+  assert.throws(() => assertCompatibleProgram(original, changed), /INSTALL_INCOMPATIBLE_PROGRAM_RESTORE_REQUIRED/)
+  changed.runtimeFingerprint = original.runtimeFingerprint; changed.images.redis.id = 'sha256:' + 'a'.repeat(64)
+  assert.throws(() => assertCompatibleProgram(original, changed), /INSTALL_INCOMPATIBLE_PROGRAM_RESTORE_REQUIRED/)
+})
 test('concurrentInstallHasOneOwner and lock is released after failure', async () => {
   const directory = await temporary()
   let finish, began
@@ -68,7 +79,7 @@ test('rejects unsafe paths rather than changing directory permissions', async ()
   await privateDirectory(directory)
   if (process.platform !== 'win32') {
     await chmod(directory, 0o777)
-    await assert.rejects(privateDirectory(directory), /INSTALL_UNSAFE_PATH/)
+    await assert.rejects(privateDirectory(directory), /INSTALL_UNSAFE_(?:PATH|ANCESTOR)/)
   }
   await assert.rejects(privateDirectory('relative-path'), /INSTALL_UNSAFE_PATH/)
 })

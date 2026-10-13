@@ -73,6 +73,20 @@ def proxy(port, upstream, certificates):
             headers = {k: v for k, v in self.headers.items() if k.lower() not in {'connection', 'transfer-encoding'}}
             headers['X-Forwarded-Proto'] = 'https'
             headers['X-Forwarded-For'] = self.client_address[0]
+            if upstream == 0:
+                if self.command == 'GET' and self.path == '/api/v1/repos/ta01/fixture/contents/AGENTS.md?ref=ta01-base' and self.headers.get('Authorization') == 'token ta01-isolated-provider':
+                    import base64
+                    content = '# 固定私有 CA 测试指导\n'.encode()
+                    value = {'encoding': 'base64', 'sha': hashlib.sha1(content).hexdigest(), 'content': base64.b64encode(content).decode()}
+                    payload = json.dumps(value).encode()
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Content-Length', str(len(payload)))
+                    self.end_headers()
+                    self.wfile.write(payload)
+                else:
+                    self.send_error(404)
+                return
             backend = http.client.HTTPConnection('127.0.0.1', upstream, timeout=90)
             try:
                 backend.request(self.command, self.path, body, headers)
@@ -104,7 +118,8 @@ def install(dist, digest, prefix, config, action, *, expected=0, extra=()):
 
 
 def compose(prefix, *args):
-    current = json.loads((prefix / 'current.json').read_text())
+    file = prefix / 'current.json'
+    current = json.loads((file if file.exists() else prefix / 'pending.json').read_text())
     return command(['docker', 'compose', '-p', current['project'], '-f', current['composeFile'], *args])
 
 
@@ -113,10 +128,11 @@ def sql(prefix, query):
 
 
 def measurement(prefix, phase):
-    current = json.loads((prefix / 'current.json').read_text())
+    file = prefix / 'current.json'
+    current = json.loads((file if file.exists() else prefix / 'pending.json').read_text())
     ids = command(['docker', 'ps', '-q', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + current['project']]).split()
     infos = json.loads(command(['docker', 'inspect', *ids]))
-    assert all(v['Config']['Labels'].get('io.workmesh.installation') == current['project'] for v in infos)
+    assert all(v['Config']['Labels'].get('io.workmesh.installation') == current['installationId'] for v in infos)
     sample = {'phase': phase, 'profile': current['profile'], 'monotonic': time.monotonic(),
               'stats': [json.loads(line) for line in command(['docker', 'stats', '--no-stream', '--format', '{{json .}}', *ids]).splitlines()],
               'state': [{'id': v['Id'], 'image': v['Image'], 'oom': v['State']['OOMKilled'], 'restarts': v['RestartCount'],
@@ -162,6 +178,23 @@ def journey(prefix, config, certificates):
     me = client.request(origin + '/api/v1/auth/me')['actor']
     team = client.request(origin + '/api/v1/teams')['items'][0]
     project = client.request(origin + '/api/v1/projects', {'name': 'TA01 guest project', 'teamId': team['id']})
+    provider = client.request(origin + '/api/v1/provider-connections', {'provider': 'gitea', 'externalAccountId': 'ta01-fixture',
+        'displayName': 'TA01 isolated TLS fixture', 'baseUrl': 'https://10.0.2.15:9446',
+        'accessToken': 'ta01-isolated-provider', 'webhookSecret': 'ta01-isolated-webhook'})
+    repository = client.request(origin + '/api/v1/repositories', {'connectionId': provider['id'], 'teamId': team['id'],
+        'externalId': 'ta01/fixture', 'fullName': 'ta01/fixture', 'defaultBranch': 'main', 'requiredChecks': []})
+    action = client.request(origin + '/api/v1/repositories/' + repository['id'] + '/context', {
+        'projectId': project['id'], 'baseBranch': 'main', 'baseSha': 'ta01-base', 'branchPattern': 'workmesh/{workItemKey}-{slug}',
+        'allowedPaths': ['**'], 'permissions': ['read']})
+    for _ in range(90):
+        contexts = client.request(origin + '/api/v1/repositories/' + repository['id'] + '/context')
+        context = next((value for value in contexts if value['provider_action_id'] == action['id']), None)
+        if context:
+            break
+        time.sleep(1)
+    assert context and context['base_sha'] == 'ta01-base' and context['project_id'] == project['id']
+    assert context['guidance'][0]['content'] == '# 固定私有 CA 测试指导\n'
+    checks.append('workerPrivateCaActualHttpsProviderRead')
     body = {'teamId': team['id'], 'projectId': project['id'], 'title': 'TA01 first task'}
     key = str(uuid.uuid4())
     item = client.request(origin + '/api/v1/work-items', body, headers={'Idempotency-Key': key})
@@ -217,15 +250,30 @@ def journey(prefix, config, certificates):
         time.sleep(1)
     assert sql(prefix, "SELECT count(*) FROM outbox_events WHERE status<>'delivered'") == '0'
     checks.append('workerRestartRecoversDurableOutbox')
+    latencies = []
     def create_task(index):
-        return client.request(origin + '/api/v1/work-items', {**body, 'title': 'concurrent-' + str(index)})['id']
+        started = time.monotonic()
+        result = client.request(origin + '/api/v1/work-items', {**body, 'title': 'concurrent-' + str(index)})['id']
+        latencies.append(time.monotonic() - started)
+        return result
+    stopped = threading.Event()
+    def measure_load():
+        while not stopped.is_set():
+            measurement(prefix, 'concurrent-load')
+            stopped.wait(1)
+    monitor = threading.Thread(target=measure_load)
+    monitor.start()
     with ThreadPoolExecutor(max_workers=4) as pool:
-        ids = list(pool.map(create_task, range(8)))
-    assert len(set(ids)) == 8
-    measurement(prefix, 'concurrent-load')
+        try:
+            ids = list(pool.map(create_task, range(32)))
+        finally:
+            stopped.set()
+            monitor.join()
+    assert len(set(ids)) == 32
+    samples.append({'phase': 'concurrent-latency', 'count': 32, 'concurrency': 4, 'seconds': latencies})
     checks.append('concurrentRequests')
     return {'email': 'probe@example.test', 'password': password, 'itemId': item['id'], 'secondItemId': second['id'],
-            'artifactId': status['artifactId'], 'uploadId': upload['id']}
+            'artifactId': status['artifactId'], 'uploadId': upload['id'], 'installationToken': redeemed['installation_token']}
 
 
 def upgrade_recovery(dist, manifest, digest, prefix, config):
@@ -247,18 +295,20 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
         return sorted(mount['Name'] for info in json.loads(command(['docker', 'inspect', *ids])) for mount in info['Mounts'] if mount['Type'] == 'volume')
     original_volumes = volumes()
     original_rows = sql(prefix, 'SELECT count(*) FROM work_items')
-    assert install(upgrade, new_digest, prefix, config, 'upgrade')['status'] == 'installed'
+    assert install(upgrade, new_digest, prefix, config, 'upgrade', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
+    assert install(upgrade, new_digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
     journal = json.loads((prefix / 'journal.json').read_text())
     assert journal['stage'] == 'committed' and journal['backup']['manifestSha256']
     backup = Path(journal['backup']['directory'])
     assert (backup / 'manifest.json').exists() and (backup / 'manifest.hmac-sha256').exists()
     assert volumes() == original_volumes and sql(prefix, 'SELECT count(*) FROM work_items') == original_rows
-    assert install(dist, digest, prefix, config, 'rollback')['status'] == 'installed'
+    assert install(dist, digest, prefix, config, 'rollback', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
+    assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
     assert volumes() == original_volumes
     checks.extend(['upgradeKeepsOriginalVolumes', 'compatibleProgramRollback', 'completeEncryptedBackup'])
     # Real durable incompatible ledger; do not rewrite an applied migration.
     sql(prefix, "INSERT INTO schema_migrations(version,checksum_sha256,execution_mode) VALUES('ta01_incompatible_fixture','" + 'b' * 64 + "','applied')")
-    install(upgrade, new_digest, prefix, config, 'rollback', expected=1)
+    install(upgrade, new_digest, prefix, config, 'rollback', expected=1, extra=['--maintenance-confirmed'])
     assert json.loads((prefix / 'current.json').read_text())['candidate'] == digest
     checks.append('partialMigrationStopsIncompatibleRollback')
     # Source volumes stay untouched; recovery uses independent empty resources.
@@ -311,6 +361,7 @@ def main():
             saved = {'distribution': str(dist), 'manifest': manifest, 'digest': digest, 'profiles': []}
         assert 'default' not in command(['ip', 'route', 'show']).split()
         certificates = ROOT / 'tls'
+        servers.append(proxy(9446, 0, certificates))
         for index, profile in enumerate(['personal', 'team', 'enterprise']):
             prefix = ROOT / profile
             config = ROOT / (profile + '-config.json')
@@ -324,6 +375,7 @@ def main():
                     'S3_PUBLIC_ENDPOINT': 'https://10.0.2.15:' + str(s3_port),
                     'API_HOST_PORT': str(3001 + index * 10), 'MCP_HOST_PORT': str(3002 + index * 10), 'S3_HOST_PORT': str(9000 + index * 10),
                     'WORKMESH_BETA_COORDINATION_MCP': 'true', 'NODE_EXTRA_CA_CERTS': str(prefix / 'certificates/ca.pem'),
+                    'WORKMESH_BETA_GITEA': 'true',
                     'AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS': '172.18.0.1/32,172.19.0.1/32,172.20.0.1/32'}})
             servers += [proxy(api_port, 3001 + index * 10, certificates), proxy(mcp_port, 3002 + index * 10, certificates), proxy(s3_port, 9000 + index * 10, certificates)]
             if rebooted:
@@ -339,11 +391,15 @@ def main():
                 assert not (prefix / 'current.json').exists() and not (prefix / 'operator-keys.json').exists()
                 assert install(dist, digest, prefix, config, 'check')['status'] == 'checked'
                 assert not (prefix / 'current.json').exists()
-                assert install(dist, digest, prefix, config, 'install')['status'] == 'installed'
-                assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
+                assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
+                assert not (prefix / 'current.json').exists()
+                assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 measurement(prefix, 'idle')
                 start = len(checks)
                 identity = journey(prefix, config, certificates)
+                private(prefix / 'validation.json', {'credential': identity['installationToken'], 'workItemId': identity['itemId']})
+                assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
+                assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
                 upgrade_recovery(dist, manifest, digest, prefix, config)
                 saved['profiles'].append({'profile': profile, 'status': 'passed', 'checks': checks[start:], 'identity': identity})
                 # Keep peak resource competition bounded: each profile's real

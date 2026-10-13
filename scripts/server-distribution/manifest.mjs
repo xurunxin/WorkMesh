@@ -4,6 +4,11 @@ import { readFile, lstat, realpath } from 'node:fs/promises'
 import path from 'node:path'
 
 export const hash = bytes => createHash('sha256').update(bytes).digest('hex')
+export function canonicalJson(value) {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value)
+  if (Array.isArray(value)) return '[' + value.map(canonicalJson).join(',') + ']'
+  return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonicalJson(value[key])).join(',') + '}'
+}
 export async function fileHash(file) {
   const digest = createHash('sha256')
   for await (const block of createReadStream(file)) digest.update(block)
@@ -14,11 +19,14 @@ const keys = (object, expected) => object && !Array.isArray(object) && typeof ob
   && Object.keys(object).sort().join(',') === expected.sort().join(',')
 const hex = (value, length) => typeof value === 'string' && new RegExp(`^[a-f0-9]{${length}}$`).test(value)
 export function validateManifest(value) {
-  if (!keys(value, ['format', 'release', 'arch', 'source', 'images', 'files', 'chunks', 'bootstrapChunks', 'migrationLedger', 'installerImage'])
+  if (!keys(value, ['format', 'release', 'arch', 'source', 'images', 'files', 'chunks', 'bootstrapChunks', 'migrationLedger', 'installerImage', 'tools', 'runtimeFingerprint'])
     || value.format !== 'workmesh-server-distribution' || !/^[a-z0-9][a-z0-9.-]{0,63}$/.test(value.release)
     || !['amd64', 'arm64'].includes(value.arch) || !keys(value.source, ['commit', 'tree'])
     || !hex(value.source.commit, 40) || !hex(value.source.tree, 40)) fail('INSTALL_MANIFEST_INVALID')
+  if (!hex(value.runtimeFingerprint, 64)) fail('INSTALL_RUNTIME_FINGERPRINT_INVALID')
   const roles = ['api', 'worker', 'mcp', 'lite', 'installer', 'postgres', 'redis', 'minio']
+  if (!keys(value.tools, ['producerNode', 'producerDocker', 'installerNode', 'installerDocker', 'installerCompose', 'pgDump', 'pgRestore'])
+    || Object.values(value.tools).some(version => typeof version !== 'string' || !version || version.length > 512 || /[\r\n\0]/.test(version))) fail('INSTALL_TOOLS_INVALID')
   if (!keys(value.images, roles) || value.installerImage !== value.images.installer.id) fail('INSTALL_IMAGES_INVALID')
   for (const [role, image] of Object.entries(value.images)) {
     if (!keys(image, ['id', 'reference', 'revision']) || !/^sha256:[a-f0-9]{64}$/.test(image.id)
@@ -38,7 +46,7 @@ export function validateManifest(value) {
       || entry.bytes > 64 * 1024 * 1024 || (seen.has(entry.path) && seen.get(entry.path) !== JSON.stringify(entry))) fail('INSTALL_FILES_INVALID')
     seen.set(entry.path, JSON.stringify(entry))
   }
-  if (value.files.map(file => file.path).sort().join(',') !== 'docker-compose.lite.yml,docker-compose.production.yml,install.sh')
+  if (value.files.map(file => file.path).sort().join(',') !== 'config.example.json,docker-compose.lite.yml,docker-compose.production.yml,install.sh')
     fail('INSTALL_FILES_INVALID')
   for (const entry of value.migrationLedger) {
     if (!keys(entry, ['version', 'checksumSha256']) || !/^[a-zA-Z0-9_]+$/.test(entry.version)
@@ -71,4 +79,9 @@ export function assertCompatibleLedger(actual, expected) {
   const normalize = rows => rows.map(row => ({ version: row.version, checksumSha256: row.checksumSha256 }))
     .sort((a, b) => a.version.localeCompare(b.version))
   if (JSON.stringify(normalize(actual)) !== JSON.stringify(normalize(expected))) fail('INSTALL_INCOMPATIBLE_LEDGER_RESTORE_REQUIRED')
+}
+export function assertCompatibleProgram(previous, candidate) {
+  if (previous.runtimeFingerprint !== candidate.runtimeFingerprint
+    || ['postgres', 'redis', 'minio'].some(role => previous.images[role].id !== candidate.images[role].id))
+    fail('INSTALL_INCOMPATIBLE_PROGRAM_RESTORE_REQUIRED')
 }

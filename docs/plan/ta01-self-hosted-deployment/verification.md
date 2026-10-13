@@ -100,3 +100,13 @@ Docker 收尾预检首次误将默认短 ID 与完整账本比较，未派发删
 产品 HEAD 5ee89e6a3289dfebec375e163890e5d4c68f074e 的 CI #511／run 38431425238 失败。分类 job 的真实 range diff 拒绝两个新来源编码文件的末尾空行，产品 jobs 因分类失败未执行；Required CI 同样失败。工作树零 diff 检查曾漏过已提交范围，现改为核完整 main 至候选范围。编码尾部空白已纠正，原工具正文的 JSON 行数组内容不变，来源指纹随编码字节更新。实际 log tail 见 [原返回](sources/product-ci-first-failure.md)。
 
 本机候选首次构建失败于 Alpine community 仓库 IO ERROR，未跳过 apk 更新；根五门禁尝试在 lint 阶段找不到 pnpm PATH 入口，后续四项未执行。本次专用 pnpm.cmd 只引用已有锁定工具，不安装全局工具。原件及实际 3 个容器／3 个卷的归属收尾回执见 [首败索引](../../reviews/ta01-product/first-local-failures.json)与 [原日志压缩包](../../reviews/ta01-product/first-local-failures.zip)。
+
+## 基础源码门禁与待执行产品关口
+
+锁定 pnpm 的本任务 PATH 入口就绪后，实际根 lint、typecheck、test、test:integration 和 test:conformance 均通过。另用 recovery opt-in 执行真实 PG／S3 完整恢复套件，通过。两轮各自登记的 3 个容器和 3 个命名卷均取得不存在回执，历史匿名卷和受拒目录没有重试。原件及成员哈希见 [foundation-checks.json](../../reviews/ta01-product/foundation-checks.json)和 [压缩原件](../../reviews/ta01-product/foundation-checks.zip)。
+
+实际运行起点 HEAD 为 47b1c123cb803eccb42d6a0e3ff5ecbb1378ecda。期间 CLI 持续修订，根门禁不当 CLI 完整 guest 验收；索引另列当前 CLI 工作树哈希。本机第二次候选构建仍失败于 Alpine main 索引 IO ERROR，没有跳过依赖或编译。Linux 容器单元的宿主 bind 请求未产生容器或输出，等待后按准确本任务进程身份取消；未取得政策拒绝，不补造拒绝，也没有换方式或申请文件共享权限。该尝试不记通过，Linux 条件分支由后续真实双架构 CI 核验。
+
+CI #512 的分类及 API／DB／worker／recovery／agent-smoke 已成功；server-install 双架构在目录拒绝单元断言处失败，尚未执行构建或 guest。断言现同时接受明确 PATH／ANCESTOR 拒绝，拒绝实现保持。根门禁通过、旧 CI 或本机单元都不代当前 CLI 候选支持通过。
+
+CLI 当前另有健康后 pending／真实鉴权读取再 commit、持久安装 UUID、同 project 全局锁与卷名冲突拒绝、程序输入指纹和依赖镜像兼容条件。安装包中加入配置示例及实际工具版本。新接口只为安装工具，没有业务 REST／events／schema／ADR 状态变化；文档同步说明首次用户由既有 API 创建，安装器不自动命名用户。

@@ -5,7 +5,7 @@ umask 077
 # Node/pnpm/source are not host prerequisites; only the trusted helper uses Node.
 [ "$#" -ge 5 ] || { echo 'INSTALL_ARGUMENTS_REQUIRED' >&2; exit 1; }
 bundle=$1; expected=$2; prefix=$3; config=$4; action=$5
-case "$bundle:$prefix:$config" in *'\n'*|*'\r'*) echo 'INSTALL_UNSAFE_PATH' >&2; exit 1;; esac
+case "$bundle:$prefix:$config" in *,*) echo 'INSTALL_UNSAFE_PATH' >&2; exit 1;; esac
 case "$bundle" in /*) ;; *) echo 'INSTALL_ABSOLUTE_PATH_REQUIRED' >&2; exit 1;; esac
 case "$prefix" in /*) ;; *) echo 'INSTALL_ABSOLUTE_PATH_REQUIRED' >&2; exit 1;; esac
 case "$config" in /*) ;; *) echo 'INSTALL_ABSOLUTE_PATH_REQUIRED' >&2; exit 1;; esac

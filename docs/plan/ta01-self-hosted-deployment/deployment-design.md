@@ -14,12 +14,12 @@
 | --- | --- | --- | --- |
 | 起点 | `docker-compose.lite.yml` | `docker-compose.production.yml` | 同 production，叠加受控内网配置 |
 | 服务端工件 | 同源 Lite 镜像，`api`／`worker`／`migrate` 分进程 | 同源、摘要固定的 API／worker／MCP 镜像 | 同左，加离线依赖闭包和受审信任材料 |
-| 持久依赖 | PostgreSQL、Redis、RustFS | 同左 | 同左，允许已验证的内网 S3 兼容存储 |
-| 首批候选副本 | API、worker 各一个 | API、worker、MCP 各一个 | 同左；本卡不承诺高可用 |
-| MCP | Lite 镜像没有该角色；外部独立 MCP | 明确启用 `agent` profile | 同左，经内网 HTTPS 路由 |
+| 持久依赖 | PostgreSQL、Redis、RustFS | 同左 | 首批同左，外部内网 S3 组合未验收 |
+| 首批候选副本 | API、worker、独立 MCP 各一个 | API、worker、MCP 各一个 | 同左；本卡不承诺高可用 |
+| MCP | Lite 镜像没有该角色；候选增加独立 MCP 镜像 | 明确启用 `agent` profile | 同左，经内网 HTTPS 路由 |
 | Runner | 外部操作系统边界，按自己的权限接入 | 外部 Runner，共享资源仍受租约和 fencing 约束 | 外部受控执行网络，本卡不接管机器池 |
 | 数据库 | 现有 Lite 参数，`max_connections=20`；保留 fsync 和 synchronous_commit | production 参数；连接池预算独立核 | 同左，按真实容量复验 |
-| 资源 | API heap 320 MiB／容器 640 MiB；worker heap 256 MiB／容器 448 MiB；PG 384 MiB、Redis 128 MiB、RustFS 256 MiB | 根据固定负载量测，不复制个人下限 | 根据企业数据和并发量测 |
+| 资源 | API heap 320 MiB／容器 640 MiB；worker heap 256 MiB／容器 448 MiB；PG 384 MiB、Redis 128 MiB、RustFS 256 MiB；独立 MCP heap 256 MiB／容器 384 MiB | 根据固定负载量测，不复制个人下限 | 根据企业数据和并发量测 |
 | 监听建议 | 新安装默认仅回环发布，由运营者配置可达 HTTPS | 回环或受控接口发布，反向代理终止 TLS | 私有 CA 和代理由运营者提供 |
 | 对外路径 | API、discovery、独立 MCP 路由及 S3 上传地址 | 同左 | 同左，内网 DNS 和证书链必须真实验证 |
 | Cookie 与代理 | HTTPS 才设 `SESSION_COOKIE_SECURE=true`；`WEB_ORIGIN` 精确匹配 | 同左，明确 `AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS` | 同左，不信任任意 forwarded header |
@@ -41,23 +41,23 @@ Coordination 模式使用每请求 `X-WorkMesh-Installation-Token`，普通执�
 
 ## 候选包及安装状态机
 
-服务端交付采用离线 Docker 镜像集合和版本目录，不新增宿主 Node 前置。目标须已有 Docker Engine、Compose、匹配架构、足够空间及受保护环境文件。首批候选设计为 Linux amd64／arm64；真实 OS 和设备支持范围等待[验收条件裁定](acceptance-matrix.md)，不把连接器 TCG 结果当成服务端证明。
+服务端交付采用离线 Docker 镜像集合和版本目录，不新增宿主 Node 前置。目标须已有 Docker Engine、Compose、匹配架构、足够空间及受保护环境文件。首批候选设计为 Linux amd64／arm64；现有双架构 CI 与完整 guest 已获批准，物理设备支持范围仍待实测，不把连接器 TCG 结果当成服务端证明。
 
 包内包括应用及所有启动依赖的镜像归档、Compose、无秘密环境模板、配置校验入口、源提交／架构／镜像 ID／摘要／schema 兼容范围清单、摘要文件和操作说明。清单摘要只证明完整性；发布者身份来自受审来源。production 沿用既有签名、来源证明和 SBOM，不将本地 Lite tag 冒官方发行。
 
-后续安装器使用单实例锁和写前 journal，阶段为 `verified → staged → backed_up → migrated → healthy → committed`。清单和 journal 均绑定安装根、原 Compose project、配置摘要和镜像身份。配置摘要不替代秘密安全存储；日志、清单及回执不保存环境文件内容。
+安装器使用目录锁、Docker project 锁、持久安装 UUID 和写前 journal，阶段为 `verified → staged → backed_up → migrated → healthy → committed`。清单和 journal 均绑定安装根、原 Compose project、配置摘要和镜像身份。配置摘要不替代秘密安全存储；日志、清单及回执不保存环境文件内容。
 
-1. 校验包、来源、架构、空间、端口和准确已有安装身份；同版本异内容拒绝。先验证配置，再 `docker load`，读回实际镜像 ID 和 OCI revision。
-2. 首次安装运行同源 `migrate` one-shot，再启动 API、worker 和选定 MCP；不直接执行 `SCHEMA.sql`。通过 readiness、安装鉴权和最小真实操作后登记 current。
+1. 校验包、来源、架构、空间、端口和准确已有安装身份；同版本异内容拒绝。可信工具先按摘要载入；配置预检通过后才导入其他应用镜像，并读回 ID 和 OCI revision。
+2. 首次安装运行同源 `migrate` one-shot，再启动 API、worker 和选定 MCP；不直接执行 `SCHEMA.sql`。通过 readiness 后保持 healthy／pending；用户沿既有 API 完成首次账号初始化、配对及真实工作项操作，再用受保护凭据执行 commit。commit 实际完成 MCP 鉴权读取，读回目标工作项及账本后才登记 current，不自动创建用户或业务数据。
 3. 升级预先暂存新旧完整镜像集合。停止入口准入，排空 API、worker、MCP，确认没有未知写入者；用旧版准确工具执行 `createRecoveryBundle`。备份失败停止迁移，保留原环境。
 4. 复用 `applyMigrations` 的 advisory lock、显式 manifest、校验账本和 SQL／账本同事务。逐项迁移提交并不表示整批升级原子；后续迁移失败时已有迁移可能已提交。
-5. 启动候选并验证读取、幂等写入、worker/outbox、MCP 与工件读回，验证完成后切换 current 并恢复准入。验证阶段保持外部业务入口关闭，记录其测试数据和结果。
+5. 启动候选并验证读取、幂等写入、worker/outbox、MCP 与工件读回，通过 commit 的真实鉴权读取后切 current，运营者再恢复代理准入。upgrade／rollback 必须显式确认维护窗口，安装器不接管运营者反向代理。验证阶段保持外部业务入口关闭，记录其测试数据和结果。
 
 | 故障位置 | 固定处置 |
 | --- | --- |
 | 验包、暂存、配置校验失败 | current、服务和数据卷保持原状；保留失败回执 |
 | 备份失败 | 不运行迁移；确认旧环境仍满足启动条件后恢复旧服务 |
-| 迁移失败 | 读取真实已提交账本；旧程序兼容范围明确涵盖该账本才允许程序回退，否则保持维护状态 |
+| 迁移失败 | 读取真实已提交账本；真实账本、程序输入指纹和依赖镜像均符合旧候选兼容条件才允许程序回退，否则保持维护状态 |
 | 候选健康或业务验证失败 | 沿同一兼容规则回退；不依据“还没切 current”推定数据库未变 |
 | 不兼容的数据回退 | 使用升级前 bundle 和旧版工具恢复至独立空数据库／空版本桶；原卷保留，人工批准数据损失与流量切换 |
 | 进程中断或 journal 损坏 | 重启读回 journal 和实际镜像／账本；不确定时拒绝继续，不手改阶段 |
@@ -68,13 +68,13 @@ Coordination 模式使用每请求 `X-WorkMesh-Installation-Token`，普通执�
 
 ## 后续逐文件实施建议
 
-以下基础文件增量已获准；完成产品修改前的计划同步关口后实施。与新限流／文件身份表有关的扩展不在本轮范围。
+以下基础文件增量已获准；用户已批准记录例外，平台字段同步不再是产品修改前置；当前已进入实现。与新限流／文件身份表有关的扩展不在本轮范围。
 
 | 路径 | 增量和复用机制 |
 | --- | --- |
-| `scripts/server-distribution/build.mjs`（待创建） | 从干净不可变源码生成候选包、镜像身份和闭包清单；复用现有 Dockerfiles，不改变发行签名身份 |
-| `scripts/server-distribution/install.mjs`（待创建） | 在发行镜像中运行预检和 journal 状态机，由宿主 Compose 启动；避免宿主 Node 前置 |
-| `scripts/server-distribution/manifest.mjs`（待创建） | 固定清单、兼容账本及同版本拒异内容规则 |
+| `scripts/server-distribution/build.mjs`（已创建，真实候选验收待执行） | 从干净不可变源码生成候选包、镜像身份和闭包清单；复用现有 Dockerfiles，不改变发行签名身份 |
+| `scripts/server-distribution/install.mjs`（已创建，真实候选验收待执行） | 在发行镜像中运行预检和 journal 状态机，由宿主 Compose 启动；避免宿主 Node 前置 |
+| `scripts/server-distribution/manifest.mjs`（已创建，真实候选验收待执行） | 固定清单、兼容账本及同版本拒异内容规则 |
 | `packages/config/src/index.ts`、`runtime-secrets.mjs` | 新画像 schema、配置交叉校验和启动拒绝；保持既有 secret 校验和显式 feature |
 | `infra/docker/runtime-guard.mjs`、`packages/config/src/service-command.ts` | 复用 authoritative config 与 `resolveServiceCommand`；Lite 角色边界保持 |
 | `docker-compose.lite.yml`、`docker-compose.production.yml`、对应环境模板 | 仅加入已获准配置、只读挂载、稳定卷身份和明确端口；不默认启用新存储模式 |
@@ -83,3 +83,9 @@ Coordination 模式使用每请求 `X-WorkMesh-Installation-Token`，普通执�
 | `docs/operations/disaster-recovery.md`、`docs/production-deployment.md` | 同次更新维护窗口、候选包、恢复工具和离线边界 |
 
 本卡基础交付不计划领域 schema／API／event 改动。若保证裁定引入持久限流或文件身份表，另列新增编号迁移、manifest 和 `SCHEMA.sql` 更新，并测试空库及上一阶段升级。不得沿用 ADR 提案的“零迁移”推定。
+
+## 首批兼容规则
+
+首批程序回退只接受相同运行代码／依赖输入指纹、相同 PG／Redis／S3 镜像及完全一致的真实迁移账本。相同 schema 不能推定程序语义兼容。运行程序内容改变后不自动退回旧程序；保留原卷，并按已批准流程恢复独立空目标。后续更宽兼容声明须有具体旧新程序对的验收及审查依据。
+
+当前 guest 的升级夹具为同一程序的不同候选标识，用于实际验证 journal、完整备份、兼容回退和原卷保留；不冒称两个已发行历史程序版本。裸 Compose 的迁入尚未实现，不把已有人工部署视为该安装器创建的受控部署。
