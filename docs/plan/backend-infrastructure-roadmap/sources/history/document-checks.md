@@ -90,4 +90,3 @@ assert all(p.startswith('docs/plan/backend-infrastructure-roadmap/') and p.endsw
 print(json.dumps({'sourceCards':62,'historicalFiles':25,'proposalCards':27,'goalEntries':len(re.findall(r'^\| \d+ \|',coverage,re.M)),'operations':281,'dependencyEdges':len(edges),'acyclic':True,'links':links},ensure_ascii=False))
 
 ```
-

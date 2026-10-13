@@ -183,10 +183,10 @@ M4 六域及本机 native 不外推其他 OS 或企业认证。
 
 - [current-conversation.md](sources/history/current-conversation.md)：6661 字节，SHA-256 `7eab1a0387d6fd67ff4be0f1e9886fa3497a7086079d0f668440a29712864ce6`。
 
-- [document-checks.md](sources/history/document-checks.md)：5107 字节，SHA-256 `81e05ae8d67547b935b311b9f99940f06a83feaf5b309cdb91141f261882ba8c`。
+- [document-checks.md](sources/history/document-checks.md)：5106 字节，SHA-256 `2f87e5ca280cc77e543d035b65856888b2673f11241f140642b2c647bb693523`。
 
 - [merge-map.md](sources/history/merge-map.md)：3100 字节，SHA-256 `e08c7a4bd75cffcdaffadb007c35743f1d896ffbdef593c145fba54c157a1e5e`。
 
 - [platform-git-refusal.md](sources/history/platform-git-refusal.md)：660 字节，SHA-256 `ae5c50c8be6d4cb196bf08f60b43f3bd1a5d8516dcabd9b7b9a868b40ffce969`。
 
-- [main-source-binding.md](sources/history/main-source-binding.md)：31301 字节，SHA-256 `446baa20d2e5476775916f5b2665d3a8c9406de0e91cc5474170594e508f5fd5`。
+- [main-source-binding.md](sources/history/main-source-binding.md)：31342 字节，SHA-256 `43b2212b0b4a21abb9c70d6b9481f2e5847737ed26156b42a15153adb936e1bc`。

@@ -17,7 +17,7 @@ f6faf54f80850ecee9118d87401e6b5ce73216f1 fff06af6ccb99c24a62035f418e850914f37a71
 Merge pull request #225 from xurunxin/tds/conv-01a12fd9-e1d0-76a4-aae1-e6b7869c6947
 ```
 
-## `git log --first-parent -24 --format=%H %s`
+## `git log 104f7afb8e89859549aa16af7a3114e90dea7f9b --first-parent -24 --format=%H %s`
 
 ```text
 104f7afb8e89859549aa16af7a3114e90dea7f9b Merge pull request #225 from xurunxin/tds/conv-01a12fd9-e1d0-76a4-aae1-e6b7869c6947
