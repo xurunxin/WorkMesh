@@ -1869,3 +1869,5 @@ Discovery 与签名 Skill 由 API origin 提供。配对响应 `connect_url` 指
 ## 接入恢复字段的消费校验
 
 SDK 和 MCP 分别按错误码、安全原因和本地恢复目录核对新增字段。目录外文字、控制串、秘密及原因或支持列表错配不进入恢复字段，原错误与既有 `safeNextAction` 保留。CLI 为 429/503 展示经校验的 `Retry-After` 等待秒数；头非法或缺失时停止重试。客户端不得根据提示自动改 pending、正文、key 或凭据。解析与示例见 `docs/integration/troubleshooting.md`。
+
+连接器离线分发、版本查询及升级卸载见 [安装说明](docs/integration/installation.md)。发行版本不修改原 pending user-agent，协议身份和全部提交前验证保持。

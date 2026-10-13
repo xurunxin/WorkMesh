@@ -13,7 +13,9 @@
     "test": "vitest run",
     "test:platform": "vitest run --config vitest.platform.config.ts",
     "connect": "tsx src/cli.ts connect",
-    "start": "node dist/cli.js"
+    "start": "node dist/cli.js",
+    "build:release": "node scripts/build-release.mjs",
+    "test:install": "vitest run --config vitest.install.config.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
@@ -21,11 +23,18 @@
     "@workmesh/contracts": "workspace:*",
     "koffi": "3.3.2",
     "node-pty": "1.1.0",
-    "zod": "^3.24.3"
+    "zod": "^3.24.3",
+    "tar": "7.5.22"
   },
   "devDependencies": {
     "@types/node": "^22.15.2",
     "tsx": "^4.19.3",
-    "vitest": "^3.1.3"
-  }
+    "vitest": "^3.1.3",
+    "esbuild": "0.28.2",
+    "postject": "1.0.0-alpha.6",
+    "node-gyp": "11.4.2",
+    "node-addon-api": "7.1.1",
+    "yaml": "2.9.0"
+  },
+  "version": "0.1.0"
 }

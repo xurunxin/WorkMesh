@@ -1,12 +1,6 @@
 # B-ship 分发与安装实施方案
 
-Status：Proposed。当前另获准[无需 KVM 的 TCG 可行性研究](tcg/current-spec.md)，按[研究计划](tcg/research-plan.md)执行必要隔离实验。下面的产品文件清单、发行命令与最终验收仍待 Chief 单独放行；不预先宣称 TCG 可替代当前 KVM 路线。历史文档准备计划原件保留，研究结果另列。
-
-## 当前工作与后续关口
-
-本轮交付 [当前规格](spec.md)、本方案、[验收设计](acceptance.md)、[准备证据](../../reviews/b-ship/planning-evidence.md) 和 [R1 追加记录](../../reviews/r1/decisions.md)。使用 Todos＋仓库记录，不创建真实 WorkMesh Project 或 WorkItem。
-
-首批 Linux amd64、arm64 与独有干净虚拟机／原生 CI 已由用户确认。Node SEA、esbuild、postject 是执行者提出的具体封装方案。方案复核只推进 P0/P1；必需 CI 与必需实测继续独立生效。方案完成后回 review，独审闭合后由 Chief 修改当前实施阶段并单独放行产品工作。
+当前按[产品规格](product/current-spec.md)及[产品计划](product/implementation-plan.md)实施。用户已采用 hosted 双架构＋TCG，并放行 Node SEA、原生封装、安装升级卸载和 B4 文档。最终产品验收和条件合入门禁保持；下列 KVM 和研究阶段条款仅保留历史来源。
 
 ## 现有机制与封装边界
 
@@ -30,7 +24,7 @@ Status：Proposed。当前另获准[无需 KVM 的 TCG 可行性研究](tcg/curr
 | 项目 | amd64 | arm64 | 当前证据级别 |
 | --- | --- | --- | --- |
 | 发行标识 | `linux-amd64`，Node 架构 `x64` | `linux-arm64`，Node 架构 `arm64` | 用户确认目标架构 |
-| 拟验收系统 | Ubuntu 24.04 LTS amd64 | Ubuntu 24.04 LTS arm64 | 执行者建议，尚无该设备实测 |
+| 验收系统 | Ubuntu 24.04 LTS amd64 | Ubuntu 24.04 LTS arm64 | 研究已有完整 guest 实证，产品实测另验 |
 | Node 基础软件下限 | kernel ≥ 4.18、glibc ≥ 2.28、`GLIBCXX_3.4.25` | kernel ≥ 4.18、glibc ≥ 2.28、`GLIBCXX_3.4.28` | 来自锁定 Node 的官方 BUILDING；不是完整产物支持承诺 |
 | 秘密后端 | 当前用户 D-Bus 会话、可解锁 Secret Service | 同左 | 当前 `SystemSecretStore` 强制要求 |
 | 测量起点 | 1 vCPU、1 GiB 内存、2 GiB 可用磁盘 | 同左 | 仅连接器与系统后端；不含模型、客户端、API 或数据库 |
@@ -99,9 +93,9 @@ sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.loc
 
 卸载样例为 `sh "$HOME/.local/lib/workmesh-connector/current/uninstall.sh" --prefix "$HOME/.local"`。卸载脚本使用安装时保存且由清单绑定的同架构 SEA 安装助手，只删除安装账本证明归本连接器的程序目录与入口；拒绝来源变化、活动进程或不安全路径，保留配置及系统秘密。卸载不撤销服务端 Connection；完整下线由管理员走现有 DELETE＋If-Match，随后按单独授权清理准确秘密引用，不增加 `--purge`。
 
-## 后续产品文件清单
+## 产品文件清单
 
-以下文件是单独放行后才修改的清单。本轮只写方案文件。
+以下为本次已放行产品改动清单；实际验收结果逐项另存。
 
 | 文件 | 后续改动与目的 |
 | --- | --- |
@@ -147,9 +141,9 @@ guest 采用上表系统。每个 job 启动前确认宿主实际架构、`/dev/
 
 原生 node-pty 构建、SEA 实际加载、完整 API/MCP/Skill 校验、秘密边界、升级与卸载断言继续保留。研究通过也不等于这些产品断言已通过；旧 saved plan 仅作为下面的历史原件保留。
 
-### 据实证提出的 TCG 方案（Proposed，待 Chief 裁定）
+### 已采用的 TCG 环境
 
-[研究报告](../../reviews/b-ship/tcg/report.md)和原件证明：现有原生 `ubuntu-24.04`、`ubuntu-24.04-arm` 能以 TCG 运行完整 guest，两架构真实 Secret Service 跨完整 OS reboot 持久，原 900 秒加密重放窗口内得到相同 API 响应。建议最终安装验收采用这两项原生 hosted runner 加 TCG guest，不取得新裸机或注册 runner。Chief 裁定后才更新产品执行规格，不能把本节 Proposed 当已批准替换旧方案。
+[研究报告](../../reviews/b-ship/tcg/report.md)和原件证明：现有原生 `ubuntu-24.04`、`ubuntu-24.04-arm` 能以 TCG 运行完整 guest，两架构真实 Secret Service 跨完整 OS reboot 持久，原 900 秒加密重放窗口内得到相同 API 响应。建议最终安装验收采用这两项原生 hosted runner 加 TCG guest，不取得新裸机或注册 runner。用户本次已明确采用该环境，当前产品规格已更新；研究证据不等于产品验收。
 
 原生构建仍在宿主进行，guest 最终只接收已验证归档、manifest、安装器及许可，不挂仓库、不安装 Node/pnpm/workspace。基础盘按内容摘要只读复用；overlay、seed、固件变量、同用户 D-Bus/keyring、DB 和日志独有。至少按本次实测约 3 GiB 模拟器峰值另计构建与服务内存，并把两份约 0.6 GiB 基础盘、每个约 1.1～1.3 GiB 实际 overlay、产物/暂存/回退空间纳入预检；这些是测量与预算依据，不是 Lite 最低环境。
 

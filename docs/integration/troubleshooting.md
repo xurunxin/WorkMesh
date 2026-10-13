@@ -92,3 +92,5 @@ Pi 内部完成使用原外层 settle key/body 的原子重放，不具备独立
 ## 保留安全诊断
 
 排障提供 `correlationId`、准确 build SHA、操作名、状态码和无秘密的结果摘要。保留首败，分别记录复验与未测。禁止把 Token、Cookie、配对码、模型密钥、完整 webhook URL 或原始 provider 错误写入活动和仓库。机器间的支持范围与正式第三方外发须单独核验。
+
+发行安装失败、回退和保留配置的卸载见[安装说明](installation.md)。`connect` 不支持 `--dry-run`；安装助手的 `--dry-run` 只读校验发行输入。

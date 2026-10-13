@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readTrustedKey } from './trusted-key.js'
 import { verify } from 'node:crypto'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
@@ -12,7 +12,6 @@ export type ProtocolDependencies = {
   fetch: typeof fetch
   bootstrap: (expected: Expectation, token: string, fetcher: typeof fetch) => Promise<Bootstrap>
 }
-export const trustedKeyPath = new URL('../assets/workmesh-public-key.pem', import.meta.url)
 const sameSet = (a: readonly string[], b: readonly string[]): boolean => new Set(a).size === a.length && a.length === b.length && a.every(v => b.includes(v))
 function checkSkill(actual: Expectation['skill'], expected: Expectation['skill']): void {
   requireThat(actual.name === expected.name && actual.version === expected.version && actual.sha256 === expected.sha256 && actual.signature === expected.signature, 'CONNECTOR_SKILL_PIN_MISMATCH')
@@ -158,7 +157,7 @@ export async function verifyPairing(e: Expectation, pending: Pending, deps: Prot
   requireThat(!text.includes('\r') && !text.startsWith('\uFEFF') && Buffer.from(text).equals(skill)
     && text.startsWith('---\nname: workmesh\n') && text.endsWith('\n')
     && `sha256:${sha256(skill)}` === e.skill.sha256, 'CONNECTOR_SKILL_BYTES_INVALID')
-  const key = await readFile(trustedKeyPath)
+  const key = await readTrustedKey()
   requireThat(/^ed25519:[A-Za-z0-9+/]+={0,2}$/.test(e.skill.signature)
     && verify(null, skill, key, Buffer.from(e.skill.signature.slice(8), 'base64')), 'CONNECTOR_SKILL_SIGNATURE_INVALID')
   await validateCurrent(e, redeemed.installation_token, fingerprint, deps)

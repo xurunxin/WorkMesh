@@ -1,24 +1,14 @@
 # B-ship 当前规格与用户确认
 
-当前允许执行[无需 KVM 的 TCG 可行性研究](tcg/current-spec.md)，执行依据为[本阶段研究计划](tcg/research-plan.md)。允许必要隔离探测、测量和研究脚本，产品、安装器、发行物及新增机器/runner/凭据仍未放行。下面保留文档准备阶段的输入与用户设备答复，旧 saved plan 不作为本次研究批准。
+当前执行[产品完整规格](product/current-spec.md)和[产品实施计划](product/implementation-plan.md)。用户已明确选择“采用 TCG 并开始产品实现（推荐）”。首批 Linux amd64、arm64、现有 hosted runner＋TCG 完整 guest 已获本次实施授权。此前 docs-only/research-only 的否决仅是历史阶段；不限制当前已放行范围。
 
-## 来源与保留方式
+Node SEA/esbuild/postject、同架构原生闭包、离线自包含安装助手、升级卸载及 B4 文档按已复审方案实施。产品 DoD 仍须实际验收，不以研究替代；最新 Required CI、双架构产品验收、P0/P1 正式成果独审和 PR ready 是条件合入门禁。外发、新机器/runner/凭据/付费资源未获授权。
 
-本次研究结果见 [TCG 报告](../../reviews/b-ship/tcg/report.md)，原生双架构的完整 guest、系统秘密跨 reboot 和原 API 重放窗口已取得分项实证。产品方案提出 hosted＋TCG 建议供 Chief 裁定；最终无源码安装、SEA/native 和完整连接器组合仍未测，产品门禁不变。原完整规格原件未改。
+## 来源与历史
 
-- 平台卡片：[#20](todo:JfGwKk3prfIie6X2u2J51)。文档准备阶段通过 `tds.todos(id)` 完整读取当时的 `Spec`，`Saved plan` 尾部截断。本次研究读取新增阶段成功，但工具在历史正文末段截断；完整当前规格来源为本会话用户全文和保留的历史原件，见 [TCG 规格](tcg/current-spec.md)。
-- 完整 saved plan：`doc:Sq2Il0gKZRLrp-8L4RFk3`。本会话用户重新提供的完整原文保存在 [实施方案](implementation-plan.md#已确认的文档准备计划原文)；不补造工具截断部分。
-- 问题卡：`doc:q-rojM7Z-OYYSGaTPRD04Td`；真实答复见下表及本会话。稳定引用、正文摘要和读取事实见[方案证据](../../reviews/b-ship/planning-evidence.md)。
+完整当前规格通过本会话用户全文和本轮 tds.todos Spec 复读保存。产品问答见产品规格。历史文档 saved plan `doc:Sq2Il0gKZRLrp-8L4RFk3` 完整原件仍在 implementation-plan.md 的 BEGIN-SAVED-PLAN 区间。现工具未提供 saved plan 更新接口，平台返回的旧计划不得冒作当前产品计划；当前计划的权威仓库文件另列。
 
-## 用户答复与当前含义
-
-| 问题 | 用户原答复 | 当前含义 |
-| --- | --- | --- |
-| 首批发行平台 | Linux amd64、arm64（推荐） | 首批双架构已确认；既有 Windows/macOS 安全回归保持 |
-| 无源码验收环境 | 独有干净虚拟机／原生 CI（推荐） | 环境类型已确认；尚未提供具体目标设备或系统版本 |
-| 本次研究路线 | 先验证无需 KVM 的路径（推荐） | 只放行 TCG 可行性实验；不批准替换最终验收路线或实施产品 |
-
-1 vCPU、1 GiB 内存和 2 GiB 可用磁盘只是测量起点建议。Node SEA、esbuild、postject 和同架构原生依赖归档是执行者提出的待审方案，不是用户已批准的产品实现。后续[验收设计](acceptance.md)中的新命令和新测试目前均未实现、未运行。
+[TCG 研究规格](tcg/current-spec.md)、[研究计划](tcg/research-plan.md)及[原运行报告](../../reviews/b-ship/tcg/report.md)保持历史字节。本次是授权变更，不倒填先前批准或产品验收。硬件测量起点不是用户最低设备承诺；软件下限须取运行时和原生 ELF 要求并实测。
 
 ## 文档准备阶段 Spec 原文（历史）
 

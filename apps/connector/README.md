@@ -36,3 +36,7 @@ MCP 和 Skill 可以位于清单明确批准的不同 HTTPS origin。兑换与 d
 源码中的测试内存 store 只用于确定性故障注入，不是产品后备存储。平台矩阵、成果独审、最新 Required CI 和实际 main 落地仍是验收门禁；本地通过不代表已发布或已合入。
 
 安装须允许原生依赖及连接器的准备脚本；`--ignore-scripts` 只适用于离线缓存准备，不能视为可运行安装。macOS 安装钩子修正锁定 node-pty 的 helper 执行位，使用安装目录内的独立副本，公共包缓存保持原样。
+
+## 版本化离线分发
+
+Linux 原生构建执行 `pnpm --filter @workmesh/connector build:release -- --output <new-owned-output>`。SEA 内嵌运行时、公钥和发行元数据；`workmesh-connector --version` 无秘密。安装、回退及保留配置秘密的卸载见[安装说明](../../docs/integration/installation.md)。当前实现仍在完整产品验收阶段，源码运行或研究 probe 不证明发行 DoD。

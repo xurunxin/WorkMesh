@@ -165,3 +165,5 @@ SDK 的 `createReviewDelegation` 接受可选 `budget`；REST、MCP `create_revi
 reviewer 不发布 Plan，必须本人 Room `review_result` 与本人 `code_review` Artifact；所有非 completed required child 保留准确阻父 IDs。实现和真实检查记录见 `docs/plan/agent-mcp-m2/product-report.md`，规划历史与产品结果分别保全。
 
 SDK 与 MCP 在各自边界按错误码、原因和恢复目录核验新增字段，丢弃自由文字、控制串及错配字段，保留原错误。CLI 从 429/503 的 `Retry-After` 展示安全等待秒数；头无效或缺失时明确停止重试，不回显原头，不新增自动重试，不改 pending。详见[恢复说明](integration/troubleshooting.md)。
+
+连接器版本化发行入口见[离线安装](integration/installation.md)。源码运行不代表设备安装；`connect` 没有 `--dry-run`。

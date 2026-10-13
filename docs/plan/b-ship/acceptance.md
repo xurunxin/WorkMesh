@@ -1,6 +1,6 @@
 # B-ship 无源码安装验收设计
 
-本文件定义单独放行后的产品必需验收。当前允许[TCG 可行性研究](tcg/current-spec.md)，其完整 guest、真实秘密存储与恢复窗口探测按[研究计划](tcg/research-plan.md)单列结果；研究不代最终发行安装验收。新发行物、新安装命令和 `apps/connector/test/install.integration.test.ts` 仍未实现，原断言不降级。
+本次按[产品规格](product/current-spec.md)与[产品计划](product/implementation-plan.md)执行完整产品验收。用户已采用现有 hosted 双架构＋TCG。历史 KVM 条款与研究阶段说明保留来源，已被本次环境裁定覆盖；研究不能代替发行安装 DoD。
 
 ## 输入、执行者与结果规则
 
@@ -79,7 +79,7 @@
 
 ## 必需检查与 CI
 
-本轮仅 Markdown。执行文档检查、方案链接/来源核验和 CI 结构检查，按 `scripts/ci-policy.mjs` 的实际 docs 分类验必需结果，不为方案文件改豁免规则。完整产品检查留给单独实施阶段，不能把本轮文档退出成功写成安装成功。
+本轮包含产品代码与验收工作流；按真实变更运行完整适用必需检查及双架构安装验收，文档检查不能代替安装成功。
 
 后续实施的具体命令如下；带新增 script 的命令当前未实现。
 

@@ -50,3 +50,7 @@ Node SEA、esbuild、postject 与同架构原生依赖归档是执行者提出�
 
 
 本次研究 run `38301479837`、attempt 1、HEAD `df26e18864b34638fce0a25751c7060f249d1a3f` 的双架构原件已交叉复核：完整 guest、实际 OS reboot、同用户真实 Secret Service 和原 900 秒加密 API 重放均取得实证。重启至重放分别为 123.52 秒和 576.14 秒；源码连接器/SEA/native/最终安装组合仍未测。[研究报告](../b-ship/tcg/report.md)保存原件、首败、预算与剩余条件。实施/验收方案提出原生 hosted＋TCG、90 分钟产品 leg 总预算的 Proposed 建议；Chief 尚未裁定路线或批准产品，不改原窗口、秘密和最终全部断言。
+
+## B-ship 产品阶段放行
+
+用户原答复：“采用 TCG 并开始产品实现（推荐）”。当前执行 [产品完整规格](../../plan/b-ship/product/current-spec.md)及[实施计划](../../plan/b-ship/product/implementation-plan.md)。现有 hosted 双架构＋TCG 替代历史 KVM 环境建议，正式放行既定仓库内 Node SEA、原生封装、安装升级卸载、B4 和无源码完整验收；历史研究原件保持。不新增设备、runner、凭据或外发。最终产品证据、最新必需 CI、P0/P1 成果独审与 PR ready 后才条件合入。
