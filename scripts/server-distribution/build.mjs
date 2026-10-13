@@ -83,8 +83,10 @@ const archive = async references => {
   await completed
   return { entries, identities }
 }
-const bootstrap = await archive([images.installer.id])
-const application = await archive([...new Set(Object.values(images).filter(image => image.id !== images.installer.id).map(image => image.id))])
+// Named references preserve every OCI index entry. Exporting several unnamed
+// IDs can collapse the index to one entry even when manifest.json lists them all.
+const bootstrap = await archive([images.installer.reference])
+const application = await archive(Object.entries(images).filter(([role]) => role !== 'installer').map(([, image]) => image.reference))
 for (const [role, image] of Object.entries(images)) image.archiveId = (role === 'installer' ? bootstrap : application).identities.id(image.id)
 const bootstrapChunks = bootstrap.entries, chunks = application.entries
 const files = []

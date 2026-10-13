@@ -379,6 +379,7 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
 
 def main():
     servers = []
+    prefix = None
     try:
         rebooted = STATE.exists()
         if rebooted:
@@ -434,6 +435,12 @@ def main():
                 private(invalid, {**json.loads(config.read_text()), 'profile': 'unsupported'})
                 install(dist, digest, prefix, invalid, 'check', expected=1)
                 assert not (prefix / 'current.json').exists() and not (prefix / 'operator-keys.json').exists()
+                for key, value in [('WORKMESH_QUEUE_BACKEND', 'none'), ('WORKMESH_ARTIFACT_BACKEND', 'filesystem')]:
+                    original = json.loads(config.read_text())
+                    private(invalid, {**original, 'environment': {**original['environment'], key: value}})
+                    install(dist, digest, prefix, invalid, 'check', expected=1)
+                    assert not (prefix / 'current.json').exists() and not (prefix / 'operator-keys.json').exists()
+                checks.append('unsupportedCombinationsRejected')
                 assert install(dist, digest, prefix, config, 'check')['status'] == 'checked'
                 assert not (prefix / 'current.json').exists()
                 lock_owner = uuid.uuid4().hex
@@ -465,7 +472,12 @@ def main():
                 compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
         boot = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
         resources = {'cpu': command(['lscpu', '-J']), 'memory': Path('/proc/meminfo').read_text().splitlines()[:3],
-                     'disk': command(['df', '-B1', '--output=size,used,avail', '/']).splitlines()}
+                     'disk': command(['df', '-B1', '--output=size,used,avail', '/']).splitlines(),
+                     'os': Path('/etc/os-release').read_text(),
+                     'docker': command(['docker', '--version']).strip(), 'compose': command(['docker', 'compose', 'version']).strip(),
+                     'hostNodeAvailable': subprocess.run(['sh', '-c', 'command -v node'], capture_output=True).returncode == 0,
+                     'hostPnpmAvailable': subprocess.run(['sh', '-c', 'command -v pnpm'], capture_output=True).returncode == 0}
+        assert not resources['hostNodeAvailable'] and not resources['hostPnpmAvailable']
         if rebooted:
             report({'phase': 'after-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
                     'restartedProfiles': ['personal', 'team', 'enterprise'], 'resources': resources})
@@ -478,6 +490,13 @@ def main():
             report({'phase': 'before-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
                     'profiles': profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
     except Exception as error:
+        if prefix and (prefix / 'journal.json').exists():
+            try:
+                journal = json.loads((prefix / 'journal.json').read_text())
+                diagnostics['journal'] = {'stage': journal['stage'], 'candidate': journal['candidate'],
+                    'actions': [{'name': entry['name'], 'status': entry['status']} for entry in journal['actions']]}
+            except (OSError, KeyError, ValueError):
+                diagnostics['journalUnavailable'] = True
         report({'phase': 'failure', 'errorType': type(error).__name__, 'diagnostics': diagnostics, 'completedChecks': checks, 'samples': samples})
         raise
     finally:

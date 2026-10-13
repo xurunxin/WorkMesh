@@ -1,0 +1,32 @@
+{
+  "sourceHead": "96b15c4fc5d70ac4bdac103321b55c414abbfe73",
+  "runId": 38452133122,
+  "jobId": 115488481183,
+  "artifactId": 11842277034,
+  "artifactUrl": "https://github.com/xurunxin/WorkMesh/actions/runs/38452133122/artifacts/11842277034",
+  "status": "failed",
+  "zipSha256": "d930bc7a9787f9f10cc02d40c81947643a3edc76afcc88a831a55cdee8df5f63",
+  "members": {
+    "result.json": {
+      "sha256": "3c7b7e5e044bd656d0502efdddeb4735e8cf6b1a8c68f76334634bd04e924cac",
+      "bytes": 2663
+    },
+    "source-after.txt": {
+      "sha256": "4a1fe02b6c802841ed49a3e7df2f1aaf79eb8aa146b768c4c94bc5b8a3abb77f",
+      "bytes": 83
+    },
+    "guest.log": {
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1",
+      "bytes": 396
+    },
+    "serial.log": {
+      "sha256": "7121ffb900e375f4159fbaecf5bb9f0918d4593b7751028a6c92bd609bf73587",
+      "bytes": 84477
+    },
+    "qemu-stderr.log": {
+      "sha256": "7d70263d629d52e2aae08d19cc47b3454c71f64c4bc89faa69f2b0494ab6cd98",
+      "bytes": 69
+    }
+  },
+  "boundary": "仅完成 offlineNoDefaultRoute 与 projectLockRejectsBeforeDeploymentMutation；失败代码 INSTALL_IMAGE_MISSING，未完成画像闭环。"
+}

@@ -124,3 +124,9 @@ CI #516／run 38447218904 的 amd64 候选完成五镜像构建及封包，完�
 随后下载同一 amd64 候选，逐分块校验后实际导入其 bootstrap 归档。Docker 明确导入 sha256:fcb4b553a31aded073bc7df79a56399df44e4615cd025ac67ecc0deac00ba065，但构建清单中的 sha256:1bb9723ad5448993fd942efed6daccfd7ac889495571c87525673c9f780a1939 不存在，按该 ID 启动实际退出 125。归档原件中前者是 OCI manifest 摘要，后者是该 manifest 引用的 config 摘要。这是本机归档复现，不能倒填为上一 guest 的原始 stderr。
 
 针对实际归档差异，封包器以流式 tar 解析绑定准确 OCI manifest 摘要与构建 config ID，二者均入可信清单。安装工具仅在这两个 ID 中解析并核架构和来源，导入后记录实际目标 ID、原子写入 Compose；不靠名称、标签或猜测生成替代 ID。未知 ID、摘要不符和截断归档拒绝。新候选待完整 guest 复验；此前 CI #517 不包含此项修正，不记通过。
+
+CI #518 的 amd64 guest 进一步通过配置检查和部署锁负例，但应用镜像导入后报 INSTALL_IMAGE_MISSING；受测 HEAD 为 96b15c4fc5d70ac4bdac103321b55c414abbfe73，1,087.42 秒，尚无资源样本或画像闭环通过。原件见 [导入首败索引](../../reviews/ta01-product/ci518-amd64-import-failure.json)及[压缩原件](../../reviews/ta01-product/ci518-amd64-import-failure.zip)。ARM 运行尚未终结，不推断其结果。
+
+旧 amd64 候选的实际应用归档包含七项 classic manifest，但 OCI index 只有 MCP 一项；在可信工具容器中实际 Docker load 也只导入该项。封包器现按唯一镜像引用导出，并验证每个 config 对应的准确 OCI manifest 确实进入索引；索引漏项在构建端拒绝。真实双镜像带标签导出取得两个索引项，原件见 [named-archive-probe.json](../../reviews/ta01-product/named-archive-probe.json)。归档内容、目标 ID、来源和架构校验保持，不按标签放宽安装接受。
+
+现行 apps/mcp/src/index.ts 的 tool() 返回 structuredContent: { data }；安装器的业务验证已改为读取 structuredContent.data，再核准确 Work Item ID。此修正来自实际源码，不冒为前述 guest 已执行。guest 同次增加 Redis-free／filesystem 错误组合实际拒绝、无宿主 Node／pnpm 检查、OS／Docker／Compose 环境回读和无秘密 journal 阶段诊断。安装器八项单元、文档静态与 Python AST 检查通过；完整 guest 仍待新候选结果。

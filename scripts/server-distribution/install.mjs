@@ -244,7 +244,7 @@ async function verifyBusinessRead(release, env, proofFile) {
   })
   await post(1, 'initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'workmesh-installer', version: '1.0.0' } })
   const result = await post(2, 'tools/call', { name: 'get_work_item', arguments: { workItemId: proof.workItemId } })
-  const resource = result.structuredContent ?? JSON.parse(result.content.find(item => item.type === 'text').text)
+  const resource = result.structuredContent?.data ?? JSON.parse(result.content.find(item => item.type === 'text').text)
   if (resource.id !== proof.workItemId) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
   assertCompatibleLedger(ledger(release), release.manifest.migrationLedger)
   return { authenticatedMcpRead: true, workItemId: proof.workItemId, candidate: release.candidate }

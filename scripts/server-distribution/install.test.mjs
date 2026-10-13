@@ -33,15 +33,21 @@ test('wrongArchitectureRejectedBeforeMutation and strict closed manifest schema'
 test('OCI archive identity is bound to the exact manifest and survives split tar headers', () => {
   const configId = 'sha256:' + 'a'.repeat(64)
   const body = Buffer.from(JSON.stringify({ schemaVersion: 2, config: { digest: configId }, layers: [] }))
-  const header = Buffer.alloc(512)
-  header.write('blobs/sha256/' + hash(body))
-  header.write(body.length.toString(8).padStart(11, '0'), 124)
-  const tar = Buffer.concat([header, body, Buffer.alloc((512 - body.length % 512) % 512), Buffer.alloc(1024)])
+  const member = (name, bytes) => {
+    const header = Buffer.alloc(512)
+    header.write(name); header.write(bytes.length.toString(8).padStart(11, '0'), 124)
+    return Buffer.concat([header, bytes, Buffer.alloc((512 - bytes.length % 512) % 512)])
+  }
+  const manifestMember = member('blobs/sha256/' + hash(body), body)
+  const indexMember = member('index.json', Buffer.from(JSON.stringify({ schemaVersion: 2, manifests: [{ digest: 'sha256:' + hash(body) }] })))
+  const tar = Buffer.concat([manifestMember, indexMember, Buffer.alloc(1024)])
   const archive = new ArchiveIdentities()
   for (let i = 0; i < tar.length; i += 17) archive.write(tar.subarray(i, i + 17))
   assert.equal(archive.id(configId), 'sha256:' + hash(body))
   const truncated = new ArchiveIdentities(); truncated.write(tar.subarray(0, 515))
   assert.throws(() => truncated.id(configId), /BUILD_ARCHIVE_TRUNCATED/)
+  const dropped = new ArchiveIdentities(); dropped.write(Buffer.concat([manifestMember, Buffer.alloc(1024)]))
+  assert.throws(() => dropped.id(configId), /BUILD_ARCHIVE_INDEX_MISSING_IMAGE/)
   assert.equal(new ArchiveIdentities().id(configId), configId)
 })
 test('offlineDependencyClosure verifies actual bytes before an image is imported', async () => {
