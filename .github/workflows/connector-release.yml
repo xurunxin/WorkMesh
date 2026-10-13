@@ -44,7 +44,7 @@ jobs:
       - name: Compile and build private self-contained release
         run: |
           set -euo pipefail
-          mkdir -p ci-connector-release
+          mkdir -p ci-connector-release .tmp
           git show -s --format='%H %T %P' HEAD > ci-connector-release/source.txt
           pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-release" 2>&1 | tee ci-connector-release/build.log
       - name: Run installed entry integrity and uninstall checks

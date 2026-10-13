@@ -44,7 +44,7 @@
 
 ## 干净目标与黄金路径
 
-1. amd64 hosted runner 与专用 ARM64 自托管原生 runner 先核架构、`/dev/kvm` 和实际 KVM guest 启动，再准备独有 guest 镜像与磁盘。ARM64 主机必须按实施方案由 Chief/管理员落实资源与注册条件，不能用 hosted ARM64 代替。两架构构建机先完成 node-pty 原生编译、准确 Node headers 与工具链回执，并核归档内 `node_modules/node-pty/build/Release/pty.node` 的 ELF/摘要和上游 loader 布局。guest 无仓库、包缓存或宿主 HOME 挂载。目标上实查 `node`、`pnpm`、`tsx`、node-gyp 不可用，安装不调用构建工具；runner 有 Node 和编译器不影响 guest 的证明。
+1. 两架构分别使用现有 `ubuntu-24.04`、`ubuntu-24.04-arm` 原生构建机和独有 TCG guest，显式 `-accel tcg`，不要求 KVM 或注册新 runner。构建机完成受控 node-pty 编译、准确 headers/toolchain 与归档 ELF 摘要。guest 无源码、workspace 或宿主 HOME 挂载；实查 node/pnpm/tsx/node-gyp 不可用，连接器安装运行不依赖 Python。
 2. 目标预备同一测试用户的 D-Bus 和可解锁 Secret Service，使用独有 XDG 数据/运行/配置目录。真实密钥环解锁输入只通过 stdin，密码不入命令、环境文件或日志。检查实际路径/owner/mode/祖先，不改变用户共享 keyring 或 ACL。
 3. 只转移受审归档、manifest、SHA256SUMS、安装脚本、同架构安装助手及其闭包、无秘密 expectation 和已构建的测试客户端。先阻断安装阶段出站访问，执行实施方案安装样例；安装不得尝试网络或调用包管理器。固定安装目录并运行 `--version`。
 4. 控制端用独有 test 数据库启动真实 API、MCP 与必要 worker；安装协调模式开关与鉴权头按现行合同设置。用管理员 Cookie/CSRF、fresh Idempotency-Key 创建 Connection，按返回事实形成预期清单，经本地管理员确认；不从 discovery 自行批准身份。

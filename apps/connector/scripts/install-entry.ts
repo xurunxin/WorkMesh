@@ -4,7 +4,7 @@ import { dirname, join, resolve, relative, isAbsolute } from 'node:path'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { createHash, randomUUID } from 'node:crypto'
-import { Parse } from 'tar'
+import { Parser } from 'tar'
 import { releaseSchema, type ReleaseManifest } from './release-schema.js'
 import { withDirectoryLock, atomicWrite, readPrivate, syncDirectory } from '../src/platform-security.js'
 import { trustedPosixDirectory } from '../src/path-policy.js'
@@ -62,7 +62,7 @@ async function archive(path: string, m: ReleaseManifest): Promise<Map<string, Bu
   const directories = new Set(m.files.flatMap(f => { const list = []; let p = dirname(f.path); while (p !== '.') { list.push(p); p = dirname(p) } return list }))
   let total = 0
   await new Promise<void>((done, fail) => {
-    const parser = new Parse({ strict: true, onReadEntry(entry) {
+    const parser = new Parser({ strict: true, onReadEntry(entry) {
       try {
         const path = entry.path.replace(/\/$/, '')
         safeRelative(path)
@@ -78,13 +78,13 @@ async function archive(path: string, m: ReleaseManifest): Promise<Map<string, Bu
         total += entry.size; check(total <= 1024 * 1024 * 1024, 'INSTALL_ARCHIVE_LIMIT')
         const chunks: Buffer[] = []; let count = 0
         entries.set(path, Buffer.alloc(0))
-        entry.on('data', (chunk: Buffer) => { count += chunk.length; if (count > f.size) { parser.destroy(new Error('INSTALL_MEMBER_SIZE')); return } chunks.push(chunk) })
+        entry.on('data', (chunk: Buffer) => { count += chunk.length; if (count > f.size) { parser.abort(new Error('INSTALL_MEMBER_SIZE')); return } chunks.push(chunk) })
         entry.on('end', () => {
           const content = Buffer.concat(chunks)
-          if (content.length !== f.size || digest(content) !== f.sha256) { parser.destroy(new Error('INSTALL_MEMBER_HASH')); return }
+          if (content.length !== f.size || digest(content) !== f.sha256) { parser.abort(new Error('INSTALL_MEMBER_HASH')); return }
           entries.set(path, content)
         })
-      } catch (error) { parser.destroy(error as Error) }
+      } catch (error) { parser.abort(error as Error) }
     } })
     parser.on('error', fail); parser.on('end', done); parser.end(bytes)
   })
