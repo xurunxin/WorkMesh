@@ -10,7 +10,11 @@ case "$(uname -s):$(uname -m)" in
   *) echo INSTALL_ARCH_MISMATCH >&2; exit 1 ;;
 esac
 test "$arch" = '@ARCH@' || { echo INSTALL_ARCH_MISMATCH >&2; exit 1; }
-sha256sum --check --status <<'WORKMESH_HELPER_SUMS'
+if ! sha256sum --check --status <<'WORKMESH_HELPER_SUMS'
 @HELPER_SUMS@
 WORKMESH_HELPER_SUMS
+then
+  echo INSTALL_HELPER_HASH >&2
+  exit 1
+fi
 exec "./installer-linux-$arch/bin/workmesh-connector-installer" "$@"

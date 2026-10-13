@@ -12,6 +12,7 @@ import subprocess
 import threading
 import time
 import urllib.request
+import uuid
 
 STATE = Path.home() / ".local/share/connector-install"
 STATE.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -166,6 +167,9 @@ def prepare():
         for path in ["install.sh", "SHA256SUMS", manifest["archive"]["name"], *[f["path"] for f in manifest["installerFiles"]]]:
             download(path)
         for f in manifest["installerFiles"]:
+            bytes = (distribution / f["path"]).read_bytes()
+            if len(bytes) != f["size"] or hashlib.sha256(bytes).hexdigest() != f["sha256"]:
+                raise RuntimeError("downloaded helper digest mismatch")
             os.chmod(distribution / f["path"], f["mode"])
 
 
@@ -221,6 +225,33 @@ printf 'CLIENT_OK\n'
         if b"CONNECTOR_SECRET_STORE_UNAVAILABLE" not in failure.stderr:
             raise RuntimeError("store fail closed")
         checks.extend(["fingerprint-zero-config", "store-fail-closed"])
+        for field in ["workspaceId", "teamId", "principalHumanActorId", "agentActorId", "connectionId", "profileVersion", "capabilities", "grantAgentDelegate"]:
+            rejected = request("create", {})
+            if field.endswith("Id"):
+                rejected["expectation"][field] = str(uuid.uuid4())
+            elif field == "profileVersion":
+                rejected["expectation"][field] = "unapproved-profile"
+            elif field == "capabilities":
+                rejected["expectation"][field] = ["work:read"]
+            else:
+                rejected["expectation"][field] = True
+            rejected_dir = STATE / ("reject-" + field)
+            connect(rejected, rejected_dir, expected=1)
+            if (rejected_dir / "config.json").exists():
+                raise RuntimeError("identity/capability rejection wrote configuration")
+            checks.append("reject-" + field)
+        corrupted = request("create", {})
+        corrupted_dir = STATE / "corrupted-pending"
+        corrupted_dir.mkdir(mode=0o700)
+        private(corrupted_dir / "pending.json", {})
+        corrupt_bytes = (corrupted_dir / "pending.json").read_bytes()
+        connect(corrupted, corrupted_dir, expected=1)
+        if (corrupted_dir / "pending.json").read_bytes() != corrupt_bytes or (corrupted_dir / "config.json").exists():
+            raise RuntimeError("corrupt pending was rewritten")
+        command([str(BINARY), "abandon-pending"], env=dict(os.environ, WORKMESH_CONNECTOR_DIRECTORY=str(corrupted_dir)))
+        if (corrupted_dir / "pending.json").exists():
+            raise RuntimeError("explicit abandon did not remove pending")
+        checks.append("corrupt-pending-and-explicit-abandon")
         upgrade_dir = STATE / "upgrade"
         upgraded = json.loads((upgrade_dir / "manifest.json").read_text())
         command(["sh", str(upgrade_dir / "install.sh"), "--archive", str(upgrade_dir / upgraded["archive"]["name"]),

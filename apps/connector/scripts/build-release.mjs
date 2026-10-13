@@ -87,7 +87,7 @@ async function copyPackage(name, root, directories) {
     for (const name of await readdir(directory)) {
       const path = join(directory, name), rel = prefix + name, info = await lstat(path)
       if (info.isDirectory()) {
-        if ((name === 'src' && meta.name !== 'koffi') || name === 'node_modules' || ['scripts', 'test', 'tests', 'obj', 'obj.target', 'vendor', 'examples', 'benchmark'].includes(name)) continue
+        if (name.includes('musl') || (name === 'src' && meta.name !== 'koffi') || name === 'node_modules' || ['scripts', 'test', 'tests', 'obj', 'obj.target', 'vendor', 'examples', 'benchmark'].includes(name)) continue
         await walk(path, rel + '/')
       } else if (info.isFile() && (/\.(?:js|cjs|json|node)$/.test(name) || /^(?:license|copying|notice)/i.test(name))) {
         if (name.endsWith('.map') || rel.includes('build/') && rel !== 'build/Release/pty.node') continue
@@ -199,6 +199,8 @@ for (const receipt of receipts) {
 }
 await copyFile(join(work, `node-v${nodeVersion}-linux-${process.arch}/LICENSE`), join(payload, 'LICENSES/node-LICENSE')); licenses.push('LICENSES/node-LICENSE')
 await chmod(join(payload, 'LICENSES/node-LICENSE'), 0o600)
+await copyFile(join(repo, 'LICENSE'), join(payload, 'LICENSES/WorkMesh-LICENSE')); licenses.push('LICENSES/WorkMesh-LICENSE')
+await chmod(join(payload, 'LICENSES/WorkMesh-LICENSE'), 0o600)
 async function fileList(root, prefix = '') {
   const list = []
   for (const name of (await readdir(root)).sort()) {

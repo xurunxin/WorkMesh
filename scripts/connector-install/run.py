@@ -104,9 +104,11 @@ def main():
         guest = (Path(__file__).parent / "guest.py").read_bytes()
         wrapper = b'''#!/bin/sh
 set -eu
-trap 'status=$?; if test "$status" -ne 0; then python3 /opt/connector-install/failure.py; fi' EXIT
+phase=prepare
+trap 'status=$?; if test "$status" -ne 0; then python3 /opt/connector-install/failure.py "$status" "$phase"; fi' EXIT
 if test ! -f /home/wmprobe/.local/share/connector-install/state.json; then
   runuser -u wmprobe -- python3 /opt/connector-install/guest.py --prepare
+  phase=offline-install
   unshare --net -- runuser -u wmprobe -- sh -c '
     set -eu
     test "$(wc -l < /proc/net/route)" -eq 1
@@ -119,6 +121,7 @@ if test ! -f /home/wmprobe/.local/share/connector-install/state.json; then
     printf "PRIVATE_NETWORK_NAMESPACE_NO_ROUTE_DRY_RUN_AND_INSTALL_PASSED\\n" > "$HOME/.local/share/connector-install/offline-proof"
   '
 fi
+phase=installed-driver
 runuser -u wmprobe -- dbus-run-session -- python3 /opt/connector-install/guest.py
 if grep -q '"phase": "reboot"' /home/wmprobe/.local/share/connector-install/state.json; then
   systemctl --no-block reboot
@@ -139,7 +142,7 @@ TimeoutStartSec=1200
 [Install]
 WantedBy=cloud-init.target
 '''
-        failure = b'import json, urllib.request\nrequest = urllib.request.Request("http://10.0.2.2:18080/receipt", json.dumps({"phase":"failure","errorType":"GuestServiceFailure"}).encode(), {"Content-Type":"application/json"})\nurllib.request.urlopen(request, timeout=30).read()\n'
+        failure = b'import json, re, subprocess, sys, urllib.request\ntext = subprocess.run(["journalctl", "-b", "--unit=connector-install.service", "--no-pager", "--output=cat"], capture_output=True).stdout.decode(errors="replace")\ncodes = sorted(set(re.findall(r"\\b(?:INSTALL|CONNECTOR)_[A-Z_]+\\b", text)))\nsignatures = [name for name in ["Illegal instruction", "Killed", "Permission denied", "not found", "cannot find", "cannot change"] if name in text]\nvalue = {"phase":"failure","errorType":"GuestServiceFailure","exitCode":int(sys.argv[1]),"stage":sys.argv[2],"codes":codes,"signatures":signatures}\nrequest = urllib.request.Request("http://10.0.2.2:18080/receipt", json.dumps(value).encode(), {"Content-Type":"application/json"})\nurllib.request.urlopen(request, timeout=30).read()\n'
         files = [("/opt/connector-install/failure.py", failure, "0644"), ("/opt/connector-install/guest.py", guest, "0644"), ("/opt/connector-install/finish.sh", wrapper, "0755"),
                  ("/etc/systemd/system/connector-install.service", service, "0644")]
         cloud = "#cloud-config\nusers:\n  - name: wmprobe\n    uid: 22020\n    lock_passwd: true\n    shell: /bin/sh\npackage_update: true\npackages:\n  - dbus\n  - gnome-keyring\n  - libsecret-tools\nwrite_files:\n"

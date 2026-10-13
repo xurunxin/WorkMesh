@@ -33,3 +33,8 @@ CI483 之后的历史 Required CI 不代本轮：run38341429314 分类明确因 
 
 
 最新原生辅助 run38344079595/head0b3f1b2755ed5094e6c3c83f324a41cb6286ce30 两架构均通过 SEA、安装完整性、真实第二版本升级回退及卸载 4 项。对应 Required run38344079493 的 amd64 完整 guest 已实际启动，但在准备／离线安装根包装器阶段失败，尚未进入 connect 或 reboot；原件 raw/product-first-amd64.zip，provider artifact11787813661，下载 SHA-256 824ffc04062d121b2aa11abe6fdde9ecf63baaddb09de61fb2772167aaa990b7 与 provider digest 一致。现原件只有 GuestServiceFailure 与串口 systemd 失败，不含具体命令错误；不猜根因。新增服务 journal+console 输出，仅输出无秘密安装和安全诊断，以复跑定位。ARM64 同轮仍在运行，结果另核。
+
+
+run38345379545/head45634e7f19839c2ac134839c14635f47d2fd847a 的 amd64 完整 guest 再次在根服务阶段失败，原件 raw/product-second-amd64.zip，artifact11788669477，SHA-256 ba4a3554b669013f1398605d2758e9f142b19b225e43f0e769b8a27def0c532a，与 provider digest 一致。journal+console 未出现在串口原件中，未据此猜原因。下一轮收集失败的阶段、退出码和固定错误码／固定系统诊断签名，不上传自由文本或秘密；下载助手先核摘要，hash 失败明确给 INSTALL_HELPER_HASH。
+
+安装拒绝矩阵已增加八类身份／能力／profile 清单偏差，以及损坏 pending 不重建和显式 abandon；GNU 归档删除不可运行的 musl sidecar，仅保 GNU 原生闭包，并纳入 WorkMesh 自身 MIT 许可。原保护与全部原断言继续保持，新增验证尚待真实运行。
