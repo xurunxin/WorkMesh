@@ -22,13 +22,23 @@ for part in $parts; do
 done
 image=$(sed -n 's/^  "installerImage": "\(sha256:[a-f0-9]*\)".*$/\1/p' "$bundle/manifest.json")
 [ "${#image}" = 71 ] || { echo 'INSTALL_BOOTSTRAP_INVALID' >&2; exit 1; }
+original_image=$image
+archive_image=$(sed -n 's/^  "installerArchiveImage": "\(sha256:[a-f0-9]*\)".*$/\1/p' "$bundle/manifest.json")
+[ "${#archive_image}" = 71 ] || { echo 'INSTALL_BOOTSTRAP_INVALID' >&2; exit 1; }
+trusted_helper() {
+  for candidate in "$original_image" "$archive_image"; do
+    actual=$(docker image inspect "$candidate" --format '{{.Id}}' 2>/dev/null || true)
+    case "$actual" in "$original_image"|"$archive_image") printf '%s\n' "$actual"; return 0;; esac
+  done
+  return 1
+}
 # Importing the trusted tool is the bootstrap boundary; application startup and
 # other image imports happen only after the helper validates configuration.
-for part in $parts; do cat "$bundle/$part"; done | docker load >/dev/null
-if ! docker image inspect "$image" >/dev/null 2>&1; then
-  image=$(sed -n 's/^  "installerArchiveImage": "\(sha256:[a-f0-9]*\)".*$/\1/p' "$bundle/manifest.json")
-  [ "${#image}" = 71 ] || { echo 'INSTALL_BOOTSTRAP_INVALID' >&2; exit 1; }
-  docker image inspect "$image" >/dev/null
+# Reuse an already imported exact digest. Bootstrap chunk verification above and
+# the helper's full bundle/configuration verification still run on every call.
+if image=$(trusted_helper); then :; else
+  for part in $parts; do cat "$bundle/$part"; done | docker load >/dev/null
+  image=$(trusted_helper) || { echo 'INSTALL_BOOTSTRAP_IMAGE_MISSING' >&2; exit 1; }
 fi
 shift 5
 exec docker run --rm --network host --pull never \

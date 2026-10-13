@@ -132,3 +132,5 @@ CI #518 的 amd64 guest 进一步通过配置检查和部署锁负例，但应�
 现行 apps/mcp/src/index.ts 的 tool() 返回 structuredContent: { data }；安装器的业务验证已改为读取 structuredContent.data，再核准确 Work Item ID。此修正来自实际源码，不冒为前述 guest 已执行。guest 同次增加 Redis-free／filesystem 错误组合实际拒绝、无宿主 Node／pnpm 检查、OS／Docker／Compose 环境回读和无秘密 journal 阶段诊断。安装器八项单元、文档静态与 Python AST 检查通过；完整 guest 仍待新候选结果。
 
 进一步核 runtime-guard.mjs 与 loadDeploymentProfile：所有长期服务均要求三个公开 HTTPS 地址，而原 MCP Compose 只提供 WORKMESH_BROWSER_ORIGIN，不能替代 WEB_ORIGIN。安装器现将 WEB_ORIGIN／PUBLIC_MCP_ORIGIN 同 S3_PUBLIC_ENDPOINT 注入 API、worker、MCP，并逐角色执行现行画像校验，避免全局配置有效而 MCP 启动时缺字段。此项是源码核查修正，尚未取得完整 guest 通过；不沿用修正前候选结果。
+
+bootstrap 现复用已导入且实际 ID 等于清单中两个可信摘要之一的工具镜像，避免每个 check／commit／回退调用重复导入相同大归档。每次仍核 manifest 和所有 bootstrap 分块摘要，工具容器仍完整核全部候选分块与配置；没有使用名称、时间戳或缓存收据替代哈希。找不到确切镜像时才从已校验分块导入，导入后仍明确拒绝未知 ID。此项待最新完整 guest 复验，不以估计耗时写通过。
