@@ -80,6 +80,17 @@ def download():
     return dist, manifest, expected['manifestSha256']
 
 
+def helper_image(manifest):
+    for image in dict.fromkeys([manifest['installerImage'], manifest['installerArchiveImage']]):
+        result = subprocess.run(['docker', 'image', 'inspect', image], capture_output=True)
+        if result.returncode == 0:
+            value = json.loads(result.stdout)[0]
+            assert value['Id'] == image and value['Architecture'] == manifest['arch']
+            assert value['Config']['Labels']['org.opencontainers.image.revision'] == manifest['source']['commit']
+            return image
+    raise RuntimeError('trusted helper was not loaded')
+
+
 def proxy(port, upstream, certificates):
     class Handler(BaseHTTPRequestHandler):
         def forward(self):
@@ -346,7 +357,7 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
     with env_file.open('w') as out:
         os.chmod(env_file, 0o600)
         out.write('\n'.join(k + '=' + v for k, v in env_values.items()) + '\n')
-    helper = manifest['installerImage']
+    helper = helper_image(manifest)
     code = "import{createRequire}from'node:module';const r=createRequire('/app/node_modules/@workmesh/recovery/package.json');const{S3Client,CreateBucketCommand}=r('@aws-sdk/client-s3');const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:'us-east-1',forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}});await c.send(new CreateBucketCommand({Bucket:'ta01-restored',ObjectLockEnabledForBucket:true}));c.destroy();"
     command(['docker', 'run', '--rm', '--pull', 'never', '--network', current['project'] + '_default', '--env-file', str(env_file),
              '--entrypoint', 'node', helper, '--input-type=module', '-e', code])
@@ -427,7 +438,7 @@ def main():
                 assert not (prefix / 'current.json').exists()
                 lock_owner = uuid.uuid4().hex
                 lock = command(['docker', 'create', '--name', 'workmesh-install-lock-ta01-' + profile,
-                    '--network', 'none', '--label', 'ta01.fixture.owner=' + lock_owner, '--entrypoint', 'true', manifest['installerImage']]).strip()
+                    '--network', 'none', '--label', 'ta01.fixture.owner=' + lock_owner, '--entrypoint', 'true', helper_image(manifest)]).strip()
                 install(dist, digest, prefix, config, 'install', expected=1)
                 assert not (prefix / 'current.json').exists() and not (prefix / 'operator-keys.json').exists()
                 inspected_lock = json.loads(command(['docker', 'inspect', lock]))[0]

@@ -25,6 +25,11 @@ image=$(sed -n 's/^  "installerImage": "\(sha256:[a-f0-9]*\)".*$/\1/p' "$bundle/
 # Importing the trusted tool is the bootstrap boundary; application startup and
 # other image imports happen only after the helper validates configuration.
 for part in $parts; do cat "$bundle/$part"; done | docker load >/dev/null
+if ! docker image inspect "$image" >/dev/null 2>&1; then
+  image=$(sed -n 's/^  "installerArchiveImage": "\(sha256:[a-f0-9]*\)".*$/\1/p' "$bundle/manifest.json")
+  [ "${#image}" = 71 ] || { echo 'INSTALL_BOOTSTRAP_INVALID' >&2; exit 1; }
+  docker image inspect "$image" >/dev/null
+fi
 shift 5
 exec docker run --rm --network host --pull never \
   --mount type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \

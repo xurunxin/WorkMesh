@@ -120,3 +120,7 @@ CI #515 的分类 job 在完整历史 fetch 中耗尽 5 分钟预算并取消，
 CI #516／run 38447218904 的 amd64 候选完成五镜像构建及封包，完整 guest 随后失败。准确受测 HEAD 为 b670f3d0a468aa51a75ccbf2b77ec8aba79a8c7d；固定 2 vCPU、4,096 MiB，执行 516.54 秒，仅完成 offlineNoDefaultRoute。后续命令退出 125，原回执没有 stderr，不能从退出码认定具体原因。原件与成员哈希见 [guest 首败索引](../../reviews/ta01-product/ci516-amd64-first-guest-failure.json)及[压缩原件](../../reviews/ta01-product/ci516-amd64-first-guest-failure.zip)。任何画像闭环、重启及新安装器恢复均未取得通过依据。
 
 独立源码核查发现 docker save 按镜像 ID 导出的归档不保证原标签存在，安装器仍将 PG／Redis／S3 的 Compose 镜像写成原标签。现统一使用清单中经校验的镜像 ID，包括 minio-init；这项修正尚不属于上述受测候选。guest 同时新增不含参数或原始 stderr 的固定错误分类及 stderr 哈希；OOM 样本先保全、后台测量错误传播、有界重启就绪等待和 1 MiB 回执上限一并待新候选复验，未改业务断言或保证。
+
+随后下载同一 amd64 候选，逐分块校验后实际导入其 bootstrap 归档。Docker 明确导入 sha256:fcb4b553a31aded073bc7df79a56399df44e4615cd025ac67ecc0deac00ba065，但构建清单中的 sha256:1bb9723ad5448993fd942efed6daccfd7ac889495571c87525673c9f780a1939 不存在，按该 ID 启动实际退出 125。归档原件中前者是 OCI manifest 摘要，后者是该 manifest 引用的 config 摘要。这是本机归档复现，不能倒填为上一 guest 的原始 stderr。
+
+针对实际归档差异，封包器以流式 tar 解析绑定准确 OCI manifest 摘要与构建 config ID，二者均入可信清单。安装工具仅在这两个 ID 中解析并核架构和来源，导入后记录实际目标 ID、原子写入 Compose；不靠名称、标签或猜测生成替代 ID。未知 ID、摘要不符和截断归档拒绝。新候选待完整 guest 复验；此前 CI #517 不包含此项修正，不记通过。

@@ -21,6 +21,16 @@ const docker = (args, options = {}) => {
   catch { fail('INSTALL_DOCKER_COMMAND_FAILED') }
 }
 const compose = (release, args) => docker(['compose', '-p', release.project, '-f', release.composeFile, ...args])
+export function loadedImage(image, arch) {
+  for (const id of new Set([image.id, image.archiveId])) {
+    let inspected
+    try { inspected = JSON.parse(docker(['image', 'inspect', id]))[0] } catch { continue }
+    if (![image.id, image.archiveId].includes(inspected.Id) || inspected.Architecture !== arch
+      || (image.revision && inspected.Config.Labels?.['org.opencontainers.image.revision'] !== image.revision)) fail('INSTALL_IMAGE_IDENTITY_MISMATCH')
+    return inspected.Id
+  }
+  fail('INSTALL_IMAGE_MISSING')
+}
 async function readPrivateConfig(file) {
   const info = await lstat(file)
   if (!info.isFile() || info.isSymbolicLink() || (info.mode & 0o077)) fail('INSTALL_CONFIG_PERMISSIONS_INVALID')
@@ -119,11 +129,7 @@ async function importImages(bundle, manifest) {
     }
     child.stdin.end(); await completed
   } catch (error) { child.kill(); await completed.catch(() => {}); throw error }
-  for (const image of Object.values(manifest.images)) {
-    const inspected = JSON.parse(docker(['image', 'inspect', image.id]))[0]
-    if (inspected.Id !== image.id || inspected.Architecture !== manifest.arch
-      || (image.revision && inspected.Config.Labels?.['org.opencontainers.image.revision'] !== image.revision)) fail('INSTALL_IMAGE_IDENTITY_MISMATCH')
-  }
+  return Object.fromEntries(Object.entries(manifest.images).map(([role, image]) => [role, loadedImage(image, manifest.arch)]))
 }
 function assertNoExistingDeployment(project, document) {
   for (const args of [['ps', '-aq'], ['volume', 'ls', '-q'], ['network', 'ls', '-q']]) {
@@ -266,6 +272,7 @@ export async function install(options, authority = undefined) {
   }
   const arch = docker(['info', '--format', '{{.Architecture}}'])
   if ((manifest.arch === 'amd64' ? 'x86_64' : 'aarch64') !== arch) fail('INSTALL_WRONG_ARCHITECTURE')
+  const helperId = loadedImage(manifest.images.installer, manifest.arch)
   const rendered = await render({ ...config, installationId: identity.id }, manifest, bundle, prefix, authority ?? await appConfig(), keys)
   const configHash = hash(Buffer.from(canonicalJson(config)))
   const fs = await statfs(prefix)
@@ -276,7 +283,7 @@ export async function install(options, authority = undefined) {
   if (['upgrade', 'rollback'].includes(action) && !options.maintenanceConfirmed) fail('INSTALL_MAINTENANCE_CONFIRMATION_REQUIRED')
   return withInstallLock(prefix, async () => {
     if (!storedIdentity) await atomicJson(identityFile, identity)
-    return withProjectLock(identity, manifest.installerImage, async () => {
+    return withProjectLock(identity, helperId, async () => {
     const currentFile = path.join(prefix, 'current.json'), journalFile = path.join(prefix, 'journal.json')
     const previous = await readState(currentFile), existing = await readState(journalFile)
     if (previous && (previous.installationId !== identity.id || previous.rootHash !== hash(Buffer.from(prefix)))) fail('INSTALL_IDENTITY_INVALID')
@@ -371,7 +378,16 @@ export async function install(options, authority = undefined) {
       }
     }
     const stage = async value => { journal.stage = value; await atomicJson(journalFile, journal) }
-    await effect('import-images', () => importImages(bundle, manifest)); await stage('staged')
+    const installedImages = await effect('import-images', () => importImages(bundle, manifest))
+    const targetIds = new Map(Object.entries(manifest.images).map(([role, image]) => [image.id, installedImages[role]]))
+    for (const service of Object.values(rendered.document.services)) {
+      if (!targetIds.has(service.image)) fail('INSTALL_COMPOSE_IMAGE_NOT_IN_CLOSURE')
+      service.image = targetIds.get(service.image)
+    }
+    release.installedImages = installedImages
+    await atomicJson(release.composeFile, rendered.document)
+    await atomicJson(path.join(releaseDir, 'release.json'), release)
+    await stage('staged')
     if (previous) {
       if (action === 'rollback') { assertCompatibleProgram(previous.manifest, manifest); assertCompatibleLedger(ledger(previous), manifest.migrationLedger) }
       await effect('drain-admission', () => compose(previous, ['stop', '-t', '35', ...runtimeServices]))

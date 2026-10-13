@@ -5,18 +5,20 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { hash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram } from './manifest.mjs'
 import { privateDirectory, atomicJson, withInstallLock, readState, validateJournal } from './journal.mjs'
+import { ArchiveIdentities } from './archive.mjs'
 
 const temporary = async () => realpath(await mkdtemp(path.join(tmpdir(), 'workmesh-server-unit-')))
 const ledger = [{ version: 'v1_0001', checksumSha256: 'a'.repeat(64) }]
 const manifest = () => {
   const commit = 'a'.repeat(40), roles = ['api', 'worker', 'mcp', 'lite', 'installer', 'postgres', 'redis', 'minio']
   const images = Object.fromEntries(roles.map((role, i) => [role, { id: 'sha256:' + String(i + 1).repeat(64),
+    archiveId: 'sha256:' + String(i + 1).repeat(64),
     reference: `workmesh/${role}:candidate`, revision: ['postgres', 'redis', 'minio'].includes(role) ? '' : commit }]))
   return { format: 'workmesh-server-distribution', release: 'candidate', arch: 'amd64', source: { commit, tree: 'b'.repeat(40) },
     runtimeFingerprint: 'c'.repeat(64),
     tools: { producerNode: 'v22.19.0', producerDocker: 'Docker fixture', installerNode: 'v22.19.0', installerDocker: 'Docker fixture',
       installerCompose: 'Compose fixture', pgDump: 'pg_dump 16', pgRestore: 'pg_restore 16' },
-    images, installerImage: images.installer.id, migrationLedger: structuredClone(ledger),
+    images, installerImage: images.installer.id, installerArchiveImage: images.installer.archiveId, migrationLedger: structuredClone(ledger),
     files: ['docker-compose.lite.yml', 'docker-compose.production.yml', 'install.sh', 'config.example.json'].map(file => ({ path: file, sha256: hash(Buffer.from(file)), bytes: file.length })),
     chunks: [{ path: 'chunks/main.tarpart', sha256: hash(Buffer.from('main')), bytes: 4 }],
     bootstrapChunks: [{ path: 'chunks/helper.tarpart', sha256: hash(Buffer.from('helper')), bytes: 6 }] }
@@ -27,6 +29,20 @@ test('wrongArchitectureRejectedBeforeMutation and strict closed manifest schema'
     m => { m.images.runner = m.images.api }, m => { m.migrationLedger.push({ ...ledger[0] }) }]) {
     const invalid = manifest(); mutate(invalid); assert.throws(() => validateManifest(invalid), /INSTALL_/)
   }
+})
+test('OCI archive identity is bound to the exact manifest and survives split tar headers', () => {
+  const configId = 'sha256:' + 'a'.repeat(64)
+  const body = Buffer.from(JSON.stringify({ schemaVersion: 2, config: { digest: configId }, layers: [] }))
+  const header = Buffer.alloc(512)
+  header.write('blobs/sha256/' + hash(body))
+  header.write(body.length.toString(8).padStart(11, '0'), 124)
+  const tar = Buffer.concat([header, body, Buffer.alloc((512 - body.length % 512) % 512), Buffer.alloc(1024)])
+  const archive = new ArchiveIdentities()
+  for (let i = 0; i < tar.length; i += 17) archive.write(tar.subarray(i, i + 17))
+  assert.equal(archive.id(configId), 'sha256:' + hash(body))
+  const truncated = new ArchiveIdentities(); truncated.write(tar.subarray(0, 515))
+  assert.throws(() => truncated.id(configId), /BUILD_ARCHIVE_TRUNCATED/)
+  assert.equal(new ArchiveIdentities().id(configId), configId)
 })
 test('offlineDependencyClosure verifies actual bytes before an image is imported', async () => {
   const directory = await temporary(), m = manifest()

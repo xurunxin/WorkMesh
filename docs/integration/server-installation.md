@@ -14,6 +14,8 @@
 
 从本任务受审候选记录取得 `manifest.json` 的可信 SHA-256。随包摘要只能证明内容一致，不能证明发布者身份。候选含安装工具、应用和 PostgreSQL／Redis／RustFS 的全部镜像分块；目标启动使用 `--pull never`。
 
+清单分别绑定构建端镜像 ID 与归档中 OCI manifest 的准确摘要。不同 Docker 存储后端可能以其中不同的摘要寻址导入镜像；安装器只接受这两个已绑定 ID，并核架构与来源标签，记录实际目标 ID 后写入 Compose。标签名或来源标签相同不足以接受其他镜像；未知 ID 明确拒绝。
+
 ## 安装和配置检查
 
 先准备 root 持有的专用目录，权限为 `0700`。当前安装工具要求该目录由 root 持有，服务进程仍使用既有非 root 身份。将公开 CA 放入该目录的 `certificates/ca.pem`，公开证书可读权限为 `0644`。配置 JSON 使用 `0600`，按 [示例](../../scripts/server-distribution/config.example.json)填入实际地址、画像和独有 project 名称。示例域名不代表可用服务。

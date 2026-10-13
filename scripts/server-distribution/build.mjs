@@ -3,6 +3,7 @@ import { mkdir, writeFile, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { fileHash, hash, validateManifest, fail } from './manifest.mjs'
+import { ArchiveIdentities } from './archive.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const run = (command, args, options = {}) => {
@@ -63,6 +64,7 @@ const archive = async references => {
     child.once('error', reject); child.once('exit', code => code === 0 ? resolve() : reject(new Error('BUILD_SAVE_FAILED')))
   })
   let pending = Buffer.alloc(0)
+  const identities = new ArchiveIdentities()
   const entries = []
   const emit = async bytes => {
     const sha256 = hash(bytes), relative = `chunks/${sha256}.tarpart`
@@ -71,6 +73,7 @@ const archive = async references => {
     entries.push({ path: relative, sha256, bytes: bytes.length })
   }
   for await (const bytes of child.stdout) {
+    identities.write(bytes)
     pending = Buffer.concat([pending, bytes])
     while (pending.length >= 48 * 1024 * 1024) {
       await emit(pending.subarray(0, 48 * 1024 * 1024)); pending = pending.subarray(48 * 1024 * 1024)
@@ -78,10 +81,12 @@ const archive = async references => {
   }
   if (pending.length) await emit(pending)
   await completed
-  return entries
+  return { entries, identities }
 }
-const bootstrapChunks = await archive([images.installer.id])
-const chunks = await archive([...new Set(Object.values(images).filter(image => image.id !== images.installer.id).map(image => image.id))])
+const bootstrap = await archive([images.installer.id])
+const application = await archive([...new Set(Object.values(images).filter(image => image.id !== images.installer.id).map(image => image.id))])
+for (const [role, image] of Object.entries(images)) image.archiveId = (role === 'installer' ? bootstrap : application).identities.id(image.id)
+const bootstrapChunks = bootstrap.entries, chunks = application.entries
 const files = []
 for (const relative of ['docker-compose.lite.yml', 'docker-compose.production.yml', 'install.sh', 'config.example.json']) {
   const from = ['install.sh', 'config.example.json'].includes(relative) ? path.join(root, 'scripts/server-distribution', relative) : path.join(root, relative)
@@ -98,6 +103,7 @@ if (versions.length !== 5) fail('BUILD_TOOL_INVENTORY_INVALID')
 const [installerNode, installerDocker, installerCompose, pgDump, pgRestore] = versions
 const tools = { producerNode: process.version, producerDocker: run('docker', ['--version']), installerNode, installerDocker, installerCompose, pgDump, pgRestore }
 const manifest = validateManifest({ format: 'workmesh-server-distribution', release, arch, source, images,
-  installerImage: images.installer.id, files, chunks, bootstrapChunks, migrationLedger: JSON.parse(rawLedger), tools, runtimeFingerprint })
+  installerImage: images.installer.id, installerArchiveImage: images.installer.archiveId,
+  files, chunks, bootstrapChunks, migrationLedger: JSON.parse(rawLedger), tools, runtimeFingerprint })
 await writeFile(path.join(directory, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n', { mode: 0o600 })
 console.log(JSON.stringify({ status: 'built', source, manifestSha256: await fileHash(path.join(directory, 'manifest.json')), output: directory }))

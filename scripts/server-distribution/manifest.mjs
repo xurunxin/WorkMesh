@@ -19,7 +19,7 @@ const keys = (object, expected) => object && !Array.isArray(object) && typeof ob
   && Object.keys(object).sort().join(',') === expected.sort().join(',')
 const hex = (value, length) => typeof value === 'string' && new RegExp(`^[a-f0-9]{${length}}$`).test(value)
 export function validateManifest(value) {
-  if (!keys(value, ['format', 'release', 'arch', 'source', 'images', 'files', 'chunks', 'bootstrapChunks', 'migrationLedger', 'installerImage', 'tools', 'runtimeFingerprint'])
+  if (!keys(value, ['format', 'release', 'arch', 'source', 'images', 'files', 'chunks', 'bootstrapChunks', 'migrationLedger', 'installerImage', 'installerArchiveImage', 'tools', 'runtimeFingerprint'])
     || value.format !== 'workmesh-server-distribution' || !/^[a-z0-9][a-z0-9.-]{0,63}$/.test(value.release)
     || !['amd64', 'arm64'].includes(value.arch) || !keys(value.source, ['commit', 'tree'])
     || !hex(value.source.commit, 40) || !hex(value.source.tree, 40)) fail('INSTALL_MANIFEST_INVALID')
@@ -27,9 +27,11 @@ export function validateManifest(value) {
   const roles = ['api', 'worker', 'mcp', 'lite', 'installer', 'postgres', 'redis', 'minio']
   if (!keys(value.tools, ['producerNode', 'producerDocker', 'installerNode', 'installerDocker', 'installerCompose', 'pgDump', 'pgRestore'])
     || Object.values(value.tools).some(version => typeof version !== 'string' || !version || version.length > 512 || /[\r\n\0]/.test(version))) fail('INSTALL_TOOLS_INVALID')
-  if (!keys(value.images, roles) || value.installerImage !== value.images.installer.id) fail('INSTALL_IMAGES_INVALID')
+  if (!keys(value.images, roles) || value.installerImage !== value.images.installer.id
+    || value.installerArchiveImage !== value.images.installer.archiveId) fail('INSTALL_IMAGES_INVALID')
   for (const [role, image] of Object.entries(value.images)) {
-    if (!keys(image, ['id', 'reference', 'revision']) || !/^sha256:[a-f0-9]{64}$/.test(image.id)
+    if (!keys(image, ['id', 'archiveId', 'reference', 'revision']) || !/^sha256:[a-f0-9]{64}$/.test(image.id)
+      || !/^sha256:[a-f0-9]{64}$/.test(image.archiveId)
       || !/^[a-z0-9][a-z0-9/_.:@-]+$/.test(image.reference)
       || (['api', 'worker', 'mcp', 'lite', 'installer'].includes(role) && image.revision !== value.source.commit)
       || typeof image.revision !== 'string') fail('INSTALL_IMAGES_INVALID')
