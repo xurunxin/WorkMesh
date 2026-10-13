@@ -62,14 +62,30 @@
 
 任务资源限于局部工具、只读来源处理脚本和本工作树 bootstrap YAML 依赖。共享 Node 归档、pnpm store、既有镜像、历史工作树及所有受拒目标保持。收尾前核归属、普通目录与无活动引用；只收尾本轮新建对象，不全局 prune 或绕过删除拒绝。
 
+实际清理调用在派发前被自动策略拒绝，返回 `blocked by policy`，不是操作系统删除失败。目标为 `D:/Cache/TEMP/workmesh-ta00-nf20n0st/` 和本工作树 `scripts/ci-bootstrap/node_modules/`；原始调用包含准确路径、Resolve-Path 一致性、reparse/活动消费者门和同一 PowerShell 的 Remove-Item。调用未执行，后续只读核两目标仍存在；没有拆批、改属性、改 ACL、换工具或重试删除。实际错误中的命令展示自身截断，除该原因外不推断隐藏拒绝理由。两目标保留，不能报告资源已清空。
+
++**受拒原始请求**（仅供查阅，禁止作为重试指令）：
+
+```json
+{
+  "cmd": "$taskRoot = 'D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st'; $taskYamlPath = 'C:\\Users\\xurx\\.tds\\workspaces\\01a134af-ce5c-749a-8ffe-f0d0c8313860\\scripts\\ci-bootstrap\\node_modules'; $resolvedTask = (Resolve-Path -LiteralPath $taskRoot -ErrorAction Stop).Path; $resolvedYaml = (Resolve-Path -LiteralPath $taskYamlPath -ErrorAction Stop).Path; if ($resolvedTask -ne $taskRoot -or $resolvedYaml -ne $taskYamlPath) { throw 'OWNER_PATH_MISMATCH' }; foreach ($taskObject in @($taskRoot,$taskYamlPath)) { if ((Get-Item -LiteralPath $taskObject -ErrorAction Stop).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'REPARSE_REFUSED' } }; $activeConsumers = @(Get-CimInstance Win32_Process | Where-Object { $_.Name -in @('node.exe','python.exe') -and ($_.CommandLine -like '*workmesh-ta00-nf20n0st*' -or $_.CommandLine -like '*scripts/ci-bootstrap/node_modules*') }); if ($activeConsumers.Count -ne 0) { throw 'ACTIVE_CONSUMER_REFUSED' }; Remove-Item -LiteralPath $taskRoot -Recurse -Force -ErrorAction Stop; Remove-Item -LiteralPath $taskYamlPath -Recurse -Force -ErrorAction Stop; [pscustomobject]@{ TaskToolsAbsent = -not (Test-Path -LiteralPath $taskRoot); BootstrapDependencyAbsent = -not (Test-Path -LiteralPath $taskYamlPath); SharedNodeArchiveRetained = Test-Path -LiteralPath docs/reviews/cleanup/2026-10-11-worktrees/continuation/node-v22.19.0-win-x64.zip } | ConvertTo-Json -Compress",
+  "max_output_tokens": 900,
+  "yield_time_ms": 10000
+}
+```
+
+可见错误：`exec_command failed: CreateProcess`，策略返回 `Rejected`、`blocked by policy`，命令展示中含 `…821 chars truncated…`。完整可见工具块保留在本卡对话；缺失的展示中段与未给出的策略原因保持未知，不用原请求补造实际返回。
+
 未运行任何新增 F/TA 产品链、设备/企业/外部 provider 组合、真实模型付费探测、通知发送或发布。没有新凭据、设备权限、真实外发和生产变更。后续卡的未测条件在路线与验收责任文件逐项保留。
 
 ## 最终实际回执
 
 提交前的专项核验、分类、本卡 CI 和资源收尾按实际结果追加于此，不用预计结果填充。
 
-本机专项核验已通过：62 份当前来源逐字匹配实际工具返回；25 份历史原件与主线 Git blob 字节一致；27 张保留卡、99 个目标条目、281 个唯一 API 操作均有索引。90 条实施/最终验收依赖无环；没有 UI、可选扩展或 TA 反向阻塞 M 批次的边。651 个原创导航和源码绑定相对链接及其锚点通过。所有 105 个 Markdown 文件的工作树字节与实际 index 字节一致。
+本机专项核验已通过：62 份当前来源逐字匹配实际工具返回；25 份历史原件与主线 Git blob 字节一致；27 张保留卡、99 个目标条目、281 个唯一 API 操作均有索引。90 条实施/最终验收依赖无环；没有 UI、可选扩展或 TA 反向阻塞 M 批次的边。最终 655 个原创导航和源码绑定相对链接及其锚点通过。所有 105 个 Markdown 文件的工作树字节与实际 index 字节一致，提交后又核与实际 HEAD blob 一致。
 
 实际分类为 `docs`，packages/testPackages 均为空，八个产品检查类别均为 false。五项根产品检查本轮按该分类不执行，不写通过。CI 的 changes、文档预检和 Required CI 仍需本候选实际成功。
 
 可复现只读专项脚本见 [document-checks.md](sources/history/document-checks.md)。它核实际归档哈希、原件 blob、操作总集、测试条目、依赖和链接；施工时与原工具字符串的逐字匹配另已执行。最后新增的验证导航也随最终核验覆盖，链接数量以后次实际回执为准。
+
+草稿 [PR #226](https://github.com/xurunxin/WorkMesh/pull/226) 已建立，候选 `9160ad16b75651186ecd8c7baa54eacd12322b44` 的 [CI #504](https://github.com/xurunxin/WorkMesh/actions/runs/38386304316) 已实际 completed/success：changes 与 Required CI 成功，八项产品检查按 docs 计划跳过，跳过不计产品通过。后续仅追加验证与受拒资源记录；该记录提交的最新 CI 仍另核，#504 不冒新 HEAD 通过。正式独审未执行，没有 ready、合并或下一卡构建。
