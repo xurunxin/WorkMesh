@@ -1,0 +1,756 @@
+# 依赖与验收责任
+
+## 关口与边的含义
+
+本图只表达未来工作输入，不派发实施、不改变卡状态。
+实施前置用实线，最终联合验收输入用虚线。
+`blocks` 按原卡保留，其下游要求仍由实际 `requires` 区分。
+全部待开始卡先取得具体范围和正式方案批准，安全/协议/持久化分歧先 Proposed ADR，不倒填 Accepted。
+实际执行者须在派发时落实；本轮只绑定整卡与模块，不冒任命。
+
+#20、#17、#15、#16、#2、#18、#3 等已有前置均为 Done，来源完整保留。
+#61 后端化与 #62 文档已合入；它们是现行基线，不新增 UI 前置。
+M0—M5 和连接器已交付，不被未来 TA 全套反向阻塞。
+TA19 的全部核心输入仅限制完整联合验收，不阻塞该卡另获准的矩阵/夹具设计。
+TA17/TA18 与 #4 不进入核心串行链。
+
+## 核心依赖图
+
+```mermaid
+flowchart TD
+  A01["TA01 部署"] --> A16["TA16 企业验收"]
+  A02["TA02 机器"] --> A03["TA03 Runner"]
+  A03 --> A04["TA04 外部运行时"]
+  A03 --> A07["TA07 交付读取"]
+  A08["TA08 Git"] --> A07
+  A12["TA12 秘密"] --> A11["TA11 出站 MCP"]
+  A12 --> A16
+  A08 -. 最终验收 .-> A03
+  A12 -. 最终验收 .-> A04
+  A13["TA13 模型预算"] -. 最终验收 .-> A04
+  A03 -. 最终验收 .-> A05["TA05 任务链"]
+  A04 -. 最终验收 .-> A05
+  A07 -. 最终验收 .-> A05
+  A03 -. 最终验收 .-> A06["TA06 对话"]
+  A09["TA09 技能"] -. 最终验收 .-> A06
+  A04 -. 最终验收 .-> A11
+  A08 -. 最终验收 .-> A16
+  A11 -. 最终验收 .-> A16
+  A02 -. 最终验收 .-> A14["TA14 时区调度"]
+  A05 -. 最终验收 .-> A14
+  A05 -. 最终验收 .-> A15["TA15 通知"]
+  A06 -. 最终验收 .-> A15
+  A07 -. 最终验收 .-> A15
+  F0["F0 Team 房间"] --> F1["F1 任命"]
+  F1 --> F2["F2 目标委派"]
+  F2 --> F3["F3 三源准入"]
+  F3 --> F4["F4 消费 checkpoint"]
+  F3 --> F5["F5 successor"]
+  F5 --> F6["F6 薄工具与联合验收"]
+  F2 --> F6
+  F4 -. 最终验收 .-> F6
+  F6 -. 最终验收 .-> A05
+  F6 -. 最终验收 .-> A10["TA10 记忆"]
+  F6 -. 最终验收 .-> A14
+  A01 --> ALL["TA19 完整三画像验收"]
+  A02 --> ALL
+  A03 --> ALL
+  A04 --> ALL
+  A05 --> ALL
+  A06 --> ALL
+  A07 --> ALL
+  A08 --> ALL
+  A09 --> ALL
+  A10 --> ALL
+  A11 --> ALL
+  A12 --> ALL
+  A13 --> ALL
+  A14 --> ALL
+  A15 --> ALL
+  A16 --> ALL
+  F6 --> ALL
+```
+
+图省略已完成前置及 F 卡传递边，完整直接依赖以下表为准。
+F5 底层不依赖 F4/F6，F4 不依赖 F6；两者的联合验收归 F6。
+“提供联合验收输入”不强加为接收卡的实施前置，避免把原阶段语义改成循环。
+
+## 逐卡依赖
+
+F 卡的下游由其他 F 卡的 requires 反推；原卡没有 blocks 字段，不把该索引列冒充新增源字段。TA 卡的 blocks 与提供联合验收输入按原文分列。
+
+| 整卡 | 实施前置 | 最终验收前置 | 原 blocks／提供联合验收输入 | 责任模块 |
+| --- | --- | --- | --- | --- |
+| [#4](sources/todos/04.md) S1 | 无新增 | 无新增 | 无新增／无新增 | 工作流技能作者；不代产品技能库 |
+| [#23](sources/todos/23.md) F0 | [#2](sources/todos/02.md)、[#3](sources/todos/03.md)、[#18](sources/todos/18.md) | 无新增 | [#24](sources/todos/24.md)／无新增 | db/contracts/collaboration scope 与受众 |
+| [#24](sources/todos/24.md) F1 | [#2](sources/todos/02.md)、[#3](sources/todos/03.md)、[#18](sources/todos/18.md)、[#23](sources/todos/23.md) | 无新增 | [#25](sources/todos/25.md)／无新增 | chief appointment domain/事务与能力交集 |
+| [#25](sources/todos/25.md) F2 | [#2](sources/todos/02.md)、[#3](sources/todos/03.md)、[#18](sources/todos/18.md)、[#23](sources/todos/23.md)、[#24](sources/todos/24.md) | 无新增 | [#26](sources/todos/26.md)／无新增 | 目标委派、共享 admission guard 与预算 |
+| [#26](sources/todos/26.md) F3 | [#2](sources/todos/02.md)、[#3](sources/todos/03.md)、[#18](sources/todos/18.md)、[#23](sources/todos/23.md)、[#24](sources/todos/24.md)、[#25](sources/todos/25.md) | 无新增 | [#27](sources/todos/27.md)、[#28](sources/todos/28.md)／无新增 | activation domain/worker 与 root 输入 |
+| [#27](sources/todos/27.md) F4 | [#2](sources/todos/02.md)、[#3](sources/todos/03.md)、[#18](sources/todos/18.md)、[#23](sources/todos/23.md)、[#24](sources/todos/24.md)、[#26](sources/todos/26.md) | 无新增 | 无新增／无新增 | durable consumer/baseline/checkpoint |
+| [#28](sources/todos/28.md) F5 | [#2](sources/todos/02.md)、[#3](sources/todos/03.md)、[#18](sources/todos/18.md)、[#23](sources/todos/23.md)、[#24](sources/todos/24.md)、[#26](sources/todos/26.md) | 无新增 | 无新增／无新增 | Inbox successor/根完成与锁序 |
+| [#29](sources/todos/29.md) F6 | [#2](sources/todos/02.md)、[#3](sources/todos/03.md)、[#18](sources/todos/18.md)、[#23](sources/todos/23.md)、[#24](sources/todos/24.md)、[#25](sources/todos/25.md)、[#26](sources/todos/26.md)、[#28](sources/todos/28.md) | [#27](sources/todos/27.md) | [#51](sources/todos/51.md)／无新增 | REST/SDK/MCP/manifest/Runner/conformance |
+| [#33](sources/todos/33.md) TA01 | 无新增 | [#20](sources/todos/20.md) | [#48](sources/todos/48.md)、[#51](sources/todos/51.md)／无新增 | 部署脚本、packages/config、recovery、API/Worker 可选依赖边界；不修改 #20 的职责。 |
+| [#34](sources/todos/34.md) TA02 | 无新增 | [#20](sources/todos/20.md) | [#35](sources/todos/35.md)、[#49](sources/todos/49.md)、[#51](sources/todos/51.md)／[#46](sources/todos/46.md) | 机器 contracts/domain/db、API/worker 调度、独立 daemon/CLI、机器资源 API/MCP 契约。 |
+| [#35](sources/todos/35.md) TA03 | [#34](sources/todos/34.md) | [#40](sources/todos/40.md) | [#36](sources/todos/36.md)、[#39](sources/todos/39.md)、[#49](sources/todos/49.md)、[#51](sources/todos/51.md)／[#37](sources/todos/37.md)、[#38](sources/todos/38.md) | apps/agent-runner 外部执行层、应用层 runner ports、Git adapter、durable run/effect contracts。 |
+| [#36](sources/todos/36.md) TA04 | [#35](sources/todos/35.md) | [#44](sources/todos/44.md)、[#45](sources/todos/45.md) | [#51](sources/todos/51.md)／[#37](sources/todos/37.md)、[#43](sources/todos/43.md) | Runner adapter 层、contracts 能力矩阵、MCP 工具桥、runtime conformance fixtures。 |
+| [#37](sources/todos/37.md) TA05 | 无新增 | [#29](sources/todos/29.md)、[#35](sources/todos/35.md)、[#36](sources/todos/36.md)、[#39](sources/todos/39.md) | [#51](sources/todos/51.md)／[#46](sources/todos/46.md)、[#47](sources/todos/47.md) | 领域命令、contracts、API/SDK/MCP、执行及审查后端服务；复用现有 approvals。 |
+| [#38](sources/todos/38.md) TA06 | 无新增 | [#35](sources/todos/35.md)、[#41](sources/todos/41.md) | [#51](sources/todos/51.md)／[#47](sources/todos/47.md) | Workbench conversation domain/contracts、SSE、对话/附件/引用 API 及 MCP 契约。 |
+| [#39](sources/todos/39.md) TA07 | [#35](sources/todos/35.md)、[#40](sources/todos/40.md) | 无新增 | [#51](sources/todos/51.md)／[#37](sources/todos/37.md)、[#47](sources/todos/47.md) | Git provider read ports、artifact/document APIs、MCP 读取契约与受控本机取回。 |
+| [#40](sources/todos/40.md) TA08 | 无新增 | 无新增 | [#39](sources/todos/39.md)、[#51](sources/todos/51.md)／[#35](sources/todos/35.md)、[#48](sources/todos/48.md) | packages/git-provider、provider configuration/domain ports、仓库配置 API/MCP 与 integration fixtures。 |
+| [#41](sources/todos/41.md) TA09 | 无新增 | 无新增 | [#51](sources/todos/51.md)／[#38](sources/todos/38.md) | skill contracts/domain/db/artifact storage、技能管理 API/MCP、Runner skill loader。 |
+| [#42](sources/todos/42.md) TA10 | 无新增 | [#29](sources/todos/29.md) | [#51](sources/todos/51.md)／无新增 | memory domain/contracts/db、记忆检查/纠正 API/MCP、Runner context assembly；F 链只消费接口。 |
+| [#43](sources/todos/43.md) TA11 | [#44](sources/todos/44.md) | [#36](sources/todos/36.md) | [#51](sources/todos/51.md)／[#48](sources/todos/48.md) | outbound connection domain/contracts、secret broker port、Runner MCP clients、连接管理 API/MCP。 |
+| [#44](sources/todos/44.md) TA12 | 无新增 | 无新增 | [#43](sources/todos/43.md)、[#48](sources/todos/48.md)、[#49](sources/todos/49.md)、[#51](sources/todos/51.md)／[#36](sources/todos/36.md) | secret broker/application ports、encrypted persistence、Runner credential injection、只写秘密提交接口及非敏感配置状态接口。 |
+| [#45](sources/todos/45.md) TA13 | 无新增 | [#17](sources/todos/17.md) | [#51](sources/todos/51.md)／[#36](sources/todos/36.md) | LLM connections/usage/budget contracts 与 Runner adapters、配置/用量/预算 API/MCP；#17 保持原范围。 |
+| [#46](sources/todos/46.md) TA14 | 无新增 | [#29](sources/todos/29.md)、[#34](sources/todos/34.md)、[#37](sources/todos/37.md) | [#51](sources/todos/51.md)／无新增 | existing automation/loop domain、worker scheduling、contracts、schedule/occurrence API/MCP 与 Chief thin tools。 |
+| [#47](sources/todos/47.md) TA15 | 无新增 | [#15](sources/todos/15.md)、[#16](sources/todos/16.md)、[#37](sources/todos/37.md)、[#38](sources/todos/38.md)、[#39](sources/todos/39.md) | [#51](sources/todos/51.md)／无新增 | 既有 notification delivery、摘要 worker、订阅/偏好 API 及获准的非敏感 MCP 查询。 |
+| [#48](sources/todos/48.md) TA16 | [#33](sources/todos/33.md)、[#44](sources/todos/44.md) | [#40](sources/todos/40.md)、[#43](sources/todos/43.md) | [#51](sources/todos/51.md)／无新增 | identity/membership、audit/retention/recovery、deployment/config、企业接入 ADR 与验收夹具。 |
+| [#49](sources/todos/49.md) TA17 | [#34](sources/todos/34.md)、[#35](sources/todos/35.md)、[#44](sources/todos/44.md) | 无新增 | 无新增／无新增 | 独立 Runner PTY service、terminal authorization domain、受控终端协议/管理接口。 |
+| [#50](sources/todos/50.md) TA18 | 无新增 | 无新增 | 无新增／无新增 | 部署/Runner/Git 架构方案作者；本卡不直接改运行时。 |
+| [#51](sources/todos/51.md) TA19 | 完整联合验收执行前置；设计不受阻<br>[#29](sources/todos/29.md)、[#33](sources/todos/33.md)、[#34](sources/todos/34.md)、[#35](sources/todos/35.md)、[#36](sources/todos/36.md)、[#37](sources/todos/37.md)、[#38](sources/todos/38.md)、[#39](sources/todos/39.md)、[#40](sources/todos/40.md)、[#41](sources/todos/41.md)、[#42](sources/todos/42.md)、[#43](sources/todos/43.md)、[#44](sources/todos/44.md)、[#45](sources/todos/45.md)、[#46](sources/todos/46.md)、[#47](sources/todos/47.md)、[#48](sources/todos/48.md) | 无新增 | 无新增／无新增 | 跨模块验收负责人；各功能 owner 提供精确版本输入，独立审查者复核。 |
+
+## 九类验收与证据规则
+
+每个未来产品卡均须覆盖下表；具体域断言见逐卡原测试摘录。
+现有用例只是复用基础，不能给未建能力标通过。
+新增写接口先冻结完整合同与用例，未存在的文件均标“待创建”。
+迁移由对应卡新增编号 entry，保持已应用 checksum；空库和上一阶段升级分别实测。
+本卡与 #4/#50 纯方案部分没有新增领域命令，领域九类测试不适用，改验来源/方案完整性；未来实施仍全部适用。
+
+| 类别 | 每个产品卡的必需证明 |
+| --- | --- |
+| 正常路径 | 合法 H/C/E 与实际消费者完成目标，响应/状态/事件/outbox 对应同一业务事实 |
+| 越权 | 跨 tenant/Team/project/Agent/exact Session、错误 principal、撤权和 feature 关闭均拒绝；无泄露/副作用 |
+| 非法状态 | Stop、暂停、终态、失效任命/批准/claim；原允许恢复入口与普通写边界分开 |
+| 幂等 | 相同 key/body/身份重放单事实，异体冲突；不更换未决 identity，不对未知效果盲重发 |
+| revision | 合法同目标竞争、旧版本拒绝；新 plan/head 令旧批准失效；无 revision 的纯查询给明确不适用理由 |
+| 事务失败 | 在 state/event/outbox/receipt/reservation 提交边界注入故障，整体回滚；外部请求不早于提交 |
+| job/webhook 重放 | 同 durable delivery/occurrence 的重复只产生一次效果；HMAC 验 raw bytes 与窗口；无 job 的操作说明不适用依据 |
+| 并发 | 两合法参与者用真实屏障证明两种提交顺序，核锁序、fence、余量及单归属，不能用顺序请求冒并发 |
+| 重启/恢复 | 真服务进程、worker/outbox、设备或 OS store 按原卡场景重启；记录 PID/boot_id/原结果与未知边界 |
+
+fake Agent/Git/model/SMTP 用于确定性回归；真实 MCP/Pi、provider、设备/OS、企业网络及真实通知分别记录。
+真实发送、付费模型请求、登录、增权和发布仍需具体授权。
+所需实测未完成或必需 CI 失败时不能合入，P0/P1 范围不取消该门禁。
+未来接口或功能修改同次维护 API/MCP 中文手册、配置、参考及真实示例。
+
+## 逐卡验收责任
+
+### S1
+
+责任：[#4](sources/todos/04.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[scripts/ci-policy.test.mjs](../../../scripts/ci-policy.test.mjs)。
+
+专项交付：流程技能原件及可读性核验。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 技能可被新 agent 加载并实际改变其行为（有可观察差异）
+- [ ] 技能内容中无会漂移的硬编码编号清单
+- [ ] 未开启「创建技能」授权时，流程正确降级为「记录待管理员代建」而非静默失败
+
+**原 DoD 承接**：
+
+技能入库且被至少一个 agent 加载；后续 ADR 与 plan 任务可直接引用该技能。
+
+当前完成依据：流程任务待开始；产品技能库另归 TA09。 本卡没有新 PASS。
+
+仅核流程技能使用和双轨例外，不作为产品技能库或新增工具权限证明。
+
+### F0
+
+责任：[#23](sources/todos/23.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/stage2-collaboration.integration.test.ts](../../../apps/api/integration/stage2-collaboration.integration.test.ts)。
+
+新增目标：`packages/db/integration/chief-room-migration.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 四种 subject 的 DB / API 成功路径
+- [ ] 跨 workspace 与跨 Team 拒绝
+- [ ] 三种既有 subject 零回归
+- [ ] **普通执行 Session 不能借 Team 房间读到兄弟 Session 的私信**
+- [ ] 撤权后房间 / 收件箱 / 事件 / 上下文同时收敛
+- [ ] 每个 entry 提交前后故障注入与重跑
+
+**原 DoD 承接**：
+
+上述断言全绿 + enum 扩展与其被引用分属两个 entry + 旧 checksum 未变 + `pnpm lint/typecheck/test/test:integration/test:e2e` 全绿。
+
+当前完成依据：数据库 room_subject_kind 仍为 work_item/project/session；Team 房间未实现。 本卡没有新 PASS。
+
+九类与原测试/DoD 的进一步映射保留在 `docs/reviews/r1/test-coverage.json`；F2 自主分派及 F5 successor 的已有选择保持，实施授权另核。
+
+### F1
+
+责任：[#24](sources/todos/24.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/agent-lock-order.integration.test.ts](../../../apps/api/integration/agent-lock-order.integration.test.ts)。
+
+新增目标：`apps/api/integration/chief-appointments.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] conformance 对 `capabilitySchema` 做全量分区，**漏一项即失败**
+- [ ] 任命一个已持 `repo:merge` 的 agent 后：其普通会话权限不变，总管会话不含 `repo:merge`
+- [ ] 显式放宽产生独立审计事实，且不改动 agent 原有委派
+- [ ] 换届原子性；并发任命只有一个成功
+- [ ] 结束任命后旧会话无法再产生分派效果
+
+**原 DoD 承接**：
+
+上述断言全绿 + 三类委派的能力交集行为符合上表 + 全部 required checks 全绿。
+
+当前完成依据：普通 Agent/委派存在；没有 chief_appointments。 本卡没有新 PASS。
+
+九类与原测试/DoD 的进一步映射保留在 `docs/reviews/r1/test-coverage.json`；F2 自主分派及 F5 successor 的已有选择保持，实施授权另核。
+
+### F2
+
+责任：[#25](sources/todos/25.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/autonomous-control-plane.integration.test.ts](../../../apps/api/integration/autonomous-control-plane.integration.test.ts)；[apps/api/integration/agent-lock-order.integration.test.ts](../../../apps/api/integration/agent-lock-order.integration.test.ts)。
+
+新增目标：`apps/api/integration/chief-dispatch.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 普通人类自由文本**不产生授权**（可作为输入，但无法凭它分派）
+- [ ] **委派范围内的分派无需逐次批准且成功** ← 本条的核心行为
+- [ ] 委派范围外的分派被拒
+- [ ] 缩小范围 / 过期 / 撤销后**立即**拒绝
+- [ ] 同一幂等键重放不产生第二次效果
+- [ ] 校验与 session / event / outbox 任一点失败共同回滚
+- [ ] Stop / 撤权 / 换届后旧会话不得再分派
+- [ ] 五个执行入口行为一致（共享 guard，不是只查一处）
+
+**原 DoD 承接**：
+
+上述断言全绿 + 「委派内自主分派、无需逐次批准」这一条有正向测试（不只是反向拒绝）
++ `pnpm lint/typecheck/test/test:integration/test:e2e` 全绿。
+
+当前完成依据：现有自主策略不是 Chief 目标委派；范围内自主分派设计已裁定，实现未批。 本卡没有新 PASS。
+
+九类与原测试/DoD 的进一步映射保留在 `docs/reviews/r1/test-coverage.json`；F2 自主分派及 F5 successor 的已有选择保持，实施授权另核。
+
+### F3
+
+责任：[#26](sources/todos/26.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/stage4-operations.integration.test.ts](../../../apps/api/integration/stage4-operations.integration.test.ts)；[apps/worker/src/automation.test.ts](../../../apps/worker/src/automation.test.ts)。
+
+新增目标：`apps/api/integration/chief-activation.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 同源重复去重；两个消费者竞争
+- [ ] admission / session / prompt / event / outbox 各边界崩溃
+- [ ] **无 runner**（对应 ADR 0074 的 `unknown`）
+- [ ] 主负责人不匹配时退回
+- [ ] 旧任命 / 被撤权 / Stopped
+- [ ] **事件自环**（总管自己的事件不得唤醒自己）
+- [ ] 累计预算耗尽
+
+**原 DoD 承接**：
+
+上述断言全绿 + 三种激活源在记录里可区分 + 预算与 Stop 不可被自激活绕过。
+
+当前完成依据：已有 rule/Loop admission；没有任命绑定三源激活合同。 本卡没有新 PASS。
+
+九类与原测试/DoD 的进一步映射保留在 `docs/reviews/r1/test-coverage.json`；F2 自主分派及 F5 successor 的已有选择保持，实施授权另核。
+
+### F4
+
+责任：[#27](sources/todos/27.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/stage2-collaboration.integration.test.ts](../../../apps/api/integration/stage2-collaboration.integration.test.ts)。
+
+新增目标：`apps/api/integration/chief-consumption.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] checkpoint 保存前后崩溃、重放
+- [ ] 长时间离线后游标过期 → 重建
+- [ ] baseline 构建期间有写入
+- [ ] 删除 / 撤权 / 新获授权（旧对象变得可见）
+- [ ] 跨 Session / 跨 Team 隔离
+- [ ] **给定固定 Team / Agent / 事件规模，断言 token、查询数、延迟预算**
+
+**原 DoD 承接**：
+
+上述断言全绿 + 存在量化的容量预算数字（实测，不是估计）+ 全部 required checks 全绿。
+
+当前完成依据：durable events、snapshot、delta 组件存在；Chief 持久消费者组合仍待建。 本卡没有新 PASS。
+
+九类与原测试/DoD 的进一步映射保留在 `docs/reviews/r1/test-coverage.json`；F2 自主分派及 F5 successor 的已有选择保持，实施授权另核。
+
+### F5
+
+责任：[#28](sources/todos/28.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/stage2-collaboration.integration.test.ts](../../../apps/api/integration/stage2-collaboration.integration.test.ts)；[apps/api/integration/agent-lock-order.integration.test.ts](../../../apps/api/integration/agent-lock-order.integration.test.ts)。
+
+新增目标：`apps/api/integration/inbox-redelivery.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] claim 后崩溃 / 被 Stop
+- [ ] 同 actor 两个 Session
+- [ ] 错误 recipient
+- [ ] 已 ACK 尚未回复
+- [ ] 重复 report / reply，且**回执不伪造**
+
+**原 DoD 承接**：
+
+已选重新投递决定**写进 ADR 0078，并显式记录对 ADR 0037 的修订**（不是只写在代码注释里）+ 上述断言全绿。
+
+当前完成依据：Inbox 四类回执已存在；跨短会话 successor 恢复尚未实现，旧设计选择保持。 本卡没有新 PASS。
+
+九类与原测试/DoD 的进一步映射保留在 `docs/reviews/r1/test-coverage.json`；F2 自主分派及 F5 successor 的已有选择保持，实施授权另核。
+
+### F6
+
+责任：[#29](sources/todos/29.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[packages/conformance/src/planning-collaboration.conformance.test.ts](../../../packages/conformance/src/planning-collaboration.conformance.test.ts)。
+
+新增目标：`packages/conformance/src/chief.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 四种路由失败各返回指定错误码
+- [ ] 换届后重放不重复投递给新人
+- [ ] `get` 与 `post` 之间换届被事务重验拦住
+- [ ] 工具适配器在 unsupported / feature-disabled / revoked / Stopped / 重试 / 载荷超限下行为正确
+
+**原 DoD 承接**：
+
+两条路径（REST 与 MCP）全绿 + 工具适配器到位 + 四个错误码在 OpenAPI 可见。
+
+当前完成依据：request_approval 已存在；两个 Chief 薄工具未注册。 本卡没有新 PASS。
+
+九类与原测试/DoD 的进一步映射保留在 `docs/reviews/r1/test-coverage.json`；F2 自主分派及 F5 successor 的已有选择保持，实施授权另核。
+
+### TA01
+
+责任：[#33](sources/todos/33.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[scripts/retire-legacy-web.test.mjs](../../../scripts/retire-legacy-web.test.mjs)；[apps/api/integration/backend-retirement.integration.test.ts](../../../apps/api/integration/backend-retirement.integration.test.ts)；[packages/recovery/integration/recovery.integration.test.ts](../../../packages/recovery/integration/recovery.integration.test.ts)。
+
+新增目标：`apps/api/integration/deployment-profiles.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 空白无源码设备安装、已有版本升级/回滚与数据卷保留。
+- [ ] 每个宣称支持的配置执行 API/MCP/Worker/outbox/限流/工件上传下载/备份恢复闭环。
+- [ ] 停 Redis、丢 wakeup、重启 worker 后持久队列恢复；不支持的组合启动时明确拒绝。
+- [ ] 固定 CPU/RAM/磁盘条件记录空闲/首任务/并发峰值，2GB 等候选指标须实测而非预写 PASS。
+
+**原 DoD 承接**：
+
+发布候选包与配置矩阵可复现，三类用户都能按文档启动且所有声明的配置有实际验证；未支持的组合和存储保证明确列出。
+
+当前完成依据：#61 已验现有 Lite/生产后端与 TLS；低功耗指标及 Redis-free/filesystem 尚无本轮组合验收。 本卡没有新 PASS。
+
+
+### TA02
+
+责任：[#34](sources/todos/34.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/agent-runner/src/execution-lifecycle.test.ts](../../../apps/agent-runner/src/execution-lifecycle.test.ts)；[apps/api/integration/stage5-agent-connections.integration.test.ts](../../../apps/api/integration/stage5-agent-connections.integration.test.ts)。
+
+新增目标：`apps/api/integration/machine-capacity.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 两台机器/同机双进程争抢 slot、满容量排队、公平性和幂等派发。
+- [ ] 心跳乱序、断网、重启、时钟偏差、旧实例迟到结果的 fencing。
+- [ ] 凭据撤销/轮换、跨团队读取/操作拒绝、版本不兼容明确提示。
+- [ ] Windows 后台无多余控制台；升级/失败回滚期间进行中任务不被错误计为成功。
+
+**原 DoD 承接**：
+
+机器查询 API/MCP、调度入口和 CLI 状态一致且有时间戳；确定性并发/离线恢复和受控升级验收通过，未知值不伪造可用。
+
+当前完成依据：Agent Connection、Agent 并发和 Runner Attempt 已有；机器注册/容量与守护契约未建。 本卡没有新 PASS。
+
+
+### TA03
+
+责任：[#35](sources/todos/35.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/agent-runner/src/isolation.test.ts](../../../apps/agent-runner/src/isolation.test.ts)；[apps/api/integration/workbench-runner.integration.test.ts](../../../apps/api/integration/workbench-runner.integration.test.ts)；[apps/worker/src/provider-actions.test.ts](../../../apps/worker/src/provider-actions.test.ts)。
+
+新增目标：`apps/api/integration/runner-workspaces.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 恶意/越界路径、符号链接、共享目录竞争、跨项目凭据泄漏和未经授权出网拒绝。
+- [ ] Stop/撤权中断子进程树，迟到输出不变更已停止会话。
+- [ ] 写盘/提交/推送前后崩溃、响应丢失、磁盘满、worker 重启恢复。
+- [ ] 非代码任务和只读分析无需 Git clone；保护无关 worktree、dirty 文件和用户本地修改。
+
+**原 DoD 承接**：
+
+至少一个明确隔离等级上的代码任务从干净工作区运行至可审产物；越权和 Stop 实测；工作区/远端状态均可追溯，恢复不制造重复外部效果。
+
+当前完成依据：runPi 已隔离 Pi 配置并有 scratch/quiescence/Stop；尚非受控 Git Coding Runner。 本卡没有新 PASS。
+
+
+### TA04
+
+责任：[#36](sources/todos/36.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/agent-runner/src/model-wire.test.ts](../../../apps/agent-runner/src/model-wire.test.ts)；[packages/conformance/src/joint-clients.conformance.test.ts](../../../packages/conformance/src/joint-clients.conformance.test.ts)。
+
+新增目标：`packages/conformance/src/runtime-adapters.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 正常/分片/错序/重复终止事件、外部 CLI 退出和协议版本变化。
+- [ ] 不支持 steer/rollback/usage 的真实降级；只读回合无法通过 CLI 内置工具写代码。
+- [ ] 取消子进程、会话恢复、过期登录、token 刷新与配置隔离。
+- [ ] fake 协议与获授权真实 CLI 两类证据独立，缺真实登录不填通过。
+
+**原 DoD 承接**：
+
+Pi 不回归，首批选定 CLI 全链通过且每项能力有已测/不支持/未测状态；平台授权、审计、Stop 跨运行时一致。
+
+当前完成依据：真实 OpenCode 是入站 MCP 消费者，不证明已有 Codex/Claude Code RunnerAdapter。 本卡没有新 PASS。
+
+
+### TA05
+
+责任：[#37](sources/todos/37.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[packages/conformance/src/planning-collaboration.conformance.test.ts](../../../packages/conformance/src/planning-collaboration.conformance.test.ts)；[packages/conformance/src/delivery-recovery.conformance.test.ts](../../../packages/conformance/src/delivery-recovery.conformance.test.ts)；[apps/api/integration/reviewer-fixes.integration.test.ts](../../../apps/api/integration/reviewer-fixes.integration.test.ts)。
+
+新增目标：`packages/conformance/src/task-delivery-chain.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 计划修订与批准竞争、旧 revision、重复批准/重跑/合并幂等。
+- [ ] reviewer 无写权限、反馈指向错误 SHA 拒绝、五轮等预算以配置为准。
+- [ ] 无改动完成、代码完成但合并失败、先完成后重开、Stop 后迟到审查均有真实状态。
+- [ ] mock/真实 provider check 结果区分；事务回滚/外部效果未知/worker 重启保留待恢复。
+
+**原 DoD 承接**：
+
+通过 API/SDK/MCP 从创建到验收/可选合并再到重跑的完整操作链通过；每个关口能解释谁对哪个版本作了何种决定，无丢失历史或自动越权。
+
+当前完成依据：M2/M3/M5 已有计划、required reviewer、exact-head 与 fake Git 联验；新整卡三画像行为未验。 本卡没有新 PASS。
+
+
+### TA06
+
+责任：[#38](sources/todos/38.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/workbench-conversations.integration.test.ts](../../../apps/api/integration/workbench-conversations.integration.test.ts)；[apps/api/integration/workbench-controls.integration.test.ts](../../../apps/api/integration/workbench-controls.integration.test.ts)；[apps/api/integration/workbench-recovery.integration.test.ts](../../../apps/api/integration/workbench-recovery.integration.test.ts)。
+
+新增目标：`apps/api/integration/conversation-references.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 首次文本/后续流/最终结束分开验证，断网重连无丢失或重复事件/消息实体。
+- [ ] 撤回与投递竞争、两端同时回答、已失效问题不可再提交。
+- [ ] 引用资源撤权、恶意附件/链接、图片尺寸上限与脱敏。
+- [ ] 压缩前后 provenance、token 未知、运行中禁止不支持的回退、已提交 checkpoint 边界。
+
+**原 DoD 承接**：
+
+通过 API/MCP/Runner 验证长对话、接续、引用与队列状态；所有回退/作答保留事实，未支持的运行时动作不会被承诺。
+
+当前完成依据：现有 steer/followup/SSE 非完整结构化引用、转发问题及受控回退产品。 本卡没有新 PASS。
+
+
+### TA07
+
+责任：[#39](sources/todos/39.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/documents.integration.test.ts](../../../apps/api/integration/documents.integration.test.ts)；[apps/api/integration/stage3-delivery.integration.test.ts](../../../apps/api/integration/stage3-delivery.integration.test.ts)；[apps/agent-runner/src/delivery-transfer.test.ts](../../../apps/agent-runner/src/delivery-transfer.test.ts)。
+
+新增目标：`apps/api/integration/repository-files.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 大 diff 截断但保留统计/基线、文件重命名/删除、二进制、空变更、并发 push。
+- [ ] 鉴权撤销、过期链接、path traversal、HTML 脚本与外部资源隔离。
+- [ ] API/MCP 重试保持精确 branch/commit/path，文件不存在明确失败。
+- [ ] 取回失败/磁盘满/无关 dirty 文件保护，下载 hash 与提交树匹配。
+
+**原 DoD 承接**：
+
+通过 API/MCP 从任一审查点定位确切版本、读取差异/文件并安全取回产物；返回状态不将未知/失败冒为完整交付。
+
+当前完成依据：文档 diff/export 与验证工件下载已有；它们不是任意版本 Git 文件服务或用户本机同步。 本卡没有新 PASS。
+
+
+### TA08
+
+责任：[#40](sources/todos/40.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[packages/git-provider/src/gitea.test.ts](../../../packages/git-provider/src/gitea.test.ts)；[apps/api/integration/configuration-readiness.integration.test.ts](../../../apps/api/integration/configuration-readiness.integration.test.ts)；[apps/worker/src/provider-actions.test.ts](../../../apps/worker/src/provider-actions.test.ts)。
+
+新增目标：`apps/api/integration/private-git.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 自建 Gitea 与 GitHub fake contracts；获授权环境的读分支、推送、PR、check、merge 链路。
+- [ ] 仅只读 PAT、被保护分支、分叉、检查不通过、删除仓库、token 撤销。
+- [ ] 私有 CA、DNS 改绑/重定向、错误网络范围、凭据不出现在 URL/log。
+- [ ] 现有不支持能力返回稳定代码，不能降级到绕过审查直接 push main。
+
+**原 DoD 承接**：
+
+已有 provider 在自部署真实路径可用，能力矩阵与 API/MCP 实际返回一致；新增 provider 仅在独立 conformance 通过后标支持。
+
+当前完成依据：Gitea 已有，M3/旧 A2 保 exact action/配置追溯；真实内网/私有 CA 场景未由静态能力表证明。 本卡没有新 PASS。
+
+
+### TA09
+
+责任：[#41](sources/todos/41.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/agent-runner/src/workbench-skill.test.ts](../../../apps/agent-runner/src/workbench-skill.test.ts)；[apps/api/integration/backend-retirement.integration.test.ts](../../../apps/api/integration/backend-retirement.integration.test.ts)。
+
+新增目标：`apps/api/integration/skill-library.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 多行/块标量 front matter、缺 SKILL.md、超大/重复文件、zip slip/符号链接、来源拉取失败。
+- [ ] 相同 hash 去重、并发 revision 冲突、撤销版本与历史运行可追溯。
+- [ ] 越权导入/更新/默认分配拒绝；Agent 实际装载指定版本，未授权脚本不可执行。
+
+**原 DoD 承接**：
+
+一个技能可导入、审阅、发布、分配、稳定 ID 引用、升级与回溯；#4 可作为样例但不是本卡前置，运行证据包含版本 hash。
+
+当前完成依据：签名协议 Skill 和内嵌 pin 已有；通用团队产品技能库未实现。 本卡没有新 PASS。
+
+
+### TA10
+
+责任：[#42](sources/todos/42.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/guidance.integration.test.ts](../../../apps/api/integration/guidance.integration.test.ts)。
+
+新增目标：`apps/api/integration/agent-memory.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 跨 Agent/项目/租户隔离、撤权/过期立即不注入。
+- [ ] 并发纠正/去重、预算满、来源删除、模型误写秘密被拒/遮蔽。
+- [ ] 压缩、换模型、回退和新 Session 后记忆版本/来源一致；人类修正不被旧提取异步覆盖。
+
+**原 DoD 承接**：
+
+普通 Agent 与后续 Chief 均可使用有来源且可纠正的记忆；会话注入记录与 API/MCP 返回能解释本轮带入了什么，不能以记忆隐式扩大权限。
+
+当前完成依据：Guidance/context snapshot 不是 Agent 持久记忆；无 memory CRUD/TTL API。 本卡没有新 PASS。
+
+
+### TA11
+
+责任：[#43](sources/todos/43.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/mcp/src/http.test.ts](../../../apps/mcp/src/http.test.ts)；[apps/agent-runner/src/egress-policy.test.ts](../../../apps/agent-runner/src/egress-policy.test.ts)。
+
+新增目标：`packages/conformance/src/outbound-mcp.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 恶意工具 schema/返回内容、发现工具变化、读写权限交集、超时/取消。
+- [ ] HTTP 重定向/SSRF/TLS、stdio args 注入/进程树清理；多租户并行隔离。
+- [ ] 凭据 refresh 竞争、撤销、更新失败回滚、未知外部效果不自动重试。
+- [ ] Pi/首批 CLI 工具桥同一 grant 生效，连接不可用不伪造已完成工具调用。
+
+**原 DoD 承接**：
+
+至少一个 HTTP 和一个 stdio fake/受控真实连接贯穿配置—授权—执行—审计—撤销；OAuth 未测 provider 明确不宣称支持。
+
+当前完成依据：入站 MCP 实现及 M5 联验不证明出站 MCP 服务配置/授权存在。 本卡没有新 PASS。
+
+
+### TA12
+
+责任：[#44](sources/todos/44.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/workbench-llm-connections.integration.test.ts](../../../apps/api/integration/workbench-llm-connections.integration.test.ts)；[apps/api/integration/stage5-connector.integration.test.ts](../../../apps/api/integration/stage5-connector.integration.test.ts)。
+
+新增目标：`apps/api/integration/runtime-secrets.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 跨租户/项目/Agent 错用引用、同名覆盖和读取顺序。
+- [ ] 撤权/Stop 前后竞争、旧版本仍在运行的约束、短时凭据重放/过期。
+- [ ] 日志/错误/环境转储/子进程输出脱敏；不可保证的外部工具回显风险与隔离责任明确。
+- [ ] 密钥轮换中崩溃、KMS/secret store 不可用、恢复缺解密材料时 fail closed。
+
+**原 DoD 承接**：
+
+秘密的授权、投递、使用归因和撤销可验证，普通记录与工件不含明文；范围/覆盖规则和恢复步骤可审。
+
+当前完成依据：专用密文和连接器 OS store 已有；通用跨 scope secret broker/短时投递未建。 本卡没有新 PASS。
+
+
+### TA13
+
+责任：[#45](sources/todos/45.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/workbench-llm-connections.integration.test.ts](../../../apps/api/integration/workbench-llm-connections.integration.test.ts)；[packages/domain/src/session-budget.test.ts](../../../packages/domain/src/session-budget.test.ts)；[apps/agent-runner/src/model-wire.test.ts](../../../apps/agent-runner/src/model-wire.test.ts)。
+
+新增目标：`packages/conformance/src/model-protocol-budget.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 保存零出站、显式探测命令有明确请求和可取消；TLS/重定向/敏感日志无泄漏。
+- [ ] 两个协议分别 fake 与获授权真实端点测试，记录首文本/首工具/完整流结束，不能拿单次 200 冒流成功。
+- [ ] 使用量重复上报、无 token/缓存字段、跨窗口和并发超预算。
+- [ ] 费用估算来源/版本、订阅额度过期/探测失败，未读取到不当作零。
+
+**原 DoD 承接**：
+
+模型选择、可用性、运行结果和用量能互相追溯；协议支持逐项有证据，不以预设存在代表提供方实测通过。
+
+当前完成依据：#17 只读预置非兼容性证明；Pi 单模型路径与 M4 本人 usage 不证明全协议/预算产品。 本卡没有新 PASS。
+
+
+### TA14
+
+责任：[#46](sources/todos/46.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/worker/src/automation.test.ts](../../../apps/worker/src/automation.test.ts)；[apps/api/integration/stage4-operations.integration.test.ts](../../../apps/api/integration/stage4-operations.integration.test.ts)。
+
+新增目标：`apps/api/integration/schedule-timezones.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 夏令时缺失/重复时刻、时区改动、闰日、一次性取消与并发触发。
+- [ ] 两 worker 抢同 occurrence、停机跨时段、effect 执行后 ACK 丢失。
+- [ ] 上轮执行/待审批/failed 三种重叠，Stop 迟到、预算不足、固定机器下线。
+- [ ] 规则 owner 撤权、Team 变更、重放不再扣预算或重复创建 Session。
+
+**原 DoD 承接**：
+
+API/MCP 的 next/last/occurrence 查询与服务器实际 occurrence 一致，所有 skipped/failed/started 有归因；恢复和去重经过故障注入，未支持 catch-up 明示。
+
+当前完成依据：schedule timezone 当前限定 UTC，Loop/rule 未覆盖新 IANA、机器指定及恢复组合。 本卡没有新 PASS。
+
+
+### TA15
+
+责任：[#47](sources/todos/47.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/wecom-notifications.integration.test.ts](../../../apps/api/integration/wecom-notifications.integration.test.ts)；[apps/api/integration/notification-channels.integration.test.ts](../../../apps/api/integration/notification-channels.integration.test.ts)；[apps/worker/src/wecom-notifications.test.ts](../../../apps/worker/src/wecom-notifications.test.ts)。
+
+新增目标：`apps/api/integration/notification-digests.integration.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 通知来源/版本/受众权限及投递后关口变化与服务端恢复的一致性。
+- [ ] Push 订阅失效、多设备、重复通知、旧批准/链接撤权、读取/处理时已被别人处理。
+- [ ] 摘要时区/DST、退订和无内容抑制；fake SMTP/企业微信，不未经授权发真实消息。
+- [ ] 撤权或订阅失效后不泄漏敏感通知内容，不将缓存通知当作批准授权。
+
+**原 DoD 承接**：
+
+每个声明支持渠道的服务端投递、关口/版本关联、失效与恢复有证据；摘要时区、退订和无内容抑制经 fake 验证。客户端界面不作为本卡验收或后端交付前置。
+
+当前完成依据：#15/#16 投递、频控恢复已完成；定时摘要和新增跨版本组合待建，真实外发未授权。 本卡没有新 PASS。
+
+
+### TA16
+
+责任：[#48](sources/todos/48.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/api/integration/route-policy-authorization.integration.test.ts](../../../apps/api/integration/route-policy-authorization.integration.test.ts)；[packages/recovery/integration/recovery.integration.test.ts](../../../packages/recovery/integration/recovery.integration.test.ts)。
+
+新增目标：`packages/conformance/src/enterprise-profile.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 两个租户/两个人/Agent 服务身份交叉读取和操作全部作用域。
+- [ ] 离职/会话吊销/SSO 不可用与 break-glass 流程，管理员活动审计。
+- [ ] 完整备份/部分损坏/密钥缺失/空新主机恢复，证明工件 hash 和事件游标一致。
+- [ ] 从上版本升级/回滚、无公网环境核心功能、可选外部服务关闭时不阻塞登录和管理。
+
+**原 DoD 承接**：
+
+三个画像使用同一产品且隔离/恢复证据完备；SSO 等可选功能按实际交付标记，不把文档配置当实测通过。
+
+当前完成依据：当前授权/完整备份机制已存在；新资源及企业 SSO/SCIM、三画像恢复未获得组合证据。 本卡没有新 PASS。
+
+
+### TA17
+
+责任：[#49](sources/todos/49.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[apps/agent-runner/src/execution-lifecycle.test.ts](../../../apps/agent-runner/src/execution-lifecycle.test.ts)。
+
+新增目标：`packages/conformance/src/controlled-pty.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 跨机器/路径/Agent 越权、并发终端限额、输入重放与迟到输出。
+- [ ] 断线重连、长运行命令、Stop/撤权、PTY 崩溃/重置/服务器重启。
+- [ ] 秘密回显/历史/审计保护与真实 Windows/POSIX 兼容。
+
+**原 DoD 承接**：
+
+仅已明确授权的终端可启动，生命周期和危险边界可解释并实测；本卡未交付不阻塞核心编程任务。
+
+当前完成依据：node-pty 发行依赖不等于终端服务；可选提案不阻塞核心。 本卡没有新 PASS。
+
+
+### TA18
+
+责任：[#50](sources/todos/50.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归：无本目标领域测试；只交研究设计，未运行实验不记通过。
+
+专项交付：两份提案的可复现实验设计，未运行标未观察。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 每份方案列可复现实验或原型的验证步骤、失败/成本条件；未运行则记未观察。
+- [ ] 证明关闭扩展时个人/小团队核心路径不受影响；无隐含中心服务/订阅前置。
+
+**原 DoD 承接**：
+
+两份提案可独立裁决且范围/成本/迁移/测试明确；本卡完成仅表示研究完成，不宣称两项已实现。
+
+当前完成依据：方案任务，本卡不实现池/Git 服务；可选扩展不阻塞核心。 本卡没有新 PASS。
+
+两份提案独立裁决；实验未经授权不执行，方案完成不等于机器池或托管 Git 实现。
+
+### TA19
+
+责任：[#51](sources/todos/51.md) 的整卡 owner 交证据，独立审查者按 P0/P1 复核；实际人员未派发。
+
+已有回归入口：[packages/conformance/src/joint-clients.conformance.test.ts](../../../packages/conformance/src/joint-clients.conformance.test.ts)；[packages/conformance/src/optional-domains.conformance.test.ts](../../../packages/conformance/src/optional-domains.conformance.test.ts)。
+
+新增目标：`packages/conformance/src/deployment-journeys.conformance.test.ts`（待创建；后续具体实施计划冻结用例）。
+
+**原专项测试承接**（来源全文保留；这些是后续要求，本轮未执行）：
+
+- [ ] 全部五项 required checks 加域 conformance；测试环境用 fake agent/Git/provider/通知。
+- [ ] 受控真实环境至少一次代码任务、一次非代码任务、一次定时和一次通过获准身份与 API/MCP 的精确版本批准。
+- [ ] 并发/revision/重复幂等、事务失败、进程/网络故障、outbox 重放、Stop/撤权、恢复演练。
+- [ ] 认证及安装可用性与资源耗用记录真实测量；未到场设备/账号明确阻塞项，不能写 PASS_WITH_LIMITS=全部通过。
+
+**原 DoD 承接**：
+
+三画像各有可复现完整证据包和未支持清单，无 failing required check；版本/数据/外部效果一致，之后才可提出发布候选。
+
+当前完成依据：M5 核心四链与 #20 双架构安装是现有输入，未覆盖全部三画像新增能力。 本卡没有新 PASS。
+
+三画像均须完整证据包：个人无源码/重启；团队多人审批竞争/机器队列；企业内网 Git/模型、隔离/撤权、受限出网及一致恢复。代码、非代码、定时及精确版本批准各有真实链。全部 TA01—TA16 和 F6 是最终完成输入；仅部分链不能报整卡 Done。
+
+## 本卡交付关口
+
+本轮只核来源、覆盖、依赖、文风和适用 CI，无领域/API/events/迁移变化。
+源码映射与文档检查完成后提交本卡候选，供正式 P0/P1 独审。
+独审、最新本卡 Required CI 和用户裁定分别记录；生产者自查不标独审通过。
+本卡合入只代表路线图整理完成；各提案仍在原卡等待下一关口。
