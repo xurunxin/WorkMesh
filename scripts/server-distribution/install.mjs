@@ -10,7 +10,7 @@ import { atomicJson, privateDirectory, readState, validateJournal, withInstallLo
 const appConfig = () => import('/app/node_modules/@workmesh/config/dist/index.js')
 const profileNames = ['WORKMESH_DEPLOYMENT_PROFILE', 'WORKMESH_QUEUE_BACKEND', 'WORKMESH_ARTIFACT_BACKEND',
   'WORKMESH_RUNNER_PLACEMENT', 'WORKMESH_API_REPLICAS', 'WORKMESH_WORKER_REPLICAS', 'WORKMESH_MCP_REPLICAS',
-  'WORKMESH_BIND_ADDRESS', 'S3_PUBLIC_ENDPOINT', 'SESSION_COOKIE_SECURE', 'NODE_EXTRA_CA_CERTS']
+  'WORKMESH_BIND_ADDRESS', 'WEB_ORIGIN', 'PUBLIC_MCP_ORIGIN', 'S3_PUBLIC_ENDPOINT', 'SESSION_COOKIE_SECURE', 'NODE_EXTRA_CA_CERTS']
 const requiredDefaults = { WORKMESH_QUEUE_BACKEND: 'redis', WORKMESH_ARTIFACT_BACKEND: 's3',
   WORKMESH_RUNNER_PLACEMENT: 'external', WORKMESH_API_REPLICAS: '1', WORKMESH_WORKER_REPLICAS: '1',
   WORKMESH_MCP_REPLICAS: '1', WORKMESH_BIND_ADDRESS: '127.0.0.1', SESSION_COOKIE_SECURE: 'true' }
@@ -99,6 +99,7 @@ async function render(config, manifest, bundle, prefix, authority, keys) {
         service.mem_limit = '384m'; service.environment.NODE_OPTIONS = '--max-old-space-size=256'
         service.logging = document.services.api.logging
       }
+      authority.loadDeploymentProfile(service.environment)
       if (name === 'api') authority.loadConfig(service.environment)
       authority.loadFeatureConfig(service.environment)
       if (name === 'worker') { authority.loadRealtimeRedisHintConfig(service.environment); authority.loadRetentionConfig(service.environment) }

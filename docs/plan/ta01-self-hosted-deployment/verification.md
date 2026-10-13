@@ -130,3 +130,5 @@ CI #518 的 amd64 guest 进一步通过配置检查和部署锁负例，但应�
 旧 amd64 候选的实际应用归档包含七项 classic manifest，但 OCI index 只有 MCP 一项；在可信工具容器中实际 Docker load 也只导入该项。封包器现按唯一镜像引用导出，并验证每个 config 对应的准确 OCI manifest 确实进入索引；索引漏项在构建端拒绝。真实双镜像带标签导出取得两个索引项，原件见 [named-archive-probe.json](../../reviews/ta01-product/named-archive-probe.json)。归档内容、目标 ID、来源和架构校验保持，不按标签放宽安装接受。
 
 现行 apps/mcp/src/index.ts 的 tool() 返回 structuredContent: { data }；安装器的业务验证已改为读取 structuredContent.data，再核准确 Work Item ID。此修正来自实际源码，不冒为前述 guest 已执行。guest 同次增加 Redis-free／filesystem 错误组合实际拒绝、无宿主 Node／pnpm 检查、OS／Docker／Compose 环境回读和无秘密 journal 阶段诊断。安装器八项单元、文档静态与 Python AST 检查通过；完整 guest 仍待新候选结果。
+
+进一步核 runtime-guard.mjs 与 loadDeploymentProfile：所有长期服务均要求三个公开 HTTPS 地址，而原 MCP Compose 只提供 WORKMESH_BROWSER_ORIGIN，不能替代 WEB_ORIGIN。安装器现将 WEB_ORIGIN／PUBLIC_MCP_ORIGIN 同 S3_PUBLIC_ENDPOINT 注入 API、worker、MCP，并逐角色执行现行画像校验，避免全局配置有效而 MCP 启动时缺字段。此项是源码核查修正，尚未取得完整 guest 通过；不沿用修正前候选结果。
