@@ -8,9 +8,9 @@
 
 ## 当前实现与未测
 
-已开始实现共享 CLI、SEA 公钥、受控同架构原生编译、清单、离线安装助手、原子切换及卸载。新增功能仍须真实产物和双架构完整产品验收，当前不填已通过；历史 TCG 研究只证明环境可行性。
+已实现共享 CLI、SEA 公钥、受控同架构原生编译、清单、离线安装助手、原子切换、回退及卸载。历史 TCG 研究只证明环境可行性；下文分别记录产品构建与完整 guest 验收。
 
-尚未完成双架构构建／SEA 加载、无源码目标安装、完整 API/MCP 黄金路径、原拒绝恢复、完整 OS 重启、升级卸载及新的 Required CI 绑定。产品 DoD、正式独审、PR ready、最新 CI 和条件合入均待实际证据，不将本卡 Done。
+双架构原生构建、SEA 装载及宿主安装专项已有真实通过结果。完整产品验收须以同一准确 HEAD 的两个 guest 回执为准。正式成果独审、PR ready、最新 Required CI 和条件合入仍需满足，不将本卡 Done。
 
 ## 环境与文档
 
@@ -50,3 +50,34 @@ run38347067626/heada73bae62331f4026de6133d1bec123f304fa3ca7 的 amd64 原件进�
 run38348959982/heada4de1986ca15a52e957c6610f674da9735915586 的 amd64 回执已进入用户驱动，报 PermissionError、尚无命令检查结果；源码早期对 /root/node_modules 的 Path.exists 在普通 UID 下无法遍历私有 /root。该环境核验移到 guest 根包装器，用户继续核可见 source/tool；不更改 /root 权限或放宽安装规则。是否完全解决以新实测为准。原件 raw/product-fourth-amd64.zip/artifact11790601358，SHA-256 b345481b93a480fe568e4acd6557826ed45f8fb5840732381817ba4d260fc3ef 与 provider digest 一致。
 
 本机辅助容器已按准确 ID/owner graceful stop 后移除，共享 Ubuntu 镜像仍存在；没有全局 prune。已提交原件和私有下载仍保留供交付核验。取消本卡 superseded 的非必需研究 run38347067445、38345379777，仅是资源收尾，不作为通过，原研究原件与完整产品 Required CI 保持。
+
+
+## 断流恢复与产品实证
+
+断流前新增的第五项安装拒绝测试和证据索引已由平台保全到 `bc7002ed6e12cd209859fb37b9e768ab2946e9b2`。本次恢复确认工作树干净、原分支不变，GitHub API 重新读取真实 main 为 `f6faf54f80850ecee9118d87401e6b5ce73216f1`。未 reset、切分支或重启健康 CI。
+
+Release9／run38352885451 对应上述完整 HEAD，两架构均成功。amd64 下载原件 SHA-256 为 `0f62e17a16e655f6e8411ac5f57f8a82b24bd3bfe7740b56485530cc69ed1879`，与 provider artifact11791159178 的 digest 一致；安装日志实际为 5 项通过。辅助原生验收不能代完整产品 guest。
+
+旧 CI499／run38350109341 的 amd64 产品 guest 已通过；ARM64 被取消，Required CI 因此失败。amd64 原件 artifact11790843181 的 SHA-256 为 `3cbaa7aa60a5a03c72279b0e55b97656df7db3f7ebefd475eda23cc83058697e`。完整源码为 `5aabce3fea1496b29fd877244b63e48b029d0827`。独立复核有两次 kernel 启动、不同 boot_id、QMP RESET 和正常 SHUTDOWN、同 UID22020 的真实 Secret Service。完整运行 897.24 秒，重启验收段 182.62 秒；原 900 秒恢复行在实际重放后尚余 746.42 秒。黄金路径、事务回滚与精确重试、真实并发、升级回退、撤销、过期及卸载保留秘密均有回执。该结果不外推 ARM64 或当前 HEAD。
+
+新增 `scripts/connector-install/verify.py` 用于从原始 ZIP 逐项复核 provider 摘要、准确 run/head/tree、Git blob 输入、完整 OS 重启、秘密服务及原窗口。旧 amd64 原件复核通过；仅在独有派生 ZIP 中将两个 boot_id 改为相同，复核明确拒绝。原件未改写。当前 CI500／run38352885437 两架构完整产品 guest 正在运行，未另起同一目标验收。
+
+旧 ARM64 取消原件 artifact11791517520 已保全，摘要 `d18c1850247c973d1a1dc5410ae9b5d9dafa46d6f5392428b9f079a28b9e5c78` 与 provider 一致。串口末尾仍在首次 cloud-init 安装系统包，没有产品 result.json 或跨重启回执。取消不计失败修复或验收通过。
+
+当前 amd64 原件 artifact11792915201 已复核并保存，摘要 `11e6092c15c16d969506400692786adfdc9da0e3410de3021e7da99994fdcad6`。来源 `bc7002ed...`／run38352885437，完整运行 897.96 秒，重启验收段 191.77 秒，原窗口余 738.98 秒。Source gates、API、worker、DB、恢复、conformance 及三系统平台检查均成功，仍等待同轮 ARM64 和总检查。
+
+amd64 五个交付成员已从同轮 distribution artifact11791834900 按成员下载，程序和助手摘要逐一与实际 guest 清单匹配。没有下载整份重复含升级候选的 provider ZIP，不冒称本地核过它的整包摘要。程序归档 86,565,030 字节，助手归档 42,470,387 字节，逐成员大小／权限／摘要和无链接布局均复核通过。仅保压缩工件，未提交原始大 ELF 或升级候选副本。
+
+新增源前后绑定复用 capture-connector-source.mjs，并保存原始 commit object；浅 checkout 的 git show `%P` 可能显示空 parent，原始 commit header 才作为父链来源。新增双安装进程收敛和 SEA 缺失／损坏 PTY 库拒绝用例；它们须在后续准确 HEAD 实跑，不提前填写通过。
+
+本轮定向类型检查（新增安装专项单文件）和 CI 结构校验通过；中文接入静态检查与 ci:validate 通过。手检固定技能文风、单位、引号和代码块；没有新装全局工具。软件门槛以两架构 ELF 的 GLIBC_2.34、锁定 Node 官方 libstdc++ 支持范围核定，未把 hardware 起点改写成最低设备批准。
+
+后续干净 guest 准备明确关闭 apt 的推荐／建议应用，仅安装 D-Bus、gnome-keyring、libsecret-tools 及其必需依赖。旧 ARM64 原件显示初始准备额外安装 GTK/桌面组件；这项调整减少可重建系统包，不替代完整 guest、真实 Secret Service 或重启断言。当前健康 CI 不取消，调整后的环境仍需两架构实测。
+
+## ARM64 产品首败与定向修复
+
+CI500／run38352885437 的 ARM64 job115149721063 失败，源码 `bc7002ed6e12cd209859fb37b9e768ab2946e9b2`。原件 artifact11793186253 已完整保存为 raw/product-first-arm64.zip，摘要 `f3a6ee080fa4009289c30bedf2cbe7bb4278482d8504621f142d3051bc7e8169` 与 provider 一致。总运行 2,804.29 秒；已有 19 项检查，含真实离线安装、SEA 原生库、完整 API/MCP 签名 Skill、身份拒绝及真实事务回滚。没有跨重启回执，完整产品验收未通过。
+
+失败位于并发连接阶段，服务端原件末尾的屏障未就绪，credentialCount 与 requestCount 均为零。原回执只有 RuntimeError，不能进一步断定是 25 秒冷启动就绪截止还是进程提前退出。新增只含固定步骤、数字退出码和机器错误码的诊断；冷启动屏障等待取既有子进程 150 秒预算，两进程同时活跃、同一 pending 和单次凭据提交断言保留。产品 HTTP 30 秒超时、原 900 秒恢复窗口、guest 服务与 CI 总预算均不改。修复是否闭合以新双架构结果为准。
+
+ARM64 五个压缩交付文件来自完整核过摘要的 Release9 artifact11791004540，并逐字节匹配上述实际 guest 的 manifest。保存工件不代表完整 ARM64 验收成功。两架构原生编译日志与宿主 5 项通过原件另外以成员保持的派生 ZIP 保全；索引明确来源原 ZIP 摘要及每个成员摘要。

@@ -78,7 +78,157 @@
       "arch": "amd64",
       "status": "failed-offline-service-exit-one",
       "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38347067626"
+    },
+    {
+      "path": "raw/product-cancelled-arm64.zip",
+      "sha256": "d18c1850247c973d1a1dc5410ae9b5d9dafa46d6f5392428b9f079a28b9e5c78",
+      "bytes": 2364727,
+      "members": 347,
+      "head": "5aabce3fea1496b29fd877244b63e48b029d0827",
+      "runId": 38350109341,
+      "attempt": 1,
+      "artifactId": 11791517520,
+      "arch": "arm64",
+      "status": "cancelled-before-product-receipts",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38350109341"
+    },
+    {
+      "path": "raw/product-passed-amd64.zip",
+      "sha256": "3cbaa7aa60a5a03c72279b0e55b97656df7db3f7ebefd475eda23cc83058697e",
+      "bytes": 2394155,
+      "members": 348,
+      "head": "5aabce3fea1496b29fd877244b63e48b029d0827",
+      "runId": 38350109341,
+      "attempt": 1,
+      "artifactId": 11790843181,
+      "arch": "amd64",
+      "status": "passed-complete-installed-guest",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38350109341"
+    },
+    {
+      "path": "raw/product-current-amd64.zip",
+      "sha256": "11e6092c15c16d969506400692786adfdc9da0e3410de3021e7da99994fdcad6",
+      "bytes": 2394318,
+      "members": 348,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885437,
+      "attempt": 1,
+      "artifactId": 11792915201,
+      "arch": "amd64",
+      "status": "passed-complete-installed-guest",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38352885437"
+    },
+    {
+      "path": "raw/product-first-arm64.zip",
+      "sha256": "f3a6ee080fa4009289c30bedf2cbe7bb4278482d8504621f142d3051bc7e8169",
+      "bytes": 2374315,
+      "members": 348,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885437,
+      "attempt": 1,
+      "artifactId": 11793186253,
+      "arch": "arm64",
+      "status": "failed-concurrent-connect-after-19-checks",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38352885437"
     }
   ],
-  "currentAcceptance": "awaiting-complete-native-and-tcg-results"
+  "currentAcceptance": "amd64-complete-passed; arm64-failed-concurrency; latest-revision-requires-full-ci",
+  "distribution": [
+    {
+      "path": "artifacts/bc7002ed/amd64",
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885437,
+      "attempt": 1,
+      "artifactId": 11791834900,
+      "providerZipSha256": "2238e0b8e6375527911afba2333a8bf245bb1ecc45d52a560173443204d7f86f",
+      "downloadRule": "只下载五个交付成员，每个程序／助手归档按实际 guest manifest 的完整摘要验证；provider ZIP 整包未下载，不宣称已本地核整包摘要",
+      "manifestSha256": "bc55be5f99f79f8661483030fd1333280d13bca1c3fc45251b345ad3e960056e"
+    },
+    {
+      "path": "artifacts/bc7002ed/arm64",
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "runId": 38352885451,
+      "attempt": 1,
+      "artifactId": 11791004540,
+      "providerZipSha256": "273f3177ceb286cbafb3f9c767148f30098a6a770f8f4bcc9fdd11e6e47f8306",
+      "downloadRule": "原 ZIP 完整摘要验证；五个成员与 Required CI 实际 ARM64 guest 的 manifest 完全相等；完整产品 guest 尚未通过",
+      "manifestSha256": "556733433e6306b6eea28c85ee60ebcf4c10af46821ee400ef5e9e069954b5c5"
+    }
+  ],
+  "nativeBuildEvidence": [
+    {
+      "path": "raw/native-build-bc7002ed-amd64.zip",
+      "sha256": "fddd175649d348d17e47d0ec8f57e410fafebedb0f69b03519a91a3aa0db0117",
+      "rule": "保留原成员字节；此小 ZIP 为派生容器，不冒充 provider 原 ZIP",
+      "sourceProviderArtifactId": 11791159178,
+      "sourceProviderZipSha256": "0f62e17a16e655f6e8411ac5f57f8a82b24bd3bfe7740b56485530cc69ed1879",
+      "runId": 38352885451,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "arch": "amd64",
+      "members": [
+        {
+          "path": "ci-connector-release/source.txt",
+          "sha256": "ffad49b064676dff6b7a2b2ea938706d6999b97694b4a8d0f0c32e21ca02701e",
+          "bytes": 83
+        },
+        {
+          "path": "ci-connector-release/install.log",
+          "sha256": "5f56556b8a7314936f1f8b37aac1ffff9aaa4ca73f75b9e6653515595d642c9b",
+          "bytes": 1532
+        },
+        {
+          "path": "ci-connector-release/build.log",
+          "sha256": "c75b5d41a4eb570c3c60d64fd1a95279876b0031c43e254c91578881a272cef2",
+          "bytes": 1538
+        },
+        {
+          "path": ".tmp/connector-release/manifest.json",
+          "sha256": "bc55be5f99f79f8661483030fd1333280d13bca1c3fc45251b345ad3e960056e",
+          "bytes": 24312
+        },
+        {
+          "path": ".tmp/connector-release/native-build.log",
+          "sha256": "dee4e4224c2f20c6280b0f3c35916aec7f1c4e065d05988fe46150692607a671",
+          "bytes": 2266
+        }
+      ]
+    },
+    {
+      "path": "raw/native-build-bc7002ed-arm64.zip",
+      "sha256": "4f345fa957c56195f81b7e61a646bec9d94993e57cf43d48765599b19db65fb0",
+      "rule": "保留原成员字节；此小 ZIP 为派生容器，不冒充 provider 原 ZIP",
+      "sourceProviderArtifactId": 11791004540,
+      "sourceProviderZipSha256": "273f3177ceb286cbafb3f9c767148f30098a6a770f8f4bcc9fdd11e6e47f8306",
+      "runId": 38352885451,
+      "head": "bc7002ed6e12cd209859fb37b9e768ab2946e9b2",
+      "arch": "arm64",
+      "members": [
+        {
+          "path": "ci-connector-release/source.txt",
+          "sha256": "ffad49b064676dff6b7a2b2ea938706d6999b97694b4a8d0f0c32e21ca02701e",
+          "bytes": 83
+        },
+        {
+          "path": "ci-connector-release/install.log",
+          "sha256": "d871a1e929fc6f289e95a41588d28a8371413171047bba3ca6b971e00937bed9",
+          "bytes": 1532
+        },
+        {
+          "path": "ci-connector-release/build.log",
+          "sha256": "b8f9252f4820d8be0cc10abbfa6042facd0c8314c6e6206fb890224c0909960c",
+          "bytes": 1538
+        },
+        {
+          "path": ".tmp/connector-release/manifest.json",
+          "sha256": "556733433e6306b6eea28c85ee60ebcf4c10af46821ee400ef5e9e069954b5c5",
+          "bytes": 23963
+        },
+        {
+          "path": ".tmp/connector-release/native-build.log",
+          "sha256": "f0441abc38f041be258f2f60a3d569849e2cc3ae0936896a28703045bad28d90",
+          "bytes": 2268
+        }
+      ]
+    }
+  ]
 }

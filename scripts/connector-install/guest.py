@@ -20,6 +20,7 @@ MARKER = STATE / "state.json"
 PREFIX = Path.home() / ".local"
 BINARY = PREFIX / "bin/workmesh-connector"
 checks = []
+diagnostics = {}
 
 
 def request(path, value):
@@ -44,6 +45,8 @@ def command(args, data=None, env=None, expected=0):
     if re.search(rb"wm[ip]_[A-Za-z0-9_-]{43}", result.stdout + result.stderr):
         raise RuntimeError("secret in process output")
     if result.returncode != expected:
+        diagnostics.update(commandExit=result.returncode,
+                           codes=sorted(set(re.findall(r"\b(?:INSTALL|CONNECTOR)_[A-Z_]+\b", result.stderr.decode(errors="replace")))))
         raise RuntimeError("installed command failed")
     return result
 
@@ -279,21 +282,26 @@ printf 'CLIENT_OK\n'
             process.stdin.write((concurrent["pairingCode"] + "\n").encode())
             process.stdin.close()
             process.stdin = None
-        deadline = time.monotonic() + 25
+        # This bounds cold-process readiness, not an HTTP timeout or the 900-second replay window.
+        deadline = time.monotonic() + 150
         while not request("status", {"connectionId": concurrent["expectation"]["connectionId"]})["barrierReady"]:
             if time.monotonic() > deadline or any(p.poll() is not None for p in processes):
+                diagnostics.update(concurrencyStep="waiting-for-first-reply", childExits=[p.poll() for p in processes])
                 raise RuntimeError("concurrent barrier not reached")
             time.sleep(0.1)
         if any(p.poll() is not None for p in processes):
+            diagnostics.update(concurrencyStep="both-alive-at-barrier", childExits=[p.poll() for p in processes])
             raise RuntimeError("concurrent processes not both alive at barrier")
         pending_concurrent = json.loads((concurrent_dir / "pending.json").read_text())
         request("release", {"connectionId": concurrent["expectation"]["connectionId"]})
         for process in processes:
             out, err = process.communicate(timeout=150)
             if process.returncode or re.search(rb"wm[ip]_[A-Za-z0-9_-]{43}", out + err):
+                diagnostics.update(concurrencyStep="after-release", commandExit=process.returncode)
                 raise RuntimeError("concurrent process failed or leaked")
         status = request("status", {"connectionId": concurrent["expectation"]["connectionId"]})
         if status["credentialCount"] != 1 or status["requestCount"] != 1 or json.loads((concurrent_dir / "config.json").read_text())["completion"]["key"] != pending_concurrent["key"]:
+            diagnostics.update(concurrencyStep="convergence", credentialCount=status["credentialCount"], requestCount=status["requestCount"])
             raise RuntimeError("concurrent processes did not converge")
         checks.append("concurrent-installed-processes-one-pending-one-credential")
         upgrade_dir = STATE / "upgrade"
@@ -368,5 +376,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as error:
-        report({"phase": "failure", "errorType": type(error).__name__, "checks": checks})
+        report({"phase": "failure", "errorType": type(error).__name__, "checks": checks, "diagnostics": diagnostics})
         raise SystemExit(1)

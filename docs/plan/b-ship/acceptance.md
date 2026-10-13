@@ -16,17 +16,17 @@
 
 | 原项 | 原要求 | 后续证明 | 本轮状态 |
 | --- | --- | --- | --- |
-| `todo-20-T1` | 带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。 | 双架构 guest 无源码/Node/pnpm，离线安装、不同 cwd 启动及 `--version`；R1-20-1 | 未运行 |
-| `todo-20-T2` | 用安装后的命令完成连接器既定黄金路径，完整校验一步不减。 | 下节真实 API/MCP＋签名 Skill＋OS store；R1-20-1 | 未运行 |
-| `todo-20-T3` | 既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。 | R1-20-2/3/4/6/8/9、B3 错误消费及随文恢复步骤 | 未运行 |
-| `todo-20-T4` | 版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。 | 准确清单、命令、目标条件、原日志和收尾；未发布标识 | 未运行 |
-| `todo-20-T5` | 所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。 | 最新 Required CI、新安装验收、正式独审和 Chief 确认 | 未运行；旧标签按实际影响仅处理 P0/P1 |
+| `todo-20-T1` | 带版本分发产物在不含仓库源码的目标 Lite 环境中可安装和启动。 | 双架构 guest 无源码/Node/pnpm，离线安装、不同 cwd 启动及 `--version`；R1-20-1 | 两架构该项已实测；ARM64 完整组合未通过 |
+| `todo-20-T2` | 用安装后的命令完成连接器既定黄金路径，完整校验一步不减。 | 下节真实 API/MCP＋签名 Skill＋OS store；R1-20-1 | 两架构该项已实测；ARM64 完整组合未通过 |
+| `todo-20-T3` | 既有错误/恢复机制与秘密边界在安装场景中成立；文档可直接指导恢复。 | R1-20-2/3/4/6/8/9、B3 错误消费及随文恢复步骤 | amd64 安装路径已有原件；矩阵完整结果仍待 |
+| `todo-20-T4` | 版本、设备环境、安装命令与实际结果均有仓库内证据；未完成对外发布时明确区分已验证产物与已发布版本。 | 准确清单、命令、目标条件、原日志和收尾；未发布标识 | amd64 工件及原件已保存；ARM64 原件及工件已保存，完整组合未通过 |
+| `todo-20-T5` | 所有适用仓库必需检查与已裁定验收通过，blocking/high 已解决。 | 最新 Required CI、新安装验收、正式独审和 Chief 确认 | 最新 Required CI 与正式成果独审仍待；只处理 P0/P1 |
 
 依赖仍为 G1、P1、R1、合并后的 B1/B2、B3；本卡吸收 B4。`stale revision` 和 `webhook/job replay` 不适用的解释不能取消连接器已有恢复、服务端权限和重放断言。
 
 ## 九类适用性
 
-所有适用的安装断言进入待创建的 `apps/connector/test/install.integration.test.ts`，使用独立 `vitest.install.config.ts`，设置非空测试、串行执行并显式开启本任务夹具。控制端可以使用源码测试工具，目标 guest 只能接收发行物、无秘密清单和已构建的测试客户端。不能在 guest 用 `tsx src/cli.ts` 替代已安装命令。
+安装专项已创建，入口为 `apps/connector/test/install.integration.test.ts`，使用独立 `vitest.install.config.ts`，设置非空测试、串行执行并显式开启本任务夹具。控制端可以使用源码测试工具，目标 guest 只能接收发行物、无秘密清单和已构建的测试客户端。不能在 guest 用 `tsx src/cli.ts` 替代已安装命令。
 
 | R1 标识与类别 | 适用性与必需断言 | 既有机制与后续责任 |
 | --- | --- | --- |
@@ -73,7 +73,7 @@
 
 后续文档必须通过 `docs/integration/README.md` 链接安装页，说明系统条件、版本清单、离线安装、管理员预期清单、客户端环境引用、完整校验、错误恢复、升级回退和卸载保留语义。未外发标为“本地已验证产物，尚未对外发布”，没有产物时标为“待实现”；不写虚构下载 URL。
 
-逐项核 `docs/agent-integration.md`、`AGENT_PROTOCOL.md`、`AGENTS.md` 与 connector README 的当前命令。当前 `cli.main` 只接收 `connect --expect <file>`、`run -- <command> [args]` 和 `abandon-pending`，没有 `--version` 或 `--dry-run`。发行阶段新增版本命令；产品 `connect` 不新增假 dry-run，安装脚本提供 `--dry-run` 只读校验并断言零写入。不能因文档提到参数就宣称代码已有支持。
+逐项核 `docs/agent-integration.md`、`AGENT_PROTOCOL.md`、`AGENTS.md` 与 connector README 的当前命令。共享 `main` 保留 `connect --expect <file>`、`run -- <command> [args]` 和 `abandon-pending`。SEA 发行入口已新增 `--version`；产品 `connect` 不新增假 dry-run，安装脚本提供 `--dry-run` 只读校验并断言零写入。不能因文档提到参数就宣称代码已有支持。
 
 当前协议仍是 Installation Token 用 `X-WorkMesh-Installation-Token`，普通执行用 Session Bearer。配对码不得成为 MCP header；示例不出现真实凭据、shell 历史中的完整配对码或普通 `.env` Token。
 
@@ -114,11 +114,15 @@ ARM64 runner 须由 Chief 落实专用裸机、管理员完成受控注册和 KV
 
 ## 本阶段交付判定
 
-### 据实证提出的 TCG 安装验收增量（待裁定，未实施）
+### 当前 TCG 产品验收入口
 
-后续拟用 `ubuntu-24.04`、`ubuntu-24.04-arm` 两个原生构建 leg，各自启动 `-accel tcg` 完整 guest；90 分钟 job 总预算待方案裁定并用完整产品组合验证。按[研究报告](../../reviews/b-ship/tcg/report.md)已测的 OS reboot、同用户 D-Bus/Secret Service、原加密 API 重放方法设计安装验收，新增实际安装 SEA、`SystemSecretStore`、pending/journal、完整协议与全部错误/恢复断言，不能用研究 `secret-tool` 或私有 API 夹具替代这些组合。
+已用 `ubuntu-24.04`、`ubuntu-24.04-arm` 两个原生构建 leg，各自启动 `-accel tcg` 完整 guest；job 总预算为 90 分钟，结果按实际产品组合记录。按[研究报告](../../reviews/b-ship/tcg/report.md)已测的 OS reboot、同用户 D-Bus/Secret Service、原加密 API 重放方法设计安装验收，新增实际安装 SEA、`SystemSecretStore`、pending/journal、完整协议与全部错误/恢复断言，不能用研究 `secret-tool` 或私有 API 夹具替代这些组合。
 
 Required CI 仍须绑定同一 run/attempt 的两架构产物及实际 checkout/tree、输入/镜像/固件摘要、native/SEA 加载、两次 boot_id/kernel 和期间 QMP RESET。TCG job 没有 KVM 不构成失败条件；缺完整 guest reboot、真实秘密或全部必要回执仍拒绝。用户已采用 TCG 并放行实施，这些增量已接入 connector-install 与 Required CI 汇总。三系统回归保留，历史 KVM 条款不作为当前产品执行步骤。
+
+### 历史研究与文档准备判定
+
+以下两段保留历史阶段判定，不作为当前产品交付结果。
 
 下面“五个文档路径齐备”是历史文档准备阶段的判定。本次研究另外交付完整当前规格、研究计划、可复现探测脚本、脱敏运行原件和结论；逐项报告完整 guest、实际 reboot、秘密持久性、时间容量及真实 API 重放。仍不填写产品 DoD 已通过，不把历史 KVM 资源取得作为本次实验授权，也不预先放行 TCG 产品路线。
 

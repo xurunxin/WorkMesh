@@ -8,9 +8,11 @@
 
 ## 系统准备
 
-使用同一 Linux 用户的 D-Bus 会话和可解锁 Secret Service。系统须有 `sh`、`sha256sum`、CA 证书及原生库动态依赖。连接器不 sudo、不安装系统软件、不建立或解锁 keyring，秘密后端不可用直接失败。
+使用同一 Linux 用户的 D-Bus 会话和可解锁 Secret Service。系统须有 `sh`、`sha256sum`、GNU tar、CA 证书及原生库动态依赖。GNU tar 只用于展开已核摘要的安装助手。连接器不 sudo、不安装系统软件、不建立或解锁 keyring，秘密后端不可用直接失败。
 
-当前实测目标准备为 Ubuntu LTS 完整虚拟机。最终软件下限须结合 `manifest.json` 中 Node 版本、原生 ELF 所需动态库和符号版本核定。1 vCPU、1 GiB 内存和 2 GiB 磁盘只是测量起点，不是最低配置承诺。
+目标软件门槛为 Linux 内核不低于 4.18、glibc 不低于 2.34，以及提供 `GLIBCXX_3.4.25` 的 libstdc++。本次两架构 node-pty ELF 均引用 `GLIBC_2.34`；其余原生库要求更低。libstdc++ 门槛沿用 [Node 锁定版本的官方支持说明](https://github.com/nodejs/node/blob/v22.19.0/BUILDING.md#official-binary-platforms-and-toolchains)。这些是软件门槛，不能代替目标发行版实测。
+
+当前产品目标为 Ubuntu 24.04 LTS 完整 TCG 虚拟机，分配 2 vCPU、1,536 MiB 内存和独有 12 GiB 逻辑磁盘。控制侧 Python 只驱动验收，连接器和安装助手不调用 Python。1 vCPU、1 GiB 内存和 2 GiB 可用磁盘保留为原测量起点，不是最低配置承诺。具体运行时间与磁盘分配见产品交付记录。
 
 ## 构建与验证来源
 
@@ -25,14 +27,21 @@ pnpm --filter @workmesh/connector build:release -- --output /path/to/new-owned-o
 
 通过受审构建记录取得程序归档、`manifest.json`、`SHA256SUMS`、`install.sh` 和同架构 `installer-linux-*.tar.gz`。助手压缩包允许在仓库保存，避免直接提交超过 GitHub 单文件限制的 ELF。SHA-256 证明完整性；发布者身份来自受审来源，不能仅凭随包清单信任外来下载。没有公开下载地址或新增发行签名密钥。
 
-先用受审记录中的摘要核助手压缩包，再用系统 GNU tar 解包到独有发行目录，保留目录及文件的私有权限。随后逐文件核 `SHA256SUMS`；安装入口会再次校验助手闭包。连接器安装本身使用 SEA 解析归档，不调用系统 tar、Python 或包管理器。
+先把下述文件放到当前用户独有的目录。目录权限为 `0700`，目录祖先不得允许其他用户写入。用受审记录中的摘要核助手压缩包，再用系统 GNU tar 解包；安装入口会再次校验助手闭包。连接器安装本身使用 SEA 解析程序归档，不调用系统 tar、Python 或包管理器。
 
 ## 安装与连接
 
-以下路径不含秘密。先校验，再离线安装：
+以下以 amd64 为例；arm64 使用对应的两个归档。将 `$HELPER_SHA256` 设为受审来源记录的助手摘要，不从未知下载自行确认信任。以下路径和摘要不含秘密。先校验，再离线安装：
 
 ```sh
+set -eu
 cd /path/to/verified-distribution
+umask 077
+HELPER=installer-linux-amd64.tar.gz
+ARCHIVE=workmesh-connector-0.1.0-linux-amd64.tar.gz
+MANIFEST=manifest.json
+printf '%s  %s\n' "$HELPER_SHA256" "$HELPER" | sha256sum --check
+tar --extract --gzip --file "$HELPER" --no-same-owner --keep-old-files
 sha256sum --check SHA256SUMS
 sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.local" --dry-run
 sh ./install.sh --archive "$ARCHIVE" --manifest "$MANIFEST" --prefix "$HOME/.local"

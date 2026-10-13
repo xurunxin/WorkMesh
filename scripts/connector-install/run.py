@@ -156,6 +156,8 @@ WantedBy=cloud-init.target
         files = [("/opt/connector-install/failure.py", failure, "0644"), ("/opt/connector-install/guest.py", guest, "0644"), ("/opt/connector-install/finish.sh", wrapper, "0755"),
                  ("/etc/systemd/system/connector-install.service", service, "0644")]
         cloud = "#cloud-config\nusers:\n  - name: wmprobe\n    uid: 22020\n    lock_passwd: true\n    shell: /bin/sh\npackage_update: true\npackages:\n  - dbus\n  - gnome-keyring\n  - libsecret-tools\nwrite_files:\n"
+        # Keep all required Secret Service dependencies; omit optional desktop applications.
+        cloud = cloud.replace("#cloud-config\n", '#cloud-config\napt:\n  conf: |\n    APT::Install-Recommends "false";\n    APT::Install-Suggests "false";\n', 1)
         for path, data, mode in files:
             cloud += f"  - path: {path}\n    encoding: b64\n    permissions: '{mode}'\n    content: {base64.b64encode(data).decode()}\n"
         cloud += "runcmd:\n  - [systemctl, daemon-reload]\n  - [systemctl, enable, connector-install.service]\n  - [systemctl, start, --no-block, connector-install.service]\n"

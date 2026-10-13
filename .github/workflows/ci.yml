@@ -799,6 +799,8 @@ jobs:
           sudo apt-get install -y build-essential python3 binutils qemu-system-x86 qemu-system-arm qemu-utils qemu-efi-aarch64 genisoimage
           mkdir -p ci-logs/connector-install .tmp
           git show -s --format='%H %T %P' HEAD > ci-logs/connector-install/source.txt
+          git cat-file commit HEAD > ci-logs/connector-install/source-commit.txt
+          node scripts/capture-connector-source.mjs before
           printf '%s %s %s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_ARCH" > ci-logs/connector-install/run.txt
           sha256sum scripts/connector-install/*.py apps/connector/scripts/*.mjs apps/connector/scripts/*.ts apps/connector/scripts/*.sh > ci-logs/connector-install/input-sha256.txt
       - name: Install source control dependencies
@@ -852,6 +854,9 @@ jobs:
           if test -d ci-logs/connector-install/image-cache; then
             case "$(realpath ci-logs/connector-install/image-cache)" in "$PWD/ci-logs/connector-install/image-cache") rm -rf -- ci-logs/connector-install/image-cache ;; *) exit 1 ;; esac
           fi
+      - name: Bind complete source after installed acceptance
+        if: ${{ always() }}
+        run: node scripts/capture-connector-source.mjs after
       - name: Upload exact installation receipts
         if: ${{ always() }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

@@ -42,6 +42,30 @@ describe('已构建 SEA 离线安装、完整性与保留边界', () => {
     expect(await readlink(join(prefix, 'lib/workmesh-connector/current'))).toBe(before)
     expect(await readFile(join(configRoot, 'marker'), 'utf8')).toBe(marker)
   })
+  it('两个真实安装进程使用同一私有前缀并串行收敛', async () => {
+    const before = await readlink(join(prefix, 'lib/workmesh-connector/current'))
+    const results = await Promise.all([installer(), installer()])
+    expect(results.map(r => r.stdout)).toEqual(['INSTALL_COMPLETE\n', 'INSTALL_COMPLETE\n'])
+    expect(await readlink(join(prefix, 'lib/workmesh-connector/current'))).toBe(before)
+    const ledger = JSON.parse(await readFile(join(prefix, 'lib/workmesh-connector/installed.json'), 'utf8')) as { versions: Record<string, unknown> }
+    expect(Object.keys(ledger.versions)).toHaveLength(1)
+  })
+  it('安装后的 SEA 拒绝缺失或损坏的 PTY 原生库，不降级加载', async () => {
+    const current = join(prefix, 'lib/workmesh-connector/current')
+    const native = join(current, 'node_modules/node-pty/build/Release/pty.node')
+    const original = await readFile(native), mode = (await lstat(native)).mode & 0o777
+    const binary = join(prefix, 'bin/workmesh-connector')
+    await unlink(native)
+    try {
+      await expect(execute(binary, ['--version'])).rejects.toMatchObject({ stderr: 'CONNECTOR_RELEASE_NATIVE_INVALID\n' })
+    } finally { await writeFile(native, original, { mode, flag: 'wx' }) }
+    const corrupt = Buffer.from(original); corrupt[Math.floor(corrupt.length / 2)]! ^= 1
+    await writeFile(native, corrupt)
+    try {
+      await expect(execute(binary, ['--version'])).rejects.toMatchObject({ stderr: 'CONNECTOR_RELEASE_NATIVE_INVALID\n' })
+    } finally { await writeFile(native, original) }
+    expect((await execute(binary, ['--version'])).stderr).toBe('')
+  })
   it('错误架构、穿越成员和重复成员均在写入前拒绝', async () => {
     const original = JSON.parse(await readFile(manifest, 'utf8')) as { arch: string; files: Array<{ path: string }> }
     const before = await readlink(join(prefix, 'lib/workmesh-connector/current'))
