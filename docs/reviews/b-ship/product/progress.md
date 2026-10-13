@@ -45,3 +45,8 @@ run38347067626/heada73bae62331f4026de6133d1bec123f304fa3ca7 的 amd64 原件进�
 辅助本机诊断使用独有 Docker 容器 f246610347465a7d599ecd5f3cdf8c0dda1e0b6628646910dec3f26a9878df9d，owner 为本卡，network=none、1536 MiB、2 CPU。复用受核原生 artifact11787912929/SHA-256 0698985707f17729652fae69bec8b622575c0bc8b774519b5e302eb2841593b5，仅用于隔离安装启动定位：UID22020 实际 dry-run、安装和 --version 成功，源码绑定 0b3f1b...，不证明 TCG 或完整连接。Windows 转移的临时准备脚本首次因 CRLF 失败，改为明确 LF 后成功；保首败，不改发行原件。
 
 封装加入单独压缩的安装助手，清单绑定其摘要，避免提交超出 GitHub 单文件限制的原始 ELF。guest 将按实际交付形式核摘要并解包助手，再执行无网络安装。新增真实事务失败恢复及并发进程屏障，仍待实测。历史 TCG 研究 workflow 改为手动复现入口；研究源与原件不改，产品 Required CI 保留完整 TCG，以避免每次产品提交重复运行已完成的非必需研究。
+
+
+run38348959982/heada4de1986ca15a52e957c6610f674da9735915586 的 amd64 回执已进入用户驱动，报 PermissionError、尚无命令检查结果；源码早期对 /root/node_modules 的 Path.exists 在普通 UID 下无法遍历私有 /root。该环境核验移到 guest 根包装器，用户继续核可见 source/tool；不更改 /root 权限或放宽安装规则。是否完全解决以新实测为准。原件 raw/product-fourth-amd64.zip/artifact11790601358，SHA-256 b345481b93a480fe568e4acd6557826ed45f8fb5840732381817ba4d260fc3ef 与 provider digest 一致。
+
+本机辅助容器已按准确 ID/owner graceful stop 后移除，共享 Ubuntu 镜像仍存在；没有全局 prune。已提交原件和私有下载仍保留供交付核验。取消本卡 superseded 的非必需研究 run38347067445、38345379777，仅是资源收尾，不作为通过，原研究原件与完整产品 Required CI 保持。

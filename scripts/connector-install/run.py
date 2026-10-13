@@ -104,6 +104,10 @@ def main():
         guest = (Path(__file__).parent / "guest.py").read_bytes()
         wrapper = b'''#!/bin/sh
 set -eu
+test ! -e /root/node_modules
+test ! -e /repo
+test ! -e /workspace
+test ! -e /workmesh
 phase=prepare
 trap 'status=$?; if test "$status" -ne 0; then python3 /opt/connector-install/failure.py "$status" "$phase"; fi' EXIT
 if test ! -f /home/wmprobe/.local/share/connector-install/state.json; then

@@ -187,7 +187,7 @@ def main():
     for name in ["node", "pnpm", "tsx", "node-gyp"]:
         if shutil.which(name):
             raise RuntimeError("source tool visible")
-    for path in ["/repo", "/workspace", "/workmesh", "/root/node_modules"]:
+    for path in ["/repo", "/workspace", "/workmesh"]:
         if Path(path).exists():
             raise RuntimeError("source mount visible")
     proxy()
