@@ -130,9 +130,35 @@
       "arch": "arm64",
       "status": "failed-concurrent-connect-after-19-checks",
       "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38352885437"
+    },
+    {
+      "path": "raw/product-ec3dafa-amd64.zip",
+      "sha256": "044d752b88028f46b11db873decda7d6d52ed4efb3231a4b4e544e096586f4f3",
+      "bytes": 2509577,
+      "members": 351,
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11794456390,
+      "arch": "amd64",
+      "status": "passed-complete-installed-guest-and-full-source-witness",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38358684140"
+    },
+    {
+      "path": "raw/product-ec3dafa-arm64.zip",
+      "sha256": "68e54f97fcdcb7f84dfab002a81f969737254cd44188edd01fa9b5772e4da893",
+      "bytes": 2510878,
+      "members": 351,
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11797245414,
+      "arch": "arm64",
+      "status": "passed-complete-installed-guest-and-full-source-witness",
+      "url": "https://github.com/xurunxin/WorkMesh/actions/runs/38358684140"
     }
   ],
-  "currentAcceptance": "amd64-complete-passed; arm64-failed-concurrency; latest-revision-requires-full-ci",
+  "currentAcceptance": "both-architectures-complete-passed-at-ec3dafa; final-document-head-ci-and-independent-product-review-required",
   "distribution": [
     {
       "path": "artifacts/bc7002ed/amd64",
@@ -153,6 +179,26 @@
       "providerZipSha256": "273f3177ceb286cbafb3f9c767148f30098a6a770f8f4bcc9fdd11e6e47f8306",
       "downloadRule": "原 ZIP 完整摘要验证；五个成员与 Required CI 实际 ARM64 guest 的 manifest 完全相等；完整产品 guest 尚未通过",
       "manifestSha256": "556733433e6306b6eea28c85ee60ebcf4c10af46821ee400ef5e9e069954b5c5"
+    },
+    {
+      "path": "artifacts/ec3dafa5/amd64",
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11794521141,
+      "providerZipSha256": "943af70e24bb6059373960eaca1525eda3f77581fe88a6f6717ac7610a4132f2",
+      "downloadRule": "只按成员下载五个交付文件；每个程序／助手归档完整摘要和所有成员匹配实际通过 guest 的 manifest，不冒称本地核过 provider 整包 ZIP",
+      "manifestSha256": "0ab1f61d52a4e8d6e5c3a43c91f787b902b3a55ecf30407d40d4ba66bb86efce"
+    },
+    {
+      "path": "artifacts/ec3dafa5/arm64",
+      "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+      "runId": 38358684140,
+      "attempt": 1,
+      "artifactId": 11797305153,
+      "providerZipSha256": "e0d62f9538d8db59e8545681bedeac4c4e1df634f56cacbe11419d866650c42e",
+      "downloadRule": "只按成员下载五个交付文件；每个程序／助手归档完整摘要和所有成员匹配实际通过 guest 的 manifest，不冒称本地核过 provider 整包 ZIP",
+      "manifestSha256": "1783f1ee9185e37f872bb9e9c028d05f881eed9301f1e6b26ac575b9d224c07a"
     }
   ],
   "nativeBuildEvidence": [
@@ -230,5 +276,45 @@
         }
       ]
     }
-  ]
+  ],
+  "validatedSnapshot": {
+    "head": "ec3dafa58e20b478137d2468e900cddb4205296a",
+    "runId": 38358684140,
+    "requiredJobs": 13,
+    "allSucceeded": true,
+    "results": [
+      {
+        "arch": "amd64",
+        "sourceHead": "ec3dafa58e20b478137d2468e900cddb4205296a",
+        "runId": 38358684140,
+        "status": "passed",
+        "totalSeconds": 626.851418185,
+        "receiptIntervalAcrossRebootSeconds": 135.04884624299996,
+        "remainingAtSuccessfulReplaySeconds": 784.862823,
+        "qemuPeakRssBytes": 2940895232,
+        "overlayAllocatedBytes": 1678987264,
+        "bootIds": [
+          "65de4adc-67d1-4cf4-9ac9-67d43afa84df",
+          "8951c95d-403a-4cc1-a92c-11949f3f0c25"
+        ],
+        "sourceBeforeAfterVerified": true
+      },
+      {
+        "arch": "arm64",
+        "sourceHead": "ec3dafa58e20b478137d2468e900cddb4205296a",
+        "runId": 38358684140,
+        "status": "passed",
+        "totalSeconds": 3725.1668377339997,
+        "receiptIntervalAcrossRebootSeconds": 874.1005015400001,
+        "remainingAtSuccessfulReplaySeconds": 104.224927,
+        "qemuPeakRssBytes": 3066638336,
+        "overlayAllocatedBytes": 1850699776,
+        "bootIds": [
+          "f8c73441-aa37-45db-920a-9ac3829b6210",
+          "f86f33a7-e1ec-4712-b4a4-d29d997be5fd"
+        ],
+        "sourceBeforeAfterVerified": true
+      }
+    ]
+  }
 }

@@ -2,7 +2,7 @@
 
 ## 适用范围与交付状态
 
-连接器发行目标为 Linux amd64 和 arm64。仓库内构建命令生成本地版本化产物，不发布 npm 包或 GitHub Release。当前产品实现与完整验收正在进行，实测状态以[产品交付记录](../reviews/b-ship/product/progress.md)为准。
+连接器发行目标为 Linux amd64 和 arm64。仓库内构建命令生成本地版本化产物，不发布 npm 包或 GitHub Release。Linux 双架构完整产品已在已记录源码快照验收，仓库工件见[版本化工件](../reviews/b-ship/product/artifacts/README.md)。最终提交检查、成果独审与合入状态以[产品交付记录](../reviews/b-ship/product/progress.md)为准。
 
 应用和离线安装助手均为 Node SEA（Single Executable Application，单可执行应用）。Node 运行时嵌入 ELF，原生 loader 与库随归档携带。目标端无需 Node、pnpm、workspace、Python 或仓库源码。
 
@@ -64,3 +64,18 @@ sh "$HOME/.local/lib/workmesh-connector/current/uninstall.sh" --prefix "$HOME/.l
 ```
 
 回退仅切换受账本清单验证的旧版。卸载拒绝活动进程和不安全路径，仅删除账本归属的程序文件。配置和系统秘密保留。完整下线仍由管理员执行原 DELETE＋If-Match 撤销 Connection，再按独立授权清理准确秘密引用；安装器没有 `--purge`。
+
+## 安装失败处理
+
+| 错误码 | 恢复步骤 |
+| --- | --- |
+| `INSTALL_ARCH_MISMATCH` | 重新核目标架构，取得对应的五个交付文件；保留旧命令。 |
+| `INSTALL_ARCHIVE_HASH`、`INSTALL_HELPER_HASH`、`INSTALL_SCRIPT_HASH` | 从同一受审来源重新取得完整文件组，再核摘要；不要混用不同快照的清单或助手。 |
+| `INSTALL_UNSAFE_DIRECTORY`、`INSTALL_UNSAFE_FILE`、`INSTALL_FOREIGN_ENTRY` | 选择当前用户独有的安全目录。保留已有对象，不修改共享目录权限或覆盖他人入口。 |
+| `INSTALL_SPACE_REQUIRED` | 按清单核可用空间，计入暂存与回退版本。只收尾本人已登记资源，不清共享缓存。 |
+| `INSTALL_VERSION_CHANGED` | 保留现有版本文件；同版本不同内容不能覆盖。核来源和版本，按受审升级步骤处理。 |
+| `INSTALL_VERSION_ACTIVE` | 正常退出本人的连接器和客户端进程，再重试卸载或回退。保留运行中的版本依赖。 |
+| `INSTALL_LEDGER_INVALID`、`INSTALL_JOURNAL_INVALID` | 停止修改安装目录，保留账本与 journal，交管理员核来源。不要手改账本或连接器 pending。 |
+| `INSTALL_FAILED`、`CONNECTOR_RELEASE_NATIVE_INVALID` | 核系统动态库、文件完整性及受审版本。使用仍可运行的旧入口；完整文件组与软件条件恢复后再试。 |
+
+安装故障不授权重建配对身份或删除系统秘密。连接故障按[故障处理](troubleshooting.md)中的既有安全下一步执行。
