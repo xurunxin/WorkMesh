@@ -112,3 +112,5 @@ CI #512 的分类及 API／DB／worker／recovery／agent-smoke 已成功；serv
 CLI 当前另有健康后 pending／真实鉴权读取再 commit、持久安装 UUID、同 project 全局锁与卷名冲突拒绝、程序输入指纹和依赖镜像兼容条件。安装包中加入配置示例及实际工具版本。新接口只为安装工具，没有业务 REST／events／schema／ADR 状态变化；文档同步说明首次用户由既有 API 创建，安装器不自动命名用户。
 
 CI #513／run 38443222251 的双架构安装器 7 项单元通过，构建前检查因未跟踪的 ci-logs/server-install 输出目录失败。现仅给该明确运行输出及 Python __pycache__ 登记忽略，不改干净源码检查；未开始构建或 guest，不记为通过。
+
+CI #514 的 ARM 原返回证明 API／worker／MCP／Lite／installer 五镜像已构建，但候选未封包。随后 docker pull 成功，继承 stdout 的 execFileSync 返回 null，构建 wrapper 对 null 调用 trim 导致失败。已修正仅不捕获输出的成功命令返回处理；进程非零仍抛错，不吞失败。原返回见 [ARM 构建首败](sources/product-ci-arm-build-failure.md)，该结果不当 guest 或最终候选通过。

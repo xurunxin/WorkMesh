@@ -5,7 +5,10 @@ import { fileURLToPath } from 'node:url'
 import { fileHash, hash, validateManifest, fail } from './manifest.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
-const run = (command, args, options = {}) => execFileSync(command, args, { cwd: root, encoding: 'utf8', ...options }).trim()
+const run = (command, args, options = {}) => {
+  const output = execFileSync(command, args, { cwd: root, encoding: 'utf8', ...options })
+  return output === null ? '' : output.trim()
+}
 const option = name => { const index = process.argv.indexOf(`--${name}`); return index < 0 ? undefined : process.argv[index + 1] }
 const output = option('output'), release = option('release'), arch = option('arch')
 if (!output || !release || !['amd64', 'arm64'].includes(arch)) fail('BUILD_ARGUMENTS_REQUIRED')

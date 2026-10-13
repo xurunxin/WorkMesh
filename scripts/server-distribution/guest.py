@@ -295,6 +295,11 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
         return sorted(mount['Name'] for info in json.loads(command(['docker', 'inspect', *ids])) for mount in info['Mounts'] if mount['Type'] == 'volume')
     original_volumes = volumes()
     original_rows = sql(prefix, 'SELECT count(*) FROM work_items')
+    current_bytes = (prefix / 'current.json').read_bytes()
+    # Deliberately mismatched digest tests the real deployed pre-migration boundary.
+    install(upgrade, '0' * 64, prefix, config, 'upgrade', expected=1, extra=['--maintenance-confirmed'])
+    assert (prefix / 'current.json').read_bytes() == current_bytes and volumes() == original_volumes
+    checks.append('preMigrationFailureKeepsCurrent')
     assert install(upgrade, new_digest, prefix, config, 'upgrade', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
     assert install(upgrade, new_digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
     journal = json.loads((prefix / 'journal.json').read_text())
@@ -391,6 +396,15 @@ def main():
                 assert not (prefix / 'current.json').exists() and not (prefix / 'operator-keys.json').exists()
                 assert install(dist, digest, prefix, config, 'check')['status'] == 'checked'
                 assert not (prefix / 'current.json').exists()
+                lock_owner = uuid.uuid4().hex
+                lock = command(['docker', 'create', '--name', 'workmesh-install-lock-ta01-' + profile,
+                    '--network', 'none', '--label', 'ta01.fixture.owner=' + lock_owner, '--entrypoint', 'true', manifest['installerImage']]).strip()
+                install(dist, digest, prefix, config, 'install', expected=1)
+                assert not (prefix / 'current.json').exists() and not (prefix / 'operator-keys.json').exists()
+                inspected_lock = json.loads(command(['docker', 'inspect', lock]))[0]
+                assert inspected_lock['Config']['Labels']['ta01.fixture.owner'] == lock_owner and not inspected_lock['State']['Running']
+                command(['docker', 'rm', lock])
+                checks.append('projectLockRejectsBeforeDeploymentMutation')
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 assert not (prefix / 'current.json').exists()
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
@@ -398,6 +412,10 @@ def main():
                 start = len(checks)
                 identity = journey(prefix, config, certificates)
                 private(prefix / 'validation.json', {'credential': identity['installationToken'], 'workItemId': identity['itemId']})
+                private(prefix / 'invalid-validation.json', {'credential': 'wmi_' + 'x' * 43, 'workItemId': identity['itemId']})
+                install(dist, digest, prefix, config, 'commit', expected=1, extra=['--validation', str(prefix / 'invalid-validation.json')])
+                assert not (prefix / 'current.json').exists()
+                checks.append('invalidCredentialCannotCommitCurrent')
                 assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
                 upgrade_recovery(dist, manifest, digest, prefix, config)
