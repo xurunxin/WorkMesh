@@ -2,7 +2,7 @@
 
 ## 当前产品阶段准备
 
-本轮仅同步完整新规格、已批准基础执行计划、阶段和历史归档。平台 Saved plan 编辑接口未提供，按最新规格的前置同步要求，尚未修改产品代码；缺口见 [product-stage-sync.md](product-stage-sync.md)。以下控制面测量与 docs CI 是历史方案交付事实，不作为新产品验收。
+用户已批准本阶段记录例外并继续。平台 Saved plan 字段仍未同步，但不再是产品修改前置；当前进入基础产品实现。授权顺序和保留缺口见 [product-stage-sync.md](product-stage-sync.md)。以下控制面测量与 docs CI 是历史方案交付事实，不作为新产品验收。
 
 本轮没有重跑健康 CI、试删历史受拒目录或匿名卷、生产操作、外发及新增权限。基础产品的五门禁、双架构完整 guest 与三画像实际候选验收仍未执行，不填通过。
 
@@ -77,3 +77,20 @@ Docker 收尾预检首次误将默认短 ID 与完整账本比较，未派发删
 实际收尾只删除已登记的七个容器、三个命名卷、一个网络及一个私有应用镜像，十二个对象各有明确不存在回执。匿名卷 `8cb9c40dd18ce0dbe135e4ba5186943cb684af64790072c28675a43650fd820e` 保留，不修改其标签，不再尝试删除。共享镜像、公共 build cache 和旧工具目录保持。原预检及最终回执见 [cleanup-receipts.md](sources/cleanup-receipts.md)，临时目录与本工作树 YAML 依赖的收尾另记实际结果。
 
 临时目录及本工作树 YAML 依赖的文件收尾请求在进程创建前被自动策略拒绝，返回 `blocked by policy`；没有执行删除或预检，不属于 OS 权限失败。两目标只读确认仍存在，没有换工具、拆批或重试。原调用和带自身截断的实际返回见 [filesystem-cleanup-refusal.md](sources/filesystem-cleanup-refusal.md)；更细策略理由未知。
+
+## 基础产品实现检查点
+
+本次已加入候选清单、无源码工具入口、三画像校验、写前 journal、兼容账本回退、完整恢复调用和双架构 server-install 必需 CI。CLI 尚未完成真实安装验收，所有支持声明保持待执行；不会用本段静态结果填产品 PASS。API、events、schema 和 ADR 状态未变。
+
+| 实际检查 | 结果 |
+| --- | --- |
+| Node 锁定工具上的 installer 单元 | 6 项通过；首次共享测试 fixture 被负例修改导致 2 项失败，已改为逐测试复制；原工具返回在本会话，未保存为独立完整日志，本段仅为摘要 |
+| ci-policy | 22 项通过，含 server-install 丢架构／跳过／吞失败负例与 Required CI 失败传播 |
+| validate-ci | 11 jobs、46 个不可变 action 引用通过 |
+| packages/config typecheck、test | typecheck 通过；3 个文件、38 项通过，含新画像 8 项；依赖安装完成前一次 typecheck 因 tsc 未就绪失败，不记为通过 |
+| check-integration-docs、git diff --check、Python AST | 通过；仅静态检查 |
+| 根五门禁、完整 guest 三画像／双架构 | 尚未执行完成，不填通过 |
+
+锁定 Node 与 pnpm 沿已有 TA00 可读缓存复用。workspace 依赖本次新建，正常 lifecycle 已执行；实际 storeDir 为 I:\.pnpm-store\v3\v3，首装 510 个包全部下载，没有命中共享 store。此路径选取多加了一层 v3，未更改共享配置，后续沿该已产生缓存复用，不冒称本轮命中共享包缓存。历史被拒目录与无标签卷未重试处理。
+
+完整 guest 固定 2 vCPU、4,096 MiB 和 40 GiB 虚拟盘，仅作为受测条件，不作为最低配置。兼容升级夹具使用同源镜像的两个候选标识，不能冒充两个已发行历史程序版本；后续按实际结果记录该边界。

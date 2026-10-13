@@ -94,3 +94,7 @@ Project/Issue 文档、Milestone、relation、Inbox、Room、Approval、Artifact
 | `ConnectorError.retryAfterMs` | CLI 为 429/503 保存的安全等待毫秒数，未知时为 `undefined` |
 
 契约为 `AgentConnectionError` 与共享 `agentConnectionErrorResponseSchema`；完整例子见[错误与恢复](troubleshooting.md)。SDK 重试和服务端授权保持原规则。
+
+## 服务端基础交付候选
+
+版本化服务端包的配置检查、安装、升级、程序回退和独立空目标恢复见 [服务端安装说明](server-installation.md)。当前处于 TA01 实现与验收阶段，尚未形成双架构三画像支持声明；连接器已交付能力沿原安装说明保留。

@@ -12,15 +12,15 @@
 
 当前 [spec.md](spec.md)采用完整平台 Spec 字段。[implementation-plan.md](implementation-plan.md)固定已批准基础路线、逐文件增量和真实验收。部署设计、验收矩阵和入口已注明当前阶段；原四份文件以已审 Git 字节保存至 [history](history/README.md)，原 doc 引用与来源保留。
 
-Redis-free／filesystem 的原保证选项不删除、不实施；ADR 0071／0072 保持 Proposed。先前被拒文件目录和无标签匿名卷不处理。本轮没有任何产品、API、DB、CI 或发行脚本变化。
+Redis-free／filesystem 的原保证选项不删除、不实施；ADR 0071／0072 保持 Proposed。先前被拒文件目录和无标签匿名卷不处理。此前阶段同步提交没有产品、API、DB、CI 或发行脚本变化。当前例外允许立即进入已批准基础产品实现。
 
 ## 尚未完成的平台同步
 
 本轮完整工具目录中没有 Saved plan 编辑接口；检索工具名称及描述中的 plan／build 也没有找到可调用入口。平台工具正常返回 todos／conversation，这不是 MCP server 启动失败，也不据此要求升级 CLI。
 
-最新用户规格要求“实际产品修改前把 saved plan 及仓库……当前阶段同步为已批准基础交付”。仓库更新不满足平台字段同步，不能假称已写回。当前停在该关口，需平台同步本文件指向的执行计划，或用户明确批准本阶段采用仓库＋对话记录例外。基础路线与验收环境无需再次选择。
+历史规格要求产品修改前同步平台字段；用户于 22:50 选择“先同步平台计划（推荐）”。随后用户于 23:41 明确选择“允许记录例外并继续（推荐）”，仅解除本阶段记录方式的硬前置。当前依据仓库计划、完整规格及对话批准记录继续产品实现，Saved plan 字段仍未同步。基础范围、真实验收、P0/P1 独审、最新必需 CI、条件合入及权限边界保持。
 
-平台没有 WorkMesh Project／WorkItem 写工具的旧缺口同样保持，不虚构双轨写回。当前准备结果供同步使用，不是再次申请产品路线批准，也不是基础产品交付完成。
+平台没有 WorkMesh Project／WorkItem 写工具的旧缺口同样保持，不虚构双轨写回。当前按已批准例外继续基础产品实现，尚未完成新候选产品验收。
 
 ## 当前来源指纹
 
@@ -29,4 +29,19 @@ Redis-free／filesystem 的原保证选项不删除、不实施；ADR 0071／007
 | [product-todo](sources/product-todo.md) | `90921b033458074c9f51b7826a9093795808ec1eff208f03105e22d4b3bec1bc` | `f1626388c8ae6b1b2dacc721639489f275750d64cccf59f0c2930ace91eebcc1` | `1196f5bc0c60447a958fc78e27d0945f57d798a7` |
 | [product-conversation](sources/product-conversation.md) | `6b120dc731b20d7415bcee61816d47d67c15f3634f10446af464ce6dc810b893` | `9644f83dfc8dc1c7cde9bbcca11db6a33e6bff8402269d4a653056114323d3c1` | `c3508e4f166fa3fbe7a418b98cb1e092dcefd316` |
 
-当前 Spec SHA-256：`8b2ef930e1e58acd10a9cfcc8c899bd9831ce3df6c6daa2ed07799e22fc8c6be`。当前执行计划 SHA-256：`627775463b813b6a373f3eccd73f044b6448efee3c5e743b11d8198804492d2b`。归档 blob 另核实际 index，计算值不证明已提交。
+此前基础同步 Spec SHA-256：`8b2ef930e1e58acd10a9cfcc8c899bd9831ce3df6c6daa2ed07799e22fc8c6be`。此前执行计划 SHA-256：`627775463b813b6a373f3eccd73f044b6448efee3c5e743b11d8198804492d2b`。归档 blob 另核实际 index，计算值不证明已提交。
+
+## 后续例外原件
+
+22:05 的两项基础选择保留在原 product 来源中。22:50 的先同步选择与 23:41 的后续例外见 [对话原返回](sources/exception-conversation.md)；[最新卡原返回](sources/exception-todo.md)包含完整 current Spec，Saved plan 尾部截断原样保留。Chief 原问句仍未取得，不补造问题全文。
+
+本次独立查询真实 refs/heads/main 为 c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8，工作树开工 HEAD 为 e0f285426942e53400a08f5d17dddb1a21d6d57c。未操作共享缓存锁。
+
+最新来源指纹：
+
+| 文件 | 原正文 SHA-256 | 文件 SHA-256 | 计算 Git blob |
+| --- | --- | --- | --- |
+| sources/exception-todo.md | d7dd371a77ffca5a8bf87b2bd9799e0bb046b8b79ecf996af09ae54fb869bd6a | 3e2b2230d0da848bac47fb69ead56994ba28aee6134ea998e6405da33977aa42 | 9154f484e230295184afcfa96aa269d53c208c81 |
+| sources/exception-conversation.md | c9f1997ec1ec4bf47b156898c10ecb25bb361016c1bd74c52ade342921be52b4 | 7a42776ca16ed8b0dd4b944e4ba4ff504a62a9ef9f477821fed15a4acef03fdb | edc1212a47b61362bbf42705ff086baeeba895e9 |
+
+当前 Spec SHA-256：77183e04c12c6f6113172a272273578a689ee923f3102b5045df2f5b3ac33ff2。当前执行计划 SHA-256：0ec0e49b2959c1323fc4009d982629bff890e409953eb68bc47f96a457253c28。

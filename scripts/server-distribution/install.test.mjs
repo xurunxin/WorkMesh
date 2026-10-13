@@ -1,0 +1,74 @@
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { mkdtemp, realpath, readFile, writeFile, mkdir, chmod, symlink } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
+import { hash, validateManifest, verifyBundle, assertCompatibleLedger } from './manifest.mjs'
+import { privateDirectory, atomicJson, withInstallLock, readState, validateJournal } from './journal.mjs'
+
+const temporary = async () => realpath(await mkdtemp(path.join(tmpdir(), 'workmesh-server-unit-')))
+const ledger = [{ version: 'v1_0001', checksumSha256: 'a'.repeat(64) }]
+const manifest = () => {
+  const commit = 'a'.repeat(40), roles = ['api', 'worker', 'mcp', 'lite', 'installer', 'postgres', 'redis', 'minio']
+  const images = Object.fromEntries(roles.map((role, i) => [role, { id: 'sha256:' + String(i + 1).repeat(64),
+    reference: `workmesh/${role}:candidate`, revision: ['postgres', 'redis', 'minio'].includes(role) ? '' : commit }]))
+  return { format: 'workmesh-server-distribution', release: 'candidate', arch: 'amd64', source: { commit, tree: 'b'.repeat(40) },
+    images, installerImage: images.installer.id, migrationLedger: structuredClone(ledger),
+    files: ['docker-compose.lite.yml', 'docker-compose.production.yml', 'install.sh'].map(file => ({ path: file, sha256: hash(Buffer.from(file)), bytes: file.length })),
+    chunks: [{ path: 'chunks/main.tarpart', sha256: hash(Buffer.from('main')), bytes: 4 }],
+    bootstrapChunks: [{ path: 'chunks/helper.tarpart', sha256: hash(Buffer.from('helper')), bytes: 6 }] }
+}
+test('wrongArchitectureRejectedBeforeMutation and strict closed manifest schema', () => {
+  for (const mutate of [m => { m.arch = 'x64' }, m => { m.images.mcp.revision = 'b'.repeat(40) },
+    m => { m.extra = true }, m => { m.files[0].path = '../configuration' }, m => { m.installerImage = m.images.redis.id },
+    m => { m.images.runner = m.images.api }, m => { m.migrationLedger.push({ ...ledger[0] }) }]) {
+    const invalid = manifest(); mutate(invalid); assert.throws(() => validateManifest(invalid), /INSTALL_/)
+  }
+})
+test('offlineDependencyClosure verifies actual bytes before an image is imported', async () => {
+  const directory = await temporary(), m = manifest()
+  await mkdir(path.join(directory, 'chunks'))
+  for (const entry of [...m.files, ...m.chunks, ...m.bootstrapChunks])
+    await writeFile(path.join(directory, entry.path), entry.path.endsWith('main.tarpart') ? 'main' : entry.path.endsWith('helper.tarpart') ? 'helper' : entry.path)
+  const bytes = Buffer.from(JSON.stringify(m)), digest = hash(bytes)
+  await writeFile(path.join(directory, 'manifest.json'), bytes)
+  assert.deepEqual(await verifyBundle(directory, digest), m)
+  await writeFile(path.join(directory, m.chunks[0].path), 'evil')
+  await assert.rejects(verifyBundle(directory, digest), /INSTALL_FILE_DIGEST_MISMATCH/)
+  await assert.rejects(verifyBundle(directory, 'f'.repeat(64)), /INSTALL_MANIFEST_DIGEST_MISMATCH/)
+})
+test('compatibleProgramRollback rejects prefix, unknown rows and changed checksums', () => {
+  assert.doesNotThrow(() => assertCompatibleLedger([{ ...ledger[0], appliedAt: 'ignored' }], ledger))
+  for (const rows of [[], [{ ...ledger[0], checksumSha256: 'b'.repeat(64) }],
+    [...ledger, { version: 'unrecognized', checksumSha256: 'c'.repeat(64) }]])
+    assert.throws(() => assertCompatibleLedger(rows, ledger), /INSTALL_INCOMPATIBLE_LEDGER_RESTORE_REQUIRED/)
+})
+test('concurrentInstallHasOneOwner and lock is released after failure', async () => {
+  const directory = await temporary()
+  let finish, began
+  const entered = new Promise(resolve => { began = resolve }), held = new Promise(resolve => { finish = resolve })
+  const first = withInstallLock(directory, async () => { began(); await held })
+  await entered
+  await assert.rejects(withInstallLock(directory, () => {}), /INSTALL_LOCKED/)
+  finish(); await first
+  await assert.rejects(withInstallLock(directory, async () => { throw Error('intent failed') }), /intent failed/)
+  await withInstallLock(directory, () => {})
+})
+test('invalidInstallJournalRefused and atomic write exposes only a complete state', async () => {
+  const directory = await temporary(), file = path.join(directory, 'journal.json')
+  const value = { format: 'workmesh-install-journal', stage: 'staged', project: 'owned-project', candidate: 'a'.repeat(64), configHash: 'b'.repeat(64), actions: [{ status: 'intent' }] }
+  await atomicJson(file, value)
+  assert.deepEqual(validateJournal(await readState(file)), value)
+  assert.throws(() => validateJournal({ ...value, stage: 'unknown' }), /INSTALL_INVALID_JOURNAL/)
+  await writeFile(file, '{')
+  await assert.rejects(readState(file), /INSTALL_INVALID_JOURNAL/)
+})
+test('rejects unsafe paths rather than changing directory permissions', async () => {
+  const directory = await temporary()
+  await privateDirectory(directory)
+  if (process.platform !== 'win32') {
+    await chmod(directory, 0o777)
+    await assert.rejects(privateDirectory(directory), /INSTALL_UNSAFE_PATH/)
+  }
+  await assert.rejects(privateDirectory('relative-path'), /INSTALL_UNSAFE_PATH/)
+})

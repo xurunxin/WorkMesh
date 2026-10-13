@@ -4,7 +4,7 @@
 
 用户已选择“先实施基础交付”和“现有 CI 与完整虚拟机”。下文保留 Redis／S3 的基础设计进入获准实现范围；Redis-free、filesystem 和保证变更仍须另行批准。当前执行计划见 [implementation-plan.md](implementation-plan.md)，旧文档原件见 [history](history/README.md)。
 
-当前先完成仓库规格和阶段同步；平台 Saved plan 编辑接口缺失，尚未改产品代码。实现结果、支持声明和产品通过须以新原件及新 CI 为准。当前环境不支持把仓库更新冒充平台 Saved plan 更新。
+仓库规格与阶段已同步。用户明确批准记录例外并继续，平台 Saved plan 同步不再是产品修改前置；字段仍未同步。实现结果、支持声明和产品通过须以新原件及新 CI 为准。当前环境不支持把仓库更新冒充平台 Saved plan 更新。
 
 ## 配置矩阵
 

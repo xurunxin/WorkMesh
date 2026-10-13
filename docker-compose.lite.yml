@@ -177,6 +177,8 @@ services:
       S3_REGION: ${S3_REGION:-us-east-1}
     mem_limit: 64m
     logging: *logging
+    tmpfs:
+      - /data:rw,nosuid,nodev,size=16m
     restart: "no"
 
   migrate:
