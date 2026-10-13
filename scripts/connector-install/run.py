@@ -36,10 +36,15 @@ def main():
         raise RuntimeError("artifact source/architecture mismatch")
     served = {"manifest.json", "install.sh", "SHA256SUMS", manifest["archive"]["name"]}
     served.update(f["path"] for f in manifest["installerFiles"])
+    upgrade = artifacts.parent / "connector-upgrade"
+    upgraded = json.loads((upgrade / "manifest.json").read_text())
+    if upgraded["sourceCommit"] != options.source or upgraded["arch"] != options.arch or upgraded["connectorVersion"] == manifest["connectorVersion"]:
+        raise RuntimeError("second version identity mismatch")
+    served.update("upgrade/" + path for path in {"manifest.json", "install.sh", "SHA256SUMS", upgraded["archive"]["name"], *[f["path"] for f in upgraded["installerFiles"]]})
     receipts, events = [], []
     began = time.monotonic()
     result = {"sourceHead": options.source, "sourceTree": manifest["sourceTree"], "arch": options.arch,
-              "manifestSha256": sha(artifacts / "manifest.json"), "archiveSha256": manifest["archive"]["sha256"],
+              "manifestSha256": sha(artifacts / "manifest.json"), "archiveSha256": manifest["archive"]["sha256"], "upgradeManifestSha256": sha(upgrade / "manifest.json"),
               "accelerator": "tcg", "guestRamMiB": 1536, "guestVcpus": 2,
               "scripts": {p.name: sha(p) for p in Path(__file__).parent.glob("*.py")},
               "startedUtc": time.time(), "status": "running"}
@@ -50,10 +55,11 @@ def main():
             if not self.path.startswith("/distribution/") or path not in served:
                 self.send_error(404)
                 return
+            source_path = upgrade / path.removeprefix("upgrade/") if path.startswith("upgrade/") else artifacts / path
             self.send_response(200)
-            self.send_header("Content-Length", str((artifacts / path).stat().st_size))
+            self.send_header("Content-Length", str(source_path.stat().st_size))
             self.end_headers()
-            with (artifacts / path).open("rb") as source:
+            with source_path.open("rb") as source:
                 while block := source.read(1024 * 1024):
                     self.wfile.write(block)
 

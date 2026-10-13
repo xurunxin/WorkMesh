@@ -15,9 +15,9 @@ const hash = bytes => createHash('sha256').update(bytes).digest('hex')
 const check = (ok, code) => { if (!ok) throw new Error(code) }
 const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...opts }).trim()
 const args = process.argv.slice(2).filter(x => x !== '--')
-check(args.length === 2 && args[0] === '--output', 'Use --output <owned-new-directory>')
+check([2, 4].includes(args.length) && args[0] === '--output' && (args.length === 2 || args[2] === '--release-version'), 'Use --output <owned-new-directory> [--release-version <semver>]')
 check(process.platform === 'linux' && ['x64', 'arm64'].includes(process.arch), 'Native Linux build required')
-const output = resolve(args[1]), version = JSON.parse(await readFile(join(app, 'package.json'), 'utf8')).version
+const output = resolve(args[1]), version = args[3] ?? JSON.parse(await readFile(join(app, 'package.json'), 'utf8')).version
 check(/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[a-z0-9.-]+)?$/.test(version), 'Invalid release version')
 const nodeVersion = (await readFile(join(repo, '.node-version'), 'utf8')).trim()
 check(process.versions.node === nodeVersion, 'Wrong build Node')
@@ -29,11 +29,20 @@ await mkdir(output, { mode: 0o700 })
 const work = join(output, 'build'), payload = join(output, 'payload'), helper = join(output, `installer-linux-${arch}`)
 for (const p of [work, payload, helper]) await mkdir(p, { mode: 0o700 })
 const sums = await fetch(`https://nodejs.org/dist/v${nodeVersion}/SHASUMS256.txt`).then(r => { check(r.ok, 'Node sums unavailable'); return r.text() })
+const downloadCache = join(dirname(output), 'connector-verified-downloads')
+await mkdir(downloadCache, { mode: 0o700, recursive: true })
 async function nodeArtifact(name) {
   const expected = sums.split('\n').find(l => l.endsWith('  ' + name))?.split(' ')[0]
   check(expected && /^[a-f0-9]{64}$/.test(expected), 'Node digest unavailable')
-  const response = await fetch(`https://nodejs.org/dist/v${nodeVersion}/${name}`); check(response.ok, 'Node download failed')
-  const bytes = Buffer.from(await response.arrayBuffer()); check(hash(bytes) === expected, 'Node digest mismatch')
+  const cached = join(downloadCache, name)
+  let bytes
+  try { bytes = await readFile(cached) } catch (error) {
+    if (error.code !== 'ENOENT') throw error
+    const response = await fetch(`https://nodejs.org/dist/v${nodeVersion}/${name}`); check(response.ok, 'Node download failed')
+    bytes = Buffer.from(await response.arrayBuffer()); check(hash(bytes) === expected, 'Node digest mismatch')
+    await writeFile(cached, bytes, { mode: 0o600, flag: 'wx' })
+  }
+  check(hash(bytes) === expected, 'Cached Node digest mismatch')
   const path = join(work, name); await writeFile(path, bytes, { mode: 0o600 }); return { path, sha256: expected }
 }
 const runtime = await nodeArtifact(`node-v${nodeVersion}-linux-${process.arch}.tar.gz`)
@@ -121,7 +130,23 @@ check(key.equals(await readFile(join(repo, 'skills/workmesh/public-key.pem'))), 
 const metadata = { connectorVersion: version, sourceCommit, sourceTree, nodeVersion, platform: 'linux', arch }
 await writeFile(join(work, 'release.json'), JSON.stringify(metadata) + '\n', { mode: 0o600 })
 await copyFile(join(work, 'release.json'), join(payload, 'release.json'))
-const banner = `const __seaRequire = require('node:module').createRequire(require('node:fs').realpathSync(process.execPath)); require = __seaRequire; delete process.env.NODE_PATH; delete process.env.NODE_OPTIONS;`
+const banner = `
+delete process.env.NODE_PATH; delete process.env.NODE_OPTIONS;
+const __fs = require('node:fs'), __path = require('node:path');
+const __exe = __fs.realpathSync(process.execPath), __root = __path.dirname(__path.dirname(__exe));
+try {
+  const files = JSON.parse(require('node:sea').getAsset('native-files.json', 'utf8'));
+  for (const file of files) {
+    const path = __path.join(__root, file.path), info = __fs.lstatSync(path);
+    if (!info.isFile() || info.isSymbolicLink() || info.nlink !== 1 || (info.mode & 0o777) !== file.mode
+      || __fs.realpathSync(path) !== path || require('node:crypto').createHash('sha256').update(__fs.readFileSync(path)).digest('hex') !== file.sha256)
+      throw new Error('native integrity');
+  }
+} catch { process.stderr.write('CONNECTOR_RELEASE_NATIVE_INVALID\\n'); process.exit(1); }
+const __seaRequire = require('node:module').createRequire(__exe);
+require = id => ['@napi-rs/keyring', 'koffi', 'node-pty'].includes(id)
+  ? __seaRequire(__path.join(__root, 'node_modules', id)) : __seaRequire(id);
+`
 const metafiles = []
 async function sea(entry, path, assets = {}) {
   await mkdir(dirname(path), { recursive: true, mode: 0o700 })
@@ -132,7 +157,10 @@ async function sea(entry, path, assets = {}) {
   })
   metafiles.push(result.metafile)
   const config = join(work, path.includes('installer') ? 'installer-sea.json' : 'connector-sea.json'), blob = config + '.blob'
-  await writeFile(config, JSON.stringify({ main: bundle, output: blob, disableExperimentalSEAWarning: true, useSnapshot: false, useCodeCache: false, assets }))
+  const nativeFiles = config + '-native.json'
+  await writeFile(nativeFiles, JSON.stringify((await fileList(path.includes('installer') ? helper : payload)).filter(f => f.path.startsWith('node_modules/'))))
+  await writeFile(config, JSON.stringify({ main: bundle, output: blob, disableExperimentalSEAWarning: true, useSnapshot: false, useCodeCache: false,
+    assets: { ...assets, 'native-files.json': nativeFiles } }))
   run(node, ['--experimental-sea-config', config])
   await copyFile(node, path)
   await inject(path, 'NODE_SEA_BLOB', await readFile(blob), { sentinelFuse: 'NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2' })

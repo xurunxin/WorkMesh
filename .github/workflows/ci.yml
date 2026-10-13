@@ -800,7 +800,7 @@ jobs:
           mkdir -p ci-logs/connector-install .tmp
           git show -s --format='%H %T %P' HEAD > ci-logs/connector-install/source.txt
           printf '%s %s %s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_ARCH" > ci-logs/connector-install/run.txt
-          sha256sum scripts/connector-install/* apps/connector/scripts/* > ci-logs/connector-install/input-sha256.txt
+          sha256sum scripts/connector-install/*.py apps/connector/scripts/*.mjs apps/connector/scripts/*.ts apps/connector/scripts/*.sh > ci-logs/connector-install/input-sha256.txt
       - name: Install source control dependencies
         run: |
           set -o pipefail
@@ -809,9 +809,11 @@ jobs:
         run: |
           set -o pipefail
           pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-release" 2>&1 | tee ci-logs/connector-install/build.log
+          pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-upgrade" --release-version 0.1.0-upgrade.1 2>&1 | tee ci-logs/connector-install/upgrade-build.log
       - name: Run installed entry integrity checks
         env:
           WORKMESH_CONNECTOR_ARTIFACTS: ${{ github.workspace }}/.tmp/connector-release
+          WORKMESH_CONNECTOR_UPGRADE_ARTIFACTS: ${{ github.workspace }}/.tmp/connector-upgrade
         run: |
           set -o pipefail
           pnpm --filter @workmesh/connector test:install 2>&1 | tee ci-logs/connector-install/install.log
@@ -870,6 +872,12 @@ jobs:
             .tmp/connector-release/*.sh
             .tmp/connector-release/SHA256SUMS
             .tmp/connector-release/installer-*/
+            .tmp/connector-upgrade/*.json
+            .tmp/connector-upgrade/*.log
+            .tmp/connector-upgrade/*.tar.gz
+            .tmp/connector-upgrade/*.sh
+            .tmp/connector-upgrade/SHA256SUMS
+            .tmp/connector-upgrade/installer-*/
           if-no-files-found: warn
           retention-days: 14
 

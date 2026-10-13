@@ -47,9 +47,11 @@ jobs:
           mkdir -p ci-connector-release .tmp
           git show -s --format='%H %T %P' HEAD > ci-connector-release/source.txt
           pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-release" 2>&1 | tee ci-connector-release/build.log
+          pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-upgrade" --release-version 0.1.0-upgrade.1 2>&1 | tee ci-connector-release/upgrade-build.log
       - name: Run installed entry integrity and uninstall checks
         env:
           WORKMESH_CONNECTOR_ARTIFACTS: ${{ github.workspace }}/.tmp/connector-release
+          WORKMESH_CONNECTOR_UPGRADE_ARTIFACTS: ${{ github.workspace }}/.tmp/connector-upgrade
         run: |
           set -o pipefail
           pnpm --filter @workmesh/connector test:install 2>&1 | tee ci-connector-release/install.log

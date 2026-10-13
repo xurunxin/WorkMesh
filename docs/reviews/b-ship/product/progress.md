@@ -25,3 +25,8 @@
 辅助原生构建 run38341094507 两架构失败，head06e01cb226b5350e6fe5ffbf55bb57840aa7fb0c：未创建输出父目录，原件见 raw/build-first-amd64.zip 和 raw/build-first-arm64.zip。后续 run38341429309/head73a8b9b55944669179c6eb9f339146365de62e72 已构建 SEA，但实际启动因 Koffi 官方运行 loader 被排除而失败；只补回 src/koffi 中 JS/CJS 运行文件，不收录 C/C++ 源码。失败尚不写成通过。
 
 CI483 之后的历史 Required CI 不代本轮：run38341429314 分类明确因 product/current-spec.md 的多余末尾空行失败，后续 job 正确未执行；已修正新增文件的末尾格式，不改历史正文。当前 Required CI 新增双架构 connector-install，保留三系统平台矩阵，遗漏任一架构、失败或意外跳过均阻断。TCG 产品驱动仍须实际验证，包含独有网络 namespace 下离线安装、完整已安装进程协议路径及真实系统重启；缺证不能填通过。
+
+
+原生辅助 run38342942446 的 amd64 leg 已实际通过 SEA 构建与安装／完整性／卸载 3 项；ARM64 leg 尚待结果，不外推双架构通过。Required run38342942448 的两条产品 leg 在记录输入摘要时因本任务新生成的 __pycache__ 目录被当文件而失败，guest 未启动。已只删除本轮两份已识别 bytecode 和其空目录，加入精确 ignore，并将摘要限定实际源文件；未触碰原策略拒目标。类型和 Python 语法检查随后不生成仓库 bytecode。
+
+升级候选使用独立 prerelease 元数据，不改变协议身份；两次构建仅复用经官方摘要再次核对的任务私有 Node/header 下载。安装加入受保护切换 journal，锁内重启恢复旧入口；卸载和回退只处理账本与归属版本。完整 TCG 驱动新增第二版本、旧配置／秘密复用、跨版本 pending、过期重放负例和卸载真实 Secret Service 秘密保留断言。这些新增断言尚待实测，不倒填通过。

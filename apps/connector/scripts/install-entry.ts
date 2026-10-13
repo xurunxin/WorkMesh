@@ -151,6 +151,41 @@ async function deleteVersion(root: string, m: ReleaseManifest): Promise<void> {
   for (const path of [...directories].sort((a, b) => b.length - a.length)) await rmdir(join(root, path))
   await rmdir(root)
 }
+async function recoverInstallation(base: string, bin: string): Promise<void> {
+  const path = join(base, 'install-journal.json'), raw = await readPrivate(path)
+  if (!raw) return
+  const journal = JSON.parse(raw.toString('utf8')) as { old: unknown; next: unknown }
+  check(journal && Object.keys(journal).sort().join(',') === 'next,old', 'INSTALL_JOURNAL_INVALID')
+  const next = validateLedger(journal.next), old = journal.old === null ? null : validateLedger(journal.old)
+  const current = join(base, 'current'), entry = join(bin, 'workmesh-connector'), ledger = join(base, 'installed.json')
+  if (await exists(current)) {
+    check((await lstat(current)).isSymbolicLink() && [`releases/${next.current}`, ...(old ? [`releases/${old.current}`] : [])].includes(await readlink(current)), 'INSTALL_FOREIGN_ENTRY')
+  }
+  await managedLink(entry, '../lib/workmesh-connector/current/bin/workmesh-connector')
+  if (old) {
+    await verifyFiles(join(base, 'releases', old.current), old.versions[old.current]!)
+    // A new process may already hold the candidate. Keep its dependencies intact.
+    Object.assign(old.versions, next.versions)
+    await switchLink(base, old.current); await atomicWrite(ledger, JSON.stringify(old) + '\n')
+  } else {
+    if (await exists(entry)) await unlink(entry)
+    if (await exists(current)) await unlink(current)
+    for (const [id, m] of Object.entries(next.versions)) await deleteVersion(join(base, 'releases', id), m)
+    if (await exists(ledger)) await unlink(ledger)
+  }
+  await unlink(path); await syncDirectory(base)
+}
+async function commitInstallation(base: string, bin: string, old: Ledger | null, next: Ledger): Promise<void> {
+  const journal = join(base, 'install-journal.json')
+  await atomicWrite(journal, JSON.stringify({ old, next }) + '\n')
+  try {
+    await atomicWrite(join(base, 'installed.json'), JSON.stringify(next) + '\n')
+    await switchLink(base, next.current)
+    const entry = join(bin, 'workmesh-connector')
+    if (!await exists(entry)) await symlink('../lib/workmesh-connector/current/bin/workmesh-connector', entry)
+    await unlink(journal); await syncDirectory(base)
+  } catch (error) { await recoverInstallation(base, bin); throw error }
+}
 async function install(args: string[]): Promise<void> {
   const values = new Map<string, string>(), flags = new Set<string>()
   for (let i = 0; i < args.length; i++) {
@@ -180,6 +215,7 @@ async function install(args: string[]): Promise<void> {
   if (m) check(fs.bavail * fs.bsize >= BigInt(m.archive.size + m.files.reduce((s, f) => s + f.size, 0) * 2), 'INSTALL_SPACE_REQUIRED')
   if (flags.has('--dry-run')) { process.stdout.write('INSTALL_VALIDATED\n'); return }
   await withDirectoryLock(base, async () => {
+    await recoverInstallation(base, bin)
     const ledgerPath = join(base, 'installed.json'), raw = await readPrivate(ledgerPath)
     let ledger = raw ? validateLedger(JSON.parse(raw.toString('utf8'))) : null
     const current = join(base, 'current'), entry = join(bin, 'workmesh-connector')
@@ -191,8 +227,9 @@ async function install(args: string[]): Promise<void> {
       for (const [id, installed] of Object.entries(ledger.versions)) await verifyFiles(join(base, 'releases', id), installed)
       if (flags.has('--rollback')) {
         check(ledger.previous, 'INSTALL_NO_PREVIOUS')
+        const old = validateLedger(JSON.parse(JSON.stringify(ledger)))
         const next = ledger.previous; ledger.previous = ledger.current; ledger.current = next
-        await switchLink(base, next); await atomicWrite(ledgerPath, JSON.stringify(ledger) + '\n')
+        await commitInstallation(base, bin, old, ledger)
       } else {
         for (const id of Object.keys(ledger.versions)) await active(join(base, 'releases', id))
         if (await exists(entry)) await unlink(entry)
@@ -229,16 +266,19 @@ async function install(args: string[]): Promise<void> {
     ledger ??= { schema: 'workmesh-connector-installed', current: id, previous: null, versions: {} }
     const previous = ledger.current === id ? ledger.previous : ledger.current
     // Only managed links change. Existing version files and config/secrets remain intact.
-    const oldLedger = raw
+    const oldLedger = raw ? validateLedger(JSON.parse(raw.toString('utf8'))) : null
     ledger.versions[id] = m; ledger.current = id; ledger.previous = previous
-    await atomicWrite(ledgerPath, JSON.stringify(ledger) + '\n')
-    try {
-      await switchLink(base, id)
-      if (!await exists(entry)) await symlink('../lib/workmesh-connector/current/bin/workmesh-connector', entry)
-    } catch (error) {
-      if (previous) await switchLink(base, previous)
-      if (oldLedger) await atomicWrite(ledgerPath, oldLedger)
-      throw error
+    await commitInstallation(base, bin, oldLedger, ledger)
+    for (const [obsolete, prior] of Object.entries(ledger.versions)) {
+      if ([ledger.current, ledger.previous].includes(obsolete)) continue
+      try {
+        await deleteVersion(join(releases, obsolete), prior)
+        delete ledger.versions[obsolete]
+        await atomicWrite(ledgerPath, JSON.stringify(ledger) + '\n')
+      } catch {
+        // Installation committed. Preserve active/changed versions rather than erase their files.
+        process.stderr.write('INSTALL_EXTRA_VERSION_RETAINED\n')
+      }
     }
     process.stdout.write('INSTALL_COMPLETE\n')
   })

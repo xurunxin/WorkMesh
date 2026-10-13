@@ -52,6 +52,28 @@ def private(path, value):
         os.chmod(path, 0o600)
         json.dump(value, file)
 
+def secret_owner():
+    output = command(["dbus-send", "--session", "--print-reply", "--dest=org.freedesktop.DBus",
+                      "/org/freedesktop/DBus", "org.freedesktop.DBus.GetConnectionUnixProcessID",
+                      "string:org.freedesktop.secrets"]).stdout.decode()
+    pid = int(re.search(r"uint32\s+(\d+)", output).group(1))
+    executable = str((Path("/proc") / str(pid) / "exe").resolve())
+    uid = (Path("/proc") / str(pid)).stat().st_uid
+    if not executable.endswith("/gnome-keyring-daemon") or uid != os.getuid():
+        raise RuntimeError("wrong Secret Service owner")
+    return {"secretServiceExecutable": executable, "secretServiceUid": uid}
+
+
+def read_os_secret(config_bytes):
+    config = json.loads(config_bytes)
+    # The secret stays in this process memory. Do not use the diagnostic command wrapper.
+    result = subprocess.run(["secret-tool", "lookup", "service", "WorkMesh.connector", "username", config["secretReference"]],
+                            capture_output=True, timeout=120)
+    secret = result.stdout.rstrip(b"\n")
+    if result.returncode or not re.fullmatch(rb"wmi_[A-Za-z0-9_-]{43}", secret) or hashlib.sha256(secret).hexdigest()[:12] != config["fingerprint"]:
+        raise RuntimeError("native secret lookup failed")
+    return secret
+
 
 def connect(fixture, directory, expected=0):
     config = STATE / (fixture["expectation"]["connectionId"] + ".json")
@@ -129,21 +151,22 @@ def proxy():
 
 
 def prepare():
-    distribution = STATE / "distribution"
-    distribution.mkdir(mode=0o700)
-    def download(path):
-        target = distribution / path
-        target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-        with urllib.request.urlopen("http://10.0.2.2:18080/distribution/" + path, timeout=180) as response:
-            with target.open("wb") as file:
-                shutil.copyfileobj(response, file)
-        os.chmod(target, 0o600)
-    download("manifest.json")
-    manifest = json.loads((distribution / "manifest.json").read_text())
-    for path in ["install.sh", "SHA256SUMS", manifest["archive"]["name"], *[f["path"] for f in manifest["installerFiles"]]]:
-        download(path)
-    for f in manifest["installerFiles"]:
-        os.chmod(distribution / f["path"], f["mode"])
+    for directory, prefix in [("distribution", ""), ("upgrade", "upgrade/")]:
+        distribution = STATE / directory
+        distribution.mkdir(mode=0o700)
+        def download(path):
+            target = distribution / path
+            target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            with urllib.request.urlopen("http://10.0.2.2:18080/distribution/" + prefix + path, timeout=180) as response:
+                with target.open("wb") as file:
+                    shutil.copyfileobj(response, file)
+            os.chmod(target, 0o600)
+        download("manifest.json")
+        manifest = json.loads((distribution / "manifest.json").read_text())
+        for path in ["install.sh", "SHA256SUMS", manifest["archive"]["name"], *[f["path"] for f in manifest["installerFiles"]]]:
+            download(path)
+        for f in manifest["installerFiles"]:
+            os.chmod(distribution / f["path"], f["mode"])
 
 
 def main():
@@ -198,17 +221,32 @@ printf 'CLIENT_OK\n'
         if b"CONNECTOR_SECRET_STORE_UNAVAILABLE" not in failure.stderr:
             raise RuntimeError("store fail closed")
         checks.extend(["fingerprint-zero-config", "store-fail-closed"])
+        upgrade_dir = STATE / "upgrade"
+        upgraded = json.loads((upgrade_dir / "manifest.json").read_text())
+        command(["sh", str(upgrade_dir / "install.sh"), "--archive", str(upgrade_dir / upgraded["archive"]["name"]),
+                 "--manifest", str(upgrade_dir / "manifest.json"), "--prefix", str(PREFIX)])
+        if json.loads(command([str(BINARY), "--version"]).stdout)["connectorVersion"] != upgraded["connectorVersion"]:
+            raise RuntimeError("upgrade version mismatch")
+        run_client(directory)
+        if (directory / "config.json").read_bytes() != config:
+            raise RuntimeError("upgrade changed configuration")
+        checks.append("second-version-and-existing-secret")
         lost = request("create", {"mode": "lost"})
         recovery_dir = STATE / "recovery"
         connect(lost, recovery_dir, expected=1)
         pending = json.loads((recovery_dir / "pending.json").read_text())
         if pending["userAgent"] != "workmesh-connector/0.1.0" or (recovery_dir / "config.json").exists():
             raise RuntimeError("pending identity")
+        saved_pending = (recovery_dir / "pending.json").read_bytes()
+        command(["sh", str(upgrade_dir / "install.sh"), "--rollback", "--prefix", str(PREFIX)])
+        if (recovery_dir / "pending.json").read_bytes() != saved_pending:
+            raise RuntimeError("rollback changed pending")
+        checks.append("rollback-retains-exact-pending")
         request("restart", {"connectionId": lost["expectation"]["connectionId"]})
         private(MARKER, {"phase": "reboot", "bootId": boot, "recoveryConnectionId": lost["expectation"]["connectionId"],
                          "goldenConfigSha256": hashlib.sha256(config).hexdigest(), "checks": checks,
                          "pendingSha256": hashlib.sha256((recovery_dir / "pending.json").read_bytes()).hexdigest()})
-        report({"phase": "before-reboot", "bootId": boot, "uid": os.getuid(), "checks": checks, "metadata": metadata})
+        report({"phase": "before-reboot", "bootId": boot, "uid": os.getuid(), "checks": checks, "metadata": metadata, **secret_owner()})
     else:
         state = json.loads(MARKER.read_text())
         if state["phase"] != "reboot" or state["bootId"] == boot:
@@ -229,12 +267,24 @@ printf 'CLIENT_OK\n'
         run_client(directory)
         request("revoke", {"connectionId": state["recoveryConnectionId"]})
         connect(fixture, directory, expected=1)
+        expired = request("create", {"mode": "lost"})
+        expired_dir = STATE / "expired"
+        connect(expired, expired_dir, expected=1)
+        pending_bytes = (expired_dir / "pending.json").read_bytes()
+        request("expire", {"connectionId": expired["expectation"]["connectionId"]})
+        connect(expired, expired_dir, expected=1)
+        if (expired_dir / "config.json").exists() or (expired_dir / "pending.json").read_bytes() != pending_bytes:
+            raise RuntimeError("expired replay altered identity/config")
+        checks.append("expired-original-replay-rejected")
         before = config
+        secret_before = read_os_secret(config)
         command(["sh", str(PREFIX / "lib/workmesh-connector/current/uninstall.sh"), "--prefix", str(PREFIX)])
         if BINARY.exists() or (STATE / "golden/config.json").read_bytes() != before:
             raise RuntimeError("uninstall boundary")
+        if read_os_secret(config) != secret_before:
+            raise RuntimeError("uninstall removed system secret")
         report({"phase": "after-reboot", "bootId": boot, "uid": os.getuid(), "replay": replay,
-                "checks": checks + ["system-store-across-full-reboot", "same-pending-after-api-mcp-and-os-restart", "revocation-rejected", "uninstall-config-retained"]})
+                **secret_owner(), "checks": checks + ["system-store-across-full-reboot", "same-pending-after-api-mcp-and-os-restart", "revocation-rejected", "uninstall-config-and-real-secret-retained"]})
         state["phase"] = "complete"
         MARKER.write_text(json.dumps(state))
 

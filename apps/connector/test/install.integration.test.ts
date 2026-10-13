@@ -9,6 +9,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 const execute = promisify(execFile)
 const distribution = process.env.WORKMESH_CONNECTOR_ARTIFACTS
 let root: string, prefix: string, archive: string, manifest: string
+const upgradeDistribution = process.env.WORKMESH_CONNECTOR_UPGRADE_ARTIFACTS
 const installer = (extra: string[] = []) => execute('sh', [join(distribution!, 'install.sh'), '--archive', archive,
   '--manifest', manifest, '--prefix', prefix, ...extra], { timeout: 120_000 })
 describe('已构建 SEA 离线安装、完整性与保留边界', () => {
@@ -40,6 +41,19 @@ describe('已构建 SEA 离线安装、完整性与保留边界', () => {
       .rejects.toMatchObject({ stderr: 'INSTALL_ARCHIVE_HASH\n' })
     expect(await readlink(join(prefix, 'lib/workmesh-connector/current'))).toBe(before)
     expect(await readFile(join(configRoot, 'marker'), 'utf8')).toBe(marker)
+  })
+  it('真实第二版本原子升级，再回退原版本', async () => {
+    if (!upgradeDistribution) throw new Error('Second version artifacts required; no skip')
+    const original = await readlink(join(prefix, 'lib/workmesh-connector/current'))
+    const upgradeManifest = resolve(upgradeDistribution, 'manifest.json')
+    const m = JSON.parse(await readFile(upgradeManifest, 'utf8')) as { archive: { name: string }; connectorVersion: string }
+    await execute('sh', [join(upgradeDistribution, 'install.sh'), '--archive', resolve(upgradeDistribution, m.archive.name),
+      '--manifest', upgradeManifest, '--prefix', prefix], { timeout: 120_000 })
+    const metadata = JSON.parse((await execute(join(prefix, 'bin/workmesh-connector'), ['--version'])).stdout) as { connectorVersion: string }
+    expect(metadata.connectorVersion).toBe(m.connectorVersion)
+    expect(await readlink(join(prefix, 'lib/workmesh-connector/current'))).not.toBe(original)
+    await execute('sh', [join(upgradeDistribution, 'install.sh'), '--rollback', '--prefix', prefix], { timeout: 120_000 })
+    expect(await readlink(join(prefix, 'lib/workmesh-connector/current'))).toBe(original)
   })
   it('卸载只移除程序，独立配置保持', async () => {
     expect((await execute('sh', [join(prefix, 'lib/workmesh-connector/current/uninstall.sh'), '--prefix', prefix])).stdout)
