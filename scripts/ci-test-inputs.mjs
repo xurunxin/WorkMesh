@@ -10,6 +10,7 @@ export const externalTestInputs = {
 // than runtime package dependencies; hash the source they actually compile.
 const packageTypeInputs = ['packages/*/src/**', 'packages/*/package.json']
 export const externalTypecheckInputs = {
+  '@workmesh/connector': ['apps/api/src/**', 'apps/mcp/src/**', ...packageTypeInputs],
   '@workmesh/conformance': ['apps/api/src/**', 'apps/mcp/src/**', 'apps/connector/src/**', 'docs/integration/examples/**', ...packageTypeInputs],
   '@workmesh/api': ['apps/worker/src/**', 'apps/fake-agent/src/**', 'apps/mcp/src/**', 'apps/connector/src/**', 'apps/connector/test-support/**', ...packageTypeInputs],
 }

@@ -3,7 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from './ci-bootstrap/yaml.mjs'
 import { externalTestInputs, externalTypecheckInputs } from './ci-test-inputs.mjs'
-import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint, validateBackendLiteEntrypoint } from './ci-policy.mjs'
+import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint, validateBackendLiteEntrypoint, validateConnectorInstallEntrypoint } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const workflow = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8')
@@ -22,6 +22,7 @@ requireCondition(workflowDocument.errors.length === 0, 'workflow must be valid Y
 const parsedWorkflow = workflowDocument.toJS()
 failures.push(...validateDevelopmentImageEntrypoint(parsedWorkflow.jobs?.['source-gates']))
 failures.push(...validateBackendLiteEntrypoint(parsedWorkflow.jobs?.['source-gates']))
+failures.push(...validateConnectorInstallEntrypoint(parsedWorkflow.jobs?.['connector-install']))
 failures.push(...validateCiBootstrap({
   job: parsedWorkflow.jobs?.changes,
   manifest: JSON.parse(readFileSync(resolve(root, 'scripts/ci-bootstrap/package.json'), 'utf8')),
@@ -139,6 +140,7 @@ const requiredJobs = [
   'recovery-integration',
   'agent-smoke',
   'connector-platform',
+  'connector-install',
   'required-ci',
 ]
 requireCondition(
@@ -155,6 +157,7 @@ const rawArtifacts = new Map([
   ['recovery-integration', 'recovery-integration-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['connector-platform', 'connector-platform-raw-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['connector-install', 'connector-install-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['required-ci', 'required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
 ])
 for (const jobId of requiredJobs) {
@@ -428,7 +431,7 @@ const postgresImage = 'postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864d
 // both roles: it ships curl with --aws-sigv4, so the bucket step no longer needs
 // a second image. The digest pins the exact reviewed build.
 const artifactStorageImage = 'rustfs/rustfs:1.0.0@sha256:8cc9801755448b71a786705ce76692c77e14936cccd87cf2fc31842e58f4d1ff'
-requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 4, 'four isolated jobs must use the reviewed PostgreSQL image')
+requireCondition(occurrences(new RegExp(postgresImage.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) === 5, 'five isolated jobs must use the reviewed PostgreSQL image')
 const api = jobSections.get('api-integration') ?? ''
 requireCondition(api.includes(artifactStorageImage), 'API integration must use the reviewed artifact-storage image')
 requireCondition(

@@ -17,3 +17,11 @@
 本机默认 Node 为不同版本；验证显式使用保留的准确 Node 工具。只读复用既有缓存，新的可写构建和测试状态独有。原策略拒绝的 YAML junction、bootstrap node_modules、`.tmp/b-ship-tcg` 和其他受保护目标不重试删除。
 
 中文文档读取固定技能 `ffda9353768dece8aabd26ccb3a4978025e9437c` 的 SKILL.md、manual-structure 与 typography；不改技能原件或全局安装。API、Schema、端点、领域事件和数据库迁移未改变；B4 文档新增安装入口，其余说明按新增命令同步。
+
+## 本轮检查与首败
+
+准确 Node 的连接器单元测试 92 项通过，含全部既有真实进程竞争和强制终止。类型检查首次发现锁定 tar 的接口是 Parser/abort，已据实际声明修正。文档静态检查通过 4 个技能文件、78 个本地链接、35 个 REST 与 11 个 MCP 名称。CI 结构及分类单测当前 21 项通过；产品远端检查仍待完整执行。
+
+辅助原生构建 run38341094507 两架构失败，head06e01cb226b5350e6fe5ffbf55bb57840aa7fb0c：未创建输出父目录，原件见 raw/build-first-amd64.zip 和 raw/build-first-arm64.zip。后续 run38341429309/head73a8b9b55944669179c6eb9f339146365de62e72 已构建 SEA，但实际启动因 Koffi 官方运行 loader 被排除而失败；只补回 src/koffi 中 JS/CJS 运行文件，不收录 C/C++ 源码。失败尚不写成通过。
+
+CI483 之后的历史 Required CI 不代本轮：run38341429314 分类明确因 product/current-spec.md 的多余末尾空行失败，后续 job 正确未执行；已修正新增文件的末尾格式，不改历史正文。当前 Required CI 新增双架构 connector-install，保留三系统平台矩阵，遗漏任一架构、失败或意外跳过均阻断。TCG 产品驱动仍须实际验证，包含独有网络 namespace 下离线安装、完整已安装进程协议路径及真实系统重启；缺证不能填通过。

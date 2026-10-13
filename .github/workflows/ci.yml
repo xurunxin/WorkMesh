@@ -37,6 +37,7 @@ jobs:
       recovery-integration: ${{ steps.scope.outputs.recovery-integration }}
       agent-smoke: ${{ steps.scope.outputs.agent-smoke }}
       connector-platform: ${{ steps.scope.outputs.connector-platform }}
+      connector-install: ${{ steps.scope.outputs.connector-install }}
     steps:
       - name: Check out comparison history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -743,9 +744,138 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  connector-install:
+    name: Connector full installation (${{ matrix.arch }})
+    needs: changes
+    if: ${{ needs.changes.outputs.connector-install == 'true' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      DATABASE_URL: postgres://workmesh:connector-ci-fixture@127.0.0.1:5432/workmesh_connector_install_test
+      REDIS_URL: redis://127.0.0.1:6379
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:57c72fd2a128e416c7fcc499958864df5301e940bca0a56f58fddf30ffc07777
+        env:
+          POSTGRES_USER: workmesh
+          POSTGRES_PASSWORD: connector-ci-fixture
+          POSTGRES_DB: workmesh_connector_install_test
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U workmesh" --health-interval 5s --health-timeout 5s --health-retries 12
+      redis:
+        image: redis:7.4.5-alpine
+        ports: ['6379:6379']
+    steps:
+      - name: Check out exact product source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Prepare native build and full guest tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3 binutils qemu-system-x86 qemu-system-arm qemu-utils qemu-efi-aarch64 genisoimage
+          mkdir -p ci-logs/connector-install .tmp
+          git show -s --format='%H %T %P' HEAD > ci-logs/connector-install/source.txt
+          printf '%s %s %s\n' "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_ARCH" > ci-logs/connector-install/run.txt
+          sha256sum scripts/connector-install/* apps/connector/scripts/* > ci-logs/connector-install/input-sha256.txt
+      - name: Install source control dependencies
+        run: |
+          set -o pipefail
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/connector-install/source-install.log
+      - name: Build native self-contained release
+        run: |
+          set -o pipefail
+          pnpm --filter @workmesh/connector build:release -- --output "$PWD/.tmp/connector-release" 2>&1 | tee ci-logs/connector-install/build.log
+      - name: Run installed entry integrity checks
+        env:
+          WORKMESH_CONNECTOR_ARTIFACTS: ${{ github.workspace }}/.tmp/connector-release
+        run: |
+          set -o pipefail
+          pnpm --filter @workmesh/connector test:install 2>&1 | tee ci-logs/connector-install/install.log
+      - name: Execute full no-source product guest
+        run: |
+          set -euo pipefail
+          pnpm exec tsx apps/connector/test-support/install-server.ts > ci-logs/connector-install/server.log 2>&1 &
+          echo "$!" > ci-logs/connector-install/server-pid
+          for attempt in $(seq 1 180); do
+            if test -f ci-logs/connector-install/server-ready; then break; fi
+            kill -0 "$(cat ci-logs/connector-install/server-pid)"
+            sleep 1
+          done
+          test -f ci-logs/connector-install/server-ready
+          node scripts/verify-connector-install.mjs --artifacts "$PWD/.tmp/connector-release" 2>&1 | tee ci-logs/connector-install/guest.log
+      - name: Stop owned fixture and retain bounded receipts
+        if: ${{ always() }}
+        run: |
+          if test -f ci-logs/connector-install/server-pid; then
+            pid="$(cat ci-logs/connector-install/server-pid)"
+            if kill -0 "$pid" 2>/dev/null; then kill -TERM "$pid"; fi
+          fi
+          mkdir -p ci-logs/connector-install/receipts
+          for file in result.json serial.log qemu-stderr.log; do
+            if test -f "ci-logs/connector-install/guest/$file"; then
+              cp "ci-logs/connector-install/guest/$file" "ci-logs/connector-install/receipts/$file"
+            fi
+          done
+          if test -f .tmp/connector-release/manifest.json; then
+            cp .tmp/connector-release/manifest.json ci-logs/connector-install/receipts/
+          fi
+          # Guest disks can contain protected test pending/keyring bytes; never upload them.
+          if test -d ci-logs/connector-install/guest; then
+            case "$(realpath ci-logs/connector-install/guest)" in "$PWD/ci-logs/connector-install/guest") rm -rf -- ci-logs/connector-install/guest ;; *) exit 1 ;; esac
+          fi
+          if test -d ci-logs/connector-install/image-cache; then
+            case "$(realpath ci-logs/connector-install/image-cache)" in "$PWD/ci-logs/connector-install/image-cache") rm -rf -- ci-logs/connector-install/image-cache ;; *) exit 1 ;; esac
+          fi
+      - name: Upload exact installation receipts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: connector-install-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve native offline distribution
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: connector-distribution-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .tmp/connector-release/*.json
+            .tmp/connector-release/*.log
+            .tmp/connector-release/*.tar.gz
+            .tmp/connector-release/*.sh
+            .tmp/connector-release/SHA256SUMS
+            .tmp/connector-release/installer-*/
+          if-no-files-found: warn
+          retention-days: 14
+
   required-ci:
     name: Required CI
-    needs: [changes, source-gates, db-integration, api-integration, worker-integration, recovery-integration, agent-smoke, connector-platform]
+    needs: [changes, source-gates, db-integration, api-integration, worker-integration, recovery-integration, agent-smoke, connector-platform, connector-install]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5

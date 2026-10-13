@@ -1,5 +1,5 @@
 import { readFile, writeFile, mkdir, readdir, lstat, copyFile, chmod, realpath, cp } from 'node:fs/promises'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -57,10 +57,12 @@ const addon = await packageRoot('node-addon-api')
 await mkdir(join(privatePty, 'node_modules'), { mode: 0o700 })
 await cp(addon, join(privatePty, 'node_modules/node-addon-api'), { recursive: true, dereference: true })
 const gyp = require.resolve('node-gyp/bin/node-gyp.js')
-const compile = run(node, [gyp, 'rebuild', `--nodedir=${join(work, `node-v${nodeVersion}`)}`, '--python=/usr/bin/python3'], {
-  cwd: privatePty, env: { ...process.env, npm_config_build_from_source: 'true', npm_config_nodedir: join(work, `node-v${nodeVersion}`), npm_config_python: '/usr/bin/python3', npm_config_offline: 'true' },
+const compilation = spawnSync(node, [gyp, 'rebuild', `--nodedir=${join(work, `node-v${nodeVersion}`)}`, '--python=/usr/bin/python3'], {
+  encoding: 'utf8', cwd: privatePty, env: { ...process.env, npm_config_build_from_source: 'true', npm_config_nodedir: join(work, `node-v${nodeVersion}`), npm_config_python: '/usr/bin/python3', npm_config_offline: 'true' },
 })
-await writeFile(join(output, 'native-build.log'), compile + '\n', { mode: 0o600 })
+await writeFile(join(output, 'native-build.log'), (compilation.stdout ?? '') + (compilation.stderr ?? ''), { mode: 0o600 })
+check(!compilation.error && compilation.status === 0, 'Native compilation failed; retain native-build.log')
+
 tools['node-gyp'] = JSON.parse(await readFile(join(dirname(dirname(gyp)), 'package.json'), 'utf8')).version
 check(tools['node-gyp'] === '11.4.2', 'Wrong node-gyp')
 const packageRoots = new Map()
@@ -76,7 +78,7 @@ async function copyPackage(name, root, directories) {
     for (const name of await readdir(directory)) {
       const path = join(directory, name), rel = prefix + name, info = await lstat(path)
       if (info.isDirectory()) {
-        if (name === 'node_modules' || ['src', 'scripts', 'test', 'tests', 'obj', 'obj.target', 'vendor', 'examples', 'benchmark'].includes(name)) continue
+        if ((name === 'src' && meta.name !== 'koffi') || name === 'node_modules' || ['scripts', 'test', 'tests', 'obj', 'obj.target', 'vendor', 'examples', 'benchmark'].includes(name)) continue
         await walk(path, rel + '/')
       } else if (info.isFile() && (/\.(?:js|cjs|json|node)$/.test(name) || /^(?:license|copying|notice)/i.test(name))) {
         if (name.endsWith('.map') || rel.includes('build/') && rel !== 'build/Release/pty.node') continue
@@ -141,7 +143,9 @@ await sea('src/release-entry.ts', join(payload, 'bin/workmesh-connector'), {
 })
 await sea('scripts/install-entry.ts', join(helper, 'bin/workmesh-connector-installer'))
 await cp(helper, join(payload, 'installer'), { recursive: true, dereference: true })
-await copyFile(join(app, 'scripts/uninstall.sh'), join(payload, 'uninstall.sh')); await chmod(join(payload, 'uninstall.sh'), 0o700)
+const internalHelperFiles = await fileList(helper)
+const uninstall = (await readFile(join(app, 'scripts/uninstall.sh'), 'utf8')).replace('@HELPER_SUMS@', internalHelperFiles.map(f => `${f.sha256}  installer/${f.path}`).join('\n'))
+await writeFile(join(payload, 'uninstall.sh'), uninstall, { mode: 0o700 })
 const licenses = []
 for (const input of new Set(metafiles.flatMap(m => Object.keys(m.inputs)))) {
   let root = dirname(resolve(input))

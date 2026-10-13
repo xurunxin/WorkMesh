@@ -5,7 +5,23 @@ import { fileURLToPath } from 'node:url'
 import { testConsumers } from './ci-test-inputs.mjs'
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'recovery-integration', 'agent-smoke', 'connector-platform']
+export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'recovery-integration', 'agent-smoke', 'connector-platform', 'connector-install']
+
+export function validateConnectorInstallEntrypoint(job) {
+  const failures = []
+  const expected = [{ arch: 'amd64', runner: 'ubuntu-24.04' }, { arch: 'arm64', runner: 'ubuntu-24.04-arm' }]
+  if (JSON.stringify(job?.strategy?.matrix?.include) !== JSON.stringify(expected)
+    || job?.['runs-on'] !== '${{ matrix.runner }}' || job?.strategy?.['fail-fast'] !== false)
+    failures.push('connector-install must retain both native hosted architectures')
+  for (const command of ['pnpm --filter @workmesh/connector build:release -- --output',
+    'pnpm --filter @workmesh/connector test:install', 'node scripts/verify-connector-install.mjs --artifacts']) {
+    const steps = job?.steps?.filter(step => step.run?.includes(command)) ?? []
+    if (steps.length !== 1 || steps[0].if || steps[0]['continue-on-error']
+      || !/set -(?:o pipefail|euo pipefail)/.test(steps[0].run) || steps[0].run.includes('|| true'))
+      failures.push(`connector-install must execute ${command} without skipping or masking failure`)
+  }
+  return failures
+}
 
 export function validateCiBootstrap({ job, manifest, lock, yamlVersion }) {
   const failures = []
@@ -96,6 +112,7 @@ export function classifyChanges(paths, workspaces, { forceFull = false, mainPush
   const checks = {
     'source-gates': full || runtime.length > 0,
     'connector-platform': full || has('connector'),
+    'connector-install': full || ['connector', 'api', 'mcp', 'contracts', 'db', 'config', 'agent-sdk'].some(has),
     'db-integration': full || has('db'),
     // API integration imports worker implementations directly in its fixtures.
     'api-integration': full || ['api', 'worker', 'fake-agent', 'mcp', 'agent-sdk', 'agent-runner', 'conformance'].some(has),

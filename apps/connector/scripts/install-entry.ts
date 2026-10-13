@@ -47,7 +47,7 @@ async function manifest(path: string): Promise<ReleaseManifest> {
     const paths = new Set<string>()
     for (const f of files) {
       safeRelative(f.path); check(!paths.has(f.path), 'INSTALL_DUPLICATE_MEMBER'); paths.add(f.path)
-      check(!f.path.endsWith('.ts') && !f.path.endsWith('.map') && !f.path.split('/').some(x => ['src', '.git', 'test', 'tests'].includes(x)), 'INSTALL_SOURCE_MEMBER')
+      check(!f.path.endsWith('.ts') && !f.path.endsWith('.map') && !f.path.split('/').some(x => ['.git', 'test', 'tests'].includes(x)) && (!f.path.split('/').includes('src') || /^(?:installer\/)?node_modules\/koffi\/src\/koffi\/.+\.(?:js|cjs)$/.test(f.path.replace(/^installer-linux-(?:amd64|arm64)\//, ''))), 'INSTALL_SOURCE_MEMBER')
     }
     for (const path of paths) check(![...paths].some(p => p !== path && path.startsWith(p + '/')), 'INSTALL_PATH_CONFLICT')
   }
