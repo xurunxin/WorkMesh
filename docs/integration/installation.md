@@ -23,7 +23,9 @@ pnpm --filter @workmesh/connector build:release -- --output /path/to/new-owned-o
 
 构建要求已提交、干净源码；输出目录须不存在。运行时和 headers 按准确 Node 版本下载并核官方摘要。node-pty 在私有源码副本中编译，编译器和 headers 不进入目标产物。
 
-通过受审构建记录取得归档、`manifest.json`、`SHA256SUMS`、`install.sh` 和同架构 `installer-linux-*` 目录。SHA-256 证明完整性；发布者身份来自受审来源，不能仅凭随包清单信任外来下载。没有公开下载地址或新增发行签名密钥。
+通过受审构建记录取得程序归档、`manifest.json`、`SHA256SUMS`、`install.sh` 和同架构 `installer-linux-*.tar.gz`。助手压缩包允许在仓库保存，避免直接提交超过 GitHub 单文件限制的 ELF。SHA-256 证明完整性；发布者身份来自受审来源，不能仅凭随包清单信任外来下载。没有公开下载地址或新增发行签名密钥。
+
+先用受审记录中的摘要核助手压缩包，再用系统 GNU tar 解包到独有发行目录，保留目录及文件的私有权限。随后逐文件核 `SHA256SUMS`；安装入口会再次校验助手闭包。连接器安装本身使用 SEA 解析归档，不调用系统 tar、Python 或包管理器。
 
 ## 安装与连接
 

@@ -11,6 +11,7 @@ export const releaseSchema = z.object({
   arch: z.enum(['amd64', 'arm64']), publicKeySha256: hash,
   archive: z.object({ name: z.string().regex(/^workmesh-connector-[a-z0-9.-]+\.tar\.gz$/), size: file.shape.size, sha256: hash }).strict(),
   files: z.array(file).min(1).max(10000), installerFiles: z.array(file).min(1).max(1000),
+  installerArchive: z.object({ name: z.string().regex(/^installer-linux-(?:amd64|arm64)\.tar\.gz$/), size: file.shape.size, sha256: hash }).strict(),
   installScriptSha256: hash,
   nativeDependencies: z.array(z.object({ name: z.string(), version: z.string(), integrity: z.string(),
     binaries: z.array(z.object({ path: z.string(), elfMachine: z.number().int(), needed: z.array(z.string()),

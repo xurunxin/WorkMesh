@@ -212,6 +212,9 @@ async function fileList(root, prefix = '') {
   return list
 }
 const helperFiles = (await fileList(helper)).map(f => ({ ...f, path: `installer-linux-${arch}/${f.path}` }))
+const installerArchiveName = `installer-linux-${arch}.tar.gz`, installerArchivePath = join(output, installerArchiveName)
+await tar({ gzip: true, cwd: output, file: installerArchivePath, portable: true, noMtime: true }, helperFiles.map(f => f.path))
+const installerArchiveBytes = await readFile(installerArchivePath)
 let shell = await readFile(join(app, 'scripts/install.sh'), 'utf8')
 shell = shell.replace('@ARCH@', arch).replace('@HELPER_SUMS@', helperFiles.map(f => `${f.sha256}  ${f.path}`).join('\n'))
 await writeFile(join(output, 'install.sh'), shell, { mode: 0o700 })
@@ -220,12 +223,13 @@ await tar({ gzip: true, cwd: payload, file: archivePath, portable: true, noMtime
 const archiveBytes = await readFile(archivePath)
 const manifest = { schema: 'workmesh-connector-release', ...metadata, lockSha256: hash(lockBytes), publicKeySha256: hash(key),
   archive: { name: archiveName, size: archiveBytes.length, sha256: hash(archiveBytes) }, files, installerFiles: helperFiles,
+  installerArchive: { name: installerArchiveName, size: installerArchiveBytes.length, sha256: hash(installerArchiveBytes) },
   installScriptSha256: hash(Buffer.from(shell)), nativeDependencies: receipts,
   build: { headersSha256: headers.sha256, headersUrl: `https://nodejs.org/dist/v${nodeVersion}/node-v${nodeVersion}-headers.tar.gz`, runtimeSha256: runtime.sha256, tools, nodeAbi: process.versions.modules },
   licenses: [...new Set(licenses)].sort(),
 }
 await writeFile(join(output, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n', { mode: 0o600 })
-await writeFile(join(output, 'SHA256SUMS'), `${hash(archiveBytes)}  ${archiveName}\n${hash(await readFile(join(output, 'manifest.json')))}  manifest.json\n${hash(Buffer.from(shell))}  install.sh\n` + helperFiles.map(f => `${f.sha256}  ${f.path}\n`).join(''), { mode: 0o600 })
+await writeFile(join(output, 'SHA256SUMS'), `${hash(archiveBytes)}  ${archiveName}\n${hash(installerArchiveBytes)}  ${installerArchiveName}\n${hash(await readFile(join(output, 'manifest.json')))}  manifest.json\n${hash(Buffer.from(shell))}  install.sh\n` + helperFiles.map(f => `${f.sha256}  ${f.path}\n`).join(''), { mode: 0o600 })
 const result = JSON.parse(run(join(payload, 'bin/workmesh-connector'), ['--version']))
 check(JSON.stringify(result) === JSON.stringify(metadata), 'SEA metadata mismatch')
 await writeFile(join(output, 'build-receipt.json'), JSON.stringify({ ...metadata, nativeDependencies: receipts, build: manifest.build, manifestSha256: hash(await readFile(join(output, 'manifest.json'))), complete: true }, null, 2) + '\n')

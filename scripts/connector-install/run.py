@@ -34,13 +34,13 @@ def main():
     manifest = json.loads((artifacts / "manifest.json").read_text())
     if manifest["arch"] != options.arch or manifest["sourceCommit"] != options.source:
         raise RuntimeError("artifact source/architecture mismatch")
-    served = {"manifest.json", "install.sh", "SHA256SUMS", manifest["archive"]["name"]}
+    served = {"manifest.json", "install.sh", "SHA256SUMS", manifest["archive"]["name"], manifest["installerArchive"]["name"]}
     served.update(f["path"] for f in manifest["installerFiles"])
     upgrade = artifacts.parent / "connector-upgrade"
     upgraded = json.loads((upgrade / "manifest.json").read_text())
     if upgraded["sourceCommit"] != options.source or upgraded["arch"] != options.arch or upgraded["connectorVersion"] == manifest["connectorVersion"]:
         raise RuntimeError("second version identity mismatch")
-    served.update("upgrade/" + path for path in {"manifest.json", "install.sh", "SHA256SUMS", upgraded["archive"]["name"], *[f["path"] for f in upgraded["installerFiles"]]})
+    served.update("upgrade/" + path for path in {"manifest.json", "install.sh", "SHA256SUMS", upgraded["archive"]["name"], upgraded["installerArchive"]["name"], *[f["path"] for f in upgraded["installerFiles"]]})
     receipts, events = [], []
     began = time.monotonic()
     result = {"sourceHead": options.source, "sourceTree": manifest["sourceTree"], "arch": options.arch,
@@ -111,11 +111,17 @@ if test ! -f /home/wmprobe/.local/share/connector-install/state.json; then
   phase=offline-install
   unshare --net -- runuser -u wmprobe -- sh -c '
     set -eu
-    test "$(wc -l < /proc/net/route)" -eq 1
+    state="$HOME/.local/share/connector-install"
+    printf "route-check\\n" > "$state/offline-stage"
+    wc -l < /proc/net/route > "$state/route-lines"
+    test "$(tail -n +2 /proc/net/route | wc -l)" -eq 0
     dist="$HOME/.local/share/connector-install/distribution"
-    for archive in "$dist"/*.tar.gz; do
+    for archive in "$dist"/workmesh-connector-*.tar.gz; do
+      printf "dry-run\\n" > "$state/offline-stage"
       sh "$dist/install.sh" --archive "$archive" --manifest "$dist/manifest.json" --prefix "$HOME/.local" --dry-run
+      printf "dry-run-zero-write\\n" > "$state/offline-stage"
       test ! -e "$HOME/.local/bin/workmesh-connector"
+      printf "install\\n" > "$state/offline-stage"
       sh "$dist/install.sh" --archive "$archive" --manifest "$dist/manifest.json" --prefix "$HOME/.local"
     done
     printf "PRIVATE_NETWORK_NAMESPACE_NO_ROUTE_DRY_RUN_AND_INSTALL_PASSED\\n" > "$HOME/.local/share/connector-install/offline-proof"
@@ -142,7 +148,7 @@ TimeoutStartSec=1200
 [Install]
 WantedBy=cloud-init.target
 '''
-        failure = b'import json, re, subprocess, sys, urllib.request\ntext = subprocess.run(["journalctl", "-b", "--unit=connector-install.service", "--no-pager", "--output=cat"], capture_output=True).stdout.decode(errors="replace")\ncodes = sorted(set(re.findall(r"\\b(?:INSTALL|CONNECTOR)_[A-Z_]+\\b", text)))\nsignatures = [name for name in ["Illegal instruction", "Killed", "Permission denied", "not found", "cannot find", "cannot change"] if name in text]\nvalue = {"phase":"failure","errorType":"GuestServiceFailure","exitCode":int(sys.argv[1]),"stage":sys.argv[2],"codes":codes,"signatures":signatures}\nrequest = urllib.request.Request("http://10.0.2.2:18080/receipt", json.dumps(value).encode(), {"Content-Type":"application/json"})\nurllib.request.urlopen(request, timeout=30).read()\n'
+        failure = b'import json, re, subprocess, sys, urllib.request\ntext = subprocess.run(["journalctl", "-b", "--unit=connector-install.service", "--no-pager", "--output=cat"], capture_output=True).stdout.decode(errors="replace")\ncodes = sorted(set(re.findall(r"\\b(?:INSTALL|CONNECTOR)_[A-Z_]+\\b", text)))\nsignatures = [name for name in ["Illegal instruction", "Killed", "Permission denied", "not found", "cannot find", "cannot change"] if name in text]\nfrom pathlib import Path\nstate = Path("/home/wmprobe/.local/share/connector-install")\nstep = (state / "offline-stage").read_text().strip() if (state / "offline-stage").exists() else "unknown"\nif step not in {"route-check","dry-run","dry-run-zero-write","install"}: step = "unknown"\nroute_lines = int((state / "route-lines").read_text().strip()) if (state / "route-lines").exists() else -1\nvalue = {"offlineStep":step,"routeLines":route_lines,"phase":"failure","errorType":"GuestServiceFailure","exitCode":int(sys.argv[1]),"stage":sys.argv[2],"codes":codes,"signatures":signatures}\nrequest = urllib.request.Request("http://10.0.2.2:18080/receipt", json.dumps(value).encode(), {"Content-Type":"application/json"})\nurllib.request.urlopen(request, timeout=30).read()\n'
         files = [("/opt/connector-install/failure.py", failure, "0644"), ("/opt/connector-install/guest.py", guest, "0644"), ("/opt/connector-install/finish.sh", wrapper, "0755"),
                  ("/etc/systemd/system/connector-install.service", service, "0644")]
         cloud = "#cloud-config\nusers:\n  - name: wmprobe\n    uid: 22020\n    lock_passwd: true\n    shell: /bin/sh\npackage_update: true\npackages:\n  - dbus\n  - gnome-keyring\n  - libsecret-tools\nwrite_files:\n"

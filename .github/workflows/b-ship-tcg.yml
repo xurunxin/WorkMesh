@@ -1,10 +1,7 @@
 name: B-ship TCG feasibility
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/b-ship-tcg.yml'
-      - 'docs/reviews/b-ship/tcg/tools/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -41,11 +38,11 @@ jobs:
       - name: Check out exact research head
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Bind actual source and experiment inputs
         env:
-          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha }}
+          EXPECTED_HEAD: ${{ github.sha }}
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"

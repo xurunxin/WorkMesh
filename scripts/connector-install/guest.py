@@ -164,8 +164,13 @@ def prepare():
             os.chmod(target, 0o600)
         download("manifest.json")
         manifest = json.loads((distribution / "manifest.json").read_text())
-        for path in ["install.sh", "SHA256SUMS", manifest["archive"]["name"], *[f["path"] for f in manifest["installerFiles"]]]:
+        for path in ["install.sh", "SHA256SUMS", manifest["archive"]["name"], manifest["installerArchive"]["name"]]:
             download(path)
+        installer_archive = distribution / manifest["installerArchive"]["name"]
+        if installer_archive.stat().st_size != manifest["installerArchive"]["size"] or hashlib.sha256(installer_archive.read_bytes()).hexdigest() != manifest["installerArchive"]["sha256"]:
+            raise RuntimeError("downloaded installer archive mismatch")
+        subprocess.run(["tar", "-xzf", str(installer_archive), "--no-same-owner", "--no-same-permissions", "-C", str(distribution)],
+                       check=True, capture_output=True, timeout=180)
         for f in manifest["installerFiles"]:
             bytes = (distribution / f["path"]).read_bytes()
             if len(bytes) != f["size"] or hashlib.sha256(bytes).hexdigest() != f["sha256"]:
@@ -252,6 +257,45 @@ printf 'CLIENT_OK\n'
         if (corrupted_dir / "pending.json").exists():
             raise RuntimeError("explicit abandon did not remove pending")
         checks.append("corrupt-pending-and-explicit-abandon")
+        failed_tx = request("create", {"mode": "db-failure"})
+        failed_tx_dir = STATE / "transaction-failure"
+        connect(failed_tx, failed_tx_dir, expected=1)
+        pending_tx = (failed_tx_dir / "pending.json").read_bytes()
+        if request("status", {"connectionId": failed_tx["expectation"]["connectionId"]})["credentialCount"] != 0:
+            raise RuntimeError("failed transaction issued credential")
+        request("reset-fault", {"connectionId": failed_tx["expectation"]["connectionId"]})
+        connect(failed_tx, failed_tx_dir)
+        status = request("status", {"connectionId": failed_tx["expectation"]["connectionId"]})
+        if not status["exactRequestMatches"] or status["credentialCount"] != 1 or json.loads((failed_tx_dir / "config.json").read_text())["completion"]["key"] != json.loads(pending_tx)["key"]:
+            raise RuntimeError("transaction retry changed identity")
+        checks.append("real-transaction-rollback-and-same-pending-retry")
+        concurrent = request("create", {"mode": "concurrent"})
+        concurrent_dir = STATE / "concurrent"
+        expectation_path = STATE / (concurrent["expectation"]["connectionId"] + ".json")
+        private(expectation_path, concurrent["expectation"])
+        processes = [subprocess.Popen([str(BINARY), "connect", "--expect", str(expectation_path)], stdin=subprocess.PIPE,
+                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=dict(os.environ, WORKMESH_CONNECTOR_DIRECTORY=str(concurrent_dir))) for _ in range(2)]
+        for process in processes:
+            process.stdin.write((concurrent["pairingCode"] + "\n").encode())
+            process.stdin.close()
+            process.stdin = None
+        deadline = time.monotonic() + 25
+        while not request("status", {"connectionId": concurrent["expectation"]["connectionId"]})["barrierReady"]:
+            if time.monotonic() > deadline or any(p.poll() is not None for p in processes):
+                raise RuntimeError("concurrent barrier not reached")
+            time.sleep(0.1)
+        if any(p.poll() is not None for p in processes):
+            raise RuntimeError("concurrent processes not both alive at barrier")
+        pending_concurrent = json.loads((concurrent_dir / "pending.json").read_text())
+        request("release", {"connectionId": concurrent["expectation"]["connectionId"]})
+        for process in processes:
+            out, err = process.communicate(timeout=150)
+            if process.returncode or re.search(rb"wm[ip]_[A-Za-z0-9_-]{43}", out + err):
+                raise RuntimeError("concurrent process failed or leaked")
+        status = request("status", {"connectionId": concurrent["expectation"]["connectionId"]})
+        if status["credentialCount"] != 1 or status["requestCount"] != 1 or json.loads((concurrent_dir / "config.json").read_text())["completion"]["key"] != pending_concurrent["key"]:
+            raise RuntimeError("concurrent processes did not converge")
+        checks.append("concurrent-installed-processes-one-pending-one-credential")
         upgrade_dir = STATE / "upgrade"
         upgraded = json.loads((upgrade_dir / "manifest.json").read_text())
         command(["sh", str(upgrade_dir / "install.sh"), "--archive", str(upgrade_dir / upgraded["archive"]["name"]),

@@ -38,3 +38,10 @@ CI483 之后的历史 Required CI 不代本轮：run38341429314 分类明确因 
 run38345379545/head45634e7f19839c2ac134839c14635f47d2fd847a 的 amd64 完整 guest 再次在根服务阶段失败，原件 raw/product-second-amd64.zip，artifact11788669477，SHA-256 ba4a3554b669013f1398605d2758e9f142b19b225e43f0e769b8a27def0c532a，与 provider digest 一致。journal+console 未出现在串口原件中，未据此猜原因。下一轮收集失败的阶段、退出码和固定错误码／固定系统诊断签名，不上传自由文本或秘密；下载助手先核摘要，hash 失败明确给 INSTALL_HELPER_HASH。
 
 安装拒绝矩阵已增加八类身份／能力／profile 清单偏差，以及损坏 pending 不重建和显式 abandon；GNU 归档删除不可运行的 musl sidecar，仅保 GNU 原生闭包，并纳入 WorkMesh 自身 MIT 许可。原保护与全部原断言继续保持，新增验证尚待真实运行。
+
+
+run38347067626/heada73bae62331f4026de6133d1bec123f304fa3ca7 的 amd64 原件进一步定位为 offline-install，退出码 1，无固定错误签名，尚不能区分路由检查、干跑零写入或安装。原件 raw/product-third-amd64.zip，artifact11788843614，SHA-256 bd6fd88396a2b756172931946430676c1d959ac8f40f7d394f7ee4281b7eac45。下一轮记录更细的安全步骤与路由行数，按“实际没有路由”验证离线，不依赖路由表头必有一行的格式。
+
+辅助本机诊断使用独有 Docker 容器 f246610347465a7d599ecd5f3cdf8c0dda1e0b6628646910dec3f26a9878df9d，owner 为本卡，network=none、1536 MiB、2 CPU。复用受核原生 artifact11787912929/SHA-256 0698985707f17729652fae69bec8b622575c0bc8b774519b5e302eb2841593b5，仅用于隔离安装启动定位：UID22020 实际 dry-run、安装和 --version 成功，源码绑定 0b3f1b...，不证明 TCG 或完整连接。Windows 转移的临时准备脚本首次因 CRLF 失败，改为明确 LF 后成功；保首败，不改发行原件。
+
+封装加入单独压缩的安装助手，清单绑定其摘要，避免提交超出 GitHub 单文件限制的原始 ELF。guest 将按实际交付形式核摘要并解包助手，再执行无网络安装。新增真实事务失败恢复及并发进程屏障，仍待实测。历史 TCG 研究 workflow 改为手动复现入口；研究源与原件不改，产品 Required CI 保留完整 TCG，以避免每次产品提交重复运行已完成的非必需研究。

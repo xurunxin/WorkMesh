@@ -44,7 +44,7 @@ const human = (method: 'POST' | 'GET' | 'DELETE', path: string, payload?: object
 const principalId = (await human('GET', '/api/v1/auth/me')).json<{ actor: { id: string } }>().actor.id
 const teamId = (await human('GET', '/api/v1/teams')).json<{ items: { id: string }[] }>().items[0]!.id
 const hash = (text: string) => createHash('sha256').update(text).digest('hex')
-const records = new Map<string, { expectation: Expectation; pairingCode: string; mode: string; requests: string[]; responses: string[]; rowId?: string }>()
+const records = new Map<string, { expectation: Expectation; pairingCode: string; mode: string; requests: string[]; responses: string[]; rowId?: string; releaseReply?: () => void }>()
 const receipts: object[] = []
 async function save(): Promise<void> { await writeFile(join(evidence, 'server-receipt.json'), JSON.stringify(receipts, null, 2) + '\n') }
 const gateway = createServer(async (incoming, outgoing) => {
@@ -66,6 +66,11 @@ const gateway = createServer(async (incoming, outgoing) => {
           requestedCapabilities: c.requested_capabilities, grantAgentDelegate: false, skill: { ...workmeshSkillManifest } })
         const pairingCode = new URL(created.connect_url).hash.slice(1)
         records.set(c.id, { expectation, pairingCode, mode: input.mode ?? 'normal', requests: [], responses: [] })
+        if (input.mode === 'db-failure') {
+          await db.query(`CREATE FUNCTION installed_redeem_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN
+            IF NEW.connection_id='${c.id}'::uuid THEN RAISE EXCEPTION 'installed fixture transaction failure'; END IF; RETURN NEW; END $$`)
+          await db.query('CREATE TRIGGER installed_redeem_fault BEFORE INSERT ON agent_connection_credentials FOR EACH ROW EXECUTE FUNCTION installed_redeem_fault()')
+        }
         outgoing.setHeader('content-type', 'application/json'); outgoing.end(JSON.stringify({ expectation, pairingCode })); return
       }
       const record = records.get(input.connectionId ?? '')
@@ -73,12 +78,19 @@ const gateway = createServer(async (incoming, outgoing) => {
       if (incoming.url === '/fixture/status') {
         const rows = await db.query<{ seconds: number; remaining: number; encrypted: boolean; created: Date }>(
           "SELECT extract(epoch from replay_expires_at-created_at)::float seconds,extract(epoch from replay_expires_at-clock_timestamp())::float remaining,replay_ciphertext IS NOT NULL encrypted,created_at created FROM auth_idempotency_records WHERE operation='redeemAgentConnection' AND id=$1", [record.rowId ?? randomUUID()])
-        const status = { originalWindowSeconds: AUTH_REPLAY_WINDOW_MS / 1000, requestCount: record.requests.length, exactRequestMatches: record.requests.length >= 2 && record.requests.every(r => r === record.requests[0]),
+        const credentialCount = (await db.query<{ count: number }>('SELECT count(*)::int AS count FROM agent_connection_credentials WHERE connection_id=$1', [input.connectionId])).rows[0]!.count
+        const status = { barrierReady: Boolean(record.releaseReply), credentialCount, originalWindowSeconds: AUTH_REPLAY_WINDOW_MS / 1000, requestCount: record.requests.length, exactRequestMatches: record.requests.length >= 2 && record.requests.every(r => r === record.requests[0]),
           sameResponse: record.responses.length >= 2 && record.responses.every(r => r === record.responses[0]), requestDigests: record.requests.map(hash), responseDigests: record.responses.map(hash), replay: rows.rows[0] ?? null }
         receipts.push({ connectionId: input.connectionId, ...status }); await save()
         outgoing.setHeader('content-type', 'application/json'); outgoing.end(JSON.stringify(status)); return
       }
-      if (incoming.url === '/fixture/expire') {
+      if (incoming.url === '/fixture/release') {
+        if (!record.releaseReply) throw new Error('No concurrent barrier')
+        record.releaseReply(); record.releaseReply = undefined
+      } else if (incoming.url === '/fixture/reset-fault') {
+        await db.query('DROP TRIGGER installed_redeem_fault ON agent_connection_credentials')
+        await db.query('DROP FUNCTION installed_redeem_fault()')
+      } else if (incoming.url === '/fixture/expire') {
         await db.query("UPDATE auth_idempotency_records SET replay_expires_at=clock_timestamp()-interval '1 second' WHERE operation='redeemAgentConnection'")
       } else if (incoming.url === '/fixture/revoke') {
         const current = await human('GET', `/api/v1/agent-connections/${input.connectionId}`)
@@ -107,7 +119,9 @@ const gateway = createServer(async (incoming, outgoing) => {
           if (record.mode === 'fingerprint' && response.statusCode === 200) {
             const tampered = JSON.parse(text) as { connection: { credential_fingerprint_prefix: string } }; tampered.connection.credential_fingerprint_prefix = '000000000000'; bytes = JSON.stringify(tampered)
           }
-          outgoing.writeHead(response.statusCode ?? 500, { 'content-type': 'application/json' }); outgoing.end(bytes)
+          const send = () => { outgoing.writeHead(response.statusCode ?? 500, { 'content-type': 'application/json' }); outgoing.end(bytes) }
+          if (record.mode === 'concurrent' && record.requests.length === 1) record.releaseReply = send
+          else send()
         })().catch(() => { outgoing.destroy() }) })
       } else { outgoing.writeHead(response.statusCode ?? 500, response.headers); response.pipe(outgoing) }
     })
