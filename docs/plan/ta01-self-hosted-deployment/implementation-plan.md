@@ -1,39 +1,29 @@
-## 背景与目标
+## 当前授权与执行关口
 
-复用已交付的纯后端部署和连接器，明确个人、团队、企业三种画像的剩余增量。形成可审阅的配置、安装、升级回退、资源测量与存储保证方案，供后续产品范围裁定。
+用户已批准保留 PostgreSQL、Redis、S3 的基础产品交付及现有 Linux amd64／arm64 CI、干净完整虚拟机验收。当前路线、设备环境和条件合入许可见 spec.md；Redis-free、filesystem、保证变更、生产接入与仓库外发布不实施。
 
-本轮仅新增 `docs/plan/ta01-self-hosted-deployment/` 下的文档和测量记录。PostgreSQL 保留，Runner 外置，连接器系统秘密存储沿用现有实现。
+原规划计划 doc:X7D1XMP5_XpGdpyYKCVNZ 和四份已审文档完整保存在 history/。本文件是基础产品执行计划。平台未暴露 Saved plan 编辑接口，因此本轮只同步仓库和来源；必须先完成平台同步或取得明确记录例外，再修改产品代码，不能把旧平台计划冒充本文件。
 
-## 文件变更
+## 基础产品文件增量
 
-- **`README.md`**：作为方案入口，区分现有能力、待实现增量、未测组合和批准关口。承接已合入路线的 TA01 责任及 TA16、TA19 联合验收输入；连接器最终验收依赖沿用已完成成果。
+- scripts/server-distribution/build.mjs、manifest.mjs：从已提交干净源码按架构构建 API／worker／MCP／Lite 和安装工具镜像，保留现有依赖镜像，记录源码 tree、镜像 ID／摘要、工具版本及准确迁移账本。候选采用离线 Docker 归档和摘要清单；大归档分块并按内容复用，不提交 guest 磁盘、源码安装副本或明文秘密。源身份来自受审渠道，随包 hash 不代发布者身份。
+- scripts/server-distribution/install.mjs、install.sh 与 infra/docker/server-installer.Dockerfile：交付包含 Node、Docker CLI／Compose 的可信安装工具镜像及 sh 启动入口，目标不需要源码、workspace、宿主 Node／pnpm／Python。启动入口先核用户取得的可信 manifest 摘要，再验证和装载工具镜像；不自行安装 Docker 或修改宿主权限。安装目录在宿主和工具镜像使用同一准确绝对路径，避免 Compose bind mount 指向其他目录。
+- packages/config/src/deployment-profile.ts 与对应测试：固定 personal／team／enterprise 三画像，只有 Redis／S3 组合；拒绝未知画像、不支持后端、副本或角色、缺 CA／代理约束及不安全路径。沿 loadConfig、loadFeatureConfig、loadRealtimeRedisHintConfig、loadRetentionConfig 和 runtime-secrets 校验；预检先于装载／启动副作用，错误不包含秘密。
+- docker-compose.lite.yml、docker-compose.production.yml、环境模板及 runtime-guard：接入显式画像、只读 CA、回环发布和准确 feature／MCP 模式，保持正常服务非 root 与硬化。初始化镜像的临时 /data 使用显式独有挂载，不新增无归属匿名卷。Runner 外置；Lite 的 MCP 使用独立镜像。
+- 安装器使用独占锁、原子写入和写前 journal。阶段固定 verified、staged、backed_up、migrated、healthy、committed，绑定原 project、配置摘要、候选身份和账本；同版本异内容拒绝，损坏或不确定 journal 拒绝继续。排空 API／worker／MCP 后用旧工具完整备份，沿 applyMigrations 逐项 SQL／账本同事务迁移，再验证候选后切 current；不将整批升级说成单事务。
+- packages/recovery 的现有 createRecoveryBundle／restoreRecoveryBundle 由安装工具调用，保持加密、密钥分离、全部 S3 版本／Object Lock／legal hold、空目标和认证 journal。迁移前失败保旧，迁移后仅在真实账本符合旧候选明确兼容清单时允许程序回退；不兼容时保留原卷，恢复到独立空目标，数据损失与切换另取具体授权。基础范围不新增领域 schema／API／event。
+- docs/integration/README.md、reference.md、getting-started.md、installation.md、troubleshooting.md 及部署／恢复文档：同次维护服务端包、三画像、离线闭包、CA 和失败恢复的可运行示例，使用仓库固定 zh-tech-writing；支持声明仅覆盖实际通过组合。
 
-- **`spec.md`、`implementation-plan.md`**：分别保存完整当前规格和平台确认的计划正文，建立稳定引用。明确执行只形成方案和现有部署测量，不能据此完成产品 DoD。
+## 验收与 CI
 
-- **`sources/*.md`、`sources.md`**：按统一格式保存本卡、相关问答、路线 TA01 原材料和部署证据；登记来源、完整性、正文及文件哈希、实际 Git blob。独立查询真实 `refs/heads/main` 并绑定不可变提交。工具截断、未取得的 Chief 原问答和共享缓存锁拒绝分别记录，不补造全文、不处理共享锁。
+创建 server-distribution 的安装、manifest、journal 测试及 apps/api/integration/deployment-profiles.integration.test.ts。沿 acceptance-matrix.md 冻结的名字覆盖安装、重复／并发、拒绝和 journal 中断、迁移失败、兼容程序回退、不兼容空目标恢复、原卷保留、限流 store 失败关闭、丢 hint／worker 重启、工件上传下载和完整备份恢复。所有断言使用真实接受状态与外部效果证据，不用 fake 结果代真实原子性和存储锁。
 
-- **`deployment-design.md`**：给出三画像的具体配置矩阵、依赖和不支持组合。个人复用 Lite，团队与企业复用 production；分别明确服务角色、并发、端口、TLS、私有 CA、代理信任、工件地址和离线交付边界。冻结后续逐文件实施建议，复用 `resolveServiceCommand`、`validateAuthoritativeRuntimeEnvironment` 和 `packages/db/src/migrations.ts` 的迁移账本机制。定义安装预检、候选暂存、维护排空、完整备份、迁移、健康验证及切换顺序。迁移前失败保旧；迁移后按明确兼容性检查程序回退，数据恢复使用独立空目标，保留原数据卷。
+新增必需双架构 server-install CI 入口，并同步 ci-policy、结果汇总和入口删除负例。复用现有固定 Ubuntu 完整 TCG guest／QMP 生命周期代码；先准备 Docker 及工具，再对无源码候选关闭外部默认路由、禁止自动 pull，实际证明离线启动闭包。三画像分别建立独有环境，API／MCP／Worker／outbox／限流／工件／完整恢复均在实际安装的候选中验证；隔离 CA、身份与 fake provider 不冒企业生产实网。
 
-- **`guarantee-decisions.md`**：逐项比较 Redis-free、filesystem 提案与 Accepted 保证。Redis 部分核 `AuthRateLimiter`、`NoopWakeSource`、`createRealtimeCoordinator`、`createOutboxWorker` 和 `RedisStreamSink`，说明限流状态、唤醒丢失、持久投递、重放及重启恢复，不能把停用唤醒当作完整 Redis-free。文件部分核 `S3ArtifactStorage`、`createRecoveryBundle`、`restoreRecoveryBundle`，覆盖上传校验、保留期限、版本、legal hold、备份与恢复。写出推荐方案及需裁定的 ADR 选项；明确 hash、应用拒删和原子写入均不能证明 WORM。保持现有默认保证，不修改 ADR 状态。
+明确原 guest image／firmware、实际 kernel、boot_id、CPU／RAM／磁盘和候选／源码／脚本摘要；保留首败、采样、重启与收尾回执。固定资源采样不宣称物理最低配置，不上传含秘密的 guest 磁盘。执行 lint、typecheck、test、integration、conformance 五项及真实示例／恢复 opt-in，核新支持组合和当前 HEAD Required CI；不复用 docs CI 或控制面基线。
 
-- **`measurement.md`**：记录现有 Docker 环境与独有 Lite 基线实测。固定源码、镜像、服务限制、数据集、采样间隔及空闲、首任务、并发负载，保存 CPU、内存、磁盘、延迟、OOM 和错误记录。只构建、运行未修改的现有部署，不实现新模式。Docker 虚拟环境测量与真实设备下限分列；设备、OS、CA 和访问条件尚未确定的验收保持未测。
+## 交付与收尾
 
-- **`acceptance-matrix.md`**：完整承接原测试清单和 DoD，逐类映射九类适用测试、真实服务与 fake 验证。复用后端退役、限流、realtime、outbox 和 recovery 的现有测试；冻结 `apps/api/integration/deployment-profiles.integration.test.ts` 等待创建路径与用例名。覆盖无源码安装、升级失败、回退、卷保留、错误组合拒绝、上传下载和备份恢复；分别标明 TA01 与后续联合验收责任。
+全部产品、候选索引和有界证据交付本会话分支，复用共享工具／store／镜像内容。只定向收尾身份已证且无活动引用的本人资源，历史匿名卷、两处 policy-blocked 目录及其他受拒目标保持，删除首败停止该目标。
 
-- **`verification.md`**：保存实际命令、首败、未测、文风检查、源码绑定和资源账本。说明本轮未改接口或功能，因此接入手册无需改动；在方案中列明未来实现须同次维护的配置、安装、恢复说明和可运行示例。
-
-## 执行约定
-
-使用仓库固定 `zh-tech-writing` 副本及结构、排版参考。沿用 Todos＋仓库记录，注明缺少 WorkMesh 控制面写工具，不虚构双轨同步。
-
-测量仅使用本任务独有项目、测试库和卷，复用共享镜像、package store 与版本工具。预检无法证明隔离时记录未测；收尾只处理本人登记且无活动引用的对象，策略拒绝后停止该目标。
-
-业务、API、DB、CI、安装器发行脚本、ADR 状态、其他卡状态、新设备权限和真实外发均不在本轮范围内。
-
-## 验证与交付
-
-- 核来源正文、平台计划与仓库副本一致；校验哈希、Git blob、相对链接、源码路径、三画像矩阵及原 DoD、九类测试的完整覆盖。
-- 执行 `git diff --check`、`pnpm check:integration-docs` 和 `node --test scripts/ci-policy.test.mjs`；用 `classifyChanges` 核实际提交路径，按现行分类完成适用检查并核本候选 Required CI。
-- 在独有隔离资源中完成现有 Lite 基线采样，保留原命令、日志及收尾回执；测量失败不改限制、断言或保证来取得通过。
-- 后续产品验收保持 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:conformance` 五项门禁；明确当前不存在根 `test:e2e` 脚本，后端验收逐项承接历史要求。
-- 全部文件提交本会话分支，提供 Markdown 预览入口，停在 P0/P1 独审与用户具体范围裁定关口。仅报告规划交付，不报告新配置、发行或产品 DoD 完成。
+PR227 随最终范围更新标题正文。实际产品验收及最新必需检查成功后回 review，完成正式 P0/P1 成果独审；问题闭合、PR ready、无新范围分歧时按已获条件授权合入。正式独审前不合并、标 Done、外发或声明产品完成。

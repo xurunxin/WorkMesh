@@ -1,5 +1,11 @@
 # 来源与完整性登记
 
+## 当前基础产品阶段
+
+用户已批准基础产品和现有 CI／完整虚拟机。新来源与同步缺口见 [product-stage-sync.md](product-stage-sync.md)，完整新规格和执行计划采用本目录当前文件。平台旧计划尚未被可调用工具更新，不能把仓库副本冒平台同步完成。
+
+下面登记保留已审规划阶段的来源和哈希。其 Spec／plan 字段现在对应 [旧规格](history/planning-spec.md)和[旧计划](history/planning-implementation-plan.md)；原材料不改写成事前产品批准。
+
 ## 准确基线与授权
 
 开工独立查询真实 `refs/heads/main`，与本工作树 HEAD 同为 `c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8`。该提交是 PR #226 的 merge；父提交含已审路线 head `3ac64f636d673906c9b5c6a0237aa7ef0e3fe726`。本卡主线来自 `git ls-remote origin refs/heads/main` 和本地不可变 Git 对象，不用陈旧 `origin/main` 推断合入。

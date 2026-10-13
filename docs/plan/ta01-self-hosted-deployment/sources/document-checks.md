@@ -11,14 +11,14 @@ sha=lambda b:hashlib.sha256(b).hexdigest()
 raw=lambda p:'\n'.join(json.loads(p.read_text(encoding='utf-8').split('```json\n',1)[1].split('\n```',1)[0]))
 source=(out/'sources.md').read_text(encoding='utf-8');evidence=(out/'sources/evidence-index.md').read_text(encoding='utf-8')
 count=0
-for p in sorted((out/'sources').glob('*-todo.md'))+sorted((out/'sources').glob('*-conversation.md')):
+for p in [p for p in sorted((out/'sources').glob('*-todo.md'))+sorted((out/'sources').glob('*-conversation.md')) if not p.name.startswith('product-')]:
  original=raw(p);row=next(l for l in source.splitlines() if ']('+p.relative_to(out).as_posix()+')' in l)
  for h in [sha(original.encode()),sha(p.read_bytes()),git('hash-object',str(p)).decode().strip()]: assert h in row,p
  count+=1
 spec=raw(out/'sources/current-todo.md').split('\nSpec:\n',1)[1].split('\nSaved plan:',1)[0]
 plan=raw(out/'sources/current-conversation.md').split('Saved plan (doc X7D1XMP5_XpGdpyYKCVNZ):\n',1)[1].split('\n[2026-10-13 13:02:35 UTC] (user/plan_revision)',1)[0]
-assert (out/'spec.md').read_bytes()==spec.encode()
-assert (out/'implementation-plan.md').read_bytes()==plan.encode()
+assert (out/'history/planning-spec.md').read_bytes()==spec.encode()
+assert (out/'history/planning-implementation-plan.md').read_bytes()==plan.encode()
 assert sha(spec.encode()) in source and sha(plan.encode()) in source
 originals=0
 for p in (out/'sources').glob('git-*.md'):
@@ -38,7 +38,8 @@ for p in out.rglob('*.md'):
  for link in re.findall(r'\[[^\]]*\]\(([^)]+)\)',prose(p)):
   if re.match(r'^(https?:|mailto:|todo:|doc:)',link): continue
   target,_,anchor=urllib.parse.unquote(link).partition('#')
-  resolved=(p.parent/target).resolve() if target else p
+  linkbase=out if p.parent.name=='history' and p.name.startswith('planning-') else p.parent
+  resolved=(linkbase/target).resolve() if target else p
   assert resolved.exists(),(p,link)
   if anchor:
    text=resolved.read_text(encoding='utf-8')
