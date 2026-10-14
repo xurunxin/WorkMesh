@@ -9,6 +9,8 @@ export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'w
 
 export function validateServerInstallEntrypoint(job) {
   const failures = []
+  if (job?.env?.PYTHONDONTWRITEBYTECODE !== '1')
+    failures.push('server-install Python checks must not dirty the committed source with bytecode')
   if (JSON.stringify(job?.strategy?.matrix?.include) !== JSON.stringify([
     { arch: 'amd64', runner: 'ubuntu-24.04' }, { arch: 'arm64', runner: 'ubuntu-24.04-arm' }])
     || job?.['runs-on'] !== '${{ matrix.runner }}' || job?.strategy?.['fail-fast'] !== false)

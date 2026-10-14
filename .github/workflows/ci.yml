@@ -894,6 +894,8 @@ jobs:
 
   server-install:
     name: Server full installation (${{ matrix.arch }})
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     needs: changes
     if: ${{ needs.changes.outputs.server-install == 'true' }}
     runs-on: ${{ matrix.runner }}

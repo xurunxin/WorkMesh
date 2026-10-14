@@ -16,6 +16,7 @@ test('双架构服务端候选完整 guest 验收必须执行并参与 Required 
   const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['server-install']
   assert.deepEqual(validateServerInstallEntrypoint(job), [])
   for (const mutate of [value => { value.strategy.matrix.include.pop() },
+    value => { delete value.env.PYTHONDONTWRITEBYTECODE },
     value => { value.steps = value.steps.filter(step => step.name !== 'Execute all installed profiles in full guest') },
     value => { value.steps.find(step => step.name === 'Execute all installed profiles in full guest').if = 'false' },
     value => { const step = value.steps.find(step => step.name === 'Execute all installed profiles in full guest'); step.run = step.run.replace("'${{ inputs.native-diagnostic }}' = true", "true = true") },

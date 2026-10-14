@@ -164,3 +164,9 @@ amd64 显式诊断受测源码 ec438487de8c69de9cae4641b9c1e667d5ce8729，结果
 amd64 显式诊断受测源码 7dff9923f2bb0f44af54ec5753582ffb674d0423，1,494.04 s，结果 diagnostic-only。团队实际 API／MCP／工件／Redis／outbox／并发链完成，MCP 无重启记录；新增真实限流为 401 → 429，Retry-After 为 1 秒。见 [索引](../../reviews/ta01-product/ci533-amd64-diagnostic-collector-rejection.json)及 [原件](../../reviews/ta01-product/ci533-amd64-diagnostic-collector-rejection.zip)。该模式没有三画像、升级回退、完整恢复及 reboot 验收，不构成支持通过，也不能证明原生故障解决。
 
 诊断结束上报 native-diagnostic 时，宿主收集器的阶段白名单没有该值，因此拒绝回执并触发 HTTPError。GDB 已返回，但结果未存入最终 failure 诊断，不能倒填符号、错误分类或信号。此为新增诊断入口遗漏的配套修改，现只在显式诊断模式接受该阶段，默认完整验收仍拒绝；三类安装／配对／Session Token 均拒绝进入回执。guest 在上报前先保安全 nativeTrace，避免上报失败再丢失诊断。4 项隐私及阶段边界负例、Python AST 通过，新收集器仍待实际运行。
+
+## CI #535 的构建前干净源码拒绝
+
+两架构受测源码均为 e5ad38a652ec44b3c08e23e586156a8318647c22，Build immutable offline candidate 被 BUILD_CLEAN_COMMITTED_SOURCE_REQUIRED 拒绝，没有候选安装或 guest 结果。分别保留 [amd64 索引](../../reviews/ta01-product/ci535-amd64-dirty-source-build-rejection.json)与 [原件](../../reviews/ta01-product/ci535-amd64-dirty-source-build-rejection.zip)、[arm64 索引](../../reviews/ta01-product/ci535-arm64-dirty-source-build-rejection.json)与 [原件](../../reviews/ta01-product/ci535-arm64-dirty-source-build-rejection.zip)。原件未采集 git porcelain 的具体脏路径，不补造路径。
+
+新增测试导入 run.py，后者导入研究助手；[独有源码副本实验](../../reviews/ta01-product/resumption-bytecode-clean-source-probe.json)复现 docs/reviews/b-ship/tcg/tools/__pycache__ 下未忽略缓存。仅对子进程设置 PYTHONDONTWRITEBYTECODE=1 后，测试通过且没有缓存。服务端 CI job 现冻结同一变量，并加策略删除负例；构建仍要求完整干净已提交源码，没有放宽检查或新增忽略规则。本机实验不代 Linux 候选或安装通过；回执收集修复及原生原因仍待后续实际结果。
