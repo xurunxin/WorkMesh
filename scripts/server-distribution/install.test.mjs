@@ -29,22 +29,34 @@ const manifest = () => {
     bootstrapChunks: [{ path: 'chunks/helper.tarpart', sha256: hash(Buffer.from('helper')), bytes: 6 }] }
 }
 
-test('health probe exits on readiness headers and preserves failure and deadline semantics', async () => {
+test('native readiness probe rejects errors, redirects and incomplete responses within its deadline', async () => {
   const server = createServer((request, response) => {
     if (request.url === '/stall') return
+    if (request.url === '/incomplete') { response.writeHead(200); response.flushHeaders(); return }
+    if (request.url === '/redirect') { response.writeHead(302, { Location: '/healthy' }).end(); return }
     if (request.url === '/unhealthy') { response.writeHead(503).end(); return }
-    // A body that stays open must not make a successful headers-only probe time
-    // out. The Docker three-second deadline includes child-process startup.
-    response.writeHead(200); response.flushHeaders()
+    response.writeHead(200).end('ready')
   })
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
-  const url = `http://127.0.0.1:${server.address().port}`
-  const script = fileURLToPath(new URL('../../infra/docker/healthcheck.mjs', import.meta.url))
-  const run = endpoint => promisify(execFile)(process.execPath, [script, endpoint], { timeout: 3_000 })
+  await new Promise(resolve => server.listen(0, '0.0.0.0', resolve))
+  const windows = process.platform === 'win32'
+  const url = `http://${windows ? 'host.docker.internal' : '127.0.0.1'}:${server.address().port}`
+  const script = fileURLToPath(new URL('../../infra/docker/healthcheck.sh', import.meta.url))
+  const bytes = (await readFile(script, 'utf8')).replace(/\r\n/g, '\n')
+  const run = endpoint => windows ? new Promise((resolve, reject) => {
+    // Use an already-owned image by exact ID; /data tmpfs prevents its declared
+    // VOLUME from allocating an anonymous volume. No fixture daemon remains.
+    assert.match(process.env.WORKMESH_HEALTH_PROBE_IMAGE ?? '', /^sha256:[0-9a-f]{64}$/)
+    const child = execFile('docker', ['run', '--rm', '-i', '--tmpfs', '/data',
+      '--label', 'io.workmesh.test.owner=ta01-health-probe', '--entrypoint', 'sh',
+      process.env.WORKMESH_HEALTH_PROBE_IMAGE, '-s', '--', endpoint], { timeout: 10_000 },
+    (error, stdout) => error ? reject(error) : resolve(stdout))
+    child.stdin.end(bytes)
+  }) : promisify(execFile)('sh', [script, endpoint], { timeout: 3_000 })
   try {
     await run(url + '/healthy')
-    await assert.rejects(run(url + '/unhealthy'), { code: 1 })
-    await assert.rejects(run(url + '/stall'), { code: 1 })
+    for (const endpoint of ['/unhealthy', '/redirect', '/stall', '/incomplete']) {
+      await assert.rejects(run(url + endpoint), { code: 1 })
+    }
     await assert.rejects(run('file:///untrusted'), { code: 1 })
     await assert.rejects(run(url.replace('http://', 'http://user:password@')), { code: 1 })
   } finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)) }

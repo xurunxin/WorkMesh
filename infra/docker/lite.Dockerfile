@@ -32,7 +32,7 @@ RUN pnpm --filter @workmesh/api --prod deploy /out-api \
 FROM ${NODE_IMAGE} AS runtime
 ARG WORKMESH_BUILD_SHA
 RUN apk upgrade --no-cache \
-    && apk add --no-cache postgresql16-client \
+    && apk add --no-cache postgresql16-client curl \
     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22 \
     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg \
@@ -52,10 +52,10 @@ COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secre
 COPY --chown=10001:10001 infra/docker/runtime-guard.mjs ./runtime-guard.mjs
 COPY --chown=10001:10001 infra/docker/lite-dispatch.mjs ./lite-dispatch.mjs
 COPY --chown=10001:10001 infra/docker/lite-entrypoint.sh ./entrypoint.sh
-COPY --chown=10001:10001 infra/docker/healthcheck.mjs ./healthcheck.mjs
+COPY --chown=10001:10001 infra/docker/healthcheck.sh ./healthcheck.sh
 # Windows checkouts may place CRLF in the shell script; normalize the shebang
 # inside the Linux image before making the production entrypoint executable.
-RUN sed -i 's/\r$//' /opt/workmesh/api/entrypoint.sh \
+RUN sed -i 's/\r$//' /opt/workmesh/api/entrypoint.sh /opt/workmesh/api/healthcheck.sh \
     && chmod 0555 /opt/workmesh/api/entrypoint.sh
 ENV NODE_ENV=production WORKMESH_BUILD_SHA=$WORKMESH_BUILD_SHA
 LABEL org.opencontainers.image.revision=$WORKMESH_BUILD_SHA \

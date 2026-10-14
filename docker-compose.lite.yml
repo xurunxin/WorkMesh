@@ -246,7 +246,7 @@ services:
     mem_limit: 640m
     logging: *logging
     healthcheck:
-      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3001/readyz"]
+      test: ["CMD", "sh", "/opt/workmesh/api/healthcheck.sh", "http://127.0.0.1:3001/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12
@@ -301,7 +301,7 @@ services:
     mem_limit: 448m
     logging: *logging
     healthcheck:
-      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3003/readyz"]
+      test: ["CMD", "sh", "/opt/workmesh/api/healthcheck.sh", "http://127.0.0.1:3003/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12

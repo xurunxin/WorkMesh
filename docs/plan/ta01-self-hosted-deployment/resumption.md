@@ -88,3 +88,11 @@ amd64 的受测源码为 da39ecb013f5f028aa4d843013f871ce6dc997a5，tree 为 5cd
 首次兼容升级及其备份已执行，健康中断负例通过后完成 commit。随后程序回退的第二次 complete-backup 失败，journal 为 staged。原回执只有 Docker 外层代码与 stderr 哈希，不能据此猜底层原因。团队、企业、完整回退／空目标恢复及整机重启仍未验收，不将个人局部结果写为支持通过。
 
 本次为备份失败增加已知恢复／文件系统／S3 错误码白名单，并投影私有 failure.json 的已知代码、报告及消息哈希。消息正文、连接 PID／名称、路径、环境与秘密不进入公开回执；保留原备份、维护和账本判定。新诊断尚待实际失败或通过回执。
+
+## CI #525 的首次启动健康失败与后续探针修正
+
+amd64 受测源码为 6340dfac008899cf2dd2f88c16c9ee193a64f256，tree 为 1a4619886d9eb7ea907a45a02eb66bd62c8ce368。1,783.97 s 后首次安装健康验证失败，只有前三个负例完成；未执行到第二次备份。API、worker、MCP 均运行，无 OOM、无重启，最后三次探针仍被 Docker 3 s 期限终止。数据服务健康。见 [索引](../../reviews/ta01-product/ci525-amd64-probe-timeout.json)与 [原成员归档](../../reviews/ta01-product/ci525-amd64-probe-timeout.zip)。原件并未记录探针内部执行阶段，不能将超时倒填为准确 CPU 或 Node 启动耗时。
+
+上一轮 Node 内置 HTTP 探针未解决该完整 guest 失败。后续改用镜像内 curl 和 POSIX shell，避免每次启动 JavaScript VM；三个生产镜像、Lite Compose 和候选运行指纹同步引用新脚本。curl 依赖随镜像归档。保持 HTTP 2 s、Docker 3 s、安装 180 s，要求完整 2xx；重定向、不完整正文、非 2xx、无响应、非法协议和凭据 URL 拒绝。就绪端点合同不变，没有修改数据维护或恢复断言。
+
+锁定 Node 22 的安装器单元 11 项通过；本机用已有 RustFS 镜像的准确 ID、临时 /data tmpfs 和自动删除容器运行真实 Linux shell／curl，实际覆盖上述成功及负例。没有新增匿名卷或修改共享镜像。该结果不代完整双架构安装；第二次备份根因仍未获新回执，三画像和完整恢复尚不能声明通过。

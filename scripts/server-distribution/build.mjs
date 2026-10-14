@@ -19,7 +19,7 @@ const runtimeFingerprint = hash(execFileSync('git', ['ls-tree', '-r', '-z', sour
   'apps', 'packages', 'skills', 'package.json', 'pnpm-lock.yaml', 'pnpm-workspace.yaml', 'tsconfig.base.json',
   '.node-version', 'OPENAPI.yaml', 'SCHEMA.sql', 'AGENT_PROTOCOL.md',
   'infra/docker/api.production.Dockerfile', 'infra/docker/worker.production.Dockerfile', 'infra/docker/mcp.production.Dockerfile',
-  'infra/docker/lite.Dockerfile', 'infra/docker/runtime-guard.mjs', 'infra/docker/prepare-production-deploy.mjs', 'infra/docker/healthcheck.mjs',
+  'infra/docker/lite.Dockerfile', 'infra/docker/runtime-guard.mjs', 'infra/docker/prepare-production-deploy.mjs', 'infra/docker/healthcheck.sh',
   'infra/docker/entrypoint.sh', 'infra/docker/lite-entrypoint.sh', 'infra/docker/lite-dispatch.mjs'], { cwd: root }))
 if (!/^[a-z0-9][a-z0-9.-]{0,63}$/.test(release)) fail('BUILD_RELEASE_INVALID')
 const hostArch = run('docker', ['info', '--format', '{{.Architecture}}'])

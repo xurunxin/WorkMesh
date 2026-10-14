@@ -92,4 +92,4 @@ Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTI
 
 健康验证开始前，journal 保存已核候选清单的原始 JSON，并绑定候选摘要。recover-old 在新程序启动后，先核清单摘要、程序输入和依赖兼容，再核真实账本。即使 pending 尚未写入，也不能跳过程序检查。旧 journal 缺少候选原件或原件损坏时明确拒绝，须先保全证据并按完整恢复流程处置。
 
-健康探针使用 Node 内置 HTTP／HTTPS 读取 readyz 状态，收到 2xx 后显式退出，避免未消费正文或 keep-alive 留存。HTTP 2 s、Docker 3 s 和安装健康验证 180 s 的预算保持；超时、非 2xx、非法协议和带凭据 URL 仍失败。此实现修正待双架构完整虚拟机验收。
+健康探针使用镜像内的 curl 读取本机 readyz，要求完整 2xx 响应，不跟随重定向，不使用代理环境变量。HTTP 2 s、Docker 3 s 和安装健康验证 180 s 的预算保持；超时、非 2xx、不完整响应、非法协议和带凭据 URL 均失败。curl 及其依赖随镜像离线交付，不要求目标设备联网安装。此修正待双架构完整虚拟机验收。
