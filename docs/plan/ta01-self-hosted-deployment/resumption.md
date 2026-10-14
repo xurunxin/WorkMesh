@@ -234,3 +234,17 @@ amd64 显式诊断受测39edad1703016901ef679336c58ff5522870d4e0，4,987.42 s，
 完整模式arm64受测39edad1703016901ef679336c58ff5522870d4e0，6,536.46 s。首个个人画像安装sh达到原1,800 s期限；迁移完成，健康动作failed，stop-unvalidated-runtime仅intent，没有停止完成或容器状态回执。见 [索引](../../reviews/ta01-product/ci540-arm64-health-timeout-stop-intent.json)及 [原件](../../reviews/ta01-product/ci540-arm64-health-timeout-stop-intent.zip)。不能将停止intent当已停止，AMD64个人故障通过不套此架构。
 
 快照MemAvailable3,175,196KiB、无swap、负载49.09／32.67／18.42、runnable54／total482。启动根因和停止实际状态未知，不从快照认定原因，不修改原预算或填通过。业务、限流、升级恢复及重启均未完成；最新完整Required CI失败，原生诊断 #541 的arm64仍待实际终态。
+
+## CI #541 arm64 的原前序安装首败
+
+保原前序的arm64诊断受测39edad1703016901ef679336c58ff5522870d4e0，6,827.21 s，diagnostic-only。个人首次安装达到原1,800 s期限，迁移完成、健康intent，容器状态不可得。见 [索引](../../reviews/ta01-product/ci541-arm64-prelude-install-timeout.json)及 [原件](../../reviews/ta01-product/ci541-arm64-prelude-install-timeout.zip)。未到团队或自然捕获，不套AMD64未复现，也不冒完整模式停止已完成。快照runnable52／total450、负载49.18／29.11／16.37、MemAvailable3,176,608KiB、无swap，仅记录当时条件，不认定原因。
+
+## 失败证据采集保留已核容器状态
+
+源码核查发现旧失败采集器会在单个日志分类器超时后丢弃整个容器状态数组。现先核安装 UUID／根哈希并记录全部准确容器的状态，再逐个采集日志；某个分类失败只记录异常类型，其他状态仍保留。仅补容器主进程准确宿主 PID 的数字用户／内核 CPU tick、线程数、启动 tick 和每秒 tick 数，不读取命令行、环境、任意进程名或私有正文。计数是失败时快照，不证明等待原因或历史资源状态，也不据此调整安装预算。
+
+Python AST 与现有边界检查通过；此项尚未完整 guest 实测。正在运行的 #543 仍绑定 e4124a49b4efce3c9b39702324d3d8646fe70532，未包含这项采集修改，不以其结果冒新采集路径通过。
+
+实际采集片段的本机夹具见 [索引](../../reviews/ta01-product/resumption-guest-state-projection-check.json)：三个日志分类器均超时，仍保全部三角色状态、排除无归属对象与异常正文。首轮夹具漏注入 allowed，NameError 未执行完整片段；补测试输入后通过，未因此改产品代码。夹具没有执行 Docker／guest，也没有覆盖 Linux proc 实际读取。
+
+本地六个有据镜像已定向收尾，见 [回执](../../reviews/ta01-product/resumption-local-image-cleanup.json)。先核旧候选源码、准确标签／完整ID与既有账本，探针另核owner；全量容器无消费者后逐项无force删除，再核No such image。共享依赖镜像、其他容器／镜像／卷保留，不prune、不宣称物理净释放。远端CI使用独立runner，不依赖本地已删对象。

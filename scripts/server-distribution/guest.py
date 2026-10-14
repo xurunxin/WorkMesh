@@ -782,6 +782,7 @@ def main():
                     inspected.check_returncode()
                     allowed = {'api', 'worker', 'mcp', 'postgres', 'redis', 'minio', 'minio-init', 'migrate'}
                     projected = []
+                    owned = []
                     for info in json.loads(inspected.stdout):
                         labels = info['Config']['Labels']
                         if labels.get('io.workmesh.installation') != journal['installationId'] or labels.get('io.workmesh.installation-root') != hashlib.sha256(str(prefix).encode()).hexdigest():
@@ -791,25 +792,42 @@ def main():
                             continue
                         state = info['State']
                         health = state.get('Health', {})
+                        # Preserve already inspected identities and states even
+                        # if a later log classifier cannot start in the guest.
+                        entry = {'id': info['Id'], 'service': service, 'running': state['Running'],
+                            'exitCode': state['ExitCode'], 'oom': state['OOMKilled'], 'restarts': info['RestartCount'],
+                            'health': health.get('Status') if health.get('Status') in {'starting', 'healthy', 'unhealthy'} else None}
+                        projected.append(entry)
+                        owned.append((info, entry))
+                        diagnostics['containers'] = projected
+                        try:
+                            process = Path('/proc') / str(int(state['Pid']))
+                            fields = (process / 'stat').read_text().rsplit(')', 1)[1].split()
+                            entry['process'] = {'userTicks': int(fields[11]), 'systemTicks': int(fields[12]),
+                                'threads': int(fields[17]), 'startTicks': int(fields[19]),
+                                'clockTicksPerSecond': os.sysconf('SC_CLK_TCK')}
+                        except (OSError, ValueError, IndexError):
+                            entry['processUnavailable'] = True
+                    for info, entry in owned:
+                        health = info['State'].get('Health', {})
                         # Capture only this installation's logs. The trusted
                         # classifier receives bytes over stdin and emits fixed
                         # categories, bounded module locations and hashes.
-                        logs = subprocess.run(['docker', 'logs', '--tail', '60', info['Id']], capture_output=True, timeout=30)
-                        code = "import{readFileSync}from'node:fs';import{commandFailure}from'/opt/workmesh/server-distribution/diagnostics.mjs';const p=JSON.parse(readFileSync(0,'utf8'));console.log(JSON.stringify({log:commandFailure({status:p.status,stdout:Buffer.from(p.stdout,'base64'),stderr:Buffer.from(p.stderr,'base64')}),probes:p.probes.map(v=>({exitCode:v.exitCode,failure:commandFailure({stderr:Buffer.from(v.output,'base64')})}))}));"
-                        import base64
-                        classified = subprocess.run(['docker', 'run', '--rm', '-i', '--pull', 'never', '--network', 'none',
-                            '--read-only', '--label', 'io.workmesh.diagnostic.installation=' + journal['installationId'],
-                            '--entrypoint', 'node', helper_image(manifest), '--input-type=module', '-e', code],
-                            input=json.dumps({'status': logs.returncode, 'stdout': base64.b64encode(logs.stdout).decode(),
-                                              'stderr': base64.b64encode(logs.stderr).decode(),
-                                              'probes': [{'exitCode': probe['ExitCode'], 'output': base64.b64encode(probe.get('Output', '').encode()).decode()} for probe in health.get('Log', [])[-3:]]}).encode(), capture_output=True, timeout=60)
-                        classified.check_returncode()
-                        log_projection = json.loads(classified.stdout)
-
-                        projected.append({'id': info['Id'], 'service': service, 'running': state['Running'],
-                            'exitCode': state['ExitCode'], 'oom': state['OOMKilled'], 'restarts': info['RestartCount'],
-                            'health': health.get('Status') if health.get('Status') in {'starting', 'healthy', 'unhealthy'} else None,
-                            'log': log_projection['log'], 'probes': log_projection['probes']})
+                        try:
+                            logs = subprocess.run(['docker', 'logs', '--tail', '60', info['Id']], capture_output=True, timeout=30)
+                            code = "import{readFileSync}from'node:fs';import{commandFailure}from'/opt/workmesh/server-distribution/diagnostics.mjs';const p=JSON.parse(readFileSync(0,'utf8'));console.log(JSON.stringify({log:commandFailure({status:p.status,stdout:Buffer.from(p.stdout,'base64'),stderr:Buffer.from(p.stderr,'base64')}),probes:p.probes.map(v=>({exitCode:v.exitCode,failure:commandFailure({stderr:Buffer.from(v.output,'base64')})}))}));"
+                            import base64
+                            classified = subprocess.run(['docker', 'run', '--rm', '-i', '--pull', 'never', '--network', 'none',
+                                '--read-only', '--label', 'io.workmesh.diagnostic.installation=' + journal['installationId'],
+                                '--entrypoint', 'node', helper_image(manifest), '--input-type=module', '-e', code],
+                                input=json.dumps({'status': logs.returncode, 'stdout': base64.b64encode(logs.stdout).decode(),
+                                                  'stderr': base64.b64encode(logs.stderr).decode(),
+                                                  'probes': [{'exitCode': probe['ExitCode'], 'output': base64.b64encode(probe.get('Output', '').encode()).decode()} for probe in health.get('Log', [])[-3:]]}).encode(), capture_output=True, timeout=60)
+                            classified.check_returncode()
+                            log_projection = json.loads(classified.stdout)
+                            entry.update(log=log_projection['log'], probes=log_projection['probes'])
+                        except (OSError, KeyError, ValueError, subprocess.TimeoutExpired, subprocess.CalledProcessError) as classification_error:
+                            entry['logClassificationUnavailable'] = type(classification_error).__name__
                     diagnostics['containers'] = projected
             except (OSError, KeyError, ValueError):
                 diagnostics['journalUnavailable'] = True
