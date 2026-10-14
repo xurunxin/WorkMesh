@@ -5,11 +5,29 @@ import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { validateServerInstallEntrypoint } from './ci-policy.mjs'
 import { parse } from './ci-bootstrap/yaml.mjs'
 
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('双架构服务端候选完整 guest 验收必须执行并参与 Required CI', () => {
+  const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['server-install']
+  assert.deepEqual(validateServerInstallEntrypoint(job), [])
+  for (const mutate of [value => { value.strategy.matrix.include.pop() },
+    value => { value.steps = value.steps.filter(step => step.name !== 'Execute all installed profiles in full guest') },
+    value => { value.steps.find(step => step.name === 'Execute all installed profiles in full guest').if = 'false' },
+    value => { value.steps.find(step => step.name === 'Build immutable offline candidate')['continue-on-error'] = true }]) {
+    const invalid = structuredClone(job); mutate(invalid); assert.ok(validateServerInstallEntrypoint(invalid).length)
+  }
+  for (const input of ['scripts/server-distribution/install.mjs', 'packages/config/src/deployment-profile.ts', 'apps/api/src/server.ts']) {
+    const plan = classify([input]); assert.equal(plan.checks['server-install'], true)
+    for (const result of ['failure', 'skipped', 'cancelled']) {
+      const needs = results(plan); needs['server-install'].result = result; assert.ok(evaluateResults(plan, needs).length)
+    }
+  }
+})
 
 test('自包含双架构完整安装不可丢 leg、跳过或吞失败', () => {
   const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['connector-install']

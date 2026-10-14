@@ -75,3 +75,7 @@ pnpm -C packages/conformance exec tsx examples/integration-agent.ts
 ```
 
 示例先用 SDK 核当前 Connection，再使用官方 MCP 客户端执行 initialize、`verify_connection`、`get_workmesh_context` 和 `tools/list`。输出只含已核身份、工具数量和 Team ID；不会认领工作或发出外部请求。源码见 [integration-agent.ts](../../packages/conformance/examples/integration-agent.ts)。示例要求先完成连接器的配对与 Skill 验证。
+
+## 服务端基础交付候选
+
+版本化服务端包的配置检查、安装、升级、程序回退和独立空目标恢复见 [服务端安装说明](server-installation.md)。当前处于 TA01 实现与验收阶段，尚未形成双架构三画像支持声明；连接器已交付能力沿原安装说明保留。

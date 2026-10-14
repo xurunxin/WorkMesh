@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { parseDocument } from './ci-bootstrap/yaml.mjs'
 import { externalTestInputs, externalTypecheckInputs } from './ci-test-inputs.mjs'
+import { validateServerInstallEntrypoint } from './ci-policy.mjs'
 import { readWorkspaces, validateCiBootstrap, validateMcpConformanceEntrypoints, validateDevelopmentImageEntrypoint, validateBackendLiteEntrypoint, validateConnectorInstallEntrypoint } from './ci-policy.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -23,6 +24,7 @@ const parsedWorkflow = workflowDocument.toJS()
 failures.push(...validateDevelopmentImageEntrypoint(parsedWorkflow.jobs?.['source-gates']))
 failures.push(...validateBackendLiteEntrypoint(parsedWorkflow.jobs?.['source-gates']))
 failures.push(...validateConnectorInstallEntrypoint(parsedWorkflow.jobs?.['connector-install']))
+failures.push(...validateServerInstallEntrypoint(parsedWorkflow.jobs?.['server-install']))
 failures.push(...validateCiBootstrap({
   job: parsedWorkflow.jobs?.changes,
   manifest: JSON.parse(readFileSync(resolve(root, 'scripts/ci-bootstrap/package.json'), 'utf8')),
@@ -141,6 +143,7 @@ const requiredJobs = [
   'agent-smoke',
   'connector-platform',
   'connector-install',
+  'server-install',
   'required-ci',
 ]
 requireCondition(
@@ -158,6 +161,7 @@ const rawArtifacts = new Map([
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['connector-platform', 'connector-platform-raw-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['connector-install', 'connector-install-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['server-install', 'server-install-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['required-ci', 'required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
 ])
 for (const jobId of requiredJobs) {
