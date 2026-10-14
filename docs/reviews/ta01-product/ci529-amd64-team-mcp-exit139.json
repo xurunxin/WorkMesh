@@ -439,5 +439,22 @@
         ]
       }
     ]
-  }
+  },
+  "downloadAttempts": [
+    {
+      "attempt": 1,
+      "exitCode": 1,
+      "bytes": 0,
+      "fileSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "errorClass": "EOF",
+      "stderrSha256": null,
+      "说明": "gh 下载的网络首败；stderr 未单独保留安全副本，不倒填摘要或保留临时签名地址。"
+    },
+    {
+      "attempt": 2,
+      "exitCode": 0,
+      "artifactZipSha256": "28384729bc968f636bae513fbf843b1aa32ce1ff10dc1b0ae1e8c736fcfaed38",
+      "说明": "新文件安全重取后核完整 ZIP；不覆盖首次空文件。"
+    }
+  ]
 }

@@ -20,6 +20,16 @@ class TracePrivacy(unittest.TestCase):
         self.assertFalse(trace['sigsegv'])
         self.assertTrue(trace['ptraceRejected'])
         self.assertEqual(trace['symbols'], [])
+        self.assertEqual(trace['categories'], ['permissionRejected'])
+
+    def test_debugger_failures_only_export_fixed_categories(self):
+        trace = safe_trace(b'No stack.\n', b"Couldn't write extended state status: Bad address.\n"
+                           b'warning: Target and debugger are in different PID namespaces.\n'
+                           b'Cannot access memory at address 0x1234 DO_NOT_PUBLISH', 1)
+        self.assertEqual(trace['categories'], ['registerAccessFailed', 'namespaceMismatch', 'inferiorUnavailable', 'memoryUnavailable'])
+        self.assertFalse(trace['sigsegv'])
+        self.assertNotIn('DO_NOT_PUBLISH', json.dumps(trace))
+        self.assertNotIn('0x1234', json.dumps(trace))
 
 
 if __name__ == '__main__':

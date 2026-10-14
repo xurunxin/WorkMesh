@@ -150,3 +150,11 @@ amd64 受测源码为 50cfca24837626c10cb4bc3a02b7e015b6da60fb，2,569.11 s 后�
 现有 CI 增加显式 workflow_dispatch 参数 native-diagnostic，默认 false。诊断模式生成新候选，编译应用源码保持，与受测诊断脚本摘要分别绑定；只装团队画像，在核安装 UUID／根哈希／镜像后由隔离 guest 内 GDB 附着准确 PID。自动加载关闭，只投影 Node／V8／OpenSSL 栈帧符号和哈希，不导出参数、局部变量、完整路径、地址、core 或秘密；附着拒绝保回执并停止该次调用。没有新增 Runner 或令牌权限。
 
 诊断不构成三画像／重启验收，即使没有崩溃也强制非零退出，结果为 diagnostic-only，不能令 Required CI 通过。普通 PR、push 及默认手动运行仍执行原完整三画像与重启门禁。新诊断尚未实际运行。22 项 CI 策略检查、2 项栈投影隐私负例、Python AST 与 CI 静态配置校验通过；它们不冒原生故障已复现或解决。
+
+CI #529 最终为 cancelled；amd64 及 Required CI 的实际 failure 保留，arm64 job 正常取消后的 artifact 没有 result.json。保留 [arm64 索引](../../reviews/ta01-product/ci529-arm64-cancelled.json)及 [原成员](../../reviews/ta01-product/ci529-arm64-cancelled.zip)，安装结果及首败未知。ec438487 的显式原生诊断 CI #531／38587482008 已启动；同源普通 CI #530／38587454712 正常取消，未补写产品结论。诊断尚未得到原生栈，最新完整必需验收仍未完成。
+
+## CI #531 的诊断首败与目标文件绑定
+
+amd64 显式诊断受测源码 ec438487de8c69de9cae4641b9c1e667d5ce8729，结果 diagnostic-only，1,272.45 s。团队直接 MCP 再次 RemoteDisconnected、进程重启一次。GDB 自身退出 1，stdout 78 字节／stderr 510 字节，无信号或原生栈；具体调试器错误仅保哈希，不能据此认定没有崩溃或倒填原因。见 [索引](../../reviews/ta01-product/ci531-amd64-native-diagnostic-no-stack.json)及 [原件](../../reviews/ta01-product/ci531-amd64-native-diagnostic-no-stack.zip)，四份 Python 脚本均与准确 Git blob 一致。新限流 429 断言仍未执行完成；arm64 诊断另记。
+
+诊断补充固定的寄存器、命名空间、线程、符号和权限错误分类。按 [GDB 目标程序与库要求](https://www.sourceware.org/gdb/current/onlinedocs/gdb.html/Connecting.html)，显式用已核目标 PID 的 /proc/PID/exe 与 /proc/PID/root 绑定程序／库；记录实际程序二进制摘要，核 TracerPid 等于本次 GDB PID，关闭 debuginfod 和自动加载。不将该设置修正冒前一轮 GDB 退出的已知原因，也未改生产 Node、TLS 或预算。3 项栈投影隐私负例和 Python AST 通过；新的固定分类与原生栈尚待实际诊断。
