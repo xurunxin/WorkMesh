@@ -18,6 +18,7 @@ test('双架构服务端候选完整 guest 验收必须执行并参与 Required 
   for (const mutate of [value => { value.strategy.matrix.include.pop() },
     value => { value.steps = value.steps.filter(step => step.name !== 'Execute all installed profiles in full guest') },
     value => { value.steps.find(step => step.name === 'Execute all installed profiles in full guest').if = 'false' },
+    value => { const step = value.steps.find(step => step.name === 'Execute all installed profiles in full guest'); step.run = step.run.replace("'${{ inputs.native-diagnostic }}' = true", "true = true") },
     value => { value.steps.find(step => step.name === 'Build immutable offline candidate')['continue-on-error'] = true }]) {
     const invalid = structuredClone(job); mutate(invalid); assert.ok(validateServerInstallEntrypoint(invalid).length)
   }

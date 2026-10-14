@@ -27,6 +27,7 @@ def main():
     parser.add_argument("--artifacts", required=True)
     parser.add_argument("--root", required=True)
     parser.add_argument("--source", required=True)
+    parser.add_argument("--native-diagnostic", action="store_true")
     options = parser.parse_args()
     root = Path(options.root).resolve()
     root.mkdir(mode=0o700, parents=True, exist_ok=False)
@@ -41,7 +42,7 @@ def main():
               "manifestSha256": sha(artifacts / "manifest.json"), "archiveSha256": sha(artifacts / "manifest.json"),
               "accelerator": "tcg", "guestRamMiB": 4096, "guestVcpus": 2,
               "scripts": {p.name: sha(p) for p in Path(__file__).parent.glob("*.py")},
-              "startedUtc": time.time(), "status": "running"}
+              "startedUtc": time.time(), "status": "running", "nativeDiagnostic": options.native_diagnostic}
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -126,8 +127,12 @@ WantedBy=cloud-init.target
 '''
         files = [("/opt/server-install/guest.py", guest, "0644"), ("/opt/server-install/finish.sh", wrapper, "0755"),
                  ("/etc/systemd/system/server-install.service", service, "0644"),
-                 ("/opt/server-install/expected.json", json.dumps({"manifestSha256": result["manifestSha256"], "sourceHead": options.source, "arch": options.arch}).encode(), "0644")]
+                 ("/opt/server-install/expected.json", json.dumps({"manifestSha256": result["manifestSha256"], "sourceHead": options.source, "arch": options.arch, "nativeDiagnostic": options.native_diagnostic}).encode(), "0644")]
+        if options.native_diagnostic:
+            files.append(("/opt/server-install/native_diagnostic.py", (Path(__file__).parent / "native_diagnostic.py").read_bytes(), "0644"))
         cloud = "#cloud-config\nusers:\n  - name: wmprobe\n    uid: 22020\n    lock_passwd: true\n    shell: /bin/sh\npackage_update: true\npackages:\n  - docker.io\n  - docker-compose-v2\n  - openssl\nwrite_files:\n"
+        if options.native_diagnostic:
+            cloud = cloud.replace("write_files:\n", "  - gdb\nwrite_files:\n")
         # Docker is prepared before the guest disables its outbound default route.
         cloud = cloud.replace("#cloud-config\n", '#cloud-config\napt:\n  conf: |\n    APT::Install-Recommends "false";\n    APT::Install-Suggests "false";\n', 1)
         for path, data, mode in files:
@@ -183,6 +188,11 @@ WantedBy=cloud-init.target
             if any(r["phase"] == "failure" for r in receipts):
                 raise RuntimeError("installed product assertion failed")
             time.sleep(1)
+        if options.native_diagnostic:
+            if process.returncode or not any(r["phase"] == "native-diagnostic" for r in receipts):
+                raise RuntimeError("missing native diagnosis")
+            result.update(status="diagnostic-only", qemuExitCode=process.returncode)
+            raise RuntimeError("native diagnostic cannot satisfy product acceptance")
         before = [r for r in receipts if r["phase"] == "before-reboot"]
         after = [r for r in receipts if r["phase"] == "after-reboot"]
         if process.returncode or len(before) != 1 or len(after) != 1 or before[0]["bootId"] == after[0]["bootId"]:
@@ -197,7 +207,7 @@ WantedBy=cloud-init.target
         result.update(status="passed", qemuExitCode=process.returncode, qemuPeakRssBytes=peak,
                       overlayAllocatedBytes=overlay.stat().st_blocks * 512, rebootSeconds=after[0]["hostElapsed"] - before[0]["hostElapsed"])
     except Exception as error:
-        result.update(status="failed", errorType=type(error).__name__)
+        result.update(status="diagnostic-only" if options.native_diagnostic else "failed", errorType=type(error).__name__)
         raise
     finally:
         if process and process.poll() is None:

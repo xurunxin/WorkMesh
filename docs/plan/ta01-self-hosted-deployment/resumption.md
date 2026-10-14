@@ -134,3 +134,19 @@ amd64 受测源码为 008ec90aaac9d14ff5cb603f5d5132922ae02441。4,518.63 s 后�
 amd64 受测源码为 991b394c0cae59367eb49eb1c4c85442f8e4403c。3,229.95 s 后，个人画像再次完成前述升级回退、备份、空目标恢复和原卷保留；团队画像的 API、重复幂等、首任务读取后，直接 MCP 请求发生 RemoteDisconnected。见 [索引](../../reviews/ta01-product/ci528-amd64-team-mcp-disconnect.json)及 [原件](../../reviews/ta01-product/ci528-amd64-team-mcp-disconnect.zip)。该错误在安装器业务校验之前，新增请求诊断没有触发；MCP 重启一次、无 OOM 记录，具体原因仍未知。企业、整机重启和完整双架构组合未完成。
 
 现把精确安装 UUID／根哈希匹配的服务日志，送入可信工具的固定分类器；输入走 stdin，回执仅含哈希、固定错误代码／类型和已知 MCP／SDK 模块的有界行号。原始消息、路径和秘密不进入公开结果，失败诊断不改变原操作结果或超时。13 项安装器单元及 UTF-8 Python AST 通过；新诊断尚待真实 guest 失败或通过回执。
+
+CI #527／#528 的 arm64 均正常取消；两份 artifact 均没有 result.json。分别保留 [#527 索引](../../reviews/ta01-product/ci527-arm64-cancelled.json)与 [原成员](../../reviews/ta01-product/ci527-arm64-cancelled.zip)、[#528 索引](../../reviews/ta01-product/ci528-arm64-cancelled.json)与 [原成员](../../reviews/ta01-product/ci528-arm64-cancelled.zip)。候选 manifest、源码记录、构建和串口原件保持，安装结论及首败原因未知，不补写通过。
+
+## 已安装画像的限流验收补齐
+
+核对发现 guest 原先只测 Redis 故障时凭据失败关闭，没有实际触发每个画像的 429。现新增 realCredentialRateLimit429：使用独有未注册邮箱和正常安装的 API／Redis，先核 INVALID_CREDENTIALS，再在最多 16 次原请求预算内要求 AUTH_RATE_LIMITED 和正整数 Retry-After。不修改生产限流默认值、不冻结或绕过 Redis TIME、不清空限流键；回执只保画像、状态序列和退避秒数。此项尚待新候选实测，CI #529 的 50cfca2 源码未包含该断言，既有个人局部通过不代本项通过。
+
+## CI #529 的原生退出线索与独立诊断
+
+amd64 受测源码为 50cfca24837626c10cb4bc3a02b7e015b6da60fb，2,569.11 s 后失败。个人画像再次完成原局部完整链，团队直接 MCP 请求为 RemoteDisconnected；[索引](../../reviews/ta01-product/ci529-amd64-team-mcp-exit139.json)和 [原件](../../reviews/ta01-product/ci529-amd64-team-mcp-exit139.zip)绑定受测脚本、tree、成员及 artifact。MCP 重启一次、exitCode 为 139，stdout 39 字节仅启动行、stderr 为空，未捕获 JavaScript 栈；原件无原生崩溃栈，不将该线索冒准确根因。arm64 尚在运行，另记实际结果。
+
+检索了 [Node 上游同版本崩溃报告](https://github.com/nodejs/node/issues/59740)，但只有相似版本事实，不能认定本次是同一 OpenSSL 问题。准确旧候选 MCP 镜像的只读版本探测为 Node v22.19.0／OpenSSL 3.0.17；没有据此更换锁定 Node 或关闭 TLS 验证。
+
+现有 CI 增加显式 workflow_dispatch 参数 native-diagnostic，默认 false。诊断模式生成新候选，编译应用源码保持，与受测诊断脚本摘要分别绑定；只装团队画像，在核安装 UUID／根哈希／镜像后由隔离 guest 内 GDB 附着准确 PID。自动加载关闭，只投影 Node／V8／OpenSSL 栈帧符号和哈希，不导出参数、局部变量、完整路径、地址、core 或秘密；附着拒绝保回执并停止该次调用。没有新增 Runner 或令牌权限。
+
+诊断不构成三画像／重启验收，即使没有崩溃也强制非零退出，结果为 diagnostic-only，不能令 Required CI 通过。普通 PR、push 及默认手动运行仍执行原完整三画像与重启门禁。新诊断尚未实际运行。22 项 CI 策略检查、2 项栈投影隐私负例、Python AST 与 CI 静态配置校验通过；它们不冒原生故障已复现或解决。

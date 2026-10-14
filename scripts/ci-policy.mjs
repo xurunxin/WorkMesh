@@ -20,6 +20,10 @@ export function validateServerInstallEntrypoint(job) {
       || !steps[0].run.includes('set -euo pipefail') || steps[0].run.includes('|| true'))
       failures.push(`server-install must execute ${command} without skipping or masking failure`)
   }
+  const guest = job?.steps?.find(step => step.name === 'Execute all installed profiles in full guest')?.run ?? ''
+  if (guest.includes('--native-diagnostic')
+    && !guest.includes("if test '${{ github.event_name }}' = workflow_dispatch && test '${{ inputs.native-diagnostic }}' = true; then"))
+    failures.push('native diagnosis must require explicit manual dispatch; normal CI must retain full acceptance')
   return failures
 }
 

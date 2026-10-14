@@ -187,7 +187,7 @@ class Client:
         self.cookies = http.cookiejar.CookieJar()
         self.opener = urllib.request.build_opener(urllib.request.HTTPSHandler(context=context), urllib.request.HTTPCookieProcessor(self.cookies))
         self.csrf = None
-    def request(self, url, body=None, *, method=None, headers=None, expected=200, raw=False):
+    def request(self, url, body=None, *, method=None, headers=None, expected=200, raw=False, metadata=False):
         hdr = {'content-type': 'application/json', **(headers or {})}
         if body is not None:
             hdr.setdefault('Idempotency-Key', str(uuid.uuid4()))
@@ -200,7 +200,8 @@ class Client:
         except urllib.error.HTTPError as error:
             response = error
         data = response.read()
-        if response.status != expected:
+        accepted = (expected,) if isinstance(expected, int) else expected
+        if response.status not in accepted:
             allowed_codes = {'VALIDATION_ERROR', 'FORBIDDEN', 'RESOURCE_SCOPE_DENIED', 'INVALID_STATE_TRANSITION',
                              'AUTH_RATE_LIMITED', 'AUTH_RATE_LIMIT_UNAVAILABLE', 'FEATURE_DISABLED'}
             try:
@@ -210,12 +211,14 @@ class Client:
             diagnostics.update(httpStatus=response.status, expectedHttpStatus=expected,
                                responseSha256=hashlib.sha256(data).hexdigest(),
                                apiErrorCode=code if code in allowed_codes else 'unknown')
-        assert response.status == expected, (url.split('?')[0], response.status, expected)
-        return data if raw else json.loads(data)
+        assert response.status in accepted, (url.split('?')[0], response.status, expected)
+        value = data if raw else json.loads(data)
+        return (value, response.status, response.headers.get('Retry-After')) if metadata else value
 
 
 def journey(prefix, config, certificates):
-    env = json.loads(config.read_text())['environment']
+    document = json.loads(config.read_text())
+    env = document['environment']
     origin = env['WEB_ORIGIN']
     client = Client(certificates)
     keys = json.loads((prefix / 'operator-keys.json').read_text())
@@ -339,6 +342,25 @@ def journey(prefix, config, certificates):
         raise RuntimeError('resource measurement failed')
     samples.append({'phase': 'concurrent-latency', 'count': 32, 'concurrency': 4, 'seconds': latencies})
     checks.append('concurrentRequests')
+    # Use a distinct absent subject with the deployed, unchanged Redis clock and
+    # budgets. Its backoff must actually reject; never flush limiter state.
+    limiter_client = Client(certificates)
+    subject = 'rate-limit-' + str(uuid.uuid4()) + '@example.test'
+    statuses = []
+    for _ in range(16):
+        reply, status_code, retry_after = limiter_client.request(origin + '/api/v1/auth/login',
+            {'email': subject, 'password': 'unrelated-password'}, expected=(401, 429), metadata=True)
+        statuses.append(status_code)
+        if status_code == 429:
+            assert reply['error']['code'] == 'AUTH_RATE_LIMITED'
+            assert isinstance(retry_after, str) and retry_after.isascii() and retry_after.isdigit()
+            assert int(retry_after) > 0
+            break
+        assert reply['error']['code'] == 'INVALID_CREDENTIALS'
+    assert 401 in statuses and statuses[-1] == 429, 'installed credential limiter did not reject'
+    samples.append({'phase': 'credential-rate-limit', 'profile': document['profile'],
+                    'statuses': statuses, 'retryAfterSeconds': int(retry_after)})
+    checks.append('realCredentialRateLimit429')
     return {'email': 'probe@example.test', 'password': password, 'itemId': item['id'], 'secondItemId': second['id'],
             'artifactId': status['artifactId'], 'uploadId': upload['id'], 'installationToken': redeemed['installation_token']}
 
@@ -453,6 +475,8 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
 def main():
     servers = []
     prefix = None
+    debugger = None
+    native_diagnostic = json.loads(Path('/opt/server-install/expected.json').read_text()).get('nativeDiagnostic') is True
     try:
         rebooted = STATE.exists()
         if rebooted:
@@ -473,7 +497,7 @@ def main():
         assert 'default' not in command(['ip', 'route', 'show']).split()
         certificates = ROOT / 'tls'
         servers.append(proxy(9446, 0, certificates))
-        for index, profile in enumerate(['personal', 'team', 'enterprise']):
+        for index, profile in enumerate(['team'] if native_diagnostic else ['personal', 'team', 'enterprise']):
             prefix = ROOT / profile
             config = ROOT / (profile + '-config.json')
             api_port, mcp_port, s3_port = 9443 + index * 10, 9444 + index * 10, 9445 + index * 10
@@ -538,7 +562,23 @@ def main():
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 measurement(prefix, 'idle')
                 start = len(checks)
+                if native_diagnostic:
+                    from native_diagnostic import NativeDebugger
+                    release = json.loads((prefix / 'pending.json').read_text())
+                    ids = command(['docker', 'ps', '-q', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + release['project']]).split()
+                    containers = json.loads(command(['docker', 'inspect', *ids]))
+                    mcp = [entry for entry in containers if entry['Config']['Labels'].get('com.docker.compose.service') == 'mcp'
+                           and entry['Config']['Labels'].get('io.workmesh.installation') == release['installationId']
+                           and entry['Config']['Labels'].get('io.workmesh.installation-root') == hashlib.sha256(str(prefix).encode()).hexdigest()]
+                    assert len(mcp) == 1 and mcp[0]['Image'] in [manifest['images']['mcp']['id'], manifest['images']['mcp']['archiveId']]
+                    debugger = NativeDebugger(mcp[0]['State']['Pid'])
                 identity = journey(prefix, config, certificates)
+                if native_diagnostic:
+                    trace = debugger.finish()
+                    debugger = None
+                    report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks})
+                    compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
+                    return
                 private(prefix / 'validation.json', {'credential': identity['installationToken'], 'workItemId': identity['itemId']})
                 private(prefix / 'invalid-validation.json', {'credential': 'wmi_' + 'x' * 43, 'workItemId': identity['itemId']})
                 install(dist, digest, prefix, config, 'commit', expected=1, extra=['--validation', str(prefix / 'invalid-validation.json')])
@@ -571,6 +611,13 @@ def main():
             report({'phase': 'before-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
                     'profiles': profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
     except Exception as error:
+        if native_diagnostic and hasattr(error, 'native_trace'):
+            diagnostics['nativeTrace'] = error.native_trace
+        if debugger:
+            try:
+                diagnostics['nativeTrace'] = debugger.finish()
+            except Exception as trace_error:
+                diagnostics['nativeTraceUnavailable'] = type(trace_error).__name__
         if prefix and (prefix / 'journal.json').exists():
             try:
                 journal = json.loads((prefix / 'journal.json').read_text())

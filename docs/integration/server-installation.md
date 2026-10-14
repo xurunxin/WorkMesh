@@ -103,3 +103,7 @@ Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTI
 业务校验按 JSON-RPC 请求 ID 选择唯一响应，SSE 中的前置通知和注释不作为读取结果；重复或缺失响应、RPC／tool 错误、鉴权失败和工作项不匹配仍拒绝。失败回执可查看安全 HTTP 状态、已知错误码及响应哈希，并附归属容器的日志分类与哈希；不输出凭据或消息正文。请求预算保持 30 s，校验失败不会登记 current。
 
 完整 guest 中直接 API／MCP 请求失败时，也按安装 UUID 和根哈希核归属后提取安全服务日志分类，保持源码／回执绑定。标准错误类型和已知模块行号用于定位首败，不能单独证明原因；支持声明仍须完整验收。
+
+每个画像的完整 guest 验收还要求真实凭据限流返回 429／AUTH_RATE_LIMITED 和有效 Retry-After，并与 Redis 故障时 503 失败关闭分别记录。使用独有测试主体、原生产预算和 Redis 时钟，不删除限流键或将根集成用例代替已安装组合。新增断言尚未实测通过。
+
+CI 的 native-diagnostic 参数默认关闭，仅用于隔离 guest 的原生崩溃定位。该模式强制非零退出且标记 diagnostic-only，不能用其结果登记完整支持或满足 Required CI；用户正常安装不依赖 GDB。详见 [接续与首败记录](../plan/ta01-self-hosted-deployment/resumption.md)。
