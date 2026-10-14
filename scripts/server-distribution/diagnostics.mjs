@@ -29,6 +29,7 @@ export function commandFailure(error) {
     moduleMissing: ['Cannot find module', 'ERR_MODULE_NOT_FOUND', 'MODULE_NOT_FOUND'],
     addressInUse: ['EADDRINUSE'],
     connectionRefused: ['ECONNREFUSED'],
+    heapFailure: ['JavaScript heap out of memory', 'Reached heap limit', 'FATAL ERROR'],
     unhandledErrorEvent: ["Unhandled 'error' event"],
     unsettledAwait: ['Detected unsettled top-level await'],
     connectionTerminated: ['Connection terminated unexpectedly', 'Connection terminated', 'socket hang up'],

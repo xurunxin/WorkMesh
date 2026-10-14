@@ -8,6 +8,7 @@ import { privateDirectory, atomicJson, withInstallLock, readState, validateJourn
 import { ArchiveIdentities } from './archive.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
 import { assertStableDataBindings } from './configuration.mjs'
+import { readMcpReply, mcpReplyStatus } from './mcp-response.mjs'
 import { createServer } from 'node:http'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
@@ -224,4 +225,20 @@ test('version changes preserve existing volumes, data namespace and cryptographi
   const prefix = document(); prefix.services.api.environment.AUTH_RATE_LIMIT_REDIS_PREFIX = 'new-budget'
   assert.throws(() => assertStableDataBindings(previous, prefix, options), /INSTALL_DATA_BINDINGS_CHANGED/)
   assert.throws(() => assertStableDataBindings(previous, next, { ...options, nextBackupKey: 'new-key' }), /INSTALL_DATA_BINDINGS_CHANGED/)
+})
+
+test('business MCP read selects its unique response and ignores preceding SSE notifications', () => {
+  const secret = 'wmi_' + 'x'.repeat(43)
+  const reply = { jsonrpc: '2.0', id: 2, result: { structuredContent: { data: { id: 'authorized-item' } } } }
+  const notification = { jsonrpc: '2.0', method: 'notifications/tools/list_changed' }
+  const sse = `: keep-alive\r\n\r\nevent: message\r\ndata: ${JSON.stringify(notification)}\r\n\r\nevent: message\r\ndata: ${JSON.stringify(reply)}\r\n\r\n`
+  assert.deepEqual(readMcpReply(sse, 2, 'text/event-stream'), reply)
+  assert.deepEqual(readMcpReply(JSON.stringify(reply), 2, 'application/json'), reply)
+  assert.deepEqual(readMcpReply(`data: {"jsonrpc":"2.0",\ndata: "id":2,"result":{}}\n\n`, 2, 'text/event-stream'), { jsonrpc: '2.0', id: 2, result: {} })
+  assert.throws(() => readMcpReply(sse, 3, 'text/event-stream'), /INSTALL_BUSINESS_VALIDATION_FAILED/)
+  assert.throws(() => readMcpReply(sse + `data: ${JSON.stringify(reply)}\n\n`, 2, 'text/event-stream'), /INSTALL_BUSINESS_VALIDATION_FAILED/)
+  assert.throws(() => readMcpReply('{malformed', 2, 'application/json'))
+  const status = mcpReplyStatus({ error: { code: -32603, message: secret }, result: { isError: true, structuredContent: { error: { code: secret, message: secret } } } })
+  assert.deepEqual(status, { rpcError: -32603, toolError: true, toolCode: 'unknown' })
+  assert.equal(JSON.stringify(status).includes(secret), false)
 })

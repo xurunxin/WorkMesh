@@ -118,3 +118,13 @@ arm64 在 5,127.22 s 后首次安装命令达到原 1,800 s 期限。镜像导�
 安装工具镜像改为复制编译后 config／contracts／Zod 的完整校验依赖，并保留 Node、Docker／Compose 与 PG 客户端；应用、worker、MCP 和数据镜像仍全部交付。本机 [工具闭包索引](../../reviews/ta01-product/resumption-slim-installer-proof.json)及 [构建、单元与上下文原件](../../reviews/ta01-product/resumption-slim-installer-proof.zip)保留首次错误的 FROM ID／registry 403、随后继承 10001 身份写 /installer 被拒及后续新 /tmp 工作目录的实际构建。没有重试被拒 registry 目标或修改旧目录权限。编译 API 基底为 98aeb2d，工具 Dockerfile／脚本为本次工作树，标签不冒全源码提交或候选通过。
 
 本机工具闭包检查通过；Docker 报告的逻辑 Size 从 683,351,646 到 375,567,996 字节，不当物理净释放或归档大小。新镜像不继承 API 全树；空目标 bucket 夹具因此明确使用已验证 API 镜像及其包实路径。镜像瘦身、stage 和数据绑定负例尚待新双架构完整组合。固定 CPU／RAM、所有候选字节校验及原预算保持，没有预写新 PASS。
+
+## CI #527 的个人闭环与团队 MCP 校验首败
+
+amd64 受测源码为 008ec90aaac9d14ff5cb603f5d5132922ae02441。4,518.63 s 后失败；[索引](../../reviews/ta01-product/ci527-amd64-team-mcp-validation-failure.json)与 [原件](../../reviews/ta01-product/ci527-amd64-team-mcp-validation-failure.zip)绑定 tree、脚本 blob、成员及 artifact 哈希。个人画像完成实际安装、API／MCP／工件、Redis 故障关闭与 PG cursor、worker／outbox、并发、数据身份变更拒绝、兼容升级回退、加密完整备份、独立空目标恢复及原卷保留。该组合的局部通过不表示双架构三画像和整机重启完成。
+
+团队画像完成业务局部及升级健康、中断缺原件负例后，commit 的 MCP 读取失败，journal 为 healthy；MCP 重启一次，无 OOM 记录，API／worker／数据服务健康。原件未采集失败请求状态、响应、具体错误或 MCP 日志分类，不能认定重启原因，也不将前面的未知备份错误倒填为已解决。企业与完整 reboot 尚未执行；arm64 结果另记。
+
+本机准确旧 MCP 镜像的 [部分请求中断](../../reviews/ta01-product/resumption-native-mcp-abort-probe.json)和 [完整请求中断](../../reviews/ta01-product/resumption-native-mcp-inflight-abort-probe.json)均未造成进程退出，原资源按准确 ID／owner 收尾。两项不证明 guest 重启原因，未据此修改 MCP 服务。
+
+独立源码发现安装器 SSE 只读取第一条 data，合法前置通知或注释会导致正确响应被拒。现选择唯一匹配 JSON-RPC 请求 ID 的响应，鉴权、错误拒绝、工作项 ID 与账本断言保持；重复响应、缺响应及 malformed JSON 拒绝。安装器 13 项单元通过。业务校验失败增加安全 HTTP／RPC／tool 状态、响应哈希、固定网络代码、准确归属状态与日志分类；30 s 请求预算保持，没有重试失败读取。新的失败诊断与解析改动待完整候选。

@@ -8,6 +8,7 @@ import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgr
 import { atomicJson, privateDirectory, readState, validateJournal, withInstallLock } from './journal.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
 import { assertStableDataBindings } from './configuration.mjs'
+import { readMcpReply, mcpReplyStatus } from './mcp-response.mjs'
 
 const appConfig = () => import('/app/node_modules/@workmesh/config/dist/index.js')
 const profileNames = ['WORKMESH_DEPLOYMENT_PROFILE', 'WORKMESH_QUEUE_BACKEND', 'WORKMESH_ARTIFACT_BACKEND',
@@ -186,14 +187,11 @@ function ledger(release) {
     'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -At -c "SELECT version || chr(9) || checksum_sha256 FROM schema_migrations ORDER BY version"'])
   return rows.split('\n').filter(Boolean).map(row => { const [version, checksumSha256] = row.split('\t'); return { version, checksumSha256 } })
 }
-async function healthy(release) {
-  // --wait also checks worker and MCP, not only an HTTP liveness endpoint.
-  try { compose(release, ['up', '-d', '--pull', 'never', '--wait', '--wait-timeout', '180', ...runtimeServices]) }
-  catch (error) {
+async function deploymentDiagnostics(release) {
     try {
       const ids = docker(['ps', '-aq', '--no-trunc', '--filter', `label=com.docker.compose.project=${release.project}`]).split('\n').filter(Boolean)
       const infos = ids.length ? JSON.parse(docker(['inspect', ...ids])) : []
-      error.diagnostics = { ...error.diagnostics, containers: infos.filter(info =>
+      return { containers: infos.filter(info =>
         info.Config.Labels?.['io.workmesh.installation'] === release.installationId
         && info.Config.Labels?.['io.workmesh.installation-root'] === release.rootHash).map(info => ({
         ...containerStatus(info), log: (() => {
@@ -201,9 +199,13 @@ async function healthy(release) {
           return commandFailure({ status: result.status, code: result.error?.code, stdout: result.stdout, stderr: result.stderr })
         })(),
       })) }
-    } catch { error.diagnostics = { ...error.diagnostics, statusUnavailable: true } }
-    throw error
-  }
+    } catch { return { statusUnavailable: true } }
+}
+async function healthy(release) {
+  // --wait also checks worker and MCP, not only an HTTP liveness endpoint.
+  try { compose(release, ['up', '-d', '--pull', 'never', '--wait', '--wait-timeout', '180', ...runtimeServices]) }
+  catch (error) { error.diagnostics = { ...error.diagnostics, ...await deploymentDiagnostics(release) }; throw error }
+
   const raw = compose(release, ['ps', '--format', 'json'])
   const services = raw.startsWith('[') ? JSON.parse(raw) : raw.split('\n').filter(Boolean).map(line => JSON.parse(line))
   for (const name of runtimeServices) if (!services.some(service => service.Service === name && service.Health === 'healthy')) fail('INSTALL_HEALTH_VALIDATION_FAILED')
@@ -250,6 +252,10 @@ async function verifyBusinessRead(release, env, proofFile) {
   const ca = env.NODE_EXTRA_CA_CERTS ? await readFile(env.NODE_EXTRA_CA_CERTS) : undefined
   const post = (id, method, params) => new Promise((resolve, reject) => {
     const body = JSON.stringify({ jsonrpc: '2.0', id, method, params })
+    const detail = { operation: 'mcp-business-read', method, requestId: id }
+    const rejection = (code, extra = {}) => {
+      const error = new Error(code); error.diagnostics = { ...detail, ...extra }; reject(error)
+    }
     const request = https.request(new URL('/mcp', env.PUBLIC_MCP_ORIGIN), {
       method: 'POST', ca, timeout: 30_000, headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream',
         'content-length': Buffer.byteLength(body), ...(env.WORKMESH_BETA_COORDINATION_MCP === 'true'
@@ -258,19 +264,26 @@ async function verifyBusinessRead(release, env, proofFile) {
       let result = '', bytes = 0
       response.on('data', block => { bytes += block.length; if (bytes > 1024 * 1024) request.destroy(); else result += block })
       response.on('end', () => {
+        Object.assign(detail, { httpStatus: response.statusCode, responseBytes: bytes, bodySha256: hash(Buffer.from(result)) })
         try {
           if (response.statusCode !== 200) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
-          const data = result.startsWith('data:') || result.startsWith('event:')
-            ? result.split('\n').find(line => line.startsWith('data:'))?.slice(5) : result
-          const reply = JSON.parse(data)
-          if (reply.error || reply.result?.isError || reply.id !== id) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
+          const reply = readMcpReply(result, id, String(response.headers['content-type'] ?? ''))
+          Object.assign(detail, mcpReplyStatus(reply))
+          if (reply.error || reply.result?.isError) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
           resolve(reply.result)
-        } catch { reject(new Error('INSTALL_BUSINESS_VALIDATION_FAILED')) }
+        } catch { rejection('INSTALL_BUSINESS_VALIDATION_FAILED') }
       })
-      response.on('error', reject)
+      response.on('error', () => rejection('INSTALL_BUSINESS_VALIDATION_FAILED', { responseInterrupted: true }))
     })
-    request.on('timeout', () => request.destroy(new Error('INSTALL_BUSINESS_VALIDATION_TIMEOUT')))
-    request.on('error', () => reject(new Error('INSTALL_BUSINESS_VALIDATION_FAILED')))
+    request.on('timeout', () => {
+      rejection('INSTALL_BUSINESS_VALIDATION_TIMEOUT', { timedOut: true })
+      request.destroy()
+    })
+    request.on('error', error => rejection('INSTALL_BUSINESS_VALIDATION_FAILED', {
+      networkCode: ['ECONNRESET', 'ECONNREFUSED', 'ETIMEDOUT', 'ENOTFOUND', 'EPIPE', 'CERT_HAS_EXPIRED',
+        'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'SELF_SIGNED_CERT_IN_CHAIN', 'ERR_TLS_CERT_ALTNAME_INVALID'].includes(error.code)
+        ? error.code : 'unknown',
+    }))
     request.end(body)
   })
   await post(1, 'initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 'workmesh-installer', version: '1.0.0' } })
@@ -345,7 +358,12 @@ export async function install(options, authority = undefined) {
       const readIntent = { name: 'validate-business-read', status: 'intent', startedAt: new Date().toISOString() }
       existing.actions.push(readIntent); await atomicJson(journalFile, existing)
       try { existing.validation = await verifyBusinessRead(pending, rendered.env, options.validationFile); readIntent.status = 'completed' }
-      catch (error) { readIntent.status = 'failed'; await atomicJson(journalFile, existing); throw error }
+      catch (error) {
+        readIntent.status = 'failed'
+        error.diagnostics = { ...error.diagnostics, ...await deploymentDiagnostics(pending) }
+        readIntent.diagnostics = error.diagnostics
+        await atomicJson(journalFile, existing); throw error
+      }
       const switchIntent = { name: 'switch-current', status: 'intent', startedAt: new Date().toISOString() }
       existing.actions.push(switchIntent)
       await atomicJson(journalFile, existing)
