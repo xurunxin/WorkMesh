@@ -689,6 +689,7 @@ def main():
                            and entry['Config']['Labels'].get('io.workmesh.installation') == release['installationId']
                            and entry['Config']['Labels'].get('io.workmesh.installation-root') == hashlib.sha256(str(prefix).encode()).hexdigest()]
                     assert len(mcp) == 1 and mcp[0]['Image'] in [manifest['images']['mcp']['id'], manifest['images']['mcp']['archiveId']]
+                    assert mcp[0]['HostConfig']['ReadonlyRootfs'] is True
                     debugger = NativeCrashWatcher(mcp[0]['State']['Pid'])
                 identity = journey(prefix, config, certificates)
                 if native_diagnostic and profile == 'team':

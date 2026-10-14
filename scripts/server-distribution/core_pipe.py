@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 import signal
 import sys
-from native_diagnostic import safe_trace, process_identity
+from native_diagnostic import safe_trace, process_identity, binary_hash
 
 OWNER = Path('/opt/server-install/core-owner.json')
 RESULT = Path('/root/server-install/native-core-trace.json')
@@ -53,6 +53,7 @@ def main():
         actual = process_identity(pid)
         if actual != owner:
             raise ValueError('native core process identity changed')
+        executable_hash = binary_hash(pid)
         descriptor, size, digest = memory_core(sys.stdin.buffer)
         completed = subprocess.run(['gdb', '--nx', '--quiet', '--batch',
             '-iex', 'set auto-load off', '-iex', 'set debuginfod enabled off',
@@ -63,7 +64,7 @@ def main():
             '-ex', 'thread apply all bt 12'], stdin=subprocess.DEVNULL,
             capture_output=True, pass_fds=(descriptor,), timeout=60)
         result.update(captured=True, coreBytes=size, coreSha256=digest,
-                      targetBinarySha256=actual['binarySha256'],
+                      targetBinarySha256=executable_hash,
                       trace=safe_trace(completed.stdout, completed.stderr, completed.returncode))
     except Exception as error:
         result['captureErrorType'] = type(error).__name__

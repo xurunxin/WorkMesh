@@ -1,0 +1,164 @@
+{
+  "说明": "保个人原升级／恢复／停止前序及团队端口，自然运行两段局部完成、未捕获core。诊断不执行新增健康故障或整机重启，不能证明常规模式团队exit139解决或完整支持；注册前读散列Node程序的观测影响尚未量化。",
+  "runId": 38622142747,
+  "jobId": 116052571636,
+  "artifactId": 11927553874,
+  "sourceHead": "39edad1703016901ef679336c58ff5522870d4e0",
+  "sourceTree": "a7472bc93230b82f2061474382f7334c726a0797",
+  "nativeDiagnostic": true,
+  "status": "diagnostic-only",
+  "totalSeconds": 4987.421270239,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "743b421664650fa38a9644b7b1c35f07ea4b61cc8d2322b3f28ed4293dd7a083",
+      "resultSha256": "743b421664650fa38a9644b7b1c35f07ea4b61cc8d2322b3f28ed4293dd7a083"
+    },
+    "run.py": {
+      "sha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860",
+      "resultSha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "c176f031e0d56cf9fc1e60690790e2cff671063f89dbfe350565fc14f1ec17ea",
+      "resultSha256": "c176f031e0d56cf9fc1e60690790e2cff671063f89dbfe350565fc14f1ec17ea"
+    },
+    "guest.py": {
+      "sha256": "f6b3fc78103a5728a7aafd7f616c42f56c6735e28e2c14cd048b7a88c647257a",
+      "resultSha256": "f6b3fc78103a5728a7aafd7f616c42f56c6735e28e2c14cd048b7a88c647257a"
+    },
+    "core_pipe.py": {
+      "sha256": "8199854874ccdac0bc95ccb07d17354e2a68b933577de4cb77d948119a9ba272",
+      "resultSha256": "8199854874ccdac0bc95ccb07d17354e2a68b933577de4cb77d948119a9ba272"
+    }
+  },
+  "artifactZipSha256": "66a836ecdbafe3cd910ae21a0d05750d1036f00d7ee34b09d0264b2b599f8a15",
+  "selectedZipSha256": "e4c4e308e03ce462d7b9ef70db2b183f73effa60083b0b2f8e06b5774f8ba6f7",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "f8f37e9e760ae5e900689f3c0e9f42c75f4810d59692a49c5cf968d89eebcee2",
+      "bytes": 69054
+    },
+    "server-install/guest.log": {
+      "sha256": "99a3a5d54bf45ef0f4dbbb62ce8802affb91e989f5de789e89e4a2911e6e24c9",
+      "bytes": 439
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "b3182e1e017a172f2a442ea50e588fa81b0550389452eb8aeb381aafdcf4c9ff",
+      "bytes": 2174
+    },
+    "server-install/manifest.json": {
+      "sha256": "cb07b46f7c9bffc778f8d46239e97a9934e2593d10d06d72d837b11f08a2b123",
+      "bytes": 12627
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "8767758a1841becc2ce1e2dd5931f464dc84c40a68daeb1e68d587d44fdf20a5",
+      "bytes": 105
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "9b92a71f63b1d248ad7a8ad90c1347cd7e4ab1d5ee2c107d3b14ba7b5e848fc3",
+      "bytes": 105
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/result.json": {
+      "sha256": "dd81310be5d897ca3a02b8f9159f446dceecf1bbe15a4b083f2ac87bc4ca08fa",
+      "bytes": 5777
+    },
+    "server-install/serial.log": {
+      "sha256": "3c4d635043f9b993fcc39d5b383a5a9ab41b20a4b2b7ad21ee97b80a2f2a518d",
+      "bytes": 113110
+    },
+    "server-install/source-after.txt": {
+      "sha256": "74cd374b823a119b51bfb4cd0f4c997edf15f1d993707d3b4ec9f7a70ffdaeec",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "e58ed23703ec14a73b2ad3018ec5fb5d8e2c046d0af2a6f0d3dab1d028003e1f",
+      "bytes": 320
+    },
+    "server-install/source.txt": {
+      "sha256": "74cd374b823a119b51bfb4cd0f4c997edf15f1d993707d3b4ec9f7a70ffdaeec",
+      "bytes": 83
+    },
+    "server-install/source-install.log": {
+      "sha256": "22b5425e83213eaf92481d6f2efa68db0a99deacf3efd8c58d229dd6d9b94053",
+      "bytes": 615
+    },
+    "server-install/unit.log": {
+      "sha256": "34989caf923f7030df5dc47681ae229de3a2e7af8a0373970295c380b19e5828",
+      "bytes": 3300
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "realCredentialRateLimit429",
+    "invalidCredentialCannotCommitCurrent",
+    "dataBindingChangesRejectedBeforeMutation",
+    "preMigrationFailureKeepsCurrent",
+    "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+    "upgradeKeepsOriginalVolumes",
+    "compatibleProgramRollback",
+    "completeEncryptedBackup",
+    "partialMigrationStopsIncompatibleRollback",
+    "restoreIntoEmptyTargetKeepsOriginal",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "realCredentialRateLimit429"
+  ],
+  "preludeProfiles": [
+    {
+      "profile": "personal",
+      "status": "passed",
+      "checks": [
+        "workerPrivateCaActualHttpsProviderRead",
+        "authenticatedApi",
+        "duplicateIdempotency",
+        "firstTaskReadback",
+        "realMcpInstallationIdentity",
+        "realArtifactUploadDownload",
+        "redisOutageFailsClosedCredentials",
+        "lostWakeupStillReadsCommittedCursor",
+        "workerRestartRecoversDurableOutbox",
+        "concurrentRequests",
+        "realCredentialRateLimit429",
+        "invalidCredentialCannotCommitCurrent",
+        "dataBindingChangesRejectedBeforeMutation",
+        "preMigrationFailureKeepsCurrent",
+        "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+        "upgradeKeepsOriginalVolumes",
+        "compatibleProgramRollback",
+        "completeEncryptedBackup",
+        "partialMigrationStopsIncompatibleRollback",
+        "restoreIntoEmptyTargetKeepsOriginal"
+      ]
+    }
+  ],
+  "nativeTrace": {
+    "naturalRun": true,
+    "captured": false
+  }
+}

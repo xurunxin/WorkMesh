@@ -6,7 +6,7 @@ import unittest
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
-from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity
+from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity, binary_hash
 from run import valid_receipt, complete_reboot_checks
 from core_pipe import memory_core
 
@@ -102,7 +102,9 @@ class TracePrivacy(unittest.TestCase):
         identity = process_identity(os.getpid())
         self.assertEqual(identity['pid'], os.getpid())
         self.assertGreater(identity['startTicks'], 0)
-        self.assertEqual(len(identity['binarySha256']), 64)
+        self.assertGreater(identity['executableInode'], 0)
+        self.assertGreater(identity['executableBytes'], 0)
+        self.assertEqual(len(binary_hash(os.getpid())), 64)
         descriptor, size, digest = memory_core(io.BytesIO(raw), 100)
         try:
             self.assertEqual(size, len(raw))

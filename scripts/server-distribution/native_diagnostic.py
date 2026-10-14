@@ -44,11 +44,18 @@ def process_identity(pid):
     target = Path('/proc') / str(pid)
     # comm may contain spaces or parentheses; starttime is field 22 after comm.
     start_ticks = target.joinpath('stat').read_text().rsplit(')', 1)[1].split()[19]
+    executable = target.joinpath('exe').stat()
+    return {'pid': pid, 'startTicks': int(start_ticks), 'executableDevice': executable.st_dev,
+            'executableInode': executable.st_ino, 'executableBytes': executable.st_size}
+
+
+def binary_hash(pid):
     digest = hashlib.sha256()
+    target = Path('/proc') / str(pid)
     with target.joinpath('exe').open('rb') as executable:
         while block := executable.read(1024 * 1024):
             digest.update(block)
-    return {'pid': pid, 'startTicks': int(start_ticks), 'binarySha256': digest.hexdigest()}
+    return digest.hexdigest()
 
 
 class NativeCrashWatcher:

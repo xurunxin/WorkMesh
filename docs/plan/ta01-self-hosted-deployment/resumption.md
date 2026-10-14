@@ -210,3 +210,27 @@ arm64 受测源码 7dff9923f2bb0f44af54ec5753582ffb674d0423，6,680.58 s，diagn
 #539 amd64 源码 b0613b24ccbdcfd64f2a9f86e1cfd4c5f3690110，1,194.75 s，独立团队自然运行的局部业务与429完成，naturalRun=true、captured=false；没有core或原生栈。见 [索引](../../reviews/ta01-product/ci539-amd64-natural-diagnostic-no-crash.json)及 [原件](../../reviews/ta01-product/ci539-amd64-natural-diagnostic-no-crash.zip)。两架构检查步骤均完成，但Linux内存路径的原日志现只从amd64原件核实，不把job步骤状态冒ARM原日志。该诊断仍为非零／diagnostic-only，不能证明原退出139已解决。
 
 源码对照发现先前诊断只装团队，缺普通首败前的个人画像安装、升级、恢复和停止，团队端口也由原index1变为index0。后续诊断保留原个人闭环前序和原端口，再仅对团队核准确自然进程；诊断前序不运行新增健康故障夹具，以保原场景。默认完整模式仍执行全部新增故障／重启和三画像断言，诊断仍不能满足Required CI。没有据此推断前序、端口、Node或QEMU就是原因。
+
+## CI #540 的真实停止通过与团队再次退出139
+
+amd64 完整模式受测源码39edad1703016901ef679336c58ff5522870d4e0，2,796.40 s，failed。个人画像完成新增真实429、原升级回退／完整加密备份／独立空目标恢复，以及真实健康故障：API／Worker／MCP全部停止，不兼容恢复拒绝，原current和数据卷身份不变。见 [索引](../../reviews/ta01-product/ci540-amd64-personal-stop-pass-team-exit139.json)及 [原件](../../reviews/ta01-product/ci540-amd64-personal-stop-pass-team-exit139.zip)。这只证明该画像该架构的故障场景，新停止逻辑不冒全矩阵通过。
+
+随后团队直接MCP再次RemoteDisconnected，exitCode139、重启一次，日志只有39字节启动行／空stderr；当前OOM字段false不证明历史没有OOM。API／Worker健康。故障回执MemTotal4,009,852KiB、MemAvailable3,155,160KiB、无swap，负载4.97／4.20／3.82；这些是该时刻数字，不据此认定或排除历史原因。企业与完整重启未执行，Required CI未通过，保原前序自然诊断 #541 另候实际结果。
+
+## CI #539 arm64 的应用就绪失败
+
+arm64 显式诊断源码b0613b24ccbdcfd64f2a9f86e1cfd4c5f3690110，6,139.45 s。首次团队安装迁移完成，健康动作失败，API／Worker为starting且无启动日志，MCP仍created、未启动。见 [索引](../../reviews/ta01-product/ci539-arm64-app-readiness-failure.json)及 [原件](../../reviews/ta01-product/ci539-arm64-app-readiness-failure.zip)。未进入业务／原生捕获，不能与AMD64退出139当同因。
+
+五条原probe输出SHA与仅含localhost端口、等待毫秒的合成curl: (7)连接失败文本完整匹配。索引标明哈希匹配推断，未改原件、未冒直接采集stderr，API exit -1未匹配仍未知。快照MemAvailable3,221,296KiB、无swap、负载18.67／14.56／9.60、runnable17／total292；不凭快照认定或排除启动根因，也不调整原预算填通过。
+
+## CI #541 的原前序自然诊断仍未复现
+
+amd64 显式诊断受测39edad1703016901ef679336c58ff5522870d4e0，4,987.42 s，diagnostic-only。个人原安装／升级／恢复／停止前序与团队业务、429完成，naturalRun=true、captured=false，没有core。见 [索引](../../reviews/ta01-product/ci541-amd64-prelude-natural-no-crash.json)及 [原件](../../reviews/ta01-product/ci541-amd64-prelude-natural-no-crash.zip)。该模式未执行新增健康故障、团队升级恢复、企业或完整重启；不能关闭同源常规 #540 的团队exit139。
+
+诊断注册原先读取并散列完整Node程序，改变请求前的读取与时机；影响未量化、不认定其就是未复现原因。下一步登记核完整镜像／安装身份、只读根文件系统、PID／启动tick与程序文件device／inode／size，避免请求前读全程序。崩溃处理时重新核同一身份，再计算实际程序SHA供trace绑定。匿名RAM、无swap、原预算及默认产品行为保持；7项本机边界检查／AST通过，新Linux身份路径与原生捕获仍待实际候选。
+
+## CI #540 arm64 的完整模式首败
+
+完整模式arm64受测39edad1703016901ef679336c58ff5522870d4e0，6,536.46 s。首个个人画像安装sh达到原1,800 s期限；迁移完成，健康动作failed，stop-unvalidated-runtime仅intent，没有停止完成或容器状态回执。见 [索引](../../reviews/ta01-product/ci540-arm64-health-timeout-stop-intent.json)及 [原件](../../reviews/ta01-product/ci540-arm64-health-timeout-stop-intent.zip)。不能将停止intent当已停止，AMD64个人故障通过不套此架构。
+
+快照MemAvailable3,175,196KiB、无swap、负载49.09／32.67／18.42、runnable54／total482。启动根因和停止实际状态未知，不从快照认定原因，不修改原预算或填通过。业务、限流、升级恢复及重启均未完成；最新完整Required CI失败，原生诊断 #541 的arm64仍待实际终态。
