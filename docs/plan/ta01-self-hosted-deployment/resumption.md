@@ -54,3 +54,17 @@ Windows 默认 GBK 解码失败，显式 UTF-8 后通过。静态结果不代根
 基础范围、原九类测试、真实验收、正式 P0/P1 成果独审、最新 Required CI 和条件合入保持。
 Redis-free、filesystem、生产接入、物理最低配置及对外发布未交付。历史匿名卷、两处受拒
 目录和共享资源没有重试清理。
+
+## 健康中断后的程序回退修复
+
+源码发现 recover-old 在缺少 pending 的中断路径上，只核迁移账本，可能漏核已启动新程序的兼容性。现将已验证清单的原始 JSON 及其候选摘要保存到 journal。新程序启动的 health intent、healthy 阶段均要求摘要有效且程序兼容，再核真实账本。缺少或损坏候选原件时拒绝，不补猜旧 journal。安装器 10 项单元通过，包含缺 pending、不同程序输入、缺原件、原件摘要损坏及兼容恢复断言。该后续修复尚未进入 9f686fd0 的 CI #522；其原件不能冒本修复的受测结果。
+
+本机依赖首次误将 storeDir 当参数再加了一层 v3，已按准确安装进程停止。修正参数后复用旧实际缓存 510 个包，未重新下载。文档静态、ci-policy 22 项及 CI 结构在 YAML 依赖就绪前首次失败；正常 bootstrap 安装后均通过。根门禁与完整 guest 的结果另记。
+
+## CI #522 的 amd64 健康探针首败
+
+CI #522／run 38513459463 的 amd64 在受测源码 9f686fd0188098961168690fbfbb40a157aafa4f 上失败。1,506.18 s，仅完成原三个负例。API 和 worker 正在运行，无 OOM、无重启，但最后三次健康探针均退出 -1。其输出哈希逐字匹配 Health check exceeded timeout (3s)。PostgreSQL、Redis 和 S3 健康，迁移完成；MCP 因 API 依赖尚未健康而处于 created。原件见 [索引](../../reviews/ta01-product/ci522-amd64-health-timeout.json)和 [逐字成员归档](../../reviews/ta01-product/ci522-amd64-health-timeout.zip)。归档只选 server-install 原成员，原 artifact ZIP 哈希另记，脚本 Git blob 均核一致。
+
+healthcheck.mjs 改用 Node 内置 HTTP／HTTPS 请求，仅核原 2xx 状态判据，收到响应头后显式退出。移除 fetch／Undici 冷启动及未消费正文、keep-alive 的进程留存。HTTP 总预算仍为 2 s，Docker 探针仍为 3 s，安装健康验证仍为 180 s；错误和超时继续拒绝。11 项安装器单元含真实子进程的成功头、503、无响应、非法协议及带凭据 URL 负例。此修正尚未通过完整 TCG guest，不将本机子进程结果当支持通过。
+
+新 guest 负例同时要求健康中断且没有 pending 时，缺少或损坏候选清单原件返回准确错误码，current 和原卷保持。丢唤醒测试只删除本画像 Redis 的 workmesh:domain-events 提示流，再通过 REST 事件 cursor 核真实 PG 事实；不删除限流键，不宣称已测 SSE 长连接。两项均待新候选完整执行。

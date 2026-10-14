@@ -89,3 +89,7 @@ sh /srv/candidate/install.sh /srv/candidate "$TRUSTED_MANIFEST_SHA256" \
 Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTIC。诊断含固定分类、输出哈希及归属容器状态，并写入 journal；参数、环境和原始服务输出不进入结果。先核阶段和动作，外层错误不能单独证明根因。诊断不改变恢复、超时或健康判定。
 
 每次仍校验候选全部文件和分块。应用镜像已载入时，全部角色的准确 ID、架构和来源符合清单才复用；身份不符即拒绝。当前支持状态仍以双架构完整 guest 结果为准。
+
+健康验证开始前，journal 保存已核候选清单的原始 JSON，并绑定候选摘要。recover-old 在新程序启动后，先核清单摘要、程序输入和依赖兼容，再核真实账本。即使 pending 尚未写入，也不能跳过程序检查。旧 journal 缺少候选原件或原件损坏时明确拒绝，须先保全证据并按完整恢复流程处置。
+
+健康探针使用 Node 内置 HTTP／HTTPS 读取 readyz 状态，收到 2xx 后显式退出，避免未消费正文或 keep-alive 留存。HTTP 2 s、Docker 3 s 和安装健康验证 180 s 的预算保持；超时、非 2xx、非法协议和带凭据 URL 仍失败。此实现修正待双架构完整虚拟机验收。

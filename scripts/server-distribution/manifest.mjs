@@ -82,6 +82,20 @@ export function assertCompatibleLedger(actual, expected) {
     .sort((a, b) => a.version.localeCompare(b.version))
   if (JSON.stringify(normalize(actual)) !== JSON.stringify(normalize(expected))) fail('INSTALL_INCOMPATIBLE_LEDGER_RESTORE_REQUIRED')
 }
+
+// A schema match alone cannot authorize old code after a newer runtime has
+// started. The health intent is durable before Compose starts that runtime.
+export function assertRecoveryCompatible(previousManifest, journal) {
+  if (journal.actions.some(action => action.name === 'verify-health-and-ledger')
+    || ['healthy', 'committed'].includes(journal.stage)) {
+    if (typeof journal.candidateManifestJson !== 'string') fail('INSTALL_RECOVERY_CANDIDATE_REQUIRED')
+    if (hash(Buffer.from(journal.candidateManifestJson)) !== journal.candidate) fail('INSTALL_RECOVERY_CANDIDATE_INVALID')
+    let candidate
+    try { candidate = validateManifest(JSON.parse(journal.candidateManifestJson)) }
+    catch { fail('INSTALL_RECOVERY_CANDIDATE_INVALID') }
+    assertCompatibleProgram(previousManifest, candidate)
+  }
+}
 export function assertCompatibleProgram(previous, candidate) {
   if (previous.runtimeFingerprint !== candidate.runtimeFingerprint
     || ['postgres', 'redis', 'minio'].some(role => previous.images[role].id !== candidate.images[role].id))

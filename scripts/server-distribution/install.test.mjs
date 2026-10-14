@@ -3,10 +3,14 @@ import assert from 'node:assert/strict'
 import { mkdtemp, realpath, readFile, writeFile, mkdir, chmod, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { hash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram } from './manifest.mjs'
+import { hash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible } from './manifest.mjs'
 import { privateDirectory, atomicJson, withInstallLock, readState, validateJournal } from './journal.mjs'
 import { ArchiveIdentities } from './archive.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
+import { createServer } from 'node:http'
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { fileURLToPath } from 'node:url'
 
 const temporary = async () => realpath(await mkdtemp(path.join(tmpdir(), 'workmesh-server-unit-')))
 const ledger = [{ version: 'v1_0001', checksumSha256: 'a'.repeat(64) }]
@@ -24,6 +28,27 @@ const manifest = () => {
     chunks: [{ path: 'chunks/main.tarpart', sha256: hash(Buffer.from('main')), bytes: 4 }],
     bootstrapChunks: [{ path: 'chunks/helper.tarpart', sha256: hash(Buffer.from('helper')), bytes: 6 }] }
 }
+
+test('health probe exits on readiness headers and preserves failure and deadline semantics', async () => {
+  const server = createServer((request, response) => {
+    if (request.url === '/stall') return
+    if (request.url === '/unhealthy') { response.writeHead(503).end(); return }
+    // A body that stays open must not make a successful headers-only probe time
+    // out. The Docker three-second deadline includes child-process startup.
+    response.writeHead(200); response.flushHeaders()
+  })
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
+  const url = `http://127.0.0.1:${server.address().port}`
+  const script = fileURLToPath(new URL('../../infra/docker/healthcheck.mjs', import.meta.url))
+  const run = endpoint => promisify(execFile)(process.execPath, [script, endpoint], { timeout: 3_000 })
+  try {
+    await run(url + '/healthy')
+    await assert.rejects(run(url + '/unhealthy'), { code: 1 })
+    await assert.rejects(run(url + '/stall'), { code: 1 })
+    await assert.rejects(run('file:///untrusted'), { code: 1 })
+    await assert.rejects(run(url.replace('http://', 'http://user:password@')), { code: 1 })
+  } finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)) }
+})
 
 test('Docker diagnostics preserve failure categories without argv, secrets or raw output', () => {
   const secret = 'wmi_' + 'x'.repeat(43)
@@ -94,6 +119,21 @@ test('same schema does not authorize rollback into changed program semantics', (
   assert.throws(() => assertCompatibleProgram(original, changed), /INSTALL_INCOMPATIBLE_PROGRAM_RESTORE_REQUIRED/)
   changed.runtimeFingerprint = original.runtimeFingerprint; changed.images.redis.id = 'sha256:' + 'a'.repeat(64)
   assert.throws(() => assertCompatibleProgram(original, changed), /INSTALL_INCOMPATIBLE_PROGRAM_RESTORE_REQUIRED/)
+})
+
+test('interrupted health intent cannot bypass program compatibility without pending state', () => {
+  const previous = manifest(), candidate = manifest()
+  candidate.runtimeFingerprint = 'd'.repeat(64)
+  const candidateManifestJson = JSON.stringify(candidate)
+  const journal = { stage: 'migrated', actions: [{ name: 'verify-health-and-ledger', status: 'intent' }], candidateManifestJson, candidate: hash(Buffer.from(candidateManifestJson)) }
+  assert.throws(() => assertRecoveryCompatible(previous, journal), /INSTALL_INCOMPATIBLE_PROGRAM_RESTORE_REQUIRED/)
+  assert.throws(() => assertRecoveryCompatible(previous, { ...journal, candidateManifestJson: undefined }), /INSTALL_RECOVERY_CANDIDATE_REQUIRED/)
+  const original = JSON.stringify(manifest())
+  assert.throws(() => assertRecoveryCompatible(previous, { ...journal, candidateManifestJson: original }), /INSTALL_RECOVERY_CANDIDATE_INVALID/)
+  assert.doesNotThrow(() => assertRecoveryCompatible(previous, { ...journal, candidateManifestJson: original, candidate: hash(Buffer.from(original)) }))
+  // Before any new runtime can start, the original program may recover after
+  // the separately required exact ledger check even if program inputs differ.
+  assert.doesNotThrow(() => assertRecoveryCompatible(previous, { ...journal, actions: [{ name: 'apply-migration-ledger', status: 'failed' }] }))
 })
 test('concurrentInstallHasOneOwner and lock is released after failure', async () => {
   const directory = await temporary()

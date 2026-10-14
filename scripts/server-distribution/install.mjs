@@ -4,7 +4,7 @@ import path from 'node:path'
 import { randomUUID, randomBytes } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 import https from 'node:https'
-import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgram, canonicalJson } from './manifest.mjs'
+import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible, canonicalJson } from './manifest.mjs'
 import { atomicJson, privateDirectory, readState, validateJournal, withInstallLock } from './journal.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
 
@@ -231,6 +231,7 @@ async function oneShotRecovery(release, mode, directory, target = undefined) {
 }
 async function recoverOld(previous, journal, journalFile) {
   if (!previous) fail('INSTALL_NO_PREVIOUS_RELEASE')
+  assertRecoveryCompatible(previous.manifest, journal)
   assertOwnedDeployment(previous)
   assertCompatibleLedger(ledger(previous), previous.manifest.migrationLedger)
   await healthy(previous)
@@ -283,6 +284,8 @@ export async function install(options, authority = undefined) {
   const { prefix, bundle, digest, configFile, action } = options
   await privateDirectory(prefix)
   const manifest = await verifyBundle(bundle, digest)
+  const candidateManifestJson = await readFile(path.join(bundle, 'manifest.json'), 'utf8')
+  if (hash(Buffer.from(candidateManifestJson)) !== digest) fail('INSTALL_MANIFEST_DIGEST_MISMATCH')
   const config = await readPrivateConfig(configFile)
   const identityFile = path.join(prefix, 'installation.json')
   const storedIdentity = await readState(identityFile)
@@ -345,7 +348,6 @@ export async function install(options, authority = undefined) {
     }
     if (action === 'recover-old') {
       if (!existing || existing.stage === 'committed' || existing.recovery?.status === 'previous-restored') fail('INSTALL_NO_INTERRUPTED_UPGRADE')
-      if (pending && existing.stage === 'healthy') assertCompatibleProgram(previous.manifest, pending.manifest)
       await recoverOld(previous, existing, journalFile)
       return { status: 'previous-restored', preservedVolumes: true }
     }
@@ -384,15 +386,17 @@ export async function install(options, authority = undefined) {
       await atomicJson(path.join(releaseDir, 'release.json'), release)
     }
     const journal = { format: 'workmesh-install-journal', id: randomUUID(), stage: 'verified', candidate: digest,
+      candidateManifestJson,
       installationId: identity.id, root: prefix,
       configHash, project: config.project, previous: previous?.candidate ?? null, actions: [], migrationLedger: null }
     await atomicJson(journalFile, journal)
     const effect = async (name, callback) => {
       const entry = { name, status: 'intent', startedAt: new Date().toISOString() }
       journal.actions.push(entry); await atomicJson(journalFile, journal)
-      try { const value = await callback(); entry.status = 'completed'; await atomicJson(journalFile, journal); return value }
+      try { const value = await callback(); entry.status = 'completed'; entry.finishedAt = new Date().toISOString(); await atomicJson(journalFile, journal); return value }
       catch (error) {
         entry.status = 'failed'
+        entry.finishedAt = new Date().toISOString()
         if (error.diagnostics) entry.diagnostics = error.diagnostics
         await atomicJson(journalFile, journal)
         // Never resume old code against an unknown/partially migrated ledger.
@@ -400,7 +404,6 @@ export async function install(options, authority = undefined) {
         // release; an incompatible ledger remains stopped for empty-target restore.
         if (previous && name !== 'import-images') {
           try {
-            if (name === 'verify-health-and-ledger') assertCompatibleProgram(previous.manifest, manifest)
             await recoverOld(previous, journal, journalFile)
           }
           catch { journal.recovery = { status: 'stopped-restore-required' }; await atomicJson(journalFile, journal) }

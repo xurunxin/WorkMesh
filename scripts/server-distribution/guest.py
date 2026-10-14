@@ -22,7 +22,7 @@ STATE = ROOT / 'state.json'
 checks, samples, diagnostics = [], [], {}
 
 
-def command(args, *, expected=0, data=None, timeout=1800):
+def command(args, *, expected=0, data=None, timeout=1800, expected_code=None):
     try:
         result = subprocess.run(args, input=data, capture_output=True, timeout=timeout)
     except subprocess.TimeoutExpired as error:
@@ -48,6 +48,8 @@ def command(args, *, expected=0, data=None, timeout=1800):
                            categories=[name for name, needles in categories.items() if any(needle in stderr for needle in needles)],
                            codes=sorted(set(re.findall(r'\b(?:INSTALL|DEPLOYMENT|RECOVERY)_[A-Z_]+', stderr))))
         raise RuntimeError('installed command failed')
+    if expected_code is not None:
+        assert expected_code in result.stderr.decode().splitlines(), 'missing expected rejection code'
     return result.stdout.decode()
 
 
@@ -143,8 +145,8 @@ def proxy(port, upstream, certificates):
     return server
 
 
-def install(dist, digest, prefix, config, action, *, expected=0, extra=()):
-    out = command(['sh', str(dist / 'install.sh'), str(dist), digest, str(prefix), str(config), action, *extra], expected=expected)
+def install(dist, digest, prefix, config, action, *, expected=0, extra=(), expected_code=None):
+    out = command(['sh', str(dist / 'install.sh'), str(dist), digest, str(prefix), str(config), action, *extra], expected=expected, expected_code=expected_code)
     return json.loads(out) if expected == 0 else None
 
 
@@ -272,8 +274,16 @@ def journey(prefix, config, certificates):
         time.sleep(1)
     checks.append('redisOutageFailsClosedCredentials')
     compose(prefix, 'stop', 'worker')
+    cursor_before = sql(prefix, 'SELECT COALESCE(max(cursor),0) FROM domain_events')
     second = client.request(origin + '/api/v1/work-items', {**body, 'title': 'durable while worker stopped'})
     assert int(sql(prefix, "SELECT count(*) FROM outbox_events WHERE status<>'delivered'")) > 0
+    # This profile owns its Redis. Erase only its derived event wake stream;
+    # credential limiter keys and PostgreSQL facts remain untouched.
+    compose(prefix, 'exec', '-T', 'redis', 'redis-cli', 'DEL', 'workmesh:domain-events')
+    assert compose(prefix, 'exec', '-T', 'redis', 'redis-cli', 'EXISTS', 'workmesh:domain-events').strip() == '0'
+    events = client.request(origin + '/api/v1/events?cursor=' + cursor_before)
+    assert any(event['aggregate_id'] == second['id'] and int(event['cursor']) > int(cursor_before) for event in events)
+    checks.append('lostWakeupStillReadsCommittedCursor')
     compose(prefix, 'start', 'worker')
     for _ in range(120):
         if sql(prefix, "SELECT count(*) FROM outbox_events WHERE status<>'delivered'") == '0':
@@ -339,6 +349,28 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
     assert (prefix / 'current.json').read_bytes() == current_bytes and volumes() == original_volumes
     checks.append('preMigrationFailureKeepsCurrent')
     assert install(upgrade, new_digest, prefix, config, 'upgrade', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
+    # Model an interruption after health started but before pending was written.
+    # Mutate only this test's private installer files, never application data.
+    journal_file = prefix / 'journal.json'
+    original_journal = journal_file.read_bytes()
+    pending_file = prefix / 'pending.json'
+    pending_held = prefix / 'pending-interruption-fixture.json'
+    assert not pending_held.exists()
+    pending_file.rename(pending_held)
+    try:
+        interrupted = json.loads(original_journal)
+        interrupted['stage'] = 'migrated'
+        missing = {k: v for k, v in interrupted.items() if k != 'candidateManifestJson'}
+        private(journal_file, missing)
+        install(dist, digest, prefix, config, 'recover-old', expected=1, expected_code='INSTALL_RECOVERY_CANDIDATE_REQUIRED')
+        corrupt = {**interrupted, 'candidateManifestJson': interrupted['candidateManifestJson'] + ' '}
+        private(journal_file, corrupt)
+        install(dist, digest, prefix, config, 'recover-old', expected=1, expected_code='INSTALL_RECOVERY_CANDIDATE_INVALID')
+        assert (prefix / 'current.json').read_bytes() == current_bytes and volumes() == original_volumes
+    finally:
+        journal_file.write_bytes(original_journal)
+        pending_held.rename(pending_file)
+    checks.append('interruptedHealthWithoutPendingRejectsUnknownCandidate')
     assert install(upgrade, new_digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
     journal = json.loads((prefix / 'journal.json').read_text())
     assert journal['stage'] == 'committed' and journal['backup']['manifestSha256']
@@ -500,12 +532,37 @@ def main():
             try:
                 journal = json.loads((prefix / 'journal.json').read_text())
                 diagnostics['journal'] = {'stage': journal['stage'], 'candidate': journal['candidate'],
-                    'actions': [{'name': entry['name'], 'status': entry['status']} for entry in journal['actions']]}
+                    'actions': [{key: entry[key] for key in ['name', 'status', 'startedAt', 'finishedAt'] if key in entry} for entry in journal['actions']]}
                 # Installer diagnostics contain only fixed classifications,
                 # owned-container states and output hashes, never raw messages.
                 diagnostics['installer'] = [entry['diagnostics'] for entry in journal['actions'] if 'diagnostics' in entry]
+                # The outer Docker client may time out before the installer can
+                # finish its journal. Inspect only this installation's objects.
+                ids = subprocess.run(['docker', 'ps', '-aq', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + journal['project']], capture_output=True, timeout=30)
+                ids.check_returncode()
+                if ids.stdout.split():
+                    inspected = subprocess.run(['docker', 'inspect', *ids.stdout.decode().split()], capture_output=True, timeout=30)
+                    inspected.check_returncode()
+                    allowed = {'api', 'worker', 'mcp', 'postgres', 'redis', 'minio', 'minio-init', 'migrate'}
+                    projected = []
+                    for info in json.loads(inspected.stdout):
+                        labels = info['Config']['Labels']
+                        if labels.get('io.workmesh.installation') != journal['installationId'] or labels.get('io.workmesh.installation-root') != hashlib.sha256(str(prefix).encode()).hexdigest():
+                            continue
+                        service = labels.get('com.docker.compose.service')
+                        if service not in allowed:
+                            continue
+                        state = info['State']
+                        health = state.get('Health', {})
+                        projected.append({'id': info['Id'], 'service': service, 'running': state['Running'],
+                            'exitCode': state['ExitCode'], 'oom': state['OOMKilled'], 'restarts': info['RestartCount'],
+                            'health': health.get('Status') if health.get('Status') in {'starting', 'healthy', 'unhealthy'} else None,
+                            'probes': [{'exitCode': probe['ExitCode'], 'outputSha256': hashlib.sha256(probe.get('Output', '').encode()).hexdigest()} for probe in health.get('Log', [])[-3:]]})
+                    diagnostics['containers'] = projected
             except (OSError, KeyError, ValueError):
                 diagnostics['journalUnavailable'] = True
+            except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
+                diagnostics['containerStatusUnavailable'] = True
         report({'phase': 'failure', 'errorType': type(error).__name__, 'diagnostics': diagnostics, 'completedChecks': checks, 'samples': samples})
         raise
     finally:
