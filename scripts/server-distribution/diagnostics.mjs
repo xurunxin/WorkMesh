@@ -16,6 +16,12 @@ export function commandFailure(error) {
     .map(match => ({ file: `${match[1]}.js`, line: Number(match[2]), column: Number(match[3]) }))
     .filter(frame => frame.line > 0 && frame.line < 100_000 && frame.column < 100_000)
     .slice(0, 12)
+  const mcpFrames = [...body.matchAll(/(?:file:\/\/)?\/app\/dist\/(http|index|discovery)\.js:(\d+):(\d+)/g)]
+    .map(match => ({ file: `mcp/${match[1]}.js`, line: Number(match[2]), column: Number(match[3]) }))
+    .filter(frame => frame.line > 0 && frame.line < 100_000 && frame.column < 100_000).slice(0, 12)
+  const transportFrames = [...body.matchAll(/@modelcontextprotocol\/sdk\/dist\/esm\/(server|shared)\/(webStandardStreamableHttp|streamableHttp|protocol|mcp)\.js:(\d+):(\d+)/g)]
+    .map(match => ({ file: `sdk/${match[1]}/${match[2]}.js`, line: Number(match[3]), column: Number(match[4]) }))
+    .filter(frame => frame.line > 0 && frame.line < 100_000 && frame.column < 100_000).slice(0, 12)
   const groups = {
     imageMissing: ['No such image', 'Unable to find image'],
     daemonUnavailable: ['Cannot connect to the Docker daemon'],
@@ -49,6 +55,8 @@ export function commandFailure(error) {
       .filter(name => new RegExp(`(?:^|\\n)${name}(?: \\[[A-Z0-9_]+\\])?:`).test(body)),
     recoveryFrames,
     databaseFrames,
+    mcpFrames,
+    transportFrames,
     postgresCodes: ['57P01', '57P02', '57P03', '57P05', '08000', '08003', '08006', '08001', '08004', '08007', '08P01',
       '53300', '53400', '53200', '57014', '42501', '28P01', '42P01', '42703', '42883', 'P0001', '22000', '23505', '40001', '40P01']
       .filter(code => new RegExp(`["']?code["']?\\s*:\\s*["']${code}["']`).test(body)),
@@ -62,7 +70,7 @@ export function commandFailure(error) {
       'WORKMESH_BACKUP_ENCRYPTION_KEY_REQUIRED', 'WORKMESH_BACKUP_ENCRYPTION_KEY_INVALID',
       'EACCES', 'ENOENT', 'EEXIST', 'ENOSPC', 'EROFS', 'EINVAL', 'ENOTDIR', 'EPERM', 'EIO',
       'ECONNRESET', 'EPIPE', 'ETIMEDOUT', 'ENOTFOUND', 'ENETUNREACH', 'EHOSTUNREACH',
-      'ERR_UNSUPPORTED_DIR_IMPORT', 'ERR_UNKNOWN_FILE_EXTENSION', 'ERR_STREAM_PREMATURE_CLOSE', 'ERR_STREAM_DESTROYED', 'ABORT_ERR']
+      'ERR_UNSUPPORTED_DIR_IMPORT', 'ERR_UNKNOWN_FILE_EXTENSION', 'ERR_STREAM_PREMATURE_CLOSE', 'ERR_STREAM_DESTROYED', 'ABORT_ERR', 'ERR_INVALID_STATE', 'ERR_HTTP_HEADERS_SENT']
       .filter(code => new RegExp(`\\b${code}\\b`).test(body)),
     providerCodes: ['AccessDenied', 'InvalidAccessKeyId', 'SignatureDoesNotMatch', 'NoSuchBucket', 'NoSuchKey',
       'NoSuchVersion', 'SlowDown', 'InternalError', 'InvalidRequest', 'InvalidBucketState', 'InvalidArgument',

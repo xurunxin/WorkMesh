@@ -609,9 +609,24 @@ def main():
                             continue
                         state = info['State']
                         health = state.get('Health', {})
+                        # Capture only this installation's logs. The trusted
+                        # classifier receives bytes over stdin and emits fixed
+                        # categories, bounded module locations and hashes.
+                        logs = subprocess.run(['docker', 'logs', '--tail', '60', info['Id']], capture_output=True, timeout=30)
+                        code = "import{readFileSync}from'node:fs';import{commandFailure}from'/opt/workmesh/server-distribution/diagnostics.mjs';const p=JSON.parse(readFileSync(0,'utf8'));console.log(JSON.stringify(commandFailure({status:p.status,stdout:Buffer.from(p.stdout,'base64'),stderr:Buffer.from(p.stderr,'base64')})));"
+                        import base64
+                        classified = subprocess.run(['docker', 'run', '--rm', '-i', '--pull', 'never', '--network', 'none',
+                            '--read-only', '--label', 'io.workmesh.diagnostic.installation=' + journal['installationId'],
+                            '--entrypoint', 'node', helper_image(manifest), '--input-type=module', '-e', code],
+                            input=json.dumps({'status': logs.returncode, 'stdout': base64.b64encode(logs.stdout).decode(),
+                                              'stderr': base64.b64encode(logs.stderr).decode()}).encode(), capture_output=True, timeout=60)
+                        classified.check_returncode()
+                        log_projection = json.loads(classified.stdout)
+
                         projected.append({'id': info['Id'], 'service': service, 'running': state['Running'],
                             'exitCode': state['ExitCode'], 'oom': state['OOMKilled'], 'restarts': info['RestartCount'],
                             'health': health.get('Status') if health.get('Status') in {'starting', 'healthy', 'unhealthy'} else None,
+                            'log': log_projection,
                             'probes': [{'exitCode': probe['ExitCode'], 'outputSha256': hashlib.sha256(probe.get('Output', '').encode()).hexdigest()} for probe in health.get('Log', [])[-3:]]})
                     diagnostics['containers'] = projected
             except (OSError, KeyError, ValueError):

@@ -128,3 +128,9 @@ amd64 受测源码为 008ec90aaac9d14ff5cb603f5d5132922ae02441。4,518.63 s 后�
 本机准确旧 MCP 镜像的 [部分请求中断](../../reviews/ta01-product/resumption-native-mcp-abort-probe.json)和 [完整请求中断](../../reviews/ta01-product/resumption-native-mcp-inflight-abort-probe.json)均未造成进程退出，原资源按准确 ID／owner 收尾。两项不证明 guest 重启原因，未据此修改 MCP 服务。
 
 独立源码发现安装器 SSE 只读取第一条 data，合法前置通知或注释会导致正确响应被拒。现选择唯一匹配 JSON-RPC 请求 ID 的响应，鉴权、错误拒绝、工作项 ID 与账本断言保持；重复响应、缺响应及 malformed JSON 拒绝。安装器 13 项单元通过。业务校验失败增加安全 HTTP／RPC／tool 状态、响应哈希、固定网络代码、准确归属状态与日志分类；30 s 请求预算保持，没有重试失败读取。新的失败诊断与解析改动待完整候选。
+
+## CI #528 的团队直接 MCP 调用中断
+
+amd64 受测源码为 991b394c0cae59367eb49eb1c4c85442f8e4403c。3,229.95 s 后，个人画像再次完成前述升级回退、备份、空目标恢复和原卷保留；团队画像的 API、重复幂等、首任务读取后，直接 MCP 请求发生 RemoteDisconnected。见 [索引](../../reviews/ta01-product/ci528-amd64-team-mcp-disconnect.json)及 [原件](../../reviews/ta01-product/ci528-amd64-team-mcp-disconnect.zip)。该错误在安装器业务校验之前，新增请求诊断没有触发；MCP 重启一次、无 OOM 记录，具体原因仍未知。企业、整机重启和完整双架构组合未完成。
+
+现把精确安装 UUID／根哈希匹配的服务日志，送入可信工具的固定分类器；输入走 stdin，回执仅含哈希、固定错误代码／类型和已知 MCP／SDK 模块的有界行号。原始消息、路径和秘密不进入公开结果，失败诊断不改变原操作结果或超时。13 项安装器单元及 UTF-8 Python AST 通过；新诊断尚待真实 guest 失败或通过回执。

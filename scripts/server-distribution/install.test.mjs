@@ -96,6 +96,14 @@ test('Docker diagnostics preserve failure categories without argv, secrets or ra
   assert.equal(JSON.stringify(database).includes(secret), false)
   assert.equal(JSON.stringify(database).includes('/private/root'), false)
   assert.deepEqual(commandFailure({ stderr: "code: '11111'" }).postgresCodes, [])
+  const mcp = commandFailure({ stderr: `Error [ERR_INVALID_STATE]: ${secret}
+    at file:///app/dist/http.js:88:7
+    at file:///app/node_modules/@modelcontextprotocol/sdk/dist/esm/server/webStandardStreamableHttp.js:41:2` })
+  assert.deepEqual(mcp.mcpFrames, [{ file: 'mcp/http.js', line: 88, column: 7 }])
+  assert.deepEqual(mcp.transportFrames, [{ file: 'sdk/server/webStandardStreamableHttp.js', line: 41, column: 2 }])
+  assert.ok(mcp.recoveryCodes.includes('ERR_INVALID_STATE'))
+  assert.equal(JSON.stringify(mcp).includes(secret), false)
+  assert.equal(JSON.stringify(mcp).includes('/app/'), false)
   const info = { Id: 'sha256:' + 'a'.repeat(64), Config: { Env: [secret], Labels: { 'com.docker.compose.service': secret } },
     State: { Status: 'exited', ExitCode: 1, OOMKilled: true, Health: { Status: 'unhealthy', Log: [{ ExitCode: 1, Output: secret }] } }, RestartCount: 2 }
   const status = containerStatus(info)
