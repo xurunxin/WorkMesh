@@ -7,11 +7,26 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity
-from run import valid_receipt
+from run import valid_receipt, complete_reboot_checks
 from core_pipe import memory_core
 
 
 class TracePrivacy(unittest.TestCase):
+    def test_each_reboot_profile_requires_actual_backend_evidence(self):
+        required = ['authenticatedApiAfterReboot', 'authenticatedMcpAfterReboot',
+                    'artifactBytesAfterReboot', 'newOutboxDeliveredAfterReboot']
+        receipt = {'checks': [{'profile': profile, 'checks': required.copy()}
+                             for profile in ['personal', 'team', 'enterprise']]}
+        self.assertTrue(complete_reboot_checks(receipt))
+        for profile in range(3):
+            for check in required:
+                missing = json.loads(json.dumps(receipt))
+                missing['checks'][profile]['checks'].remove(check)
+                self.assertFalse(complete_reboot_checks(missing))
+        self.assertFalse(complete_reboot_checks({'checks': receipt['checks'][:2]}))
+        self.assertFalse(complete_reboot_checks({'checks': [receipt['checks'][0]] * 3}))
+        self.assertFalse(complete_reboot_checks({}))
+
     def test_kernel_settings_restore_only_successful_writes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -216,6 +216,25 @@ class Client:
         return (value, response.status, response.headers.get('Retry-After')) if metadata else value
 
 
+def mcp_read(client, url, credential, method, params, request_id):
+    raw = client.request(url, {'jsonrpc': '2.0', 'id': request_id, 'method': method, 'params': params},
+        headers={'X-WorkMesh-Installation-Token': credential, 'accept': 'application/json, text/event-stream'}, raw=True).decode()
+    messages = []
+    if raw.lstrip().startswith(('data:', 'event:', ':')):
+        for frame in raw.replace('\r\n', '\n').split('\n\n'):
+            data = '\n'.join(line[5:].removeprefix(' ') for line in frame.split('\n') if line.startswith('data:'))
+            if data:
+                messages.append(json.loads(data))
+    else:
+        messages.append(json.loads(raw))
+    matching = [reply for reply in messages if isinstance(reply, dict)
+                and reply.get('jsonrpc') == '2.0' and reply.get('id') == request_id]
+    assert len(matching) == 1
+    reply = matching[0]
+    assert 'error' not in reply and not reply['result'].get('isError')
+    return reply['result']
+
+
 def journey(prefix, config, certificates):
     document = json.loads(config.read_text())
     env = document['environment']
@@ -264,13 +283,10 @@ def journey(prefix, config, certificates):
     code = created['connect_url'].split('#', 1)[1]
     redeemed = client.request(origin + '/api/v1/agent-connections/redeem', {'pairingCode': code, 'agentSlug': 'ta01-probe',
         'client': {'type': 'codex', 'version': '1.1.0'}})
-    mcp_headers = {'X-WorkMesh-Installation-Token': redeemed['installation_token'], 'accept': 'application/json, text/event-stream'}
     for i, (method, params) in enumerate([('initialize', {'protocolVersion': '2024-11-05', 'capabilities': {},
         'clientInfo': {'name': 'ta01-guest', 'version': '1.0.0'}}), ('tools/call', {'name': 'verify_connection', 'arguments': {}}),
         ('tools/call', {'name': 'get_workmesh_context', 'arguments': {}})]):
-        raw = client.request(redeemed['mcp']['url'], {'jsonrpc': '2.0', 'id': i + 1, 'method': method, 'params': params}, headers=mcp_headers, raw=True).decode()
-        reply = json.loads(next(line[5:] for line in raw.splitlines() if line.startswith('data:'))) if raw.startswith(('data:', 'event:')) else json.loads(raw)
-        assert 'error' not in reply and not reply['result'].get('isError')
+        mcp_read(client, redeemed['mcp']['url'], redeemed['installation_token'], method, params, i + 1)
     checks.append('realMcpInstallationIdentity')
     content = b'TA01 installed artifact\n'
     upload = client.request(origin + '/api/v1/artifact-upload-intents', {'workItemId': item['id'], 'filename': 'proof.txt',
@@ -362,10 +378,11 @@ def journey(prefix, config, certificates):
                     'statuses': statuses, 'retryAfterSeconds': int(retry_after)})
     checks.append('realCredentialRateLimit429')
     return {'email': 'probe@example.test', 'password': password, 'itemId': item['id'], 'secondItemId': second['id'],
-            'artifactId': status['artifactId'], 'uploadId': upload['id'], 'installationToken': redeemed['installation_token']}
+            'artifactId': status['artifactId'], 'uploadId': upload['id'], 'installationToken': redeemed['installation_token'],
+            'mcpUrl': redeemed['mcp']['url'], 'workItemBody': body}
 
 
-def upgrade_recovery(dist, manifest, digest, prefix, config):
+def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_health=True):
     # A second candidate identity for the same checked source/ledger tests the
     # supported compatible-program case. This is not a released older binary.
     upgrade = ROOT / 'compatible-upgrade'
@@ -470,6 +487,83 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
     # Remove only the exact fixture row we inserted; it never represented product SQL.
     sql(prefix, "DELETE FROM schema_migrations WHERE version='ta01_incompatible_fixture' AND checksum_sha256='" + 'b' * 64 + "'")
     assert install(dist, digest, prefix, config, 'recover-old')['status'] == 'previous-restored'
+    if include_failed_health:
+        failed_health_stops_runtime(dist, manifest, prefix, config, original_volumes, volumes)
+
+
+def failed_health_stops_runtime(dist, manifest, prefix, config, original_volumes, volumes):
+    # Same binaries, a deliberately unknown compatibility fingerprint, and a
+    # failing health probe form an isolated failure fixture, not an older release.
+    fixture = ROOT / 'incompatible-health-fixture'
+    altered = {**manifest, 'release': manifest['release'] + '.unhealthy',
+               'runtimeFingerprint': hashlib.sha256(b'ta01-unknown-runtime-fixture').hexdigest()}
+    if not fixture.exists():
+        fixture.mkdir(mode=0o700)
+        for entry in {entry['path']: entry for entry in manifest['files'] + manifest['chunks'] + manifest['bootstrapChunks']}.values():
+            target = fixture / entry['path']
+            target.parent.mkdir(mode=0o700, exist_ok=True)
+            os.link(dist / entry['path'], target)
+        (fixture / 'manifest.json').write_text(json.dumps(altered, indent=2) + '\n')
+    fixture_digest = hashlib.sha256((fixture / 'manifest.json').read_bytes()).hexdigest()
+    journal_file = prefix / 'journal.json'
+    original_journal = journal_file.read_bytes()
+    original_current = (prefix / 'current.json').read_bytes()
+    stopped, injected = threading.Event(), threading.Event()
+    injection_errors = []
+    release_dir = prefix / 'releases' / (altered['release'] + '-' + manifest['arch'])
+    def inject_health_failure():
+        try:
+            while not stopped.wait(0.1):
+                journal = json.loads(journal_file.read_text())
+                if journal['candidate'] != fixture_digest or not any(
+                    entry['name'] == 'apply-migration-ledger' and entry['status'] == 'intent' for entry in journal['actions']):
+                    continue
+                file = release_dir / 'compose.json'
+                document = json.loads(file.read_text())
+                labels = document['services']['mcp']['labels']
+                assert labels['io.workmesh.installation'] == journal['installationId']
+                assert labels['io.workmesh.installation-root'] == hashlib.sha256(str(prefix).encode()).hexdigest()
+                document['services']['mcp']['healthcheck'] = {'test': ['CMD', 'false'],
+                    'interval': '1s', 'timeout': '1s', 'retries': 1, 'start_period': '0s'}
+                temporary = file.with_name(file.name + '.health-fixture.tmp')
+                with temporary.open('x') as output:
+                    os.chmod(temporary, 0o600)
+                    json.dump(document, output)
+                os.replace(temporary, file)
+                injected.set()
+                return
+        except Exception as error:
+            injection_errors.append(type(error).__name__)
+    monitor = threading.Thread(target=inject_health_failure)
+    monitor.start()
+    try:
+        install(fixture, fixture_digest, prefix, config, 'upgrade', expected=1, extra=['--maintenance-confirmed'])
+    finally:
+        stopped.set()
+        monitor.join()
+    assert injected.is_set() and not injection_errors
+    journal = json.loads(journal_file.read_text())
+    assert journal['recovery']['status'] == 'stopped-restore-required'
+    stop_action = next(entry for entry in journal['actions'] if entry['name'] == 'stop-unvalidated-runtime')
+    assert stop_action['status'] == 'completed'
+    current = json.loads(original_current)
+    infos = json.loads(command(['docker', 'inspect', *compose(prefix, 'ps', '-aq').split()]))
+    runtime = [entry for entry in infos if entry['Config']['Labels'].get('com.docker.compose.service') in {'api', 'worker', 'mcp'}]
+    expected_roles = set(json.loads((release_dir / 'compose.json').read_text())['services']) & {'api', 'worker', 'mcp'}
+    assert {entry['Config']['Labels']['com.docker.compose.service'] for entry in runtime} == expected_roles
+    assert all(entry['Config']['Labels']['io.workmesh.installation'] == journal['installationId']
+               and entry['Config']['Labels']['io.workmesh.installation-root'] == current['rootHash']
+               and not entry['State']['Running'] for entry in runtime)
+    assert (prefix / 'current.json').read_bytes() == original_current and volumes() == original_volumes
+    samples.append({'phase': 'incompatible-health-failure', 'profile': current['profile'],
+                    'candidate': fixture_digest, 'journalSha256': hashlib.sha256(journal_file.read_bytes()).hexdigest(),
+                    'recovery': journal['recovery']['status'], 'stoppedServices': sorted(expected_roles)})
+    checks.append('failedHealthStopsIncompatibleRuntimeAndKeepsVolumes')
+    # Only after all failure assertions passed, restore this known same-binary
+    # fixture's private journal and original Compose. Unexpected failure is kept.
+    private(prefix / 'failed-health-fixture-journal.json', journal)
+    journal_file.write_bytes(original_journal)
+    compose(prefix, 'up', '-d', '--pull', 'never', '--wait', '--wait-timeout', '180', 'api', 'worker', 'mcp')
 
 
 def main():
@@ -497,7 +591,8 @@ def main():
         assert 'default' not in command(['ip', 'route', 'show']).split()
         certificates = ROOT / 'tls'
         servers.append(proxy(9446, 0, certificates))
-        for index, profile in enumerate(['team'] if native_diagnostic else ['personal', 'team', 'enterprise']):
+        reboot_checks = []
+        for index, profile in enumerate(['personal', 'team'] if native_diagnostic else ['personal', 'team', 'enterprise']):
             prefix = ROOT / profile
             config = ROOT / (profile + '-config.json')
             api_port, mcp_port, s3_port = 9443 + index * 10, 9444 + index * 10, 9445 + index * 10
@@ -527,6 +622,29 @@ def main():
                 result = client.request('https://10.0.2.15:' + str(api_port) + '/api/v1/auth/login', {'email': identity['email'], 'password': identity['password']})
                 client.csrf = result['csrfToken']
                 assert client.request('https://10.0.2.15:' + str(api_port) + '/api/v1/work-items/' + identity['itemId'])['id'] == identity['itemId']
+                origin = 'https://10.0.2.15:' + str(api_port)
+                mcp_read(client, identity['mcpUrl'], identity['installationToken'], 'initialize',
+                    {'protocolVersion': '2024-11-05', 'capabilities': {},
+                     'clientInfo': {'name': 'ta01-reboot', 'version': '1.0.0'}}, 1)
+                mcp_result = mcp_read(client, identity['mcpUrl'], identity['installationToken'], 'tools/call',
+                    {'name': 'get_work_item', 'arguments': {'workItemId': identity['itemId']}}, 2)
+                resource = mcp_result.get('structuredContent', {}).get('data')
+                if resource is None:
+                    resource = json.loads(next(item['text'] for item in mcp_result['content'] if item['type'] == 'text'))
+                assert resource['id'] == identity['itemId']
+                link = client.request(origin + '/api/v1/artifact-upload-intents/' + identity['uploadId'] + '/download')
+                assert client.request(link['downloadUrl'], raw=True) == b'TA01 installed artifact\n'
+                item = client.request(origin + '/api/v1/work-items', {**identity['workItemBody'], 'title': 'TA01 after reboot'})
+                item_id = str(uuid.UUID(item['id']))
+                query = "SELECT count(*),count(*) FILTER(WHERE o.status<>'delivered') FROM outbox_events o JOIN domain_events e ON e.id=o.domain_event_id WHERE e.aggregate_id='" + item_id + "'"
+                for _ in range(120):
+                    total, pending_count = map(int, sql(prefix, query).split('|'))
+                    if total > 0 and pending_count == 0:
+                        break
+                    time.sleep(1)
+                assert total > 0 and pending_count == 0
+                reboot_checks.append({'profile': profile, 'checks': ['authenticatedApiAfterReboot',
+                    'authenticatedMcpAfterReboot', 'artifactBytesAfterReboot', 'newOutboxDeliveredAfterReboot']})
             else:
                 invalid = ROOT / (profile + '-unsupported.json')
                 private(invalid, {**json.loads(config.read_text()), 'profile': 'unsupported'})
@@ -562,7 +680,7 @@ def main():
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 measurement(prefix, 'idle')
                 start = len(checks)
-                if native_diagnostic:
+                if native_diagnostic and profile == 'team':
                     from native_diagnostic import NativeCrashWatcher
                     release = json.loads((prefix / 'pending.json').read_text())
                     ids = command(['docker', 'ps', '-q', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + release['project']]).split()
@@ -573,11 +691,12 @@ def main():
                     assert len(mcp) == 1 and mcp[0]['Image'] in [manifest['images']['mcp']['id'], manifest['images']['mcp']['archiveId']]
                     debugger = NativeCrashWatcher(mcp[0]['State']['Pid'])
                 identity = journey(prefix, config, certificates)
-                if native_diagnostic:
+                if native_diagnostic and profile == 'team':
                     trace = debugger.finish()
                     debugger = None
                     diagnostics['nativeTrace'] = trace
-                    report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks})
+                    report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks,
+                            'preludeProfiles': [{k: v for k, v in entry.items() if k != 'identity'} for entry in saved['profiles']]})
                     compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
                     return
                 private(prefix / 'validation.json', {'credential': identity['installationToken'], 'workItemId': identity['itemId']})
@@ -587,7 +706,7 @@ def main():
                 checks.append('invalidCredentialCannotCommitCurrent')
                 assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
-                upgrade_recovery(dist, manifest, digest, prefix, config)
+                upgrade_recovery(dist, manifest, digest, prefix, config, include_failed_health=not native_diagnostic)
                 saved['profiles'].append({'profile': profile, 'status': 'passed', 'checks': checks[start:], 'identity': identity})
                 # Keep peak resource competition bounded: each profile's real
                 # journey is independent; all three are restarted for reboot.
@@ -602,7 +721,7 @@ def main():
         assert not resources['hostNodeAvailable'] and not resources['hostPnpmAvailable']
         if rebooted:
             report({'phase': 'after-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
-                    'restartedProfiles': ['personal', 'team', 'enterprise'], 'resources': resources})
+                    'restartedProfiles': ['personal', 'team', 'enterprise'], 'checks': reboot_checks, 'resources': resources})
         else:
             for profile in ['personal', 'team', 'enterprise']:
                 compose(ROOT / profile, 'start', 'postgres', 'redis', 'minio', 'api', 'worker', 'mcp')

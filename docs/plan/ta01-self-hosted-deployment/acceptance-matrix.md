@@ -34,8 +34,8 @@
 | --- | --- |
 | guest：API 安装、Cookie／CSRF、provider 私有 CA HTTPS、配对 MCP、上传／worker 验证／下载 | 未执行完成；首批候选不宣称支持 |
 | guest：真实凭据 429／Retry-After、停 Redis 的凭据失败关闭、停 worker 时 PG outbox 留存、重启后 delivered、并发请求和周期采样 | 未执行完成；新增 realCredentialRateLimit429 尚待新候选实测，Root 集成回归是独立输入 |
-| guest：同程序两候选升级、完整加密备份、兼容回退、真实未知账本拒绝、独立空目标恢复、原卷身份 | 未执行完成；不是两个已发行历史程序版本，裸 Compose 迁入未实现 |
-| guest：两次 kernel／boot_id 与 QMP RESET／SHUTDOWN，实际已安装服务重启读取 | 未执行完成；不以 hosted 架构标签或 Docker healthy 代证 |
+| guest：同程序两候选升级、完整加密备份、兼容回退、真实未知账本拒绝、健康失败后实际停止不兼容候选、独立空目标恢复、原卷身份 | 未执行完成；不是两个已发行历史程序版本，裸 Compose 迁入未实现 |
+| guest：两次 kernel／boot_id 与 QMP RESET／SHUTDOWN，实际已安装服务重启 API／MCP 读取、原工件字节和新 outbox 投递 | 未执行完成；不以 hosted 架构标签或 Docker healthy 代证 |
 | 根 lint／typecheck／test／integration／conformance；独立恢复 opt-in | 实际通过，原件见 verification.md；不当 guest 通过 |
 
 下面的历史冻结用例名继续保留。已有等效入口的真实名字和范围以上表为准；尚未完成的新场景仍是待创建或待执行责任，不因函数、配置或旧测试存在而勾选。Redis-free／filesystem 专属用例维持后续裁定。

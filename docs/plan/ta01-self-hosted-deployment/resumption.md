@@ -188,3 +188,25 @@ amd64 源码 ec228240b13cd06041e803931fe238836fa72478，1,786.54 s，结果 diag
 ## CI #533 arm64 的独立原件
 
 arm64 受测源码 7dff9923f2bb0f44af54ec5753582ffb674d0423，6,680.58 s，diagnostic-only。首次团队安装 sh 达原 1,800 s 期限；迁移完成，健康验证失败，多个角色探针 exitCode -1，原输出仅哈希。未进入 MCP 业务或原生诊断，也未完成新增 429 断言。见 [索引](../../reviews/ta01-product/ci533-arm64-install-health-timeout.json)及 [原件](../../reviews/ta01-product/ci533-arm64-install-health-timeout.zip)。14 个原成员及四份受测 Python 脚本摘要实核；不能与该轮 amd64 回执收集器拒绝混为同因，具体探针错误仍待新诊断。
+
+## 整机重启后的后端闭环补齐
+
+源码核对发现原整机重启分支只核 API 登录及既有工作项读取，未明确验证 MCP、工件和新 outbox 投递。现三画像重启后各自使用原 Human／Installation 身份：API 读取原项、MCP 实际读取同项、下载原工件并逐字比对、正常 API 新建工作项后核相应 domain_event 的真实 outbox 全部 delivered。保持原请求及 120 次轮询预算，不扩大权限、不直接写领域状态。MCP JSON／SSE 选择唯一准确请求 ID，通知和注释不冒业务响应。
+
+宿主要求三画像各含四项重启证据；删除任一画像或任一项不能通过。7 项本机边界／隐私检查及有通知、重复、错误 ID、malformed 的 MCP 解析夹具通过；夹具没有执行后端，新增真实重启闭环仍未执行。当前诊断 CI #539 受测 b0613b24ccbdcfd64f2a9f86e1cfd4c5f3690110，未含本节新增断言，且该模式本来不做整机重启。后续默认完整候选须绑定新源码。
+
+## 健康失败后实际停止候选程序
+
+源码核查发现 P1：升级候选健康失败时，旧程序兼容检查可能拒绝，但原 catch 只写 stopped-restore-required，没有实际停止已启动的候选 API／Worker／MCP。现先持久化 stop-unvalidated-runtime intent，核安装 UUID／根哈希后按完整容器 ID 停止并实核 Running=false，再尝试旧程序兼容恢复。停止失败记 runtime-stop-failed、固定失败码和安全诊断，不重试该目标，也不启动旧程序；其他失败无法证明停止时只记 restore-required。数据服务和原卷保留。
+
+14 项安装器单元通过，覆盖停止先于恢复、不兼容后保持停止、停止拒绝不重试／不恢复以及不能误写已停止。新增每画像真实 guest 故障夹具：同程序镜像配明确未知兼容指纹，在本任务私有生成 Compose 中原子注入失败健康探针，要求实际停止全部候选程序、旧 current 和卷身份不变。夹具不是两个已发行程序版本，也不更改普通健康预算；只有断言全部通过后才还原已知同程序夹具的私有 journal／原 Compose，意外首败保留。该完整 guest 场景尚未执行，当前 #539 的 b0613b24 未含本项修正。
+
+本机补跑根 lint 首次漏了现有 pnpm PATH 入口，Turbo 无法找到 package manager binary、退出1；没有执行包内检查。使用已有 Node22.19.0 与 pnpm9.15.4 的 bin 后，lint／typecheck 各17任务、test共31任务均实际执行、0缓存，退出0。原命令未另保存原日志，保留工具返回事实而不补造摘要；复验日志与输入子集绑定见 [索引](../../reviews/ta01-product/resumption-latest-checks.json)及 [原件](../../reviews/ta01-product/resumption-latest-checks.zip)，该子集不是完整候选验收快照。既有根 integration／conformance 的准确原件保持，新增程序停止和重启场景仍不冒完整候选通过。
+
+## CI #537 arm64 与 #539 amd64 的新原件
+
+#537 arm64 源码 ec228240b13cd06041e803931fe238836fa72478，6,603.75 s，首次团队安装达到原1,800 s期限；迁移完成，健康动作为intent，容器状态采集未成功。见 [索引](../../reviews/ta01-product/ci537-arm64-health-timeout-no-status.json)及 [原件](../../reviews/ta01-product/ci537-arm64-health-timeout-no-status.zip)。未到业务／GDB，不补造具体探针原因。
+
+#539 amd64 源码 b0613b24ccbdcfd64f2a9f86e1cfd4c5f3690110，1,194.75 s，独立团队自然运行的局部业务与429完成，naturalRun=true、captured=false；没有core或原生栈。见 [索引](../../reviews/ta01-product/ci539-amd64-natural-diagnostic-no-crash.json)及 [原件](../../reviews/ta01-product/ci539-amd64-natural-diagnostic-no-crash.zip)。两架构检查步骤均完成，但Linux内存路径的原日志现只从amd64原件核实，不把job步骤状态冒ARM原日志。该诊断仍为非零／diagnostic-only，不能证明原退出139已解决。
+
+源码对照发现先前诊断只装团队，缺普通首败前的个人画像安装、升级、恢复和停止，团队端口也由原index1变为index0。后续诊断保留原个人闭环前序和原端口，再仅对团队核准确自然进程；诊断前序不运行新增健康故障夹具，以保原场景。默认完整模式仍执行全部新增故障／重启和三画像断言，诊断仍不能满足Required CI。没有据此推断前序、端口、Node或QEMU就是原因。

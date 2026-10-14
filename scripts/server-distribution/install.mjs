@@ -9,6 +9,7 @@ import { atomicJson, privateDirectory, readState, validateJournal, withInstallLo
 import { commandFailure, containerStatus } from './diagnostics.mjs'
 import { assertStableDataBindings } from './configuration.mjs'
 import { readMcpReply, mcpReplyStatus } from './mcp-response.mjs'
+import { recoverFailedDeployment } from './failure-recovery.mjs'
 
 const appConfig = () => import('/app/node_modules/@workmesh/config/dist/index.js')
 const profileNames = ['WORKMESH_DEPLOYMENT_PROFILE', 'WORKMESH_QUEUE_BACKEND', 'WORKMESH_ARTIFACT_BACKEND',
@@ -166,6 +167,19 @@ function assertOwnedDeployment(release) {
     if (info.Config.Labels?.['io.workmesh.installation'] !== release.installationId
       || info.Config.Labels?.['io.workmesh.installation-root'] !== release.rootHash) fail('INSTALL_DEPLOYMENT_OWNERSHIP_MISMATCH')
   }
+}
+function stopUnvalidatedRuntime(release) {
+  assertOwnedDeployment(release)
+  const ids = docker(['ps', '-aq', '--no-trunc', '--filter', `label=com.docker.compose.project=${release.project}`]).split('\n').filter(Boolean)
+  const runtime = JSON.parse(docker(['inspect', ...ids])).filter(info => {
+    if (info.Config.Labels?.['io.workmesh.installation'] !== release.installationId
+      || info.Config.Labels?.['io.workmesh.installation-root'] !== release.rootHash) fail('INSTALL_DEPLOYMENT_OWNERSHIP_MISMATCH')
+    return runtimeServices.includes(info.Config.Labels?.['com.docker.compose.service'])
+  }).map(info => info.Id)
+  if (!runtime.length) return
+  // Exact registered IDs avoid stopping a newly appeared foreign service.
+  docker(['stop', '-t', '35', ...runtime])
+  if (JSON.parse(docker(['inspect', ...runtime])).some(info => info.State.Running)) fail('INSTALL_RUNTIME_STOP_FAILED')
 }
 async function withProjectLock(identity, image, action) {
   let id
@@ -428,12 +442,10 @@ export async function install(options, authority = undefined) {
         // Never resume old code against an unknown/partially migrated ledger.
         // Pre-migration failures and exactly compatible failures retain the old
         // release; an incompatible ledger remains stopped for empty-target restore.
-        if (previous && name !== 'import-images') {
-          try {
-            await recoverOld(previous, journal, journalFile)
-          }
-          catch { journal.recovery = { status: 'stopped-restore-required' }; await atomicJson(journalFile, journal) }
-        }
+        if (name !== 'import-images') await recoverFailedDeployment({ journal, failedAction: name,
+          stopRuntime: () => stopUnvalidatedRuntime(release),
+          recoverPrevious: previous ? () => recoverOld(previous, journal, journalFile) : undefined,
+          persist: () => atomicJson(journalFile, journal) })
         throw error
       }
     }

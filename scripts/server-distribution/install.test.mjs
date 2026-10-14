@@ -9,12 +9,43 @@ import { ArchiveIdentities } from './archive.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
 import { assertStableDataBindings } from './configuration.mjs'
 import { readMcpReply, mcpReplyStatus } from './mcp-response.mjs'
+import { recoverFailedDeployment } from './failure-recovery.mjs'
 import { createServer } from 'node:http'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import { fileURLToPath } from 'node:url'
 
 const temporary = async () => realpath(await mkdtemp(path.join(tmpdir(), 'workmesh-server-unit-')))
+test('failed health stops runtime before recovery; stop rejection never restarts or retries', async () => {
+  for (const stopFails of [false, true]) {
+    const journal = { actions: [] }, events = []
+    let running = true
+    await recoverFailedDeployment({ journal, failedAction: 'verify-health-and-ledger',
+      persist: async () => { events.push('persist:' + journal.actions.at(-1).status) },
+      stopRuntime: async () => {
+        events.push('stop')
+        if (stopFails) throw new Error('fixed fixture rejection')
+        running = false
+      },
+      recoverPrevious: async () => {
+        events.push('recover')
+        assert.equal(running, false)
+        throw new Error('incompatible fixture')
+      } })
+    assert.equal(journal.recovery.status, stopFails ? 'runtime-stop-failed' : 'stopped-restore-required')
+    assert.equal(events.filter(value => value === 'stop').length, 1)
+    assert.equal(events.includes('recover'), !stopFails)
+    assert.equal(events[0], 'persist:intent')
+    if (stopFails) {
+      assert.equal(journal.actions.at(-1).failureCode, 'unknown')
+      assert.equal(JSON.stringify(journal).includes('fixed fixture rejection'), false)
+    }
+  }
+  const journal = { actions: [] }
+  await recoverFailedDeployment({ journal, failedAction: 'complete-backup', stopRuntime: async () => assert.fail(),
+    recoverPrevious: async () => { throw new Error('unverified original runtime') }, persist: async () => {} })
+  assert.equal(journal.recovery.status, 'restore-required')
+})
 const ledger = [{ version: 'v1_0001', checksumSha256: 'a'.repeat(64) }]
 const manifest = () => {
   const commit = 'a'.repeat(40), roles = ['api', 'worker', 'mcp', 'lite', 'installer', 'postgres', 'redis', 'minio']

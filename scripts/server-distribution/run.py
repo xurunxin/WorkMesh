@@ -29,6 +29,16 @@ def valid_receipt(value, native_diagnostic=False):
             and not __import__('re').search(r'wm[ips]_[A-Za-z0-9_-]{43}', json.dumps(value)))
 
 
+def complete_reboot_checks(value):
+    entries = value.get('checks', [])
+    required = {'authenticatedApiAfterReboot', 'authenticatedMcpAfterReboot',
+                'artifactBytesAfterReboot', 'newOutboxDeliveredAfterReboot'}
+    return (isinstance(entries, list) and len(entries) == 3
+            and all(isinstance(entry, dict) and isinstance(entry.get('checks'), list)
+                    and required.issubset(entry['checks']) for entry in entries)
+            and {entry.get('profile') for entry in entries} == {'personal', 'team', 'enterprise'})
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--arch", choices=IMAGES, required=True)
@@ -208,7 +218,7 @@ WantedBy=cloud-init.target
         profiles = before[0].get("profiles", [])
         if {entry.get("profile") for entry in profiles} != {"personal", "team", "enterprise"} or any(entry.get("status") != "passed" for entry in profiles):
             raise RuntimeError("missing supported profile acceptance")
-        if after[0].get("restartedProfiles") != ["personal", "team", "enterprise"]:
+        if after[0].get("restartedProfiles") != ["personal", "team", "enterprise"] or not complete_reboot_checks(after[0]):
             raise RuntimeError("missing reboot recovery")
         result.update(status="passed", qemuExitCode=process.returncode, qemuPeakRssBytes=peak,
                       overlayAllocatedBytes=overlay.stat().st_blocks * 512, rebootSeconds=after[0]["hostElapsed"] - before[0]["hostElapsed"])

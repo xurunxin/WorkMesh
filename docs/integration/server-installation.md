@@ -104,8 +104,16 @@ Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTI
 
 完整 guest 中直接 API／MCP 请求失败时，也按安装 UUID 和根哈希核归属后提取安全服务日志分类，保持源码／回执绑定。标准错误类型和已知模块行号用于定位首败，不能单独证明原因；支持声明仍须完整验收。
 
-每个画像的完整 guest 验收还要求真实凭据限流返回 429／AUTH_RATE_LIMITED 和有效 Retry-After，并与 Redis 故障时 503 失败关闭分别记录。使用独有测试主体、原生产预算和 Redis 时钟，不删除限流键或将根集成用例代替已安装组合。新增断言尚未实测通过。
+每个画像的完整 guest 验收还要求真实凭据限流返回 429／AUTH_RATE_LIMITED 和有效 Retry-After，并与 Redis 故障时 503 失败关闭分别记录。使用独有测试主体、原生产预算和 Redis 时钟，不删除限流键或将根集成用例代替已安装组合。团队 amd64 诊断已有该局部通过，双架构三画像完整组合仍未通过。
 
 CI 的 native-diagnostic 参数默认关闭，仅用于隔离 guest 的原生崩溃定位。该模式强制非零退出且标记 diagnostic-only，不能用其结果登记完整支持或满足 Required CI；用户正常安装不依赖 GDB。详见 [接续与首败记录](../plan/ta01-self-hosted-deployment/resumption.md)。
 
-显式原生诊断的自然运行捕获仅在独有、无 swap 的 guest 中临时开启，经核准确 MCP PID／启动时间／程序摘要 后将崩溃流在匿名内存解析；只保安全符号与摘要，处理后恢复设置。普通安装不配置 core 管道，不要求 GDB。该诊断仍不产生产品 PASS，当前自然崩溃原因尚未定位。
+显式原生诊断的自然运行捕获仅在独有、无 swap 的 guest 中临时开启，经核准确 MCP PID／启动时间／程序摘要后将崩溃流在匿名内存解析；只保安全符号与摘要，处理后恢复设置。普通安装不配置 core 管道，不要求 GDB。该诊断仍不产生产品 PASS，当前自然崩溃原因尚未定位。
+
+默认完整 guest 在整机重启后要求每画像用原身份读回 API／MCP 工作项和原工件字节，并通过正常 API 新建工作项、验证对应 outbox 投递。两次 boot_id、kernel 与 QMP 生命周期另核；单独 API 可读不能代表全部恢复。新增完整重启闭环尚待实际候选验收。
+
+候选健康失败后，journal 先记录 stop-unvalidated-runtime，再按安装 UUID／根哈希绑定的完整容器 ID 停止 API／Worker／MCP，核全部 Running=false 后才尝试兼容恢复。不能兼容时记 stopped-restore-required；停止失败记 runtime-stop-failed，不重试停止或启动旧程序，也不宣称已经停止。其他未证明停止的失败记 restore-required。数据服务和原卷继续保留；这个新增真实故障场景尚待 guest 验收。
+
+业务证明或凭据校验失败时，commit 保留待验证候选及维护状态，不登记 current。先核实际失败并修正证明；需要 recover-old 时仍核原候选、程序／依赖和账本兼容性，不按未切 current 推断数据未变。
+
+原生诊断保留原失败前的个人画像安装／升级／恢复／停止及团队端口，再观察团队进程。独立团队未复现只能记局部结果，不能替代原场景；诊断前序不执行新增故障夹具，也不构成三画像完整支持。

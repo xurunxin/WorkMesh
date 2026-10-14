@@ -1,0 +1,120 @@
+{
+  "说明": "本机锁定工具复验；根编译输入与起点Git一致，CLI和guest持续修订，不代完整无源码候选、真实停止或重启。Installer恢复回调是故障夹具，Python memfd在Windows为不支持拒绝；实际Linux memfd原日志另在CI539 amd64。",
+  "headAtRootRunStart": "b0613b24ccbdcfd64f2a9f86e1cfd4c5f3690110",
+  "rootGitInputPaths": [
+    "apps",
+    "packages",
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "turbo.json",
+    "tsconfig.base.json",
+    ".node-version"
+  ],
+  "rootGitInputTreeSha256": "55a1b5aef28840ca92e628e494e65d441c338ae7c212dc7dc73f61935c8393bd",
+  "rootInputWorktreeDiff": "none",
+  "platform": "win32",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "commands": {
+    "lint": {
+      "command": "pnpm lint",
+      "exitCode": 0,
+      "count": 17,
+      "countMeaning": "task count"
+    },
+    "typecheck": {
+      "command": "pnpm typecheck",
+      "exitCode": 0,
+      "count": 17,
+      "countMeaning": "task count"
+    },
+    "test": {
+      "command": "pnpm test",
+      "exitCode": 0,
+      "count": 31,
+      "countMeaning": "task count"
+    },
+    "conformance": {
+      "command": "pnpm test:conformance",
+      "exitCode": 0,
+      "count": 6,
+      "countMeaning": "test/adapter fixture count"
+    },
+    "installer": {
+      "command": "node --test scripts/server-distribution/install.test.mjs",
+      "exitCode": 0,
+      "count": 14,
+      "countMeaning": "test/adapter fixture count"
+    },
+    "python": {
+      "command": "python scripts/server-distribution/native_diagnostic_test.py",
+      "exitCode": 0,
+      "count": 7,
+      "countMeaning": "test/adapter fixture count"
+    },
+    "ciPolicy": {
+      "command": "node --test scripts/ci-policy.test.mjs",
+      "exitCode": 0,
+      "count": 22,
+      "countMeaning": "test/adapter fixture count"
+    }
+  },
+  "firstLintFailure": {
+    "command": "direct locked Node plus pnpm.cjs lint; PATH omitted existing pnpm bin",
+    "exitCode": 1,
+    "result": "Turbo could not find package manager binary; no package checks ran",
+    "originalLog": "not separately saved; original tool response retained, no invented hash"
+  },
+  "members": {
+    "latest-lint.log": {
+      "sha256": "17dd6e7fe1ff6a6ea77e2158b610cf91578c452de58ac0fca887b5972719a957",
+      "bytes": 5777
+    },
+    "latest-typecheck.log": {
+      "sha256": "dbdd8400b280a044c86e6034ec900ca68716e52b029faec0de1931c44a543783",
+      "bytes": 6302
+    },
+    "latest-test.log": {
+      "sha256": "e78995d34fc14bee8006c7a29941bfd5458fc2eb302226ae4862acfc3aa0de38",
+      "bytes": 92499
+    },
+    "latest-conformance.log": {
+      "sha256": "9917097c77b53984fb7868f395924af3652a07eae08e677c5f0dce8a85677adf",
+      "bytes": 475
+    },
+    "failed-runtime-stop-final-unit.log": {
+      "sha256": "f064f8279a689199a3587efc1056581d6954b3c8967fbaa769ca6ff2fa5494d4",
+      "bytes": 3369
+    },
+    "latest-native-boundary.log": {
+      "sha256": "085d4566287d59db28b3ca0dd28ad359a96adb88108df9325009b41ae801605b",
+      "bytes": 110
+    },
+    "latest-ci-policy.log": {
+      "sha256": "599ce477e5f487b1abf5b1885a376e78cba6a60e08d52e556f88ae660b5b6fa2",
+      "bytes": 5114
+    }
+  },
+  "archiveSha256": "ad25a2b4df01e4e0f039296b11b6ceab3889530d53082a775d10430e81418548",
+  "installerInputSha256": {
+    "archive.mjs": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212",
+    "build.mjs": "2aef495102ca39cb46a79958fe705abdaf6ccdc1992a17cc3443f31af76e25b4",
+    "configuration.mjs": "4d31ea1eb119e3674a4d70ab91282c7e51429860ffc77492ff2b73ef93754a0c",
+    "diagnostics.mjs": "b91c6414853cdcd84fbc7ea69a56fde5e85690545439b81bc465d9ac7796fbfd",
+    "failure-recovery.mjs": "137d4e13ba07ed3fb2bc0c1dd29401b7da6a772b0f4768913fbd70c0de38eabb",
+    "install.mjs": "e40b9f16788c4ea18b56394a65cc4027c8b202fef8d51c453bebf14c4b174241",
+    "install.test.mjs": "2f2b71288eeb32e261d9467236737add37507147e8aeac83ddc0464cda527177",
+    "journal.mjs": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06",
+    "manifest.mjs": "691c46a8e035a1acfe2321d8b0bb7d3c485705d68c03b4c85bb503da4171e26e",
+    "mcp-response.mjs": "9a9d1a74f23e7d595d8abb82e60600bb6e12860524896e8c51fa6fd4d0592dcb",
+    "measure.mjs": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d"
+  },
+  "pythonUnitInputSha256": {
+    "core_pipe.py": "8199854874ccdac0bc95ccb07d17354e2a68b933577de4cb77d948119a9ba272",
+    "guest.py": "eb193f0cf3d143df72a50bc90bc466a3abc3fe5b53108c741f4b291cfa300ce2",
+    "native_diagnostic.py": "743b421664650fa38a9644b7b1c35f07ea4b61cc8d2322b3f28ed4293dd7a083",
+    "native_diagnostic_test.py": "c176f031e0d56cf9fc1e60690790e2cff671063f89dbfe350565fc14f1ec17ea",
+    "run.py": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860"
+  }
+}
