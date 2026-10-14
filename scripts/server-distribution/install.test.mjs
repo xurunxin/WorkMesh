@@ -59,6 +59,11 @@ test('Docker diagnostics preserve failure categories without argv, secrets or ra
   assert.equal(summary.exitCode, 1)
   assert.equal(JSON.stringify(summary).includes(secret), false)
   assert.equal(commandFailure({ code: 'ETIMEDOUT' }).timedOut, true)
+  const recovery = commandFailure({ stderr: `RECOVERY_DATABASE_CLIENTS_ACTIVE:23:private-client:idle ${secret} AccessDenied` })
+  assert.deepEqual(recovery.recoveryCodes, ['RECOVERY_DATABASE_CLIENTS_ACTIVE'])
+  assert.deepEqual(recovery.providerCodes, ['AccessDenied'])
+  assert.equal(JSON.stringify(recovery).includes('private-client'), false)
+  assert.equal(JSON.stringify(recovery).includes(secret), false)
   const info = { Id: 'sha256:' + 'a'.repeat(64), Config: { Env: [secret], Labels: { 'com.docker.compose.service': secret } },
     State: { Status: 'exited', ExitCode: 1, OOMKilled: true, Health: { Status: 'unhealthy', Log: [{ ExitCode: 1, Output: secret }] } }, RestartCount: 2 }
   const status = containerStatus(info)

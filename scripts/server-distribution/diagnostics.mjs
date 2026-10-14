@@ -25,6 +25,16 @@ export function commandFailure(error) {
     timedOut: error.code === 'ETIMEDOUT',
     stderrSha256: hash(stderr),
     categories: Object.entries(groups).filter(([, needles]) => needles.some(text => body.includes(text))).map(([name]) => name),
+    recoveryCodes: ['RECOVERY_DATABASE_LOCKED', 'RECOVERY_DATABASE_CLIENTS_ACTIVE', 'RECOVERY_MAINTENANCE_CONFIRMATION_REQUIRED',
+      'RECOVERY_ARTIFACT_OBJECT_MISSING', 'RECOVERY_ARTIFACT_CHECKSUM_MISMATCH', 'RECOVERY_ARTIFACT_SIZE_MISMATCH',
+      'RECOVERY_ARTIFACT_MIME_MISMATCH', 'RECOVERY_UPLOAD_OBJECT_MISSING', 'RECOVERY_UPLOAD_CHECKSUM_MISMATCH',
+      'RECOVERY_UPLOAD_SIZE_MISMATCH', 'RECOVERY_ARCHIVE_OBJECT_VERSION_MISSING', 'RECOVERY_POSTGRES_TOOL_FAILED',
+      'RECOVERY_POSTGRES_TOOL_START_FAILED', 'RECOVERY_POSTGRES_TOOL_INPUT_FAILED', 'RECOVERY_POSTGRES_TOOL_OUTPUT_FAILED',
+      'WORKMESH_MASTER_KEY_INVALID', 'WORKMESH_BUILD_SHA_INVALID', 'EACCES', 'ENOENT', 'EEXIST', 'ENOSPC']
+      .filter(code => new RegExp(`\\b${code}\\b`).test(body)),
+    providerCodes: ['AccessDenied', 'InvalidAccessKeyId', 'SignatureDoesNotMatch', 'NoSuchBucket', 'NoSuchKey',
+      'NoSuchVersion', 'SlowDown', 'InternalError', 'InvalidRequest', 'InvalidBucketState', 'InvalidArgument',
+      'MethodNotAllowed', 'NotImplemented'].filter(code => new RegExp(`\\b${code}\\b`).test(body)),
   }
 }
 

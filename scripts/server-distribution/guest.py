@@ -549,6 +549,18 @@ def main():
                 # Installer diagnostics contain only fixed classifications,
                 # owned-container states and output hashes, never raw messages.
                 diagnostics['installer'] = [entry['diagnostics'] for entry in journal['actions'] if 'diagnostics' in entry]
+                failure_file = prefix / 'backups' / journal['id'] / 'failure.json'
+                if failure_file.is_file() and not failure_file.is_symlink():
+                    failure = json.loads(failure_file.read_text())
+                    known = {'RECOVERY_DATABASE_LOCKED', 'RECOVERY_DATABASE_CLIENTS_ACTIVE', 'RECOVERY_MAINTENANCE_CONFIRMATION_REQUIRED',
+                             'RECOVERY_ARTIFACT_OBJECT_MISSING', 'RECOVERY_ARTIFACT_CHECKSUM_MISMATCH',
+                             'RECOVERY_UPLOAD_OBJECT_MISSING', 'RECOVERY_UPLOAD_CHECKSUM_MISMATCH',
+                             'RECOVERY_ARCHIVE_OBJECT_VERSION_MISSING', 'RECOVERY_POSTGRES_TOOL_FAILED',
+                             'WORKMESH_MASTER_KEY_INVALID', 'WORKMESH_BUILD_SHA_INVALID', 'EACCES', 'ENOENT', 'EEXIST', 'ENOSPC'}
+                    code = failure.get('error', {}).get('code')
+                    diagnostics['backupFailure'] = {'code': code if code in known else 'unknown',
+                        'reportSha256': hashlib.sha256(failure_file.read_bytes()).hexdigest(),
+                        'messageSha256': hashlib.sha256(failure.get('error', {}).get('message', '').encode()).hexdigest()}
                 # The outer Docker client may time out before the installer can
                 # finish its journal. Inspect only this installation's objects.
                 ids = subprocess.run(['docker', 'ps', '-aq', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + journal['project']], capture_output=True, timeout=30)

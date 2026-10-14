@@ -78,3 +78,13 @@ healthcheck.mjs 改用 Node 内置 HTTP／HTTPS 请求，仅核原 2xx 状态判
 对照当前 workItemInputSchema 发现旧 guest 正例缺少必需 statusId。现从真实 GET /api/v1/teams/{id}/states 的 items 读取状态，并显式指定当前负责 Human；不修改或放宽共享合同。HTTP 首败只记录状态、固定错误码和响应哈希，不导出原响应。该 guest 修正不在 CI #523 的 4a9df2ab 输入中，须新候选受测。
 
 CI #522 最终因新提交而取消：amd64 的实际失败原件保持，未完成 arm64 不补写产品结论。CI #523 属于中间候选，后续变更须准确区分，最新 Required CI 和正式 P0/P1 成果独审仍未完成。
+
+## CI #524 的个人画像与第二次备份首败
+
+amd64 的受测源码为 da39ecb013f5f028aa4d843013f871ce6dc997a5，tree 为 5cdb30699e9c8365ab24fe2edc4d531e217b395f。2,152.23 s 后失败。原件见 [索引](../../reviews/ta01-product/ci524-amd64-second-backup-failure.json)及 [原成员归档](../../reviews/ta01-product/ci524-amd64-second-backup-failure.zip)，脚本 Git blob 已核一致。
+
+个人画像已通过真实 API／MCP、worker 私有 CA 读取 fake HTTPS provider、工件上传下载、重复幂等、Redis 故障关闭、丢提示后的 PG cursor 读取、worker 重启与持久 outbox、32 请求／4 并发、无效凭据不能登记 current、迁移前失败保旧及健康中断缺候选原件拒绝。记录包含空闲、首任务、并发原样采样，无 OOM；这些是固定完整 TCG guest 条件，不是物理最低配置。
+
+首次兼容升级及其备份已执行，健康中断负例通过后完成 commit。随后程序回退的第二次 complete-backup 失败，journal 为 staged。原回执只有 Docker 外层代码与 stderr 哈希，不能据此猜底层原因。团队、企业、完整回退／空目标恢复及整机重启仍未验收，不将个人局部结果写为支持通过。
+
+本次为备份失败增加已知恢复／文件系统／S3 错误码白名单，并投影私有 failure.json 的已知代码、报告及消息哈希。消息正文、连接 PID／名称、路径、环境与秘密不进入公开回执；保留原备份、维护和账本判定。新诊断尚待实际失败或通过回执。
