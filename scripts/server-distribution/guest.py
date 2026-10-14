@@ -193,8 +193,18 @@ class Client:
             response = self.opener.open(request, timeout=90)
         except urllib.error.HTTPError as error:
             response = error
-        assert response.status == expected, (url.split('?')[0], response.status, expected)
         data = response.read()
+        if response.status != expected:
+            allowed_codes = {'VALIDATION_ERROR', 'FORBIDDEN', 'RESOURCE_SCOPE_DENIED', 'INVALID_STATE_TRANSITION',
+                             'AUTH_RATE_LIMITED', 'AUTH_RATE_LIMIT_UNAVAILABLE', 'FEATURE_DISABLED'}
+            try:
+                code = json.loads(data).get('error', {}).get('code')
+            except (ValueError, AttributeError):
+                code = None
+            diagnostics.update(httpStatus=response.status, expectedHttpStatus=expected,
+                               responseSha256=hashlib.sha256(data).hexdigest(),
+                               apiErrorCode=code if code in allowed_codes else 'unknown')
+        assert response.status == expected, (url.split('?')[0], response.status, expected)
         return data if raw else json.loads(data)
 
 
@@ -210,6 +220,8 @@ def journey(prefix, config, certificates):
     client.csrf = result['csrfToken']
     me = client.request(origin + '/api/v1/auth/me')['actor']
     team = client.request(origin + '/api/v1/teams')['items'][0]
+    states = client.request(origin + '/api/v1/teams/' + team['id'] + '/states')['items']
+    assert states and states[0]['id']
     project = client.request(origin + '/api/v1/projects', {'name': 'TA01 guest project', 'teamId': team['id']})
     provider = client.request(origin + '/api/v1/provider-connections', {'provider': 'gitea', 'externalAccountId': 'ta01-fixture',
         'displayName': 'TA01 isolated TLS fixture', 'baseUrl': 'https://10.0.2.15:9446',
@@ -228,7 +240,8 @@ def journey(prefix, config, certificates):
     assert context and context['base_sha'] == 'ta01-base' and context['project_id'] == project['id']
     assert context['guidance'][0]['content'] == '# 固定私有 CA 测试指导\n'
     checks.append('workerPrivateCaActualHttpsProviderRead')
-    body = {'teamId': team['id'], 'projectId': project['id'], 'title': 'TA01 first task'}
+    body = {'teamId': team['id'], 'projectId': project['id'], 'statusId': states[0]['id'],
+            'responsibleHumanActorId': me['id'], 'title': 'TA01 first task'}
     key = str(uuid.uuid4())
     item = client.request(origin + '/api/v1/work-items', body, headers={'Idempotency-Key': key})
     replay = client.request(origin + '/api/v1/work-items', body, headers={'Idempotency-Key': key})

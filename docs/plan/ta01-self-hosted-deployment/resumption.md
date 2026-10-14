@@ -68,3 +68,13 @@ CI #522／run 38513459463 的 amd64 在受测源码 9f686fd0188098961168690fbfbb
 healthcheck.mjs 改用 Node 内置 HTTP／HTTPS 请求，仅核原 2xx 状态判据，收到响应头后显式退出。移除 fetch／Undici 冷启动及未消费正文、keep-alive 的进程留存。HTTP 总预算仍为 2 s，Docker 探针仍为 3 s，安装健康验证仍为 180 s；错误和超时继续拒绝。11 项安装器单元含真实子进程的成功头、503、无响应、非法协议及带凭据 URL 负例。此修正尚未通过完整 TCG guest，不将本机子进程结果当支持通过。
 
 新 guest 负例同时要求健康中断且没有 pending 时，缺少或损坏候选清单原件返回准确错误码，current 和原卷保持。丢唤醒测试只删除本画像 Redis 的 workmesh:domain-events 提示流，再通过 REST 事件 cursor 核真实 PG 事实；不删除限流键，不宣称已测 SSE 长连接。两项均待新候选完整执行。
+
+## 根门禁与恢复 opt-in
+
+本机 Node 22.19.0、pnpm 9.15.4 上的 lint、typecheck、test、test:integration、test:conformance 和真实接入示例全部通过。[根检查索引](../../reviews/ta01-product/resumption-required-checks.json)及 [原件](../../reviews/ta01-product/resumption-required-checks.zip)绑定运行起点 9f686fd0、实际命令、工作树边界和六个资源不存在回执。期间 apps／packages／API／Schema／协议不变；后续 CLI 与健康探针变化另列工作树 SHA，不冒这批根检查完成新候选验收。
+
+恢复 opt-in 的真实 PG／S3 完整恢复套件也通过，起点为 4a9df2ab。[恢复索引](../../reviews/ta01-product/resumption-recovery-checks.json)及 [原件](../../reviews/ta01-product/resumption-recovery-checks.zip)保留实际命令、结果和三个容器、三个卷的定向收尾。共享镜像、工具、旧树、匿名卷和历史受拒目录保留。
+
+对照当前 workItemInputSchema 发现旧 guest 正例缺少必需 statusId。现从真实 GET /api/v1/teams/{id}/states 的 items 读取状态，并显式指定当前负责 Human；不修改或放宽共享合同。HTTP 首败只记录状态、固定错误码和响应哈希，不导出原响应。该 guest 修正不在 CI #523 的 4a9df2ab 输入中，须新候选受测。
+
+CI #522 最终因新提交而取消：amd64 的实际失败原件保持，未完成 arm64 不补写产品结论。CI #523 属于中间候选，后续变更须准确区分，最新 Required CI 和正式 P0/P1 成果独审仍未完成。
