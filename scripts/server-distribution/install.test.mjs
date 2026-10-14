@@ -7,6 +7,7 @@ import { hash, validateManifest, verifyBundle, assertCompatibleLedger, assertCom
 import { privateDirectory, atomicJson, withInstallLock, readState, validateJournal } from './journal.mjs'
 import { ArchiveIdentities } from './archive.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
+import { assertStableDataBindings } from './configuration.mjs'
 import { createServer } from 'node:http'
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
@@ -76,6 +77,24 @@ test('Docker diagnostics preserve failure categories without argv, secrets or ra
   assert.deepEqual(recovery.providerCodes, ['AccessDenied'])
   assert.equal(JSON.stringify(recovery).includes('private-client'), false)
   assert.equal(JSON.stringify(recovery).includes(secret), false)
+  const trace = commandFailure({ status: 1, stderr: `TypeError: ${secret} private-message
+    at file:///private/root/node_modules/@workmesh/recovery/dist/src/postgres.js:71:13
+    at file:///private/root/node_modules/@workmesh/recovery/dist/src/unknown.js:9:9`,
+    stdout: `RECOVERY_S3_CONFIGURATION_REQUIRED ${secret}` })
+  assert.deepEqual(trace.errorTypes, ['TypeError'])
+  assert.deepEqual(trace.recoveryFrames, [{ file: 'src/postgres.js', line: 71, column: 13 }])
+  assert.equal(trace.stdoutSha256, hash(Buffer.from(`RECOVERY_S3_CONFIGURATION_REQUIRED ${secret}`)))
+  assert.ok(trace.stderrBytes > 0)
+  for (const value of [secret, 'private-message', '/private/root', 'unknown.js']) assert.equal(JSON.stringify(trace).includes(value), false)
+  const database = commandFailure({ stderr: `error: Connection terminated unexpectedly ${secret}
+    at /private/root/node_modules/pg/lib/client.js:12:9
+    code: '57P05'` })
+  assert.deepEqual(database.errorTypes, ['error'])
+  assert.deepEqual(database.postgresCodes, ['57P05'])
+  assert.deepEqual(database.databaseFrames, [{ file: 'pg/lib/client.js', line: 12, column: 9 }])
+  assert.equal(JSON.stringify(database).includes(secret), false)
+  assert.equal(JSON.stringify(database).includes('/private/root'), false)
+  assert.deepEqual(commandFailure({ stderr: "code: '11111'" }).postgresCodes, [])
   const info = { Id: 'sha256:' + 'a'.repeat(64), Config: { Env: [secret], Labels: { 'com.docker.compose.service': secret } },
     State: { Status: 'exited', ExitCode: 1, OOMKilled: true, Health: { Status: 'unhealthy', Log: [{ ExitCode: 1, Output: secret }] } }, RestartCount: 2 }
   const status = containerStatus(info)
@@ -180,4 +199,29 @@ test('rejects unsafe paths rather than changing directory permissions', async ()
     await assert.rejects(privateDirectory(directory), /INSTALL_UNSAFE_(?:PATH|ANCESTOR)/)
   }
   await assert.rejects(privateDirectory('relative-path'), /INSTALL_UNSAFE_PATH/)
+})
+
+test('version changes preserve existing volumes, data namespace and cryptographic identity', () => {
+  const document = () => ({ services: {
+    api: { environment: Object.fromEntries(['DATABASE_URL', 'WORKMESH_MASTER_KEY', 'S3_BUCKET', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'AUTH_RATE_LIMIT_HMAC_KEY'].map(name => [name, name + '-original'])) },
+    postgres: { volumes: [{ type: 'volume', source: 'pg', target: '/var/lib/postgresql/data' }] },
+    redis: { volumes: [{ type: 'volume', source: 'redis', target: '/data' }] },
+    minio: { volumes: [{ type: 'volume', source: 's3', target: '/data' }] },
+  }, volumes: { pg: { name: 'original-pg' }, redis: { name: 'original-redis' }, s3: { name: 'original-s3' } } })
+  const options = { previousProfile: 'personal', nextProfile: 'personal', previousBackupKey: 'original-key', nextBackupKey: 'original-key' }
+  const previous = document(), next = document()
+  next.services.api.environment.WEB_ORIGIN = 'https://new-proxy.example.test'
+  assertStableDataBindings(previous, next, options)
+  assert.throws(() => assertStableDataBindings(previous, next, { ...options, nextProfile: 'team' }), /INSTALL_PROFILE_CHANGE_REQUIRES_MIGRATION/)
+  for (const name of Object.keys(previous.services.api.environment)) {
+    const changed = document(); changed.services.api.environment[name] = 'new-value'
+    assert.throws(() => assertStableDataBindings(previous, changed, options), /INSTALL_DATA_BINDINGS_CHANGED/)
+  }
+  const renamed = document(); renamed.volumes.pg.name = 'other-pg'
+  assert.throws(() => assertStableDataBindings(previous, renamed, options), /INSTALL_DATA_BINDINGS_CHANGED/)
+  const invalid = document(); invalid.services.minio.volumes[0].read_only = true
+  assert.throws(() => assertStableDataBindings(previous, invalid, options), /INSTALL_DATA_BINDINGS_INVALID/)
+  const prefix = document(); prefix.services.api.environment.AUTH_RATE_LIMIT_REDIS_PREFIX = 'new-budget'
+  assert.throws(() => assertStableDataBindings(previous, prefix, options), /INSTALL_DATA_BINDINGS_CHANGED/)
+  assert.throws(() => assertStableDataBindings(previous, next, { ...options, nextBackupKey: 'new-key' }), /INSTALL_DATA_BINDINGS_CHANGED/)
 })

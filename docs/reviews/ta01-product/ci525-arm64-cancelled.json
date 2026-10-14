@@ -1,0 +1,61 @@
+{
+  "说明": "CI #525 的 arm64 被后续修正取代，正常取消；artifact 没有 result.json，不能补造首败或通过。只保全原始 server-install 成员。",
+  "runId": 38526263421,
+  "jobId": 115728966364,
+  "artifactId": 11878780365,
+  "sourceHead": "6340dfac008899cf2dd2f88c16c9ee193a64f256",
+  "conclusion": "cancelled",
+  "resultJsonPresent": false,
+  "artifactZipSha256": "362b6583135e93a07f1027ae45a7bccf65b54c40a77fc05875bb01b0ebfccf1e",
+  "selectedZipSha256": "af085a43f8b5128049d0c8e49570dfe25d54259ca506f4ed547fce19a2433fb6",
+  "members": {
+    "server-install/guest.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "08727cc87ceb07df94ef2352c5ffd39da9b769d2f888ffa75031ff8d90858b18",
+      "bytes": 1494
+    },
+    "server-install/build.log": {
+      "sha256": "8afc6cd6067564680d01a52f7a7ec35e47ad5bdc3749d4e09d9d89766ab4b739",
+      "bytes": 63718
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "c37029d99e0bb9c8b35c1ba6d03343cf114a57d669fda93ce5a12a548e47669e",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "15c2f61724bcf7e7d78764ed73eb72815d558ffab1538dc36f40ba104307c08f",
+      "bytes": 12626
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/serial.log": {
+      "sha256": "8eb80df498140cc886a88cf0c7c527229070c2926287e0795938e674c3d0bb45",
+      "bytes": 98513
+    },
+    "server-install/source-after.txt": {
+      "sha256": "7f5ea5545796a59b654ff61e8768847c760daf4e2880f9d8e95fe6bf60d6e1a2",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "2c4f3ff2763946660feda01264fcb73883edca45dc99ab2ef355e17bc36dc4d0",
+      "bytes": 262
+    },
+    "server-install/source-install.log": {
+      "sha256": "8543541b73d536ea7e124904ef8fbe1ff9fb42cc0256917f544df98f86135a5d",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "7f5ea5545796a59b654ff61e8768847c760daf4e2880f9d8e95fe6bf60d6e1a2",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "5175c80ef5892c14de73b78d000fe0eea217aad8ac13fd26a63590d5704a180d",
+      "bytes": 2557
+    }
+  }
+}

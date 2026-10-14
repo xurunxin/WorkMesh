@@ -51,7 +51,7 @@ Coordination 模式使用每请求 `X-WorkMesh-Installation-Token`，普通执�
 
 1. 校验包、来源、架构、空间、端口和准确已有安装身份；同版本异内容拒绝。可信工具先按摘要载入；配置预检通过后才导入其他应用镜像，并读回 ID 和 OCI revision。
 2. 首次安装运行同源 `migrate` one-shot，再启动 API、worker 和选定 MCP；不直接执行 `SCHEMA.sql`。通过 readiness 后保持 healthy／pending；用户沿既有 API 完成首次账号初始化、配对及真实工作项操作，再用受保护凭据执行 commit。commit 实际完成 MCP 鉴权读取，读回目标工作项及账本后才登记 current，不自动创建用户或业务数据。
-3. 升级预先暂存新旧完整镜像集合。停止入口准入，排空 API、worker、MCP，确认没有未知写入者；用旧版准确工具执行 `createRecoveryBundle`。备份失败停止迁移，保留原环境。
+3. 使用 stage 独立暂存新旧完整镜像集合；仍校验全部候选字节和实际镜像身份，不启动数据服务。同画像版本升级保持原数据卷、数据连接、S3 命名空间、加密与限流身份；变化须另行迁移，当前操作提前拒绝。停止入口准入，排空 API、worker、MCP，确认没有未知写入者；用旧版准确工具执行 `createRecoveryBundle`。备份失败停止迁移，保留原环境。
 4. 复用 `applyMigrations` 的 advisory lock、显式 manifest、校验账本和 SQL／账本同事务。逐项迁移提交并不表示整批升级原子；后续迁移失败时已有迁移可能已提交。
 5. 启动候选并验证读取、幂等写入、worker/outbox、MCP 与工件读回，通过 commit 的真实鉴权读取后切 current，运营者再恢复代理准入。upgrade／rollback 必须显式确认维护窗口，安装器不接管运营者反向代理。验证阶段保持外部业务入口关闭，记录其测试数据和结果。
 

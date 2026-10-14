@@ -88,15 +88,21 @@ def download():
     return dist, manifest, expected['manifestSha256']
 
 
-def helper_image(manifest):
-    for image in dict.fromkeys([manifest['installerImage'], manifest['installerArchiveImage']]):
+def role_image(manifest, role):
+    definition = manifest['images'][role]
+    accepted = dict.fromkeys([definition['id'], definition['archiveId']])
+    for image in accepted:
         result = subprocess.run(['docker', 'image', 'inspect', image], capture_output=True)
         if result.returncode == 0:
             value = json.loads(result.stdout)[0]
-            assert value['Id'] == image and value['Architecture'] == manifest['arch']
-            assert value['Config']['Labels']['org.opencontainers.image.revision'] == manifest['source']['commit']
-            return image
-    raise RuntimeError('trusted helper was not loaded')
+            assert value['Id'] in accepted and value['Architecture'] == manifest['arch']
+            assert value['Config']['Labels']['org.opencontainers.image.revision'] == definition['revision']
+            return value['Id']
+    raise RuntimeError('trusted role image was not loaded')
+
+
+def helper_image(manifest):
+    return role_image(manifest, 'installer')
 
 
 def proxy(port, upstream, certificates):
@@ -357,6 +363,22 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
     original_volumes = volumes()
     original_rows = sql(prefix, 'SELECT count(*) FROM work_items')
     current_bytes = (prefix / 'current.json').read_bytes()
+    if current['profile'] == 'personal':
+        original_config = json.loads(config.read_text())
+        original_journal_bytes = (prefix / 'journal.json').read_bytes()
+        rejected = prefix / 'data-binding-negative.json'
+        for updated, code in [
+            ({**original_config, 'profile': 'team'}, 'INSTALL_PROFILE_CHANGE_REQUIRES_MIGRATION'),
+            ({**original_config, 'environment': {**original_config['environment'], 'S3_BUCKET': 'ta01-other-bucket'}}, 'INSTALL_DATA_BINDINGS_CHANGED'),
+            ({**original_config, 'environment': {**original_config['environment'], 'WORKMESH_MASTER_KEY': os.urandom(32).hex()}}, 'INSTALL_DATA_BINDINGS_CHANGED'),
+        ]:
+            private(rejected, updated)
+            install(upgrade, new_digest, prefix, rejected, 'upgrade', expected=1,
+                    expected_code=code, extra=['--maintenance-confirmed'])
+            assert (prefix / 'current.json').read_bytes() == current_bytes
+            assert (prefix / 'journal.json').read_bytes() == original_journal_bytes
+            assert volumes() == original_volumes
+        checks.append('dataBindingChangesRejectedBeforeMutation')
     # Deliberately mismatched digest tests the real deployed pre-migration boundary.
     install(upgrade, '0' * 64, prefix, config, 'upgrade', expected=1, extra=['--maintenance-confirmed'])
     assert (prefix / 'current.json').read_bytes() == current_bytes and volumes() == original_volumes
@@ -408,8 +430,8 @@ def upgrade_recovery(dist, manifest, digest, prefix, config):
     with env_file.open('w') as out:
         os.chmod(env_file, 0o600)
         out.write('\n'.join(k + '=' + v for k, v in env_values.items()) + '\n')
-    helper = helper_image(manifest)
-    code = "import{createRequire}from'node:module';const r=createRequire('/app/node_modules/@workmesh/recovery/package.json');const{S3Client,CreateBucketCommand}=r('@aws-sdk/client-s3');const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:'us-east-1',forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}});await c.send(new CreateBucketCommand({Bucket:'ta01-restored',ObjectLockEnabledForBucket:true}));c.destroy();"
+    helper = role_image(manifest, 'api')
+    code = "import{createRequire}from'node:module';import{realpathSync}from'node:fs';const r=createRequire(realpathSync('/app/node_modules/@workmesh/recovery/package.json'));const{S3Client,CreateBucketCommand}=r('@aws-sdk/client-s3');const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:'us-east-1',forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}});await c.send(new CreateBucketCommand({Bucket:'ta01-restored',ObjectLockEnabledForBucket:true}));c.destroy();"
     command(['docker', 'run', '--rm', '--pull', 'never', '--network', current['project'] + '_default', '--env-file', str(env_file),
              '--entrypoint', 'node', helper, '--input-type=module', '-e', code])
     target = prefix / 'target.json'
@@ -503,6 +525,14 @@ def main():
                 assert inspected_lock['Config']['Labels']['ta01.fixture.owner'] == lock_owner and not inspected_lock['State']['Running']
                 command(['docker', 'rm', lock])
                 checks.append('projectLockRejectsBeforeDeploymentMutation')
+                if index == 0:
+                    # Candidate staging and deployment have independent original
+                    # command budgets; neither starts until its own preflight passes.
+                    staged = install(dist, digest, prefix, config, 'stage')
+                    assert staged['status'] == 'staged-candidate'
+                    assert not (prefix / 'current.json').exists()
+                    assert not command(['docker', 'ps', '-aq', '--filter', 'label=com.docker.compose.project=ta01-personal']).strip()
+                    checks.append('candidateStagedBeforeDeployment')
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 assert not (prefix / 'current.json').exists()
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'

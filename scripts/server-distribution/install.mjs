@@ -7,6 +7,7 @@ import https from 'node:https'
 import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible, canonicalJson } from './manifest.mjs'
 import { atomicJson, privateDirectory, readState, validateJournal, withInstallLock } from './journal.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
+import { assertStableDataBindings } from './configuration.mjs'
 
 const appConfig = () => import('/app/node_modules/@workmesh/config/dist/index.js')
 const profileNames = ['WORKMESH_DEPLOYMENT_PROFILE', 'WORKMESH_QUEUE_BACKEND', 'WORKMESH_ARTIFACT_BACKEND',
@@ -197,7 +198,7 @@ async function healthy(release) {
         && info.Config.Labels?.['io.workmesh.installation-root'] === release.rootHash).map(info => ({
         ...containerStatus(info), log: (() => {
           const result = spawnSync('docker', ['logs', '--tail', '40', info.Id], { encoding: 'utf8', timeout: 30_000, maxBuffer: 1024 * 1024 })
-          return commandFailure({ status: result.status, code: result.error?.code, stderr: (result.stdout ?? '') + (result.stderr ?? '') })
+          return commandFailure({ status: result.status, code: result.error?.code, stdout: result.stdout, stderr: result.stderr })
         })(),
       })) }
     } catch { error.diagnostics = { ...error.diagnostics, statusUnavailable: true } }
@@ -310,6 +311,7 @@ export async function install(options, authority = undefined) {
   const fs = await statfs(prefix)
   const required = [...manifest.chunks, ...manifest.bootstrapChunks].reduce((sum, entry) => sum + entry.bytes, 0)
   if (Number(fs.bavail) * Number(fs.bsize) < Math.max(1024 ** 3, required * 2)) fail('INSTALL_INSUFFICIENT_SPACE')
+  if (action === 'stage') return { status: 'staged-candidate', candidate: digest, installedImages: await importImages(bundle, manifest) }
   if (action === 'check') return { status: 'checked', profile: config.profile, release: manifest.release, candidate: digest }
   if (!['install', 'upgrade', 'rollback', 'recover-old', 'restore-empty', 'commit'].includes(action)) fail('INSTALL_ACTION_INVALID')
   if (['upgrade', 'rollback'].includes(action) && !options.maintenanceConfirmed) fail('INSTALL_MAINTENANCE_CONFIRMATION_REQUIRED')
@@ -318,6 +320,12 @@ export async function install(options, authority = undefined) {
     return withProjectLock(identity, helperId, async () => {
     const currentFile = path.join(prefix, 'current.json'), journalFile = path.join(prefix, 'journal.json')
     const previous = await readState(currentFile), existing = await readState(journalFile)
+    if (previous && ['upgrade', 'rollback'].includes(action)) {
+      assertStableDataBindings(JSON.parse(await readFile(previous.composeFile, 'utf8')), rendered.document, {
+        previousProfile: previous.profile, nextProfile: config.profile,
+        previousBackupKey: previous.backupKey, nextBackupKey: rendered.env.WORKMESH_BACKUP_ENCRYPTION_KEY,
+      })
+    }
     if (previous && (previous.installationId !== identity.id || previous.rootHash !== hash(Buffer.from(prefix)))) fail('INSTALL_IDENTITY_INVALID')
     if (previous && !keysExisted) fail('INSTALL_OPERATOR_KEYS_MISSING')
     if (previous && (previous.project !== config.project || previous.configHash !== configHash)) fail('INSTALL_DEPLOYMENT_CONFIG_CHANGED')

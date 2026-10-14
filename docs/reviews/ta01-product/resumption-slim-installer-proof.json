@@ -1,0 +1,135 @@
+{
+  "说明": "仅本机工具闭包实验；编译 API 基底为 CI526 的 98aeb2d，Dockerfile 和部署脚本来自本次未提交工作树。标签中的该 revision 不证明完整实验源码已提交，不作为候选或 guest 验收。原 /installer 写入失败已停止，校验复制仍用继承的 10001 身份，改为容器内新建的 /tmp/workmesh-installer，未改旧对象权限。",
+  "apiBaseId": "sha256:8cef341f64c420cccd4dde83c065d1d6bc126ab7a9a945b13b59518ae88c84f3",
+  "imageId": "sha256:78a20b0f027acd6492437f5ce274e524778c7efbd68d23b2af98b199a33d5ccf",
+  "owner": "ta01-slim-installer-probe",
+  "arch": "amd64",
+  "originalSizeBytes": 683351646,
+  "probeSizeBytes": 375567996,
+  "tools": [
+    "v22.19.0",
+    "Docker version 27.3.1, build ce1223035ac3ab8922717092e63a184cf67b493d",
+    "Docker Compose version v2.31.0",
+    "pg_dump (PostgreSQL) 16.15",
+    "pg_restore (PostgreSQL) 16.15"
+  ],
+  "validatorProbeExit": 0,
+  "validatorStdoutSha256": "3fac582943903ced1037daadd98a845676ada867b9fe27e0be3269f974dff0ec",
+  "dockerfileSha256": "f99373e3446f1d72c3ab5106cae8d285d26b3aba9fbd355f6bed8b266f7d9bd0",
+  "logs": {
+    "slim-installer-build.log": "592e576a475279dd75eff302428182a7f26a1f3069fa4d7e9efbc4ddbd47c484",
+    "slim-installer-build-local-reference.log": "43e2b5bcc0ab4d3f085f9aa01c90ab05da6a12501f8a605f9995f6e9082e082b",
+    "slim-installer-build-owned-tmp.log": "b6f683354337fe11c4e372e418af082f14c14701d9e2409115b2a22eebfdc4d9"
+  },
+  "contextFiles": {
+    "Dockerfile": {
+      "bytes": 1561,
+      "sha256": "f99373e3446f1d72c3ab5106cae8d285d26b3aba9fbd355f6bed8b266f7d9bd0"
+    },
+    "scripts/server-distribution/archive.mjs": {
+      "bytes": 3036,
+      "sha256": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212"
+    },
+    "scripts/server-distribution/build.mjs": {
+      "bytes": 8519,
+      "sha256": "2aef495102ca39cb46a79958fe705abdaf6ccdc1992a17cc3443f31af76e25b4"
+    },
+    "scripts/server-distribution/config.example.json": {
+      "bytes": 430,
+      "sha256": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a"
+    },
+    "scripts/server-distribution/configuration.mjs": {
+      "bytes": 1875,
+      "sha256": "4d31ea1eb119e3674a4d70ab91282c7e51429860ffc77492ff2b73ef93754a0c"
+    },
+    "scripts/server-distribution/diagnostics.mjs": {
+      "bytes": 6109,
+      "sha256": "07cab52139087f5987b227588ed5cf88a3d05a19165d46e091e1370244f849f8"
+    },
+    "scripts/server-distribution/guest.py": {
+      "bytes": 41448,
+      "sha256": "57cda4adc57fb5c01a0d361df104ad0d041c7332555c0267050c7eef7ef20305"
+    },
+    "scripts/server-distribution/install.mjs": {
+      "bytes": 33472,
+      "sha256": "3939b6ce348a8d5a039eeb0d694a47a52be042368db9d2434889ac48c34c138b"
+    },
+    "scripts/server-distribution/install.sh": {
+      "bytes": 3146,
+      "sha256": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6"
+    },
+    "scripts/server-distribution/install.test.mjs": {
+      "bytes": 16691,
+      "sha256": "e87947881d42a4228f230546085dd53823c874ee9536dbfb93c7a3dc619872d3"
+    },
+    "scripts/server-distribution/journal.mjs": {
+      "bytes": 2853,
+      "sha256": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06"
+    },
+    "scripts/server-distribution/manifest.mjs": {
+      "bytes": 6742,
+      "sha256": "691c46a8e035a1acfe2321d8b0bb7d3c485705d68c03b4c85bb503da4171e26e"
+    },
+    "scripts/server-distribution/measure.mjs": {
+      "bytes": 1956,
+      "sha256": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d"
+    },
+    "scripts/server-distribution/run.py": {
+      "bytes": 11269,
+      "sha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd"
+    },
+    "server-distribution/archive.mjs": {
+      "bytes": 3036,
+      "sha256": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212"
+    },
+    "server-distribution/build.mjs": {
+      "bytes": 8519,
+      "sha256": "2aef495102ca39cb46a79958fe705abdaf6ccdc1992a17cc3443f31af76e25b4"
+    },
+    "server-distribution/config.example.json": {
+      "bytes": 430,
+      "sha256": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a"
+    },
+    "server-distribution/configuration.mjs": {
+      "bytes": 1875,
+      "sha256": "4d31ea1eb119e3674a4d70ab91282c7e51429860ffc77492ff2b73ef93754a0c"
+    },
+    "server-distribution/diagnostics.mjs": {
+      "bytes": 6109,
+      "sha256": "07cab52139087f5987b227588ed5cf88a3d05a19165d46e091e1370244f849f8"
+    },
+    "server-distribution/guest.py": {
+      "bytes": 41448,
+      "sha256": "57cda4adc57fb5c01a0d361df104ad0d041c7332555c0267050c7eef7ef20305"
+    },
+    "server-distribution/install.mjs": {
+      "bytes": 33472,
+      "sha256": "3939b6ce348a8d5a039eeb0d694a47a52be042368db9d2434889ac48c34c138b"
+    },
+    "server-distribution/install.sh": {
+      "bytes": 3146,
+      "sha256": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6"
+    },
+    "server-distribution/install.test.mjs": {
+      "bytes": 16691,
+      "sha256": "e87947881d42a4228f230546085dd53823c874ee9536dbfb93c7a3dc619872d3"
+    },
+    "server-distribution/journal.mjs": {
+      "bytes": 2853,
+      "sha256": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06"
+    },
+    "server-distribution/manifest.mjs": {
+      "bytes": 6742,
+      "sha256": "691c46a8e035a1acfe2321d8b0bb7d3c485705d68c03b4c85bb503da4171e26e"
+    },
+    "server-distribution/measure.mjs": {
+      "bytes": 1956,
+      "sha256": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d"
+    },
+    "server-distribution/run.py": {
+      "bytes": 11269,
+      "sha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd"
+    }
+  },
+  "sizeMeaning": "Docker image inspect 的逻辑 Size，不是物理净释放，也不是候选归档大小。"
+}

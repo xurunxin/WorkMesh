@@ -27,6 +27,8 @@ chmod 600 /srv/workmesh-config.json
 sh /srv/candidate/install.sh /srv/candidate "$TRUSTED_MANIFEST_SHA256" \
   /srv/workmesh /srv/workmesh-config.json check
 sh /srv/candidate/install.sh /srv/candidate "$TRUSTED_MANIFEST_SHA256" \
+  /srv/workmesh /srv/workmesh-config.json stage
+sh /srv/candidate/install.sh /srv/candidate "$TRUSTED_MANIFEST_SHA256" \
   /srv/workmesh /srv/workmesh-config.json install
 ```
 
@@ -46,6 +48,8 @@ commit 实际校验 MCP 鉴权、读取所选工作项并核迁移账本，然�
 
 `check` 校验候选、架构、空间、画像和现有配置合同；不会启动业务服务或写安装状态。首次调用会先载入经过可信摘要验证的安装工具镜像。应用镜像导入及服务启动须等配置校验完成。
 
+`stage` 先完成同样的候选与配置预检，再导入清单绑定的完整镜像集合，返回 staged-candidate 和实际镜像 ID。该步骤不启动部署容器、不生成运营密钥、不登记 current。后续 install 仍重新校验全部候选字节和镜像身份；暂存结果不替代安装验收。
+
 首次安装生成相互分离的随机密钥，保存在安装目录的 `operator-keys.json`，权限为 `0600`。密钥不进入候选、journal、日志或结果摘要。运营者须单独保管备份密钥和主密钥，不能仅复制恢复 bundle。已有部署缺失密钥文件时停止，不重新生成密钥。
 
 Coordination MCP 须显式设置 `WORKMESH_BETA_COORDINATION_MCP=true`，通过正常配对流程取得安装凭据。静态模式须提供现行 Session 与 MCP 边界凭据。安装器不创建 Runner 注册或执行身份。
@@ -60,6 +64,8 @@ sh /srv/new-candidate/install.sh /srv/new-candidate "$NEW_MANIFEST_SHA256" \
 sh /srv/old-candidate/install.sh /srv/old-candidate "$OLD_MANIFEST_SHA256" \
   /srv/workmesh /srv/workmesh-config.json rollback --maintenance-confirmed
 ```
+
+当前 upgrade／rollback 只支持同画像、原数据卷与原数据身份。画像、数据库连接、S3 bucket／凭据、主密钥、备份密钥或限流键空间／HMAC 身份变化时，在停止服务或迁移前拒绝。普通版本升级不承担这些数据迁移或密钥轮换；公共 HTTPS 地址等接入设置仍按现行配置合同校验。
 
 `rollback` 要求真实账本逐项一致，运行程序输入指纹和 PG／Redis／S3 镜像也须一致。拒绝未知迁移、前缀、校验和或运行语义变化；账本相同不单独证明程序兼容。升级不是整批数据库事务。原数据卷不删除；完整恢复写到独立空目标，不覆盖原卷。
 
@@ -86,7 +92,7 @@ sh /srv/candidate/install.sh /srv/candidate "$TRUSTED_MANIFEST_SHA256" \
 
 ## 安装失败诊断与镜像复用
 
-Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTIC。诊断含固定分类、输出哈希及归属容器状态，并写入 journal；参数、环境和原始服务输出不进入结果。先核阶段和动作，外层错误不能单独证明根因。诊断不改变恢复、超时或健康判定。
+Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTIC。诊断含固定分类、标准错误类型、PG 错误码白名单、分离的 stdout／stderr 字节数与哈希、已知模块的有界行号及归属容器状态，并写入 journal；参数、环境和原始服务输出不进入结果。先核阶段和动作，外层错误不能单独证明根因。诊断不改变恢复、超时或健康判定。
 
 每次仍校验候选全部文件和分块。应用镜像已载入时，全部角色的准确 ID、架构和来源符合清单才复用；身份不符即拒绝。当前支持状态仍以双架构完整 guest 结果为准。
 

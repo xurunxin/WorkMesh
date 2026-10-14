@@ -96,3 +96,25 @@ amd64 受测源码为 6340dfac008899cf2dd2f88c16c9ee193a64f256，tree 为 1a4619
 上一轮 Node 内置 HTTP 探针未解决该完整 guest 失败。后续改用镜像内 curl 和 POSIX shell，避免每次启动 JavaScript VM；三个生产镜像、Lite Compose 和候选运行指纹同步引用新脚本。curl 依赖随镜像归档。保持 HTTP 2 s、Docker 3 s、安装 180 s，要求完整 2xx；重定向、不完整正文、非 2xx、无响应、非法协议和凭据 URL 拒绝。就绪端点合同不变，没有修改数据维护或恢复断言。
 
 锁定 Node 22 的安装器单元 11 项通过；本机用已有 RustFS 镜像的准确 ID、临时 /data tmpfs 和自动删除容器运行真实 Linux shell／curl，实际覆盖上述成功及负例。没有新增匿名卷或修改共享镜像。该结果不代完整双架构安装；第二次备份根因仍未获新回执，三画像和完整恢复尚不能声明通过。
+
+## CI #525 取消与 CI #526 双架构首败
+
+CI #525 正常取消后，arm64 artifact 没有 result.json；保留 [索引](../../reviews/ta01-product/ci525-arm64-cancelled.json)及 [原成员](../../reviews/ta01-product/ci525-arm64-cancelled.zip)，不补造首败或通过。
+
+CI #526 受测源码 98aeb2d65c28ce19b81358b1a04f8974f21569c2，tree 为 8a64faca5aaf62af86f3b620a8f57e3dfc4cc406。amd64 在 1,722.49 s 后首次兼容升级备份失败；健康和个人 API／MCP／工件／Redis／outbox／并发等局部检查已过，未执行到本轮中断、回退或空目标恢复。见 [amd64 索引](../../reviews/ta01-product/ci526-amd64-upgrade-backup-failure.json)及 [原件](../../reviews/ta01-product/ci526-amd64-upgrade-backup-failure.zip)。其 stderr 哈希与 #524 备份错误相同，但原件仍没有可分类原因、stdout 或 failure.json 回执，不能倒填根因。
+
+arm64 在 5,127.22 s 后首次安装命令达到原 1,800 s 期限。镜像导入耗时 20 分 36 秒，数据服务已健康，迁移仍在运行且无 OOM／重启；没有业务或备份结果。见 [arm64 索引](../../reviews/ta01-product/ci526-arm64-install-timeout.json)及 [原件](../../reviews/ta01-product/ci526-arm64-install-timeout.zip)。两个架构的失败阶段保持分开。
+
+后续将已批准的候选暂存实现为独立 stage，预检后导入全部绑定镜像，不启动服务或登记 current。安装时仍核所有候选字节和实际 ID。原命令、健康及完整 guest 预算，2 vCPU／4,096 MiB 和磁盘条件保持；新步骤尚待双架构实测。
+
+源码发现同 project 的新版本可以配置不同画像、数据卷、数据库／S3 命名空间或加密身份，仅工作项读取不能证明旧工件和秘密仍可用。现于停止服务、备份与迁移前校验原绑定，明确拒绝这些变更；普通版本升级保持原数据身份，不冒已实现数据迁移或密钥轮换。安装器 12 项单元通过，包含真实 Linux 探针、标准 PG 代码与安全栈位置投影、数据绑定变更拒绝。接口、事件、Schema 和 ADR 状态未变。
+
+准确 amd64 候选已逐项核 manifest、源码和全部分块，在本机加载。原生空库两次备份、包含私有 CA／env-file／嵌套 Docker 的备份，以及一个测试对象的备份均通过；对应 [首次夹具失败](../../reviews/ta01-product/resumption-native-backup-probe-first-failure.json)、[空库](../../reviews/ta01-product/resumption-native-backup-probe-second.json)、[嵌套调用](../../reviews/ta01-product/resumption-native-backup-probe-third.json)和 [单对象](../../reviews/ta01-product/resumption-native-backup-probe.json)回执保留各自资源登记与定向收尾。它们未包含已安装的 Human／Agent 业务快照，不能代 guest 备份失败或真实三画像验收。
+
+独立 [模块解析实验](../../reviews/ta01-product/resumption-native-module-resolution-proof.json)在准确 API 镜像中证明 pnpm 逻辑链接路径建立 createRequire 会缺失 S3 依赖，先 realpathSync 后成功。空目标夹具改从 API 镜像的实际包路径加载依赖。该问题不倒填为前面的备份首败。
+
+失败诊断补充 stdout／stderr 独立哈希、字节数、固定错误类型和标准 PG 代码，以及已知恢复／PG 模块的有界行号。完整路径、SQL、消息正文和秘密仍不进入回执；备份、维护与迁移断言保持。新的具体故障诊断尚待实际结果。
+
+安装工具镜像改为复制编译后 config／contracts／Zod 的完整校验依赖，并保留 Node、Docker／Compose 与 PG 客户端；应用、worker、MCP 和数据镜像仍全部交付。本机 [工具闭包索引](../../reviews/ta01-product/resumption-slim-installer-proof.json)及 [构建、单元与上下文原件](../../reviews/ta01-product/resumption-slim-installer-proof.zip)保留首次错误的 FROM ID／registry 403、随后继承 10001 身份写 /installer 被拒及后续新 /tmp 工作目录的实际构建。没有重试被拒 registry 目标或修改旧目录权限。编译 API 基底为 98aeb2d，工具 Dockerfile／脚本为本次工作树，标签不冒全源码提交或候选通过。
+
+本机工具闭包检查通过；Docker 报告的逻辑 Size 从 683,351,646 到 375,567,996 字节，不当物理净释放或归档大小。新镜像不继承 API 全树；空目标 bucket 夹具因此明确使用已验证 API 镜像及其包实路径。镜像瘦身、stage 和数据绑定负例尚待新双架构完整组合。固定 CPU／RAM、所有候选字节校验及原预算保持，没有预写新 PASS。

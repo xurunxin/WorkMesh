@@ -1,0 +1,51 @@
+{
+  "owner": "c97f6886-ea79-437a-9277-b1b6a0e3e82f",
+  "source": {
+    "commit": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+    "tree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406"
+  },
+  "resources": [
+    {
+      "kind": "network",
+      "id": "b481a5c3a2d6d0d5111dcf375af65f04efca26d0cc8b5ae6ae3e537f99ee8d9b",
+      "name": "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f-pg"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f-s3"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f-backup"
+    },
+    {
+      "kind": "container",
+      "id": "8855b4be6922a15e6d4ba23731a4dcc275b29b019f578c256abcdafc69c40a16",
+      "role": "pg"
+    },
+    {
+      "kind": "container",
+      "id": "41725ccc9aaace74a1427b1a6093b9f73bb051a67ed2882e2f27bf5a7aab248b",
+      "role": "s3"
+    }
+  ],
+  "results": [
+    {
+      "nestedHelperExit": 0,
+      "stdoutSha256": "6c5ecf39ad798d990c0f78139c0fe0242baf407aed3a906a645e447bd0747280",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "removed": [
+    "41725ccc9aaace74a1427b1a6093b9f73bb051a67ed2882e2f27bf5a7aab248b",
+    "8855b4be6922a15e6d4ba23731a4dcc275b29b019f578c256abcdafc69c40a16",
+    "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f-backup",
+    "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f-s3",
+    "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f-pg",
+    "ta01-backup-c97f6886-ea79-437a-9277-b1b6a0e3e82f"
+  ]
+}
