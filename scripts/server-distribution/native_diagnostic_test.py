@@ -1,6 +1,7 @@
 import json
 import unittest
 from native_diagnostic import safe_trace
+from run import valid_receipt
 
 
 class TracePrivacy(unittest.TestCase):
@@ -30,6 +31,15 @@ class TracePrivacy(unittest.TestCase):
         self.assertFalse(trace['sigsegv'])
         self.assertNotIn('DO_NOT_PUBLISH', json.dumps(trace))
         self.assertNotIn('0x1234', json.dumps(trace))
+
+    def test_collector_requires_diagnostic_mode_and_refuses_each_token_kind(self):
+        receipt = {'phase': 'native-diagnostic', 'nativeTrace': {'symbols': []}}
+        self.assertFalse(valid_receipt(receipt))
+        self.assertTrue(valid_receipt(receipt, True))
+        for kind in ['i', 'p', 's']:
+            self.assertFalse(valid_receipt({**receipt, 'unsafe': 'wm' + kind + '_' + 'A' * 43}, True))
+        self.assertTrue(valid_receipt({'phase': 'failure'}))
+        self.assertFalse(valid_receipt({'phase': 'unknown'}, True))
 
 
 if __name__ == '__main__':

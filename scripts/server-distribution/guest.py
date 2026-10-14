@@ -576,6 +576,7 @@ def main():
                 if native_diagnostic:
                     trace = debugger.finish()
                     debugger = None
+                    diagnostics['nativeTrace'] = trace
                     report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks})
                     compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
                     return

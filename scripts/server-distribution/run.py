@@ -21,6 +21,14 @@ spec.loader.exec_module(common)
 sha, execute, IMAGES = common.sha, common.execute, common.IMAGES
 
 
+def valid_receipt(value, native_diagnostic=False):
+    phases = {'before-reboot', 'after-reboot', 'failure'}
+    if native_diagnostic:
+        phases.add('native-diagnostic')
+    return (isinstance(value, dict) and value.get('phase') in phases
+            and not __import__('re').search(r'wm[ips]_[A-Za-z0-9_-]{43}', json.dumps(value)))
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--arch", choices=IMAGES, required=True)
@@ -64,10 +72,7 @@ def main():
                 self.send_error(400)
                 return
             value = json.loads(self.rfile.read(size))
-            if not isinstance(value, dict) or value.get("phase") not in {"before-reboot", "after-reboot", "failure"}:
-                self.send_error(400)
-                return
-            if __import__("re").search(r"wm[ip]_[A-Za-z0-9_-]{43}", json.dumps(value)):
+            if not valid_receipt(value, options.native_diagnostic):
                 self.send_error(400)
                 return
             receipts.append({**value, "hostUtc": time.time(), "hostElapsed": time.monotonic() - began})
