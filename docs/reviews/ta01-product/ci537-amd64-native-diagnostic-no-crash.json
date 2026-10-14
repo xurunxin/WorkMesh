@@ -1,0 +1,121 @@
+{
+  "说明": "团队诊断业务局部与429断言完成，GDB退出0、没有捕获SIGSEGV／符号栈，结束时主动中止等待，只有namespaceMismatch提示及实际程序摘要。不能据此证明先前退出139解决；不是完整三画像／升级恢复／reboot或Required CI通过。",
+  "runId": 38602869906,
+  "jobId": 115986723823,
+  "artifactId": 11917380488,
+  "sourceHead": "ec228240b13cd06041e803931fe238836fa72478",
+  "sourceTree": "fab06526a6f32851c9e76a9352709e74ace9b377",
+  "nativeDiagnostic": true,
+  "status": "diagnostic-only",
+  "totalSeconds": 1786.535290849,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e",
+      "resultSha256": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e"
+    },
+    "run.py": {
+      "sha256": "58e5f25dd4ad89599f98e47d34ff603275998d1f8f2276e680f1a89dfed39ce5",
+      "resultSha256": "58e5f25dd4ad89599f98e47d34ff603275998d1f8f2276e680f1a89dfed39ce5"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "31871f6c966a2c5ac7677e500770d1b70112098bd537178da4b2ffe0ed5f3828",
+      "resultSha256": "31871f6c966a2c5ac7677e500770d1b70112098bd537178da4b2ffe0ed5f3828"
+    },
+    "guest.py": {
+      "sha256": "3406f77f9a88d9bfef1ce43e5c3b02f3a8fc7a9edc87346ae4a9ee69f28d8fe7",
+      "resultSha256": "3406f77f9a88d9bfef1ce43e5c3b02f3a8fc7a9edc87346ae4a9ee69f28d8fe7"
+    }
+  },
+  "artifactZipSha256": "c265692fca52b9d741aa4ed68afc83ce743940ccf3b70c4ce516f960a6944ca7",
+  "selectedZipSha256": "684da367d5c8ebdd2345215959dfc6367f3d622ee736605a053b80591e534f34",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "7ba5d4e7c31559ef054d78c0f33658201fac182075d64d35fa8febc573f46113",
+      "bytes": 68604
+    },
+    "server-install/guest.log": {
+      "sha256": "b38747d41cc2c4cc524f10927cf1c6ba7b669308ef1f0fad2070e7db69669239",
+      "bytes": 439
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "fb9361204c31c9605f9c56289d53b29548d7d424f380d1276d3c84824aefce53",
+      "bytes": 1952
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "dcce6b34f6efa65c9fd07b6970b4f19b0f8b88574cf45f9afb8f701b09b2ba8e",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "b73bd0d288eba4242a47ba62fac12ec89527ee324e0f818037a7d8702554180c",
+      "bytes": 12627
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "feabb4add9e2ca3374e538560634d1ec97dc4f4ce89aab12f3d726e36ea9b2f6",
+      "bytes": 102
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/result.json": {
+      "sha256": "9f0803785aa36a8a882b659d44da95e60ed90d3fb477039d71cccd34537eee4d",
+      "bytes": 3772
+    },
+    "server-install/serial.log": {
+      "sha256": "32521a63e4acfaa12dc60db88e7e6c6dcbd564f57d10ba6f5589c50a183edeb0",
+      "bytes": 106197
+    },
+    "server-install/source-after.txt": {
+      "sha256": "f207edfeb71e4b0bc10428bf29d18caaa5f91ce3d28c267f77acee85e0f16866",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "033dc1544e33827da9d4911a9d256f54b424e6b0455ce9457f5973c4457c6da3",
+      "bytes": 253
+    },
+    "server-install/source-install.log": {
+      "sha256": "ca2b29163f4a35a89d3a92ed543f75fb2684231d7570028b5ccdc8a65aba495a",
+      "bytes": 615
+    },
+    "server-install/source.txt": {
+      "sha256": "f207edfeb71e4b0bc10428bf29d18caaa5f91ce3d28c267f77acee85e0f16866",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "8372861e52f1440cba18db0253eb2ced3a1282e15bb521236762146646f688f6",
+      "bytes": 3060
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "realCredentialRateLimit429"
+  ],
+  "nativeTrace": {
+    "exitCode": 0,
+    "stdoutSha256": "e5a86c666b8f9b114cc79eafbb320ac5decda3de88ee827b763f60e6814dfc40",
+    "stderrSha256": "0ff97dcb91e8d655f11824809aaad33cfd293548fa34e37d486f4d0be1293eb9",
+    "stdoutBytes": 65,
+    "stderrBytes": 229,
+    "sigsegv": false,
+    "symbols": [],
+    "categories": [
+      "namespaceMismatch"
+    ],
+    "ptraceRejected": false,
+    "interruptedWithoutCrash": true,
+    "targetBinarySha256": "849512e15597bf8ae95d5067fe2c146580f0e9290a2b8262f8ad3a69b9492bf6"
+  }
+}

@@ -111,6 +111,11 @@ test('Docker diagnostics preserve failure categories without argv, secrets or ra
   assert.equal(status.oom, true)
   assert.equal(status.probes[0].outputSha256, hash(Buffer.from(secret)))
   assert.equal(JSON.stringify(status).includes(secret), false)
+  const probe = containerStatus({ ...info, State: { ...info.State, Health: { ...info.State.Health,
+    Log: [{ ExitCode: -1, Output: `OCI runtime exec failed: unable to start container process: Resource temporarily unavailable ${secret}` }] } } })
+  assert.ok(probe.probes[0].failure.categories.includes('execRuntimeRejected'))
+  assert.ok(probe.probes[0].failure.categories.includes('resourceUnavailable'))
+  assert.equal(JSON.stringify(probe).includes(secret), false)
 })
 test('wrongArchitectureRejectedBeforeMutation and strict closed manifest schema', () => {
   for (const mutate of [m => { m.arch = 'x64' }, m => { m.images.mcp.revision = 'b'.repeat(40) },

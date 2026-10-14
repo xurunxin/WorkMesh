@@ -1,6 +1,7 @@
 """Guest-only native crash diagnosis; never a product acceptance result."""
 import hashlib
 import re
+import os
 import subprocess
 import time
 from pathlib import Path
@@ -27,7 +28,7 @@ def safe_trace(stdout, stderr, returncode):
     return {'exitCode': returncode, 'stdoutSha256': hashlib.sha256(stdout).hexdigest(),
             'stderrSha256': hashlib.sha256(stderr).hexdigest(),
             'stdoutBytes': len(stdout), 'stderrBytes': len(stderr),
-            'sigsegv': 'received signal SIGSEGV' in text,
+            'sigsegv': 'received signal SIGSEGV' in text or 'terminated with signal SIGSEGV' in text,
             'symbols': [symbol[:160] for symbol in symbols[:40]],
             'categories': [name for name, needles in groups.items() if any(needle in combined for needle in needles)],
             'ptraceRejected': 'Operation not permitted' in stderr.decode(errors='replace')}
@@ -37,6 +38,59 @@ class NativeDiagnosticError(RuntimeError):
     def __init__(self, trace):
         super().__init__('native debugger attachment failed')
         self.native_trace = trace
+
+
+def process_identity(pid):
+    target = Path('/proc') / str(pid)
+    # comm may contain spaces or parentheses; starttime is field 22 after comm.
+    start_ticks = target.joinpath('stat').read_text().rsplit(')', 1)[1].split()[19]
+    digest = hashlib.sha256()
+    with target.joinpath('exe').open('rb') as executable:
+        while block := executable.read(1024 * 1024):
+            digest.update(block)
+    return {'pid': pid, 'startTicks': int(start_ticks), 'binarySha256': digest.hexdigest()}
+
+
+class NativeCrashWatcher:
+    def __init__(self, pid):
+        import json
+        assert isinstance(pid, int) and pid > 1
+        memory = Path('/proc/meminfo').read_text()
+        if not re.search(r'^SwapTotal:\s+0 kB$', memory, re.M):
+            raise RuntimeError('native core diagnosis requires a swap-free guest')
+        self.settings = {Path('/proc/sys/kernel') / name: (Path('/proc/sys/kernel') / name).read_text()
+                         for name in ['core_pattern', 'core_pipe_limit']}
+        self.changed = []
+        owner = Path('/opt/server-install/core-owner.json')
+        with owner.open('x') as output:
+            os.chmod(owner, 0o600)
+            json.dump(process_identity(pid), output)
+        try:
+            for name, value in [('core_pipe_limit', '1\n'),
+                                ('core_pattern', '|/usr/bin/python3 /opt/server-install/core_pipe.py %P\n')]:
+                file = Path('/proc/sys/kernel') / name
+                file.write_text(value)
+                self.changed.append(file)
+        except BaseException:
+            self.restore()
+            raise
+
+    def restore(self):
+        for file in reversed(self.changed):
+            file.write_text(self.settings[file])
+        self.changed.clear()
+
+    def finish(self):
+        import json
+        try:
+            result = Path('/root/server-install/native-core-trace.json')
+            for _ in range(90):
+                if result.exists():
+                    return json.loads(result.read_text())
+                time.sleep(1)
+            return {'naturalRun': True, 'captured': False}
+        finally:
+            self.restore()
 
 
 class NativeDebugger:

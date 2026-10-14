@@ -35,6 +35,9 @@ export function commandFailure(error) {
     moduleMissing: ['Cannot find module', 'ERR_MODULE_NOT_FOUND', 'MODULE_NOT_FOUND'],
     addressInUse: ['EADDRINUSE'],
     connectionRefused: ['ECONNREFUSED'],
+    execRuntimeRejected: ['OCI runtime exec failed', 'OCI runtime create failed', 'unable to start container process', 'failed to create task'],
+    resourceUnavailable: ['Resource temporarily unavailable', 'Cannot allocate memory', 'cannot allocate memory', 'Too many open files'],
+    containerNotRunning: ['is not running'],
     heapFailure: ['JavaScript heap out of memory', 'Reached heap limit', 'FATAL ERROR'],
     unhandledErrorEvent: ["Unhandled 'error' event"],
     unsettledAwait: ['Detected unsettled top-level await'],
@@ -90,6 +93,9 @@ export function containerStatus(info) {
     oom: state.OOMKilled === true,
     restarts: info.RestartCount,
     health: ['starting', 'healthy', 'unhealthy'].includes(health?.Status) ? health.Status : null,
-    probes: (health?.Log ?? []).slice(-3).map(probe => ({ exitCode: probe.ExitCode, outputSha256: hash(Buffer.from(probe.Output ?? '')) })),
+    probes: (health?.Log ?? []).slice(-3).map(probe => ({ exitCode: probe.ExitCode,
+      outputSha256: hash(Buffer.from(probe.Output ?? '')),
+      failure: commandFailure({ stderr: probe.Output ?? '' }),
+    })),
   }
 }

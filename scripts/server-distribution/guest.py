@@ -563,7 +563,7 @@ def main():
                 measurement(prefix, 'idle')
                 start = len(checks)
                 if native_diagnostic:
-                    from native_diagnostic import NativeDebugger
+                    from native_diagnostic import NativeCrashWatcher
                     release = json.loads((prefix / 'pending.json').read_text())
                     ids = command(['docker', 'ps', '-q', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + release['project']]).split()
                     containers = json.loads(command(['docker', 'inspect', *ids]))
@@ -571,7 +571,7 @@ def main():
                            and entry['Config']['Labels'].get('io.workmesh.installation') == release['installationId']
                            and entry['Config']['Labels'].get('io.workmesh.installation-root') == hashlib.sha256(str(prefix).encode()).hexdigest()]
                     assert len(mcp) == 1 and mcp[0]['Image'] in [manifest['images']['mcp']['id'], manifest['images']['mcp']['archiveId']]
-                    debugger = NativeDebugger(mcp[0]['State']['Pid'])
+                    debugger = NativeCrashWatcher(mcp[0]['State']['Pid'])
                 identity = journey(prefix, config, certificates)
                 if native_diagnostic:
                     trace = debugger.finish()
@@ -612,6 +612,20 @@ def main():
             report({'phase': 'before-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
                     'profiles': profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
     except Exception as error:
+        # This guest is exclusive. Project only numeric kernel counters, never
+        # process command lines, environment or arbitrary file contents.
+        try:
+            memory = {}
+            for line in Path('/proc/meminfo').read_text().splitlines():
+                key, value = line.split(':', 1)
+                if key in {'MemTotal', 'MemAvailable', 'SwapTotal', 'SwapFree'}:
+                    memory[key + 'KiB'] = int(value.split()[0])
+            load = Path('/proc/loadavg').read_text().split()
+            running, total = map(int, load[3].split('/'))
+            diagnostics['guestResources'] = {'memory': memory, 'loadAverage': list(map(float, load[:3])),
+                                              'runnableTasks': running, 'totalTasks': total}
+        except (OSError, ValueError, IndexError):
+            diagnostics['guestResourcesUnavailable'] = True
         if native_diagnostic and hasattr(error, 'native_trace'):
             diagnostics['nativeTrace'] = error.native_trace
         if debugger:
@@ -661,21 +675,21 @@ def main():
                         # classifier receives bytes over stdin and emits fixed
                         # categories, bounded module locations and hashes.
                         logs = subprocess.run(['docker', 'logs', '--tail', '60', info['Id']], capture_output=True, timeout=30)
-                        code = "import{readFileSync}from'node:fs';import{commandFailure}from'/opt/workmesh/server-distribution/diagnostics.mjs';const p=JSON.parse(readFileSync(0,'utf8'));console.log(JSON.stringify(commandFailure({status:p.status,stdout:Buffer.from(p.stdout,'base64'),stderr:Buffer.from(p.stderr,'base64')})));"
+                        code = "import{readFileSync}from'node:fs';import{commandFailure}from'/opt/workmesh/server-distribution/diagnostics.mjs';const p=JSON.parse(readFileSync(0,'utf8'));console.log(JSON.stringify({log:commandFailure({status:p.status,stdout:Buffer.from(p.stdout,'base64'),stderr:Buffer.from(p.stderr,'base64')}),probes:p.probes.map(v=>({exitCode:v.exitCode,failure:commandFailure({stderr:Buffer.from(v.output,'base64')})}))}));"
                         import base64
                         classified = subprocess.run(['docker', 'run', '--rm', '-i', '--pull', 'never', '--network', 'none',
                             '--read-only', '--label', 'io.workmesh.diagnostic.installation=' + journal['installationId'],
                             '--entrypoint', 'node', helper_image(manifest), '--input-type=module', '-e', code],
                             input=json.dumps({'status': logs.returncode, 'stdout': base64.b64encode(logs.stdout).decode(),
-                                              'stderr': base64.b64encode(logs.stderr).decode()}).encode(), capture_output=True, timeout=60)
+                                              'stderr': base64.b64encode(logs.stderr).decode(),
+                                              'probes': [{'exitCode': probe['ExitCode'], 'output': base64.b64encode(probe.get('Output', '').encode()).decode()} for probe in health.get('Log', [])[-3:]]}).encode(), capture_output=True, timeout=60)
                         classified.check_returncode()
                         log_projection = json.loads(classified.stdout)
 
                         projected.append({'id': info['Id'], 'service': service, 'running': state['Running'],
                             'exitCode': state['ExitCode'], 'oom': state['OOMKilled'], 'restarts': info['RestartCount'],
                             'health': health.get('Status') if health.get('Status') in {'starting', 'healthy', 'unhealthy'} else None,
-                            'log': log_projection,
-                            'probes': [{'exitCode': probe['ExitCode'], 'outputSha256': hashlib.sha256(probe.get('Output', '').encode()).hexdigest()} for probe in health.get('Log', [])[-3:]]})
+                            'log': log_projection['log'], 'probes': log_projection['probes']})
                     diagnostics['containers'] = projected
             except (OSError, KeyError, ValueError):
                 diagnostics['journalUnavailable'] = True

@@ -107,3 +107,5 @@ Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTI
 每个画像的完整 guest 验收还要求真实凭据限流返回 429／AUTH_RATE_LIMITED 和有效 Retry-After，并与 Redis 故障时 503 失败关闭分别记录。使用独有测试主体、原生产预算和 Redis 时钟，不删除限流键或将根集成用例代替已安装组合。新增断言尚未实测通过。
 
 CI 的 native-diagnostic 参数默认关闭，仅用于隔离 guest 的原生崩溃定位。该模式强制非零退出且标记 diagnostic-only，不能用其结果登记完整支持或满足 Required CI；用户正常安装不依赖 GDB。详见 [接续与首败记录](../plan/ta01-self-hosted-deployment/resumption.md)。
+
+显式原生诊断的自然运行捕获仅在独有、无 swap 的 guest 中临时开启，经核准确 MCP PID／启动时间／程序摘要 后将崩溃流在匿名内存解析；只保安全符号与摘要，处理后恢复设置。普通安装不配置 core 管道，不要求 GDB。该诊断仍不产生产品 PASS，当前自然崩溃原因尚未定位。

@@ -170,3 +170,21 @@ amd64 显式诊断受测源码 7dff9923f2bb0f44af54ec5753582ffb674d0423，1,494.
 两架构受测源码均为 e5ad38a652ec44b3c08e23e586156a8318647c22，Build immutable offline candidate 被 BUILD_CLEAN_COMMITTED_SOURCE_REQUIRED 拒绝，没有候选安装或 guest 结果。分别保留 [amd64 索引](../../reviews/ta01-product/ci535-amd64-dirty-source-build-rejection.json)与 [原件](../../reviews/ta01-product/ci535-amd64-dirty-source-build-rejection.zip)、[arm64 索引](../../reviews/ta01-product/ci535-arm64-dirty-source-build-rejection.json)与 [原件](../../reviews/ta01-product/ci535-arm64-dirty-source-build-rejection.zip)。原件未采集 git porcelain 的具体脏路径，不补造路径。
 
 新增测试导入 run.py，后者导入研究助手；[独有源码副本实验](../../reviews/ta01-product/resumption-bytecode-clean-source-probe.json)复现 docs/reviews/b-ship/tcg/tools/__pycache__ 下未忽略缓存。仅对子进程设置 PYTHONDONTWRITEBYTECODE=1 后，测试通过且没有缓存。服务端 CI job 现冻结同一变量，并加策略删除负例；构建仍要求完整干净已提交源码，没有放宽检查或新增忽略规则。本机实验不代 Linux 候选或安装通过；回执收集修复及原生原因仍待后续实际结果。
+
+## CI #531 arm64 的安装健康首败
+
+arm64 显式诊断源码 ec438487，6,454.27 s，结果 diagnostic-only。首次安装 sh 达到原 1,800 s 期限；迁移已完成，verify-health-and-ledger 失败，多角色最后探针 exitCode 为 -1，输出仅哈希。未执行到业务或 GDB，与 amd64 重启分开记录。见 [索引](../../reviews/ta01-product/ci531-arm64-install-health-timeout.json)及 [原件](../../reviews/ta01-product/ci531-arm64-install-health-timeout.zip)。该原件不能证明具体 OCI exec、资源或 HTTP 错误。
+
+诊断补充探针的固定 Docker exec／资源错误分类，以及独有 guest 的数字内存、负载及任务计数；没有原始输出、命令行、环境或任意进程名，原预算和断言保持。安装器单元首轮因遗漏 Windows 必需的 WORKMESH_HEALTH_PROBE_IMAGE 参数，12 过／1 失败；补经核准确既有 RustFS ID 后 13 项复验通过，真实 shell／curl 临时 /data 使用 tmpfs 且容器自动删除。首轮不冒全过，本机结果不代双架构 guest；新探针分类尚待候选实测。
+
+## CI #537 的已收录诊断与自然运行捕获方式
+
+amd64 源码 ec228240b13cd06041e803931fe238836fa72478，1,786.54 s，结果 diagnostic-only。团队业务局部及真实 429 断言完成，native-diagnostic 回执正确收录。GDB 退出 0、无 SIGSEGV／符号栈，结束时主动中止等待，只有 namespaceMismatch 提示；实际程序二进制摘要已登记。见 [索引](../../reviews/ta01-product/ci537-amd64-native-diagnostic-no-crash.json)及 [原件](../../reviews/ta01-product/ci537-amd64-native-diagnostic-no-crash.zip)。附着调试下未复现不等于之前退出 139 解决，不构成完整三画像／升级恢复／reboot 或 Required CI 通过。
+
+后续显式诊断改为自然运行捕获：在独有、无 swap 的 guest 中登记经安装／根哈希／镜像核验的 MCP PID，临时设置 Linux core 管道。按 [Linux core(5)](https://man7.org/linux/man-pages/man5/core.5.html) 使用初始命名空间 PID，保进程 proc 条目至处理结束；核 PID、进程启动 tick 与预先登记的程序摘要，只接收准确进程，其余不捕获。原始流只进入匿名 memfd，最多 512 MiB，封存为只读；处理总限 90 s、GDB 限 60 s，不保存 core、原始内存或变量，不上传磁盘。安全 trace 原子落盘，核心数据只记字节数／摘要，恢复仅成功改过的内核设置，拒绝目标不重试。
+
+普通产品／验收模式没有此内核设置；诊断仍只跑团队且始终非零／diagnostic-only，原请求、健康、安装和全 guest 预算保持。6 项本机边界／隐私测试与 AST 通过：Windows 不支持 memfd 时明确拒绝，无磁盘替代；Linux CI 将验证匿名文件、封存与容量负例。本机设置拒绝夹具核仅恢复成功写过的目标，受拒 core_pattern 只调用一次；夹具拒绝不冒真实内核权限拒绝。真实自然崩溃捕获尚未执行，不能冒原生原因已定位。
+
+## CI #533 arm64 的独立原件
+
+arm64 受测源码 7dff9923f2bb0f44af54ec5753582ffb674d0423，6,680.58 s，diagnostic-only。首次团队安装 sh 达原 1,800 s 期限；迁移完成，健康验证失败，多个角色探针 exitCode -1，原输出仅哈希。未进入 MCP 业务或原生诊断，也未完成新增 429 断言。见 [索引](../../reviews/ta01-product/ci533-arm64-install-health-timeout.json)及 [原件](../../reviews/ta01-product/ci533-arm64-install-health-timeout.zip)。14 个原成员及四份受测 Python 脚本摘要实核；不能与该轮 amd64 回执收集器拒绝混为同因，具体探针错误仍待新诊断。

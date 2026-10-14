@@ -1,0 +1,455 @@
+{
+  "说明": "arm64首次团队安装达到原1800秒期限，迁移完成，健康验证失败，探针exitCode=-1且原输出仅哈希。未到MCP业务或原生附着，不能与amd64收集器拒绝判为同因；没有新429或完整安装通过。",
+  "runId": 38595049813,
+  "jobId": 115960064663,
+  "artifactId": 11918852083,
+  "sourceHead": "7dff9923f2bb0f44af54ec5753582ffb674d0423",
+  "sourceTree": "748bf3e0b12a26fb7fa31c9fa052ba74db04ca81",
+  "nativeDiagnostic": true,
+  "status": "diagnostic-only",
+  "totalSeconds": 6680.575380342,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e",
+      "resultSha256": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e"
+    },
+    "run.py": {
+      "sha256": "c7383025599365abcaeeb6acbdeec540e7e4f6e41c3a208bac330091a007e07f",
+      "resultSha256": "c7383025599365abcaeeb6acbdeec540e7e4f6e41c3a208bac330091a007e07f"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "2bcaa8f3577d0a896fde1006a086f6886b2fff7b8d2edc69d070fdaee792b4d4",
+      "resultSha256": "2bcaa8f3577d0a896fde1006a086f6886b2fff7b8d2edc69d070fdaee792b4d4"
+    },
+    "guest.py": {
+      "sha256": "ece04eabcf0b6a7ff2ef3894380c222ef111d21067e3e11dd737f1cd980e5ced",
+      "resultSha256": "ece04eabcf0b6a7ff2ef3894380c222ef111d21067e3e11dd737f1cd980e5ced"
+    }
+  },
+  "artifactZipSha256": "ed02bfb9fd8b86f65c4efcccce8edafdcf7bb3fed0d80d6199cd49b8448ae124",
+  "selectedZipSha256": "f30834ea1898ebb34074f29967838a5cb9d37b52bee7cc2126c99e4c88d9412d",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "1326e5be70bb312992820499fad327d7ce078818398a493a7e95332e8f0245b2",
+      "bytes": 68870
+    },
+    "server-install/guest.log": {
+      "sha256": "c15a796cd83bae7a48c7dcde6dc5dd4f9a679c5545f21b48f6131c317443f1b0",
+      "bytes": 405
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "f8e6b665556cd93cac525df895309a6b4492fb3407af8e3e7c0be52275205884",
+      "bytes": 1952
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "49a95a375bc380db163a451692092b93ddcf2ec217278a257ed8993f5c99afdf",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "c3b8a740c79f74a27fe64971ebc35e7ad893dfe73575aefa6fadb8336e2dc517",
+      "bytes": 12409
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "33060fd73862c5e1af97335504d5b45211fce6d229657f556d8deceeadc52ce4",
+      "bytes": 101
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "69acd0e978d9eec23758536044dfbb07973c7a97ed76896cbcb0d1647c43f527",
+      "bytes": 70
+    },
+    "server-install/result.json": {
+      "sha256": "da7fe8c0be0e457f6eb58bbd2a247b9b4a2ab356ff75cc4e2e6a12942178f550",
+      "bytes": 18083
+    },
+    "server-install/serial.log": {
+      "sha256": "26614ba130bbc4984d448d7e695f7327a302871992fa9a45a076eee32c086267",
+      "bytes": 103538
+    },
+    "server-install/source-after.txt": {
+      "sha256": "e0dac86991b7da4bc9c59ab76675d4d294665eafe88358d32d380ad03d0bc723",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "76e794628f7a9862ea62053204badd392c625d9c3441e71b476947562134a200",
+      "bytes": 256
+    },
+    "server-install/source-install.log": {
+      "sha256": "ca0bbdc7c295d7d629d34df7665b9801e536e0a0391de90ce97941c24b59750c",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "e0dac86991b7da4bc9c59ab76675d4d294665eafe88358d32d380ad03d0bc723",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "f377f9ff8a0e88d4f8be63d2b2c97cc94386c652db59acd568030c250c2e5272",
+      "bytes": 3060
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment"
+  ],
+  "errorType": "TimeoutExpired",
+  "diagnostics": {
+    "command": "sh",
+    "timedOut": true,
+    "timeoutSeconds": 1800,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "e44c3c4a769970d5bf3d5e65d12ba227329bc26ba53bfa55af565908eca47882",
+    "journal": {
+      "stage": "migrated",
+      "candidate": "c3b8a740c79f74a27fe64971ebc35e7ad893dfe73575aefa6fadb8336e2dc517",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-14T17:38:38.536Z",
+          "finishedAt": "2026-10-14T17:39:09.618Z"
+        },
+        {
+          "name": "start-data-services",
+          "status": "completed",
+          "startedAt": "2026-10-14T17:39:09.839Z",
+          "finishedAt": "2026-10-14T17:42:59.745Z"
+        },
+        {
+          "name": "initialize-locked-bucket",
+          "status": "completed",
+          "startedAt": "2026-10-14T17:43:00.473Z",
+          "finishedAt": "2026-10-14T17:44:09.284Z"
+        },
+        {
+          "name": "apply-migration-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T17:44:10.516Z",
+          "finishedAt": "2026-10-14T17:51:06.102Z"
+        },
+        {
+          "name": "verify-health-and-ledger",
+          "status": "failed",
+          "startedAt": "2026-10-14T17:51:23.672Z",
+          "finishedAt": "2026-10-14T18:04:47.159Z"
+        }
+      ]
+    },
+    "installer": [
+      {
+        "exitCode": 1,
+        "timedOut": false,
+        "stderrSha256": "84e657bf4a9e7677d54546530e42b1c05a0165afb828825ea5938aceaf35a067",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrBytes": 2285,
+        "stdoutBytes": 0,
+        "errorTypes": [],
+        "recoveryFrames": [],
+        "databaseFrames": [],
+        "mcpFrames": [],
+        "transportFrames": [],
+        "postgresCodes": [],
+        "categories": [],
+        "recoveryCodes": [],
+        "providerCodes": [],
+        "containers": [
+          {
+            "id": "b471bd66637b7fc489c89e2fa4e802d26efeddf317b45d329e69ce5d416dc366",
+            "service": "mcp",
+            "status": "running",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "starting",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "303e8d46ac5153f1f19c55893aba113e453746f49b1f552b276a0021cc438bd2"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "303e8d46ac5153f1f19c55893aba113e453746f49b1f552b276a0021cc438bd2"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "303e8d46ac5153f1f19c55893aba113e453746f49b1f552b276a0021cc438bd2"
+              }
+            ],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "f6b97c93285f320fbbd852b6a4d48d483719c681e399cfa75e2e89b4917e72e9",
+              "stderrBytes": 0,
+              "stdoutBytes": 39,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "id": "3b54a2cf7ed11af447d19a6d4ec655f2315bd8d65f6ba487cde2fbe915fb8006",
+            "service": "api",
+            "status": "running",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "unhealthy",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "51dc6968a0f6b57d555a5f2bc7d2c2f44e090c82426bfe8ab5fd503ec0093517"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "51dc6968a0f6b57d555a5f2bc7d2c2f44e090c82426bfe8ab5fd503ec0093517"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "51dc6968a0f6b57d555a5f2bc7d2c2f44e090c82426bfe8ab5fd503ec0093517"
+              }
+            ],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "ea0f29e56517b66b201e792d7efcedaaca6dc4bb548940e6d1ba4157bd78222d",
+              "stderrBytes": 0,
+              "stdoutBytes": 982,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "id": "1cc1e05479c4167833fbdd73ea60e3957e74bd1877e917dec6bc4c65a188c97c",
+            "service": "worker",
+            "status": "running",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "unhealthy",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "c2719e91b8d197691f05af2610843a77a6e13925dacca6104b30ca61ad9ba29b"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "c2719e91b8d197691f05af2610843a77a6e13925dacca6104b30ca61ad9ba29b"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "c2719e91b8d197691f05af2610843a77a6e13925dacca6104b30ca61ad9ba29b"
+              }
+            ],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "id": "b585914bb68ff4dd8d3d5b1bd724a36c6ee7515bdfbfd95c1a07d2cd9ee4c72b",
+            "service": "migrate",
+            "status": "exited",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": null,
+            "probes": [],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "bfe0b16ad836207f6178b993b529d597f6365728c824773e9b6c0980ae0ca3d4",
+              "stderrBytes": 0,
+              "stdoutBytes": 19,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "id": "2da4287f980cc0ae156f1544d243543db08f896817ca1219a9f18eeb35a3cd97",
+            "service": "minio-init",
+            "status": "exited",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": null,
+            "probes": [],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "id": "c931e3f2945d38c4cbf5ea740ccb1ac2af82f37de0d687ee6d37015ec2acbba5",
+            "service": "postgres",
+            "status": "running",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "c98fdc49daa57517ec129963e5dba28f99275897dbfd9c09c12a88a1cf8ff76e"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "c98fdc49daa57517ec129963e5dba28f99275897dbfd9c09c12a88a1cf8ff76e"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "c98fdc49daa57517ec129963e5dba28f99275897dbfd9c09c12a88a1cf8ff76e"
+              }
+            ],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "5a0720aa73dd4f3c20d383c0e44ed3b7e51a55dbc9f0d344a36730c7988714af",
+              "stdoutSha256": "8228496828c338a816e82d4223f2d7f2dcdf6c6966b0aff1a6d9d5063a7a61e5",
+              "stderrBytes": 2169,
+              "stdoutBytes": 1518,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "id": "ab0ee20e84df6c387922cfa233339cffcccc85bc7d9567d1d83b1b75d4ce7690",
+            "service": "redis",
+            "status": "running",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "413146253607ac6b5e0198ad5ac77e9a2acfa788ffe8b97b7aeec6449e44171d"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "413146253607ac6b5e0198ad5ac77e9a2acfa788ffe8b97b7aeec6449e44171d"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "413146253607ac6b5e0198ad5ac77e9a2acfa788ffe8b97b7aeec6449e44171d"
+              }
+            ],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "cb8272dbbf40d1c97662f4e63226ebac2fc2b79c9e932edf6b70eace63b8bba2",
+              "stderrBytes": 0,
+              "stdoutBytes": 1235,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "id": "0d4bd80158864991b0246e862ae74e2f65648e734d5a6375d337fed99b746470",
+            "service": "minio",
+            "status": "running",
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "afe0194fc99bec7c175585a34d6c7661f5c8d66c2b02f1f3ae0fc00d11661cc8"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "afe0194fc99bec7c175585a34d6c7661f5c8d66c2b02f1f3ae0fc00d11661cc8"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "afe0194fc99bec7c175585a34d6c7661f5c8d66c2b02f1f3ae0fc00d11661cc8"
+              }
+            ],
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "8932c1e815bd7b7812960bb57d3755a50e4f47de0afa1e19d6a44abe44b21adc",
+              "stdoutSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+              "stderrBytes": 568,
+              "stdoutBytes": 104,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          }
+        ]
+      }
+    ],
+    "containerStatusUnavailable": true
+  }
+}
