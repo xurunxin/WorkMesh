@@ -362,3 +362,65 @@ Windows 原生 Node22.19 的四次新进程量测中，总入口为 123.88／127
 guest 在捕获异常、读 journal、核完归属容器状态后分别即时输出固定快照，再进行原日志分类；最多三条，不新增 HTTP 成功阶段或验收通过依据。未知消息、路径、参数、身份和环境不输出，原异常仍传播。该路径及阶段耗时的边界测试已通过，尚未实际 guest 验证，不补写 #548 的缺失诊断。首轮新增 AST 夹具因 Windows 默认 GBK 读取 UTF-8 源文件而有三项 UnicodeDecodeError，工具返回留在对话，未另存完整原始日志；改为显式 UTF-8 后通过。随后 12 项 Python、15 项安装器及语法／AST 原日志在上述本机原件中。
 
 新根五门禁及真实示例正在独有环境运行。17,071 文件摘要在首批检查运行期间生成，产品源码在命令启动前已固定且扫描期间未修改；后续文档／证据另列。它是当前工作树的运行输入记录，起点 Git HEAD26f6293 不是干净受测快照，不拼接旧 6c20a93 或 CI548 为新候选通过。没有迁移、REST/MCP 合同或事件语义变更，正式成果独审未做，当前不能合入。
+
+## 新根 test 首败与连接器管道定向诊断
+
+轻量入口修正已推送 38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428，CI549／run38710331571 执行中，三份新增 ZIP 的实际 Git blob 与工作树原字节一致。根链的真实示例、artifact bucket、lint、typecheck 通过，test 退出 1，integration／conformance 因前序失败未执行。连接器的管道提示用例在约 10.37 s 后未满足 replied=true；原日志没有子进程退出码及其 stdout／stderr 正文，不能认定是超时、启动错误或资源竞争。
+
+首败原件及 3 容器／3 卷收尾见 [索引](../../reviews/ta01-product/resumption-runtime-metadata-required-first-failure.json)／[原件](../../reviews/ta01-product/resumption-runtime-metadata-required-first-failure.zip)。结束后 686 个产品、测试、脚本、构建和合同输入与运行期间摘要一致，文档和证据不属于此子集；不冒一份干净完整快照。父 PID49548 的创建／关闭在原日志，后续只读查询没有其子进程，不执行猜测清理。
+
+同一用例在独立定向诊断中通过，其他 18 项按 -t 未执行，原断言及 10 s 子进程／15 s 用例预算未改；见 [索引](../../reviews/ta01-product/resumption-runtime-metadata-pipe-targeted-pass.json)／[原件](../../reviews/ta01-product/resumption-runtime-metadata-pipe-targeted-pass.zip)。该通过不关闭首轮未知原因，也不代根 test。现在新建独有环境，按原完整五门禁入口复验；当前 Required、完整 guest 及正式独审仍待结果，不可合入。
+
+## CI #549 灾备组件与真实 checkout 绑定
+
+Complete disaster recovery job116340184245 通过，实际 PG／S3 恢复矩阵及恢复后 API／Worker／MCP 生产镜像 smoke 原件见 [索引](../../reviews/ta01-product/ci549-recovery-components-pass.json)／[原件](../../reviews/ta01-product/ci549-recovery-components-pass.zip)。选取七份根日志／报告及四份源码／job 投影，另保完整下载 ZIP 摘要；未纳入其他 332 成员，不将所选包称全部 artifact 原件。报告 sourceBuildSha 为 bbbb 测试夹具值，不当 runner 源码。
+
+该 job 默认 checkout PR 合成提交 a39ca5a600329797b7afe6c0fea46d997a3df520。实际 checkout 日志、完整日志摘要及 Git API 投影证明父为 main c3dd64b 与 head38a8923，tree 为 ae9aac8747435c07b326da854e6d7c7161bdc4bd，与分支 38a8923 完全一致；不由 workflow head_sha 单独推算 runner 检出。此组件通过不代离线三画像、真实重启或当前 Required。根复验 lint／typecheck／test 已通过，integration／conformance 仍待终态。
+
+本次没有 REST/MCP 路径、鉴权、DTO 或配置示例字段变化，因此 reference、getting-started、接入 README 及请求示例无需改输入输出；真实接入示例另已通过。新增安装诊断开关及内部加载边界已同次维护 server-installation.md，不把内部轻量入口当新产品接口。
+
+## 规范 integration 的 M5 首败与事后观测
+
+38a8923 的完整复验中，lint／typecheck／test 通过，integration 在内层真实 MCP/Pi 套件失败：95 项通过、1 项失败，位置为 joint-clients.conformance.test.ts:523 的 producer complete_session。DB／API 前段已通过，后续根 Worker／recovery 阶段及独立 test:conformance 未执行；不能把未到达阶段记 skip 或 PASS。原件、686 个规范输入核对和 3 容器／3 卷收尾见 [索引](../../reviews/ta01-product/resumption-runtime-metadata-integration-m5-failure.json)／[原件](../../reviews/ta01-product/resumption-runtime-metadata-integration-m5-failure.zip)。
+
+失败 Pi 原件 nativeExit=0、captures=0，运行 18.88 s；Runner stderr 为 RUNNER_ANSWER_INVALID，控制面 telemetry 映射为通用 RUNNER_EXECUTION_FAILED。二者不是同一字段，不能由进程退出 0 认定业务成功。原夹具在解析请求及执行回调后才写 captures，0 捕获也不能证明 0 网络请求。原失败没有模型侧传输分类，当前根因未知，不套其他 CI 或旧 M5 失败的原因。
+
+事后只在本机临时加入模型夹具的接收／解析／TLS 错误观测，原文件事前逐字保全，规范与观测 SHA 分开登记；诊断结束须按原字节恢复，不能把临时改动当受测产品源码。定向 M5 链在观测下通过，40 次接收与解析、无夹具或 TLS 错误，尚未复现整套失败。随后保原前序及预算运行完整 conformance 诊断，不以该诊断通过替代规范入口。
+
+首轮附加 fetch 观测写入 stderr，破坏示例原有空 stderr 断言；该采集失败与 2 容器／2 卷收尾保留，不能记为产品失败。已改为退出时写独有有界文件，只记录回环 HTTPS 状态和错误分类，不改请求／响应、模型重试或断言；完整诊断仍在运行。当前 CI549 只剩服务端双架构完整 guest，仍不可合入。
+
+## 已证实的 Pi 压缩请求夹具缺陷与规范修正
+
+整套 conformance 观测运行通过，但 265 次接收／解析中仍有 12 次无 tools 请求触发旧夹具的 tools.map，返回 500。TypeError 消息摘要精确等于 `Cannot read properties of undefined (reading 'map')` 的 SHA-256；记录、SDK 0.87.1 文件摘要、临时源码及收尾见 [索引](../../reviews/ta01-product/resumption-pi-compaction-observation.json)／[原件](../../reviews/ta01-product/resumption-pi-compaction-observation.zip)。SDK 的独立摘要 context 没有 tools，这与业务工具请求不同。观测通过不证明夹具无误，也不补造旧 M5 原件缺失的传输数据，不能直接追认全部旧首败同因。
+
+诊断结束后先逐字恢复原夹具，实核 SHA 与 Git diff 为空，再接入正式修正。新 pi-compaction.fixture.ts 只识别 SDK 摘要 system／developer 前缀、序列化 conversation 及空／缺失 tools，返回明确的测试摘要 SSE；未知无工具请求继续拒绝。摘要独立计数，不消耗业务回调或 captures，业务工具调用、实际结果、权限与链路断言保持；生产 Runner 的压缩及失败结算未变。
+
+真实 HTTP 回归验证摘要正常结束、不回显会话、保留首个业务调用计数，带工具的请求即使含相同摘要前缀也仍走业务。回归、包 typecheck 和生产 build 通过，辅助文件明确从生产 build 排除。临时观测源码及 preload 不进入新规范运行；观测开销及首轮采集失败单列，不冒产品证据。
+
+新规范五门禁已按原入口在独有环境执行，起点为 head38a8923 加本次测试夹具修正，695 个产品／测试／脚本／构建／CI／合同输入在启动前固定。真实示例、artifact bucket、lint、typecheck 已通过，test 及后续仍待结果；不把起点 HEAD 或旧 CI 当本次干净源码快照。CI549 的双架构 guest 仍在运行，当前不可合入。
+
+## CI #549 AMD64 团队回退后真实读取首败
+
+job116340184419 在 6313.08 s 失败，已送达 failure 回执，并非达到总期限。个人画像 profile-completed，团队画像业务已提交，rollback 操作 41 完成；随后 commit 操作 42 在 113439 ms 后失败。journal 的 validate-business-read 为 failed，具体为真实 MCP initialize 的 ECONNRESET／INSTALL_BUSINESS_VALIDATION_FAILED。完整下载 ZIP、所选 14 份原件及逐成员摘要见 [索引](../../reviews/ta01-product/ci549-amd64-rollback-mcp-reset.json)／[原件](../../reviews/ta01-product/ci549-amd64-rollback-mcp-reset.zip)。五份 Python 脚本摘要逐项核受测 Git head38a8923，源码 tree 为 ae9aac8747435c07b326da854e6d7c7161bdc4bd。
+
+安装器当时记录 MCP running／starting、RestartCount=1；稍后的 guest 快照为 running／healthy、RestartCount=1，API／Worker 重启数为 0。没有保存 MCP 历史 die 的退出码，不能将这次连接重置认定为历史退出139或同一根因。日志、串口未出现崩溃分类也不能证明没有崩溃。失败后的可用内存约 3 GiB，不是首败瞬间资源采样，不能据此判断根因。
+
+新增 caught／journal／owned-states 三条即时快照及固定阶段耗时已实际保存。40 次完整包校验累计约 1369.84 s，38 次轻量配置加载累计约 27.55 s；均为本次已执行操作，含预期拒绝，不是完整流程成本或优化收益证明。CPU 数值只包含安装器 Node 自身。ARM64 guest 与本机新规范 integration 仍在运行；本机示例、lint、typecheck、test 已通过，695 个固定输入仍逐字一致。当前 Required 不具备通过条件，PR 保持草稿，不可合入。
+
+## Pi 修正后的规范五门禁终态与后续诊断边界
+
+本机新规范五门禁全部退出0，真实示例也通过；root test 包含新的真实 HTTP 摘要夹具回归。695 个固定输入在运行前后逐字相同，未加载临时传输观测或 preload；3 容器／3 卷均按准确账本收尾。根 integration 的 recovery opt-in 仍按配置跳过，其真实验证另由 CI549 组件原件承接，不补写为本机实跑。十份根日志／输入绑定／账本见 [索引](../../reviews/ta01-product/resumption-pi-compaction-required-pass.json)／[原件](../../reviews/ta01-product/resumption-pi-compaction-required-pass.zip)。该通过不代表离线三画像、整机重启、当前 Required 或正式独审完成。
+
+规范检查结束并核全部固定输入后，才将准备好的三份 Python 诊断修改写回仓库。普通模式业务、故障、画像、重启及期限保持；失败后仅对已核安装 UUID／根哈希的准确 ID 读取固定事件字段，保 die 退出码，最多 64 条，查询限 10 s。Docker 历史缓存不保证完整，空事件不能证明未退出，采集失败不覆盖原异常。
+
+显式原生模式现对准 CI549 团队回退后的原 commit，保正常个人故障恢复及团队业务／升级前序；并行准备不推迟原请求，事后比注册时间与 journal 的 validate-business-read 开始时间，缺失或迟到拒绝。提交只执行一次，原异常原样上抛，finish 负责一次恢复，拒绝不重试；仍为默认关闭、非零、非 Required 的诊断，原匿名内存／无 swap／容量及时间边界保持，完整 guest 尚未执行。
+
+新 21 项 Python 边界通过，本机 Docker 的合成 Node 退出7可准确投影历史 die，按 owner／完整 ID 核退出后移除，无卷；不当真实 MCP 崩溃。首轮不存在断言因 Docker 返回小写 no such object 失败，原失败只在工具返回，后续只读事件证实已 destroy，未再次删除；一轮只读事件查询误设未来 until 而到期，改为当前 UTC 后完成。首败、后续新身份实验、收尾与准确源码见 [索引](../../reviews/ta01-product/resumption-rollback-diagnostic-checks.json)／[原件](../../reviews/ta01-product/resumption-rollback-diagnostic-checks.zip)。这些验证不能代新完整 guest 或根因修复。
+
+## CI #549 ARM64 与 Required 终态
+
+ARM64 job116340184297 在 8679.98 s 失败，操作 19 为个人画像升级后的 commit，原 30 s MCP socket 读取触发 INSTALL_BUSINESS_VALIDATION_TIMEOUT，方法 tools/call、requestId=2。首次个人业务已提交，但个人完整升级／恢复闭环未完成，团队／企业及整机重启均未到达。MCP／API／Worker 当时 running／healthy、RestartCount=0；这与 AMD64 团队回退后 initialize 连接重置的记录不同，不推定同因。十四份所选原件、完整下载摘要及五份脚本对 head38a8923 的核验见 [索引](../../reviews/ta01-product/ci549-arm64-upgrade-mcp-timeout.json)／[原件](../../reviews/ta01-product/ci549-arm64-upgrade-mcp-timeout.zip)。准确 tree 仍为 ae9aac8747435c07b326da854e6d7c7161bdc4bd。
+
+ARM64 已执行的 18 次完整包校验累计约 1457.47 s，17 次轻量配置加载累计约 31.63 s；不代表完整流程或加速比。失败后 load average 为 9.95／9.49／9.34、可用内存 3201000 KiB，是事后快照，不能单独证明瓶颈或根因。Required job116401453704 终态 failure，其余 jobs 成功；CI549 不满足合入条件，健康 jobs 不重跑来追认原失败。
+
+针对新 ARM64 观测缺口，业务读取失败诊断补固定 requestFinished／responseStarted／responseCompleted 布尔值、响应字节数及读取耗时，状态码在响应头到达时记录。请求写入完成不证明服务端接收，未完成响应不写为成功；不记录头值／正文、不提前解析或重试、不改 30 s socket 及原完整成功判定。即时快照白名单补实际超时码。追加后的 15 项安装单元、21 项 Python 边界及 Node 语法通过，原件与准确源码见 [索引](../../reviews/ta01-product/resumption-mcp-read-progress-checks.json)／[原件](../../reviews/ta01-product/resumption-mcp-read-progress-checks.zip)。新增采集仍待新完整 guest，不能称产品根因已修复。

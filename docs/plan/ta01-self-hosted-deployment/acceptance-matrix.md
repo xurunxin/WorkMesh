@@ -36,7 +36,7 @@
 | guest：真实凭据 429／Retry-After、停 Redis 的凭据失败关闭、停 worker 时 PG outbox 留存、重启后 delivered、并发请求和周期采样 | 未执行完成；新增 realCredentialRateLimit429 尚待新候选实测，Root 集成回归是独立输入 |
 | guest：同程序两候选升级、完整加密备份、兼容回退、真实未知账本拒绝、健康失败后实际停止不兼容候选、独立空目标恢复、原卷身份 | 未执行完成；不是两个已发行历史程序版本，裸 Compose 迁入未实现 |
 | guest：两次 kernel／boot_id 与 QMP RESET／SHUTDOWN，实际已安装服务重启 API／MCP 读取、原工件字节和新 outbox 投递 | 未执行完成；不以 hosted 架构标签或 Docker healthy 代证 |
-| 根 lint／typecheck／test／integration／conformance；独立恢复 opt-in | 既有通过原件见 verification.md；6c20a93 的完整 integration 首轮失败后原入口复验通过，conformance 及独立恢复 opt-in 另通过。26f6293 的 CI548 服务端双架构及 Required 失败；当前轻量配置入口、即时快照和阶段耗时改动另起根五门禁，仍在运行。不同源码边界见 resumption.md，不拼成最新五门禁或 guest 全通过 |
+| 根 lint／typecheck／test／integration／conformance；独立恢复 opt-in | 38a8923 加正式 Pi 摘要测试修正的规范五门禁全部通过，695 个输入前后相同，无临时观测／preload；此前 M5 首败及观测另保。根 recovery opt-in 仍跳过，CI549 真实 PG／S3 恢复和恢复后生产镜像 smoke 另通过。后续诊断修改的21项 Python／15项安装单元通过，新完整 CI 待执行；CI549 AMD64 团队回退后 MCP 初始化连接重置，ARM64 个人升级后工具读取超时，双架构及 Required 失败。准确源、首败与收尾见 resumption.md，当前不能合入 |
 
 下面的历史冻结用例名继续保留。已有等效入口的真实名字和范围以上表为准；尚未完成的新场景仍是待创建或待执行责任，不因函数、配置或旧测试存在而勾选。Redis-free／filesystem 专属用例维持后续裁定。
 

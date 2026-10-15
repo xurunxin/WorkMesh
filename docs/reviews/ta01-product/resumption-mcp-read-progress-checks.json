@@ -1,0 +1,28 @@
+{
+  "说明": "ARM64真实tools/call读取超时后追加安全进度数字：requestFinished仅表示Node写入完成；responseStarted／responseCompleted／responseBytes区分响应阶段，不含正文或头值。原30秒socket期限和完整响应成功判定未改。15项安装单元、21项Python边界及Node语法通过，新增字段实际guest尚未验证；不宣称根因修复。",
+  "sourceHead": "38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428",
+  "sourceIsDirty": true,
+  "selectedZipSha256": "34be0b143647af55ae63735f0e006e7ed81ce1d193841bd70b0422106d9a3b88",
+  "members": {
+    "mcp-read-progress-unit.log": {
+      "bytes": 3610,
+      "sha256": "5e773eafd1e68d4b39211c02b8ed36b57438c92166d086e1ad69c3abc1ec20c3"
+    },
+    "mcp-read-progress-python.log": {
+      "bytes": 125,
+      "sha256": "542db25feaaadbdf13dde01ec691edd634c3524daa8bf0b599a498dafdd08bb7"
+    },
+    "source/install.mjs": {
+      "bytes": 36637,
+      "sha256": "26b31e034040b036a3e5fbda8dc828656a06c453a5f4fa4cd2c7071fe28a6e8f"
+    },
+    "source/guest.py": {
+      "bytes": 68655,
+      "sha256": "148f0cd86d79154e3bff8e430648252d44ca084be8022a186736b06d1b011c7c"
+    },
+    "source/native_diagnostic_test.py": {
+      "bytes": 19683,
+      "sha256": "954a59a4d0dfb53234c21b415bde2a91381423e76818f3442082cafeb57da79f"
+    }
+  }
+}

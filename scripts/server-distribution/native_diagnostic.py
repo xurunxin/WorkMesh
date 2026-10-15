@@ -172,3 +172,55 @@ class NativeDebugger:
             stdout, stderr = self.process.communicate(timeout=10)
         return {**safe_trace(stdout, stderr, self.process.returncode), 'interruptedWithoutCrash': interrupted,
                 'targetBinarySha256': self.binary_sha256}
+
+
+class NativeProbeError(RuntimeError):
+    def __init__(self, trace):
+        super().__init__('native probe did not establish the original business boundary')
+        self.native_trace = trace
+
+
+def observe_native_action(action, prepare, business_started):
+    from concurrent.futures import ThreadPoolExecutor
+    known_errors = {'RuntimeError', 'AssertionError', 'TimeoutExpired', 'TimeoutError', 'PermissionError',
+                    'FileNotFoundError', 'OSError', 'ValueError', 'KeyError', 'NativeDiagnosticError'}
+    error_type = lambda error: type(error).__name__ if type(error).__name__ in known_errors else 'OtherError'
+    def registration():
+        return prepare(), time.time()
+
+    outcome, original_error = None, None
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        capture = pool.submit(registration)
+        try:
+            outcome = action()
+        except BaseException as error:
+            original_error = error
+        trace = {'target': 'team-rollback-commit', 'operationSucceeded': original_error is None,
+                 'preparedBeforeBusiness': False}
+        try:
+            watcher, prepared_at = capture.result()
+        except BaseException as error:
+            # prepare owns its partial rollback. Never retry denied setup or
+            # switch to another capture mechanism after its refusal.
+            trace['preparationErrorType'] = error_type(error)
+        else:
+            trace['preparedUtcEpoch'] = prepared_at
+            try:
+                started_at = business_started()
+                if type(started_at) in [int, float]:
+                    trace['businessStartedUtcEpoch'] = started_at
+                    trace['preparedBeforeBusiness'] = prepared_at <= started_at
+            except BaseException as error:
+                trace['businessBoundaryErrorType'] = error_type(error)
+            try:
+                # finish owns restoration in its finally. Calling restore again
+                # after a refusal would retry a protected kernel-setting write.
+                trace.update(watcher.finish())
+            except BaseException as error:
+                trace['finishErrorType'] = error_type(error)
+        if original_error is not None:
+            original_error.native_trace = trace
+            raise original_error
+        if not trace['preparedBeforeBusiness'] or 'finishErrorType' in trace:
+            raise NativeProbeError(trace)
+        return outcome, trace

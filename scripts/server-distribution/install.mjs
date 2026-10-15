@@ -266,19 +266,28 @@ async function verifyBusinessRead(release, env, proofFile) {
   const ca = env.NODE_EXTRA_CA_CERTS ? await readFile(env.NODE_EXTRA_CA_CERTS) : undefined
   const post = (id, method, params) => new Promise((resolve, reject) => {
     const body = JSON.stringify({ jsonrpc: '2.0', id, method, params })
-    const detail = { operation: 'mcp-business-read', method, requestId: id }
+    const detail = { operation: 'mcp-business-read', method, requestId: id,
+      requestFinished: false, responseStarted: false, responseCompleted: false, responseBytes: 0 }
+    const began = performance.now()
     const rejection = (code, extra = {}) => {
-      const error = new Error(code); error.diagnostics = { ...detail, ...extra }; reject(error)
+      const error = new Error(code)
+      error.diagnostics = { ...detail, elapsedMilliseconds: Math.round(performance.now() - began), ...extra }
+      reject(error)
     }
     const request = https.request(new URL('/mcp', env.PUBLIC_MCP_ORIGIN), {
       method: 'POST', ca, timeout: 30_000, headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream',
         'content-length': Buffer.byteLength(body), ...(env.WORKMESH_BETA_COORDINATION_MCP === 'true'
           ? { 'X-WorkMesh-Installation-Token': proof.credential } : { authorization: `Bearer ${proof.credential}` }) },
     }, response => {
+      Object.assign(detail, { responseStarted: true, httpStatus: response.statusCode })
       let result = '', bytes = 0
-      response.on('data', block => { bytes += block.length; if (bytes > 1024 * 1024) request.destroy(); else result += block })
+      response.on('data', block => {
+        bytes += block.length
+        detail.responseBytes = bytes
+        if (bytes > 1024 * 1024) request.destroy(); else result += block
+      })
       response.on('end', () => {
-        Object.assign(detail, { httpStatus: response.statusCode, responseBytes: bytes, bodySha256: hash(Buffer.from(result)) })
+        Object.assign(detail, { responseCompleted: true, bodySha256: hash(Buffer.from(result)) })
         try {
           if (response.statusCode !== 200) fail('INSTALL_BUSINESS_VALIDATION_FAILED')
           const reply = readMcpReply(result, id, String(response.headers['content-type'] ?? ''))
@@ -289,6 +298,7 @@ async function verifyBusinessRead(release, env, proofFile) {
       })
       response.on('error', () => rejection('INSTALL_BUSINESS_VALIDATION_FAILED', { responseInterrupted: true }))
     })
+    request.on('finish', () => { detail.requestFinished = true })
     request.on('timeout', () => {
       rejection('INSTALL_BUSINESS_VALIDATION_TIMEOUT', { timedOut: true })
       request.destroy()

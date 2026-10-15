@@ -1,5 +1,6 @@
 """Accept the installed distribution in an isolated full guest, without host Node."""
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import http.client
@@ -35,7 +36,7 @@ def failure_progress(stage, error, context, journal=None, containers=None):
     assert stage in {'caught', 'journal', 'owned-states'}
     known_errors = {'RuntimeError', 'AssertionError', 'TimeoutExpired', 'TimeoutError', 'RemoteDisconnected',
                     'HTTPError', 'URLError', 'ConnectionResetError', 'CalledProcessError', 'JSONDecodeError', 'FileNotFoundError'}
-    known_codes = {'INSTALL_BUSINESS_VALIDATION_FAILED', 'INSTALL_PREFLIGHT_OR_OPERATION_FAILED',
+    known_codes = {'INSTALL_BUSINESS_VALIDATION_FAILED', 'INSTALL_BUSINESS_VALIDATION_TIMEOUT', 'INSTALL_PREFLIGHT_OR_OPERATION_FAILED',
                    'INSTALL_DOCKER_COMMAND_FAILED', 'INSTALL_IMAGE_IMPORT_FAILED',
                    'INSTALL_INCOMPATIBLE_LEDGER_RESTORE_REQUIRED', 'INSTALL_RECOVERY_CANDIDATE_INVALID'}
     value = {'tag': 'ta01-failure', 'stage': stage,
@@ -83,6 +84,59 @@ def failure_progress(stage, error, context, journal=None, containers=None):
     # Emit before slow Docker log classifiers. No messages, arguments, paths,
     # environment, identities or unknown classifications enter serial output.
     print(json.dumps(value), flush=True)
+
+
+def project_container_events(raw, roles, since_nano, until_nano):
+    known = {'api', 'worker', 'mcp', 'postgres', 'redis', 'minio', 'minio-init', 'migrate'}
+    if (not isinstance(roles, dict) or len(roles) > 8 or not roles
+            or any(not isinstance(key, str) or not re.fullmatch('[a-f0-9]{64}', key)
+                   or role not in known for key, role in roles.items())
+            or type(since_nano) is not int or type(until_nano) is not int
+            or not 0 <= since_nano <= until_nano):
+        raise ValueError('container event scope invalid')
+    events, truncated = [], False
+    for line in raw.decode('utf8', errors='replace').splitlines():
+        try:
+            value = json.loads(line)
+        except ValueError:
+            continue
+        if (not isinstance(value, dict) or set(value) != {'timeNano', 'event', 'id', 'exitCode'}
+                or not isinstance(value['id'], str) or value['id'] not in roles
+                or not isinstance(value['event'], str) or value['event'] not in {'die', 'restart', 'oom'}
+                or type(value['timeNano']) is not int or not since_nano <= value['timeNano'] <= until_nano
+                or not isinstance(value['exitCode'], str)):
+            continue
+        entry = {key: value[key] for key in ['timeNano', 'event', 'id']}
+        entry['service'] = roles[value['id']]
+        if value['event'] == 'die':
+            if not re.fullmatch('[0-9]{1,3}', value['exitCode']) or int(value['exitCode']) > 255:
+                continue
+            entry['exitCode'] = int(value['exitCode'])
+        if len(events) == 64:
+            truncated = True
+            break
+        events.append(entry)
+    return {'events': events, 'truncated': truncated}
+
+
+def collect_container_events(journal, owned):
+    # IDs and ownership labels were checked by the caller. Historical events
+    # contain only fixed fields; never request the full Actor attributes.
+    starts = [datetime.fromisoformat(entry['startedAt'].replace('Z', '+00:00'))
+              for entry in journal['actions'] if 'startedAt' in entry]
+    if not starts or any(value.tzinfo is None for value in starts):
+        raise ValueError('container event interval unavailable')
+    since = min(starts)
+    until = datetime.now(timezone.utc)
+    roles = {entry['id']: entry['service'] for _, entry in owned}
+    args = ['docker', 'events', '--since', since.isoformat(), '--until', until.isoformat(),
+            '--filter', 'type=container', '--filter', 'event=die', '--filter', 'event=restart', '--filter', 'event=oom']
+    for identifier in roles:
+        args.extend(['--filter', 'container=' + identifier])
+    args.extend(['--format', '{"timeNano":{{.TimeNano}},"event":"{{.Action}}","id":"{{.Actor.ID}}","exitCode":"{{index .Actor.Attributes "exitCode"}}"}'])
+    result = subprocess.run(args, capture_output=True, timeout=10)
+    result.check_returncode()
+    return project_container_events(result.stdout, roles, int(since.timestamp() * 1e9), int(until.timestamp() * 1e9))
 
 
 def installer_timings(raw, context):
@@ -494,7 +548,7 @@ def journey(prefix, config, certificates):
             'mcpUrl': redeemed['mcp']['url'], 'workItemBody': body}
 
 
-def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_health=True):
+def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_health=True, native_diagnostic=False):
     # A second candidate identity for the same checked source/ledger tests the
     # supported compatible-program case. This is not a released older binary.
     upgrade = ROOT / 'compatible-upgrade'
@@ -564,6 +618,20 @@ def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_h
     assert (backup / 'manifest.json').exists() and (backup / 'manifest.hmac-sha256').exists()
     assert volumes() == original_volumes and sql(prefix, 'SELECT count(*) FROM work_items') == original_rows
     assert install(dist, digest, prefix, config, 'rollback', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
+    if native_diagnostic:
+        from native_diagnostic import observe_native_action
+        def business_started():
+            entries = json.loads((prefix / 'journal.json').read_text())['actions']
+            reads = [entry for entry in entries if entry['name'] == 'validate-business-read']
+            assert len(reads) == 1
+            return datetime.fromisoformat(reads[0]['startedAt'].replace('Z', '+00:00')).timestamp()
+        # Register concurrently with the original commit preflight. Do not wait
+        # before its request, repeat it, or turn a missed boundary into evidence.
+        outcome, trace = observe_native_action(
+            lambda: install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')]),
+            lambda: prepare_native_watcher(prefix, manifest), business_started)
+        assert outcome['status'] == 'installed' and volumes() == original_volumes
+        return trace
     assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
     assert volumes() == original_volumes
     checks.extend(['upgradeKeepsOriginalVolumes', 'compatibleProgramRollback', 'completeEncryptedBackup'])
@@ -696,7 +764,6 @@ def prepare_native_watcher(prefix, manifest):
 def main():
     servers = []
     prefix = None
-    debugger = None
     native_diagnostic = json.loads(Path('/opt/server-install/expected.json').read_text()).get('nativeDiagnostic') is True
     try:
         rebooted = STATE.exists()
@@ -805,47 +872,10 @@ def main():
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 progress(profile, 'health-ready')
                 assert not (prefix / 'current.json').exists()
-                if native_diagnostic and profile == 'team':
-                    # Prepare while the unchanged duplicate-install and idle
-                    # measurement run, rather than adding Docker calls directly
-                    # before business requests. Never await a late watcher and
-                    # then claim the original request timing was preserved.
-                    with ThreadPoolExecutor(max_workers=1) as capture_pool:
-                        capture = capture_pool.submit(prepare_native_watcher, prefix, manifest)
-                        try:
-                            assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
-                            measurement(prefix, 'idle')
-                            if not capture.done():
-                                diagnostics['nativePreparation'] = 'not-ready-before-business'
-                                raise RuntimeError('native watcher not ready before business')
-                            debugger = capture.result()
-                        except BaseException:
-                            # Both Docker reads have 30 s bounds. A completed
-                            # watcher must restore only its successful settings,
-                            # even if the existing measurement itself failed.
-                            try:
-                                watcher = capture.result()
-                            except Exception as preparation_error:
-                                diagnostics['nativePreparationErrorType'] = type(preparation_error).__name__
-                            else:
-                                try:
-                                    watcher.restore()
-                                except Exception as restoration_error:
-                                    diagnostics['nativeRestorationErrorType'] = type(restoration_error).__name__
-                            raise
-                else:
-                    assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
-                    measurement(prefix, 'idle')
+                assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
+                measurement(prefix, 'idle')
                 start = len(checks)
                 identity = journey(prefix, config, certificates)
-                if native_diagnostic and profile == 'team':
-                    trace = debugger.finish()
-                    debugger = None
-                    diagnostics['nativeTrace'] = trace
-                    report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks,
-                            'preludeProfiles': [{k: v for k, v in entry.items() if k != 'identity'} for entry in saved['profiles']]})
-                    compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
-                    return
                 private(prefix / 'validation.json', {'credential': identity['installationToken'], 'workItemId': identity['itemId']})
                 private(prefix / 'invalid-validation.json', {'credential': 'wmi_' + 'x' * 43, 'workItemId': identity['itemId']})
                 install(dist, digest, prefix, config, 'commit', expected=1, extra=['--validation', str(prefix / 'invalid-validation.json')])
@@ -854,7 +884,14 @@ def main():
                 assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
                 progress(profile, 'business-committed')
-                upgrade_recovery(dist, manifest, digest, prefix, config, include_failed_health=not native_diagnostic)
+                trace = upgrade_recovery(dist, manifest, digest, prefix, config,
+                    native_diagnostic=native_diagnostic and profile == 'team')
+                if native_diagnostic and profile == 'team':
+                    diagnostics['nativeTrace'] = trace
+                    report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks,
+                            'preludeProfiles': [{k: v for k, v in entry.items() if k != 'identity'} for entry in saved['profiles']]})
+                    compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
+                    return
                 saved['profiles'].append({'profile': profile, 'status': 'passed', 'checks': checks[start:], 'identity': identity})
                 progress(profile, 'profile-completed')
                 # Keep peak resource competition bounded: each profile's real
@@ -897,11 +934,6 @@ def main():
             diagnostics['guestResourcesUnavailable'] = True
         if native_diagnostic and hasattr(error, 'native_trace'):
             diagnostics['nativeTrace'] = error.native_trace
-        if debugger:
-            try:
-                diagnostics['nativeTrace'] = debugger.finish()
-            except Exception as trace_error:
-                diagnostics['nativeTraceUnavailable'] = type(trace_error).__name__
         if prefix and (prefix / 'journal.json').exists():
             try:
                 journal = json.loads((prefix / 'journal.json').read_text())
@@ -959,6 +991,11 @@ def main():
                         except (OSError, ValueError, IndexError):
                             entry['processUnavailable'] = True
                     failure_progress('owned-states', error, diagnostics, journal=journal, containers=projected)
+                    if owned:
+                        try:
+                            diagnostics['containerEvents'] = collect_container_events(journal, owned)
+                        except (OSError, ValueError, KeyError, subprocess.TimeoutExpired, subprocess.CalledProcessError):
+                            diagnostics['containerEventsUnavailable'] = True
                     for info, entry in owned:
                         health = info['State'].get('Health', {})
                         # Capture only this installation's logs. The trusted

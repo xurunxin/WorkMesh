@@ -58,14 +58,14 @@ class GuestFailureProgress(unittest.TestCase):
                 raise original
             except RuntimeError as error:
                 marker('caught', error, {'command': private, 'exitCode': 1, 'stderrSha256': 'a' * 64,
-                    'codes': ['INSTALL_BUSINESS_VALIDATION_FAILED', private], 'environment': private, 'path': private})
+                    'codes': ['INSTALL_BUSINESS_VALIDATION_FAILED', 'INSTALL_BUSINESS_VALIDATION_TIMEOUT', private], 'environment': private, 'path': private})
                 # The original failure survives even if a later classifier never runs.
                 raise
         self.assertIs(caught.exception, original)
         value = json.loads(output.getvalue())
         self.assertNotIn(private, output.getvalue())
         self.assertEqual(value, {'tag': 'ta01-failure', 'stage': 'caught', 'errorType': 'RuntimeError',
-            'exitCode': 1, 'stderrSha256': 'a' * 64, 'codes': ['INSTALL_BUSINESS_VALIDATION_FAILED']})
+            'exitCode': 1, 'stderrSha256': 'a' * 64, 'codes': ['INSTALL_BUSINESS_VALIDATION_FAILED', 'INSTALL_BUSINESS_VALIDATION_TIMEOUT']})
         self.assertFalse(valid_receipt(value))
 
     def test_journal_and_owned_states_keep_machine_facts_and_bound_output(self):
@@ -255,6 +255,116 @@ class TracePrivacy(unittest.TestCase):
             os.close(descriptor)
         with self.assertRaises(ValueError):
             memory_core(io.BytesIO(raw), 1)
+
+
+from native_diagnostic import NativeProbeError, observe_native_action
+
+
+class Watcher:
+    def __init__(self, failure=None):
+        self.finished = 0
+        self.failure = failure
+
+    def finish(self):
+        self.finished += 1
+        if self.failure:
+            raise self.failure
+        return {'naturalRun': True, 'captured': False}
+
+
+class ProbeBoundary(unittest.TestCase):
+    def test_success_retains_original_result_and_does_not_invent_capture(self):
+        watcher = Watcher()
+        result, trace = observe_native_action(lambda: 'installed', lambda: watcher, lambda: 10**12)
+        self.assertEqual(result, 'installed')
+        self.assertTrue(trace['preparedBeforeBusiness'])
+        self.assertFalse(trace['captured'])
+        self.assertEqual(watcher.finished, 1)
+
+    def test_original_failure_survives_late_registration_and_is_not_retried(self):
+        original = RuntimeError('private original failure')
+        calls = []
+        watcher = Watcher()
+        def action():
+            calls.append('business')
+            raise original
+        with self.assertRaises(RuntimeError) as caught:
+            observe_native_action(action, lambda: watcher, lambda: 0)
+        self.assertIs(caught.exception, original)
+        self.assertFalse(original.native_trace['preparedBeforeBusiness'])
+        self.assertEqual(calls, ['business'])
+        self.assertEqual(watcher.finished, 1)
+
+    def test_setup_refusal_is_not_retried_and_original_failure_is_preserved(self):
+        calls = []
+        original = RuntimeError('original')
+        def prepare():
+            calls.append('prepare')
+            raise PermissionError('private refusal')
+        def action():
+            raise original
+        with self.assertRaises(RuntimeError) as caught:
+            observe_native_action(action, prepare, lambda: 10**12)
+        self.assertIs(caught.exception, original)
+        self.assertEqual(calls, ['prepare'])
+        self.assertEqual(original.native_trace['preparationErrorType'], 'PermissionError')
+
+    def test_finish_refusal_is_attempted_once_and_cannot_turn_success_into_valid_diagnosis(self):
+        watcher = Watcher(PermissionError('private restoration refusal'))
+        with self.assertRaises(NativeProbeError) as caught:
+            observe_native_action(lambda: 'installed', lambda: watcher, lambda: 10**12)
+        self.assertEqual(watcher.finished, 1)
+        self.assertEqual(caught.exception.native_trace['finishErrorType'], 'PermissionError')
+
+    def test_missing_business_boundary_is_not_a_successful_diagnosis(self):
+        watcher = Watcher()
+        with self.assertRaises(NativeProbeError):
+            observe_native_action(lambda: 'installed', lambda: watcher, lambda: None)
+        self.assertEqual(watcher.finished, 1)
+
+    def test_finish_refusal_does_not_replace_or_retry_the_original_error(self):
+        original = RuntimeError('private business failure')
+        watcher = Watcher(PermissionError('private restoration refusal'))
+        def action():
+            raise original
+        with self.assertRaises(RuntimeError) as caught:
+            observe_native_action(action, lambda: watcher, lambda: 10**12)
+        self.assertIs(caught.exception, original)
+        self.assertEqual(watcher.finished, 1)
+        self.assertEqual(original.native_trace['finishErrorType'], 'PermissionError')
+
+
+class Events(unittest.TestCase):
+    def test_owned_restart_history_retains_exit_without_private_attributes(self):
+        owner = 'a' * 64
+        record = {'timeNano': 100, 'event': 'die', 'id': owner, 'exitCode': '139'}
+        values = [record, {**record, 'event': 'restart', 'exitCode': ''},
+                  {**record, 'event': 'oom', 'exitCode': ''}]
+        result = GuestFailureProgress.marker('project_container_events')('\n'.join(map(json.dumps, values)).encode(), {owner: 'mcp'}, 90, 110)
+        self.assertEqual([v['event'] for v in result['events']], ['die', 'restart', 'oom'])
+        self.assertEqual(result['events'][0]['exitCode'], 139)
+        self.assertFalse(result['truncated'])
+
+    def test_unknown_unowned_outside_window_and_private_fields_rejected(self):
+        owner = 'a' * 64
+        private = 'wmi_' + 'x' * 43
+        record = {'timeNano': 100, 'event': 'die', 'id': owner, 'exitCode': '1'}
+        values = [{**record, 'id': 'b' * 64}, {**record, 'timeNano': 89},
+                  {**record, 'event': private}, {**record, 'attributes': private},
+                  {**record, 'exitCode': private}, {**record, 'exitCode': '256'},
+                  {**record, 'timeNano': True}, {**record, 'event': []}]
+        result = GuestFailureProgress.marker('project_container_events')(('invalid\n' + '\n'.join(map(json.dumps, values))).encode(), {owner: 'mcp'}, 90, 110)
+        self.assertEqual(result, {'events': [], 'truncated': False})
+        self.assertNotIn(private, json.dumps(result))
+
+    def test_scope_and_record_limits(self):
+        owner = 'a' * 64
+        record = {'timeNano': 100, 'event': 'die', 'id': owner, 'exitCode': '1'}
+        result = GuestFailureProgress.marker('project_container_events')(('\n'.join([json.dumps(record)] * 70)).encode(), {owner: 'mcp'}, 90, 110)
+        self.assertEqual(len(result['events']), 64)
+        self.assertTrue(result['truncated'])
+        with self.assertRaises(ValueError):
+            GuestFailureProgress.marker('project_container_events')(b'', {'a': 'mcp'}, 90, 110)
 
 
 if __name__ == '__main__':
