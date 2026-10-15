@@ -424,3 +424,40 @@ ARM64 job116340184297 在 8679.98 s 失败，操作 19 为个人画像升级后�
 ARM64 已执行的 18 次完整包校验累计约 1457.47 s，17 次轻量配置加载累计约 31.63 s；不代表完整流程或加速比。失败后 load average 为 9.95／9.49／9.34、可用内存 3201000 KiB，是事后快照，不能单独证明瓶颈或根因。Required job116401453704 终态 failure，其余 jobs 成功；CI549 不满足合入条件，健康 jobs 不重跑来追认原失败。
 
 针对新 ARM64 观测缺口，业务读取失败诊断补固定 requestFinished／responseStarted／responseCompleted 布尔值、响应字节数及读取耗时，状态码在响应头到达时记录。请求写入完成不证明服务端接收，未完成响应不写为成功；不记录头值／正文、不提前解析或重试、不改 30 s socket 及原完整成功判定。即时快照白名单补实际超时码。追加后的 15 项安装单元、21 项 Python 边界及 Node 语法通过，原件与准确源码见 [索引](../../reviews/ta01-product/resumption-mcp-read-progress-checks.json)／[原件](../../reviews/ta01-product/resumption-mcp-read-progress-checks.zip)。新增采集仍待新完整 guest，不能称产品根因已修复。
+
+## fbb59cf 新候选与 CI550 组件结果
+
+修正及十组证据包已提交 fbb59cf0181cd8f5876770e568bf620d25c47d4d，十个实际 Git ZIP blob 与本地原字节一致。普通验收 CI550/run38729719330 和显式诊断 CI551/run38729756247 分开执行；两者的12个非服务端安装 jobs 均成功，服务端组合及 Required 尚未完成，不将诊断成功或组件通过用于登记完整支持。
+
+CI550 API integration job116404845400 内层6文件、96项真实 API／MCP／Pi 通过。实际 checkout a51d38c5685bc34e29a733250bab0fe397a7b455 的父为 main c3dd64b 与 head fbb59cf，tree d8754a0118f8e65f49ab0d9d694bb92f6963d306 与 fbb59cf 一致。825成员原 artifact 只选两份日志及四份投影；294份 Pi 记录无摘要分支计数，不能声称此 CI 实际触发了压缩分支或证明全部旧 M5 首败同因。见[索引](../../reviews/ta01-product/ci550-api-pi-conformance-pass.json)／[原件](../../reviews/ta01-product/ci550-api-pi-conformance-pass.zip)。
+
+监测曾有一次查询未获得有效结果，原因未保留；后续另观测到 GitHub 查询 HTTP 5xx，不能倒填第一次原因，也不当产品失败。重新只读核对仍运行，没有重跑已成功 jobs、改变候选或延长期限。
+
+## CI551 AMD64 目标前就绪与真实 die139
+
+显式诊断 job116404766221 在6077.15 s 结束，status=diagnostic-only，回执为 failure。准确 Node PID82146、容器 init PID82075；注册时间1792071243.3534672早于业务读取1792071326.07。团队回退后 initialize 在原30 s socket 期限超时，实际诊断 requestFinished=true、responseStarted=false、responseBytes=0、elapsedMilliseconds=31680；已核 MCP 完整 ID 的历史事件记录 die／139，重启数1，API／Worker 重启数0。见[索引](../../reviews/ta01-product/ci551-amd64-rollback-node139-debugger-timeout.json)／[原件](../../reviews/ta01-product/ci551-amd64-rollback-node139-debugger-timeout.zip)，五份脚本逐项对受测 Git fbb59cf 核 SHA。
+
+捕获处理已调用，captureErrorType=TimeoutExpired；依据该版源码，异常发生在有60 s期限的 GDB 子进程。旧处理丢弃了到期前输出和内存流大小／摘要，core 有效性及具体故障点仍未知，不补造栈、字节数或摘要。captured=false 不能当没有退出139；捕获可能延迟进程退出，不将此超时与普通模式 ECONNRESET 直接归为同一根因。一次本地归档命令在 PowerShell 解析阶段失败，未执行或改原件；后续独立脚本完成归档，原解析失败仅保留在工具返回。
+
+## 保留部分捕获结果与公开程序内位置
+
+后续采集先保存实际内存流大小／摘要、目标程序摘要和阶段，再解析受限的 ELF64 note。仅接受 amd64／arm64，对截断、边界和架构不一致拒绝；只输出信号及已核 Node 的文件内偏移／链接地址，不输出其他映射名、寄存器、ASLR地址或字节。流读完不等于有效 core，位置不是完整回溯或根因；读取权限拒绝停止捕获，不换工具或读法重试。
+
+布局依据 Linux v6.8 的 [elfcore](https://github.com/torvalds/linux/blob/v6.8/include/linux/elfcore.h)、[ELF notes](https://github.com/torvalds/linux/blob/v6.8/include/uapi/linux/elf.h)、[x86寄存器](https://github.com/torvalds/linux/blob/v6.8/arch/x86/include/asm/user_64.h)、[arm64寄存器](https://github.com/torvalds/linux/blob/v6.8/arch/arm64/include/uapi/asm/ptrace.h)及[先写故障线程的顺序](https://github.com/torvalds/linux/blob/v6.8/fs/binfmt_elf.c)；不以参考版本倒填实际受测内核。GDB改为当前故障线程 bt12，保默认展开，没有启用可能丢失 DWARF 回溯的 [readnever](https://www.sourceware.org/gdb/current/onlinedocs/gdb.html/File-Options.html)。到期保白名单部分输出及摘要，GDB最多60 s且受原90 s总预算限制，原512 MiB／无swap／不落盘或上传core边界保持。
+
+25项 Windows 边界通过，包含两架构合成布局、私密路径／地址拒绝、模拟超时元数据及安全部分输出；六份 Python AST 通过。结果是工具返回投影，没有另存原始 stdout；新路径尚未在guest捕获真实core。准确源码及范围见[索引](../../reviews/ta01-product/resumption-core-metadata-checks.json)／[材料](../../reviews/ta01-product/resumption-core-metadata-checks.zip)。当前仍未满足基础产品验收或正式独审条件。
+## CI550／551 终态及后续候选
+
+两轮均受测 fbb59cf0181cd8f5876770e568bf620d25c47d4d／tree d8754a0118f8e65f49ab0d9d694bb92f6963d306，均终态 failure。CI550 的 Required CI 为 job116479588611，CI551 为 job116472607788。各轮其余 12 项 job 成功不能代服务端完整安装。
+
+普通 CI550 AMD64 在 9,000.46 s 达到原总期限；个人、团队 profile-completed，企业 install 开始，没有完整重启回执。ARM64 在个人升级后的 commit 失败，tools/call 原 30 s socket 超时（30,390 ms），请求写完、无响应头和响应字节，程序当前健康、重启数 0。分别见 [AMD64 索引](../../reviews/ta01-product/ci550-amd64-total-budget.json)／[原件](../../reviews/ta01-product/ci550-amd64-total-budget.zip)、[ARM64 索引](../../reviews/ta01-product/ci550-arm64-upgrade-read-timeout.json)／[原件](../../reviews/ta01-product/ci550-arm64-upgrade-read-timeout.zip)。不由快照推定无历史退出，也不将 AMD64 诊断退出139套为 ARM64 根因。
+
+CI551 ARM64 同样在个人升级 commit 读取超时（30,800 ms），尚未到原团队回退捕获目标，没有 nativeTrace；见 [索引](../../reviews/ta01-product/ci551-arm64-pre-target-read-timeout.json)／[原件](../../reviews/ta01-product/ci551-arm64-pre-target-read-timeout.zip)。AMD64 已保全实际 Node 退出139和 GDB 超时原件，但没有可用栈。诊断模式非零不属于产品验收通过。
+
+后续候选的完整包校验最多使用两个 Node 工作线程；单可用 CPU 顺序执行。每项仍核普通文件、真实路径、大小及全部字节 SHA，所有线程确认数量且退出0后才继续，无缓存、mtime 捷径或忽略末块。线程堆限额不冒进程总内存上限；运行失败即停本次线程，不重试文件。安装工具的目录 COPY 包含新 worker 文件。16 项安装单元通过，包含大于读取缓冲的双文件、末字节篡改和缺失文件拒绝；尚无 TCG 性能或完整产品通过。此前 Linux 容器原型 create 达30 s超时，没有返回容器 ID；未重试创建或挂载，后续只读 owner 查询为空，不冒 Linux 测试通过。
+
+显式原生诊断按架构观察：AMD64 仍为团队回退后的原 commit；ARM64 改为个人升级后的原 commit。只执行一次原动作，并行准备后核 preparedBeforeBusiness，迟到不当捕获证据。ARM64 诊断在目标后结束，不冒三画像／恢复／重启完成；普通模式保持全链。捕获在 GDB 前保存 core 大小、摘要及安全的公开 Node 相对位置；超时保安全部分栈，仍使用默认 DWARF，60 s 调试／90 s 总捕获／512 MiB 内存及禁 swap 不变。
+
+失败快照对归属已核的本安装 PostgreSQL 容器执行一次有界只读聚合，记录 max_connections、包含采集本身的 client backend 数和 track_activities 开关；没有查询正文、会话身份或 SQL 输出原文，也不改连接池配置、不重试原业务读取。隔离 PostgreSQL 16.9、max_connections=20、track_activities=off 实测返回 20／1／off；独有容器使用 tmpfs，无持久卷，已核不存在。这只证明采集可用，不证明连接耗尽或超时原因。
+
+当前 26 项 Python 测试、6 文件 AST 与16项安装单元通过，原日志、源码子集和隔离采集账本见 [索引](../../reviews/ta01-product/resumption-bounded-verification-diagnostics.json)／[原件](../../reviews/ta01-product/resumption-bounded-verification-diagnostics.zip)。旧25项合成捕获记录单独保留，不覆写为新版本。无迁移、REST/MCP 合同或事件变更；接入入口及请求示例不受影响，安装说明同次更新。下一候选须执行新的普通 Required CI 和双架构完整 guest；尚未通过，正式成果独审未做，不能合入。

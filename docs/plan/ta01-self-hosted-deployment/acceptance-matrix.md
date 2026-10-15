@@ -84,3 +84,8 @@ flowchart LR
 复用实测入口包括 `pnpm validate:lite`、`pnpm validate:production-images`、`node scripts/verify-a2-backend-lite.mjs`、`pnpm verify:integration-examples --recovery-checks`。最后一项的恢复套件为显式 opt-in；只跑普通 integration 成功不能表示已运行恢复。全部仅对准确独有测试库和 bucket 运行。
 
 后续新增用例的生产 build 排除、unit／integration／conformance 分类和必需 CI 消费必须同步核实，不能把测试文件存在当执行证据。源码、runner checkout、镜像身份、原日志、未测及资源收尾分别绑定。
+## 最新候选验收状态
+
+CI550／551 均受测 fbb59cf0181cd8f5876770e568bf620d25c47d4d，双架构服务端与 Required CI 均失败。普通 AMD64 达到150分钟总期限；ARM64 个人升级后 MCP tools/call 达原30秒读取期限。AMD64 显式诊断捕获 Node 退出139，GDB超时、没有可用栈；ARM64未到该团队目标。各轮其他12项成功不代产品完整验收。
+
+后续保全部三画像、恢复、重启和原期限：完整文件校验最多两个工作线程，新增安全 core 相对位置及超时部分栈，ARM64 显式诊断观察个人升级提交，失败快照加本安装 PG 只读连接数聚合。26项 Python、16项安装单元和隔离 PG 聚合采集通过只覆盖工具边界，不覆盖 TCG 性能、根因或支持矩阵。新候选普通 Required CI、双架构完整 guest 及正式 P0/P1 成果独审均待完成，当前不可合入。准确首败、源码和资源账本见 [接续记录](resumption.md)。

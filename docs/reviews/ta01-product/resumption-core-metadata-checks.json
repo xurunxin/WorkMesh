@@ -1,0 +1,36 @@
+{
+  "说明": "新采集先保存实际流大小／摘要／阶段，读取有界ELF元数据，仅输出信号及公开Node程序内偏移；GDB超时保安全部分输出。内存流完整不等于有效core或完整回溯，公开位置不等于根因。25项Windows边界通过，新guest尚未执行；无原始core落盘或上传。",
+  "sourceHead": "fbb59cf0181cd8f5876770e568bf620d25c47d4d",
+  "sourceIsDirty": true,
+  "selectedZipSha256": "1bd1e65d5467bde0f857c25a333511503890533c7d9676cdd8bee90f33c6db9a",
+  "members": {
+    "source/core_metadata.py": {
+      "bytes": 5194,
+      "sha256": "6c6ecdf0dd5ddeb3040157d8b19bba7ba01ca5323fceda9f5a14b82cfb19de4e"
+    },
+    "source/core_pipe.py": {
+      "bytes": 4512,
+      "sha256": "ca04f29714ffb4ef6f3bc86cfd418ff5378aad1813fe44ff5be0df8c0e915da4"
+    },
+    "source/native_diagnostic.py": {
+      "bytes": 10891,
+      "sha256": "8e55e2ac8d33949c66013f9db67ac9f99909fa7be206cdffcd78a9d340b00f0a"
+    },
+    "source/native_diagnostic_test.py": {
+      "bytes": 26563,
+      "sha256": "7ddc5b48d7effeba83581746d278a892e70e7165224477d969aec13647633de2"
+    },
+    "source/run.py": {
+      "bytes": 13188,
+      "sha256": "8746284238764cbf4fcca1f40a57f300677ebc8815f75c42fc5bbaf435f03651"
+    },
+    "source/guest.py": {
+      "bytes": 68655,
+      "sha256": "148f0cd86d79154e3bff8e430648252d44ca084be8022a186736b06d1b011c7c"
+    },
+    "checks-projection.json": {
+      "bytes": 1327,
+      "sha256": "21d5ce578d6b746f084e632bdf1f121d6efd1dacfe1ec3932145aad9e514f0cf"
+    }
+  }
+}

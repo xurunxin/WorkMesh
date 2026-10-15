@@ -6,12 +6,122 @@ import unittest
 import tempfile
 import ast
 import re
+import struct
+from types import SimpleNamespace
 from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity, binary_hash, node_process_pid
 from run import valid_receipt, complete_reboot_checks
 from core_pipe import memory_core
+from core_metadata import core_location
+import core_pipe
+
+
+class CoreMetadata(unittest.TestCase):
+    @staticmethod
+    def fixture(machine=62, mapped_name=b'/usr/local/bin/node', page_offset=0):
+        private = ('wmi_' + 'x' * 43).encode()
+        start, pc_offset = 0x7F0000000000, 0x1234 - page_offset * 4096
+        status = bytearray(336 if machine == 62 else 392)
+        struct.pack_into('<h', status, 12, 11)
+        struct.pack_into('<Q', status, 112 + (16 if machine == 62 else 32) * 8, start + pc_offset)
+        def note(tag, data):
+            name = b'CORE\0'
+            return (struct.pack('<III', len(name), len(data), tag) + name + b'\0' * 3
+                    + data + b'\0' * ((-len(data)) % 4))
+        notes = note(1, status) + note(3, private) + note(0x53494749, struct.pack('<iii', 11, 0, 1) + private)
+        notes += note(0x46494C45, struct.pack('<QQQQQ', 1, 4096, start, start + 0x4000, page_offset) + mapped_name + b'\0')
+        def elf(kind, offset, length, flags, virtual):
+            header = struct.pack('<16sHHIQQQIHHHHHH', b'\x7fELF\x02\x01\x01' + b'\0' * 9,
+                kind, machine, 1, 0, 64, 0, 0, 64, 56, 1, 64, 0, 0)
+            return header + struct.pack('<IIQQQQQQ', 4 if kind == 4 else 1, flags, offset, virtual, 0, length, length, 4096)
+        core = elf(4, 120, len(notes), 0, 0) + notes
+        binary = elf(3, 0, 0x4000, 5, 0x400000).ljust(0x4000, b'\0')
+        return core, binary, private, start + pc_offset
+
+    def test_two_architectures_map_only_public_node_relative_offsets(self):
+        for machine in [62, 183]:
+            for pages in [0, 1]:
+                with self.subTest(machine=machine, pages=pages):
+                    core, binary, private, pc = self.fixture(machine, page_offset=pages)
+                    value = core_location(io.BytesIO(core), io.BytesIO(binary))
+                    self.assertEqual(value, {'architecture': 'amd64' if machine == 62 else 'arm64',
+                        'signal': 11, 'signalCode': 1, 'faultModule': 'node', 'executableSegment': True,
+                        'nodeFileOffset': 0x1234, 'nodeElfAddress': 0x401234})
+                    output = json.dumps(value)
+                    self.assertNotIn(private.decode(), output)
+                    self.assertNotIn(str(pc), output)
+                    self.assertNotIn('/usr/local', output)
+
+    def test_unmapped_or_private_module_never_exports_paths_addresses_or_memory(self):
+        core, _, private, pc = self.fixture(mapped_name=b'/private/' + b'wmi_' + b'x' * 43)
+        value = core_location(io.BytesIO(core), io.BytesIO(b''))
+        self.assertEqual(value['faultModule'], 'other-or-unmapped')
+        self.assertNotIn(private.decode(), json.dumps(value))
+        self.assertNotIn(str(pc), json.dumps(value))
+        self.assertNotIn('nodeElfAddress', value)
+
+    def test_truncation_format_bounds_and_binary_architecture_are_not_guessed(self):
+        core, binary, _, _ = self.fixture()
+        invalid_offset = bytearray(core); struct.pack_into('<Q', invalid_offset, 32, 2**63)
+        invalid_class = bytearray(core); invalid_class[4] = 1
+        _, wrong_binary, _, _ = self.fixture(183)
+        for bad_core, bad_binary in [(core[:-1], binary), (invalid_offset, binary),
+                                      (invalid_class, binary), (core, wrong_binary)]:
+            with self.assertRaises(ValueError):
+                core_location(io.BytesIO(bad_core), io.BytesIO(bad_binary))
+
+    def test_debugger_timeout_keeps_core_metadata_and_only_safe_partial_output(self):
+        base = (Path.cwd() / '.tmp').resolve()
+        self.assertTrue(base.is_relative_to(Path.cwd().resolve()))
+        base.mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(prefix='ta01-core-timeout-', dir=base)).resolve()
+        self.assertTrue(root.is_relative_to(base))
+        owner_file, result_file = root / 'owner.json', root / 'result.json'
+        temporary = result_file.with_name('result.json.' + str(os.getpid()) + '.tmp')
+        owner = {'pid': 12345}
+        owner_file.write_text(json.dumps(owner), encoding='utf8')
+        private = 'wmi_' + 'x' * 43
+        timeout = __import__('subprocess').TimeoutExpired('gdb', 60,
+            output=('Program terminated with signal SIGSEGV.\n#0 0x123 in v8::internal::Probe(' + private + ') at /private/file.cc:2\n').encode(),
+            stderr=private.encode())
+        try:
+            with tempfile.TemporaryFile() as synthetic:
+                descriptor = os.dup(synthetic.fileno())
+                with patch.object(core_pipe, 'OWNER', owner_file), patch.object(core_pipe, 'RESULT', result_file), \
+                     patch.object(core_pipe.sys, 'argv', ['core_pipe.py', '12345']), \
+                     patch.object(core_pipe.sys, 'stdin', SimpleNamespace(buffer=io.BytesIO(b'synthetic'))), \
+                     patch.object(core_pipe.signal, 'SIGALRM', 999, create=True), \
+                     patch.object(core_pipe.signal, 'signal'), patch.object(core_pipe.signal, 'alarm', create=True) as alarm, \
+                     patch.object(core_pipe, 'process_identity', return_value=owner), \
+                     patch.object(core_pipe, 'binary_hash', return_value='b' * 64), \
+                     patch.object(core_pipe, 'memory_core', return_value=(descriptor, 9, 'a' * 64)), \
+                     patch.object(core_pipe, 'location_metadata', return_value={'signal': 11}), \
+                     patch.object(core_pipe.subprocess, 'run', side_effect=timeout) as run, \
+                     patch.object(core_pipe.os, 'close', wraps=os.close) as close:
+                    core_pipe.main()
+                    close.assert_called_once_with(descriptor)
+                    self.assertEqual([call.args[0] for call in alarm.call_args_list], [90, 0])
+                    self.assertEqual(run.call_args.kwargs['timeout'], 60)
+                    self.assertIn('bt 12', run.call_args.args[0])
+                    self.assertNotIn('thread apply all bt 12', run.call_args.args[0])
+            value = json.loads(result_file.read_text(encoding='utf8'))
+            self.assertTrue(value['coreCaptured'])
+            self.assertFalse(value['captured'])
+            self.assertEqual(value['coreBytes'], 9)
+            self.assertEqual(value['targetBinarySha256'], 'b' * 64)
+            self.assertTrue(value['debuggerTimedOut'])
+            self.assertTrue(value['trace']['sigsegv'])
+            self.assertEqual(value['trace']['symbols'], ['v8::internal::Probe'])
+            self.assertNotIn(private, json.dumps(value))
+            self.assertNotIn('/private', json.dumps(value))
+        finally:
+            for file in [owner_file, result_file, temporary]:
+                if file.exists():
+                    self.assertFalse(file.is_symlink())
+                    file.unlink()
+            root.rmdir()
 
 
 class GuestFailureProgress(unittest.TestCase):
@@ -23,6 +133,14 @@ class GuestFailureProgress(unittest.TestCase):
         scope = {'json': json, 're': re}
         exec(compile(ast.Module(body=[function], type_ignores=[]), 'guest-projection', 'exec'), scope)
         return scope[name]
+
+    def test_database_budget_reports_only_aggregates_and_rejects_private_or_invalid_data(self):
+        project = self.marker('project_database_budget')
+        self.assertEqual(project(b'20|17|off\n'), {'maxConnections': 20,
+            'backendsIncludingDiagnostic': 17, 'trackActivitiesEnabled': False})
+        for raw in [b'20|21|on', b'0|0|off', b'20|0|off', b'20|17|off|private', ('wmi_' + 'x' * 43).encode()]:
+            with self.assertRaises(ValueError):
+                project(raw)
 
     def test_installer_phase_timings_reject_private_or_malformed_output_and_bound_records(self):
         project = self.marker('installer_timings')

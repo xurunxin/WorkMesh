@@ -139,6 +139,36 @@ def collect_container_events(journal, owned):
     return project_container_events(result.stdout, roles, int(since.timestamp() * 1e9), int(until.timestamp() * 1e9))
 
 
+def project_database_budget(raw):
+    match = re.fullmatch(rb'([0-9]{1,6})\|([0-9]{1,6})\|(on|off)\s*', raw)
+    if match is None:
+        raise ValueError('database budget response invalid')
+    maximum, backends = map(int, match.group(1, 2))
+    if not 1 <= backends <= maximum:
+        raise ValueError('database budget bounds invalid')
+    return {'maxConnections': maximum, 'backendsIncludingDiagnostic': backends,
+            'trackActivitiesEnabled': match.group(3) == b'on'}
+
+
+def database_budget(identifier):
+    if not re.fullmatch('[a-f0-9]{64}', identifier):
+        raise ValueError('database budget target invalid')
+    # Only aggregates from this installation's verified PostgreSQL container.
+    # The diagnostic connection itself is counted. No query text or identities.
+    query = "SELECT current_setting('max_connections'), count(*), current_setting('track_activities') FROM pg_stat_activity WHERE backend_type='client backend'"
+    result = subprocess.run(['docker', 'exec', '-e', 'PGCONNECT_TIMEOUT=5',
+        '-e', 'PGOPTIONS=-c statement_timeout=5000', identifier, 'psql', '--no-psqlrc',
+        '-U', 'workmesh', '-d', 'workmesh', '-At', '-v', 'ON_ERROR_STOP=1', '-c', query],
+        capture_output=True, timeout=10)
+    if result.returncode:
+        return {'available': False, 'exitCode': result.returncode,
+                'stderrSha256': hashlib.sha256(result.stderr).hexdigest(),
+                'stdoutSha256': hashlib.sha256(result.stdout).hexdigest(),
+                'connectionLimitReported': any(text in result.stderr.lower() for text in
+                    [b'too many clients already', b'remaining connection slots are reserved'])}
+    return {'available': True, **project_database_budget(result.stdout)}
+
+
 def installer_timings(raw, context):
     if (not isinstance(context, dict) or set(context) != {'tag', 'sequence', 'profile', 'action'} or context['tag'] != 'ta01-install-action'
             or type(context['sequence']) is not int or not 1 <= context['sequence'] <= 128
@@ -548,6 +578,18 @@ def journey(prefix, config, certificates):
             'mcpUrl': redeemed['mcp']['url'], 'workItemBody': body}
 
 
+def observed_commit(dist, digest, prefix, config, manifest, target):
+    from native_diagnostic import observe_native_action
+    def business_started():
+        entries = json.loads((prefix / 'journal.json').read_text())['actions']
+        reads = [entry for entry in entries if entry['name'] == 'validate-business-read']
+        assert len(reads) == 1
+        return datetime.fromisoformat(reads[0]['startedAt'].replace('Z', '+00:00')).timestamp()
+    return observe_native_action(
+        lambda: install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')]),
+        lambda: prepare_native_watcher(prefix, manifest), business_started, target=target)
+
+
 def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_health=True, native_diagnostic=False):
     # A second candidate identity for the same checked source/ledger tests the
     # supported compatible-program case. This is not a released older binary.
@@ -611,6 +653,10 @@ def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_h
         journal_file.write_bytes(original_journal)
         pending_held.rename(pending_file)
     checks.append('interruptedHealthWithoutPendingRejectsUnknownCandidate')
+    if native_diagnostic and manifest['arch'] == 'arm64':
+        outcome, trace = observed_commit(upgrade, new_digest, prefix, config, manifest, 'personal-upgrade-commit')
+        assert outcome['status'] == 'installed'
+        return trace
     assert install(upgrade, new_digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
     journal = json.loads((prefix / 'journal.json').read_text())
     assert journal['stage'] == 'committed' and journal['backup']['manifestSha256']
@@ -619,17 +665,9 @@ def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_h
     assert volumes() == original_volumes and sql(prefix, 'SELECT count(*) FROM work_items') == original_rows
     assert install(dist, digest, prefix, config, 'rollback', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
     if native_diagnostic:
-        from native_diagnostic import observe_native_action
-        def business_started():
-            entries = json.loads((prefix / 'journal.json').read_text())['actions']
-            reads = [entry for entry in entries if entry['name'] == 'validate-business-read']
-            assert len(reads) == 1
-            return datetime.fromisoformat(reads[0]['startedAt'].replace('Z', '+00:00')).timestamp()
         # Register concurrently with the original commit preflight. Do not wait
         # before its request, repeat it, or turn a missed boundary into evidence.
-        outcome, trace = observe_native_action(
-            lambda: install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')]),
-            lambda: prepare_native_watcher(prefix, manifest), business_started)
+        outcome, trace = observed_commit(dist, digest, prefix, config, manifest, 'team-rollback-commit')
         assert outcome['status'] == 'installed' and volumes() == original_volumes
         return trace
     assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
@@ -786,7 +824,9 @@ def main():
         certificates = ROOT / 'tls'
         servers.append(proxy(9446, 0, certificates))
         reboot_checks = []
-        for index, profile in enumerate(['personal', 'team'] if native_diagnostic else ['personal', 'team', 'enterprise']):
+        native_profile = 'personal' if manifest['arch'] == 'arm64' else 'team'
+        profiles = (['personal'] if native_profile == 'personal' else ['personal', 'team']) if native_diagnostic else ['personal', 'team', 'enterprise']
+        for index, profile in enumerate(profiles):
             prefix = ROOT / profile
             config = ROOT / (profile + '-config.json')
             api_port, mcp_port, s3_port = 9443 + index * 10, 9444 + index * 10, 9445 + index * 10
@@ -885,8 +925,8 @@ def main():
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
                 progress(profile, 'business-committed')
                 trace = upgrade_recovery(dist, manifest, digest, prefix, config,
-                    native_diagnostic=native_diagnostic and profile == 'team')
-                if native_diagnostic and profile == 'team':
+                    native_diagnostic=native_diagnostic and profile == native_profile)
+                if native_diagnostic and profile == native_profile:
                     diagnostics['nativeTrace'] = trace
                     report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks,
                             'preludeProfiles': [{k: v for k, v in entry.items() if k != 'identity'} for entry in saved['profiles']]})
@@ -996,6 +1036,12 @@ def main():
                             diagnostics['containerEvents'] = collect_container_events(journal, owned)
                         except (OSError, ValueError, KeyError, subprocess.TimeoutExpired, subprocess.CalledProcessError):
                             diagnostics['containerEventsUnavailable'] = True
+                    postgres = [entry for _, entry in owned if entry['service'] == 'postgres']
+                    if len(postgres) == 1:
+                        try:
+                            diagnostics['databaseBudget'] = database_budget(postgres[0]['id'])
+                        except (OSError, ValueError, subprocess.TimeoutExpired):
+                            diagnostics['databaseBudgetUnavailable'] = True
                     for info, entry in owned:
                         health = info['State'].get('Health', {})
                         # Capture only this installation's logs. The trusted

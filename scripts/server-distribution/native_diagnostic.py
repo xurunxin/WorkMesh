@@ -180,8 +180,10 @@ class NativeProbeError(RuntimeError):
         self.native_trace = trace
 
 
-def observe_native_action(action, prepare, business_started):
+def observe_native_action(action, prepare, business_started, *, target='team-rollback-commit'):
     from concurrent.futures import ThreadPoolExecutor
+    if target not in {'team-rollback-commit', 'personal-upgrade-commit'}:
+        raise ValueError('native observation target invalid')
     known_errors = {'RuntimeError', 'AssertionError', 'TimeoutExpired', 'TimeoutError', 'PermissionError',
                     'FileNotFoundError', 'OSError', 'ValueError', 'KeyError', 'NativeDiagnosticError'}
     error_type = lambda error: type(error).__name__ if type(error).__name__ in known_errors else 'OtherError'
@@ -195,7 +197,7 @@ def observe_native_action(action, prepare, business_started):
             outcome = action()
         except BaseException as error:
             original_error = error
-        trace = {'target': 'team-rollback-commit', 'operationSucceeded': original_error is None,
+        trace = {'target': target, 'operationSucceeded': original_error is None,
                  'preparedBeforeBusiness': False}
         try:
             watcher, prepared_at = capture.result()

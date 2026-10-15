@@ -194,14 +194,52 @@ test('OCI archive identity is bound to the exact manifest and survives split tar
 test('offlineDependencyClosure verifies actual bytes before an image is imported', async () => {
   const directory = await temporary(), m = manifest()
   await mkdir(path.join(directory, 'chunks'))
-  for (const entry of [...m.files, ...m.chunks, ...m.bootstrapChunks])
-    await writeFile(path.join(directory, entry.path), entry.path.endsWith('main.tarpart') ? 'main' : entry.path.endsWith('helper.tarpart') ? 'helper' : entry.path)
-  const bytes = Buffer.from(JSON.stringify(m)), digest = hash(bytes)
-  await writeFile(path.join(directory, 'manifest.json'), bytes)
-  assert.deepEqual(await verifyBundle(directory, digest), m)
-  await writeFile(path.join(directory, m.chunks[0].path), 'evil')
-  await assert.rejects(verifyBundle(directory, digest), /INSTALL_FILE_DIGEST_MISMATCH/)
-  await assert.rejects(verifyBundle(directory, 'f'.repeat(64)), /INSTALL_MANIFEST_DIGEST_MISMATCH/)
+  const live = []
+  try {
+    for (const entry of [...m.files, ...m.chunks, ...m.bootstrapChunks]) {
+      await writeFile(path.join(directory, entry.path), entry.path.endsWith('main.tarpart') ? 'main' : entry.path.endsWith('helper.tarpart') ? 'helper' : entry.path)
+      live.push(entry.path)
+    }
+    const bytes = Buffer.from(JSON.stringify(m)), digest = hash(bytes)
+    await writeFile(path.join(directory, 'manifest.json'), bytes); live.push('manifest.json')
+    assert.deepEqual(await verifyBundle(directory, digest), m)
+    await writeFile(path.join(directory, m.chunks[0].path), 'evil')
+    await assert.rejects(verifyBundle(directory, digest), /INSTALL_FILE_DIGEST_MISMATCH/)
+    await assert.rejects(verifyBundle(directory, 'f'.repeat(64)), /INSTALL_MANIFEST_DIGEST_MISMATCH/)
+  } finally {
+    for (const file of live.reverse()) await unlink(path.join(directory, file))
+    await rmdir(path.join(directory, 'chunks')); await rmdir(directory)
+  }
+})
+
+test('parallel closure checks every group and partial tail before continuing and rejects missing files', async () => {
+  const directory = await temporary(), m = manifest(), live = []
+  const payloads = new Map(m.files.map(entry => [entry.path, Buffer.from(entry.path)]))
+  payloads.set('chunks/main.tarpart', Buffer.alloc(3 * 1024 * 1024 + 17, 7))
+  payloads.set('chunks/second.tarpart', Buffer.alloc(2 * 1024 * 1024 + 29, 9))
+  payloads.set('chunks/helper.tarpart', Buffer.from('synthetic helper'))
+  const describe = file => ({ path: file, bytes: payloads.get(file).length, sha256: hash(payloads.get(file)) })
+  m.chunks = ['chunks/main.tarpart', 'chunks/second.tarpart'].map(describe)
+  m.bootstrapChunks = [describe('chunks/helper.tarpart')]
+  await mkdir(path.join(directory, 'chunks'))
+  try {
+    for (const [file, bytes] of payloads) { await writeFile(path.join(directory, file), bytes, { flag: 'wx' }); live.push(file) }
+    const bytes = Buffer.from(JSON.stringify(m)), digest = hash(bytes)
+    await writeFile(path.join(directory, 'manifest.json'), bytes, { flag: 'wx' }); live.push('manifest.json')
+    assert.deepEqual(await verifyBundle(directory, digest), m)
+    const damaged = Buffer.from(payloads.get('chunks/second.tarpart')); damaged[damaged.length - 1] ^= 1
+    await writeFile(path.join(directory, 'chunks/second.tarpart'), damaged)
+    let continued = false
+    await assert.rejects(async () => { await verifyBundle(directory, digest); continued = true }, /INSTALL_FILE_DIGEST_MISMATCH/)
+    assert.equal(continued, false)
+    await writeFile(path.join(directory, 'chunks/second.tarpart'), payloads.get('chunks/second.tarpart'))
+    await unlink(path.join(directory, 'chunks/helper.tarpart')); live.splice(live.indexOf('chunks/helper.tarpart'), 1)
+    await assert.rejects(async () => { await verifyBundle(directory, digest); continued = true }, /ENOENT/)
+    assert.equal(continued, false)
+  } finally {
+    for (const file of live.reverse()) await unlink(path.join(directory, file))
+    await rmdir(path.join(directory, 'chunks')); await rmdir(directory)
+  }
 })
 test('compatibleProgramRollback rejects prefix, unknown rows and changed checksums', () => {
   assert.doesNotThrow(() => assertCompatibleLedger([{ ...ledger[0], appliedAt: 'ignored' }], ledger))

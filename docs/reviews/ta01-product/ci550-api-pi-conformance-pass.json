@@ -1,0 +1,38 @@
+{
+  "说明": "当前fbb59cf的API integration成功，内层6文件96项真实API/MCP/Pi通过。294份Pi记录无压缩分支计数，不冒实际激活该分支或直接关闭全部旧M5未知原因。实际checkout合成提交的父和tree另核，tree等于当前head；不代离线三画像、重启或Required。",
+  "runId": 38729719330,
+  "jobId": 116404845400,
+  "artifactId": 11971151206,
+  "sourceHead": "fbb59cf0181cd8f5876770e568bf620d25c47d4d",
+  "actualCheckout": "a51d38c5685bc34e29a733250bab0fe397a7b455",
+  "sourceTree": "d8754a0118f8e65f49ab0d9d694bb92f6963d306",
+  "originalArtifactMembers": 825,
+  "artifactZipSha256": "eab7eccaac0fbe30a447ac33b0b4607a626b4f9e16e3f9b1bbc55f542fab374f",
+  "selectedZipSha256": "5f850819b35ba007e85e0e4cc1c52666c8169633edc8c06c51a8cd8087aefa96",
+  "members": {
+    "api-integration.log": {
+      "bytes": 1849482,
+      "sha256": "e26037c882f77e80b481b58888fc674cdf9fa3bbcfb22687a2568d77477f8236"
+    },
+    "mcp-coverage/conformance.log": {
+      "bytes": 127668,
+      "sha256": "cca176204e4fb235ee3b38d22ae1495c638d893320ec78ed97416f1a6eaef473"
+    },
+    "source-facts.json": {
+      "bytes": 420,
+      "sha256": "5c4ab90cb5f7d7d884b26085746c2b6efcc7927b2ff348040b2d11579bb01af3"
+    },
+    "checkout-commit.json": {
+      "bytes": 225,
+      "sha256": "3b67d476b1094dcbc6647b9a0eecb3b564858e7c20d491126e0ff124b513e393"
+    },
+    "job.json": {
+      "bytes": 188,
+      "sha256": "3ab93cce2932e8a1b7fb9870e2e07225eefd26c106cf49ba3ef33a5263b27df9"
+    },
+    "pi-compaction-counts.json": {
+      "bytes": 80,
+      "sha256": "575dd09228682f4facdcee1cb7394b63573598a0c5da5998aac661486e338e2a"
+    }
+  }
+}

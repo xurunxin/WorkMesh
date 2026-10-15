@@ -147,6 +147,7 @@ WantedBy=cloud-init.target
         if options.native_diagnostic:
             files.append(("/opt/server-install/native_diagnostic.py", (Path(__file__).parent / "native_diagnostic.py").read_bytes(), "0644"))
             files.append(("/opt/server-install/core_pipe.py", (Path(__file__).parent / "core_pipe.py").read_bytes(), "0644"))
+            files.append(("/opt/server-install/core_metadata.py", (Path(__file__).parent / "core_metadata.py").read_bytes(), "0644"))
         cloud = "#cloud-config\nusers:\n  - name: wmprobe\n    uid: 22020\n    lock_passwd: true\n    shell: /bin/sh\npackage_update: true\npackages:\n  - docker.io\n  - docker-compose-v2\n  - openssl\nwrite_files:\n"
         if options.native_diagnostic:
             cloud = cloud.replace("write_files:\n", "  - gdb\nwrite_files:\n")

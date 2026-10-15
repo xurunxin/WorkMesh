@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto'
 import { createReadStream } from 'node:fs'
 import { readFile, lstat, realpath } from 'node:fs/promises'
 import path from 'node:path'
+import { Worker } from 'node:worker_threads'
+import { availableParallelism } from 'node:os'
 
 export const hash = bytes => createHash('sha256').update(bytes).digest('hex')
 export function canonicalJson(value) {
@@ -66,13 +68,52 @@ export async function verifyBundle(directory, expectedSha) {
   let manifest
   try { manifest = validateManifest(JSON.parse(bytes.toString('utf8'))) }
   catch (error) { if (error.message.startsWith('INSTALL_')) throw error; fail('INSTALL_MANIFEST_INVALID') }
-  for (const entry of [...manifest.files, ...manifest.chunks, ...manifest.bootstrapChunks]) {
-    const file = path.join(root, entry.path)
-    const info = await lstat(file)
-    if (!info.isFile() || info.isSymbolicLink() || await realpath(file) !== file
-      || info.size !== entry.bytes || await fileHash(file) !== entry.sha256) fail('INSTALL_FILE_DIGEST_MISMATCH')
-  }
+  await verifyFiles(root, [...manifest.files, ...manifest.chunks, ...manifest.bootstrapChunks])
   return manifest
+}
+
+export async function verifyFileEntry(root, entry) {
+  const file = path.join(root, entry.path)
+  const info = await lstat(file)
+  if (!info.isFile() || info.isSymbolicLink() || await realpath(file) !== file
+    || info.size !== entry.bytes || await fileHash(file) !== entry.sha256) fail('INSTALL_FILE_DIGEST_MISMATCH')
+}
+
+async function verifyFiles(root, entries) {
+  const count = Math.min(2, availableParallelism(), entries.length)
+  if (count < 2) {
+    for (const entry of entries) await verifyFileEntry(root, entry)
+    return
+  }
+  const workers = [], tasks = []
+  try {
+    for (let index = 0; index < count; index++) {
+      const group = entries.filter((_, ordinal) => ordinal % count === index)
+      const worker = new Worker(new URL('./verify-files-worker.mjs', import.meta.url), {
+        workerData: { root, entries: group },
+        resourceLimits: { maxOldGenerationSizeMb: 32, maxYoungGenerationSizeMb: 8, stackSizeMb: 2 },
+      })
+      workers.push(worker)
+      const task = new Promise((resolve, reject) => {
+        let acknowledged = false
+        worker.once('message', message => {
+          acknowledged = message?.verified === group.length && Object.keys(message).join(',') === 'verified'
+        })
+        worker.once('error', reject)
+        worker.once('exit', code => code === 0 && acknowledged
+          ? resolve() : reject(new Error('INSTALL_FILE_VERIFICATION_FAILED')))
+      })
+      // A later worker constructor can fail before Promise.all is reached.
+      // Keep that cleanup's rejection handled without replacing the task result.
+      void task.catch(() => {})
+      tasks.push(task)
+    }
+    await Promise.all(tasks)
+  } finally {
+    // No deployment effect starts before every worker exits successfully.
+    // Failure stops this invocation's workers; files are never retried.
+    await Promise.allSettled(workers.map(worker => worker.terminate()))
+  }
 }
 
 // Program rollback is allowed only for an exact, checksummed ledger. A prefix,
