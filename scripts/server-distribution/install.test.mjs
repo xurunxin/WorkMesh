@@ -1,9 +1,9 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, realpath, readFile, writeFile, mkdir, chmod, symlink } from 'node:fs/promises'
+import { mkdtemp, realpath, readFile, writeFile, mkdir, chmod, symlink, unlink, rmdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { hash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible } from './manifest.mjs'
+import { hash, fileHash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible } from './manifest.mjs'
 import { privateDirectory, atomicJson, withInstallLock, readState, validateJournal } from './journal.mjs'
 import { ArchiveIdentities } from './archive.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
@@ -16,6 +16,22 @@ import { promisify } from 'node:util'
 import { fileURLToPath } from 'node:url'
 
 const temporary = async () => realpath(await mkdtemp(path.join(tmpdir(), 'workmesh-server-unit-')))
+test('file digest includes a partial final block and changes when its final byte changes', async () => {
+  const root = await temporary(), file = path.join(root, 'owned-hash-boundary.bin')
+  const bytes = Buffer.alloc(1024 * 1024 + 37, 7)
+  try {
+    await writeFile(file, bytes, { flag: 'wx' })
+    assert.equal(await fileHash(file), hash(bytes))
+    const original = await fileHash(file)
+    bytes[bytes.length - 1] = 8
+    await writeFile(file, bytes)
+    assert.equal(await fileHash(file), hash(bytes))
+    assert.notEqual(await fileHash(file), original)
+  } finally {
+    await unlink(file)
+    await rmdir(root)
+  }
+})
 test('failed health stops runtime before recovery; stop rejection never restarts or retries', async () => {
   for (const stopFails of [false, true]) {
     const journal = { actions: [] }, events = []

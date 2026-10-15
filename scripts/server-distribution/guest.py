@@ -20,6 +20,7 @@ ROOT = Path('/root/server-install')
 ROOT.mkdir(mode=0o700, exist_ok=True)
 STATE = ROOT / 'state.json'
 checks, samples, diagnostics = [], [], {}
+install_actions = 0
 
 
 def progress(profile, stage):
@@ -160,8 +161,24 @@ def proxy(port, upstream, certificates):
 
 
 def install(dist, digest, prefix, config, action, *, expected=0, extra=(), expected_code=None):
-    out = command(['sh', str(dist / 'install.sh'), str(dist), digest, str(prefix), str(config), action, *extra], expected=expected, expected_code=expected_code)
-    return json.loads(out) if expected == 0 else None
+    global install_actions
+    assert action in {'check', 'stage', 'install', 'upgrade', 'rollback', 'commit', 'recover-old', 'restore-empty'}
+    install_actions += 1
+    profile = prefix.name if prefix.name in {'personal', 'team', 'enterprise'} else 'fixture'
+    fields = {'tag': 'ta01-install-action', 'sequence': install_actions, 'profile': profile, 'action': action}
+    started = time.monotonic()
+    completed = False
+    if install_actions <= 128:
+        print(json.dumps({**fields, 'state': 'started'}), flush=True)
+    try:
+        out = command(['sh', str(dist / 'install.sh'), str(dist), digest, str(prefix), str(config), action, *extra], expected=expected, expected_code=expected_code)
+        result = json.loads(out) if expected == 0 else None
+        completed = True
+        return result
+    finally:
+        if fields['sequence'] <= 128:
+            print(json.dumps({**fields, 'state': 'finished' if completed else 'failed',
+                              'elapsedMilliseconds': round((time.monotonic() - started) * 1000)}), flush=True)
 
 
 def compose(prefix, *args):

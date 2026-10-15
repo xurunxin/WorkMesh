@@ -1,0 +1,25 @@
+{
+  "说明": "当前工作树子集，起点066351bc、安装读取缓冲及操作日志有修改；15项安装单元过。只读旧ZIP的Windows原生Node22对照共436135767字节，6655→416块、SHA一致；顺序与缓存未控制，不代TCG性能／全库同一快照／物理最低配置／完整产品通过。隔离日志函数检查见对话事实，不补造原始字节日志。",
+  "sourceHeadAtStart": "066351bc64e2fc816c2d12ebc5e3efabed326a5d",
+  "sourceFiles": {
+    "scripts/server-distribution/manifest.mjs": "7d2cb20e58eb29f8c8524f4f3080b00eacb8b6030004032f493928598a4cebd1",
+    "scripts/server-distribution/install.mjs": "29adef4763c8f7f04b1a4fd745e1f0b7ea5fe4a320dc704909c2c261cb8d33cc",
+    "scripts/server-distribution/install.test.mjs": "1b642b423cd6df9101ad9330cd37480228a9529b36d09ffeb11a13e0204f12f3",
+    "scripts/server-distribution/guest.py": "b2ee3d9bb51e2ed69e3ec15ce7d432a4a2c0cf6ddbbab9098b8ac4659e3f11ec"
+  },
+  "members": {
+    "unit.log": {
+      "bytes": 3610,
+      "sha256": "d4ea40173624fefae954b9c414425d84be8fb3a10de41be5a7a064e88514ba01"
+    },
+    "hash-read-benchmark.mjs": {
+      "bytes": 1676,
+      "sha256": "66e0f71cd41043c4af0e52950ae290a493bebccf7858179ec3e1471a5dffc28a"
+    },
+    "hash-read-benchmark.json": {
+      "bytes": 828,
+      "sha256": "ed425064774cd8c8192a17babe55ae46a7502cca155cb425e14193c6b766a1a7"
+    }
+  },
+  "selectedZipSha256": "09c7c2919bb392cb3fae869769e1948d030e2808d27857a932c3695a5be80329"
+}

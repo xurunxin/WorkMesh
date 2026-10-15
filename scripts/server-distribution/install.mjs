@@ -138,7 +138,7 @@ async function importImages(bundle, manifest) {
   // before this first application-image side effect.
   try {
     for (const entry of manifest.chunks) {
-      for await (const block of (await import('node:fs')).createReadStream(path.join(bundle, entry.path))) {
+      for await (const block of (await import('node:fs')).createReadStream(path.join(bundle, entry.path), { highWaterMark: 1024 * 1024 })) {
         if (!child.stdin.write(block)) await new Promise((resolve, reject) => {
           child.stdin.once('drain', resolve); child.stdin.once('error', reject)
         })

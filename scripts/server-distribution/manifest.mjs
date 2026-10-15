@@ -11,7 +11,7 @@ export function canonicalJson(value) {
 }
 export async function fileHash(file) {
   const digest = createHash('sha256')
-  for await (const block of createReadStream(file)) digest.update(block)
+  for await (const block of createReadStream(file, { highWaterMark: 1024 * 1024 })) digest.update(block)
   return digest.digest('hex')
 }
 export function fail(code) { throw new Error(code) }

@@ -332,3 +332,13 @@ Python AST 与现有边界检查通过；此项尚未完整 guest 实测。正�
 普通AMD64受测6c20a93c3d7113d2750b8b6265abb06f28283b04，2 vCPU／4 GiB，9,000.77 s，failed／TimeoutError：原150分钟总期限已到，result的receipts为空。见 [索引](../../reviews/ta01-product/ci545-amd64-total-budget-no-receipts.json)及 [原件](../../reviews/ta01-product/ci545-amd64-total-budget-no-receipts.zip)。14成员及五脚本实核Git摘要。serial有cloud-init完成、容器启动和安装服务最终失败行，但没有服务失败的具体原因或画像／动作完成回执；不由启动行补造业务、升级、备份恢复或重启通过，也不能据此关闭MCP139。
 
 #545两架构完整模式均失败。旧2 vCPU运行已全部结束并保原件，后续才推送已准备的4 vCPU固定容量对照与有界serial进度标记；全部原期限／成功断言保持，新候选尚未实测，正式成果独审未做，当前不能合入。
+
+## CI #547 四核容量对照仍达到总期限
+
+受测066351bc64e2fc816c2d12ebc5e3efabed326a5d，两架构均为4 vCPU／4 GiB，均达到原150分钟总期限、result没有阶段回执。AMD64为9,001.18 s，ARM64为9,000.42 s；见 [AMD64索引](../../reviews/ta01-product/ci547-amd64-total-budget-profile-progress.json)／[原件](../../reviews/ta01-product/ci547-amd64-total-budget-profile-progress.zip)和 [ARM64索引](../../reviews/ta01-product/ci547-arm64-total-budget-profile-progress.json)／[原件](../../reviews/ta01-product/ci547-arm64-total-budget-profile-progress.zip)。各14成员及五脚本均实核准确Git摘要。
+
+固定serial标记确认：AMD64个人profile-completed，团队business-committed但没有profile-completed；ARM64个人business-committed但没有profile-completed。因此只承认这些阶段，不当全画像／重启通过。4 vCPU未解决完整验收超时，不将容量调整当根因修复，MCP139仍未闭合。下一步保每命令完整字节／SHA校验，将Node读取缓冲由默认64 KiB改为1 MiB减少读取调度，并记录有界固定操作耗时以定位具体慢段；尚未guest实测，不预写性能或产品PASS。
+
+分块散列及归档读取均固定1 MiB缓冲，仍完整读全部字节，既有文件类型／路径／大小／摘要／OCI闭包／目标实际ID校验保持，不新增缓存或mtime捷径。15项安装器单元通过，含超过缓冲边界的末块与最后一字节变更回归；这不是TCG性能通过。新增ta01-install-action固定操作耗时，128次操作最多256条，未知动作先拒绝，路径／参数／正文不输出；finished表示达到预期结果、包括预期拒绝，不表示产品PASS。隔离函数验证输出边界、原异常及上限保持，不冒实际guest运行。
+
+只读复用本地已保留的436,135,767字节旧ZIP，Windows原生Node22记录的读取块数从6,655降到416，全部字节SHA及实际新fileHash一致，输入没有修改或删除。顺序固定、缓存未控制，不将原生时间差当TCG性能或超时原因。15项原日志、脚本、对照及实际工作树子集绑定见 [索引](../../reviews/ta01-product/resumption-hash-buffer-checks.json)／[原件](../../reviews/ta01-product/resumption-hash-buffer-checks.zip)。下一候选仍须原完整验收，当前Required失败、正式独审未做，不可合入。
