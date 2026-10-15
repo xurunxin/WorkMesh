@@ -1,0 +1,35 @@
+{
+  "说明": "实际ci:validate消费方仍使用旧作业图，真实CI策略门禁拒绝；与构建器未忽略日志的拒绝分别保留。准确checkout由原job日志解析，再核GitHub不可变commit父与tree，不冒run head就是checkout。",
+  "runId": 38799626569,
+  "jobId": 116645463647,
+  "artifactId": 12002729986,
+  "runConclusion": "cancelled",
+  "jobConclusion": "failure",
+  "binding": {
+    "runHead": "73102d9af6b26490cc20302b02c83da378159fdc",
+    "actualCheckout": "700928306857b4aa562af32b6d11120bf4bad707",
+    "tree": "0801cd8c81fafe58310bda8b5e74672fb3a13411",
+    "parents": [
+      "c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8",
+      "73102d9af6b26490cc20302b02c83da378159fdc"
+    ],
+    "treeEqualsRunHead": true,
+    "jobLogSha256": "178fa3e130024b84d0ddba681064105825076b0b2be5e33e761317958c11e629"
+  },
+  "artifactZipSha256": "c14a341425b64467be75a3bbff2eb7ae6e177d557746470a07ff7e9ea4d1e670",
+  "members": {
+    "ci-validate.log": {
+      "bytes": 2184,
+      "sha256": "b3e9ba43c7824de005089c422f59debcf84cd5bc0d7af07decc4f5e26314e377"
+    },
+    "install.log": {
+      "bytes": 615,
+      "sha256": "d60dc9b8c87a3fbc17c8070c6ba743123e1a5de02a86700bc9bb9b058eb76c94"
+    },
+    "source-binding.json": {
+      "bytes": 408,
+      "sha256": "74a55df3efd9c9803d5a061c039693b39127f0ed0083787ad23d837aaaf704fa"
+    }
+  },
+  "selectedZipSha256": "0a6d0ae9b09eb79a9b562ba2d1746dc5846543b37abc91ea02f30f420d3ab892"
+}

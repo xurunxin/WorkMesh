@@ -510,3 +510,15 @@ CI553 ARM64单窗口guest为7,768.53 s、diagnostic-only，实际提交成功、
 最终40项Python、六文件AST和22项CI门禁测试通过；重启分支按单画像和默认三画像分别验证，缺任一后台证据、空／未知／重复范围拒绝。首轮重启夹具因插入位置错误有NameError，原日志保留；修正前未另存整份失败源码，不补其SHA。最终九源码子集、首败与通过日志见 [索引](../../reviews/ta01-product/resumption-profile-scope-checks.json)／[原件](../../reviews/ta01-product/resumption-profile-scope-checks.zip)。旧34项原件另保，真实六组合／工件交接／根因及正式独审未完成；当前不能合入。
 
 CI554 ARM64 job116568767849／artifact12003372159随后终态failure，guest在9,001.13 s达到原总期限，errorType=TimeoutError；没有业务receipt或完整重启证明。128条结构化串口记录中个人health-ready、business-committed，最后安装动作是个人rollback完成，244,876 ms；这些局部记录不代个人闭环，也不推MCP超时、139或同一根因。见 [索引](../../reviews/ta01-product/ci554-arm64-total-budget.json)／[原件](../../reviews/ta01-product/ci554-arm64-total-budget.zip)，14成员与六脚本绑定同一21a847bf0cc665b8f5e809c29480de3ec73d9f44／tree9371523043c65d4814d7054a948cdb441db7ccd0。普通运行两架构及原件均已结束、保全后再推送新候选；Required job116643954912终态failure，不拿其余12项成功代服务端通过。
+
+## CI556／557 候选生产首败与准确日志目录
+
+六组合候选73102d9af6b26490cc20302b02c83da378159fdc／tree0801cd8c81fafe58310bda8b5e74672fb3a13411已推送，七份新增ZIP实际Git blob、索引SHA与原字节相同，九份本机受测源码与提交源码逐字相同，无换行转换差异。普通CI556／run38799626569及显式CI557／run38799632291已实际启动，PR228正文更新并保持草稿。
+
+普通双架构候选生产及显式AMD64均在创建候选前被BUILD_CLEAN_COMMITTED_SOURCE_REQUIRED拒绝。原因是本次拆分新建ci-logs/server-build后遗漏其专用Git忽略规则；没有降低构建器的干净源码要求。三份运行各40项Python及16项安装单元通过，不能代候选、guest或自然core观察；六组尚未执行。原件分别见 [CI556 AMD64](../../reviews/ta01-product/ci556-build-amd64-clean-source.json)／[ZIP](../../reviews/ta01-product/ci556-build-amd64-clean-source.zip)、[CI556 ARM64](../../reviews/ta01-product/ci556-build-arm64-clean-source.json)／[ZIP](../../reviews/ta01-product/ci556-build-arm64-clean-source.zip)、[CI557 AMD64](../../reviews/ta01-product/ci557-build-amd64-clean-source.json)／[ZIP](../../reviews/ta01-product/ci557-build-amd64-clean-source.zip)。每份只取8个生产者成员，六脚本均核准确Git；完整原归档SHA另记，不复制无关历史夹具目录。
+
+补入的规则仅为/ci-logs/server-build/，本机git check-ignore实际命中；未知输出和真实源码变化仍会阻断构建。固定download-artifact commit的原生action.yml已只读核含artifact-ids及merge-multiple输入，没有换action或增权。两轮源已失效，20:15 UTC前后发普通取消、未force；显式ARM64取消请求前尚在corepack准备，不补其未完成单元、候选或guest结论。准确取消终态另记，修正后用新候选验证，当前仍不能合入。
+
+两轮同时在实际ci:validate入口失败：本次只更新了可导入策略及其测试，遗漏scripts/validate-ci.mjs这一真实消费方的生产者参数、作业图、工件名称和固定下载action登记。该首败属于本次CI改动，原普通快照和旧产品MCP首败不受其解释。分别见 [CI556索引](../../reviews/ta01-product/ci556-source-policy-failure.json)／[原件](../../reviews/ta01-product/ci556-source-policy-failure.zip)、[CI557索引](../../reviews/ta01-product/ci557-source-policy-failure.json)／[原件](../../reviews/ta01-product/ci557-source-policy-failure.zip)。普通实际checkout700928306857b4aa562af32b6d11120bf4bad707的父为main c3dd64b与候选73102d9，tree与候选相同；显式直接checkout73102d9，均由原job日志与不可变GitHub commit实核，不将run head冒实际checkout。
+
+真实validator现纳入server-build、按画像命名的guest原件、严格生产者依赖及原准确下载pin；源码执行job继续锁定Node／pnpm，guest只消费已核候选，不强迫其再次安装源码。新增直接执行真实入口的回归，以免仅导入策略测试通过而实际消费方仍旧。23项策略检查及完整pnpm ci:validate exit0，其中既有24项退役／原件检查通过；新用例首轮在Windows错误使用URL.pathname，MODULE_NOT_FOUND保留，改fileURLToPath后通过，未保留首败整源码则不补SHA。见 [索引](../../reviews/ta01-product/resumption-ci-handoff-validation.json)／[材料](../../reviews/ta01-product/resumption-ci-handoff-validation.zip)。CI556及557均已终态cancelled，无force，无guest；两套新门禁和产品真实支持仍须新候选验证。

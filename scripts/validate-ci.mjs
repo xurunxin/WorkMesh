@@ -24,7 +24,7 @@ const parsedWorkflow = workflowDocument.toJS()
 failures.push(...validateDevelopmentImageEntrypoint(parsedWorkflow.jobs?.['source-gates']))
 failures.push(...validateBackendLiteEntrypoint(parsedWorkflow.jobs?.['source-gates']))
 failures.push(...validateConnectorInstallEntrypoint(parsedWorkflow.jobs?.['connector-install']))
-failures.push(...validateServerInstallEntrypoint(parsedWorkflow.jobs?.['server-install']))
+failures.push(...validateServerInstallEntrypoint(parsedWorkflow.jobs?.['server-install'], parsedWorkflow.jobs?.['server-build']))
 failures.push(...validateCiBootstrap({
   job: parsedWorkflow.jobs?.changes,
   manifest: JSON.parse(readFileSync(resolve(root, 'scripts/ci-bootstrap/package.json'), 'utf8')),
@@ -81,6 +81,7 @@ const expectedActions = new Map([
   ['actions/checkout', '11d5960a326750d5838078e36cf38b85af677262'],
   ['actions/setup-node', '49933ea5288caeca8642d1e84afbd3f7d6820020'],
   ['actions/upload-artifact', 'ea165f8d65b6e75b540449e92b4886f43607fa02'],
+  ['actions/download-artifact', '634f93cb2916e3fdff6788551b99b062d0335ce0'],
   ['actions/cache/restore', '0400d5f644dc74513175e3cd8d07132dd4860809'],
   ['actions/cache/save', '0400d5f644dc74513175e3cd8d07132dd4860809'],
 ])
@@ -146,6 +147,7 @@ const requiredJobs = [
   'agent-smoke',
   'connector-platform',
   'connector-install',
+  'server-build',
   'server-install',
   'required-ci',
 ]
@@ -164,7 +166,8 @@ const rawArtifacts = new Map([
   ['agent-smoke', 'agent-smoke-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['connector-platform', 'connector-platform-raw-${{ matrix.os }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['connector-install', 'connector-install-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}'],
-  ['server-install', 'server-install-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['server-build', 'server-build-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}'],
+  ['server-install', 'server-install-raw-${{ matrix.arch }}-${{ matrix.profile }}-${{ github.run_id }}-${{ github.run_attempt }}'],
   ['required-ci', 'required-ci-raw-${{ github.run_id }}-${{ github.run_attempt }}'],
 ])
 for (const jobId of requiredJobs) {
@@ -213,6 +216,7 @@ for (const [jobId, uploads] of uploadStepsByJob) {
 }
 
 const executableJobs = requiredJobs.filter(job => job !== 'required-ci' && job !== 'changes')
+const toolchainJobs = executableJobs.filter(job => job !== 'server-install')
 for (const jobId of executableJobs) {
   const section = jobSections.get(jobId) ?? ''
   requireCondition(
@@ -220,9 +224,11 @@ for (const jobId of executableJobs) {
     `${jobId} must check out the source`,
   )
   requireCondition(section.includes('persist-credentials: false'), `${jobId} must disable persisted credentials`)
-  requireCondition(section.includes('node-version-file: .node-version'), `${jobId} must use .node-version`)
-  requireCondition(section.includes('cache: pnpm'), `${jobId} must cache the pnpm store`)
-  requireCondition(section.includes('pnpm install --frozen-lockfile'), `${jobId} must use the frozen lockfile`)
+  if (toolchainJobs.includes(jobId)) {
+    requireCondition(section.includes('node-version-file: .node-version'), `${jobId} must use .node-version`)
+    requireCondition(section.includes('cache: pnpm'), `${jobId} must cache the pnpm store`)
+    requireCondition(section.includes('pnpm install --frozen-lockfile'), `${jobId} must use the frozen lockfile`)
+  }
 }
 requireCondition(
   occurrences(/persist-credentials:\s*false/g) === occurrences(/actions\/checkout@/g),
@@ -283,8 +289,10 @@ requireCondition(!source.includes('pnpm --filter @workmesh/contracts test'), 'co
 requireCondition(!source.includes('pnpm lint 2>&1'), 'CI must not repeat identical lint/typecheck commands')
 for (const jobId of executableJobs) {
   requireCondition(
-    parsedWorkflow.jobs[jobId].needs === 'changes',
-    `${jobId} must start after classification without waiting for the build/unit critical path`,
+    jobId === 'server-install'
+      ? JSON.stringify(parsedWorkflow.jobs[jobId].needs) === JSON.stringify(['changes', 'server-build'])
+      : parsedWorkflow.jobs[jobId].needs === 'changes',
+    `${jobId} must retain its classification dependency and server guests must await their candidates`,
   )
   requireCondition(
     parsedWorkflow.jobs[jobId].if === '${{ needs.changes.outputs.' + jobId + " == 'true' }}",
@@ -491,7 +499,7 @@ requireCondition(required.includes('node-version: 22.19.0'), 'required-ci must p
 requireCondition(packageJson.packageManager === 'pnpm@9.15.4', 'packageManager must be pnpm@9.15.4')
 requireCondition(nodeVersion === '22.19.0', 'Node must be pinned to 22.19.0')
 requireCondition(
-  occurrences(/corepack prepare pnpm@9\.15\.4 --activate/g) === executableJobs.length,
+  occurrences(/corepack prepare pnpm@9\.15\.4 --activate/g) === toolchainJobs.length,
   'every executable job must activate pnpm@9.15.4 with Corepack',
 )
 const expectedIntegrationScripts = {

@@ -1,0 +1,57 @@
+{
+  "说明": "新增server-build日志目录未列入现行Git忽略，构建器在创建任何候选前保持干净源码门禁并拒绝。Linux本机40项Python及16项安装单元成功只证明工具边界，无guest或自然捕获。普通取消其余失效运行，不force；修正忽略规则另绑定新候选。",
+  "runId": 38799626569,
+  "jobId": 116645463664,
+  "artifactId": 12004390415,
+  "jobConclusion": "failure",
+  "sourceHead": "73102d9af6b26490cc20302b02c83da378159fdc",
+  "sourceTree": "0801cd8c81fafe58310bda8b5e74672fb3a13411",
+  "scripts": {
+    "core_metadata.py": "6c6ecdf0dd5ddeb3040157d8b19bba7ba01ca5323fceda9f5a14b82cfb19de4e",
+    "core_pipe.py": "b80f03c1718122ffdb2bd03bb86ab2b21f477230be78e873add6a877efdbefdd",
+    "guest.py": "d7a7a176498f8805d74361ad29b8bb5854fbf9ac8729ad6bdeb92803f69580f8",
+    "native_diagnostic.py": "61fb0d9ba42733007cd9e884d86603d1e3857721cfe4fb5c15c0aff68b7ec5dd",
+    "native_diagnostic_test.py": "4424e8bf0eb9fa0d4290807728a909f4bcd017ae3cae910879ae01b5908590a7",
+    "run.py": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+  },
+  "scriptsMatchGit": true,
+  "pythonTests": 40,
+  "installerTests": 16,
+  "candidateProduced": false,
+  "artifactZipSha256": "3a8ab74b56334bdf1adf23102ee73b38cad9830787be560a3c113b68291b1b37",
+  "members": {
+    "server-build/build.log": {
+      "bytes": 677,
+      "sha256": "ca67b0851b5135df113b014d4c362c27e7542eb6696b53f35451a4325027c775"
+    },
+    "server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "5e684e7ae260e0a8e1ae68be5e4ff1d45181abed0bad8ee897faa94fa171a010"
+    },
+    "server-build/native-privacy.log": {
+      "bytes": 139,
+      "sha256": "73a82ec183b566d55a6b10296781cd5e515040cacac2bc3f17f6cb029f7c69bb"
+    },
+    "server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "b5d17c8cfde009fb30a940eb4daae10bf9aed972149c104fcabde151781b7183"
+    },
+    "server-build/source-commit.txt": {
+      "bytes": 258,
+      "sha256": "2f3503a060e472b86f7dc0c249599390342fcd0a5ead47a1421af531c77dae34"
+    },
+    "server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "b5d17c8cfde009fb30a940eb4daae10bf9aed972149c104fcabde151781b7183"
+    },
+    "server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "9cd04392b9c131523f047d86ffb98ce328d4f86aa494497a5cf36fc01e0bf26e"
+    },
+    "server-build/unit.log": {
+      "bytes": 3805,
+      "sha256": "333392100dab56e954238b33612889ec8558d5eb4dcf2898bd9056fc449e705d"
+    }
+  },
+  "selectedZipSha256": "dda2146095cde2e85cf9e24441d8bcc3399b47c73749b04a4d1b302c589a0a61"
+}

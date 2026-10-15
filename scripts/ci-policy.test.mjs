@@ -5,12 +5,19 @@ import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { validateServerInstallEntrypoint } from './ci-policy.mjs'
 import { parse } from './ci-bootstrap/yaml.mjs'
 
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('实际CI校验入口消费完整生产者与guest图及固定工件下载', () => {
+  const result = spawnSync(process.execPath, [fileURLToPath(new URL('./validate-ci.mjs', import.meta.url))], { encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stderr || result.stdout)
+  assert.match(result.stdout, /\[ci:validate\] OK: 12 jobs/)
+})
 
 test('双架构候选只构建一次，六个画像 guest 全部必需且摘要交接不能绕过', () => {
   const jobs = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs
