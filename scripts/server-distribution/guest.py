@@ -1,5 +1,6 @@
 """Accept the installed distribution in an isolated full guest, without host Node."""
 from concurrent.futures import ThreadPoolExecutor
+from collections import deque
 from datetime import datetime, timezone
 import hashlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -284,10 +285,63 @@ def helper_image(manifest):
     return role_image(manifest, 'installer')
 
 
+class McpProxyProgress:
+    def __init__(self):
+        self.lock = threading.Lock()
+        self.rows = deque(maxlen=8)
+        self.count = 0
+
+    def begin(self):
+        with self.lock:
+            self.count = min(129, self.count + 1)
+            if self.count > 128:
+                return None
+            self.rows.append({'sequence': self.count, 'stage': 'reading-request', 'elapsedMilliseconds': 0})
+            return self.count, time.monotonic()
+
+    def update(self, token, stage, status=None):
+        if token is None:
+            return
+        if stage not in {'request-read', 'request-sent', 'upstream-headers', 'upstream-complete', 'client-complete'}:
+            raise ValueError('proxy observation stage invalid')
+        if status is not None and (type(status) is not int or not 100 <= status <= 599):
+            raise ValueError('proxy observation status invalid')
+        with self.lock:
+            for row in self.rows:
+                if row['sequence'] == token[0]:
+                    row.update(stage=stage, elapsedMilliseconds=max(0, round((time.monotonic() - token[1]) * 1000)))
+                    if status is not None:
+                        row['upstreamStatus'] = status
+
+    def failure(self, token, error):
+        if token is None:
+            return
+        known = {'TimeoutError', 'BrokenPipeError', 'ConnectionResetError', 'RemoteDisconnected', 'IncompleteRead', 'OSError', 'SSLError'}
+        with self.lock:
+            for row in self.rows:
+                if row['sequence'] == token[0]:
+                    row.update(failed=True, errorType=type(error).__name__ if type(error).__name__ in known else 'OtherError')
+
+    def snapshot(self):
+        with self.lock:
+            return {'requestsObserved': min(128, self.count), 'truncated': self.count > 8,
+                    'requests': [dict(row) for row in self.rows]}
+
+
 def proxy(port, upstream, certificates):
+    observer = McpProxyProgress()
     class Handler(BaseHTTPRequestHandler):
         def forward(self):
+            token = observer.begin() if self.command == 'POST' and self.path == '/mcp' else None
+            try:
+                self.forward_request(token)
+            except Exception as error:
+                observer.failure(token, error)
+                raise
+
+        def forward_request(self, token):
             body = self.rfile.read(int(self.headers.get('content-length', '0')))
+            observer.update(token, 'request-read')
             headers = {k: v for k, v in self.headers.items() if k.lower() not in {'connection', 'transfer-encoding'}}
             headers['X-Forwarded-Proto'] = 'https'
             headers['X-Forwarded-For'] = self.client_address[0]
@@ -308,8 +362,11 @@ def proxy(port, upstream, certificates):
             backend = http.client.HTTPConnection('127.0.0.1', upstream, timeout=90)
             try:
                 backend.request(self.command, self.path, body, headers)
+                observer.update(token, 'request-sent')
                 response = backend.getresponse()
+                observer.update(token, 'upstream-headers', response.status)
                 payload = response.read()
+                observer.update(token, 'upstream-complete')
                 self.send_response(response.status)
                 for k, v in response.getheaders():
                     if k.lower() not in {'connection', 'transfer-encoding', 'content-length'}:
@@ -317,12 +374,14 @@ def proxy(port, upstream, certificates):
                 self.send_header('Content-Length', str(len(payload)))
                 self.end_headers()
                 self.wfile.write(payload)
+                observer.update(token, 'client-complete')
             finally:
                 backend.close()
         do_GET = do_POST = do_PUT = do_DELETE = do_PATCH = do_HEAD = forward
         def log_message(self, *_):
             pass
     server = ThreadingHTTPServer(('0.0.0.0', port), Handler)
+    server.workmesh_mcp_progress = observer
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     context.load_cert_chain(certificates / 'ca.pem', certificates / 'key.pem')
     server.socket = context.wrap_socket(server.socket, server_side=True)
@@ -578,16 +637,23 @@ def journey(prefix, config, certificates):
             'mcpUrl': redeemed['mcp']['url'], 'workItemBody': body}
 
 
-def observed_commit(dist, digest, prefix, config, manifest, target):
+def commit_candidate(dist, digest, prefix, config, manifest, stage, *, native_diagnostic=False):
+    action = lambda: install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])
+    if not native_diagnostic:
+        return action()
     from native_diagnostic import observe_native_action
     def business_started():
         entries = json.loads((prefix / 'journal.json').read_text())['actions']
         reads = [entry for entry in entries if entry['name'] == 'validate-business-read']
         assert len(reads) == 1
         return datetime.fromisoformat(reads[0]['startedAt'].replace('Z', '+00:00')).timestamp()
-    return observe_native_action(
-        lambda: install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')]),
-        lambda: prepare_native_watcher(prefix, manifest), business_started, target=target)
+    outcome, trace = observe_native_action(action,
+        lambda: prepare_native_watcher(prefix, manifest), business_started,
+        target=prefix.name + '-' + stage + '-commit')
+    # Preserve each completed observation before the next long operation. A
+    # successful window is not a full suite, a natural crash, or acceptance.
+    report({'phase': 'native-diagnostic', 'windowComplete': True, 'nativeTrace': trace})
+    return outcome
 
 
 def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_health=True, native_diagnostic=False):
@@ -653,24 +719,16 @@ def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_h
         journal_file.write_bytes(original_journal)
         pending_held.rename(pending_file)
     checks.append('interruptedHealthWithoutPendingRejectsUnknownCandidate')
-    if native_diagnostic and manifest['arch'] == 'arm64':
-        outcome, trace = observed_commit(upgrade, new_digest, prefix, config, manifest, 'personal-upgrade-commit')
-        assert outcome['status'] == 'installed'
-        return trace
-    assert install(upgrade, new_digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
+    assert commit_candidate(upgrade, new_digest, prefix, config, manifest, 'upgrade',
+                            native_diagnostic=native_diagnostic)['status'] == 'installed'
     journal = json.loads((prefix / 'journal.json').read_text())
     assert journal['stage'] == 'committed' and journal['backup']['manifestSha256']
     backup = Path(journal['backup']['directory'])
     assert (backup / 'manifest.json').exists() and (backup / 'manifest.hmac-sha256').exists()
     assert volumes() == original_volumes and sql(prefix, 'SELECT count(*) FROM work_items') == original_rows
     assert install(dist, digest, prefix, config, 'rollback', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
-    if native_diagnostic:
-        # Register concurrently with the original commit preflight. Do not wait
-        # before its request, repeat it, or turn a missed boundary into evidence.
-        outcome, trace = observed_commit(dist, digest, prefix, config, manifest, 'team-rollback-commit')
-        assert outcome['status'] == 'installed' and volumes() == original_volumes
-        return trace
-    assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
+    assert commit_candidate(dist, digest, prefix, config, manifest, 'rollback',
+                            native_diagnostic=native_diagnostic)['status'] == 'installed'
     assert volumes() == original_volumes
     checks.extend(['upgradeKeepsOriginalVolumes', 'compatibleProgramRollback', 'completeEncryptedBackup'])
     # Real durable incompatible ledger; do not rewrite an applied migration.
@@ -824,9 +882,7 @@ def main():
         certificates = ROOT / 'tls'
         servers.append(proxy(9446, 0, certificates))
         reboot_checks = []
-        native_profile = 'personal' if manifest['arch'] == 'arm64' else 'team'
-        profiles = (['personal'] if native_profile == 'personal' else ['personal', 'team']) if native_diagnostic else ['personal', 'team', 'enterprise']
-        for index, profile in enumerate(profiles):
+        for index, profile in enumerate(['personal', 'team', 'enterprise']):
             prefix = ROOT / profile
             config = ROOT / (profile + '-config.json')
             api_port, mcp_port, s3_port = 9443 + index * 10, 9444 + index * 10, 9445 + index * 10
@@ -921,22 +977,21 @@ def main():
                 install(dist, digest, prefix, config, 'commit', expected=1, extra=['--validation', str(prefix / 'invalid-validation.json')])
                 assert not (prefix / 'current.json').exists()
                 checks.append('invalidCredentialCannotCommitCurrent')
-                assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
+                assert commit_candidate(dist, digest, prefix, config, manifest, 'initial',
+                                        native_diagnostic=native_diagnostic)['status'] == 'installed'
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
                 progress(profile, 'business-committed')
-                trace = upgrade_recovery(dist, manifest, digest, prefix, config,
-                    native_diagnostic=native_diagnostic and profile == native_profile)
-                if native_diagnostic and profile == native_profile:
-                    diagnostics['nativeTrace'] = trace
-                    report({'phase': 'native-diagnostic', 'nativeTrace': trace, 'completedChecks': checks,
-                            'preludeProfiles': [{k: v for k, v in entry.items() if k != 'identity'} for entry in saved['profiles']]})
-                    compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
-                    return
+                upgrade_recovery(dist, manifest, digest, prefix, config,
+                                 native_diagnostic=native_diagnostic)
                 saved['profiles'].append({'profile': profile, 'status': 'passed', 'checks': checks[start:], 'identity': identity})
                 progress(profile, 'profile-completed')
                 # Keep peak resource competition bounded: each profile's real
                 # journey is independent; all three are restarted for reboot.
                 compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')
+        if native_diagnostic:
+            report({'phase': 'native-diagnostic', 'windowsComplete': True, 'completedChecks': checks,
+                    'preludeProfiles': [{k: v for k, v in entry.items() if k != 'identity'} for entry in saved['profiles']]})
+            return
         boot = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
         resources = {'cpu': command(['lscpu', '-J']), 'memory': Path('/proc/meminfo').read_text().splitlines()[:3],
                      'disk': command(['df', '-B1', '--output=size,used,avail', '/']).splitlines(),
@@ -957,6 +1012,9 @@ def main():
             report({'phase': 'before-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
                     'profiles': profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
     except Exception as error:
+        proxy_profiles = {9444: 'personal', 9454: 'team', 9464: 'enterprise'}
+        diagnostics['mcpProxyProgress'] = [{'profile': proxy_profiles[server.server_port],
+            **server.workmesh_mcp_progress.snapshot()} for server in servers if server.server_port in proxy_profiles]
         failure_progress('caught', error, diagnostics)
         # This guest is exclusive. Project only numeric kernel counters, never
         # process command lines, environment or arbitrary file contents.

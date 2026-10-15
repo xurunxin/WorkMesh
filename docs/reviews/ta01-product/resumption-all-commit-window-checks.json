@@ -1,0 +1,40 @@
+{
+  "说明": "当前脏工作树30项Python原日志与完整六脚本子集；不是完整guest、产品通过或自然崩溃根因修复。",
+  "sourceHead": "0f69f7c9801f18338fec3127ba5d2cd20c250268",
+  "sourceIsDirty": true,
+  "members": {
+    "scripts/server-distribution/core_metadata.py": {
+      "bytes": 5194,
+      "sha256": "6c6ecdf0dd5ddeb3040157d8b19bba7ba01ca5323fceda9f5a14b82cfb19de4e"
+    },
+    "scripts/server-distribution/core_pipe.py": {
+      "bytes": 4512,
+      "sha256": "ca04f29714ffb4ef6f3bc86cfd418ff5378aad1813fe44ff5be0df8c0e915da4"
+    },
+    "scripts/server-distribution/guest.py": {
+      "bytes": 70802,
+      "sha256": "8bdd66114cadfa70035c2d6c7f25763340856a7e650f6efc95b71ec0f4262ede"
+    },
+    "scripts/server-distribution/native_diagnostic.py": {
+      "bytes": 11169,
+      "sha256": "6f5f4001ba8df5caa7abc21b3f2cad7f2585def8802f31688527f1013afb0a52"
+    },
+    "scripts/server-distribution/native_diagnostic_test.py": {
+      "bytes": 31291,
+      "sha256": "35b784011966c3fa9d7a203ca94c45c8f1af81c30002748fe3e2dd62adfd8137"
+    },
+    "scripts/server-distribution/run.py": {
+      "bytes": 13188,
+      "sha256": "8746284238764cbf4fcca1f40a57f300677ebc8815f75c42fc5bbaf435f03651"
+    },
+    "checks/python-tests.log": {
+      "bytes": 5400,
+      "sha256": "4c5f5c7ab124d5a9c076fca0ad1dd70f04c75f5802245bbc03c0908ae7a2c42f"
+    },
+    "checks/limits.json": {
+      "bytes": 917,
+      "sha256": "69336c82e94e9a32129d88738c22e1189ee45cf4ce5929536318185eb4852a17"
+    }
+  },
+  "selectedZipSha256": "3d3c1aeff3d192b668622c42d66b1a46799cef18decffd8229dbdbbbe1288605"
+}

@@ -461,3 +461,26 @@ CI551 ARM64 同样在个人升级 commit 读取超时（30,800 ms），尚未到
 失败快照对归属已核的本安装 PostgreSQL 容器执行一次有界只读聚合，记录 max_connections、包含采集本身的 client backend 数和 track_activities 开关；没有查询正文、会话身份或 SQL 输出原文，也不改连接池配置、不重试原业务读取。隔离 PostgreSQL 16.9、max_connections=20、track_activities=off 实测返回 20／1／off；独有容器使用 tmpfs，无持久卷，已核不存在。这只证明采集可用，不证明连接耗尽或超时原因。
 
 当前 26 项 Python 测试、6 文件 AST 与16项安装单元通过，原日志、源码子集和隔离采集账本见 [索引](../../reviews/ta01-product/resumption-bounded-verification-diagnostics.json)／[原件](../../reviews/ta01-product/resumption-bounded-verification-diagnostics.zip)。旧25项合成捕获记录单独保留，不覆写为新版本。无迁移、REST/MCP 合同或事件变更；接入入口及请求示例不受影响，安装说明同次更新。下一候选须执行新的普通 Required CI 和双架构完整 guest；尚未通过，正式成果独审未做，不能合入。
+## CI553 AMD64 目标提交成功但未复现崩溃
+
+新候选 0f69f7c9801f18338fec3127ba5d2cd20c250268／tree 67056dd33c0124a9cd5b12dee34e0b4cc97d8cd6 已推送，新增七份ZIP的实际Git blob与工作树原字节一致。普通CI552／run38754929048及显式诊断CI553／run38754957010分别执行；PR228保持草稿。只读tree查询首次因PowerShell未引用花括号解析失败，后续引用准确参数读取上述tree，没有改动Git。
+
+CI553 AMD64 job116491306114 已结束，guest 3,594.95 s、diagnostic-only。准确Node PID60901、init PID60811；preparedUtcEpoch1792079869.8007777早于businessStartedUtcEpoch1792079909.817，团队回退后的原commit成功，naturalRun=true、captured=false，没有core或栈。个人profile-completed、团队business-committed，41项前序断言只覆盖实际范围，不冒团队其后故障、企业或整机重启完成；见 [索引](../../reviews/ta01-product/ci553-amd64-rollback-target-no-crash.json)／[原件](../../reviews/ta01-product/ci553-amd64-rollback-target-no-crash.zip)。14成员及六脚本均与准确受测Git摘要匹配。未复现不能证明旧139根因已解决，也不当Required通过；普通两架构及ARM64诊断仍待终态。
+## CI552 AMD64 企业回退首败与九窗口观察
+
+普通AMD64 job116491304044、artifact11991854708受测0f69f7c，guest 7,372.21 s失败，原150分钟总期限未到。个人、团队profile-completed，企业business-committed；action63企业回退后的commit初始化MCP连接在4,355 ms重置，请求写完、无响应头和字节。准确容器db5120cf0c46cc6ad1831cb17d040bc4ed4734c8736ab70e423ebf08d3f74d60的历史die事件exit139；API／Worker健康、无OOM，失败时PG聚合100／3／on。该快照不解释原生故障。见 [索引](../../reviews/ta01-product/ci552-amd64-enterprise-rollback-node139.json)／[原件](../../reviews/ta01-product/ci552-amd64-enterprise-rollback-node139.zip)，14成员与六脚本实核Git摘要。企业其后恢复／全三画像重启未完成，不能合入。
+
+CI553 ARM64 job116491306111、artifact11992913309的个人升级原commit成功，preparedUtcEpoch1792083710.7832692早于businessStartedUtcEpoch1792083861.578；Node PID40007／init39882，naturalRun=true、captured=false。没有故障或PG失败快照，不补写超时；见 [索引](../../reviews/ta01-product/ci553-arm64-personal-upgrade-no-crash.json)／[原件](../../reviews/ta01-product/ci553-arm64-personal-upgrade-no-crash.zip)。该轮Required job116560249430终态failure，诊断只完成旧单窗口，不属于完整支持。两架构单窗口均未复现，但普通AMD64在企业窗口实际退出139，不能据此关闭原生故障。普通ARM64仍待终态。
+
+下一候选显式诊断覆盖三画像的首次、升级、回退九个正常commit，保原前序、升级／恢复与失败断言；每次只执行一次原动作，并行准备后实核业务边界，每次结束恢复一次。任一准备／恢复受拒或原动作失败即沿原异常停止全链，不重试或切捕获方式。每个成功窗口即时报告diagnostic-only回执，后续超时也可保已经完成的观察；单窗口成功不代表整套通过或捕获到故障。诊断仍不执行整机重启、最终非零，普通全链及其30 s请求／180 s健康／1,800 s安装／150分钟guest期限不变。不得以扩大观察覆盖来冒根因修复。
+
+30项Python检查及六文件AST通过，包括九窗口原动作／恢复各一次、未知窗口提前拒绝、普通模式参数和动作数不变、真实助手的单窗口报告不被普通收集器接受；见 [索引](../../reviews/ta01-product/resumption-all-commit-window-checks.json)／[原件](../../reviews/ta01-product/resumption-all-commit-window-checks.zip)。原26项、16项安装单元和旧候选原件不覆写为新快照。Linux容器原型先前只读查询误用了另一标签，不当不存在证明；17:15 UTC使用实际io.workmesh.ta01.parallel-probe及原owner的准确查询为空，未重试创建／挂载。正式成果独审未做，当前不能合入。
+## CI552 ARM64 终态与只观察原代理请求
+
+普通ARM64 job116491303959、artifact11994011072受测0f69f7c，guest 8,288.04 s失败。个人business-committed后action19升级commit失败；tools/call在30,557 ms超时，请求写完、无响应头和字节，API／Worker／MCP当前健康、重启0、无OOM，历史事件为空不证明全程无退出。PG只读聚合20／3／off，包含采集自身；该较晚快照不证明先前连接耗尽，也不改变池配置。见 [索引](../../reviews/ta01-product/ci552-arm64-upgrade-read-timeout.json)／[原件](../../reviews/ta01-product/ci552-arm64-upgrade-read-timeout.zip)，14成员及六脚本实核Git摘要。CI552 Required job116564571513终态failure；其余12项成功不代服务端通过。
+
+CI553 ARM64单窗口guest为7,768.53 s、diagnostic-only，实际提交成功、无自然core，不能用“timeout”描述这份原件；命名已在首次提交前准确整理，ZIP原字节未改。两轮全部结束后才推送下一候选，不取消在途完整验收。
+
+后续guest测试代理观察原POST /mcp的读取、发送、上游响应头／体完成和客户端发送完成，区分等待上游头与等待完整体；每代理最多128次、仅保最近8条，超过范围明确truncated，失败只导出固定异常类。只读快照不含正文／凭据／路径／异常消息，不额外请求、不重试，也不改原30秒业务socket或90秒代理上游期限。观察本身有少量开销，不作为性能或根因证明。
+
+新增真实HTTP回环测试证明：上游已发响应头但未发完整体时，可保upstream-headers且原请求仍等待；释放余体后原单请求完成、全部字节不变。该用例TLS包装为stub，不冒CA验收；另验并发上限、私有错误消息及未知字段拒绝。最新33项Python、六文件AST通过，旧30项原件另保；源码子集与原日志见 [索引](../../reviews/ta01-product/resumption-all-commit-proxy-checks.json)／[原件](../../reviews/ta01-product/resumption-all-commit-proxy-checks.zip)。没有REST/MCP合同、事件或迁移改动，原请求示例不变；安装说明同步。双架构完整支持、根因修复和正式独审仍未完成，当前不可合入。

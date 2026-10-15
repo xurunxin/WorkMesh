@@ -11,11 +11,132 @@ from types import SimpleNamespace
 from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
+import http.client
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import threading
+import time
 from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity, binary_hash, node_process_pid
 from run import valid_receipt, complete_reboot_checks
 from core_pipe import memory_core
 from core_metadata import core_location
 import core_pipe
+
+
+class ProxyProgress(unittest.TestCase):
+    @staticmethod
+    def environment():
+        source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
+        nodes = [node for node in ast.parse(source).body if isinstance(node, (ast.ClassDef, ast.FunctionDef))
+                 and node.name in {'McpProxyProgress', 'proxy'}]
+        # The HTTP test uses plain loopback sockets; TLS trust is not under test.
+        context = SimpleNamespace(load_cert_chain=lambda *_: None, wrap_socket=lambda sock, **_: sock)
+        def loopback_server(address, handler):
+            assert address == ('0.0.0.0', 0)
+            return ThreadingHTTPServer(('127.0.0.1', 0), handler)
+        env = {'threading': threading, 'time': time, 'deque': deque,
+               'BaseHTTPRequestHandler': BaseHTTPRequestHandler, 'ThreadingHTTPServer': loopback_server,
+               'http': SimpleNamespace(client=http.client),
+               'ssl': SimpleNamespace(SSLContext=lambda _: context, PROTOCOL_TLS_SERVER=0)}
+        exec(compile(ast.Module(body=nodes, type_ignores=[]), '<proxy-progress>', 'exec'), env)
+        return env
+
+    def test_bounded_concurrent_progress_never_exports_error_body_or_identity(self):
+        observer = self.environment()['McpProxyProgress']()
+        private = 'wmi_' + 'x' * 43
+        def observe(_):
+            token = observer.begin()
+            observer.update(token, 'upstream-headers', 200)
+            observer.failure(token, TimeoutError(private))
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            list(pool.map(observe, range(140)))
+        value = observer.snapshot()
+        self.assertEqual(value['requestsObserved'], 128)
+        self.assertTrue(value['truncated'])
+        self.assertEqual(len(value['requests']), 8)
+        self.assertEqual([row['sequence'] for row in value['requests']], list(range(121, 129)))
+        self.assertTrue(all(row['failed'] and row['errorType'] == 'TimeoutError' for row in value['requests']))
+        self.assertNotIn(private, json.dumps(value))
+        value['requests'][0]['stage'] = private
+        self.assertNotIn(private, json.dumps(observer.snapshot()))
+
+    def test_unknown_stage_status_and_error_type_cannot_enter_projection(self):
+        observer = self.environment()['McpProxyProgress']()
+        token = observer.begin()
+        with self.assertRaises(ValueError):
+            observer.update(token, 'private-stage')
+        for status in [True, 'private-status', 99, 600]:
+            with self.assertRaises(ValueError):
+                observer.update(token, 'upstream-headers', status)
+        class PrivateError(Exception):
+            pass
+        observer.failure(token, PrivateError('private-message'))
+        self.assertEqual(observer.snapshot()['requests'][0]['errorType'], 'OtherError')
+        self.assertNotIn('private', json.dumps(observer.snapshot()))
+
+    def test_real_http_identifies_waiting_for_body_and_preserves_single_request(self):
+        env = self.environment()
+        release, headers, complete = threading.Event(), threading.Event(), threading.Event()
+        requests = []
+        private = 'wmi_' + 'x' * 43
+        class Upstream(BaseHTTPRequestHandler):
+            def do_POST(self):
+                requests.append(self.rfile.read(int(self.headers['content-length'])))
+                self.send_response(200)
+                self.send_header('Content-Length', '100')
+                self.end_headers()
+                self.wfile.write(b'x')
+                self.wfile.flush()
+                release.wait(5)
+                self.wfile.write(b'y' * 99)
+            def log_message(self, *_):
+                pass
+        upstream = ThreadingHTTPServer(('127.0.0.1', 0), Upstream)
+        thread = threading.Thread(target=upstream.serve_forever, daemon=True)
+        thread.start()
+        server = env['proxy'](0, upstream.server_port, Path('/unused-test-ca'))
+        observer = server.workmesh_mcp_progress
+        update = observer.update
+        def observed_update(token, stage, status=None):
+            update(token, stage, status)
+            if stage == 'upstream-headers':
+                headers.set()
+            if stage == 'client-complete':
+                complete.set()
+        observer.update = observed_update
+        def request():
+            connection = http.client.HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+            try:
+                connection.request('POST', '/mcp', private, {'X-WorkMesh-Installation-Token': private})
+                reply = connection.getresponse()
+                return reply.status, reply.read()
+            finally:
+                connection.close()
+        try:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(request)
+                try:
+                    self.assertTrue(headers.wait(3))
+                    snapshot = observer.snapshot()
+                    self.assertEqual(snapshot['requests'][0]['stage'], 'upstream-headers')
+                    self.assertEqual(snapshot['requests'][0]['upstreamStatus'], 200)
+                    self.assertFalse(future.done())
+                    self.assertNotIn(private, json.dumps(snapshot))
+                finally:
+                    release.set()
+                self.assertEqual(future.result(timeout=3), (200, b'x' + b'y' * 99))
+                self.assertTrue(complete.wait(3))
+                self.assertEqual(observer.snapshot()['requests'][0]['stage'], 'client-complete')
+                self.assertEqual(requests, [private.encode()])
+        finally:
+            release.set()
+            server.shutdown()
+            server.server_close()
+            upstream.shutdown()
+            upstream.server_close()
+            thread.join(timeout=3)
+            self.assertFalse(thread.is_alive())
 
 
 class CoreMetadata(unittest.TestCase):
@@ -391,6 +512,79 @@ class Watcher:
 
 
 class ProbeBoundary(unittest.TestCase):
+    def test_every_profile_stage_is_exactly_one_original_action_and_one_restoration(self):
+        for profile in ['personal', 'team', 'enterprise']:
+            for stage in ['initial', 'upgrade', 'rollback']:
+                watcher = Watcher()
+                calls = []
+                def action():
+                    calls.append('original')
+                    return {'status': 'installed'}
+                result, trace = observe_native_action(action, lambda: watcher, lambda: 10**12,
+                    target=profile + '-' + stage + '-commit')
+                self.assertEqual(result, {'status': 'installed'})
+                self.assertEqual(calls, ['original'])
+                self.assertEqual(watcher.finished, 1)
+                self.assertEqual(trace['target'], profile + '-' + stage + '-commit')
+                self.assertTrue(trace['preparedBeforeBusiness'])
+
+    def test_unknown_observation_window_rejects_before_preparation_or_business(self):
+        calls = []
+        with self.assertRaises(ValueError):
+            observe_native_action(lambda: calls.append('business'), lambda: calls.append('prepare'),
+                                  lambda: 10**12, target='private-unknown-commit')
+        self.assertEqual(calls, [])
+
+    def test_ordinary_commit_preserves_parameters_and_never_prepares_or_reports(self):
+        source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
+        function = next(node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef)
+                        and node.name == 'commit_candidate')
+        calls = []
+        result = {'status': 'installed'}
+        def install(*args, **kwargs):
+            calls.append((args, kwargs))
+            return result
+        def forbidden(*_):
+            raise AssertionError('ordinary mode cannot observe or report')
+        env = {'install': install, 'prepare_native_watcher': forbidden, 'report': forbidden}
+        exec(compile(ast.Module(body=[function], type_ignores=[]), '<ordinary-commit>', 'exec'), env)
+        prefix = Path('/owned/personal')
+        actual = env['commit_candidate']('bundle', 'digest', prefix, 'config', {}, 'initial')
+        self.assertIs(actual, result)
+        self.assertEqual(calls, [(('bundle', 'digest', prefix, 'config', 'commit'),
+                                 {'extra': ['--validation', str(prefix / 'validation.json')]})])
+
+    def test_native_commit_reports_completed_window_after_the_original_action_once(self):
+        from datetime import datetime
+        source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
+        function = next(node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef)
+                        and node.name == 'commit_candidate')
+        watcher, actions, reports = Watcher(), [], []
+        class Journal:
+            def read_text(self):
+                return json.dumps({'actions': [{'name': 'validate-business-read',
+                    'startedAt': '2099-01-01T00:00:00Z'}]})
+        class Prefix:
+            name = 'enterprise'
+            def __truediv__(self, name):
+                return Journal() if name == 'journal.json' else Path('/owned/enterprise') / name
+        def install(*args, **kwargs):
+            actions.append((args, kwargs))
+            return {'status': 'installed'}
+        env = {'install': install, 'prepare_native_watcher': lambda *_: watcher,
+               'report': reports.append, 'json': json, 'datetime': datetime}
+        exec(compile(ast.Module(body=[function], type_ignores=[]), '<native-commit>', 'exec'), env)
+        result = env['commit_candidate']('bundle', 'digest', Prefix(), 'config', {}, 'rollback', native_diagnostic=True)
+        self.assertEqual(result, {'status': 'installed'})
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(watcher.finished, 1)
+        self.assertEqual(len(reports), 1)
+        self.assertTrue(reports[0]['windowComplete'])
+        self.assertEqual(reports[0]['nativeTrace']['target'], 'enterprise-rollback-commit')
+        self.assertFalse(reports[0]['nativeTrace']['captured'])
+        self.assertTrue(valid_receipt(reports[0], True))
+        self.assertFalse(valid_receipt(reports[0], False))
+
     def test_success_retains_original_result_and_does_not_invent_capture(self):
         watcher = Watcher()
         result, trace = observe_native_action(lambda: 'installed', lambda: watcher, lambda: 10**12)

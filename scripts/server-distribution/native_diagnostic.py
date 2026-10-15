@@ -182,7 +182,9 @@ class NativeProbeError(RuntimeError):
 
 def observe_native_action(action, prepare, business_started, *, target='team-rollback-commit'):
     from concurrent.futures import ThreadPoolExecutor
-    if target not in {'team-rollback-commit', 'personal-upgrade-commit'}:
+    if target not in {profile + '-' + stage + '-commit'
+                     for profile in ['personal', 'team', 'enterprise']
+                     for stage in ['initial', 'upgrade', 'rollback']}:
         raise ValueError('native observation target invalid')
     known_errors = {'RuntimeError', 'AssertionError', 'TimeoutExpired', 'TimeoutError', 'PermissionError',
                     'FileNotFoundError', 'OSError', 'ValueError', 'KeyError', 'NativeDiagnosticError'}
