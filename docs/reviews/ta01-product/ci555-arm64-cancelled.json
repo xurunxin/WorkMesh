@@ -1,0 +1,80 @@
+{
+  "说明": "源代码核查已确认首次正常commit前保留旧失败读取，旧助手len(reads)==1会拒绝新观察边界，因此停止本失效显式诊断运行，未取消普通CI554。正常取消非force，保可取得原件。缺失result／receipt不补造产品失败、通过、捕获或收尾结论；本地34项修正另保。",
+  "runId": 38777353104,
+  "runConclusion": "cancelled",
+  "jobId": 116568878351,
+  "jobConclusion": "cancelled",
+  "artifactId": 11995539169,
+  "requiredJob": 116588059455,
+  "requiredConclusion": "failure",
+  "sourceHead": "21a847bf0cc665b8f5e809c29480de3ec73d9f44",
+  "sourceTree": "9371523043c65d4814d7054a948cdb441db7ccd0",
+  "scripts": {
+    "core_metadata.py": "6c6ecdf0dd5ddeb3040157d8b19bba7ba01ca5323fceda9f5a14b82cfb19de4e",
+    "core_pipe.py": "ca04f29714ffb4ef6f3bc86cfd418ff5378aad1813fe44ff5be0df8c0e915da4",
+    "guest.py": "6f80b7a692df2cba9bc633a837ee3707fb85525cd29aab02c66213b18b6f7a2c",
+    "native_diagnostic.py": "6f5f4001ba8df5caa7abc21b3f2cad7f2585def8802f31688527f1013afb0a52",
+    "native_diagnostic_test.py": "af67063b99f310eb42eeccba9c4f4037eb6d2f7f05012599332188b6f3851c9a",
+    "run.py": "8746284238764cbf4fcca1f40a57f300677ebc8815f75c42fc5bbaf435f03651"
+  },
+  "scriptsMatchGit": true,
+  "artifactZipSha256": "7d23137808e7f28769af8e9e231bdae98faf9aea410806f2bb57462b19ffe165",
+  "missingWantedMembers": [
+    "server-install/result.json"
+  ],
+  "members": {
+    "server-install/build.log": {
+      "bytes": 69131,
+      "sha256": "a5a4091471dac288901c2b94dc89764a8a5bb476b401c15ecda9ddd89d84611f"
+    },
+    "server-install/guest.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "22ef52f17e2e826d8b23f38e41387643f8d85ff137c76dc6efef181e75eab958"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "fdeb2014acd74ebabe7c1a81c57d4b4ed6391869d0f987ecade2b480661d9a4d"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12409,
+      "sha256": "fbd18073792b5ca2f023f148e0eb144cc6881f5ea973cf4f0b396f30b5420a91"
+    },
+    "server-install/native-privacy.log": {
+      "bytes": 132,
+      "sha256": "9c82083a9b3ad717a33da3c149905fd369cf79b95d1e3c2650ec76b9183b8cd8"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-install/serial.log": {
+      "bytes": 84135,
+      "sha256": "c96c213cd4bc6bcab50fdb179555ef3d165e3a9852f71f8072c3c81081e3f6d8"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "5b1d3b542c07cd80ffb9b3fa0a3f4412c903b1727ebb6dda7b1d8e64d93ffc1a"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 261,
+      "sha256": "d78f678192b2236fb9560d67854a73105b3cf1c47d3dc07e28edd9ee179f68c5"
+    },
+    "server-install/source-install.log": {
+      "bytes": 555,
+      "sha256": "ca0bbdc7c295d7d629d34df7665b9801e536e0a0391de90ce97941c24b59750c"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "5b1d3b542c07cd80ffb9b3fa0a3f4412c903b1727ebb6dda7b1d8e64d93ffc1a"
+    },
+    "server-install/unit.log": {
+      "bytes": 3804,
+      "sha256": "3bd5c00fd31981c8f2d01dbf7f774c53def434756c09694f150f48243ab9f62c"
+    }
+  },
+  "selectedZipSha256": "c63e8495f70507ac50e4c806ee3b427500619c19a6f0b9defd008ce7f401ef5e"
+}

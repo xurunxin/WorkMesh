@@ -1,0 +1,62 @@
+{
+  "说明": "六组合拆分、候选共享、重启范围及多窗口捕获隔离的本机边界检查；完整新guest、真实artifact交接与根因仍待实测。",
+  "sourceHead": "21a847bf0cc665b8f5e809c29480de3ec73d9f44",
+  "sourceIsDirty": true,
+  "pythonTests": 40,
+  "ciPolicyTests": 22,
+  "members": {
+    "scripts/server-distribution/core_metadata.py": {
+      "bytes": 5194,
+      "sha256": "6c6ecdf0dd5ddeb3040157d8b19bba7ba01ca5323fceda9f5a14b82cfb19de4e"
+    },
+    "scripts/server-distribution/core_pipe.py": {
+      "bytes": 4894,
+      "sha256": "b80f03c1718122ffdb2bd03bb86ab2b21f477230be78e873add6a877efdbefdd"
+    },
+    "scripts/server-distribution/guest.py": {
+      "bytes": 74486,
+      "sha256": "d7a7a176498f8805d74361ad29b8bb5854fbf9ac8729ad6bdeb92803f69580f8"
+    },
+    "scripts/server-distribution/native_diagnostic.py": {
+      "bytes": 11561,
+      "sha256": "61fb0d9ba42733007cd9e884d86603d1e3857721cfe4fb5c15c0aff68b7ec5dd"
+    },
+    "scripts/server-distribution/native_diagnostic_test.py": {
+      "bytes": 47070,
+      "sha256": "4424e8bf0eb9fa0d4290807728a909f4bcd017ae3cae910879ae01b5908590a7"
+    },
+    "scripts/server-distribution/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    "scripts/ci-policy.mjs": {
+      "bytes": 20310,
+      "sha256": "0c359766033035cd6c3b96d29c7ecd718527cd4fc06a5eef428f97153a98d6ac"
+    },
+    "scripts/ci-policy.test.mjs": {
+      "bytes": 22894,
+      "sha256": "f764b37d5baae19a9469687866be794e9a5fca880777074003a3a855620b0d55"
+    },
+    ".github/workflows/ci.yml": {
+      "bytes": 48896,
+      "sha256": "b0b98334180cdc7e6e1b2ebae2aab5fe859651ee63aa6d126b89bd2eef1ace7a"
+    },
+    "checks/profile-scope-python-tests-current.log": {
+      "bytes": 7503,
+      "sha256": "8202a01098dc92aefba1d391474fd6483e1619e5ddf7d42a378dad209f857307"
+    },
+    "checks/profile-scope-python-tests-lifecycle.log": {
+      "bytes": 7281,
+      "sha256": "947a606be22862c36618fea3b1ab187f1702c28638ce209c6aebfb6f3fd23e79"
+    },
+    "checks/profile-scope-ci-policy-tests-current.log": {
+      "bytes": 5146,
+      "sha256": "03c83202d3030eea7bfd17cb09505f3558e5ae586fcba7041a5aeb0a5110d956"
+    },
+    "checks/scope.json": {
+      "bytes": 1211,
+      "sha256": "6f0afd861d9d13defa0870b2c600ad9e8052ab565c3fc6f1326165ed0d400ce6"
+    }
+  },
+  "selectedZipSha256": "abda63a4c7ba224fad624a03b6dd115b27c309d2a71b533cbac5dc1c2d4fc743"
+}

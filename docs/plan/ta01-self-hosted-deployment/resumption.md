@@ -484,3 +484,29 @@ CI553 ARM64单窗口guest为7,768.53 s、diagnostic-only，实际提交成功、
 后续guest测试代理观察原POST /mcp的读取、发送、上游响应头／体完成和客户端发送完成，区分等待上游头与等待完整体；每代理最多128次、仅保最近8条，超过范围明确truncated，失败只导出固定异常类。只读快照不含正文／凭据／路径／异常消息，不额外请求、不重试，也不改原30秒业务socket或90秒代理上游期限。观察本身有少量开销，不作为性能或根因证明。
 
 新增真实HTTP回环测试证明：上游已发响应头但未发完整体时，可保upstream-headers且原请求仍等待；释放余体后原单请求完成、全部字节不变。该用例TLS包装为stub，不冒CA验收；另验并发上限、私有错误消息及未知字段拒绝。最新33项Python、六文件AST通过，旧30项原件另保；源码子集与原日志见 [索引](../../reviews/ta01-product/resumption-all-commit-proxy-checks.json)／[原件](../../reviews/ta01-product/resumption-all-commit-proxy-checks.zip)。没有REST/MCP合同、事件或迁移改动，原请求示例不变；安装说明同步。双架构完整支持、根因修复和正式独审仍未完成，当前不可合入。
+## CI555 主动取消与首次提交边界修正
+
+21a847bf0cc665b8f5e809c29480de3ec73d9f44／tree9371523043c65d4814d7054a948cdb441db7ccd0已推送，六份新增ZIP实际Git blob与索引SHA一致。普通CI554／run38777334678继续运行；显式CI555／run38777353104于18:05 UTC发普通取消，18:09:50 UTC终态cancelled，未force。双架构服务端与该运行中重复的ARM64连接器安装取消；Required116588059455失败，不冒任何产品新结论。
+
+取消依据是源码核查发现的诊断助手缺陷：首次安装先做无效凭据commit，按现行append-only journal保留失败的validate-business-read；首次正常commit再追加新读取。扩展窗口时旧助手仍要求全journal只有一条读取，会拒绝合法的新观察边界。该问题属于本次助手，不等于产品139或ARM64超时的原因；没有改产品journal、删旧失败或重试原业务。
+
+可取得原件分别见 [AMD64索引](../../reviews/ta01-product/ci555-amd64-cancelled.json)／[原件](../../reviews/ta01-product/ci555-amd64-cancelled.zip)、[ARM64索引](../../reviews/ta01-product/ci555-arm64-cancelled.json)／[原件](../../reviews/ta01-product/ci555-arm64-cancelled.zip)。各13成员、六脚本与准确Git实核；两份均缺result.json，不补造失败回执、捕获、guest关闭或资源收尾证明。源代码预知缺陷与取消分别记录，不倒填为实际运行触发该断言。普通CI554未取消，修正暂不推送，以保全该准确普通snapshot的完整终态。
+
+助手现在在原动作前保本journal ID及既有actions，结束时要求ID和既有前缀相同，且仅本次新增区间恰有一条读取，才核准备早于业务。普通模式不加载这段观察。新回归保旧失败记录不变并观察新提交；已有未来时间的旧读取、没有新读取时也必须拒绝，原动作／恢复各一次。34项Python及六文件AST通过，源码子集与原日志见 [索引](../../reviews/ta01-product/resumption-append-only-boundary-checks.json)／[原件](../../reviews/ta01-product/resumption-append-only-boundary-checks.zip)。旧30／33项原件保持，新guest未测，不冒根因修复或完整支持。
+
+另只读复制既有公开node:22.19.0-alpine3.21镜像的单一Node程序，生成公开ELF STT_FUNC范围索引，未启动程序、未创建卷，准确临时容器已核不存在。124,181,928字节，SHA638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328，100,811个有尺寸函数范围；目标进程SHA尚未匹配，只是准备，不据同版本或同大小解析故障。见 [索引](../../reviews/ta01-product/resumption-public-node-symbol-preparation.json)／[原件](../../reviews/ta01-product/resumption-public-node-symbol-preparation.zip)。仅保源镜像、脚本、头信息、摘要与收尾，不提交二进制或完整大索引；本任务单一临时分析副本暂保，待实际匹配后定向收尾。结构依据为 [ELF section](https://gabi.xinuos.com/elf/03-sheader.html)及 [symbol table](https://gabi.xinuos.com/elf/05-symtab.html)，零尺寸／未定义／非可执行范围不猜归属，链接地址不当进程ASLR地址。
+## CI554 AMD64 上游重置与六组合独立 guest 编排
+
+普通AMD64 job116568767886／artifact12001250134，受测21a847bf0cc665b8f5e809c29480de3ec73d9f44／tree9371523043c65d4814d7054a948cdb441db7ccd0，guest 5,980.59 s失败。个人profile-completed，团队business-committed，action42团队回退commit的initialize在2,837 ms连接重置。测试代理团队第10个请求停在request-sent，之后ConnectionResetError，未进入upstream-headers；历史die事件确认准确MCP容器5c5840fb21b4d5790aa3ba41d0d05928ddb74d82b70b7248004dbe2024162bf0退出139。较晚快照该MCP已重启一次且健康，API／Worker健康、无OOM，PG100／3／on；不把较晚健康改写为全程未崩溃，也不据PG快照解释139。见 [索引](../../reviews/ta01-product/ci554-amd64-team-rollback-node139.json)／[原件](../../reviews/ta01-product/ci554-amd64-team-rollback-node139.zip)，14成员及六脚本实核Git摘要。没有故障栈，根因未闭合；普通ARM64仍待终态，未取消。
+
+为使已批准的六种组合都取得完整证据，后续普通CI改为三画像×两架构六个独立完整TCG guest；每VM仍4 vCPU／4 GiB、150分钟总期限，原30秒业务／180秒健康／1,800秒安装及服务oneshot期限、恢复与重启断言不变。原来每架构一台guest串三画像，改为每架构三台独立guest，合计可用计算预算增加；不声称架构总预算未变，不将时长或通过率与旧编排直接比较，也不作为MCP故障修复。使用原有两个Linux hosted runner类型，不注册机器／runner、增权或引入付费服务，不宣称物理最低配置。
+
+每架构独有server-build只构建一次无源码候选，上传不可变工件；按架构独名传递工件ID和manifest SHA，供该架构三组复用。guest先拒绝空／非法交接，按确切ID下载，核生产者摘要后才启动；不覆写旧attempt工件。Required新增生产者结果并要求全部六个普通guest成功，删架构／画像、skip／cancel／吞失败、错工件／摘要及提前执行均拒绝。输出组合依据 [GitHub矩阵输出规则](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#using-job-outputs-in-a-matrix-job)，沿仓库现有download-artifact固定commit，不新增发布或秘密权限；真实GitHub交接尚待新候选。
+
+验收助手新增--profile供单配置运行，默认仍为三画像完整串行，显式诊断保默认三画像观察窗口、不作普通支持验收。单配置结果标scope=single-configuration和profilesRequested；重启前后必须同一请求范围、每项原API／MCP／工件／新outbox证明及两次kernel／boot_id、QMP RESET／SHUTDOWN齐全。只重启请求的部署，按画像名找原身份，单份成功不能代六组合；普通CI矩阵全部必需。该参数仅用于验收助手，不是产品安装器的新依赖或配置。
+
+多窗口复用核查还发现旧捕获器的独占标记原为单窗口设计。后续每窗口生成独有captureId、标记及结果文件，内核参数只接受32位十六进制ID，结果必须匹配该ID；不覆盖／删除旧窗口文件。出现本窗口core处理回执即停止整轮诊断，即使原命令成功，也不让后续窗口重用该结果。coreObserved只表示处理回执出现，不等于有效core或可用栈；原512 MiB内存、无swap、90秒总捕获／60秒GDB均保持。两次真实捕获器对象的隔离检查是临时目录合成文件，不冒自然崩溃实测。
+
+最终40项Python、六文件AST和22项CI门禁测试通过；重启分支按单画像和默认三画像分别验证，缺任一后台证据、空／未知／重复范围拒绝。首轮重启夹具因插入位置错误有NameError，原日志保留；修正前未另存整份失败源码，不补其SHA。最终九源码子集、首败与通过日志见 [索引](../../reviews/ta01-product/resumption-profile-scope-checks.json)／[原件](../../reviews/ta01-product/resumption-profile-scope-checks.zip)。旧34项原件另保，真实六组合／工件交接／根因及正式独审未完成；当前不能合入。
+
+CI554 ARM64 job116568767849／artifact12003372159随后终态failure，guest在9,001.13 s达到原总期限，errorType=TimeoutError；没有业务receipt或完整重启证明。128条结构化串口记录中个人health-ready、business-committed，最后安装动作是个人rollback完成，244,876 ms；这些局部记录不代个人闭环，也不推MCP超时、139或同一根因。见 [索引](../../reviews/ta01-product/ci554-arm64-total-budget.json)／[原件](../../reviews/ta01-product/ci554-arm64-total-budget.zip)，14成员与六脚本绑定同一21a847bf0cc665b8f5e809c29480de3ec73d9f44／tree9371523043c65d4814d7054a948cdb441db7ccd0。普通运行两架构及原件均已结束、保全后再推送新候选；Required job116643954912终态failure，不拿其余12项成功代服务端通过。

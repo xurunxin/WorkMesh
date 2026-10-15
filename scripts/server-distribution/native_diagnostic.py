@@ -4,6 +4,7 @@ import re
 import os
 import subprocess
 import time
+import uuid
 from pathlib import Path
 
 
@@ -97,13 +98,15 @@ class NativeCrashWatcher:
         self.changed = []
         self.identity = process_identity(pid)
         self.container_init_pid = container_init_pid
-        owner = Path('/opt/server-install/core-owner.json')
+        self.capture_id = uuid.uuid4().hex
+        owner = Path('/opt/server-install/core-owner-' + self.capture_id + '.json')
+        self.result = Path('/root/server-install/native-core-trace-' + self.capture_id + '.json')
         with owner.open('x') as output:
             os.chmod(owner, 0o600)
             json.dump(self.identity, output)
         try:
             for name, value in [('core_pipe_limit', '1\n'),
-                                ('core_pattern', '|/usr/bin/python3 /opt/server-install/core_pipe.py %P\n')]:
+                                ('core_pattern', '|/usr/bin/python3 /opt/server-install/core_pipe.py %P ' + self.capture_id + '\n')]:
                 file = Path('/proc/sys/kernel') / name
                 file.write_text(value)
                 self.changed.append(file)
@@ -119,15 +122,17 @@ class NativeCrashWatcher:
     def finish(self):
         import json
         try:
-            registration = {'registeredTarget': self.identity}
+            registration = {'registeredTarget': self.identity, 'captureId': self.capture_id}
             if self.container_init_pid is not None:
                 registration['containerInitPid'] = self.container_init_pid
-            result = Path('/root/server-install/native-core-trace.json')
             for _ in range(90):
-                if result.exists():
-                    return {**json.loads(result.read_text()), **registration}
+                if self.result.exists():
+                    value = json.loads(self.result.read_text())
+                    if value.get('captureId') != self.capture_id:
+                        raise ValueError('native capture identity mismatch')
+                    return {**value, **registration, 'coreObserved': True}
                 time.sleep(1)
-            return {'naturalRun': True, 'captured': False, **registration}
+            return {'naturalRun': True, 'captured': False, 'coreObserved': False, **registration}
         finally:
             self.restore()
 
@@ -176,7 +181,7 @@ class NativeDebugger:
 
 class NativeProbeError(RuntimeError):
     def __init__(self, trace):
-        super().__init__('native probe did not establish the original business boundary')
+        super().__init__('native observation requires review')
         self.native_trace = trace
 
 
@@ -225,6 +230,6 @@ def observe_native_action(action, prepare, business_started, *, target='team-rol
         if original_error is not None:
             original_error.native_trace = trace
             raise original_error
-        if not trace['preparedBeforeBusiness'] or 'finishErrorType' in trace:
+        if not trace['preparedBeforeBusiness'] or 'finishErrorType' in trace or trace.get('coreObserved'):
             raise NativeProbeError(trace)
         return outcome, trace

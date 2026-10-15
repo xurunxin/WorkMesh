@@ -7,6 +7,7 @@ import subprocess
 import signal
 import sys
 import time
+import re
 from native_diagnostic import safe_trace, process_identity, binary_hash
 from core_metadata import core_location
 
@@ -43,8 +44,13 @@ def memory_core(stream, maximum=MAX_BYTES):
 
 
 def main():
+    if len(sys.argv) != 3 or not re.fullmatch('[a-f0-9]{32}', sys.argv[2]):
+        raise ValueError('native capture identity invalid')
+    capture_id = sys.argv[2]
+    owner_file = OWNER.with_name(OWNER.stem + '-' + capture_id + OWNER.suffix)
+    result_file = RESULT.with_name(RESULT.stem + '-' + capture_id + RESULT.suffix)
     pid = int(sys.argv[1])
-    owner = json.loads(OWNER.read_text())
+    owner = json.loads(owner_file.read_text())
     if owner['pid'] != pid:
         return
     def deadline(_number, _frame):
@@ -53,7 +59,7 @@ def main():
     signal.alarm(90)
     began = time.monotonic()
     target = Path('/proc') / str(pid)
-    result = {'naturalRun': True, 'captured': False, 'coreCaptured': False, 'captureStage': 'identity'}
+    result = {'naturalRun': True, 'captureId': capture_id, 'captured': False, 'coreCaptured': False, 'captureStage': 'identity'}
     descriptor = None
     try:
         # The PID is registered after checking the exact installation/container
@@ -95,11 +101,11 @@ def main():
         result['captureElapsedMilliseconds'] = round((time.monotonic() - began) * 1000)
         if descriptor is not None:
             os.close(descriptor)
-        temporary = RESULT.with_name(RESULT.name + '.' + str(os.getpid()) + '.tmp')
+        temporary = result_file.with_name(result_file.name + '.' + str(os.getpid()) + '.tmp')
         with temporary.open('x') as output:
             os.chmod(temporary, 0o600)
             json.dump(result, output)
-        os.replace(temporary, RESULT)
+        os.replace(temporary, result_file)
 
 
 if __name__ == '__main__':

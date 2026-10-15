@@ -12,21 +12,40 @@ const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
 
-test('双架构服务端候选完整 guest 验收必须执行并参与 Required CI', () => {
-  const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['server-install']
-  assert.deepEqual(validateServerInstallEntrypoint(job), [])
-  for (const mutate of [value => { value.strategy.matrix.include.pop() },
-    value => { delete value.env.PYTHONDONTWRITEBYTECODE },
-    value => { value.steps = value.steps.filter(step => step.name !== 'Execute all installed profiles in full guest') },
-    value => { value.steps.find(step => step.name === 'Execute all installed profiles in full guest').if = 'false' },
-    value => { const step = value.steps.find(step => step.name === 'Execute all installed profiles in full guest'); step.run = step.run.replace("'${{ inputs.native-diagnostic }}' = true", "true = true") },
-    value => { value.steps.find(step => step.name === 'Build immutable offline candidate')['continue-on-error'] = true }]) {
-    const invalid = structuredClone(job); mutate(invalid); assert.ok(validateServerInstallEntrypoint(invalid).length)
+test('双架构候选只构建一次，六个画像 guest 全部必需且摘要交接不能绕过', () => {
+  const jobs = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs
+  const original = { job: jobs['server-install'], build: jobs['server-build'] }
+  assert.deepEqual(validateServerInstallEntrypoint(original.job, original.build), [])
+  assert.ok(jobs['required-ci'].needs.includes('server-build'))
+  for (const mutate of [
+    value => { value.build.strategy.matrix.include.pop() },
+    value => { value.job.strategy.matrix.arch.pop() },
+    value => { value.job.strategy.matrix.profile = value.job.strategy.matrix.profile.replace(',"enterprise"', '') },
+    value => { value.job.strategy.matrix.exclude = [{ arch: 'arm64', profile: 'team' }] },
+    value => { delete value.build.env.PYTHONDONTWRITEBYTECODE },
+    value => { delete value.job.env.PYTHONDONTWRITEBYTECODE },
+    value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Execute installed configuration in full guest') },
+    value => { value.job.steps.find(step => step.name === 'Execute installed configuration in full guest').if = 'false' },
+    value => { const step = value.job.steps.find(step => step.name === 'Execute installed configuration in full guest'); step.run = step.run.replace("'${{ inputs.native-diagnostic }}' = true", "true = true") },
+    value => { value.build.steps.find(step => step.name === 'Build immutable offline candidate')['continue-on-error'] = true },
+    value => { value.job.steps.find(step => step.name === 'Verify producer manifest digest').if = 'false' },
+    value => { value.job.steps.find(step => step.name === 'Download immutable architecture candidate').with['artifact-ids'] = 'other-artifact' },
+    value => { value.job.env.CANDIDATE_SHA = 'unbound' },
+    value => { value.build.outputs['digest-amd64'] = value.build.outputs['digest-arm64'] },
+    value => { value.job.needs = ['changes'] },
+    value => { value.job.steps.find(step => step.name === 'Execute installed configuration in full guest').run += ' --profile personal' },
+    value => { const steps = value.job.steps; const left = steps.findIndex(step => step.name === 'Verify producer manifest digest'); const right = steps.findIndex(step => step.name === 'Execute installed configuration in full guest'); [steps[left], steps[right]] = [steps[right], steps[left]] },
+  ]) {
+    const invalid = structuredClone(original); mutate(invalid)
+    assert.ok(validateServerInstallEntrypoint(invalid.job, invalid.build).length)
   }
   for (const input of ['scripts/server-distribution/install.mjs', 'packages/config/src/deployment-profile.ts', 'apps/api/src/server.ts']) {
-    const plan = classify([input]); assert.equal(plan.checks['server-install'], true)
-    for (const result of ['failure', 'skipped', 'cancelled']) {
-      const needs = results(plan); needs['server-install'].result = result; assert.ok(evaluateResults(plan, needs).length)
+    const plan = classify([input])
+    for (const id of ['server-build', 'server-install']) {
+      assert.equal(plan.checks[id], true)
+      for (const result of ['failure', 'skipped', 'cancelled']) {
+        const needs = results(plan); needs[id].result = result; assert.ok(evaluateResults(plan, needs).length)
+      }
     }
   }
 })

@@ -140,6 +140,14 @@ class ProxyProgress(unittest.TestCase):
 
 
 class CoreMetadata(unittest.TestCase):
+    def test_unknown_capture_identity_rejects_before_reading_an_owner_file(self):
+        for value in ['../private', 'a' * 31, 'a' * 33, 'G' * 32]:
+            with patch.object(core_pipe.sys, 'argv', ['core_pipe.py', '12345', value]), \
+                 patch.object(core_pipe, 'OWNER') as owner:
+                with self.assertRaises(ValueError):
+                    core_pipe.main()
+                owner.with_name.assert_not_called()
+
     @staticmethod
     def fixture(machine=62, mapped_name=b'/usr/local/bin/node', page_offset=0):
         private = ('wmi_' + 'x' * 43).encode()
@@ -199,8 +207,10 @@ class CoreMetadata(unittest.TestCase):
         base.mkdir(exist_ok=True)
         root = Path(tempfile.mkdtemp(prefix='ta01-core-timeout-', dir=base)).resolve()
         self.assertTrue(root.is_relative_to(base))
-        owner_file, result_file = root / 'owner.json', root / 'result.json'
-        temporary = result_file.with_name('result.json.' + str(os.getpid()) + '.tmp')
+        capture_id = 'c' * 32
+        owner_base, result_base = root / 'owner.json', root / 'result.json'
+        owner_file, result_file = root / ('owner-' + capture_id + '.json'), root / ('result-' + capture_id + '.json')
+        temporary = result_file.with_name(result_file.name + '.' + str(os.getpid()) + '.tmp')
         owner = {'pid': 12345}
         owner_file.write_text(json.dumps(owner), encoding='utf8')
         private = 'wmi_' + 'x' * 43
@@ -210,8 +220,8 @@ class CoreMetadata(unittest.TestCase):
         try:
             with tempfile.TemporaryFile() as synthetic:
                 descriptor = os.dup(synthetic.fileno())
-                with patch.object(core_pipe, 'OWNER', owner_file), patch.object(core_pipe, 'RESULT', result_file), \
-                     patch.object(core_pipe.sys, 'argv', ['core_pipe.py', '12345']), \
+                with patch.object(core_pipe, 'OWNER', owner_base), patch.object(core_pipe, 'RESULT', result_base), \
+                     patch.object(core_pipe.sys, 'argv', ['core_pipe.py', '12345', capture_id]), \
                      patch.object(core_pipe.sys, 'stdin', SimpleNamespace(buffer=io.BytesIO(b'synthetic'))), \
                      patch.object(core_pipe.signal, 'SIGALRM', 999, create=True), \
                      patch.object(core_pipe.signal, 'signal'), patch.object(core_pipe.signal, 'alarm', create=True) as alarm, \
@@ -228,6 +238,7 @@ class CoreMetadata(unittest.TestCase):
                     self.assertIn('bt 12', run.call_args.args[0])
                     self.assertNotIn('thread apply all bt 12', run.call_args.args[0])
             value = json.loads(result_file.read_text(encoding='utf8'))
+            self.assertEqual(value['captureId'], capture_id)
             self.assertTrue(value['coreCaptured'])
             self.assertFalse(value['captured'])
             self.assertEqual(value['coreBytes'], 9)
@@ -403,6 +414,66 @@ class TracePrivacy(unittest.TestCase):
         self.assertFalse(complete_reboot_checks({'checks': [receipt['checks'][0]] * 3}))
         self.assertFalse(complete_reboot_checks({}))
 
+    def test_single_configuration_requires_its_own_complete_reboot_evidence(self):
+        required = ['authenticatedApiAfterReboot', 'authenticatedMcpAfterReboot',
+                    'artifactBytesAfterReboot', 'newOutboxDeliveredAfterReboot']
+        for profile in ['personal', 'team', 'enterprise']:
+            receipt = {'checks': [{'profile': profile, 'checks': required.copy()}]}
+            self.assertTrue(complete_reboot_checks(receipt, [profile]))
+            self.assertFalse(complete_reboot_checks(receipt))
+            for other in set(['personal', 'team', 'enterprise']) - {profile}:
+                self.assertFalse(complete_reboot_checks(receipt, [other]))
+            for check in required:
+                missing = {'checks': [{'profile': profile, 'checks': [name for name in required if name != check]}]}
+                self.assertFalse(complete_reboot_checks(missing, [profile]))
+        for profiles in [[], ['unknown'], ['personal', 'personal'], [['personal']], True]:
+            self.assertFalse(complete_reboot_checks({'checks': []}, profiles))
+
+    def test_unknown_profile_argument_is_rejected_before_creating_a_guest_root(self):
+        import subprocess
+        import sys
+        import uuid
+        root = Path(__file__).resolve().parents[2] / '.tmp' / ('ta01-invalid-profile-' + uuid.uuid4().hex)
+        self.assertFalse(root.exists())
+        result = subprocess.run([sys.executable, str(Path(__file__).with_name('run.py')), '--arch', 'amd64',
+            '--profile', 'unknown', '--root', str(root), '--artifacts', str(root), '--source', 'a' * 40],
+            capture_output=True, timeout=5)
+        self.assertEqual(result.returncode, 2)
+        self.assertFalse(root.exists())
+
+    def test_guest_reboot_branch_starts_and_reports_only_the_requested_profiles(self):
+        source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
+        main = next(node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef) and node.name == 'main')
+        body = next(node for node in main.body if isinstance(node, ast.Try)).body
+        branch = [node for node in body if isinstance(node, ast.If) and isinstance(node.test, ast.Name)
+                  and node.test.id == 'rebooted'][-1]
+        required = ['authenticatedApiAfterReboot', 'authenticatedMcpAfterReboot',
+                    'artifactBytesAfterReboot', 'newOutboxDeliveredAfterReboot']
+        for profiles in [['personal'], ['team'], ['enterprise'], ['personal', 'team', 'enterprise']]:
+            for rebooted in [False, True]:
+                reports, starts, stored = [], [], []
+                saved = {'profiles': [{'profile': name, 'status': 'passed', 'identity': 'private-identity'} for name in profiles]}
+                env = {'profiles': profiles.copy(), 'saved': saved, 'rebooted': rebooted,
+                       'ROOT': Path('/owned'), 'STATE': Path('/owned/state.json'), 'boot': 'boot-id',
+                       'resources': {}, 'samples': [], 'report': reports.append,
+                       'command': lambda _: 'kernel', 'compose': lambda *args: starts.append(args),
+                       'private': lambda *args: stored.append(args),
+                       'reboot_checks': [{'profile': name, 'checks': required.copy()} for name in profiles]}
+                with patch.object(Path, 'touch') as touch:
+                    exec(compile(ast.Module(body=[branch], type_ignores=[]), '<guest-reboot-scope>', 'exec'), env)
+                    self.assertEqual(touch.call_count, 0 if rebooted else 1)
+                self.assertEqual(len(reports), 1)
+                self.assertEqual(reports[0]['profilesRequested'], profiles)
+                self.assertNotIn('private-identity', json.dumps(reports[0]))
+                if rebooted:
+                    self.assertEqual(starts, [])
+                    self.assertEqual(stored, [])
+                    self.assertEqual(reports[0]['restartedProfiles'], profiles)
+                    self.assertTrue(complete_reboot_checks(reports[0], profiles))
+                else:
+                    self.assertEqual([str(args[0]) for args in starts], [str(Path('/owned') / name) for name in profiles])
+                    self.assertEqual(stored, [(Path('/owned/state.json'), saved)])
+                    self.assertEqual([row['profile'] for row in reports[0]['profiles']], profiles)
     def test_kernel_settings_restore_only_successful_writes(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -429,6 +500,36 @@ class TracePrivacy(unittest.TestCase):
             self.assertEqual(writes, ['core_pipe_limit', 'core_pattern', 'core_pipe_limit'])
             self.assertEqual((kernel / 'core_pipe_limit').read_text(), '0\n')
             self.assertEqual((kernel / 'core_pattern').read_text(), 'original-pattern\n')
+
+    def test_sequential_real_watchers_have_distinct_owner_and_result_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            kernel = root / 'proc/sys/kernel'
+            kernel.mkdir(parents=True)
+            (root / 'opt/server-install').mkdir(parents=True)
+            (root / 'root/server-install').mkdir(parents=True)
+            (root / 'proc/meminfo').write_text('SwapTotal: 0 kB\n')
+            (kernel / 'core_pattern').write_text('original-pattern\n')
+            (kernel / 'core_pipe_limit').write_text('0\n')
+            def local_path(value):
+                return root / str(value).lstrip('/')
+            with patch('native_diagnostic.Path', side_effect=local_path), \
+                 patch('native_diagnostic.process_identity', side_effect=lambda pid: {'pid': pid}), \
+                 patch('native_diagnostic.time.sleep'):
+                first = NativeCrashWatcher(42)
+                first.result.write_text(json.dumps({'captureId': first.capture_id, 'naturalRun': True, 'captured': True}))
+                self.assertTrue(first.finish()['coreObserved'])
+                second = NativeCrashWatcher(43)
+                self.assertNotEqual(first.capture_id, second.capture_id)
+                self.assertNotEqual(first.result, second.result)
+                trace = second.finish()
+                self.assertFalse(trace['captured'])
+                self.assertFalse(trace['coreObserved'])
+                self.assertTrue(first.result.exists())
+                self.assertEqual(trace['registeredTarget'], {'pid': 43})
+            self.assertEqual(len(list((root / 'opt/server-install').glob('core-owner-*.json'))), 2)
+            self.assertEqual((kernel / 'core_pattern').read_text(), 'original-pattern\n')
+            self.assertEqual((kernel / 'core_pipe_limit').read_text(), '0\n')
 
     def test_only_runtime_stack_symbols_escape(self):
         trace = safe_trace(b'Program received signal SIGSEGV\n'
@@ -512,6 +613,21 @@ class Watcher:
 
 
 class ProbeBoundary(unittest.TestCase):
+    def test_native_core_is_terminal_even_when_the_original_command_returned_success(self):
+        watcher = Watcher()
+        def finish():
+            watcher.finished += 1
+            return {'naturalRun': True, 'captured': False, 'coreCaptured': True, 'coreObserved': True,
+                    'captureErrorType': 'TimeoutExpired'}
+        watcher.finish = finish
+        calls = []
+        with self.assertRaises(NativeProbeError) as caught:
+            observe_native_action(lambda: calls.append('original') or 'installed', lambda: watcher, lambda: 10**12)
+        self.assertEqual(calls, ['original'])
+        self.assertEqual(watcher.finished, 1)
+        self.assertTrue(caught.exception.native_trace['coreObserved'])
+        self.assertTrue(caught.exception.native_trace['operationSucceeded'])
+
     def test_every_profile_stage_is_exactly_one_original_action_and_one_restoration(self):
         for profile in ['personal', 'team', 'enterprise']:
             for stage in ['initial', 'upgrade', 'rollback']:
@@ -554,22 +670,25 @@ class ProbeBoundary(unittest.TestCase):
         self.assertEqual(calls, [(('bundle', 'digest', prefix, 'config', 'commit'),
                                  {'extra': ['--validation', str(prefix / 'validation.json')]})])
 
-    def test_native_commit_reports_completed_window_after_the_original_action_once(self):
+    def test_native_commit_retains_failed_history_and_observes_only_this_appended_intent(self):
         from datetime import datetime
         source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
         function = next(node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef)
                         and node.name == 'commit_candidate')
         watcher, actions, reports = Watcher(), [], []
+        history = {'id': 'owned-journal', 'actions': [{'name': 'validate-business-read',
+            'startedAt': '2000-01-01T00:00:00Z', 'status': 'failed'}]}
         class Journal:
             def read_text(self):
-                return json.dumps({'actions': [{'name': 'validate-business-read',
-                    'startedAt': '2099-01-01T00:00:00Z'}]})
+                return json.dumps(history)
         class Prefix:
             name = 'enterprise'
             def __truediv__(self, name):
                 return Journal() if name == 'journal.json' else Path('/owned/enterprise') / name
         def install(*args, **kwargs):
             actions.append((args, kwargs))
+            history['actions'].append({'name': 'validate-business-read',
+                'startedAt': '2099-01-01T00:00:00Z', 'status': 'completed'})
             return {'status': 'installed'}
         env = {'install': install, 'prepare_native_watcher': lambda *_: watcher,
                'report': reports.append, 'json': json, 'datetime': datetime}
@@ -584,6 +703,36 @@ class ProbeBoundary(unittest.TestCase):
         self.assertFalse(reports[0]['nativeTrace']['captured'])
         self.assertTrue(valid_receipt(reports[0], True))
         self.assertFalse(valid_receipt(reports[0], False))
+        self.assertEqual(history['actions'][0]['status'], 'failed')
+        self.assertEqual(len(history['actions']), 2)
+
+    def test_native_commit_without_new_intent_cannot_reuse_old_future_dated_read(self):
+        from datetime import datetime
+        source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
+        function = next(node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef)
+                        and node.name == 'commit_candidate')
+        watcher, calls, reports = Watcher(), [], []
+        class Journal:
+            def read_text(self):
+                return json.dumps({'id': 'owned-journal', 'actions': [{'name': 'validate-business-read',
+                    'startedAt': '2099-01-01T00:00:00Z', 'status': 'completed'}]})
+        class Prefix:
+            name = 'personal'
+            def __truediv__(self, name):
+                return Journal() if name == 'journal.json' else Path('/owned/personal') / name
+        def install(*_, **__):
+            calls.append('original')
+            return {'status': 'already-installed'}
+        env = {'install': install, 'prepare_native_watcher': lambda *_: watcher,
+               'report': reports.append, 'json': json, 'datetime': datetime}
+        exec(compile(ast.Module(body=[function], type_ignores=[]), '<native-commit>', 'exec'), env)
+        with self.assertRaises(NativeProbeError) as caught:
+            env['commit_candidate']('bundle', 'digest', Prefix(), 'config', {}, 'initial', native_diagnostic=True)
+        self.assertEqual(calls, ['original'])
+        self.assertEqual(watcher.finished, 1)
+        self.assertEqual(reports, [])
+        self.assertFalse(caught.exception.native_trace['preparedBeforeBusiness'])
+        self.assertEqual(caught.exception.native_trace['businessBoundaryErrorType'], 'AssertionError')
 
     def test_success_retains_original_result_and_does_not_invent_capture(self):
         watcher = Watcher()

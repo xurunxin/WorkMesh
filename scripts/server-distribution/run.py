@@ -16,6 +16,7 @@ import urllib.request
 
 REPO = Path(__file__).resolve().parents[2]
 GUEST_VCPUS = 4
+PROFILES = ('personal', 'team', 'enterprise')
 spec = importlib.util.spec_from_file_location("tcg_research_common", REPO / "docs/reviews/b-ship/tcg/tools/run.py")
 common = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(common)
@@ -30,14 +31,18 @@ def valid_receipt(value, native_diagnostic=False):
             and not __import__('re').search(r'wm[ips]_[A-Za-z0-9_-]{43}', json.dumps(value)))
 
 
-def complete_reboot_checks(value):
+def complete_reboot_checks(value, profiles=PROFILES):
+    if (not isinstance(profiles, (list, tuple)) or not profiles
+            or any(not isinstance(profile, str) or profile not in PROFILES for profile in profiles)
+            or len(set(profiles)) != len(profiles)):
+        return False
     entries = value.get('checks', [])
     required = {'authenticatedApiAfterReboot', 'authenticatedMcpAfterReboot',
                 'artifactBytesAfterReboot', 'newOutboxDeliveredAfterReboot'}
-    return (isinstance(entries, list) and len(entries) == 3
+    return (isinstance(entries, list) and len(entries) == len(profiles)
             and all(isinstance(entry, dict) and isinstance(entry.get('checks'), list)
                     and required.issubset(entry['checks']) for entry in entries)
-            and {entry.get('profile') for entry in entries} == {'personal', 'team', 'enterprise'})
+            and {entry.get('profile') for entry in entries} == set(profiles))
 
 
 def main():
@@ -47,7 +52,9 @@ def main():
     parser.add_argument("--root", required=True)
     parser.add_argument("--source", required=True)
     parser.add_argument("--native-diagnostic", action="store_true")
+    parser.add_argument("--profile", choices=PROFILES)
     options = parser.parse_args()
+    profiles = [options.profile] if options.profile else list(PROFILES)
     root = Path(options.root).resolve()
     root.mkdir(mode=0o700, parents=True, exist_ok=False)
     artifacts = Path(options.artifacts).resolve()
@@ -61,7 +68,8 @@ def main():
               "manifestSha256": sha(artifacts / "manifest.json"), "archiveSha256": sha(artifacts / "manifest.json"),
               "accelerator": "tcg", "guestRamMiB": 4096, "guestVcpus": GUEST_VCPUS,
               "scripts": {p.name: sha(p) for p in Path(__file__).parent.glob("*.py")},
-              "startedUtc": time.time(), "status": "running", "nativeDiagnostic": options.native_diagnostic}
+              "startedUtc": time.time(), "status": "running", "nativeDiagnostic": options.native_diagnostic,
+              "profilesRequested": profiles, "scope": "single-configuration" if options.profile else "all-profiles"}
 
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -143,7 +151,7 @@ WantedBy=cloud-init.target
 '''
         files = [("/opt/server-install/guest.py", guest, "0644"), ("/opt/server-install/finish.sh", wrapper, "0755"),
                  ("/etc/systemd/system/server-install.service", service, "0644"),
-                 ("/opt/server-install/expected.json", json.dumps({"manifestSha256": result["manifestSha256"], "sourceHead": options.source, "arch": options.arch, "nativeDiagnostic": options.native_diagnostic}).encode(), "0644")]
+                 ("/opt/server-install/expected.json", json.dumps({"manifestSha256": result["manifestSha256"], "sourceHead": options.source, "arch": options.arch, "nativeDiagnostic": options.native_diagnostic, "profiles": profiles}).encode(), "0644")]
         if options.native_diagnostic:
             files.append(("/opt/server-install/native_diagnostic.py", (Path(__file__).parent / "native_diagnostic.py").read_bytes(), "0644"))
             files.append(("/opt/server-install/core_pipe.py", (Path(__file__).parent / "core_pipe.py").read_bytes(), "0644"))
@@ -217,10 +225,12 @@ WantedBy=cloud-init.target
             raise RuntimeError("missing full product reboot/exit evidence")
         if not any(e["event"] == "RESET" for e in events) or not any(e["event"] == "SHUTDOWN" for e in events):
             raise RuntimeError("missing QMP lifecycle")
-        profiles = before[0].get("profiles", [])
-        if {entry.get("profile") for entry in profiles} != {"personal", "team", "enterprise"} or any(entry.get("status") != "passed" for entry in profiles):
+        accepted = before[0].get("profiles", [])
+        if (before[0].get("profilesRequested") != profiles or after[0].get("profilesRequested") != profiles
+                or len(accepted) != len(profiles) or {entry.get("profile") for entry in accepted} != set(profiles)
+                or any(entry.get("status") != "passed" for entry in accepted)):
             raise RuntimeError("missing supported profile acceptance")
-        if after[0].get("restartedProfiles") != ["personal", "team", "enterprise"] or not complete_reboot_checks(after[0]):
+        if after[0].get("restartedProfiles") != profiles or not complete_reboot_checks(after[0], profiles):
             raise RuntimeError("missing reboot recovery")
         result.update(status="passed", qemuExitCode=process.returncode, qemuPeakRssBytes=peak,
                       overlayAllocatedBytes=overlay.stat().st_blocks * 512, rebootSeconds=after[0]["hostElapsed"] - before[0]["hostElapsed"])

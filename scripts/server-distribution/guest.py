@@ -642,9 +642,15 @@ def commit_candidate(dist, digest, prefix, config, manifest, stage, *, native_di
     if not native_diagnostic:
         return action()
     from native_diagnostic import observe_native_action
+    baseline = json.loads((prefix / 'journal.json').read_text())
+    previous_actions = baseline['actions']
     def business_started():
-        entries = json.loads((prefix / 'journal.json').read_text())['actions']
-        reads = [entry for entry in entries if entry['name'] == 'validate-business-read']
+        current = json.loads((prefix / 'journal.json').read_text())
+        entries = current['actions']
+        # Initial validation deliberately follows a failed-credential commit.
+        # Only this invocation's appended intent can establish its boundary.
+        assert current['id'] == baseline['id'] and entries[:len(previous_actions)] == previous_actions
+        reads = [entry for entry in entries[len(previous_actions):] if entry['name'] == 'validate-business-read']
         assert len(reads) == 1
         return datetime.fromisoformat(reads[0]['startedAt'].replace('Z', '+00:00')).timestamp()
     outcome, trace = observe_native_action(action,
@@ -860,11 +866,15 @@ def prepare_native_watcher(prefix, manifest):
 def main():
     servers = []
     prefix = None
-    native_diagnostic = json.loads(Path('/opt/server-install/expected.json').read_text()).get('nativeDiagnostic') is True
+    expected = json.loads(Path('/opt/server-install/expected.json').read_text())
+    native_diagnostic = expected.get('nativeDiagnostic') is True
+    profiles = expected.get('profiles', ['personal', 'team', 'enterprise'])
+    assert profiles in [['personal'], ['team'], ['enterprise'], ['personal', 'team', 'enterprise']]
     try:
         rebooted = STATE.exists()
         if rebooted:
             saved = json.loads(STATE.read_text())
+            assert [entry['profile'] for entry in saved['profiles']] == profiles
             dist, manifest, digest = Path(saved['distribution']), saved['manifest'], saved['digest']
             command(['ip', 'route', 'del', 'default'])
         else:
@@ -882,7 +892,8 @@ def main():
         certificates = ROOT / 'tls'
         servers.append(proxy(9446, 0, certificates))
         reboot_checks = []
-        for index, profile in enumerate(['personal', 'team', 'enterprise']):
+        for profile in profiles:
+            index = ['personal', 'team', 'enterprise'].index(profile)
             prefix = ROOT / profile
             config = ROOT / (profile + '-config.json')
             api_port, mcp_port, s3_port = 9443 + index * 10, 9444 + index * 10, 9445 + index * 10
@@ -900,7 +911,7 @@ def main():
             servers += [proxy(api_port, 3001 + index * 10, certificates), proxy(mcp_port, 3002 + index * 10, certificates), proxy(s3_port, 9000 + index * 10, certificates)]
             if rebooted:
                 client = Client(certificates)
-                identity = saved['profiles'][index]['identity']
+                identity = next(entry['identity'] for entry in saved['profiles'] if entry['profile'] == profile)
                 for attempt in range(120):
                     try:
                         client.request('https://10.0.2.15:' + str(api_port) + '/readyz')
@@ -1001,16 +1012,16 @@ def main():
                      'hostPnpmAvailable': subprocess.run(['sh', '-c', 'command -v pnpm'], capture_output=True).returncode == 0}
         assert not resources['hostNodeAvailable'] and not resources['hostPnpmAvailable']
         if rebooted:
-            report({'phase': 'after-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
-                    'restartedProfiles': ['personal', 'team', 'enterprise'], 'checks': reboot_checks, 'resources': resources})
+            report({'phase': 'after-reboot', 'profilesRequested': profiles, 'bootId': boot, 'kernel': command(['uname', '-a']),
+                    'restartedProfiles': profiles.copy(), 'checks': reboot_checks, 'resources': resources})
         else:
-            for profile in ['personal', 'team', 'enterprise']:
+            for profile in profiles:
                 compose(ROOT / profile, 'start', 'postgres', 'redis', 'minio', 'api', 'worker', 'mcp')
             private(STATE, saved)
             (ROOT / 'reboot').touch()
-            profiles = [{k: v for k, v in value.items() if k != 'identity'} for value in saved['profiles']]
-            report({'phase': 'before-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
-                    'profiles': profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
+            accepted_profiles = [{k: v for k, v in value.items() if k != 'identity'} for value in saved['profiles']]
+            report({'phase': 'before-reboot', 'profilesRequested': profiles, 'bootId': boot, 'kernel': command(['uname', '-a']),
+                    'profiles': accepted_profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
     except Exception as error:
         proxy_profiles = {9444: 'personal', 9454: 'team', 9464: 'enterprise'}
         diagnostics['mcpProxyProgress'] = [{'profile': proxy_profiles[server.server_port],
