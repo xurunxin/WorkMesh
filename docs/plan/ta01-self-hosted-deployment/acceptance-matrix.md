@@ -17,13 +17,15 @@
 | 个人 Lite／amd64 | 完整 guest 通过，2,081.81 s | [索引](../../reviews/ta01-product/ci558-amd64-personal-full-guest-pass.json)／[原件](../../reviews/ta01-product/ci558-amd64-personal-full-guest-pass.zip) |
 | 团队／amd64 | 完整 guest 通过，2,571.94 s | [索引](../../reviews/ta01-product/ci558-amd64-team-full-guest-pass.json)／[原件](../../reviews/ta01-product/ci558-amd64-team-full-guest-pass.zip) |
 | 企业／amd64 | 完整 guest 通过，1,860.15 s | [索引](../../reviews/ta01-product/ci558-amd64-enterprise-full-guest-pass.json)／[原件](../../reviews/ta01-product/ci558-amd64-enterprise-full-guest-pass.zip) |
-| 个人 Lite／arm64 | 执行中，job116655073308 | 未取得终态，不填通过 |
-| 团队／arm64 | 执行中，job116655073593 | 未取得终态，不填通过 |
-| 企业／arm64 | 执行中，job116655073569 | 未取得终态，不填通过 |
+| 个人 Lite／arm64 | cancelled，job116655073308 | [取消索引](../../reviews/ta01-product/ci558-arm64-personal-cancelled.json)，缺 result，不填通过 |
+| 团队／arm64 | cancelled，job116655073593 | [取消索引](../../reviews/ta01-product/ci558-arm64-team-cancelled.json)，缺 result，不填通过 |
+| 企业／arm64 | failure，job116655073569；首次安装达到 1,800 s | [首败索引](../../reviews/ta01-product/ci558-arm64-enterprise-first-failure.json)／[原件](../../reviews/ta01-product/ci558-arm64-enterprise-first-failure.zip) |
 
 三份 amd64 回执均明确 `single-configuration`，包含安装、API/MCP/Worker、真实 429、Redis 故障关闭、丢 wakeup、重启 worker、工件、升级、兼容回退、加密备份及空目标恢复；个人另核数据绑定变化提前拒绝。各自保两个不同 boot_id、两次 kernel、QMP RESET/SHUTDOWN、QEMU 退出 0，以及重启后的鉴权 API、MCP、原工件字节和新 outbox 投递。全部使用同一生产者工件 `12005130717`，manifest SHA 为 `04be6dd70621aefb14c223a20722ee6fd6f9ccb04405fce69f387ecb7255b60a`；不将这三份成功写成整个矩阵通过。详细首败及范围见 [接续记录](resumption.md)。
 
 显式 CI559 的 AMD64 团队升级原动作观察窗口仍自然崩溃，core 元数据与准确公开 Node SHA 匹配后定位到 V8 `IC::UpdateState`，没有完整栈，根因未闭合。原件及新有界帧链工具的本机／未测边界见 [接续记录](resumption.md#ci559-自然故障的公开位置及后续有界帧链)。普通三个 AMD64 成功不能关闭这个问题。
+
+CI558 已终态 cancelled，Required job116693532882 为 failure。ARM 企业首败在首次安装 action6，尚无 MCP 请求。拆分后的独立团队／企业 guest 遗漏 `stage`，使导入与部署共用一次安装期限；本次修正首个请求画像的暂存分支，保每命令原期限及全部复核。新候选尚未通过真实 guest。CI560 的 `405f880` 仍含旧分支，不能承接本次修正。准确交付、取消原因与缺口见 [当前报告](current-delivery.md)。
 
 ## 原要求承接
 

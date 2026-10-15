@@ -968,13 +968,14 @@ def main():
                 assert inspected_lock['Config']['Labels']['ta01.fixture.owner'] == lock_owner and not inspected_lock['State']['Running']
                 command(['docker', 'rm', lock])
                 checks.append('projectLockRejectsBeforeDeploymentMutation')
-                if index == 0:
+                if profile == profiles[0]:
                     # Candidate staging and deployment have independent original
                     # command budgets; neither starts until its own preflight passes.
                     staged = install(dist, digest, prefix, config, 'stage')
                     assert staged['status'] == 'staged-candidate'
                     assert not (prefix / 'current.json').exists()
-                    assert not command(['docker', 'ps', '-aq', '--filter', 'label=com.docker.compose.project=ta01-personal']).strip()
+                    assert not (prefix / 'operator-keys.json').exists()
+                    assert not command(['docker', 'ps', '-aq', '--filter', 'label=com.docker.compose.project=ta01-' + profile]).strip()
                     checks.append('candidateStagedBeforeDeployment')
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 progress(profile, 'health-ready')

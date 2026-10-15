@@ -527,6 +527,48 @@ class TracePrivacy(unittest.TestCase):
         for profiles in [[], ['unknown'], ['personal', 'personal'], [['personal']], True]:
             self.assertFalse(complete_reboot_checks({'checks': []}, profiles))
 
+    def test_each_guest_stages_its_first_requested_profile_without_starting_deployment(self):
+        source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
+        main = next(node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef) and node.name == 'main')
+        branch = next(node for node in ast.walk(main) if isinstance(node, ast.If)
+                      and any(isinstance(statement, ast.Expr) and isinstance(statement.value, ast.Call)
+                              and any(isinstance(arg, ast.Constant) and arg.value == 'candidateStagedBeforeDeployment'
+                                      for arg in statement.value.args) for statement in node.body))
+        code = compile(ast.Module(body=[branch], type_ignores=[]), '<guest-stage-scope>', 'exec')
+        for profiles in [['personal'], ['team'], ['enterprise'], ['personal', 'team', 'enterprise']]:
+            calls, commands, checks = [], [], []
+            with tempfile.TemporaryDirectory() as directory:
+                for profile in profiles:
+                    prefix = Path(directory) / profile
+                    prefix.mkdir()
+                    def install(*args):
+                        calls.append(args)
+                        return {'status': 'staged-candidate'}
+                    def command(args):
+                        commands.append(args)
+                        return ''
+                    env = {'profile': profile, 'profiles': profiles, 'index': ['personal', 'team', 'enterprise'].index(profile),
+                           'prefix': prefix, 'config': 'config', 'dist': 'bundle', 'digest': 'digest',
+                           'install': install, 'command': command, 'checks': checks}
+                    exec(code, env)
+            self.assertEqual(calls, [('bundle', 'digest', Path(directory) / profiles[0], 'config', 'stage')])
+            self.assertEqual(commands, [['docker', 'ps', '-aq', '--filter',
+                                        'label=com.docker.compose.project=ta01-' + profiles[0]]])
+            self.assertEqual(checks, ['candidateStagedBeforeDeployment'])
+            # A stage result never permits a pre-existing current or runtime.
+            with tempfile.TemporaryDirectory() as directory:
+                prefix = Path(directory)
+                env.update(profile=profiles[0], prefix=prefix)
+                for filename in ['current.json', 'operator-keys.json']:
+                    file = prefix / filename
+                    file.write_text('{}')
+                    with self.assertRaises(AssertionError):
+                        exec(code, env)
+                    file.unlink()
+                env['command'] = lambda args: 'unexpected-container'
+                with self.assertRaises(AssertionError):
+                    exec(code, env)
+
     def test_unknown_profile_argument_is_rejected_before_creating_a_guest_root(self):
         import subprocess
         import sys
