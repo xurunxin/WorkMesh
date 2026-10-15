@@ -3,7 +3,7 @@ export { loadDeploymentProfile } from './deployment-profile.js'
 import { loadDeploymentProfile } from './deployment-profile.js'
 import net from 'node:net'
 import { randomBytes } from 'node:crypto'
-import { featureDefinitions, releaseMetadata, type FeatureKey } from '@workmesh/contracts'
+import { featureDefinitions, releaseMetadata, type FeatureKey } from '@workmesh/contracts/runtime-metadata'
 import {
   decodeCanonicalBase64Url,
   isRepeatedSecretMaterial,

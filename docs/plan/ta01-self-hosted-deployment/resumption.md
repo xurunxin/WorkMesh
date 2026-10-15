@@ -342,3 +342,23 @@ Python AST 与现有边界检查通过；此项尚未完整 guest 实测。正�
 分块散列及归档读取均固定1 MiB缓冲，仍完整读全部字节，既有文件类型／路径／大小／摘要／OCI闭包／目标实际ID校验保持，不新增缓存或mtime捷径。15项安装器单元通过，含超过缓冲边界的末块与最后一字节变更回归；这不是TCG性能通过。新增ta01-install-action固定操作耗时，128次操作最多256条，未知动作先拒绝，路径／参数／正文不输出；finished表示达到预期结果、包括预期拒绝，不表示产品PASS。隔离函数验证输出边界、原异常及上限保持，不冒实际guest运行。
 
 只读复用本地已保留的436,135,767字节旧ZIP，Windows原生Node22记录的读取块数从6,655降到416，全部字节SHA及实际新fileHash一致，输入没有修改或删除。顺序固定、缓存未控制，不将原生时间差当TCG性能或超时原因。15项原日志、脚本、对照及实际工作树子集绑定见 [索引](../../reviews/ta01-product/resumption-hash-buffer-checks.json)／[原件](../../reviews/ta01-product/resumption-hash-buffer-checks.zip)。下一候选仍须原完整验收，当前Required失败、正式独审未做，不可合入。
+
+## CI #548 的操作耗时与缺失失败回执
+
+受测 26f6293992f01c5d192010b1e224c63d32c7e5c1，4 vCPU／4 GiB，两架构仍达到原 150 分钟总期限，receipts 为空。AMD64 为 9,001.42 s，个人和团队均到 profile-completed，企业仅到 health-ready；ARM64 为 9,000.78 s，个人到 business-committed，升级链第 19 次操作 commit 在 280.09 s 后标 failed，没有完整失败回执。不能由该标记区分命令失败、响应解码失败或其他异常，具体原因未知。两架构不能认定同因，MCP139 及完整重启仍未闭合。
+
+原件与固定操作记录见 [AMD64 索引](../../reviews/ta01-product/ci548-amd64-total-budget-action-timings.json)／[原件](../../reviews/ta01-product/ci548-amd64-total-budget-action-timings.zip)及 [ARM64 索引](../../reviews/ta01-product/ci548-arm64-total-budget-action-timings.json)／[原件](../../reviews/ta01-product/ci548-arm64-total-budget-action-timings.zip)。各 14 成员及五脚本均实核准确 Git 摘要；保原完整下载 ZIP 摘要、选取 ZIP 摘要及逐成员摘要。finished 包含预期拒绝，不由动作名补造成功。Required CI job116331281353 已失败，其他已结束作业均成功，不代服务端完整支持。
+
+ARM64 stage 为 1,157.46 s、首次实际安装为 952.06 s；后续重复确认及部分预期拒绝也超过 200 s。AMD64 对应 stage 为 332.85 s、首次安装为 313.37 s。当前只有整条安装器命令耗时，不能区分散列、配置加载、Docker 导入及请求各自成本；1 MiB 缓冲未使完整验收通过，不将时间差或阶段推进当根因证明。
+
+## 下一候选的轻量配置入口与即时诊断
+
+配置原先从合同总入口加载版本和功能登记，同时初始化无关合同。现抽出 runtime-metadata 入口，原公共入口重导出同一对象；13 项功能、版本值、类型和校验保持，生产 prepare 显式保留编译入口。本机 39 项配置测试通过；实际编译生产闭包证明两个入口对象相同，临时移开复制件总入口时配置仍可加载。全部复制件经准确路径及无 reparse 核验后收尾，源文件和共享依赖未修改。
+
+Windows 原生 Node22.19 的四次新进程量测中，总入口为 123.88／127.04 ms，轻量入口为 28.73／28.99 ms；总入口导出 518 项、轻量入口 4 项。顺序及文件缓存未受控，这些数字不能折算为 TCG 效果或完整产品通过。编译输入、生产闭包、复制件账本及收尾见 [索引](../../reviews/ta01-product/resumption-runtime-metadata-checks.json)／[原件](../../reviews/ta01-product/resumption-runtime-metadata-checks.zip)。
+
+安装器另加默认关闭的 --trace-timings，完整 guest 显式启用，提取固定阶段耗时及当前 Node CPU 数字，每操作最多 16 条、最多 128 次操作，不输出参数或 stderr 原文，也不包含 Docker 子进程 CPU。用于区分包校验、配置加载、导入和业务读取，不跳过完整字节／SHA／OCI 核验，不更改三画像、原期限、故障或重启断言。
+
+guest 在捕获异常、读 journal、核完归属容器状态后分别即时输出固定快照，再进行原日志分类；最多三条，不新增 HTTP 成功阶段或验收通过依据。未知消息、路径、参数、身份和环境不输出，原异常仍传播。该路径及阶段耗时的边界测试已通过，尚未实际 guest 验证，不补写 #548 的缺失诊断。首轮新增 AST 夹具因 Windows 默认 GBK 读取 UTF-8 源文件而有三项 UnicodeDecodeError，工具返回留在对话，未另存完整原始日志；改为显式 UTF-8 后通过。随后 12 项 Python、15 项安装器及语法／AST 原日志在上述本机原件中。
+
+新根五门禁及真实示例正在独有环境运行。17,071 文件摘要在首批检查运行期间生成，产品源码在命令启动前已固定且扫描期间未修改；后续文档／证据另列。它是当前工作树的运行输入记录，起点 Git HEAD26f6293 不是干净受测快照，不拼接旧 6c20a93 或 CI548 为新候选通过。没有迁移、REST/MCP 合同或事件语义变更，正式成果独审未做，当前不能合入。

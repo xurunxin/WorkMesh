@@ -4,11 +4,104 @@ import os
 import hashlib
 import unittest
 import tempfile
+import ast
+import re
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity, binary_hash, node_process_pid
 from run import valid_receipt, complete_reboot_checks
 from core_pipe import memory_core
+
+
+class GuestFailureProgress(unittest.TestCase):
+    @staticmethod
+    def marker(name='failure_progress'):
+        # Load only the pure projection; importing guest.py creates guest paths.
+        source = ast.parse(Path(__file__).with_name('guest.py').read_text(encoding='utf8'))
+        function = next(node for node in source.body if isinstance(node, ast.FunctionDef) and node.name == name)
+        scope = {'json': json, 're': re}
+        exec(compile(ast.Module(body=[function], type_ignores=[]), 'guest-projection', 'exec'), scope)
+        return scope[name]
+
+    def test_installer_phase_timings_reject_private_or_malformed_output_and_bound_records(self):
+        project = self.marker('installer_timings')
+        context = {'tag': 'ta01-install-action', 'sequence': 1, 'profile': 'personal', 'action': 'commit'}
+        known = {'phase': 'validate-business-read', 'elapsedMilliseconds': 30, 'userCpuMicroseconds': 12, 'systemCpuMicroseconds': 3}
+        private = 'wmi_' + 'x' * 43
+        records = [b'private stderr ' + private.encode(), b'INSTALL_TIMING {invalid',
+                   *[('INSTALL_TIMING ' + json.dumps(value)).encode() for value in [
+                       {**known, 'phase': []}, {**known, 'phase': private}, {**known, 'private': private},
+                       {**known, 'elapsedMilliseconds': -1}, {**known, 'userCpuMicroseconds': True}]],
+                   *[('INSTALL_TIMING ' + json.dumps(known)).encode()] * 20]
+        output = io.StringIO()
+        with redirect_stdout(output):
+            project(b'\n'.join(records), context)
+        values = [json.loads(line) for line in output.getvalue().splitlines()]
+        self.assertEqual(len(values), 16)
+        self.assertEqual(values[0], {**context, 'tag': 'ta01-installer-phase', **known})
+        self.assertNotIn(private, output.getvalue())
+        self.assertFalse(valid_receipt(values[0]))
+        output = io.StringIO()
+        with redirect_stdout(output):
+            project(b'\n'.join(records), {**context, 'sequence': 129})
+            project(b'\n'.join(records), {**context, 'environment': private})
+        self.assertEqual(output.getvalue(), '')
+
+    def test_failure_is_visible_before_classification_without_private_fields(self):
+        marker = self.marker()
+        private = 'wmi_' + 'x' * 43
+        original = RuntimeError(private)
+        output = io.StringIO()
+        with self.assertRaises(RuntimeError) as caught, redirect_stdout(output):
+            try:
+                raise original
+            except RuntimeError as error:
+                marker('caught', error, {'command': private, 'exitCode': 1, 'stderrSha256': 'a' * 64,
+                    'codes': ['INSTALL_BUSINESS_VALIDATION_FAILED', private], 'environment': private, 'path': private})
+                # The original failure survives even if a later classifier never runs.
+                raise
+        self.assertIs(caught.exception, original)
+        value = json.loads(output.getvalue())
+        self.assertNotIn(private, output.getvalue())
+        self.assertEqual(value, {'tag': 'ta01-failure', 'stage': 'caught', 'errorType': 'RuntimeError',
+            'exitCode': 1, 'stderrSha256': 'a' * 64, 'codes': ['INSTALL_BUSINESS_VALIDATION_FAILED']})
+        self.assertFalse(valid_receipt(value))
+
+    def test_journal_and_owned_states_keep_machine_facts_and_bound_output(self):
+        marker = self.marker()
+        private = 'private arguments and environment'
+        state = {'service': 'mcp', 'running': False, 'oom': False, 'exitCode': 139, 'restarts': 1,
+                 'health': 'unhealthy', 'environment': private, 'id': private}
+        journal = {'stage': 'healthy', 'actions': [{'name': 'validate-business-read', 'status': 'failed', 'message': private}]}
+        output = io.StringIO()
+        with redirect_stdout(output):
+            marker('journal', RuntimeError(private), {}, journal=journal)
+            marker('owned-states', RuntimeError(private), {}, journal=journal, containers=[state] * 12)
+        values = [json.loads(line) for line in output.getvalue().splitlines()]
+        self.assertEqual(values[0]['lastAction'], 'validate-business-read')
+        self.assertEqual(values[0]['lastActionStatus'], 'failed')
+        self.assertEqual(len(values[1]['containers']), 8)
+        self.assertEqual(values[1]['containers'][0], {key: state[key] for key in ['service', 'running', 'oom', 'exitCode', 'restarts', 'health']})
+        self.assertNotIn(private, output.getvalue())
+
+    def test_unknown_fields_are_not_exported_and_unknown_stage_writes_nothing(self):
+        marker = self.marker()
+        class PrivateError(Exception):
+            pass
+        output = io.StringIO()
+        with redirect_stdout(output):
+            marker('journal', PrivateError('private'), {'codes': None, 'exitCode': 'private'},
+                   journal={'stage': 'private', 'actions': ['private']}, containers=[{'service': 'private'}])
+        value = json.loads(output.getvalue())
+        self.assertEqual(value['errorType'], 'OtherError')
+        self.assertEqual(value['journalStage'], 'unknown')
+        self.assertEqual(value['lastAction'], 'unknown')
+        self.assertEqual(value['containers'], [])
+        output = io.StringIO()
+        with redirect_stdout(output), self.assertRaises(AssertionError):
+            marker('private', RuntimeError('private'), {})
+        self.assertEqual(output.getvalue(), '')
 
 
 class TracePrivacy(unittest.TestCase):

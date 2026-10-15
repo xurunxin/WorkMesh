@@ -310,8 +310,19 @@ async function verifyBusinessRead(release, env, proofFile) {
 
 export async function install(options, authority = undefined) {
   const { prefix, bundle, digest, configFile, action } = options
+  const measure = async (phase, callback) => {
+    const began = performance.now(), cpu = process.cpuUsage()
+    try { return await callback() }
+    finally {
+      if (options.traceTimings) {
+        const used = process.cpuUsage(cpu)
+        console.error('INSTALL_TIMING ' + JSON.stringify({ phase, elapsedMilliseconds: Math.round(performance.now() - began),
+          userCpuMicroseconds: used.user, systemCpuMicroseconds: used.system }))
+      }
+    }
+  }
   await privateDirectory(prefix)
-  const manifest = await verifyBundle(bundle, digest)
+  const manifest = await measure('verify-bundle', () => verifyBundle(bundle, digest))
   const candidateManifestJson = await readFile(path.join(bundle, 'manifest.json'), 'utf8')
   if (hash(Buffer.from(candidateManifestJson)) !== digest) fail('INSTALL_MANIFEST_DIGEST_MISMATCH')
   const config = await readPrivateConfig(configFile)
@@ -333,12 +344,13 @@ export async function install(options, authority = undefined) {
   const arch = docker(['info', '--format', '{{.Architecture}}'])
   if ((manifest.arch === 'amd64' ? 'x86_64' : 'aarch64') !== arch) fail('INSTALL_WRONG_ARCHITECTURE')
   const helperId = loadedImage(manifest.images.installer, manifest.arch)
-  const rendered = await render({ ...config, installationId: identity.id }, manifest, bundle, prefix, authority ?? await appConfig(), keys)
+  const validator = authority ?? await measure('load-config-validator', appConfig)
+  const rendered = await measure('render-config', () => render({ ...config, installationId: identity.id }, manifest, bundle, prefix, validator, keys))
   const configHash = hash(Buffer.from(canonicalJson(config)))
   const fs = await statfs(prefix)
   const required = [...manifest.chunks, ...manifest.bootstrapChunks].reduce((sum, entry) => sum + entry.bytes, 0)
   if (Number(fs.bavail) * Number(fs.bsize) < Math.max(1024 ** 3, required * 2)) fail('INSTALL_INSUFFICIENT_SPACE')
-  if (action === 'stage') return { status: 'staged-candidate', candidate: digest, installedImages: await importImages(bundle, manifest) }
+  if (action === 'stage') return { status: 'staged-candidate', candidate: digest, installedImages: await measure('import-images', () => importImages(bundle, manifest)) }
   if (action === 'check') return { status: 'checked', profile: config.profile, release: manifest.release, candidate: digest }
   if (!['install', 'upgrade', 'rollback', 'recover-old', 'restore-empty', 'commit'].includes(action)) fail('INSTALL_ACTION_INVALID')
   if (['upgrade', 'rollback'].includes(action) && !options.maintenanceConfirmed) fail('INSTALL_MAINTENANCE_CONFIRMATION_REQUIRED')
@@ -371,7 +383,7 @@ export async function install(options, authority = undefined) {
       assertOwnedDeployment(pending)
       const readIntent = { name: 'validate-business-read', status: 'intent', startedAt: new Date().toISOString() }
       existing.actions.push(readIntent); await atomicJson(journalFile, existing)
-      try { existing.validation = await verifyBusinessRead(pending, rendered.env, options.validationFile); readIntent.status = 'completed' }
+      try { existing.validation = await measure('validate-business-read', () => verifyBusinessRead(pending, rendered.env, options.validationFile)); readIntent.status = 'completed' }
       catch (error) {
         readIntent.status = 'failed'
         error.diagnostics = { ...error.diagnostics, ...await deploymentDiagnostics(pending) }
@@ -433,7 +445,7 @@ export async function install(options, authority = undefined) {
     const effect = async (name, callback) => {
       const entry = { name, status: 'intent', startedAt: new Date().toISOString() }
       journal.actions.push(entry); await atomicJson(journalFile, journal)
-      try { const value = await callback(); entry.status = 'completed'; entry.finishedAt = new Date().toISOString(); await atomicJson(journalFile, journal); return value }
+      try { const value = await measure(name, callback); entry.status = 'completed'; entry.finishedAt = new Date().toISOString(); await atomicJson(journalFile, journal); return value }
       catch (error) {
         entry.status = 'failed'
         entry.finishedAt = new Date().toISOString()
@@ -487,7 +499,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   try {
     const result = await install({ prefix: option('prefix'), bundle: option('bundle'), digest: option('digest'),
       configFile: option('config'), action: option('action'), restoreBundle: option('restore-bundle'), targetFile: option('target'),
-      validationFile: option('validation'), maintenanceConfirmed: process.argv.includes('--maintenance-confirmed') })
+      validationFile: option('validation'), maintenanceConfirmed: process.argv.includes('--maintenance-confirmed'),
+      traceTimings: process.argv.includes('--trace-timings') })
     console.log(JSON.stringify(result))
   } catch (error) {
     const code = /^INSTALL_[A-Z_]+|^DEPLOYMENT_PROFILE_INVALID(?::[A-Z_,]+)?/.exec(error.message)?.[0] ?? 'INSTALL_PREFLIGHT_OR_OPERATION_FAILED'

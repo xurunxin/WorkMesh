@@ -31,14 +31,100 @@ def progress(profile, stage):
     print(json.dumps({'tag': 'ta01-progress', 'profile': profile, 'stage': stage}), flush=True)
 
 
-def command(args, *, expected=0, data=None, timeout=1800, expected_code=None):
+def failure_progress(stage, error, context, journal=None, containers=None):
+    assert stage in {'caught', 'journal', 'owned-states'}
+    known_errors = {'RuntimeError', 'AssertionError', 'TimeoutExpired', 'TimeoutError', 'RemoteDisconnected',
+                    'HTTPError', 'URLError', 'ConnectionResetError', 'CalledProcessError', 'JSONDecodeError', 'FileNotFoundError'}
+    known_codes = {'INSTALL_BUSINESS_VALIDATION_FAILED', 'INSTALL_PREFLIGHT_OR_OPERATION_FAILED',
+                   'INSTALL_DOCKER_COMMAND_FAILED', 'INSTALL_IMAGE_IMPORT_FAILED',
+                   'INSTALL_INCOMPATIBLE_LEDGER_RESTORE_REQUIRED', 'INSTALL_RECOVERY_CANDIDATE_INVALID'}
+    value = {'tag': 'ta01-failure', 'stage': stage,
+             'errorType': type(error).__name__ if type(error).__name__ in known_errors else 'OtherError'}
+    safe_name = lambda name, allowed: name if isinstance(name, str) and name in allowed else 'unknown'
+    if safe_name(context.get('command'), {'sh', 'docker', 'ip', 'uname', 'lscpu', 'df'}) != 'unknown':
+        value['command'] = context['command']
+    if type(context.get('exitCode')) is int:
+        value['exitCode'] = context['exitCode']
+    if context.get('timedOut') is True:
+        value['timedOut'] = True
+    for key in ['stderrSha256', 'stdoutSha256']:
+        digest = context.get(key)
+        if isinstance(digest, str) and re.fullmatch('[a-f0-9]{64}', digest):
+            value[key] = digest
+    codes = context.get('codes', [])
+    value['codes'] = sorted(known_codes.intersection(code for code in codes if isinstance(code, str))) if isinstance(codes, list) else []
+    if journal is not None:
+        journal = journal if isinstance(journal, dict) else {}
+        allowed_stages = {'verified', 'staged', 'backed_up', 'migrated', 'healthy', 'committed'}
+        value['journalStage'] = safe_name(journal.get('stage'), allowed_stages)
+        actions = journal.get('actions', [])
+        if isinstance(actions, list) and actions:
+            last = actions[-1] if isinstance(actions[-1], dict) else {}
+            allowed_actions = {'import-images', 'drain-admission', 'complete-backup', 'start-data-services',
+                               'initialize-locked-bucket', 'apply-migration-ledger', 'verify-health-and-ledger',
+                               'validate-business-read', 'switch-current', 'stop-unvalidated-runtime'}
+            value['lastAction'] = safe_name(last.get('name'), allowed_actions)
+            value['lastActionStatus'] = safe_name(last.get('status'), {'intent', 'completed', 'failed'})
+    if containers is not None:
+        value['containers'] = []
+        for entry in containers[:8]:
+            if not isinstance(entry, dict) or safe_name(entry.get('service'), {'api', 'worker', 'mcp', 'postgres', 'redis', 'minio', 'minio-init', 'migrate'}) == 'unknown':
+                continue
+            item = {'service': entry['service']}
+            for key in ['running', 'oom']:
+                if type(entry.get(key)) is bool:
+                    item[key] = entry[key]
+            for key in ['exitCode', 'restarts']:
+                if type(entry.get(key)) is int:
+                    item[key] = entry[key]
+            if safe_name(entry.get('health'), {'starting', 'healthy', 'unhealthy'}) != 'unknown':
+                item['health'] = entry['health']
+            value['containers'].append(item)
+    # Emit before slow Docker log classifiers. No messages, arguments, paths,
+    # environment, identities or unknown classifications enter serial output.
+    print(json.dumps(value), flush=True)
+
+
+def installer_timings(raw, context):
+    if (not isinstance(context, dict) or set(context) != {'tag', 'sequence', 'profile', 'action'} or context['tag'] != 'ta01-install-action'
+            or type(context['sequence']) is not int or not 1 <= context['sequence'] <= 128
+            or not isinstance(context['profile'], str) or not isinstance(context['action'], str)
+            or context['profile'] not in {'personal', 'team', 'enterprise', 'fixture'}
+            or context['action'] not in {'check', 'stage', 'install', 'upgrade', 'rollback', 'commit', 'recover-old', 'restore-empty'}):
+        return
+    phases = {'verify-bundle', 'load-config-validator', 'render-config', 'import-images', 'drain-admission',
+              'complete-backup', 'start-data-services', 'initialize-locked-bucket', 'apply-migration-ledger',
+              'verify-health-and-ledger', 'validate-business-read'}
+    fields = {'phase', 'elapsedMilliseconds', 'userCpuMicroseconds', 'systemCpuMicroseconds'}
+    emitted = 0
+    for line in raw.decode('utf8', errors='replace').splitlines():
+        if not line.startswith('INSTALL_TIMING '):
+            continue
+        try:
+            value = json.loads(line.removeprefix('INSTALL_TIMING '))
+        except ValueError:
+            continue
+        if (not isinstance(value, dict) or set(value) != fields or not isinstance(value['phase'], str) or value['phase'] not in phases
+                or any(type(value[key]) is not int or not 0 <= value[key] <= 2**53 - 1 for key in fields - {'phase'})):
+            continue
+        print(json.dumps({**context, 'tag': 'ta01-installer-phase', **value}), flush=True)
+        emitted += 1
+        if emitted == 16:
+            break
+
+
+def command(args, *, expected=0, data=None, timeout=1800, expected_code=None, timing_context=None):
     try:
         result = subprocess.run(args, input=data, capture_output=True, timeout=timeout)
     except subprocess.TimeoutExpired as error:
+        if timing_context is not None:
+            installer_timings(error.stderr or b'', timing_context)
         diagnostics.update(command=args[0].rsplit('/', 1)[-1], timedOut=True, timeoutSeconds=timeout,
                            stdoutSha256=hashlib.sha256(error.stdout or b'').hexdigest(),
                            stderrSha256=hashlib.sha256(error.stderr or b'').hexdigest())
         raise
+    if timing_context is not None:
+        installer_timings(result.stderr, timing_context)
     if result.returncode != expected:
         stderr = result.stderr.decode(errors='replace')
         # Never export command arguments or raw stderr: either may contain keys.
@@ -171,7 +257,8 @@ def install(dist, digest, prefix, config, action, *, expected=0, extra=(), expec
     if install_actions <= 128:
         print(json.dumps({**fields, 'state': 'started'}), flush=True)
     try:
-        out = command(['sh', str(dist / 'install.sh'), str(dist), digest, str(prefix), str(config), action, *extra], expected=expected, expected_code=expected_code)
+        out = command(['sh', str(dist / 'install.sh'), str(dist), digest, str(prefix), str(config), action, '--trace-timings', *extra],
+                      expected=expected, expected_code=expected_code, timing_context=fields)
         result = json.loads(out) if expected == 0 else None
         completed = True
         return result
@@ -793,6 +880,7 @@ def main():
             report({'phase': 'before-reboot', 'bootId': boot, 'kernel': command(['uname', '-a']),
                     'profiles': profiles, 'samples': samples, 'resources': resources, 'offline': 'no-default-route-and-pull-never'})
     except Exception as error:
+        failure_progress('caught', error, diagnostics)
         # This guest is exclusive. Project only numeric kernel counters, never
         # process command lines, environment or arbitrary file contents.
         try:
@@ -817,6 +905,7 @@ def main():
         if prefix and (prefix / 'journal.json').exists():
             try:
                 journal = json.loads((prefix / 'journal.json').read_text())
+                failure_progress('journal', error, diagnostics, journal=journal)
                 diagnostics['journal'] = {'stage': journal['stage'], 'candidate': journal['candidate'],
                     'actions': [{key: entry[key] for key in ['name', 'status', 'startedAt', 'finishedAt'] if key in entry} for entry in journal['actions']]}
                 # Installer diagnostics contain only fixed classifications,
@@ -869,6 +958,7 @@ def main():
                                 'clockTicksPerSecond': os.sysconf('SC_CLK_TCK')}
                         except (OSError, ValueError, IndexError):
                             entry['processUnavailable'] = True
+                    failure_progress('owned-states', error, diagnostics, journal=journal, containers=projected)
                     for info, entry in owned:
                         health = info['State'].get('Health', {})
                         # Capture only this installation's logs. The trusted

@@ -18,6 +18,11 @@ if (await exists(workspaceRoot)) {
     if (await exists(rootEntry)) manifest.exports = './dist/index.js'
     else if (await exists(nestedEntry)) manifest.exports = './dist/src/index.js'
     else throw new Error(`Compiled workspace entry point is missing: ${manifest.name}`)
+    if (manifest.name === '@workmesh/contracts') {
+      const runtimeMetadata = './dist/runtime-metadata.js'
+      if (!await exists(path.join(packageRoot, runtimeMetadata))) throw new Error('Compiled runtime metadata is missing')
+      manifest.exports = { '.': manifest.exports, './runtime-metadata': runtimeMetadata }
+    }
     if (manifest.name === '@workmesh/config') {
       await cp(
         path.join(sourceRoot, 'packages', 'config', 'src', 'runtime-secrets.mjs'),
