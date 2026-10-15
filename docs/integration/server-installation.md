@@ -4,6 +4,8 @@
 
 本卡正在实现保留 PostgreSQL、Redis 和 S3 的基础交付。以下入口及命令已有代码，双架构完整虚拟机验收尚未完成，当前候选不能作为发行包或已支持声明。Redis-free、filesystem、生产内网接入和物理设备最低配置仍未交付。
 
+普通 CI558 的 `f53f20b` 候选已在三个独立 AMD64 guest 完成个人、团队、企业的安装／升级／回退／恢复和整机重启闭环；三组 ARM64、原生故障调查及正式独审仍待完成。这些结果只覆盖实测组合，完整状态及原件见 [验收矩阵](../plan/ta01-self-hosted-deployment/acceptance-matrix.md#ci558-当前基础矩阵)。
+
 ## 环境和候选
 
 目标为 Linux amd64 或 arm64，已有 Docker Engine、Docker Compose 和 POSIX sh。目标不需要源码、宿主 Node、pnpm 或 Python。安装器使用可信工具容器，沿用当前 Docker 访问权限；它不安装 Docker，也不修改设备权限。

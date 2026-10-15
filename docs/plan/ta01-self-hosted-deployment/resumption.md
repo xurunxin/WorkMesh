@@ -522,3 +522,25 @@ CI554 ARM64 job116568767849／artifact12003372159随后终态failure，guest在9
 两轮同时在实际ci:validate入口失败：本次只更新了可导入策略及其测试，遗漏scripts/validate-ci.mjs这一真实消费方的生产者参数、作业图、工件名称和固定下载action登记。该首败属于本次CI改动，原普通快照和旧产品MCP首败不受其解释。分别见 [CI556索引](../../reviews/ta01-product/ci556-source-policy-failure.json)／[原件](../../reviews/ta01-product/ci556-source-policy-failure.zip)、[CI557索引](../../reviews/ta01-product/ci557-source-policy-failure.json)／[原件](../../reviews/ta01-product/ci557-source-policy-failure.zip)。普通实际checkout700928306857b4aa562af32b6d11120bf4bad707的父为main c3dd64b与候选73102d9，tree与候选相同；显式直接checkout73102d9，均由原job日志与不可变GitHub commit实核，不将run head冒实际checkout。
 
 真实validator现纳入server-build、按画像命名的guest原件、严格生产者依赖及原准确下载pin；源码执行job继续锁定Node／pnpm，guest只消费已核候选，不强迫其再次安装源码。新增直接执行真实入口的回归，以免仅导入策略测试通过而实际消费方仍旧。23项策略检查及完整pnpm ci:validate exit0，其中既有24项退役／原件检查通过；新用例首轮在Windows错误使用URL.pathname，MODULE_NOT_FOUND保留，改fileURLToPath后通过，未保留首败整源码则不补SHA。见 [索引](../../reviews/ta01-product/resumption-ci-handoff-validation.json)／[材料](../../reviews/ta01-product/resumption-ci-handoff-validation.zip)。CI556及557均已终态cancelled，无force，无guest；两套新门禁和产品真实支持仍须新候选验证。
+
+## CI558 六组交接及 AMD64 三画像完整通过
+
+修正候选 `f53f20b85e680a4219ae9f22a58ff37de58c37d8`／tree `6868b31ac93f90d6bfb9e5149f2f01421426a2f8` 已推送。新增六份 ZIP 的实际 Git blob 与索引 SHA 一致，五份本机受测源码与提交源码逐字相同。普通 CI558／run38801221509 和显式 CI559／run38801222595 实际启动，PR228 保持草稿；没有把 CI556/557 取消或旧故障改写为通过。
+
+普通两架构生产者均成功，各自实跑 40 项 Python、16 项安装单元后构建一次候选。AMD64 工件为 `12005130717`，manifest SHA 为 `04be6dd70621aefb14c223a20722ee6fd6f9ccb04405fce69f387ecb7255b60a`；ARM64 为 `12003809838`／`896e587970de424a180db568fe4547e06baf6cbdfec56b1f06ea3e35ab5fdeac`。六组普通作业都已实际通过工件 ID 下载和生产者摘要校验，再进入 guest。两个生产者原归档及公开 manifest 已取得，准确六脚本摘要与 Git 实核；未重复下载两个四百余 MB 的候选包。本轮源码门禁、API、数据库、Worker、恢复及其他已结束检查成功，ARM64 连接器仍待终态，不提前写整个 Required 通过。
+
+AMD64 企业 job116655073277／artifact12006648134 完整通过，1,860.15 s、20 项前序检查，重启恢复 123.94 s；个人 job116655073333／artifact12006981154 完整通过，2,081.81 s、21 项前序检查，重启恢复 139.56 s；团队 job116655073226／artifact12007860393 完整通过，2,571.94 s、20 项前序检查，重启恢复 166.36 s。三份均为 `single-configuration`，没有重新解释为三画像单 guest 成功。每份 11 个原始成员、六脚本与准确 Git 摘要相符，实际消费同一 AMD64 候选；三项分别有不同的前后 boot_id、两次 kernel、QMP RESET/SHUTDOWN、QEMU 退出 0 和重启后鉴权 API/MCP、原工件字节、新 outbox 投递四项证明。完整范围与三份原件见 [当前矩阵](acceptance-matrix.md#ci558-当前基础矩阵)。三组 ARM64 及双架构显式诊断仍执行，不能把部分成功冒整个基础产品完成。
+
+并行只读检索发现 [Node #59740](https://github.com/nodejs/node/issues/59740) 报告同为 Node 22.19.0 的 TLS 证书存储崩溃，并关联 [OpenSSL #28171](https://github.com/openssl/openssl/issues/28171) 的并发缺陷。这是上游独立报告，尚未匹配本任务实际故障位置或证明同一根因；没有据此改锁定 Node、关闭证书校验或声明旧 139 已解决。当前完整支持矩阵、普通 Required 和正式独审尚未完成，不可合入。
+
+## CI559 自然故障的公开位置及后续有界帧链
+
+显式 AMD64 job116656730219／artifact12007982474 于 21:29 UTC 结束，guest 3,179.09 s，原始状态 `diagnostic-only`、错误 `RuntimeError`，作业 failure。四个已完成窗口分别为个人首次／升级／回退和团队首次，原提交都成功、无 core；第五个团队升级原提交失败，观察准备早于其业务 intent，正确登记的 Node PID55466、init PID55411。五个 captureId 不同，未复用旧窗口结果；第五个自然处理回执出现后停止整轮，没有执行完九窗口、企业或整机重启。11 个原始成员、六脚本和公开 manifest 均核准确 `f53f20b` 来源，实际生产者工件为 `12004383197`。见 [索引](../../reviews/ta01-product/ci559-amd64-native-observation.json)／[原件](../../reviews/ta01-product/ci559-amd64-native-observation.zip)。
+
+本次 `coreCaptured=true`，取得 111,050,752 字节 core 的大小、摘要及位置；`captured=false`，GDB 达原 60 s 期限，没有函数栈，整个捕获 65.107 s。core 仅在原匿名内存内处理，未落盘或上传。目标程序 SHA 与此前复制的公开 Node 完全一致后才解析：`638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328`；信号 11、code -6，公开 ELF 位置为 `0x136b1a0`。公开符号范围匹配 `v8::internal::IC::UpdateState` 的 +128，解码正好是 `mov rax,[rax-1]` 指令边界。只读取公开二进制字节，未读取或输出该私有寄存器值；函数位置及指令不能解释指针为何失效，也不与上述 OpenSSL 报告的故障点相同。见 [公开匹配索引](../../reviews/ta01-product/resumption-ci559-public-location.json)／[材料](../../reviews/ta01-product/resumption-ci559-public-location.zip)。解码器 iced-x86 1.21.0 的 886,006 字节 wheel 仅解包到任务临时目录，核 PyPI SHA，项目依赖及全局环境未改。
+
+同窗口 MCP initialize／id1 的原 30 s 读取到期（30,588 ms），请求已写完、无响应头或字节；团队代理第 8 次请求停于 request-sent，RemoteDisconnected，准确容器 `6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778` 历史 die 为 139。PG 较晚聚合 100／3／on，不能据此解释崩溃或排除历史争用。`preparedBeforeBusiness` 只证明准备在业务之前，不证明故障在业务之后或由 initialize 引起；当前回执没有处理器开始 UTC，不倒推该时刻，也不将诊断中读取超时套给普通 ARM64。当前候选仍自然崩溃，AMD64 三份普通成功不能关闭此问题。
+
+后续工具在原内存及 90 s／60 s 期限内，先沿已捕获、唯一可写非执行栈段的常规帧指针链接，距 SP 最多 1 MiB、16 字节对齐、递增且最多 12 帧。只投影可唯一映射到公开 Node 执行段的相对返回代码位置；省略帧指针、缺页、环、重叠映射和 JIT／其他模块即停，不扫描栈或猜完整调用链。返回位置与用于归属的前一字节分列。依据 [AMD64 ABI](https://gitlab.com/x86-psABIs/x86-64-ABI/-/blob/master/x86-64-ABI/low-level-sys-info.tex) 与 [AAPCS64 2025Q1](https://github.com/ARM-software/abi-aa/blob/2025Q1/aapcs64/aapcs64.rst)。GDB 不自动加载共享库符号，仍保 Node 符号及默认 DWARF，没有启用 readnever；部分回溯不冒完整栈。
+
+新增处理器开始 UTC（不是原始信号时刻）及四个固定调试器阶段；阶段只说明命令执行位置，不代表命令成功，不导出原 stderr。46 项本机检查与六文件 AST 通过，含两架构、私密标记拒绝、循环／越界／缺页／重叠映射、12 帧上限及原时限；[最新索引](../../reviews/ta01-product/resumption-native-phase-frame-checks.json)／[材料](../../reviews/ta01-product/resumption-native-phase-frame-checks.zip) 保准确当前源码。前一轮 45 项[索引](../../reviews/ta01-product/resumption-public-frame-chain-checks.json)／[材料](../../reviews/ta01-product/resumption-public-frame-chain-checks.zip) 单独保留，不能冒最新字段也已在该快照执行。新帧链路径尚未实测，在途 ARM64 普通／诊断仍受测原 `f53f20b` 的 40 项版本；暂不推送以保全终态。产品根因、三组 ARM64、最新普通 Required 及正式独审未闭合，当前不可合入。

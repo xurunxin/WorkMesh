@@ -140,6 +140,16 @@ class ProxyProgress(unittest.TestCase):
 
 
 class CoreMetadata(unittest.TestCase):
+    def test_debugger_stage_projection_only_accepts_exact_public_markers(self):
+        private = 'wmi_' + 'x' * 43
+        value = safe_trace(('WORKMESH_NATIVE_PHASE:before-binary\n'
+            'WORKMESH_NATIVE_PHASE:after-binary\n'
+            'WORKMESH_NATIVE_PHASE:after-binary\n'
+            'WORKMESH_NATIVE_PHASE:after-core:' + private + '\n'
+            'WORKMESH_NATIVE_PHASE:' + private + '\n').encode(), b'', None)
+        self.assertEqual(value['debuggerStages'], ['before-binary', 'after-binary'])
+        self.assertNotIn(private, json.dumps(value))
+
     def test_unknown_capture_identity_rejects_before_reading_an_owner_file(self):
         for value in ['../private', 'a' * 31, 'a' * 33, 'G' * 32]:
             with patch.object(core_pipe.sys, 'argv', ['core_pipe.py', '12345', value]), \
@@ -177,11 +187,92 @@ class CoreMetadata(unittest.TestCase):
                     value = core_location(io.BytesIO(core), io.BytesIO(binary))
                     self.assertEqual(value, {'architecture': 'amd64' if machine == 62 else 'arm64',
                         'signal': 11, 'signalCode': 1, 'faultModule': 'node', 'executableSegment': True,
-                        'nodeFileOffset': 0x1234, 'nodeElfAddress': 0x401234})
+                        'nodeFileOffset': 0x1234, 'nodeElfAddress': 0x401234,
+                        'publicFrameChain': {'method': 'frame-pointers', 'frames': [], 'stopped': 'stack-unavailable'}})
                     output = json.dumps(value)
                     self.assertNotIn(private.decode(), output)
                     self.assertNotIn(str(pc), output)
                     self.assertNotIn('/usr/local', output)
+
+    @classmethod
+    def frame_fixture(cls, machine=62, depth=2):
+        core, binary, private, _ = cls.fixture(machine)
+        notes = bytearray(core[120:])
+        stack = 0x7E0000000000
+        sp, fp = stack + 0x100, stack + 0x120
+        for register, value in [(19 if machine == 62 else 31, sp), (4 if machine == 62 else 29, fp)]:
+            struct.pack_into('<Q', notes, 20 + 112 + register * 8, value)
+        header = bytearray(core[:64]); struct.pack_into('<H', header, 56, 2)
+        stack_offset = (176 + len(notes) + 4095) & ~4095
+        note_header = struct.pack('<IIQQQQQQ', 4, 0, 176, 0, 0, len(notes), len(notes), 4)
+        stack_header = struct.pack('<IIQQQQQQ', 1, 6, stack_offset, stack, 0, 8192, 8192, 4096)
+        payload = bytearray((private * 200)[:8192].ljust(8192, b'x'))
+        for index in range(depth + 1):
+            current = fp + index * 0x40
+            target = 0x7F0000000000 + 0x2345 + index if index < depth else 0x5E0000000000
+            struct.pack_into('<QQ', payload, current-stack, current+0x40, target)
+        value = bytes(header) + note_header + stack_header + notes
+        return value.ljust(stack_offset, b'\0') + payload, binary, private, sp, fp
+
+    def test_public_frame_chain_both_architectures_does_not_export_stack_values(self):
+        for machine in [62, 183]:
+            core, binary, private, sp, fp = self.frame_fixture(machine)
+            value = core_location(io.BytesIO(core), io.BytesIO(binary))
+            self.assertEqual(value['publicFrameChain'], {'method': 'frame-pointers',
+                'frames': [{'lookupNodeElfAddress': 0x402344, 'returnSiteNodeElfAddress': 0x402345},
+                           {'lookupNodeElfAddress': 0x402345, 'returnSiteNodeElfAddress': 0x402346}],
+                'stopped': 'caller-outside-public-node'})
+            output = json.dumps(value)
+            for forbidden in [private.decode(), str(sp), str(fp), str(0x7F0000002345), str(0x5E0000000000)]:
+                self.assertNotIn(forbidden, output)
+
+    def test_frame_chain_invalid_links_and_uncaptured_stack_stop_without_guessing(self):
+        core, binary, _, sp, fp = self.frame_fixture()
+        stack_offset = struct.unpack_from('<Q', core, 128)[0]
+        cases = []
+        for invalid in [sp-16, fp+1, fp+1024*1024]:
+            changed = bytearray(core); struct.pack_into('<Q', changed, 176+20+112+4*8, invalid)
+            cases.append((changed, 'frame-link-invalid'))
+        for invalid in [fp, fp-16, fp+8]:
+            changed = bytearray(core); struct.pack_into('<Q', changed, stack_offset+0x120, invalid)
+            cases.append((changed, 'frame-link-invalid'))
+        changed = bytearray(core); struct.pack_into('<Q', changed, 120+32, 0x100)
+        cases.append((changed, 'stack-bytes-not-captured'))
+        for changed, reason in cases:
+            with self.subTest(reason=reason):
+                chain = core_location(io.BytesIO(changed), io.BytesIO(binary))['publicFrameChain']
+                self.assertEqual(chain['frames'], [])
+                self.assertEqual(chain['stopped'], reason)
+
+    def test_frame_chain_has_an_explicit_twelve_frame_budget(self):
+        core, binary, _, _, _ = self.frame_fixture(depth=16)
+        chain = core_location(io.BytesIO(core), io.BytesIO(binary))['publicFrameChain']
+        self.assertEqual(len(chain['frames']), 12)
+        self.assertEqual(chain['stopped'], 'depth-limit')
+
+    def test_public_caller_requires_one_exact_node_mapping_and_executable_bytes(self):
+        from core_metadata import _public_position
+        start = 0x7F0000000000
+        mapping = (start, start+0x4000, (0, 4096), b'/usr/local/bin/node')
+        segment = (1, 5, 0, 0x400000, 0, 0x4000, 0x4000, 4096)
+        self.assertEqual(_public_position(start+0x2344, [mapping], [segment], 0x4000), 0x402344)
+        for mappings, segments in [
+            ([mapping, (start+0x2300, start+0x2400, (0, 4096), b'/private/path')], [segment]),
+            ([(start, start+0x4000, (0, 4096), b'/private/node')], [segment]),
+            ([mapping], [(1, 6, *segment[2:])]),
+            ([(start, start+0x4000, (2**63, 4096), b'/usr/local/bin/node')], [segment]),
+        ]:
+            self.assertIsNone(_public_position(start+0x2344, mappings, segments, 0x4000))
+
+    def test_ambiguous_stack_mapping_is_not_used_for_a_frame_chain(self):
+        core, binary, _, _, _ = self.frame_fixture()
+        header = bytearray(core[:64]); struct.pack_into('<H', header, 56, 3)
+        note_header = bytearray(core[64:120]); struct.pack_into('<Q', note_header, 8, 232)
+        stack_header = bytearray(core[120:176])
+        struct.pack_into('<Q', stack_header, 8, struct.unpack_from('<Q', stack_header, 8)[0]+56)
+        changed = bytes(header)+note_header+stack_header+stack_header+core[176:]
+        chain = core_location(io.BytesIO(changed), io.BytesIO(binary))['publicFrameChain']
+        self.assertEqual(chain, {'method': 'frame-pointers', 'frames': [], 'stopped': 'stack-unavailable'})
 
     def test_unmapped_or_private_module_never_exports_paths_addresses_or_memory(self):
         core, _, private, pc = self.fixture(mapped_name=b'/private/' + b'wmi_' + b'x' * 43)
@@ -236,9 +327,16 @@ class CoreMetadata(unittest.TestCase):
                     self.assertEqual([call.args[0] for call in alarm.call_args_list], [90, 0])
                     self.assertEqual(run.call_args.kwargs['timeout'], 60)
                     self.assertIn('bt 12', run.call_args.args[0])
+                    self.assertIn('set auto-solib-add off', run.call_args.args[0])
+                    self.assertNotIn('--readnever', run.call_args.args[0])
+                    command = run.call_args.args[0]
+                    self.assertLess(command.index('file ' + str(Path('/proc') / str(owner['pid']) / 'exe')),
+                                    command.index('core-file /proc/self/fd/' + str(descriptor)))
                     self.assertNotIn('thread apply all bt 12', run.call_args.args[0])
             value = json.loads(result_file.read_text(encoding='utf8'))
             self.assertEqual(value['captureId'], capture_id)
+            self.assertIsInstance(value['handlerStartedUtcEpoch'], float)
+            self.assertGreater(value['handlerStartedUtcEpoch'], 0)
             self.assertTrue(value['coreCaptured'])
             self.assertFalse(value['captured'])
             self.assertEqual(value['coreBytes'], 9)

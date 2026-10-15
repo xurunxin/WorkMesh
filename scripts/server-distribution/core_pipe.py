@@ -59,7 +59,8 @@ def main():
     signal.alarm(90)
     began = time.monotonic()
     target = Path('/proc') / str(pid)
-    result = {'naturalRun': True, 'captureId': capture_id, 'captured': False, 'coreCaptured': False, 'captureStage': 'identity'}
+    result = {'naturalRun': True, 'captureId': capture_id, 'captured': False, 'coreCaptured': False,
+              'captureStage': 'identity', 'handlerStartedUtcEpoch': time.time()}
     descriptor = None
     try:
         # The PID is registered after checking the exact installation/container
@@ -83,11 +84,15 @@ def main():
             raise TimeoutError('native debugger budget exhausted')
         completed = subprocess.run(['gdb', '--nx', '--quiet', '--batch',
             '-iex', 'set auto-load off', '-iex', 'set debuginfod enabled off',
+            '-iex', 'set auto-solib-add off',
             '-iex', 'set print frame-arguments none',
-            '-iex', 'set sysroot ' + str(target / 'root'), '--se', str(target / 'exe'),
-            '--core', '/proc/self/fd/' + str(descriptor),
-            '-ex', 'set pagination off', '-ex', 'set print frame-arguments none',
-            '-ex', 'bt 12'], stdin=subprocess.DEVNULL,
+            '-iex', 'set sysroot ' + str(target / 'root'), '-iex', 'set pagination off',
+            '-ex', 'echo WORKMESH_NATIVE_PHASE:before-binary\\n',
+            '-ex', 'file ' + str(target / 'exe'),
+            '-ex', 'echo WORKMESH_NATIVE_PHASE:after-binary\\n',
+            '-ex', 'core-file /proc/self/fd/' + str(descriptor),
+            '-ex', 'echo WORKMESH_NATIVE_PHASE:after-core\\n',
+            '-ex', 'bt 12', '-ex', 'echo WORKMESH_NATIVE_PHASE:after-backtrace\\n'], stdin=subprocess.DEVNULL,
             capture_output=True, pass_fds=(descriptor,), timeout=min(60, remaining))
         result.update(captured=True, captureStage='completed',
                       trace=safe_trace(completed.stdout, completed.stderr, completed.returncode))

@@ -8,6 +8,23 @@
 
 旧控制面基线和 docs Required CI 不替代新候选包验收。用户已批准本阶段记录例外并继续。平台 Saved plan 字段仍未同步，当前依据仓库执行计划进入产品实现；产品验收已有局部真实结果，三画像双架构完整组合尚未通过；最新准确源码、首败及未测见 [接续记录](resumption.md)。
 
+## CI558 当前基础矩阵
+
+受测源码为 `f53f20b85e680a4219ae9f22a58ff37de58c37d8`，tree 为 `6868b31ac93f90d6bfb9e5149f2f01421426a2f8`。每组独立完整 TCG guest，4 vCPU、4 GiB，保原 150 分钟及业务、健康、安装期限。以下成功仅覆盖对应配置；其余组合、最新普通 Required CI、原生故障根因和正式 P0/P1 独审仍待完成，当前不可合入。
+
+| 画像／架构 | 实际结果 | 证据 |
+| --- | --- | --- |
+| 个人 Lite／amd64 | 完整 guest 通过，2,081.81 s | [索引](../../reviews/ta01-product/ci558-amd64-personal-full-guest-pass.json)／[原件](../../reviews/ta01-product/ci558-amd64-personal-full-guest-pass.zip) |
+| 团队／amd64 | 完整 guest 通过，2,571.94 s | [索引](../../reviews/ta01-product/ci558-amd64-team-full-guest-pass.json)／[原件](../../reviews/ta01-product/ci558-amd64-team-full-guest-pass.zip) |
+| 企业／amd64 | 完整 guest 通过，1,860.15 s | [索引](../../reviews/ta01-product/ci558-amd64-enterprise-full-guest-pass.json)／[原件](../../reviews/ta01-product/ci558-amd64-enterprise-full-guest-pass.zip) |
+| 个人 Lite／arm64 | 执行中，job116655073308 | 未取得终态，不填通过 |
+| 团队／arm64 | 执行中，job116655073593 | 未取得终态，不填通过 |
+| 企业／arm64 | 执行中，job116655073569 | 未取得终态，不填通过 |
+
+三份 amd64 回执均明确 `single-configuration`，包含安装、API/MCP/Worker、真实 429、Redis 故障关闭、丢 wakeup、重启 worker、工件、升级、兼容回退、加密备份及空目标恢复；个人另核数据绑定变化提前拒绝。各自保两个不同 boot_id、两次 kernel、QMP RESET/SHUTDOWN、QEMU 退出 0，以及重启后的鉴权 API、MCP、原工件字节和新 outbox 投递。全部使用同一生产者工件 `12005130717`，manifest SHA 为 `04be6dd70621aefb14c223a20722ee6fd6f9ccb04405fce69f387ecb7255b60a`；不将这三份成功写成整个矩阵通过。详细首败及范围见 [接续记录](resumption.md)。
+
+显式 CI559 的 AMD64 团队升级原动作观察窗口仍自然崩溃，core 元数据与准确公开 Node SHA 匹配后定位到 V8 `IC::UpdateState`，没有完整栈，根因未闭合。原件及新有界帧链工具的本机／未测边界见 [接续记录](resumption.md#ci559-自然故障的公开位置及后续有界帧链)。普通三个 AMD64 成功不能关闭这个问题。
+
 ## 原要求承接
 
 当前完整规格见 [spec.md](spec.md)，旧原件见 [history](history/README.md)。以下用例进入已批准基础范围时必须实际执行，不能因文档检查或历史成果通过而勾选。

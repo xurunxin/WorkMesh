@@ -26,11 +26,60 @@ def _headers(stream, kinds):
     return machine, size, list(struct.iter_unpack('<IIQQQQQQ', table))
 
 
+def _public_position(address, mappings, segments, binary_size):
+    matches = [(start, pages, name) for start, end, pages, name in mappings if start <= address < end]
+    if len(matches) != 1 or matches[0][2] != b'/usr/local/bin/node':
+        return None
+    start, pages, _ = matches[0]
+    offset = pages[0] * pages[1] + address - start
+    addresses = [virtual + offset - source for kind, flags, source, virtual, _, length, _, _ in segments
+                 if kind == 1 and flags & 1 and source <= offset < source + length <= binary_size]
+    return addresses[0] if len(addresses) == 1 else None
+
+
+def _public_frame_chain(core, size, headers, sp, fp, mappings, segments, binary_size):
+    # Only conventional frame links in the captured, writable stack are read.
+    # No stack scanning, arguments, registers, mapped paths or ASLR values leave
+    # this function. Omitted/invalid frame pointers end this partial observation.
+    frames = []
+    result = {'method': 'frame-pointers', 'frames': frames, 'stopped': 'stack-unavailable'}
+    stacks = [(offset, virtual, length, memory) for kind, flags, offset, virtual, _, length, memory, _ in headers
+              if kind == 1 and flags & 6 == 6 and not flags & 1 and virtual <= sp < virtual + memory]
+    if len(stacks) != 1:
+        return result
+    offset, start, length, memory = stacks[0]
+    for _ in range(12):
+        if not sp <= fp <= sp + 1024 * 1024 or fp % 16 or fp + 16 > start + memory:
+            result['stopped'] = 'frame-link-invalid'
+            return result
+        if fp + 16 > start + length:
+            result['stopped'] = 'stack-bytes-not-captured'
+            return result
+        try:
+            following, return_address = struct.unpack('<QQ', _read(core, offset + fp - start, 16, size))
+        except ValueError:
+            result['stopped'] = 'stack-bytes-not-captured'
+            return result
+        if not fp + 16 <= following <= min(sp + 1024 * 1024, start + memory - 16) or following % 16:
+            result['stopped'] = 'frame-link-invalid'
+            return result
+        # Return addresses designate the following instruction. Attribute the
+        # public caller using its preceding byte, never guess a JIT/private frame.
+        address = _public_position(return_address - 1, mappings, segments, binary_size)
+        if address is None:
+            result['stopped'] = 'caller-outside-public-node'
+            return result
+        frames.append({'lookupNodeElfAddress': address, 'returnSiteNodeElfAddress': address + 1})
+        fp = following
+    result['stopped'] = 'depth-limit'
+    return result
+
+
 def core_location(core, executable):
     # Linux v6.8 elfcore.h, x86 user_64.h, arm64 ptrace.h and binfmt_elf.c:
     # the dumper's NT_PRSTATUS is first; its ELF64 common prefix is 112 bytes.
     machine, size, headers = _headers(core, {4})
-    pc = signal = signal_code = current_signal = None
+    pc = sp = fp = signal = signal_code = current_signal = None
     files = None
     total = 0
     for kind, _, offset, _, _, length, _, _ in headers:
@@ -61,6 +110,8 @@ def core_location(core, executable):
                     raise ValueError('ELF process status truncated')
                 current_signal = struct.unpack_from('<h', desc, 12)[0]
                 pc = struct.unpack_from('<Q', desc, 112 + (16 if machine == 62 else 32) * 8)[0]
+                sp = struct.unpack_from('<Q', desc, 112 + (19 if machine == 62 else 31) * 8)[0]
+                fp = struct.unpack_from('<Q', desc, 112 + (4 if machine == 62 else 29) * 8)[0]
             elif tag == 0x53494749 and signal is None:
                 if len(desc) < 12:
                     raise ValueError('ELF signal information truncated')
@@ -102,4 +153,7 @@ def core_location(core, executable):
         # Both numbers refer to the public, separately checksummed binary.
         # Never export the ASLR address, registers, mapped paths or note bytes.
         result.update(nodeFileOffset=file_offset, nodeElfAddress=addresses[0])
+        mappings = [(begin, end, (pages, page_size), names[index]) for index, (begin, end, pages) in
+                    enumerate(struct.iter_unpack('<QQQ', files[16:table_end]))]
+        result['publicFrameChain'] = _public_frame_chain(core, size, headers, sp, fp, mappings, segments, binary_size)
     return result

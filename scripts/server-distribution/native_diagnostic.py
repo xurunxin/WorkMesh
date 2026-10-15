@@ -31,6 +31,8 @@ def safe_trace(stdout, stderr, returncode):
             'stdoutBytes': len(stdout), 'stderrBytes': len(stderr),
             'sigsegv': 'received signal SIGSEGV' in text or 'terminated with signal SIGSEGV' in text,
             'symbols': [symbol[:160] for symbol in symbols[:40]],
+            'debuggerStages': list(dict.fromkeys(re.findall(
+                r'^WORKMESH_NATIVE_PHASE:(before-binary|after-binary|after-core|after-backtrace)$', text, re.M)))[:4],
             'categories': [name for name, needles in groups.items() if any(needle in combined for needle in needles)],
             'ptraceRejected': 'Operation not permitted' in stderr.decode(errors='replace')}
 
