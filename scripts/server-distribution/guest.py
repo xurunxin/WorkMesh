@@ -22,6 +22,14 @@ STATE = ROOT / 'state.json'
 checks, samples, diagnostics = [], [], {}
 
 
+def progress(profile, stage):
+    assert profile in {'personal', 'team', 'enterprise'}
+    assert stage in {'health-ready', 'business-committed', 'profile-completed'}
+    # The oneshot can be terminated before its final receipt. Keep only fixed
+    # milestones in the bounded serial evidence, never identities or requests.
+    print(json.dumps({'tag': 'ta01-progress', 'profile': profile, 'stage': stage}), flush=True)
+
+
 def command(args, *, expected=0, data=None, timeout=1800, expected_code=None):
     try:
         result = subprocess.run(args, input=data, capture_output=True, timeout=timeout)
@@ -691,6 +699,7 @@ def main():
                     assert not command(['docker', 'ps', '-aq', '--filter', 'label=com.docker.compose.project=ta01-personal']).strip()
                     checks.append('candidateStagedBeforeDeployment')
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
+                progress(profile, 'health-ready')
                 assert not (prefix / 'current.json').exists()
                 if native_diagnostic and profile == 'team':
                     # Prepare while the unchanged duplicate-install and idle
@@ -740,8 +749,10 @@ def main():
                 checks.append('invalidCredentialCannotCommitCurrent')
                 assert install(dist, digest, prefix, config, 'commit', extra=['--validation', str(prefix / 'validation.json')])['status'] == 'installed'
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'already-installed'
+                progress(profile, 'business-committed')
                 upgrade_recovery(dist, manifest, digest, prefix, config, include_failed_health=not native_diagnostic)
                 saved['profiles'].append({'profile': profile, 'status': 'passed', 'checks': checks[start:], 'identity': identity})
+                progress(profile, 'profile-completed')
                 # Keep peak resource competition bounded: each profile's real
                 # journey is independent; all three are restarted for reboot.
                 compose(prefix, 'stop', 'api', 'worker', 'mcp', 'postgres', 'redis', 'minio')

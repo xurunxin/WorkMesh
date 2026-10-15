@@ -22,7 +22,7 @@
 
 新增必需双架构 server-install CI 入口，并同步 ci-policy、结果汇总和入口删除负例。复用现有固定 Ubuntu 完整 TCG guest／QMP 生命周期代码；先准备 Docker 及工具，再对无源码候选关闭外部默认路由、禁止自动 pull，实际证明离线启动闭包。三画像分别建立独有环境，API／MCP／Worker／outbox／限流／工件／完整恢复均在实际安装的候选中验证；隔离 CA、身份与 fake provider 不冒企业生产实网。
 
-明确原 guest image／firmware、实际 kernel、boot_id、CPU／RAM／磁盘和候选／源码／脚本摘要；保留首败、采样、重启与收尾回执。固定资源采样不宣称物理最低配置，不上传含秘密的 guest 磁盘。执行 lint、typecheck、test、integration、conformance 五项及真实示例／恢复 opt-in，核新支持组合和当前 HEAD Required CI；不复用 docs CI 或控制面基线。
+明确原 guest image／firmware、实际 kernel、boot_id、CPU／RAM／磁盘和候选／源码／脚本摘要；保留首败、采样、重启与收尾回执。固定资源采样不宣称物理最低配置，不上传含秘密的 guest 磁盘。 首轮2 vCPU／4 GiB的完整TCG记录保留；ARM64首次安装未通过，数据服务也有连续健康探针超时。下一候选验收环境改为固定4 vCPU／4 GiB作容量对照，现有健康、安装、请求和guest总期限及全部业务／故障／重启断言保持；对照尚未执行，不据此认定CPU是根因或宣称任何物理最低配置。执行 lint、typecheck、test、integration、conformance 五项及真实示例／恢复 opt-in，核新支持组合和当前 HEAD Required CI；不复用 docs CI 或控制面基线。
 
 ## 交付与收尾
 

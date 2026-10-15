@@ -1,0 +1,130 @@
+{
+  "说明": "本机根链lint／typecheck／test通过；integration在M5真实Pi链失败：捕获0、nativeExit0但turn RUNNER_ANSWER_INVALID，不能当成功。Root conformance因首败未执行。源HEAD1a只是起点，当前工作树已有PG-FD修正，全文件起点与661运行输入另绑定；后续Python／文档／证据修订不冒单一干净快照。3容器3卷已按owner／ID收尾。首败保留，原因待核，不套备份／MCP139。",
+  "members": {
+    "results.json": {
+      "bytes": 3573,
+      "sha256": "86b676828488c6674dfe5158afbe67409aa969cacd0df4c2978f9c874ad86def"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "e39c14a9ae393844a57598129dc04c0b1998b0dab5afa98c8a3e7e74c205be83"
+    },
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "lint.log": {
+      "bytes": 5640,
+      "sha256": "c2a2ac6614eb9352fb93f6e90a95324d97298a77592d4ea3f89a55f2fa6453ce"
+    },
+    "typecheck.log": {
+      "bytes": 6166,
+      "sha256": "302d84a5cd8704558d6268fc7d6ea429fe73fcade928077709f7aa8b9470a6c3"
+    },
+    "test.log": {
+      "bytes": 92366,
+      "sha256": "4af5ac1835b1ace3d242fe6e3aa63241d360399213a8a187496e7c47687fe863"
+    },
+    "test-integration.log": {
+      "bytes": 1949802,
+      "sha256": "159940299ce6bf679297b6ed54b0540d55b2a3acf65983642932f5044ad383ef"
+    },
+    "worktree-source-before.json": {
+      "bytes": 2839175,
+      "sha256": "120b2f663f7f38ea4af805665095477b9b1187750d8a5967e2a804526541b32f"
+    },
+    "runtime-input-match-before-push.json": {
+      "bytes": 79274,
+      "sha256": "2046d6141843da988102b8e729e77201e5a3142a40c4f46cdb174f9120add570"
+    },
+    "mcp/pi-ef218e86-b233-4aba-8501-30ef5fc3c992.json": {
+      "bytes": 947,
+      "sha256": "488f276a5af23fcc8cd955e942e99896d5d0893e2ca814dd7bc16193b814ac5e"
+    }
+  },
+  "zipSha256": "180b9e19e241f17b36917aec0f2f18ca9da348172b8666f241be3bc0520895c0",
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-14T23:35:53.830Z",
+      "endedAt": "2026-10-14T23:36:42.614Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-14T23:36:48.746Z",
+      "endedAt": "2026-10-14T23:36:50.104Z",
+      "exitCode": 0
+    },
+    {
+      "label": "lint",
+      "command": "pnpm lint",
+      "startedAt": "2026-10-14T23:36:50.108Z",
+      "endedAt": "2026-10-14T23:38:54.992Z",
+      "exitCode": 0
+    },
+    {
+      "label": "typecheck",
+      "command": "pnpm typecheck",
+      "startedAt": "2026-10-14T23:38:54.994Z",
+      "endedAt": "2026-10-14T23:40:53.675Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test",
+      "command": "pnpm test",
+      "startedAt": "2026-10-14T23:40:53.679Z",
+      "endedAt": "2026-10-14T23:47:10.373Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-14T23:47:10.376Z",
+      "endedAt": "2026-10-15T00:22:57.479Z",
+      "exitCode": 1
+    }
+  ],
+  "owner": "workmesh-docs-59dd1b14-e040-4eb1-8dd9-f4c563ab2cca",
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "4a7b16dbe1a81f8d9b433a8c71a330b41355b27b7f0e3c079768895ceb523d1b",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "01ecc9a6eefc6bb9c95f583587825a543bfb6d205c0f64f450bfcfbfd78efe82",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "18b90794391c6cb65ed0d1e11f6437639d692e92745609eb1ed473d1a91b55e4",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-59dd1b14-e040-4eb1-8dd9-f4c563ab2cca-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-59dd1b14-e040-4eb1-8dd9-f4c563ab2cca-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-59dd1b14-e040-4eb1-8dd9-f4c563ab2cca-s3-data",
+      "absent": true
+    }
+  ],
+  "failedPi": {
+    "sessionId": "90efa76b-17d6-465f-8317-b07dd0568613",
+    "turnId": "ef218e86-b233-4aba-8501-30ef5fc3c992",
+    "captures": 0,
+    "nativeExit": 0,
+    "runtimeMs": 19249.7083
+  }
+}

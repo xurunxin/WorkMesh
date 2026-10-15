@@ -284,3 +284,51 @@ Python AST 与现有边界检查通过；此项尚未完整 guest 实测。正�
 普通ARM64受测1a5e5252a9c306cd3fa61b03fbd58061a09b338f，6,614.94 s，failed。个人首次安装迁移后健康验证失败，stop-unvalidated-runtime实际completed；后续8个已核状态完整保留，API／Worker／MCP全部停止、PG／Redis／S3数据服务健康。见 [索引](../../reviews/ta01-product/ci544-arm64-health-failure-runtime-stopped.json)及 [原件](../../reviews/ta01-product/ci544-arm64-health-failure-runtime-stopped.zip)。14成员与五脚本实核Git摘要。与此前仅intent／状态未知区分，本轮证明该故障后的程序停止，不是AMD64同程序不兼容恢复夹具或完整支持通过。
 
 停止前安装器状态显示MCP健康、API／worker不健康，多角色探针含healthTimeout、exitCode -1；输出只保摘要和分类，不补正文或认定原因。停止后资源快照MemAvailable3,470,948KiB、无swap、负载12.50／16.46／11.96、runnable1／total223，不冒停止前或历史资源状态。业务、限流、升级回退、完整恢复及重启未开始。#544 Required CI失败；原MCP139与ARM64健康问题仍未闭合，新PG输入与正确Node诊断目标须由新候选验证。
+
+## 新根检查首败、恢复通过与 M5 定向复验
+
+新根lint／typecheck／test通过；integration退出1，conformance因首败未执行。M5两个真实Pi Connection联合链在review delegation调用前没有模型请求捕获，runner进程nativeExit0但turn为RUNNER_ANSWER_INVALID；不能以进程退出0算成功。见 [首败索引](../../reviews/ta01-product/resumption-postgres-input-required-first-failure.json)及 [原件](../../reviews/ta01-product/resumption-postgres-input-required-first-failure.zip)。记录起点1a5e525的当前工作树完整摘要与661运行输入，诊断Python／文档后续修订及6c20a93提交另列，不冒一份干净源码。所有3容器3卷已定向收尾。
+
+同一M5用例在新独有环境定向复验通过，原断言和预算不改，另外22项按-t未执行；见 [索引](../../reviews/ta01-product/resumption-m5-pi-targeted-pass.json)及 [原件](../../reviews/ta01-product/resumption-m5-pi-targeted-pass.zip)。临时编排入口首轮缺npm_execpath、尚未创建资源时拒绝，补准确已有pnpm入口后执行；不绕锁定Node／pnpm断言。该局部通过不关闭首轮未知原因，现按原完整integration／conformance入口复验中。
+
+真实PG／S3恢复opt-in在6c20a93源码通过，含完整加密bundle、独立空目标恢复及原合同核验，3容器3卷收尾齐全；见 [索引](../../reviews/ta01-product/resumption-postgres-input-recovery-pass.json)及 [原件](../../reviews/ta01-product/resumption-postgres-input-recovery-pass.zip)。此验证证明实际新输入路径，仍不代无源码guest全矩阵。另行conformance为6/6 adapter fixture通过，不冒原完整integration或外部客户全部完成。
+
+6c20a93的新普通CI #545／显式诊断#546仍在运行；新的正确Node目标、完整guest、ARM64健康根因与正式独审尚未完成。现无新的授权／schema／API事件语义改变，仍不可合入。
+
+## CI #546 AMD64 的正确 Node 目标自然诊断
+
+受测6c20a93c3d7113d2750b8b6265abb06f28283b04，2,318.24 s，diagnostic-only。注册目标Node PID34283、容器init PID34217；个人原前序闭环与团队业务／真实429完成，naturalRun=true、captured=false，没有core。见 [索引](../../reviews/ta01-product/ci546-amd64-node-target-no-crash.json)及 [原件](../../reviews/ta01-product/ci546-amd64-node-target-no-crash.zip)。14成员及五脚本实核Git摘要，8项Linux边界原日志通过。正确选中Node后仍未复现，不证明旧退出139已解决，也不据此归因于读取／并发准备。
+
+本轮未执行新增健康故障、团队升级恢复、企业及完整重启；其非零终态符合诊断模式设计，不满足Required CI。普通#545双架构、#546 ARM64及本机原完整integration／conformance复验仍在进行，正式成果独审未做。
+
+## 原完整 integration／conformance 复验通过
+
+6c20a93当前工作树在原独有编排入口执行完整integration（00:37:52–01:23:29 UTC）和conformance（01:23:29–01:23:32 UTC），均退出0，3容器3卷全部核不存在。见 [索引](../../reviews/ta01-product/resumption-postgres-input-integration-recheck-pass.json)及 [原件](../../reviews/ta01-product/resumption-postgres-input-integration-recheck-pass.zip)。复验结束后661运行输入与首轮五门禁起点原字节一致；诊断Python、文档及证据修订不属此子集，不冒完整同一快照。首轮M5失败及局部复验另保，原断言／预算保持，没有已修其未知根因的声明。
+
+普通integration中的恢复与保留升级opt-in仍为skip；真实恢复已在6c20a93独立执行通过，不将skip倒填PASS。conformance单独为6/6 adapter fixture，真实MCP／Pi组合在integration原入口内另验。新文档静态检查通过90链接／4技能文件／35 REST／11 MCP，不代真实支持。当前双架构连接器普通CI已通过，服务端#545双架构及#546 ARM64仍待终态；三画像完整支持、重启与正式独审未完成。
+
+## CI #545 ARM64 首次安装超时与后续停止快照
+
+普通ARM64受测6c20a93c3d7113d2750b8b6265abb06f28283b04，6,481.70 s，failed。个人首次安装外层sh达到原1,800 s期限；迁移完成、健康失败，stop-unvalidated-runtime仍为intent。见 [索引](../../reviews/ta01-product/ci545-arm64-health-timeout-stop-intent.json)及 [原件](../../reviews/ta01-product/ci545-arm64-health-timeout-stop-intent.zip)。14成员及五脚本实核Git摘要。后续8个准确状态显示API／Worker／MCP全部停止、PG／Redis／S3健康；实际状态与journal intent分别保留，不补写completed。
+
+安装器较早投影显示API／Worker不健康、MCP starting；数据服务也有最近三条Docker healthTimeout。API／Worker日志仅有字节／摘要，不能由239字节或94字节猜正文。外层超时后的资源快照MemAvailable3,426,044KiB、无swap、负载29.43／33.26／20.44、runnable20／total277，不代健康前或历史状态，不认定原因。未到业务、限流、升级恢复、完整重启或自然捕获；MCP139与ARM启动问题继续独立未闭合。#545 AMD64及#546 ARM64仍在运行，不能以其他门禁绿色合入。
+
+## 下一候选的固定资源容量对照
+
+当前6c20a93的2 vCPU／4 GiB首败记录保持。ARM64 #545包含数据服务在内的多角色近期探针均出现Docker healthTimeout，仍没有CPU为根因的证据。下一候选将完整TCG guest固定为4 vCPU／4 GiB，两架构采用同一固定设置并在原件记录；尚未执行、不预写PASS。原Docker探针3秒、HTTP2秒、健康180秒、安装外层1,800秒及guest总150分钟不变，三画像、升级故障、备份恢复、业务与整机重启断言全部保持。
+
+这只调整既有CI内独有guest的容量对照，不注册设备／runner，不连接生产、不改变程序或保证，不宣称物理最低配置，也不将旧2 vCPU结果改写为通过。当前#545 AMD64与#546 ARM64仍使用原2 vCPU，等待其真实终态后才推送后续候选，保全部原件。
+
+## CI #546 ARM64 健康首败与停止完成
+
+受测6c20a93c3d7113d2750b8b6265abb06f28283b04，2 vCPU／4 GiB，6,825.33 s，diagnostic-only。个人首次安装迁移完成、健康失败；stop-unvalidated-runtime为completed，后续8状态证实API／Worker／MCP已停、数据服务健康。见 [索引](../../reviews/ta01-product/ci546-arm64-health-failure-runtime-stopped.json)及 [原件](../../reviews/ta01-product/ci546-arm64-health-failure-runtime-stopped.zip)。14成员、五脚本均实核准确Git摘要；与#545停止intent分别记录，不把较晚快照倒填更早动作。
+
+停止后MemAvailable3,458,168KiB、无swap、负载20.11／24.96／16.13、runnable1／total224；不认定启动原因。未到团队、正确Node目标注册、自然捕获或业务／恢复／重启，不套AMD64局部通过。下一4 vCPU容量对照仍未运行；#545 AMD64仍等待终态，基础产品尚未验收完成。
+
+下一候选另在serial输出固定ta01-progress标记：每画像仅health-ready、business-committed、profile-completed，未知画像／阶段在输出前拒绝；最多9条、没有身份、路径、凭据或请求正文。服务被终止时可从原serial核最后完成阶段，不能把标记当整机重启或完整支持通过。没有增加网络回调、变更成功判定或延长期限；少量观察开销仍存在，容量对照不冒CPU单因素根因实验。9个固定输出及2个未知输入拒绝的隔离函数检查、两Python AST通过，没有guest实测。
+
+## CI #545 AMD64 达到总期限且无阶段回执
+
+普通AMD64受测6c20a93c3d7113d2750b8b6265abb06f28283b04，2 vCPU／4 GiB，9,000.77 s，failed／TimeoutError：原150分钟总期限已到，result的receipts为空。见 [索引](../../reviews/ta01-product/ci545-amd64-total-budget-no-receipts.json)及 [原件](../../reviews/ta01-product/ci545-amd64-total-budget-no-receipts.zip)。14成员及五脚本实核Git摘要。serial有cloud-init完成、容器启动和安装服务最终失败行，但没有服务失败的具体原因或画像／动作完成回执；不由启动行补造业务、升级、备份恢复或重启通过，也不能据此关闭MCP139。
+
+#545两架构完整模式均失败。旧2 vCPU运行已全部结束并保原件，后续才推送已准备的4 vCPU固定容量对照与有界serial进度标记；全部原期限／成功断言保持，新候选尚未实测，正式成果独审未做，当前不能合入。

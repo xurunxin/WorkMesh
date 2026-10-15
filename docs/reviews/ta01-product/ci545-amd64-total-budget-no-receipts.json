@@ -1,0 +1,102 @@
+{
+  "说明": "AMD64完整模式达到原150分钟总期限，result无阶段回执；serial显示安装服务最终失败，原因及完成画像／动作未知。不由容器启动行推断业务、升级、恢复或重启通过，不冒MCP139已修复；新进度标记尚未在此快照存在。",
+  "runId": 38659322165,
+  "jobId": 116176838228,
+  "artifactId": 11945047884,
+  "sourceHead": "6c20a93c3d7113d2750b8b6265abb06f28283b04",
+  "sourceTree": "54583c6d7b3c1d18d8ccb86465bd3b3153c7d1cd",
+  "status": "failed",
+  "errorType": "TimeoutError",
+  "totalSeconds": 9000.766000879,
+  "guestVcpus": 2,
+  "guestRamMiB": 4096,
+  "manifestSha256": "c122c4dbd6ab026085563061045adca070887b63c5fefd1dc420e165cff925ba",
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "8125afe5cefc47f57884946824c3f20ea34a6c677572efb953d101a7d04c4e8d",
+      "resultSha256": "8125afe5cefc47f57884946824c3f20ea34a6c677572efb953d101a7d04c4e8d"
+    },
+    "run.py": {
+      "sha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860",
+      "resultSha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "c94acb51651abe645638bfff397d085e13ba786c94ee716a72a8096e8755d29a",
+      "resultSha256": "c94acb51651abe645638bfff397d085e13ba786c94ee716a72a8096e8755d29a"
+    },
+    "guest.py": {
+      "sha256": "428a97e960a3d17a669eb257f194169031767954c4481afb78bf1e34d64027de",
+      "resultSha256": "428a97e960a3d17a669eb257f194169031767954c4481afb78bf1e34d64027de"
+    },
+    "core_pipe.py": {
+      "sha256": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c",
+      "resultSha256": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c"
+    }
+  },
+  "artifactZipSha256": "f184753e9c8c05b27b09daac7918d1d7d37046c5c2ee40b36fa98a95a8888d38",
+  "selectedZipSha256": "f4dfd57e8a59e15e28947d7915310095cd7b6b7e6470e3f6cb442ff03f0fdfa7",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "60fc75fdc9ee1e10424781957ad2a7d535d93423ac3d47da1db2984cfe9acb89",
+      "bytes": 68017
+    },
+    "server-install/guest.log": {
+      "sha256": "fce92360e46b9993c6b33e2c75f0a9bf19f467309c07edc9c4a2bb1bc3285ec9",
+      "bytes": 396
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "f5bb9d1c3ac3bb567a7daba1d2af3d67c4a2a5f43d672760048bf3d447be59a7",
+      "bytes": 2174
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "1c9f446386da7fb13e7c6af8f4cd2f254f16add80eb5bad48d0418a2cc1a3ca5",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "c122c4dbd6ab026085563061045adca070887b63c5fefd1dc420e165cff925ba",
+      "bytes": 12627
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "3d05864adaa7a067c6dd8f488b76741afad7cdf90e6cdbe6566339424de57b0f",
+      "bytes": 106
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "c477bbea2b848f8eea818d382e6b180b74b283606ca0d386e6397955ac5f3057",
+      "bytes": 69
+    },
+    "server-install/result.json": {
+      "sha256": "a74cc4be7ff17b9d114e37526e1013a68d38338ec02f1008592498f5510d4b78",
+      "bytes": 3365
+    },
+    "server-install/serial.log": {
+      "sha256": "b0c9964e2e6dee7ab3150cf52e13b91207caa162da71212ea9987d9b5f854246",
+      "bytes": 101603
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "68f901330942cc360d51bfe39844fc9f814bc469caa0032ad876eb396e047159",
+      "bytes": 264
+    },
+    "server-install/source-after.txt": {
+      "sha256": "e7da6524374027cdb123e50bef7c0300f5094bedd7e23c13d465d4b7ea475f82",
+      "bytes": 83
+    },
+    "server-install/source-install.log": {
+      "sha256": "449c2e1a108cb2c267bc77a3ab72c6eedf1ccd57fa2d1ff87b3f73ab1a5c78bc",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "e7da6524374027cdb123e50bef7c0300f5094bedd7e23c13d465d4b7ea475f82",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "33167fcf37dfe6f1e68d8b0449fd59f74f31438edb939f4993cdb8a5daad3442",
+      "bytes": 3303
+    }
+  },
+  "receipts": [],
+  "qmpEventCounts": {
+    "NIC_RX_FILTER_CHANGED": 1,
+    "RTC_CHANGE": 14,
+    "SHUTDOWN": 1
+  }
+}

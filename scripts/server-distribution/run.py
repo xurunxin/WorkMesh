@@ -15,6 +15,7 @@ import time
 import urllib.request
 
 REPO = Path(__file__).resolve().parents[2]
+GUEST_VCPUS = 4
 spec = importlib.util.spec_from_file_location("tcg_research_common", REPO / "docs/reviews/b-ship/tcg/tools/run.py")
 common = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(common)
@@ -58,7 +59,7 @@ def main():
     began = time.monotonic()
     result = {"sourceHead": options.source, "sourceTree": manifest["source"]["tree"], "arch": options.arch,
               "manifestSha256": sha(artifacts / "manifest.json"), "archiveSha256": sha(artifacts / "manifest.json"),
-              "accelerator": "tcg", "guestRamMiB": 4096, "guestVcpus": 2,
+              "accelerator": "tcg", "guestRamMiB": 4096, "guestVcpus": GUEST_VCPUS,
               "scripts": {p.name: sha(p) for p in Path(__file__).parent.glob("*.py")},
               "startedUtc": time.time(), "status": "running", "nativeDiagnostic": options.native_diagnostic}
 
@@ -159,7 +160,7 @@ WantedBy=cloud-init.target
         seed = root / "seed.iso"
         execute(["genisoimage", "-quiet", "-output", str(seed), "-volid", "cidata", "-joliet", "-rock", str(root / "user-data"), str(root / "meta-data")])
         qmp = root / "qmp.sock"
-        args = ["qemu-system-" + machine, "-accel", "tcg", "-m", "4096", "-smp", "2", "-display", "none",
+        args = ["qemu-system-" + machine, "-accel", "tcg", "-m", "4096", "-smp", str(GUEST_VCPUS), "-display", "none",
                 "-serial", "file:" + str(root / "serial.log"), "-qmp", "unix:" + str(qmp) + ",server=on,wait=off",
                 "-netdev", "user,id=net0", "-device", "virtio-net-pci,netdev=net0"]
         if options.arch == "arm64":
