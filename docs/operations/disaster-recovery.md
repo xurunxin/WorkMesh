@@ -34,6 +34,12 @@ backup destination parent must exist, be writable only by the operator/tool
 UID, and have enough free space for the encrypted custom dump plus all object
 versions. Generate a distinct 32-byte backup key:
 
+数据库工具从只读文件描述符读取输入，成功要求工具退出 0、stdio 和完整输出文件关闭。
+输入错误、工具非零退出或输出目标已存在时仍拒绝。`pg_restore --list` 只列归档目录，
+不验证完整恢复结果；应按下文执行独立空目标恢复及数据、对象和秘密核验。此次输入边界
+修正已有真实子进程回归，最新完整 PostgreSQL／guest 复验状态见
+[TA01 接续记录](../plan/ta01-self-hosted-deployment/resumption.md)。
+
 ```powershell
 $env:WORKMESH_BACKUP_ENCRYPTION_KEY = node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"
 ```

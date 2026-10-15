@@ -1,6 +1,7 @@
 import { spawn } from 'node:child_process'
 import { createDecipheriv, createHash } from 'node:crypto'
-import { createReadStream, createWriteStream } from 'node:fs'
+import { createWriteStream } from 'node:fs'
+import { open } from 'node:fs/promises'
 import { Pool, type PoolClient } from 'pg'
 import type { RecoveryCount, RecoveryLedgerEntry, RestoreObjectMapping } from './types.js'
 
@@ -139,56 +140,71 @@ const toolDatabaseConnection = (databaseUrl: string): Readonly<{ databaseUrl: st
   return { databaseUrl: url.toString(), password }
 }
 
-const runPostgresTool = async (
+export const runPostgresTool = async (
   command: string,
   args: readonly string[],
   options: Readonly<{ stdinPath?: string; stdoutPath?: string; password?: string }> = {},
-): Promise<void> => new Promise((resolve, reject) => {
-  const container = process.env.WORKMESH_POSTGRES_TOOL_CONTAINER
-  const executable = container ? 'docker' : command
-  const actualArgs = container
-    ? ['exec', ...(options.stdinPath ? ['-i'] : []), ...(options.password ? ['--env', 'PGPASSWORD'] : []), container, command, ...args]
-    : [...args]
-  const child = spawn(executable, actualArgs, {
-    stdio: ['pipe', 'pipe', 'pipe'],
-    windowsHide: true,
-    env: options.password ? { ...process.env, PGPASSWORD: options.password } : process.env,
-  })
-  let stderr = ''
-  const input = options.stdinPath ? createReadStream(options.stdinPath) : undefined
-  const output = options.stdoutPath ? createWriteStream(options.stdoutPath, { flags: 'wx', mode: 0o600 }) : undefined
-  if (input) input.pipe(child.stdin)
-  else child.stdin.end()
-  if (output) child.stdout.pipe(output)
-  else child.stdout.resume()
-  child.stderr.on('data', chunk => {
-    if (stderr.length < 64_000) stderr += String(chunk)
-  })
-  let settled = false
-  const fail = (error: Error, terminate = false): void => {
-    if (settled) return
-    settled = true
-    if (terminate && child.exitCode === null && child.signalCode === null) child.kill()
-    reject(error)
+): Promise<void> => {
+  // pg_restore --list can finish after its TOC, before consuming the payload.
+  // Give the child the read-only file descriptor instead of writing into a pipe
+  // that it may close early. Nonzero tool exits still fail the operation.
+  const input = options.stdinPath ? await open(options.stdinPath, 'r').catch((error: unknown) => {
+    throw new Error(`RECOVERY_POSTGRES_TOOL_INPUT_FAILED:${error instanceof Error ? error.message : 'unknown'}`)
+  }) : undefined
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const container = process.env.WORKMESH_POSTGRES_TOOL_CONTAINER
+      const executable = container ? 'docker' : command
+      const actualArgs = container
+        ? ['exec', ...(options.stdinPath ? ['-i'] : []), ...(options.password ? ['--env', 'PGPASSWORD'] : []), container, command, ...args]
+        : [...args]
+      const stdio: [number | 'ignore', 'pipe', 'pipe'] = [input?.fd ?? 'ignore', 'pipe', 'pipe']
+      const child = spawn(executable, actualArgs, {
+        stdio,
+        windowsHide: true,
+        env: options.password ? { ...process.env, PGPASSWORD: options.password } : process.env,
+      })
+      let settled = false
+      const fail = (error: Error, terminate = false): void => {
+        if (settled) return
+        settled = true
+        if (terminate && child.exitCode === null && child.signalCode === null) child.kill()
+        reject(error)
+      }
+      child.once('error', error => fail(new Error(`RECOVERY_POSTGRES_TOOL_START_FAILED:${command}:${error.message}`)))
+      const stdout = child.stdout
+      const stderrStream = child.stderr
+      if (!stdout || !stderrStream) {
+        fail(new Error(`RECOVERY_POSTGRES_TOOL_START_FAILED:${command}:stdio`), true)
+        return
+      }
+      let stderr = ''
+      const output = options.stdoutPath ? createWriteStream(options.stdoutPath, { flags: 'wx', mode: 0o600 }) : undefined
+      if (output) stdout.pipe(output)
+      else stdout.resume()
+      stderrStream.on('data', chunk => {
+        if (stderr.length < 64_000) stderr += String(chunk)
+      })
+      output?.once('error', error => fail(new Error(`RECOVERY_POSTGRES_TOOL_OUTPUT_FAILED:${error.message}`), true))
+      child.once('close', (code, signal) => {
+        if (settled) return
+        if (code !== 0) {
+          fail(new Error(`RECOVERY_POSTGRES_TOOL_FAILED:${command}:${code ?? signal ?? 'unknown'}:${stderr.trim()}`))
+          return
+        }
+        const complete = (): void => {
+          if (settled) return
+          settled = true
+          resolve()
+        }
+        if (output && !output.closed) output.once('close', complete)
+        else complete()
+      })
+    })
+  } finally {
+    await input?.close()
   }
-  input?.once('error', error => fail(new Error(`RECOVERY_POSTGRES_TOOL_INPUT_FAILED:${error.message}`), true))
-  output?.once('error', error => fail(new Error(`RECOVERY_POSTGRES_TOOL_OUTPUT_FAILED:${error.message}`), true))
-  child.once('error', error => fail(new Error(`RECOVERY_POSTGRES_TOOL_START_FAILED:${command}:${error.message}`)))
-  child.once('exit', (code, signal) => {
-    if (settled) return
-    if (code !== 0) {
-      fail(new Error(`RECOVERY_POSTGRES_TOOL_FAILED:${command}:${code ?? signal ?? 'unknown'}:${stderr.trim()}`))
-      return
-    }
-    const complete = (): void => {
-      if (settled) return
-      settled = true
-      resolve()
-    }
-    if (output && !output.closed) output.once('close', complete)
-    else complete()
-  })
-})
+}
 
 export const createCustomDump = async (databaseUrl: string, destination: string): Promise<void> => {
   const connection = toolDatabaseConnection(databaseUrl)

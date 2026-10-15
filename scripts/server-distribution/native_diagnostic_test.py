@@ -6,12 +6,56 @@ import unittest
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
-from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity, binary_hash
+from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity, binary_hash, node_process_pid
 from run import valid_receipt, complete_reboot_checks
 from core_pipe import memory_core
 
 
 class TracePrivacy(unittest.TestCase):
+    def test_container_init_cannot_be_registered_as_the_node_program(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / 'proc/100'
+            expected = target / 'root/usr/local/bin/node'
+            expected.parent.mkdir(parents=True)
+            expected.write_bytes(b'owned Node executable')
+            (target / 'task/100').mkdir(parents=True)
+            children = target / 'task/100/children'
+            children.write_text('101')
+
+            def process(pid, parent, node=False):
+                path = root / 'proc' / str(pid)
+                path.mkdir(exist_ok=True)
+                fields = ['S', str(parent)] + ['0'] * 17 + ['123']
+                (path / 'stat').write_text(str(pid) + ' (private name (ignored)) ' + ' '.join(fields))
+                if node:
+                    os.link(expected, path / 'exe')
+                else:
+                    (path / 'exe').write_bytes(b'container init')
+
+            process(100, 1)
+            process(101, 100, True)
+            with patch('native_diagnostic.Path', side_effect=lambda value: root / str(value).lstrip('/')):
+                self.assertEqual(node_process_pid(100), 101)
+                children.write_text('')
+                with self.assertRaises(ValueError):
+                    node_process_pid(100)
+                process(102, 999, True)
+                children.write_text('102')
+                with self.assertRaises(ValueError):
+                    node_process_pid(100)
+                process(103, 100, True)
+                children.write_text('101 103')
+                with self.assertRaises(ValueError):
+                    node_process_pid(100)
+                children.write_text('101')
+                (target / 'exe').unlink()
+                os.link(expected, target / 'exe')
+                with self.assertRaises(ValueError):
+                    node_process_pid(100)
+                children.write_text('')
+                self.assertEqual(node_process_pid(100), 100)
+
     def test_each_reboot_profile_requires_actual_backend_evidence(self):
         required = ['authenticatedApiAfterReboot', 'authenticatedMcpAfterReboot',
                     'artifactBytesAfterReboot', 'newOutboxDeliveredAfterReboot']

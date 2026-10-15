@@ -566,6 +566,21 @@ def failed_health_stops_runtime(dist, manifest, prefix, config, original_volumes
     compose(prefix, 'up', '-d', '--pull', 'never', '--wait', '--wait-timeout', '180', 'api', 'worker', 'mcp')
 
 
+def prepare_native_watcher(prefix, manifest):
+    from native_diagnostic import NativeCrashWatcher, node_process_pid
+    release = json.loads((prefix / 'pending.json').read_text())
+    ids = command(['docker', 'ps', '-q', '--no-trunc', '--filter',
+                   'label=com.docker.compose.project=' + release['project']], timeout=30).split()
+    containers = json.loads(command(['docker', 'inspect', *ids], timeout=30))
+    mcp = [entry for entry in containers if entry['Config']['Labels'].get('com.docker.compose.service') == 'mcp'
+           and entry['Config']['Labels'].get('io.workmesh.installation') == release['installationId']
+           and entry['Config']['Labels'].get('io.workmesh.installation-root') == hashlib.sha256(str(prefix).encode()).hexdigest()]
+    assert len(mcp) == 1 and mcp[0]['Image'] in [manifest['images']['mcp']['id'], manifest['images']['mcp']['archiveId']]
+    assert mcp[0]['HostConfig']['ReadonlyRootfs'] is True
+    init_pid = mcp[0]['State']['Pid']
+    return NativeCrashWatcher(node_process_pid(init_pid), container_init_pid=init_pid)
+
+
 def main():
     servers = []
     prefix = None
@@ -677,20 +692,38 @@ def main():
                     checks.append('candidateStagedBeforeDeployment')
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 assert not (prefix / 'current.json').exists()
-                assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
-                measurement(prefix, 'idle')
-                start = len(checks)
                 if native_diagnostic and profile == 'team':
-                    from native_diagnostic import NativeCrashWatcher
-                    release = json.loads((prefix / 'pending.json').read_text())
-                    ids = command(['docker', 'ps', '-q', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + release['project']]).split()
-                    containers = json.loads(command(['docker', 'inspect', *ids]))
-                    mcp = [entry for entry in containers if entry['Config']['Labels'].get('com.docker.compose.service') == 'mcp'
-                           and entry['Config']['Labels'].get('io.workmesh.installation') == release['installationId']
-                           and entry['Config']['Labels'].get('io.workmesh.installation-root') == hashlib.sha256(str(prefix).encode()).hexdigest()]
-                    assert len(mcp) == 1 and mcp[0]['Image'] in [manifest['images']['mcp']['id'], manifest['images']['mcp']['archiveId']]
-                    assert mcp[0]['HostConfig']['ReadonlyRootfs'] is True
-                    debugger = NativeCrashWatcher(mcp[0]['State']['Pid'])
+                    # Prepare while the unchanged duplicate-install and idle
+                    # measurement run, rather than adding Docker calls directly
+                    # before business requests. Never await a late watcher and
+                    # then claim the original request timing was preserved.
+                    with ThreadPoolExecutor(max_workers=1) as capture_pool:
+                        capture = capture_pool.submit(prepare_native_watcher, prefix, manifest)
+                        try:
+                            assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
+                            measurement(prefix, 'idle')
+                            if not capture.done():
+                                diagnostics['nativePreparation'] = 'not-ready-before-business'
+                                raise RuntimeError('native watcher not ready before business')
+                            debugger = capture.result()
+                        except BaseException:
+                            # Both Docker reads have 30 s bounds. A completed
+                            # watcher must restore only its successful settings,
+                            # even if the existing measurement itself failed.
+                            try:
+                                watcher = capture.result()
+                            except Exception as preparation_error:
+                                diagnostics['nativePreparationErrorType'] = type(preparation_error).__name__
+                            else:
+                                try:
+                                    watcher.restore()
+                                except Exception as restoration_error:
+                                    diagnostics['nativeRestorationErrorType'] = type(restoration_error).__name__
+                            raise
+                else:
+                    assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
+                    measurement(prefix, 'idle')
+                start = len(checks)
                 identity = journey(prefix, config, certificates)
                 if native_diagnostic and profile == 'team':
                     trace = debugger.finish()

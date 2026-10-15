@@ -58,8 +58,35 @@ def binary_hash(pid):
     return digest.hexdigest()
 
 
+def node_process_pid(container_pid):
+    assert isinstance(container_pid, int) and container_pid > 0
+    proc = Path('/proc')
+    target = proc / str(container_pid)
+    expected = (target / 'root/usr/local/bin/node').stat()
+    children = (target / 'task' / str(container_pid) / 'children').read_text().split()
+    if len(children) > 16:
+        raise ValueError('native target process tree is ambiguous')
+    matches = []
+    for pid in [container_pid, *map(int, children)]:
+        if pid < 1:
+            raise ValueError('native target PID invalid')
+        try:
+            process = proc / str(pid)
+            fields = (process / 'stat').read_text().rsplit(')', 1)[1].split()
+            if pid != container_pid and int(fields[1]) != container_pid:
+                continue
+            executable = (process / 'exe').stat()
+            if (executable.st_dev, executable.st_ino) == (expected.st_dev, expected.st_ino):
+                matches.append(pid)
+        except (OSError, IndexError):
+            continue
+    if len(matches) != 1:
+        raise ValueError('native target must be one owned Node process')
+    return matches[0]
+
+
 class NativeCrashWatcher:
-    def __init__(self, pid):
+    def __init__(self, pid, *, container_init_pid=None):
         import json
         assert isinstance(pid, int) and pid > 1
         memory = Path('/proc/meminfo').read_text()
@@ -68,10 +95,12 @@ class NativeCrashWatcher:
         self.settings = {Path('/proc/sys/kernel') / name: (Path('/proc/sys/kernel') / name).read_text()
                          for name in ['core_pattern', 'core_pipe_limit']}
         self.changed = []
+        self.identity = process_identity(pid)
+        self.container_init_pid = container_init_pid
         owner = Path('/opt/server-install/core-owner.json')
         with owner.open('x') as output:
             os.chmod(owner, 0o600)
-            json.dump(process_identity(pid), output)
+            json.dump(self.identity, output)
         try:
             for name, value in [('core_pipe_limit', '1\n'),
                                 ('core_pattern', '|/usr/bin/python3 /opt/server-install/core_pipe.py %P\n')]:
@@ -90,12 +119,15 @@ class NativeCrashWatcher:
     def finish(self):
         import json
         try:
+            registration = {'registeredTarget': self.identity}
+            if self.container_init_pid is not None:
+                registration['containerInitPid'] = self.container_init_pid
             result = Path('/root/server-install/native-core-trace.json')
             for _ in range(90):
                 if result.exists():
-                    return json.loads(result.read_text())
+                    return {**json.loads(result.read_text()), **registration}
                 time.sleep(1)
-            return {'naturalRun': True, 'captured': False}
+            return {'naturalRun': True, 'captured': False, **registration}
         finally:
             self.restore()
 

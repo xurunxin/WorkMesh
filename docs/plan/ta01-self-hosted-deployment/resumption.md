@@ -248,3 +248,39 @@ Python AST 与现有边界检查通过；此项尚未完整 guest 实测。正�
 实际采集片段的本机夹具见 [索引](../../reviews/ta01-product/resumption-guest-state-projection-check.json)：三个日志分类器均超时，仍保全部三角色状态、排除无归属对象与异常正文。首轮夹具漏注入 allowed，NameError 未执行完整片段；补测试输入后通过，未因此改产品代码。夹具没有执行 Docker／guest，也没有覆盖 Linux proc 实际读取。
 
 本地六个有据镜像已定向收尾，见 [回执](../../reviews/ta01-product/resumption-local-image-cleanup.json)。先核旧候选源码、准确标签／完整ID与既有账本，探针另核owner；全量容器无消费者后逐项无force删除，再核No such image。共享依赖镜像、其他容器／镜像／卷保留，不prune、不宣称物理净释放。远端CI使用独立runner，不依赖本地已删对象。
+
+本任务旧候选的重复解包目录另已收尾，见 [回执](../../reviews/ta01-product/resumption-local-extraction-cleanup.json)。33个文件逐项核与本地完整ZIP的字节、大小及清单摘要一致；删除前核准确工作区路径、无reparse／进程／容器挂载引用，再按原目标删除。完整ZIP仍在本地保留，作为该旧实验的恢复来源，不是最终交付候选。没有删旧工作区、历史受拒目标或唯一候选副本，不宣称物理净释放。
+
+## CI #543 AMD64 的低读取自然诊断
+
+受测源码e4124a49b4efce3c9b39702324d3d8646fe70532，4,991.48 s，diagnostic-only。个人原闭环及团队业务／真实429完成，naturalRun=true、captured=false，未取得core；见 [索引](../../reviews/ta01-product/ci543-amd64-cheap-identity-no-crash.json)及 [原件](../../reviews/ta01-product/ci543-amd64-cheap-identity-no-crash.zip)。14个成员及五份Python脚本与准确Git源码摘要一致；Linux身份／匿名RAM边界7项原日志通过。未运行新增健康故障、团队升级恢复、企业或整机重启，不关闭正常模式退出139，也不满足Required CI。该轮ARM64仍在运行。
+
+减少完整程序读取后仍未复现，不能将先前未复现归因于程序散列。后续显式诊断将准确MCP进程准备与已有重复安装／空闲测量并行；业务请求前不再串行增加Docker检查。安装UUID／根哈希／实际镜像／只读根／PID与程序身份门禁不变，两次只读Docker调用各限30秒。准备未及时完成则明确拒绝此次诊断，不等到准备完成后继续请求并冒原时机；测量或准备失败保首败，已成功设置只恢复一次，受拒目标不重试。并发准备本身仍有观察影响，尚未量化，不冒故障原因或完整时序等价。
+
+4项实际调度片段的本机夹具及AST、原7项边界检查通过，见 [索引](../../reviews/ta01-product/resumption-async-native-preparation-check.json)。夹具没有真实线程／Docker／Linux内核或guest实测，新路径尚待候选。当前普通CI #544受测1a5e5252a9c306cd3fa61b03fbd58061a09b338f，不包含异步准备；已有根源码、API／Worker／数据库及灾备等已结束门禁通过，服务端双架构和ARM64连接器仍未结束，Required CI未通过。
+
+## CI #543 ARM64 与 #544 AMD64 的独立首败
+
+#543 ARM64受测e4124a49b4efce3c9b39702324d3d8646fe70532，6,791.53 s，diagnostic-only。个人首次安装达到1,800 s期限；迁移完成、健康intent，容器状态采集不可得，未到团队或原生捕获。见 [索引](../../reviews/ta01-product/ci543-arm64-personal-health-timeout.json)及 [原件](../../reviews/ta01-product/ci543-arm64-personal-health-timeout.zip)。runnable44／total446、负载51.71／30.24／16.61、MemAvailable3,166,984KiB、无swap是当时快照，不认定原因。
+
+普通#544 AMD64受测1a5e5252a9c306cd3fa61b03fbd58061a09b338f，3,494.98 s。个人业务／429及首轮升级、中断候选负例完成；随后兼容回退前complete-backup失败，失败候选摘要与原始manifest一致。见 [索引](../../reviews/ta01-product/ci544-amd64-personal-backup-epipe.json)及 [原件](../../reviews/ta01-product/ci544-amd64-personal-backup-epipe.zip)。实际分类为unhandledErrorEvent／EPIPE、stderr600字节及0cf869f6摘要，没有原正文；8个已核容器状态完整保留，API／Worker／MCP当前健康、无重启。未进入团队、新健康故障或重启，不当MCP139解决。两份原件各14成员及五脚本均实核准确Git摘要。
+
+## PostgreSQL 工具的提前关闭输入边界
+
+源码中runPostgresTool将文件流写入子进程stdin，却未处理该Writable的error。真实Node子进程只读32MiB文件开头后退出0，原父进程出现未处理EPIPE、退出1；见 [回执](../../reviews/ta01-product/resumption-postgres-input-fd-probe.json)。这证明实现缺陷，与#544分类相符，但不还原其未保正文的具体子阶段。[PG16说明](https://www.postgresql.org/docs/16/app-pgrestore.html)中 --list 仅列归档目录；该检查不代完整恢复。
+
+现传递只读文件FD作为stdin、关闭父进程FD，并等子进程close和输出文件close后确认成功；非零退出、输入失败、目标已存在仍拒绝，没有吞掉工具错误。[Node22.19说明](https://nodejs.org/download/release/v22.19.0/docs/api/child_process.html)区分exit与stdio关闭，并支持传递FD。4项真实子进程回归通过；首轮夹具cwd错误、类型检查nullable错误和大Buffer深比较超时均保留，修正后类型通过，使用同字节Buffer.equals、原5秒预算保持。新根lint／typecheck／test已过，真实integration仍在运行；这些命令读取当前工作树，不能把起点Git HEAD冒为干净受测快照。
+
+## 原生诊断须区分容器初始化进程与 Node
+
+两份Compose均init:true，旧准备直接取Docker State.Pid，没有识别Node。[Docker说明](https://docs.docker.com/engine/containers/multi-service_container/)指出init是容器主进程。本机真实Node22实验及Docker top确认State.Pid为docker-init，Node为其直属子PID；两者exe不同，Node匹配镜像内 /usr/local/bin/node。见 [回执](../../reviews/ta01-product/resumption-native-init-pid-proof.json)。本机只证明PID层级，未复现MCP崩溃；首次日志未就绪和不存在断言大小写错误保留，容器已成功收尾、没有重复删除，共享镜像保留。
+
+后续准备在核安装UUID／根哈希／实际镜像／只读根后，从已核主PID及其直属子进程中，按受信Node文件device／inode选择唯一Node；PPID不符、缺失、歧义均拒绝，不读取argv／环境，也不回退选择init。继续登记启动tick／程序身份，回执即使未捕获也保注册对象及容器主PID；core预算保持，8项Python边界通过，实际新guest捕获仍待验证。旧原件的注册对象摘要不改写为当前Node摘要，先前GDB无栈／captured=false不能证明Node未崩溃，更不能认定程序读取时机是根因。
+
+根五门禁开始时保存完整工作树文件摘要；后续仅诊断Python及证据／文档有修订，TypeScript运行源码保持。交付将区分该起点与后续诊断快照，不拼成单一干净候选通过。#544 ARM64仍在运行，最新Required CI、全矩阵和正式独审仍未完成。
+
+## CI #544 ARM64 的健康首败与实际停止
+
+普通ARM64受测1a5e5252a9c306cd3fa61b03fbd58061a09b338f，6,614.94 s，failed。个人首次安装迁移后健康验证失败，stop-unvalidated-runtime实际completed；后续8个已核状态完整保留，API／Worker／MCP全部停止、PG／Redis／S3数据服务健康。见 [索引](../../reviews/ta01-product/ci544-arm64-health-failure-runtime-stopped.json)及 [原件](../../reviews/ta01-product/ci544-arm64-health-failure-runtime-stopped.zip)。14成员与五脚本实核Git摘要。与此前仅intent／状态未知区分，本轮证明该故障后的程序停止，不是AMD64同程序不兼容恢复夹具或完整支持通过。
+
+停止前安装器状态显示MCP健康、API／worker不健康，多角色探针含healthTimeout、exitCode -1；输出只保摘要和分类，不补正文或认定原因。停止后资源快照MemAvailable3,470,948KiB、无swap、负载12.50／16.46／11.96、runnable1／total223，不冒停止前或历史资源状态。业务、限流、升级回退、完整恢复及重启未开始。#544 Required CI失败；原MCP139与ARM64健康问题仍未闭合，新PG输入与正确Node诊断目标须由新候选验证。
