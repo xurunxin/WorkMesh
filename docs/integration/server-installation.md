@@ -8,6 +8,8 @@
 
 验收助手现先上报已构造的安全故障摘要，再继续原范围的容器诊断，避免摘要等到总期限后才丢失。diagnosticsPending=true 不允许验收通过；只收到这份失败回执、未收最终诊断也仍失败，原总期限保持。新增55项本机检查不能代新候选真实guest验证，更不代表139或迟响应根因已修复。
 
+普通 CI564 绑定 `5371f16`，双架构生产者已核真实55项Python和16项安装单元通过，完整guest仍在运行。当前修正仅保首败证据；原生Linux小组件确认资格处理成本，有限未崩溃样本不能排除139或解释ARM迟响应。可证伪假设、测量条件和下一项验证见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)，安装命令、配置和保证保持。
+
 ## 环境和候选
 
 目标为 Linux amd64 或 arm64，已有 Docker Engine、Docker Compose 和 POSIX sh。目标不需要源码、宿主 Node、pnpm 或 Python。安装器使用可信工具容器，沿用当前 Docker 访问权限；它不安装 Docker，也不修改设备权限。
