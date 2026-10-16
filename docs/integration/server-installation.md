@@ -2,13 +2,19 @@
 
 ## 当前状态
 
+本轮真实受测为 `541f6ba`／CI566。AMD 个人及企业完整重启通过，团队 initialize 遇到 MCP 容器 139。ARM 个人 get_work_item 在 30,609 ms 失败；团队／企业达到原 150 分钟，upgrade 缺最终回执。整体及 Required 失败，六组无取消。
+
+个人 ARM 新 API 投影记录资格 21,622.81 ms、工作项 10,019.08 ms。两者 200 仍不补客户端成功；内部阶段及统一关联缺失，不能据此拆分 MCP CPU 或 SQL 时间。其余组合没有本次工具窗口，不能套同一根因。
+
+准确源码、原件和微测边界见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。基础交付仍未完成，PR 保持 draft，未进入正式成果审或合入。
+
 本卡正在实现保留 PostgreSQL、Redis 和 S3 的基础交付。以下入口及命令已有代码，双架构完整虚拟机验收尚未完成，当前候选不能作为发行包或已支持声明。Redis-free、filesystem、生产内网接入和物理设备最低配置仍未交付。
 
 普通 CI562 的 `9c8bbff` 候选个人和团队 AMD64 完整通过；企业 AMD64 首次健康后 API 自然退出 139，尚无 MCP 请求。三组 ARM64 达原150分钟：个人／企业仅见空目标恢复开始，团队此前commit业务超时但故障采集未交最终receipt。显式 CI563 AMD64 团队回退窗口捕获 MCP139，ARM64 升级后的 get_work_item 原30秒到期、上游较晚200不补成功。两轮及 Required 均失败。当前原件、准确来源及终态见[验收矩阵](../plan/ta01-self-hosted-deployment/acceptance-matrix.md#ci562-当前候选矩阵)和[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。
 
 验收助手现先上报已构造的安全故障摘要，再继续原范围的容器诊断，避免摘要等到总期限后才丢失。diagnosticsPending=true 不允许验收通过；只收到这份失败回执、未收最终诊断也仍失败，原总期限保持。该路径此前55项本机检查不能代新候选真实guest验证，更不代表139或迟响应根因已修复。
 
-CI564绑定 `5371f16`，最终运行cancelled、Required失败；只有AMD64团队完整通过，企业回退后commit的initialize遇到MCP139，个人AMD和三ARM取消且缺result。平台checkpoint将分支推至 `ac0a4d21` 并自动触发CI565，当前AMD64三画像完整通过，ARM三画像均在get_work_item的原30秒业务读取失败，Required失败、无取消；取消与未完成不补为自然失败或通过。
+CI564绑定 `5371f16`，最终运行cancelled、Required失败；只有AMD64团队完整通过，企业回退后commit的initialize遇到MCP139，个人AMD和三ARM取消且缺result。平台checkpoint将分支推至 `ac0a4d21` 并自动触发CI565，该ac0候选AMD64三画像完整通过，ARM三画像均在get_work_item的原30秒业务读取失败，Required失败、无取消；取消与未完成不补为自然失败或通过。
 
 固定Node／guest／精确QEMU版本的原生与TCG小组件对照已完成。initialize均不读资格；只授work:read的工具读取确认处理成本，两个环境各12次零POST进程冷启动也未复现139。有限小测不代完整生产镜像、ARM或支持矩阵。准确来源、微测条件和未闭原因见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。本轮安装命令、配置、合同及原期限保持。
 
@@ -104,7 +110,7 @@ sh /srv/candidate/install.sh /srv/candidate "$TRUSTED_MANIFEST_SHA256" \
 
 Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTIC。诊断含固定分类、标准错误类型、PG 错误码白名单、分离的 stdout／stderr 字节数与哈希、已知模块的有界行号及归属容器状态，并写入 journal；参数、环境和原始服务输出不进入结果。先核阶段和动作，外层错误不能单独证明根因。诊断不改变恢复、超时或健康判定。
 
-验收助手另在最后失败的MCP工具读取窗口中，提前投影已核API容器原有的最近60行日志，并由后续分类器复用这一次读取；读取失败不重试，首份失败回执仍在前。只配对固定资格／工作项GET路由，最多8对，仅保状态、完成／错误、耗时及关联摘要，不输出URL参数、身份或正文。有限尾部可能缺件，0对不证明没有请求；API的200也不表示客户端已成功。该增量经本机60项Python及真实Fastify inject日志格式检查，真实新guest效果尚待验证，不冒CI565已覆盖或根因已修复。
+验收助手另在最后失败的MCP工具读取窗口中，提前投影已核API容器原有的最近60行日志，并由后续分类器复用这一次读取；读取失败不重试，首份失败回执仍在前。只配对固定资格／工作项GET路由，最多8对，仅保状态、完成／错误、耗时及关联摘要，不输出URL参数、身份或正文。有限尾部可能缺件，0对不证明没有请求；API的200也不表示客户端已成功。该增量先经本机60项Python及真实Fastify inject格式检查；CI566双生产者实际Linux60项/16安装单元通过，个人ARM已真实覆盖两条API路由并核串口/最终回执/原有日志SHA一致。团队AMD initialize未选取该分支，另两ARM缺回执；这些分界不补为通过。API窗口结果不代内部CPU/SQL分解、MCP客户端成功或根因闭合。
 
 每次仍校验候选全部文件和分块。 流式读取使用有界缓冲，散列及归档身份核验仍覆盖全部字节；不缓存跳过或依赖文件时间、标签代替完整性检查。缓冲调整的实际guest性能尚未验证，不能据此放宽超时或登记支持。应用镜像已载入时，全部角色的准确 ID、架构和来源符合清单才复用；身份不符即拒绝。当前支持状态仍以双架构完整 guest 结果为准。
 

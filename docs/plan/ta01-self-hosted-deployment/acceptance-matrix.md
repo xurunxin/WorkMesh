@@ -16,6 +16,20 @@ CI564／run38846561914绑定 `5371f16e24db94415155228dfc8ac149523573a0`，运行
 
 首败提前摘要已在CI564企业AMD实际送达，比最终诊断早85.72 s，最终仍失败；只为证据修正。固定Node／guest／精确QEMU版本的AMD64原生／TCG小组件与各12次零POST冷启动完成，并补准确CI563 MCP镜像角色各12组配对，以及CI565 ARM准确角色的12组合成补测；有限未139不排除故障，也不代ARM、完整已安装候选或原真实验收。具体时序、四项假设与未测见[当前报告](current-delivery.md)；原全部断言／期限和P0/P1独审、最新Required门禁保持。
 
+## CI566 当前受测结果
+
+受测 head `541f6ba64841915801a1ccb123f9adb7f61ebe17`；[完整终态](../../reviews/ta01-product/ci566-final-results.json)保六组、双生产者、22 输入／六脚本及真实 checkout。Required116933988732 failure，整体 failure，六组无取消。双生产者 Linux60 项 Python／16 安装单元只证明对应检查，不能代完整支持。
+
+| 画像 | AMD64 | ARM64 |
+| --- | --- | --- |
+| 个人 | success，完整重启 4,274.10 s | failure，action19 commit 的 get_work_item 30,609 ms 无头／体超时 |
+| 团队 | failure，action18 commit initialize 2,766 ms 重置，MCP 容器 139 | failure，原 150 分钟总期限，最后 action22 upgrade 开始，无回执 |
+| 企业 | success，完整重启 4,016.89 s | failure，原 150 分钟总期限，最后 action22 upgrade 开始，无回执 |
+
+两 AMD 通过组有不同 boot_id、两次 kernel、QMP RESET／SHUTDOWN、QEMU0 和重启后四证明。个人 ARM 首次真实 API 投影为资格 21,622.81 ms／工作项 10,019.08 ms，两者 completed／200 仍不补客户端失败；窗口缺统一关联／内部阶段，不相减为 MCP CPU 或 SQL 时间。团队 AMD initialize 未选取此分支，另外两 ARM 没有本次请求／API／journal 回执证据，不套同一根因。
+
+独立健康／initialize 原生与 TCG 负样本、同源 ARM manifest 三次成本测量均非完整 API／真实身份事务。旧角色／合成输入、原生 ARM 缺失、尚无准确产品修复分别保留，详见[当前报告](current-delivery.md)。本轮原期限、全量包校验、PG／Redis／S3 保证和原 DoD 保持，未进入正式 P0/P1 成果审或合入。
+
 ## CI562 当前候选矩阵
 
 普通 CI562／run38831525243 与显式 CI563／run38831565958 均绑定 `9c8bbff749c1d2a52a3e6489dcec02d2d7c859af`。四份生产者原件已核 Linux 上 52 项 Python、16 项安装单元通过，六脚本与准确 Git、manifest 相符。普通矩阵继续六组合，显式诊断仅双架构团队，诊断失败不能当支持通过。

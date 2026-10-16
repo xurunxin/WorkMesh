@@ -1,0 +1,216 @@
+{
+  "说明": "固定CI563准确MCP角色的健康读取/initialize有界对照；源码到541未变，不证明新候选二进制相同。只覆盖合成上游待完成健康读取，不保证Abort回调与构造函数执行重叠；有限未139不排除。",
+  "sourceBaseHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+  "roleSourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+  "roleEvidence": "resumption-mcp-exact-role-comparison.json",
+  "rootfsSha256": "7f5c28b98d3df88b571135fd6ce0c53e4ca589155373430654a090baab419a9f",
+  "nodeVersion": "22.19.0",
+  "nodeSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+  "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+  "qemuBinarySha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+  "imageSha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2",
+  "guestVcpus": 4,
+  "guestRamMiB": 4096,
+  "guestKernel": "6.8.0-142-generic",
+  "nativeKernel": "7.0.14-linuxkit",
+  "measurementSha256": "1691bead14148f18ea1de658c4182792974e2cac050d2e8c481be982309dcc8e",
+  "measurements": {
+    "native": {
+      "healthy": {
+        "count": 12,
+        "healthStatus": 200,
+        "initializeMedianMilliseconds": 21.42894999999953,
+        "initializeMaxMilliseconds": 69.0340000000001
+      },
+      "abort": {
+        "count": 12,
+        "healthStatus": 503,
+        "initializeMedianMilliseconds": 20.644149999996444,
+        "initializeMaxMilliseconds": 37.52069999999367
+      }
+    },
+    "tcg": {
+      "healthy": {
+        "count": 12,
+        "healthStatus": 200,
+        "initializeMedianMilliseconds": 407.5066999999981,
+        "initializeMaxMilliseconds": 2321.1672
+      },
+      "abort": {
+        "count": 12,
+        "healthStatus": 503,
+        "initializeMedianMilliseconds": 315.0962500000023,
+        "initializeMaxMilliseconds": 643.5577000000048
+      }
+    }
+  },
+  "nativeCommandSeconds": 241.01599999982864,
+  "tcgNodeSeconds": 253.03464980000004,
+  "qemuSeconds": 451.10541319998447,
+  "nativeExitCode": 0,
+  "tcgNodeExitCode": 0,
+  "qemuExitCode": 0,
+  "requestsPerEnvironment": 24,
+  "readinessPerEnvironment": 24,
+  "qualifiedPerEnvironment": 0,
+  "workItemReadsPerEnvironment": 0,
+  "fixtureHealthyDelayMilliseconds": 0,
+  "fixtureAbortDelayMilliseconds": 2000,
+  "actualMcpUpstreamHealthDeadlineMilliseconds": 1000,
+  "healthLaunchCadenceMilliseconds": 10000,
+  "fullProductAcceptance": false,
+  "actualServicesCovered": false,
+  "controller": {
+    "id": "29726f0c47ac21da1e1bad1905cc8d4529554eba5891cf9e72726c6ac9ab2523",
+    "purpose": "qemu provisioning; no guest started",
+    "exitCode": 137,
+    "oom": false,
+    "activeQemuCountBeforeStop": 0,
+    "activeNodeCountBeforeStop": 0,
+    "removedAndAbsent": true
+  },
+  "firstHelperFailures": {
+    "encoding": {
+      "originalSha256": "f884e0d933517e0793b88888227a8f3b6f58cfcbc72f8b0dcdba3d86b7621698",
+      "originalBytes": 683,
+      "encoding": "cp936",
+      "correction": "UTF-8; decoded JSON equality checked; prior runner stopped before input copy or native/guest launch; no install or runtime retried",
+      "convertedSha256": "f94282e33d26ed3bb1238bb7b608bb8bbd271bb0c536e3c4e622b83579d727b5"
+    },
+    "syntax": [
+      {
+        "stage": "native wrapper syntax",
+        "nodeStarted": false,
+        "guestStarted": false,
+        "sourceSha256": "43184fa064b9bd6925c3912778e3ccde2047b2a23c15b745340782dc46fd38f5",
+        "stderrSha256": "c9fb05636845d01c445757c34466f354e49ccebe90c1580f1cb098e505b562c8"
+      }
+    ]
+  },
+  "limits": "仍为每Node600秒/VM1200秒、4CPU/4GiB；未改变产品或原CI期限。合成API、旧准确角色rootfs、跳过entrypoint；无真实API/PG/Redis/S3/TLS/代理/长期负载或ARM。健康响应200/503不参与产品通过判定。",
+  "resources": "原Node/guest输入按摘要复用；无宿主安装/新设备/权限/公开端口/服务。所有Node/QEMU结束后按owner及完整ID收尾唯一控制容器，PID1最后137无OOM；共享镜像/缓存/旧树/未知卷/受拒目录保持。",
+  "nextStep": "本组未复现且未测到具体Abort回调执行位置；不据此排除原故障，不追加整轮或仅改字段。先核CI566原ARM工具窗口。",
+  "selectedZipSha256": "51771e06fc3292df8970d02dba0c20a38b458262b16484982056247604f55027",
+  "members": {
+    "resources.json": {
+      "bytes": 3284,
+      "sha256": "c5708d1612d00b11aa9036683ba5c4cd2b1a1761f4501f87d78df23de65e691e"
+    },
+    "resources-cp936.original": {
+      "bytes": 683,
+      "sha256": "f884e0d933517e0793b88888227a8f3b6f58cfcbc72f8b0dcdba3d86b7621698"
+    },
+    "ledger-encoding-correction.json": {
+      "bytes": 384,
+      "sha256": "cdd4ab59730ae3b1ac4c6173cd63dba94ec17b37c463c41f7c044b41226e7076"
+    },
+    "provision.py": {
+      "bytes": 2389,
+      "sha256": "a490e5ceec41eab5ad12faad06545a0aab33462ad1496f5cbdc38f372b00eb36"
+    },
+    "install-qemu.py": {
+      "bytes": 978,
+      "sha256": "a44a7933f6895e7fc7378e9c059fca4cda61b2fa00a5c0076cfe430fe84b1eda"
+    },
+    "run.py": {
+      "bytes": 5506,
+      "sha256": "f1d7ddc7b65386a3e4c1a2f24c5054100b1cb4c2b90e171fbba812673a5559f4"
+    },
+    "continue-measurement.py": {
+      "bytes": 3498,
+      "sha256": "96a07feb2ee2f0f54cc735a82dcc2598906fcaf6f78fd289eb0c88240f13d906"
+    },
+    "used-native-runner.py": {
+      "bytes": 1074,
+      "sha256": "43184fa064b9bd6925c3912778e3ccde2047b2a23c15b745340782dc46fd38f5"
+    },
+    "used-native-exec.py": {
+      "bytes": 235,
+      "sha256": "184c6d4dc0d71c0434c6f78ced4b0240c66b94233e5ebbd2e5d80f9c09e431fc"
+    },
+    "used-component-tcg-guest.py": {
+      "bytes": 5856,
+      "sha256": "3a84af5efb04f029b86daead3a2c7d0da1197cfb1222ac3f9fa5c190cae63bab"
+    },
+    "used-run-component-tcg.py": {
+      "bytes": 6671,
+      "sha256": "104fefff0c31ba04c19e4576af6f30e54ce6d3f1f2fa786bbe36611046861b7f"
+    },
+    "native-runner.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-runner.stderr": {
+      "bytes": 693,
+      "sha256": "c9fb05636845d01c445757c34466f354e49ccebe90c1580f1cb098e505b562c8"
+    },
+    "native-runner-exit.json": {
+      "bytes": 17,
+      "sha256": "bc3b6dbf9284b62654e163d7d8bb21c0e0206d75c8d09936cb049cec67a579b0"
+    },
+    "native-result.json": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-measurement.stdout": {
+      "bytes": 4390,
+      "sha256": "5ff0e3f9ec1aec1a0f58aea3ecca715b0a29b73619a844333891734ea29f666d"
+    },
+    "native-measurement.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-measurement.json": {
+      "bytes": 267,
+      "sha256": "d0f9d48021f5e57e0235bcf35d63960f494fbd09e8422784c01af8716654ae0a"
+    },
+    "tcg-runner.stdout": {
+      "bytes": 108,
+      "sha256": "8af651110db61ae4d1fae6051452b6cc072fa240e2fe4f5d526186b8db1bcaf2"
+    },
+    "tcg-runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg-runner-exit.json": {
+      "bytes": 17,
+      "sha256": "d45db54bba0c56e2691a52869729c0a3eade7f5d50545e7832a20e3262a9d422"
+    },
+    "tcg-result.json": {
+      "bytes": 10013,
+      "sha256": "7d9d063e57559fbcc150077d2ff2da43bee47a7e3f6eeeb29b5a67dad3aeaadb"
+    },
+    "tcg-serial.log": {
+      "bytes": 81417,
+      "sha256": "a3019ff894b76a9093f9352e867bc49e663f2c51ecda7650bbb2eae80dd6494c"
+    },
+    "tcg-qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "qemu-policy.stdout": {
+      "bytes": 414,
+      "sha256": "bdfd3bb703abb8d4c1bc4cd53897f4c111e5ef2a528c22d4f7a08c623d0a2bda"
+    },
+    "outer-metadata.json": {
+      "bytes": 156,
+      "sha256": "d94c944fdeb3941c93a78b3b935c3821c6c8b533eed08d132482470e236ea2e3"
+    },
+    "outer-controls.json": {
+      "bytes": 246,
+      "sha256": "0ae14fd0dfc7c5e288a919436ec39afc58d2064eb40876d2c9722cd2a01736dd"
+    },
+    "measurement.mjs": {
+      "bytes": 4728,
+      "sha256": "1691bead14148f18ea1de658c4182792974e2cac050d2e8c481be982309dcc8e"
+    },
+    "summary.json": {
+      "bytes": 4259,
+      "sha256": "0bca231e7f198122f47957f1167a93fcbdaab912d2e7eec0115a06425f72592c"
+    }
+  }
+}
