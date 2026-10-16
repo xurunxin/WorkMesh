@@ -9,6 +9,17 @@ import { pathToFileURL } from 'node:url';
 
 const appRoot = process.argv[2] ?? '/app';
 const lockControl = process.argv.includes('--lock-control');
+const singlePair = process.argv.includes('--single-pair');
+assert.ok(!(singlePair && lockControl), 'single pair excludes lock control');
+const progressBegan = performance.now();
+let progressOrdinal = 0;
+const progress = (name, fields = {}) => {
+  if (!singlePair) return;
+  assert.ok(progressOrdinal < 512, 'bounded progress exceeded');
+  console.log(JSON.stringify({ kind: 'progress', eventOrdinal: progressOrdinal++, name,
+    elapsedMs: performance.now() - progressBegan, ...fields }));
+};
+progress('module-started');
 const requireApp = createRequire(`${appRoot}/package.json`);
 const { Client, Pool } = requireApp('pg');
 const sha = value => createHash('sha256').update(value).digest('hex');
@@ -28,11 +39,13 @@ Client.prototype.query = function (...args) {
     phase: trace.phase, textSha256, verb: text.trim().split(/\s+/)[0],
     startedMs: performance.now() - trace.began };
   trace.queries.push(row);
+  progress('sql-started', { correlationSha256: trace.correlationSha256, label: trace.label, ...row });
   const start = performance.now();
   const finish = (error, result) => {
     row.wallMs = performance.now() - start;
     row.status = error ? 'error' : 'completed';
     row.rowCount = result?.rowCount ?? null;
+    progress('sql-finished', { correlationSha256: trace.correlationSha256, label: trace.label, ...row });
     if (trace.phase === 'handler') {
       trace.lastHandlerQueryFinishedMs = performance.now() - trace.began;
       trace.lastHandlerQueryCpu = process.cpuUsage();
@@ -79,13 +92,19 @@ process.env.WORKMESH_BETA_COORDINATION_MCP = 'true';
 process.env.WORKMESH_BETA_GITEA = 'true';
 process.env.WEB_ORIGIN = 'http://127.0.0.1:3001';
 const importsStarted = performance.now();
+progress('product-import-started');
 const dbModule = await import(pathToFileURL(requireApp.resolve('@workmesh/db')));
 const { buildApp } = await import(pathToFileURL(`${appRoot}/dist/server.js`));
 process.env.NODE_ENV = 'production';
 const importsMs = performance.now() - importsStarted;
+progress('product-import-finished', { importsMs });
 const app = buildApp({ logger: false, afterAuthorizeRequest: async () => {
   const trace = context.getStore();
-  if (trace) { trace.authorizedMs = performance.now() - trace.began; trace.phase = 'handler'; }
+  if (trace) {
+    trace.authorizedMs = performance.now() - trace.began; trace.phase = 'handler';
+    progress('authorized', { correlationSha256: trace.correlationSha256, label: trace.label,
+      atMs: trace.authorizedMs });
+  }
 } });
 // inject 的 caller AsyncResource 不属于 Fastify 请求；在真实 hook 的 done 内绑定。
 app.addHook('onRequest', (request, _reply, done) => {
@@ -99,6 +118,7 @@ app.addHook('onSend', async (_request, _reply, payload) => {
   const trace = context.getStore();
   if (trace) {
     trace.onSendMs = performance.now() - trace.began;
+    progress('on-send', { correlationSha256: trace.correlationSha256, label: trace.label, atMs: trace.onSendMs });
     if (trace.lastHandlerQueryCpu) {
       trace.handlerTail = { wallMs: trace.onSendMs - trace.lastHandlerQueryFinishedMs,
         nodeCpu: process.cpuUsage(trace.lastHandlerQueryCpu),
@@ -124,8 +144,10 @@ const report = { mode: 'real-api-auth-pg-path', nodeVersion: process.version,
   fullProductAcceptance: false, runs: [] };
 
 try {
+  progress('migrations-started');
   await monitor.connect();
   await dbModule.applyMigrations(setupDb);
+  progress('migrations-finished');
   await monitor.query('CREATE EXTENSION pg_stat_statements');
   report.postgresSettings = (await monitor.query(`SELECT version() AS version,
     current_setting('max_connections') AS max_connections,
@@ -137,6 +159,7 @@ try {
     payload: { name: 'TA01 isolated auth path', slug: 'ta01-auth-path', adminName: 'Probe',
       email: 'probe@example.test', password: randomBytes(24).toString('base64url') } });
   expectStatus(install, 200);
+  progress('installation-finished');
   const setCookie = install.headers['set-cookie'];
   cookie = (Array.isArray(setCookie) ? setCookie[0] : setCookie).split(';')[0];
   csrf = install.json().csrfToken;
@@ -149,6 +172,7 @@ try {
   const item = await human('POST', '/api/v1/work-items', { teamId: team.id, projectId: project.json().id,
     statusId: states.json().items[0].id, responsibleHumanActorId: me.json().actor.id, title: 'TA01 auth path' });
   expectStatus(item, 200);
+  progress('work-item-fixture-created');
   const created = await human('POST', '/api/v1/agent-connections', { name: 'TA01 path probe',
     agentSlug: 'ta01-path-probe', clientType: 'codex', teamId: team.id,
     principalHumanActorId: me.json().actor.id, requestedCapabilities: ['work:read'], grantAgentDelegate: false });
@@ -158,11 +182,12 @@ try {
       pairingCode: new URL(created.json().connect_url).hash.slice(1), agentSlug: 'ta01-path-probe',
       client: { type: 'codex', version: '1.1.0' } } });
   expectStatus(redeemed, 200);
+  progress('real-work-read-pairing-finished');
   const token = redeemed.json().installation_token;
   report.fixture = { capabilities: ['work:read'], realPairing: true, realCredential: true,
     isolatedFreshDatabase: true, changedProductionAuthority: false };
   const lag = monitorEventLoopDelay({ resolution: 20 }); lag.enable();
-  for (let repeat = 0; repeat < (lockControl ? 1 : 3); repeat++) {
+  for (let repeat = 0; repeat < (lockControl || singlePair ? 1 : 3); repeat++) {
     for (const [label, url] of [
       ['qualified-capabilities', '/api/v1/agent-capabilities?discovery=qualified'],
       ['work-item-read', `/api/v1/work-items/${item.json().id}`],
@@ -205,6 +230,8 @@ try {
       let response;
       let deadline;
       const correlation = randomUUID();
+      trace.correlationSha256 = sha(correlation);
+      progress('request-started', { correlationSha256: trace.correlationSha256, label });
       requestTraces.set(correlation, trace);
       try {
         response = await Promise.race([
@@ -212,6 +239,7 @@ try {
             headers: { 'x-workmesh-installation-token': token, 'x-correlation-id': correlation } })),
           new Promise((_, reject) => { deadline = setTimeout(() => {
             trace.deadlineReached = true;
+            progress('request-deadline', { correlationSha256: trace.correlationSha256, label });
             report.runs.push({ ...trace, began: undefined, phase: undefined });
             reject(new Error('probe request deadline reached'));
           }, 30_000); }),
@@ -223,6 +251,10 @@ try {
       trace.wallMs = performance.now() - trace.began;
       trace.nodeCpu = process.cpuUsage(cpu);
       trace.eventLoopDelayMs = { max: lag.max / 1e6, mean: Number.isFinite(lag.mean) ? lag.mean / 1e6 : null };
+      progress('request-returned', { correlationSha256: trace.correlationSha256, label,
+        wallMs: trace.wallMs, nodeCpu: trace.nodeCpu, eventLoopDelayMs: trace.eventLoopDelayMs,
+        status: response.statusCode, sqlCount: trace.queries.length,
+        identityCommittedMs: trace.identityCommittedMs, authorizedMs: trace.authorizedMs });
       while (sampleActive) await new Promise(resolve => setTimeout(resolve, 1));
       expectStatus(response, 200);
       assert.ok(trace.identityCommittedMs !== undefined && trace.authorizedMs !== undefined
@@ -242,9 +274,11 @@ try {
           AND query NOT LIKE '%pg_stat_%' ORDER BY queryid`)).rows.map(({ query, ...row }) => ({ ...row, textSha256: sha(query) }));
       delete trace.began; delete trace.phase;
       report.runs.push(trace);
+      progress('request-recorded', { trace });
     }
   }
   lag.disable();
+  if (!singlePair) {
   // 实时撤销负例：不保存或复用上一次资格，也不恢复已撤销连接。
   const detail = await human('GET', `/api/v1/agent-connections/${created.json().connection.id}`);
   expectStatus(detail, 200);
@@ -255,6 +289,7 @@ try {
     headers: { 'x-workmesh-installation-token': token } });
   assert.equal(rejected.statusCode, 401);
   report.revokedReadStatus = rejected.statusCode;
+  } else report.revocationControl = 'not selected: exactly one timed GET pair';
   report.sqlTemplates = Object.fromEntries(querySource);
   console.log(JSON.stringify(report));
 } catch (error) {

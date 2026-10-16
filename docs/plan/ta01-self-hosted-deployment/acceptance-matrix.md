@@ -17,6 +17,8 @@ CI567／run38893305755 绑定 `e2763da4dfdf25f7fc5c28c34a9619d4788f4541`。执�
 
 本轮[原生真实身份与 PG 测量](../../reviews/ta01-product/resumption-api-auth-pg-path-comparison.json)有六份完整阶段记录及三份含受控行锁的记录。首次原生六个 HTTP 成功但 ALS 未传入，不能算内部测量成功。受控凭据 SELECT 与 PG 同模板统计及四份 Lock 采样对应，仅证明校准有效，不推原 CI 根因。两次固定 ARM 组件过程均达原 1,200 秒、无请求回执，实际请求数未知；供料和服务准备不冒 API 时间。独立 API 角色、inject、观测开销及个人 Lite 镜像差异见[当前报告](current-delivery.md)。
 
+新[预展开 ARM 小测](../../reviews/ta01-product/resumption-api-auth-pg-arm-preexpanded.json)只执行一次单对模式，VM 原 1,200 秒截止。8 条实时回执止于监测连接／迁移准备；目标开始／返回回执均无，实际目标 GET 数未知。Node／PG／Redis 最终状态缺失，QEMU0伴宿主TERM不算通过。公开输入全 tar SHA、固定 guest／Node／QEMU及4CPU／4GiB均核；只读ISO布局、独立API、观测开销与个人Lite差异保留。未追加第四次微测；任何组件增窗仅为待裁定选项，原业务和正式验收期限保持。
+
 产品代码、CI、原期限和支持矩阵均未改；资料提交用 `[skip ci]` 保留 CI567，不获得本 head 的 Required 成功结论。原根因、完整验收、仅 P0/P1 正式产品审及最新 Required 未齐，不进入合入。
 
 ## 当前基础产品验收范围

@@ -1,0 +1,648 @@
+{
+  "说明": "预展开已核公开CI566独立API/PG/Redis角色，固定ARM小组件单对真实GET；不是个人Lite同镜像复现、原CI根因或完整支持验收。",
+  "startingDeliveryHead": "4d549c41c8126226dc78f254a9c565ad3c0d919a",
+  "testedProductSource": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+  "measurementSha256": "79dfd8f7828a8fbedfc6384249dc467fa0b46b86c6cc77f7227fe75b362b2e4a",
+  "publicInputs": {
+    "api-rootfs.tar.gz": {
+      "bytes": 60203258,
+      "sha256": "a9f84b90264349e538ff976b470453516da227457acbecee98965ac35dccf486"
+    },
+    "postgres-rootfs.tar.gz": {
+      "bytes": 101053938,
+      "sha256": "db53c0cc6817a56a9abb36a9315f85c6d8c391f9d569fd410434fd115c1dc1e1"
+    },
+    "redis-rootfs.tar.gz": {
+      "bytes": 16991315,
+      "sha256": "f0f4ad52c2d328ead6c9fe1009a331cae42166f48e9686031378c20cfdda5eb6"
+    },
+    "node-sha256.txt": {
+      "bytes": 66,
+      "sha256": "a6ab60c78bda1977c34efc53b53853cc5fefcf5d597f3862bf84ec8f9c413b68"
+    },
+    "role-source.json": {
+      "bytes": 5498,
+      "sha256": "93c9301b84014e02bffe2471b2b1b8e46be4e9f3878a391b53530609795706d7"
+    },
+    "component-tcg-guest.py": {
+      "bytes": 9456,
+      "sha256": "a729656283cb20adaff8390d0d7a9c5194a14489433d7328050094f1264e2650"
+    },
+    "run-component-tcg.py": {
+      "bytes": 7315,
+      "sha256": "61f93e8475cd0c971aac0b011f26937861bb3e78e879ec074b0e953927ac3e60"
+    },
+    "expand.py": {
+      "bytes": 1694,
+      "sha256": "ecc8c57b142dd46a9bf974b181134907f5e14903d3a9997830c596de162b9fcb"
+    },
+    "measurement.mjs": {
+      "bytes": 16800,
+      "sha256": "79dfd8f7828a8fbedfc6384249dc467fa0b46b86c6cc77f7227fe75b362b2e4a"
+    },
+    "arm64.img": {
+      "bytes": 620224512,
+      "sha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55"
+    }
+  },
+  "productSourceFiles": {
+    "apps/api/src/server.ts": {
+      "sha256": "3bf336a6f4a0a01bde0fcbcff57967670bc53cf002288796501cd4177d178457",
+      "blob": "ba019b20861d3d8551c59722e820238e01de65ee"
+    },
+    "apps/api/src/agent-connections.ts": {
+      "sha256": "e127accfa4a0b750b09fb1231689915ed1f60443195cdc3a358bebb1a9af95fd",
+      "blob": "0ad86be864c90a4078f61f46dc733de2b5a909eb"
+    },
+    "apps/api/src/authz/authorize.ts": {
+      "sha256": "6da5f9b7fc603b2f4aee8c18561c9f032fdf4f30113cbd112bbc9573770144a4",
+      "blob": "ac607b54c9f26e0c7648df382026184b3bfb2a9b"
+    },
+    "apps/api/src/client-profile.ts": {
+      "sha256": "cc4f4efd8a732daa0fe14e405b7f886054d3f98e36705eb47545034d16a0d51a",
+      "blob": "d032b13da21b16e3294910878d83151e62480ae1"
+    },
+    "apps/api/src/work-item-executors.ts": {
+      "sha256": "ef233f2acb74842981052a1cb9f0b96cf1da81d7e40480398868ad126bc7bd54",
+      "blob": "dff64b4e6aa1fa8e01da3e3a3cc7176065eddda2"
+    },
+    "packages/db/src/index.ts": {
+      "sha256": "af81326407144a6771a78d09b21b84eb4a0f3fd919572478c5e2b44b9381bd13",
+      "blob": "5c39a06e86ac2b90f4c8ca8969fa3299b143c2c3"
+    },
+    "packages/contracts/src/agent-discovery.ts": {
+      "sha256": "171c6625ea294162cd8f19cac023aeeed5bb3acfc6a53903308afe885a0e4334",
+      "blob": "e49e9a3f55cd9c445ab6d47794d8ed3885e17ffc"
+    },
+    "packages/config/src/index.ts": {
+      "sha256": "08bebea054b76d902984a70afd153d174b2297f58332d7700ad0eba4cb0dc6e7",
+      "blob": "4c37c2e8f76da975c857fb9417c3d12b1e0c48d3"
+    },
+    "docker-compose.lite.yml": {
+      "sha256": "81637573e5004237f275ce0351ae333c36a65da9de793b4954d788403e6b1435",
+      "blob": "47f5fe17e3e513b263cf6f593667cbc49eef8107"
+    }
+  },
+  "result": {
+    "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "imageSha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+    "guestVcpus": 4,
+    "guestRamMiB": 4096,
+    "inputs": {
+      "nonce": "c2d0bfa3dda24f978c67d55ea5aa612d",
+      "architecture": "arm64",
+      "exactMcpRole": true,
+      "case": "api-auth-pg-path",
+      "inputs": {
+        "measurement.mjs": "79dfd8f7828a8fbedfc6384249dc467fa0b46b86c6cc77f7227fe75b362b2e4a"
+      },
+      "keyFiles": {
+        "api": {
+          "app/dist/server.js": {
+            "bytes": 72215,
+            "sha256": "b511c3ce89dc404b00ece5642829290c1ff74ad54a97417974e5f986836e5ea4"
+          },
+          "app/package.json": {
+            "bytes": 1288,
+            "sha256": "9165a49fffd7abab69f175dc00b746f4a65594d3d94680e848c470a84fe4dae7"
+          },
+          "usr/local/bin/node": {
+            "bytes": 122607048,
+            "sha256": "da2abd2c48f19561e35478d51583b068ab410f888a09f363bd131ab611392cb7"
+          }
+        },
+        "postgres": {
+          "usr/local/bin/postgres": {
+            "bytes": 10431448,
+            "sha256": "6467407f2e9f49c9a327cd957c1ea52421ababb3ed01a94e55e105faf35569da"
+          },
+          "usr/local/lib/postgresql/pg_stat_statements.so": {
+            "bytes": 78488,
+            "sha256": "a6d7e4d879089defe5a1de880307faf9e93444f1162fb96e23e0e394f213d565"
+          }
+        },
+        "redis": {
+          "usr/local/bin/redis-server": {
+            "bytes": 17039808,
+            "sha256": "38cd1ad7b011fa85e374e4ac7b3ce20eb797adae8b1ee38af398ba535c729883"
+          }
+        }
+      },
+      "nodeSha256": "da2abd2c48f19561e35478d51583b068ab410f888a09f363bd131ab611392cb7"
+    },
+    "fullProductAcceptance": false,
+    "qemuCommand": [
+      "qemu-system-aarch64",
+      "-accel",
+      "tcg",
+      "-m",
+      "4096",
+      "-smp",
+      "4",
+      "-display",
+      "none",
+      "-serial",
+      "file:/opt/arm-preexpanded/guest/serial.log",
+      "-netdev",
+      "user,id=net0",
+      "-device",
+      "virtio-net-pci,netdev=net0",
+      "-drive",
+      "if=virtio,format=qcow2,file=/opt/arm-preexpanded/guest/root.qcow2",
+      "-drive",
+      "if=virtio,format=raw,readonly=on,file=/opt/arm-preexpanded/guest/seed.iso",
+      "-machine",
+      "virt",
+      "-cpu",
+      "max",
+      "-drive",
+      "if=pflash,format=raw,readonly=on,file=/usr/share/AAVMF/AAVMF_CODE.fd",
+      "-drive",
+      "if=pflash,format=raw,file=/opt/arm-preexpanded/guest/vars.fd"
+    ],
+    "firmwareSha256": "545e2eda871a00dba51c0df48a34829fe3b0de6ec10ea760c75f1fc1c6a29dc5",
+    "deadlineReached": true,
+    "qemuExitCode": 0,
+    "receipts": [],
+    "status": "incomplete",
+    "elapsedSeconds": 1200.6522375000059
+  },
+  "analysis": {
+    "capturedProgressEvents": 8,
+    "guestStages": [
+      {
+        "name": "guest-identity-verified",
+        "elapsedSeconds": 0.013994800000091345
+      },
+      {
+        "name": "preexpanded-inputs-mounted-and-egress-removed",
+        "elapsedSeconds": 9.759608400000047
+      },
+      {
+        "name": "exact-role-readonly-rootfs-ready",
+        "elapsedSeconds": 26.178172096000026
+      },
+      {
+        "name": "isolated-pg-and-redis-ready",
+        "elapsedSeconds": 129.69968600000004
+      }
+    ],
+    "nodeStages": [
+      {
+        "kind": "progress",
+        "eventOrdinal": 0,
+        "name": "module-started",
+        "elapsedMs": 4.916911999999684
+      },
+      {
+        "kind": "progress",
+        "eventOrdinal": 1,
+        "name": "product-import-started",
+        "elapsedMs": 2625.6123999999995
+      },
+      {
+        "kind": "progress",
+        "eventOrdinal": 2,
+        "name": "product-import-finished",
+        "elapsedMs": 62916.547600000005,
+        "importsMs": 60290.879392
+      },
+      {
+        "kind": "progress",
+        "eventOrdinal": 3,
+        "name": "migrations-started",
+        "elapsedMs": 84287.417808
+      }
+    ],
+    "observedTargetGetStartCount": 0,
+    "observedTargetGetReturnCount": 0,
+    "actualTargetGetCount": null,
+    "actualTargetGetCountReason": "缺Node最终回执；零已保存目标回执不证明实际零请求，不倒填前两次ARM。",
+    "earliestProvenFailure": "VM原1200秒宿主截止；未观察到业务断言失败或139。",
+    "lastObservedBoundary": "migrations-started在monitor.connect之前；不能区分该连接建立与applyMigrations。",
+    "notInference": [
+      "模块导入60.29秒在目标GET前，不解释旧资格21.62秒。",
+      "目标SQL/连接取得/锁等待/handler生成/调度未测；不推DB或CPU根因，也不把缺回执当排除。",
+      "QEMU0但宿主TERM且deadlineReached，非正常关机；Node/PG/Redis最终退出与实际请求数未知。"
+    ],
+    "hypotheses": [
+      {
+        "id": "H1",
+        "claim": "本次ARM目标GET主要等待连接或行锁",
+        "verdict": "未知",
+        "missing": "无目标trace、SQL或等待样本；原生校准不外推"
+      },
+      {
+        "id": "H2",
+        "claim": "资格生成/序列化解释原21.62秒",
+        "verdict": "未知",
+        "missing": "本次未收handler阶段；模块导入是前置成本，不能扣减"
+      },
+      {
+        "id": "H3",
+        "claim": "调度或观测开销解释迟响应",
+        "verdict": "未知",
+        "missing": "无目标CPU/wall/PG关联；ISO只读布局及流式观测未量化"
+      },
+      {
+        "id": "H4",
+        "claim": "这次预展开足以在1200秒内取得单对完整回执",
+        "verdict": "不成立于本次执行",
+        "evidence": "准备阶段有回执，目标回执和最终报告仍缺；未证明固定环境下一定不可完成"
+      }
+    ],
+    "nextAuthorizedAction": "保留CI567，待三ARM原件可得后核准确result/serial/journal；不追加第四次组件或整轮试跑。",
+    "unapprovedOption": {
+      "proposal": "若仍要一次同固定guest单对测量，单独裁定VM总窗1800秒（比原上限增加600秒），Node600秒/GET30秒及4CPU4GiB不变；不改产品或正式验收期限。",
+      "status": "仅选项，未批准/未执行；增窗也不保证得到样本或闭合原根因。"
+    },
+    "fullProductAcceptance": false,
+    "legacyRunnerFlag": "原件exactMcpRole=true和--exact-mcp-role仅沿用旧ARM启动开关；实际输入为API/PG/Redis，未测MCP，不能当MCP角色或完整闭环。",
+    "preexpandedRuntimeChangesMeaning": "仅指原始公开运行文件字节未改；只读ISO9660供料、私有tmp/data绑定及proc/null挂载均为本次组件布局，未证明与生产I/O或时延等价。"
+  },
+  "resources": {
+    "owner": "b6976a4f-f54a-4b56-8561-bf11fe92937c",
+    "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+    "repoDigests": [
+      "ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55"
+    ],
+    "containers": [
+      {
+        "id": "b8a52313137e9708918ed3390e60281eb9aa0187715e884095c82d8e201573bf",
+        "purpose": "qemu provisioning; no guest started",
+        "exitCode": 137,
+        "oom": false,
+        "activeRelevantProcessesBeforeStop": 0,
+        "removedAndAbsent": true
+      }
+    ],
+    "scope": "仅同锁定QEMU版本的小组件TCG对照，非完整产品验收；无宿主挂载、端口、Docker socket或真实凭据。",
+    "osExitCode": 0,
+    "apt-updateExitCode": 0,
+    "qemu-policyExitCode": 0,
+    "exactQemuPackageAvailable": true,
+    "aptInstallExitCode": 0,
+    "installedPackageRequests": [
+      "qemu-system-arm=1:8.2.2+ds-0ubuntu1.18",
+      "qemu-utils=1:8.2.2+ds-0ubuntu1.18",
+      "qemu-efi-aarch64=2024.02-2ubuntu0.10",
+      "ipxe-qemu=1.21.1+git-20220113.fbbdc3926-0ubuntu2",
+      "ipxe-qemu-256k-compat-efi-roms=1.0.0+git-20150424.a25a16d-0ubuntu5",
+      "genisoimage",
+      "python3",
+      "ca-certificates"
+    ],
+    "beforeStopProcessProof": {
+      "matchingProcesses": [],
+      "active": 0
+    },
+    "scopeCorrection": "无已有或生产凭据；独有测试身份是否生成及实际请求数未知，Node最终报告缺失；不保存私有日志/数据/磁盘。",
+    "stopExitCode": 0,
+    "sharedReferencesStillSame": {
+      "ubuntu:24.04": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+      "node:22.19.0-alpine3.21": "sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9",
+      "postgres:16.9-alpine": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+      "redis:7.4.5-alpine": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442"
+    },
+    "closedAt": "2026-10-16T13:31:41.856240+00:00"
+  },
+  "ci567Snapshot": {
+    "at": "2026-10-16T13:31:27.981173+00:00",
+    "runId": 38893305755,
+    "headSha": "e2763da4dfdf25f7fc5c28c34a9619d4788f4541",
+    "status": "in_progress",
+    "conclusion": "",
+    "jobs": [
+      {
+        "databaseId": 116947751642,
+        "name": "Classify changes and validate CI selection",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144277,
+        "name": "Database integration",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144293,
+        "name": "Connector native storage (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144334,
+        "name": "Source gates",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144370,
+        "name": "Complete disaster recovery",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144388,
+        "name": "Connector native storage (windows-latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144395,
+        "name": "API integration",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144399,
+        "name": "Agent construction and protocol smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144419,
+        "name": "Connector native storage (macos-latest)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144480,
+        "name": "Connector full installation (amd64)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144496,
+        "name": "Worker integration",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144516,
+        "name": "Connector full installation (arm64)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144546,
+        "name": "Server candidate (amd64)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116948144757,
+        "name": "Server candidate (arm64)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116950873839,
+        "name": "Server full installation (amd64, team)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116950873874,
+        "name": "Server full installation (arm64, team)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "databaseId": 116950873944,
+        "name": "Server full installation (amd64, enterprise)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116950873965,
+        "name": "Server full installation (arm64, personal)",
+        "status": "in_progress",
+        "conclusion": ""
+      },
+      {
+        "databaseId": 116950873995,
+        "name": "Server full installation (amd64, personal)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "databaseId": 116950874189,
+        "name": "Server full installation (arm64, enterprise)",
+        "status": "in_progress",
+        "conclusion": ""
+      }
+    ]
+  },
+  "unchangedOriginalLimits": {
+    "vcpus": 4,
+    "ramMiB": 4096,
+    "vmSeconds": 1200,
+    "nodeSeconds": 600,
+    "getSeconds": 30
+  },
+  "priorArmAttempts": "两个旧ARM均到期且无最终回执，实际GET数未知；本次不倒填。",
+  "scopeLimits": [
+    "独立API而非个人Lite；Fastify inject、真实PG/Redis/配对，未覆盖MCP/TLS/Worker/S3/竞争负载",
+    "公开rootfs在原控制容器内预展开并核gzip和rawTarSHA；现有seed盘供应只读代码，临时目录绑原guest私有根盘，无新设备/宿主依赖/权限",
+    "PG20连接/64MB/额外观测，不等个人Lite；事件输出/采样开销未配对量化",
+    "process CPU含Node多线程；SQL客户端wall包含调度，PG执行含等待；不同钟不相减",
+    "API139/MCP139、原ARM迟响应未闭，未放宽任何产品期限、授权或保证；未具备正式成果审或合入条件"
+  ],
+  "fullProductAcceptance": false,
+  "productCodeChanged": false,
+  "workflowChanged": false,
+  "observedAt": "2026-10-16T13:33:25.011262+00:00",
+  "selectedZipSha256": "fb5ea507797346f82de084e1ec4a389aeee7d184ad4bf6be77c44da88f85cc4f",
+  "members": {
+    "measurement/analysis.json": {
+      "bytes": 3778,
+      "sha256": "37b6e697009562ee6a936f0f9b97b1248f0cbec9f5fcaded958401a3f2043cbe"
+    },
+    "measurement/analyze.py": {
+      "bytes": 4276,
+      "sha256": "a12e139300dbb98f75c58643875104a88dde334fc3e436329e0218aabeaa1ef9"
+    },
+    "measurement/apt-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "measurement/apt-install.stdout": {
+      "bytes": 29789,
+      "sha256": "ad43f5e430bb6b29455c4dbae24b6076c8f6d9cc21d7776579b754a4a86a4925"
+    },
+    "measurement/apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/apt-update.stdout": {
+      "bytes": 1635,
+      "sha256": "f2eb4ee677004fa7f65b5769a7475c2ac18c24ed2cde84aeee370e0b43dd0404"
+    },
+    "measurement/archive.py": {
+      "bytes": 3441,
+      "sha256": "c4418c618fc01893b98301f8984f64f14e2916cf31197ec2dcfb412551414a86"
+    },
+    "measurement/before-stop-processes.json": {
+      "bytes": 39,
+      "sha256": "01e2a01b14e73e819c7c8a24a5210b988420b9c532a8de28542f1fefdbf2ba1c"
+    },
+    "measurement/ci567-snapshot.json": {
+      "bytes": 3441,
+      "sha256": "948458f46c8a4b1c7686b6b2986cb4a0e760e03d8fa423c11858c8daa8baee8f"
+    },
+    "measurement/close.py": {
+      "bytes": 2666,
+      "sha256": "5fce2b567372ce9fad3638e3151c15d6732ef8e5da589cab1c82b1c2512d8681"
+    },
+    "measurement/docs.py": {
+      "bytes": 13147,
+      "sha256": "dd9afb87ea2602ef0838e539b498958a19934086c032b265bd5dc4ec2f5333f5"
+    },
+    "measurement/expand.py": {
+      "bytes": 1694,
+      "sha256": "ecc8c57b142dd46a9bf974b181134907f5e14903d3a9997830c596de162b9fcb"
+    },
+    "measurement/expand.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/expand.stdout": {
+      "bytes": 80,
+      "sha256": "54e07504bd4c12940d05fa6aa125b29420ace56afab058a95e8e88eaca8b4c80"
+    },
+    "measurement/firmware-sha256.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/firmware-sha256.stdout": {
+      "bytes": 97,
+      "sha256": "8745d56657c5a07a8f78546b48de89ca97c155e5bd3460fe1dbe1685197e7789"
+    },
+    "measurement/guest.py": {
+      "bytes": 9456,
+      "sha256": "a729656283cb20adaff8390d0d7a9c5194a14489433d7328050094f1264e2650"
+    },
+    "measurement/install.py": {
+      "bytes": 1995,
+      "sha256": "998ea5dfc0a60bc167df97d49bbdea79e7ad6bd9172806092c0af4824443cac6"
+    },
+    "measurement/isolation.json": {
+      "bytes": 313,
+      "sha256": "c13378ed2c44b7a71e1a2c82221fb6f586caff14c5287a38ef15a301edd41e29"
+    },
+    "measurement/os.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/os.stdout": {
+      "bytes": 400,
+      "sha256": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763"
+    },
+    "measurement/preexpanded.json": {
+      "bytes": 2126,
+      "sha256": "c3f9e90b58f4c8e4cda18b838e8c718485e99897c93e1f451bf5e27e7bc40642"
+    },
+    "measurement/prepare.py": {
+      "bytes": 6570,
+      "sha256": "7c3655539b6f3763c9c52e13c237373d1f20048951027dde5ae0367882c0d528"
+    },
+    "measurement/progress.jsonl": {
+      "bytes": 1461,
+      "sha256": "e3825996254b7cc62fc1f8eea63008fbe78fc5f9c84ff172174a5926e54b8c6e"
+    },
+    "measurement/provision.py": {
+      "bytes": 2391,
+      "sha256": "0378b279bff2362594a40eee657c4f155973599ada83247716152aa2ff772b35"
+    },
+    "measurement/qemu-binary.stdout": {
+      "bytes": 95,
+      "sha256": "e406dc7f5e40070901c384076ca70ff4330843965317dd3ff04a5b8af105e756"
+    },
+    "measurement/qemu-packages.stdout": {
+      "bytes": 226,
+      "sha256": "164c47f19553a1a6582b3502650537ad2db668e5cefef629a369d228c5d89566"
+    },
+    "measurement/qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/qemu-policy.stdout": {
+      "bytes": 414,
+      "sha256": "33520d077bb5c0d139106d9aa1383e4df982a3e1f8222f954377184c04ff44a9"
+    },
+    "measurement/qemu-stderr.log": {
+      "bytes": 70,
+      "sha256": "2dfa701b4ed24e8fb36b0f4fc86dde6299b21c1235c35c57ba4346ab540ad7e6"
+    },
+    "measurement/qemu-version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "measurement/resources.json": {
+      "bytes": 1988,
+      "sha256": "c49aa6205732d099edece9f1241c80ae4db2eaf0d89a3ab486a6668e597e12f2"
+    },
+    "measurement/result.json": {
+      "bytes": 2602,
+      "sha256": "94cd0239020f56c817a703226951c8902ae854143510530b0287b0908fc58716"
+    },
+    "measurement/role-source.json": {
+      "bytes": 5498,
+      "sha256": "93c9301b84014e02bffe2471b2b1b8e46be4e9f3878a391b53530609795706d7"
+    },
+    "measurement/rom-sha256.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/rom-sha256.stdout": {
+      "bytes": 100,
+      "sha256": "7b4716a03c587a9aa0b33eef581858795960b928e2c7f554c75ef932efbba885"
+    },
+    "measurement/run-guest.py": {
+      "bytes": 7315,
+      "sha256": "61f93e8475cd0c971aac0b011f26937861bb3e78e879ec074b0e953927ac3e60"
+    },
+    "measurement/runner-exit.json": {
+      "bytes": 23,
+      "sha256": "59c8897806c5f1945a06be2f82cf3d4acde140121a171535c6fe29caf3d9aaf5"
+    },
+    "measurement/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement/runner.stdout": {
+      "bytes": 99,
+      "sha256": "08acf756817a823952ac85df0958e29c65bdba9d3983bb171803354bd06afa1c"
+    },
+    "measurement/serial.log": {
+      "bytes": 79415,
+      "sha256": "312fec04d8bd25523e56050bb5269d5b5ff9486ee443330ccc4ddef74bd2814d"
+    },
+    "measurement/snapshot.py": {
+      "bytes": 1379,
+      "sha256": "c681edfd6b9215a0d4f3cae9688a90225755d381a45b43e924abedbd328c7e77"
+    },
+    "measurement/start.py": {
+      "bytes": 2832,
+      "sha256": "d0468e81ff84daea4b28e5fb8654b6a3dec0f99b34571dbf6a7c8c215108a02d"
+    },
+    "measurement/used-inputs.json": {
+      "bytes": 1356,
+      "sha256": "5fc2616a3c0993deda3e36448108bdd3adae7104f748b6b0aa46b6af00ec69fd"
+    },
+    "tools/api-auth-pg-path-probe.mjs": {
+      "bytes": 16800,
+      "sha256": "79dfd8f7828a8fbedfc6384249dc467fa0b46b86c6cc77f7227fe75b362b2e4a"
+    },
+    "summary.json": {
+      "bytes": 16892,
+      "sha256": "b07c1ae7a15237eb19c53f12da3ac3c5fb51e67475efb28cb96dbd6cf4091a54"
+    }
+  }
+}
