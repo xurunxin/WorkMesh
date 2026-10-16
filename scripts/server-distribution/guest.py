@@ -490,7 +490,25 @@ def mcp_read(client, url, credential, method, params, request_id):
     return reply['result']
 
 
-def journey(prefix, config, certificates):
+def read_initial_mcp_identity(client, redeemed, prefix, manifest, *, native_diagnostic=False):
+    started_at = None
+    def read():
+        nonlocal started_at
+        started_at = time.time()
+        for i, (method, params) in enumerate([('initialize', {'protocolVersion': '2024-11-05', 'capabilities': {},
+            'clientInfo': {'name': 'ta01-guest', 'version': '1.0.0'}}), ('tools/call', {'name': 'verify_connection', 'arguments': {}}),
+            ('tools/call', {'name': 'get_workmesh_context', 'arguments': {}})]):
+            mcp_read(client, redeemed['mcp']['url'], redeemed['installation_token'], method, params, i + 1)
+    if not native_diagnostic or prefix.name != 'team':
+        return read()
+    from native_diagnostic import observe_native_action
+    outcome, trace = observe_native_action(read, lambda: prepare_native_watcher(prefix, manifest),
+        lambda: started_at, target='team-initial-identity', prepare_before_action=True)
+    report({'phase': 'native-diagnostic', 'windowComplete': True, 'nativeTrace': trace})
+    return outcome
+
+
+def journey(prefix, config, certificates, manifest, *, native_diagnostic=False):
     document = json.loads(config.read_text())
     env = document['environment']
     origin = env['WEB_ORIGIN']
@@ -538,10 +556,7 @@ def journey(prefix, config, certificates):
     code = created['connect_url'].split('#', 1)[1]
     redeemed = client.request(origin + '/api/v1/agent-connections/redeem', {'pairingCode': code, 'agentSlug': 'ta01-probe',
         'client': {'type': 'codex', 'version': '1.1.0'}})
-    for i, (method, params) in enumerate([('initialize', {'protocolVersion': '2024-11-05', 'capabilities': {},
-        'clientInfo': {'name': 'ta01-guest', 'version': '1.0.0'}}), ('tools/call', {'name': 'verify_connection', 'arguments': {}}),
-        ('tools/call', {'name': 'get_workmesh_context', 'arguments': {}})]):
-        mcp_read(client, redeemed['mcp']['url'], redeemed['installation_token'], method, params, i + 1)
+    read_initial_mcp_identity(client, redeemed, prefix, manifest, native_diagnostic=native_diagnostic)
     checks.append('realMcpInstallationIdentity')
     content = b'TA01 installed artifact\n'
     upload = client.request(origin + '/api/v1/artifact-upload-intents', {'workItemId': item['id'], 'filename': 'proof.txt',
@@ -983,7 +998,7 @@ def main():
                 assert install(dist, digest, prefix, config, 'install')['status'] == 'awaiting-validation'
                 measurement(prefix, 'idle')
                 start = len(checks)
-                identity = journey(prefix, config, certificates)
+                identity = journey(prefix, config, certificates, manifest, native_diagnostic=native_diagnostic)
                 private(prefix / 'validation.json', {'credential': identity['installationToken'], 'workItemId': identity['itemId']})
                 private(prefix / 'invalid-validation.json', {'credential': 'wmi_' + 'x' * 43, 'workItemId': identity['itemId']})
                 install(dist, digest, prefix, config, 'commit', expected=1, extra=['--validation', str(prefix / 'invalid-validation.json')])

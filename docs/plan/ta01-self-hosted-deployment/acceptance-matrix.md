@@ -8,6 +8,23 @@
 
 旧控制面基线和 docs Required CI 不替代新候选包验收。用户已批准本阶段记录例外并继续。平台 Saved plan 字段仍未同步，当前依据仓库执行计划进入产品实现；产品验收已有局部真实结果，三画像双架构完整组合尚未通过；最新准确源码、首败及未测见 [接续记录](resumption.md)。
 
+## CI561 修正候选矩阵
+
+普通 CI561／run38815572580 绑定 `461c753c9ddca19e83a97fc31f4381427603a9ac`，tree 为 `af26442a7b06030642fa917c84dd57f5e55bf6f3`。双架构生产者各 47 项 Python、16 项安装单元通过，候选分别核准确源码、六脚本与 manifest；不能据此宣称六 guest 通过。
+
+| 画像／架构 | 当前实际结果 | 证据 |
+| --- | --- | --- |
+| 个人 Lite／amd64 | success，4,101.91 s，整机重启齐全 | [索引](../../reviews/ta01-product/ci561-amd64-personal-full-guest-pass.json) |
+| 团队／amd64 | failure，首次身份读取连接断开，MCP die139 | [首败](../../reviews/ta01-product/ci561-amd64-team-first-failure.json) |
+| 企业／amd64 | failure，回退后 commit initialize 连接重置，MCP die139 | [首败](../../reviews/ta01-product/ci561-amd64-enterprise-first-failure.json) |
+| 个人 Lite／arm64 | failure，升级后的 commit tools/call 原 30 s 超时；上游稍后完成不代客户端成功 | [首败](../../reviews/ta01-product/ci561-arm64-personal-first-failure.json) |
+| 团队／arm64 | failure，回退后 commit tools/call 原 30 s 超时；上游稍后完成不代客户端成功 | [首败](../../reviews/ta01-product/ci561-arm64-team-first-failure.json) |
+| 企业／arm64 | failure，升级后的 commit tools/call 原 30 s 超时；上游稍后完成不代客户端成功 | [首败](../../reviews/ta01-product/ci561-arm64-enterprise-first-failure.json) |
+
+六组已全部结束，没有取消；CI561 与 Required job116749221401 均 failure。[终态索引](../../reviews/ta01-product/ci561-final-results.json)逐组核六脚本、生产者与 manifest，六组 stage 及首次健康均真实完成，只证明已越过此前首次安装的预算首败，不代后续全部操作通过。两份 AMD 139 未捕获 core，不套旧 CI559 位置为本次根因；三份 ARM 超时的较晚完整 200 也不记客户端成功。
+
+后续 52 项本机检查对应收窄的显式诊断，不能冒上述真实 47 项 guest 已使用新路径。CI559 ARM64 已达原 150 分钟，只有个人三个 commit 成功、无 core，Required 失败。完整报告、原件及未闭问题见[交付报告](current-delivery.md)。以下 CI558 表保留前轮准确来源，不代 CI561 或新提交。
+
 ## CI558 当前基础矩阵
 
 受测源码为 `f53f20b85e680a4219ae9f22a58ff37de58c37d8`，tree 为 `6868b31ac93f90d6bfb9e5149f2f01421426a2f8`。每组独立完整 TCG guest，4 vCPU、4 GiB，保原 150 分钟及业务、健康、安装期限。以下成功仅覆盖对应配置；其余组合、最新普通 Required CI、原生故障根因和正式 P0/P1 独审仍待完成，当前不可合入。

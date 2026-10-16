@@ -4,7 +4,7 @@
 
 本卡正在实现保留 PostgreSQL、Redis 和 S3 的基础交付。以下入口及命令已有代码，双架构完整虚拟机验收尚未完成，当前候选不能作为发行包或已支持声明。Redis-free、filesystem、生产内网接入和物理设备最低配置仍未交付。
 
-普通 CI558 的 `f53f20b` 候选已在三个独立 AMD64 guest 完成个人、团队、企业的安装／升级／回退／恢复和整机重启；ARM64 企业首次安装超时，个人与团队取消，Required 失败。CI559 的 AMD64 仍自然退出 139，根因未闭合。这些结果只覆盖实测组合，完整状态及原件见 [验收矩阵](../plan/ta01-self-hosted-deployment/acceptance-matrix.md#ci558-当前基础矩阵)及[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。
+普通 CI561 的 `461c753` 候选仅个人 AMD64 完整通过；团队首次 MCP 身份读取、企业回退后 commit 均自然退出 139。ARM64 个人／企业升级、团队回退后的 commit 均触发原 30 s socket 超时，上游较晚完整响应不代成功；整轮与 Required 失败，无取消。旧 CI558 的 `f53f20b` 三个 AMD64 成功原件保留，不套给新源码。准确状态及原件见 [验收矩阵](../plan/ta01-self-hosted-deployment/acceptance-matrix.md#ci561-修正候选矩阵)及[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。
 
 ## 环境和候选
 
@@ -111,6 +111,10 @@ Docker 命令失败时输出 INSTALL_DOCKER_COMMAND_FAILED 和 INSTALL_DIAGNOSTI
 每个画像的完整 guest 验收还要求真实凭据限流返回 429／AUTH_RATE_LIMITED 和有效 Retry-After，并与 Redis 故障时 503 失败关闭分别记录。使用独有测试主体、原生产预算和 Redis 时钟，不删除限流键或将根集成用例代替已安装组合。团队 amd64 诊断已有该局部通过，双架构三画像完整组合仍未通过。
 
 CI 的 native-diagnostic 参数默认关闭，仅用于隔离 guest 的原生崩溃定位。该模式强制非零退出且标记 diagnostic-only，不能用其结果登记完整支持或满足 Required CI；用户正常安装不依赖 GDB。详见 [接续与首败记录](../plan/ta01-self-hosted-deployment/resumption.md)。
+
+最新显式诊断按 CI561 的准确首败收窄为双架构团队画像。首次身份读取早于 commit，先完成准确 Node 捕获器准备，再执行原 initialize／verify_connection／get_workmesh_context 三次请求。准备受拒不发请求，读取失败不重试；回执有 core 即停止后续操作。读取边界记函数开始 UTC，不冒服务端收包时刻。团队原有首次／升级／回退 commit 观察保留，仍核 journal 本次追加边界；单纯业务读取不用 journal 冒边界。
+
+普通 CI 继续六组合及原整机重启断言。显式诊断仍非零、无普通支持结论；原 30 s 请求、1,800 s 安装、150 分钟 guest、512 MiB 无 swap 内存及 60／90 s 捕获预算保持。本轮 52 项合成检查通过，新窗口未做真实 guest，不据此宣称 MCP 139 已修复。下文较早的 CI549 单窗口、三画像九窗口及并行准备记录保留为历史，当前范围以上述段落为准。
 
 显式原生诊断的自然运行捕获仅在独有、无 swap 的 guest 中临时开启，经核准确 MCP PID／启动时间／程序摘要后将崩溃流在匿名内存解析；只保安全符号、摘要及已核公开 Node 程序内的位置，处理后恢复设置。普通安装不配置 core 管道，不要求 GDB。该诊断仍不产生产品 PASS，当前自然崩溃原因尚未定位。
 

@@ -995,7 +995,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [amd64, arm64]
-        profile: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.native-diagnostic == true && '["all"]' || '["personal","team","enterprise"]') }}
+        profile: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.native-diagnostic == true && '["team"]' || '["personal","team","enterprise"]') }}
         include:
           - arch: amd64
             runner: ubuntu-24.04
@@ -1038,7 +1038,7 @@ jobs:
         run: |
           set -euo pipefail
           if test '${{ github.event_name }}' = workflow_dispatch && test '${{ inputs.native-diagnostic }}' = true; then
-            python3 scripts/server-distribution/run.py --native-diagnostic --arch '${{ matrix.arch }}' --artifacts "$PWD/.tmp/server-distribution" --source "$(git rev-parse HEAD)" --root "$PWD/.tmp/server-guest" 2>&1 | tee ci-logs/server-install/guest.log
+            python3 scripts/server-distribution/run.py --native-diagnostic --arch '${{ matrix.arch }}' --profile '${{ matrix.profile }}' --artifacts "$PWD/.tmp/server-distribution" --source "$(git rev-parse HEAD)" --root "$PWD/.tmp/server-guest" 2>&1 | tee ci-logs/server-install/guest.log
           else
             python3 scripts/server-distribution/run.py --arch '${{ matrix.arch }}' --profile '${{ matrix.profile }}' --artifacts "$PWD/.tmp/server-distribution" --source "$(git rev-parse HEAD)" --root "$PWD/.tmp/server-guest" 2>&1 | tee ci-logs/server-install/guest.log
           fi

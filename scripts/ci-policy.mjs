@@ -12,7 +12,7 @@ export function validateServerInstallEntrypoint(job, build) {
   if (job?.env?.PYTHONDONTWRITEBYTECODE !== '1' || build?.env?.PYTHONDONTWRITEBYTECODE !== '1')
     failures.push('server-install Python checks must not dirty the committed source with bytecode')
   const architectures = [{ arch: 'amd64', runner: 'ubuntu-24.04' }, { arch: 'arm64', runner: 'ubuntu-24.04-arm' }]
-  const profileMatrix = '${{ fromJSON(github.event_name == \'workflow_dispatch\' && inputs.native-diagnostic == true && \'["all"]\' || \'["personal","team","enterprise"]\') }}'
+  const profileMatrix = '${{ fromJSON(github.event_name == \'workflow_dispatch\' && inputs.native-diagnostic == true && \'["team"]\' || \'["personal","team","enterprise"]\') }}'
   if (JSON.stringify(build?.strategy?.matrix) !== JSON.stringify({ include: architectures })
     || JSON.stringify(job?.strategy?.matrix) !== JSON.stringify({ arch: ['amd64', 'arm64'], profile: profileMatrix, include: architectures })
     || [job, build].some(value => value?.['runs-on'] !== '${{ matrix.runner }}'
@@ -56,7 +56,7 @@ export function validateServerInstallEntrypoint(job, build) {
   }
   const guest = job?.steps?.find(step => step.name === 'Execute installed configuration in full guest')?.run ?? ''
   if (!guest.includes("--profile '${{ matrix.profile }}'") || !guest.includes('--native-diagnostic')
-    || guest.split('--profile').length !== 2
+    || guest.split("--profile '${{ matrix.profile }}'").length !== 3 || guest.split('--profile').length !== 3
     || !guest.includes("if test '${{ github.event_name }}' = workflow_dispatch && test '${{ inputs.native-diagnostic }}' = true; then"))
     failures.push('native diagnosis must require explicit manual dispatch; normal CI must retain full acceptance')
   const handoffOrder = ['Validate immutable producer handoff', 'Download immutable architecture candidate',

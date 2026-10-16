@@ -753,6 +753,98 @@ class Watcher:
 
 
 class ProbeBoundary(unittest.TestCase):
+    @staticmethod
+    def identity_reader(env):
+        source = Path(__file__).with_name('guest.py').read_text(encoding='utf8')
+        function = next(node for node in ast.parse(source).body if isinstance(node, ast.FunctionDef)
+                        and node.name == 'read_initial_mcp_identity')
+        exec(compile(ast.Module(body=[function], type_ignores=[]), '<initial-mcp-identity>', 'exec'), env)
+        return env['read_initial_mcp_identity']
+
+    def test_initial_identity_ordinary_and_other_profiles_keep_three_original_requests_without_observation(self):
+        import time
+        def forbidden(*args):
+            raise AssertionError('ordinary or non-team reads cannot prepare or report')
+        client = object()
+        redeemed = {'mcp': {'url': 'https://isolated.test/mcp'}, 'installation_token': 'test-credential'}
+        for profile, native in [('team', False), ('personal', False), ('enterprise', False),
+                                ('personal', True), ('enterprise', True)]:
+            calls = []
+            read = self.identity_reader({'time': time, 'mcp_read': lambda *args: calls.append(args),
+                'prepare_native_watcher': forbidden, 'report': forbidden})
+            read(client, redeemed, Path('/owned') / profile, {}, native_diagnostic=native)
+            self.assertEqual(calls, [
+                (client, redeemed['mcp']['url'], 'test-credential', 'initialize',
+                 {'protocolVersion': '2024-11-05', 'capabilities': {}, 'clientInfo': {'name': 'ta01-guest', 'version': '1.0.0'}}, 1),
+                (client, redeemed['mcp']['url'], 'test-credential', 'tools/call', {'name': 'verify_connection', 'arguments': {}}, 2),
+                (client, redeemed['mcp']['url'], 'test-credential', 'tools/call', {'name': 'get_workmesh_context', 'arguments': {}}, 3)])
+
+    def test_team_identity_prepares_before_original_reads_and_restores_once(self):
+        import time
+        calls, reports, watcher = [], [], Watcher()
+        def prepare(*args):
+            calls.append('prepare')
+            return watcher
+        read = self.identity_reader({'time': time, 'mcp_read': lambda *args: calls.append(args[-1]),
+                                    'prepare_native_watcher': prepare, 'report': reports.append})
+        read(object(), {'mcp': {'url': 'https://isolated.test/mcp'}, 'installation_token': 'test-credential'},
+             Path('/owned/team'), {}, native_diagnostic=True)
+        self.assertEqual(calls, ['prepare', 1, 2, 3])
+        self.assertEqual(watcher.finished, 1)
+        self.assertEqual(len(reports), 1)
+        trace = reports[0]['nativeTrace']
+        self.assertEqual(trace['target'], 'team-initial-identity')
+        self.assertTrue(trace['preparedBeforeBusiness'])
+        self.assertTrue(trace['operationSucceeded'])
+
+    def test_identity_preparation_refusal_sends_no_request_and_never_retries(self):
+        calls = []
+        def prepare():
+            calls.append('prepare')
+            raise PermissionError('private message')
+        with self.assertRaises(PermissionError) as caught:
+            observe_native_action(lambda: calls.append('request'), prepare, lambda: 10**12,
+                                  target='team-initial-identity', prepare_before_action=True)
+        self.assertEqual(calls, ['prepare'])
+        self.assertFalse(caught.exception.native_trace['operationStarted'])
+        self.assertNotIn('private message', json.dumps(caught.exception.native_trace))
+
+    def test_identity_request_failure_restores_once_without_second_request(self):
+        import time
+        from http.client import RemoteDisconnected
+        calls, reports, watcher = [], [], Watcher()
+        def fail(*args):
+            calls.append(args[-1])
+            raise RemoteDisconnected('private message')
+        read = self.identity_reader({'time': time, 'mcp_read': fail,
+                                    'prepare_native_watcher': lambda *args: watcher, 'report': reports.append})
+        with self.assertRaises(RemoteDisconnected) as caught:
+            read(object(), {'mcp': {'url': 'https://isolated.test/mcp'}, 'installation_token': 'test-credential'},
+                 Path('/owned/team'), {}, native_diagnostic=True)
+        self.assertEqual(calls, [1])
+        self.assertEqual(reports, [])
+        self.assertEqual(watcher.finished, 1)
+        self.assertTrue(caught.exception.native_trace['preparedBeforeBusiness'])
+        self.assertFalse(caught.exception.native_trace['operationSucceeded'])
+
+    def test_identity_core_receipt_stops_even_if_all_original_reads_succeeded(self):
+        import time
+        calls, reports, watcher = [], [], Watcher()
+        def finish():
+            watcher.finished += 1
+            return {'naturalRun': True, 'captured': False, 'coreObserved': True}
+        watcher.finish = finish
+        read = self.identity_reader({'time': time, 'mcp_read': lambda *args: calls.append(args[-1]),
+                                    'prepare_native_watcher': lambda *args: watcher, 'report': reports.append})
+        with self.assertRaises(NativeProbeError) as caught:
+            read(object(), {'mcp': {'url': 'https://isolated.test/mcp'}, 'installation_token': 'test-credential'},
+                 Path('/owned/team'), {}, native_diagnostic=True)
+        self.assertEqual(calls, [1, 2, 3])
+        self.assertEqual(watcher.finished, 1)
+        self.assertEqual(reports, [])
+        self.assertTrue(caught.exception.native_trace['coreObserved'])
+        self.assertTrue(caught.exception.native_trace['operationSucceeded'])
+
     def test_native_core_is_terminal_even_when_the_original_command_returned_success(self):
         watcher = Watcher()
         def finish():

@@ -1,0 +1,67 @@
+{
+  "说明": "CI561首次团队MCP身份读取真实139后的最小诊断助手修正；52项本机检查不冒自然捕获或产品根因修复。",
+  "sourceBase": "461c753c9ddca19e83a97fc31f4381427603a9ac",
+  "sourceDirty": true,
+  "selectedZipSha256": "ee8b0239bb17dcf64e249672622aa78dd48343d0e4c195028f31b6163a7ea07a",
+  "members": {
+    "source/scripts/server-distribution/guest.py": {
+      "bytes": 75400,
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe"
+    },
+    "source/scripts/server-distribution/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    "source/scripts/server-distribution/native_diagnostic.py": {
+      "bytes": 12173,
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94"
+    },
+    "source/scripts/server-distribution/native_diagnostic_test.py": {
+      "bytes": 61675,
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815"
+    },
+    "source/scripts/server-distribution/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    "source/scripts/server-distribution/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "source/.github/workflows/ci.yml": {
+      "bytes": 48931,
+      "sha256": "b943ed74a44c2f93fef89f1aac038a01998068b9a48c508a2bfcf48692a9cc2a"
+    },
+    "source/scripts/ci-policy.mjs": {
+      "bytes": 20376,
+      "sha256": "58da34e6c3b907ea0a6ffa6305adea02cb28c5c8dc093e378116d9e082a0c5dd"
+    },
+    "source/scripts/ci-policy.test.mjs": {
+      "bytes": 23603,
+      "sha256": "29fc08e6d6b4d33424fe77046f535a753ef29f5c8e8576f04cf48af21d170280"
+    },
+    "checks/team-initial-identity-final-checks.log": {
+      "bytes": 156,
+      "sha256": "cd44b39352cb9ac42b825ef5c76c1f549dbbda328e1f93772a7fb2d00386babc"
+    },
+    "checks/team-initial-identity-ci-validate.log": {
+      "bytes": 4605,
+      "sha256": "3e3476bb1784ad2b63e402694641901d80db3d9488c5e3ac718fbaeb2b799d15"
+    },
+    "checks/ci561-producer-projection.json": {
+      "bytes": 2051,
+      "sha256": "6e8cc8ea01607d4b1fbc603fda591944578d165220297fdd7b972630e633ec20"
+    },
+    "scope.json": {
+      "bytes": 1309,
+      "sha256": "8c5728c44abf5832e114fdf2d2e057c1629156764306b5b2c220131917358575"
+    }
+  },
+  "verificationEnvironment": {
+    "os": "Windows",
+    "python": "3.11.15",
+    "node": "22.19.0",
+    "pnpm": "9.15.4",
+    "scope": "仅本机合成检查；新真实guest待验"
+  }
+}

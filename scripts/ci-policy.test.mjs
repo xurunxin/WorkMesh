@@ -28,6 +28,7 @@ test('双架构候选只构建一次，六个画像 guest 全部必需且摘要�
     value => { value.build.strategy.matrix.include.pop() },
     value => { value.job.strategy.matrix.arch.pop() },
     value => { value.job.strategy.matrix.profile = value.job.strategy.matrix.profile.replace(',"enterprise"', '') },
+    value => { value.job.strategy.matrix.profile = value.job.strategy.matrix.profile.replace('["team"]', '["personal"]') },
     value => { value.job.strategy.matrix.exclude = [{ arch: 'arm64', profile: 'team' }] },
     value => { delete value.build.env.PYTHONDONTWRITEBYTECODE },
     value => { delete value.job.env.PYTHONDONTWRITEBYTECODE },
@@ -41,6 +42,7 @@ test('双架构候选只构建一次，六个画像 guest 全部必需且摘要�
     value => { value.build.outputs['digest-amd64'] = value.build.outputs['digest-arm64'] },
     value => { value.job.needs = ['changes'] },
     value => { value.job.steps.find(step => step.name === 'Execute installed configuration in full guest').run += ' --profile personal' },
+    value => { const step = value.job.steps.find(step => step.name === 'Execute installed configuration in full guest'); step.run = step.run.replace("--profile '${{ matrix.profile }}'", '') },
     value => { const steps = value.job.steps; const left = steps.findIndex(step => step.name === 'Verify producer manifest digest'); const right = steps.findIndex(step => step.name === 'Execute installed configuration in full guest'); [steps[left], steps[right]] = [steps[right], steps[left]] },
   ]) {
     const invalid = structuredClone(original); mutate(invalid)

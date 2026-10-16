@@ -18,6 +18,10 @@
 
 ## 验收与 CI
 
+当前接续以[完整报告](current-delivery.md)及其准确原件为准，以下逐轮记录保留历史时态。CI561 的 `461c753` 在团队首次 MCP 身份读取、尚未 commit 时自然退出 139，旧 commit-only 捕获会漏该窗口。后续仅将显式诊断收窄到双架构团队画像，在原三次身份读取前准备完成；受拒不发请求，失败不重试。团队三次 commit 观察继续。普通六组合、Required 严格结果、全部请求／健康／安装／guest／捕获期限不变。
+
+新诊断窗口与同步准备的回归冻结在既有 `native_diagnostic_test.py`，包括普通三请求原参数、其他画像无新观察、准备受拒零请求、读取失败不重试且一次恢复、core 回执停止。CI 入口及 `ci-policy.test.mjs` 同步核显式团队和普通六组合，删除 profile、替换画像或逃离手动分支拒绝。52 项本机检查与真实 CI 校验入口通过；新路径未实测，不关闭根因或进入正式成果审。
+
 创建 server-distribution 的安装、manifest、journal 测试及 apps/api/integration/deployment-profiles.integration.test.ts。沿 acceptance-matrix.md 冻结的名字覆盖安装、重复／并发、拒绝和 journal 中断、迁移失败、兼容程序回退、不兼容空目标恢复、原卷保留、限流 store 失败关闭、丢 hint／worker 重启、工件上传下载和完整备份恢复。所有断言使用真实接受状态与外部效果证据，不用 fake 结果代真实原子性和存储锁。
 
 新增必需双架构 server-install CI 入口，并同步 ci-policy、结果汇总和入口删除负例。复用现有固定 Ubuntu 完整 TCG guest／QMP 生命周期代码；先准备 Docker 及工具，再对无源码候选关闭外部默认路由、禁止自动 pull，实际证明离线启动闭包。三画像分别建立独有环境，API／MCP／Worker／outbox／限流／工件／完整恢复均在实际安装的候选中验证；隔离 CA、身份与 fake provider 不冒企业生产实网。
