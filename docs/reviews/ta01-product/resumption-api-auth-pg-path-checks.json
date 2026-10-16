@@ -1,0 +1,267 @@
+{
+  "说明": "本轮诊断工具、原件及文档适用检查；不代五根门禁、完整guest或Required。",
+  "startingHead": "e2763da4dfdf25f7fc5c28c34a9619d4788f4541",
+  "rootFiveChecksRerunLocally": false,
+  "checks": [
+    {
+      "name": "ci567-amd64-personal-full-guest-pass",
+      "members": 11,
+      "allBytesAndShaMatched": true
+    },
+    {
+      "name": "ci567-amd64-team-full-guest-pass",
+      "members": 11,
+      "allBytesAndShaMatched": true
+    },
+    {
+      "name": "ci567-amd64-enterprise-full-guest-pass",
+      "members": 11,
+      "allBytesAndShaMatched": true
+    },
+    {
+      "name": "resumption-api-auth-pg-path-comparison",
+      "members": 132,
+      "allBytesAndShaMatched": true
+    },
+    {
+      "name": "node-syntax",
+      "command": [
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\node-v22.19.0-win-x64\\node.exe",
+        "--check",
+        "docs\\reviews\\ta01-product\\tools\\api-auth-pg-path-probe.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "ci-validate",
+      "command": [
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\node-v22.19.0-win-x64\\node.exe",
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\tools\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "ci:validate"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "integration-docs",
+      "command": [
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\node-v22.19.0-win-x64\\node.exe",
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\tools\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "check:integration-docs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "diff-check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "pythonHelpersSyntax": [
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/analyze.py",
+      "sha256": "863404a45fce1934383f917b5b6f756035f8aeee250dd7021953a5cb22550bff"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/archive.py",
+      "sha256": "0ad714846d75ecb1a534ff2647f72273e52e8a88ef97f2382e5bf41f569874a9"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/arm-seed-2/guest.py",
+      "sha256": "c491febac60f4222885098bfa5b1d02bbe34e331f065ab1b22c02679d8bd005a"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/arm-seed-2/run-guest.py",
+      "sha256": "4ef64c0b6d4461d90be0a079630d9016b964e784e7ab3ca6250763d9cbe15915"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/arm-seed-2/start-run.py",
+      "sha256": "26dd4edd18b18775e8901d44f18eedb427032071e11e09b0d77e6fad5d64ce07"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/checks.py",
+      "sha256": "47fe6b3dcbf27238cc486ed91d08b83bfb9fecff4467459931b6fe9ab8b26607"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/close-resources.py",
+      "sha256": "8ae174ec07eb69cee1d34c9704eebac3beafd7ed1c33d77e6317c3c8ade8536f"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/controls.py",
+      "sha256": "a1589185ab3956917528955b0eabe1dcdc26a9aa4ae6a0299449a3ed67e6b6c7"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/export.py",
+      "sha256": "9b72ee96ac4484f3151a5f0814d6be0e5e2ed4802843d832a8a23a1db2caa4ba"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/fetch-select.py",
+      "sha256": "2337f8da0a85d14635e31fe944aa7abbdf0074af35e93a843072e82ff274d771"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/finalize-metadata.py",
+      "sha256": "408903c582ed19be053c97d9e36d723940fea0c9131caf491df65ab9eec0b0d8"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/finish-docs.py",
+      "sha256": "e47b40aecda6a355833c70edb7ef49673ca6c9b23b0b26bc15cfa3f6a1429e57"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/guest.py",
+      "sha256": "2471ef24486955afb0cb0b6889630deaf011eaf4e5939aabf4611d9cacfccba9"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/input-progress.py",
+      "sha256": "6d4b24e54c3031fafd6c51e035001b827cdb869e26d90b1d934f8229114eea62"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/inspect-ci567-guest.py",
+      "sha256": "98997be47351787f992bb6a6d72c9f8df5348a3c8eac7f40a6df65e44720ac3f"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/install.py",
+      "sha256": "44ef429775dc6073dfff3c88c386474b254c9398a6de4e78150653a7b82f6b1e"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/poll.py",
+      "sha256": "87cc21c96985418bfed93474819c0e42a35b05f8d10f7d22878fe2a71dad8c42"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/prepare-native.py",
+      "sha256": "3b762b052cfab457242f30285ef4be8396fc74a640788d9f6c0220c9a514d7d9"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/prepare-runner.py",
+      "sha256": "dbd9d93879b58fd8cac02d8a2f6a138f33f8ecd5a339669da7095ba51b8f3a10"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/prepare-seed-2.py",
+      "sha256": "d063057a02d45ff11ff6c2e5e0d873051943234846286363dceb0b300a8a4e9c"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/provision.py",
+      "sha256": "08001e5a16be50c6b682b65c87bafcd7b0ee0624a352b2d8514d4928ecc698c0"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/read-ci567-amd-remaining.py",
+      "sha256": "0f98df3c6e9c8379fefdf2a4c9de35115428041078b4452d74a30b22b5a508b9"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/read-ci567-enterprise.py",
+      "sha256": "9244347f9d40392e31cd5dd92b19e9dd611b3ce57dae94e8d6aefb783867d01e"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/run-guest.py",
+      "sha256": "90fc9f6c32842fd0aa04fc23c9562dd7a6a83bf42f41c24bdb694d99308d7d54"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/snapshot.py",
+      "sha256": "94889445cde25f79d3d1af5a8cf43226d112bb3122b840d2218aefad1eb228fa"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/start-run.py",
+      "sha256": "43049506a84080378ea83bee53cf6a30a803e8b1e9f392b28c71353bcb169cb6"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-567/verify-ci567-enterprise.py",
+      "sha256": "d7f56b55d58da3c43360b16c14c05f0a9673b61eee07ffeca8dbd3df055a1c77"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/context-2/native.py",
+      "sha256": "eb64cb0b59acf7546bc0f9330154a1a97f449a97afa93b170d874015ecffc7fb"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/context-2/start-native.py",
+      "sha256": "044875de54c509a8f85fa6446a14555b137525c448fb03759ddf64c2904405b9"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/export.py",
+      "sha256": "290da48f66a2b7ffbf545a2959abf8e0edfc9402259f2b817a29575697c4feb3"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/fetch-select.py",
+      "sha256": "b684abf546e7480c0d280fb7c0766dda6db40f6801b0dfacce9bedbd98390d94"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/lock-control/native.py",
+      "sha256": "a23b9214deba0b183e0147b6c0a57cb7af0cd3ac6565d5908b308117945e016b"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/lock-control/start-native.py",
+      "sha256": "141800679fefd06d5244e3c339224e80fc76b50a113cec6c2753c42eea81da08"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/native.py",
+      "sha256": "bda0f552e3f4dcf408c6953194061a0aab724bf20170b61badb7f7e06c8401af"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/prepare-context-2.py",
+      "sha256": "7df430f396eab4dcfab60d051a836b372085321cc87aaee49a5a137a19e379d6"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/prepare-lock-control.py",
+      "sha256": "b065c8c4b490ba4bfc3be92d89c9041a559f283dacbadf5ee85a290c80294bef"
+    },
+    {
+      "path": ".tmp/ta01-resumption/api-auth-pg-native-567/start-native.py",
+      "sha256": "6e07c0e0c517b617aea8842974a71a9754dcf476f4997d09f8683438e48fa2a8"
+    }
+  ],
+  "productCiSchemaWorkingTreeDiffEmpty": true,
+  "newFilesGitFilterBytesSame": true,
+  "writingSkill": {
+    "commit": "ffda9353768dece8aabd26ccb3a4978025e9437c",
+    "references": [
+      "SKILL.md",
+      "manual-structure.md",
+      "typography.md"
+    ],
+    "autocorrect": "unavailable; manual review; no global install"
+  },
+  "selectedZipSha256": "ea29cd5f38a0b3b7fe370b705d93318780c6727cbe27b3cb5ef21967406bf371",
+  "members": {
+    "node-syntax.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node-syntax.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ci-validate.stdout": {
+      "bytes": 4440,
+      "sha256": "874a0ec782e06dee5f066617a30a33bd36b635e54f67a4332ea835dde33ac155"
+    },
+    "ci-validate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "integration-docs.stdout": {
+      "bytes": 295,
+      "sha256": "34cca6f63a48335f952e79219864455a9b0db20e29d899b01d713a5ddcd7e461"
+    },
+    "integration-docs.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diff-check.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "diff-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "checks.json": {
+      "bytes": 8354,
+      "sha256": "3679d2604b8a196c96237767188f8e15d4cbc0738ea5384b961809f5fd5ef598"
+    },
+    "tools/checks.py": {
+      "bytes": 4463,
+      "sha256": "47fe6b3dcbf27238cc486ed91d08b83bfb9fecff4467459931b6fe9ab8b26607"
+    }
+  }
+}

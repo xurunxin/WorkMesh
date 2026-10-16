@@ -1,0 +1,12 @@
+{
+  "profile": "personal",
+  "project": "workmesh-personal",
+  "environment": {
+    "WEB_ORIGIN": "https://workmesh.example.test",
+    "PUBLIC_MCP_ORIGIN": "https://mcp.workmesh.example.test",
+    "S3_PUBLIC_ENDPOINT": "https://s3.workmesh.example.test",
+    "NODE_EXTRA_CA_CERTS": "/srv/workmesh/certificates/ca.pem",
+    "WORKMESH_BETA_COORDINATION_MCP": "true",
+    "AUTH_RATE_LIMIT_TRUSTED_PROXY_CIDRS": "172.20.0.1/32"
+  }
+}

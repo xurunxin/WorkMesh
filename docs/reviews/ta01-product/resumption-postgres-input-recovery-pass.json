@@ -1,0 +1,79 @@
+{
+  "说明": "真实PG／S3恢复opt-in通过，源码为6c20a93，独有3容器3卷按owner／ID收尾；不代完整guest。",
+  "sourceHead": "6c20a93c3d7113d2750b8b6265abb06f28283b04",
+  "owner": "workmesh-docs-f5db531c-b527-402c-b63c-08895494193d",
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-15T00:24:01.230Z",
+      "endedAt": "2026-10-15T00:24:24.660Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-15T00:24:29.290Z",
+      "endedAt": "2026-10-15T00:24:30.660Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration-recovery",
+      "command": "pnpm test:integration:recovery",
+      "startedAt": "2026-10-15T00:24:31.389Z",
+      "endedAt": "2026-10-15T00:24:56.721Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "443fe35963267de9877f9e4f61eb3ef885d063c286bd7d3189e337af26900dba",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "128543d0d07d789d85cbd29c8c6afa1794c3ead553b80e92af13730afb0086ec",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "f5f7bd11a38e8712456973eb74b422961cd758fe644d5848799e47c0ca66951d",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-f5db531c-b527-402c-b63c-08895494193d-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-f5db531c-b527-402c-b63c-08895494193d-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-f5db531c-b527-402c-b63c-08895494193d-s3-data",
+      "absent": true
+    }
+  ],
+  "members": {
+    "results.json": {
+      "bytes": 3047,
+      "sha256": "5e982439e5254ec2fe6674f1765b4866ebd5caef339128e9aefad36a454d7e72"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "12ff515cea858abb6cb7877944691b36fdc72318180e1652e98f36badf292827"
+    },
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "test-integration-recovery.log": {
+      "bytes": 864,
+      "sha256": "324d60d4489830a9aae36929d79164a4fbd47b96f35a1a3f962a0b8ae216365f"
+    }
+  },
+  "selectedZipSha256": "24d538d1ed6e868e53e0eb540f62d9a9cca8913934be68bb98bd989e85b336f7"
+}

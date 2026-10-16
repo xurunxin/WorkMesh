@@ -1,0 +1,39 @@
+## 背景与目标
+
+复用已交付的纯后端部署和连接器，明确个人、团队、企业三种画像的剩余增量。形成可审阅的配置、安装、升级回退、资源测量与存储保证方案，供后续产品范围裁定。
+
+本轮仅新增 `docs/plan/ta01-self-hosted-deployment/` 下的文档和测量记录。PostgreSQL 保留，Runner 外置，连接器系统秘密存储沿用现有实现。
+
+## 文件变更
+
+- **`README.md`**：作为方案入口，区分现有能力、待实现增量、未测组合和批准关口。承接已合入路线的 TA01 责任及 TA16、TA19 联合验收输入；连接器最终验收依赖沿用已完成成果。
+
+- **`spec.md`、`implementation-plan.md`**：分别保存完整当前规格和平台确认的计划正文，建立稳定引用。明确执行只形成方案和现有部署测量，不能据此完成产品 DoD。
+
+- **`sources/*.md`、`sources.md`**：按统一格式保存本卡、相关问答、路线 TA01 原材料和部署证据；登记来源、完整性、正文及文件哈希、实际 Git blob。独立查询真实 `refs/heads/main` 并绑定不可变提交。工具截断、未取得的 Chief 原问答和共享缓存锁拒绝分别记录，不补造全文、不处理共享锁。
+
+- **`deployment-design.md`**：给出三画像的具体配置矩阵、依赖和不支持组合。个人复用 Lite，团队与企业复用 production；分别明确服务角色、并发、端口、TLS、私有 CA、代理信任、工件地址和离线交付边界。冻结后续逐文件实施建议，复用 `resolveServiceCommand`、`validateAuthoritativeRuntimeEnvironment` 和 `packages/db/src/migrations.ts` 的迁移账本机制。定义安装预检、候选暂存、维护排空、完整备份、迁移、健康验证及切换顺序。迁移前失败保旧；迁移后按明确兼容性检查程序回退，数据恢复使用独立空目标，保留原数据卷。
+
+- **`guarantee-decisions.md`**：逐项比较 Redis-free、filesystem 提案与 Accepted 保证。Redis 部分核 `AuthRateLimiter`、`NoopWakeSource`、`createRealtimeCoordinator`、`createOutboxWorker` 和 `RedisStreamSink`，说明限流状态、唤醒丢失、持久投递、重放及重启恢复，不能把停用唤醒当作完整 Redis-free。文件部分核 `S3ArtifactStorage`、`createRecoveryBundle`、`restoreRecoveryBundle`，覆盖上传校验、保留期限、版本、legal hold、备份与恢复。写出推荐方案及需裁定的 ADR 选项；明确 hash、应用拒删和原子写入均不能证明 WORM。保持现有默认保证，不修改 ADR 状态。
+
+- **`measurement.md`**：记录现有 Docker 环境与独有 Lite 基线实测。固定源码、镜像、服务限制、数据集、采样间隔及空闲、首任务、并发负载，保存 CPU、内存、磁盘、延迟、OOM 和错误记录。只构建、运行未修改的现有部署，不实现新模式。Docker 虚拟环境测量与真实设备下限分列；设备、OS、CA 和访问条件尚未确定的验收保持未测。
+
+- **`acceptance-matrix.md`**：完整承接原测试清单和 DoD，逐类映射九类适用测试、真实服务与 fake 验证。复用后端退役、限流、realtime、outbox 和 recovery 的现有测试；冻结 `apps/api/integration/deployment-profiles.integration.test.ts` 等待创建路径与用例名。覆盖无源码安装、升级失败、回退、卷保留、错误组合拒绝、上传下载和备份恢复；分别标明 TA01 与后续联合验收责任。
+
+- **`verification.md`**：保存实际命令、首败、未测、文风检查、源码绑定和资源账本。说明本轮未改接口或功能，因此接入手册无需改动；在方案中列明未来实现须同次维护的配置、安装、恢复说明和可运行示例。
+
+## 执行约定
+
+使用仓库固定 `zh-tech-writing` 副本及结构、排版参考。沿用 Todos＋仓库记录，注明缺少 WorkMesh 控制面写工具，不虚构双轨同步。
+
+测量仅使用本任务独有项目、测试库和卷，复用共享镜像、package store 与版本工具。预检无法证明隔离时记录未测；收尾只处理本人登记且无活动引用的对象，策略拒绝后停止该目标。
+
+业务、API、DB、CI、安装器发行脚本、ADR 状态、其他卡状态、新设备权限和真实外发均不在本轮范围内。
+
+## 验证与交付
+
+- 核来源正文、平台计划与仓库副本一致；校验哈希、Git blob、相对链接、源码路径、三画像矩阵及原 DoD、九类测试的完整覆盖。
+- 执行 `git diff --check`、`pnpm check:integration-docs` 和 `node --test scripts/ci-policy.test.mjs`；用 `classifyChanges` 核实际提交路径，按现行分类完成适用检查并核本候选 Required CI。
+- 在独有隔离资源中完成现有 Lite 基线采样，保留原命令、日志及收尾回执；测量失败不改限制、断言或保证来取得通过。
+- 后续产品验收保持 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:conformance` 五项门禁；明确当前不存在根 `test:e2e` 脚本，后端验收逐项承接历史要求。
+- 全部文件提交本会话分支，提供 Markdown 预览入口，停在 P0/P1 独审与用户具体范围裁定关口。仅报告规划交付，不报告新配置、发行或产品 DoD 完成。

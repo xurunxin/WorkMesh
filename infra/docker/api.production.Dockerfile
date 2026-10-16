@@ -23,7 +23,7 @@ RUN pnpm check:workmesh-skill \
 FROM node:22.19.0-alpine3.21 AS runtime
 ARG WORKMESH_BUILD_SHA
 RUN apk upgrade --no-cache \
-    && apk add --no-cache postgresql16-client \
+    && apk add --no-cache postgresql16-client curl \
     && rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /opt/yarn-v1.22.22 \
     && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack \
       /usr/local/bin/pnpm /usr/local/bin/pnpx /usr/local/bin/yarn /usr/local/bin/yarnpkg \
@@ -34,10 +34,10 @@ RUN apk upgrade --no-cache \
 WORKDIR /app
 COPY --from=build --chown=10001:10001 /out ./
 COPY --chown=10001:10001 packages/config/src/runtime-secrets.mjs ./runtime-secrets.mjs
-COPY --chown=10001:10001 infra/docker/runtime-guard.mjs infra/docker/entrypoint.sh infra/docker/healthcheck.mjs ./
+COPY --chown=10001:10001 infra/docker/runtime-guard.mjs infra/docker/entrypoint.sh infra/docker/healthcheck.sh ./
 # Windows checkouts may place CRLF in the shell script; normalize the shebang
 # inside the Linux image before making the production entrypoint executable.
-RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod 0555 /app/entrypoint.sh
+RUN sed -i 's/\r$//' /app/entrypoint.sh /app/healthcheck.sh && chmod 0555 /app/entrypoint.sh
 ENV NODE_ENV=production WORKMESH_SERVICE=api WORKMESH_BUILD_SHA=$WORKMESH_BUILD_SHA API_HOST=0.0.0.0 API_PORT=3001
 LABEL org.opencontainers.image.revision=$WORKMESH_BUILD_SHA \
       org.opencontainers.image.title="WorkMesh API"
@@ -46,4 +46,4 @@ EXPOSE 3001
 STOPSIGNAL SIGTERM
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["node", "dist/server.js"]
-HEALTHCHECK --interval=10s --timeout=3s --retries=6 CMD ["node", "/app/healthcheck.mjs", "http://127.0.0.1:3001/readyz"]
+HEALTHCHECK --interval=10s --timeout=3s --retries=6 CMD ["sh", "/app/healthcheck.sh", "http://127.0.0.1:3001/readyz"]

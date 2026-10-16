@@ -1,0 +1,23 @@
+{
+  "source": {
+    "commit": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+    "tree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406"
+  },
+  "image": "sha256:8cef341f64c420cccd4dde83c065d1d6bc126ab7a9a945b13b59518ae88c84f3",
+  "results": [
+    {
+      "canonical": false,
+      "exitCode": 1,
+      "stderrSha256": "bb7fdc23e638fe20181f6ddd8cd4f8ee8373925b727afac3749a7b456635e2ee",
+      "moduleMissing": true,
+      "code": "import{createRequire}from'node:module';import{realpathSync}from'node:fs';const r=createRequire('/app/node_modules/@workmesh/recovery/package.json');r('@aws-sdk/client-s3');"
+    },
+    {
+      "canonical": true,
+      "exitCode": 0,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "moduleMissing": false,
+      "code": "import{createRequire}from'node:module';import{realpathSync}from'node:fs';const r=createRequire(realpathSync('/app/node_modules/@workmesh/recovery/package.json'));r('@aws-sdk/client-s3');"
+    }
+  ]
+}

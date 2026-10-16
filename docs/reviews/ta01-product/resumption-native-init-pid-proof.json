@@ -1,0 +1,36 @@
+{
+  "说明": "本机Docker --init 与真实Node22受控实验；只证明主PID／Node子PID区分，不是MCP崩溃复现或完整guest。共享Node基础镜像保留，独有容器无网络／只读／无卷。",
+  "owner": "ta01-init-pid-7c4e83cdb33b417e8e62a7de0b14f415",
+  "image": "sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9",
+  "status": "passed-and-owned-container-removed",
+  "containerId": "ffbe54870b807133397a0f73828d8ea6e24b5d55983149310d182193eea77ed5",
+  "probe": {
+    "version": "v22.19.0",
+    "nodePid": 7,
+    "parentPid": 1,
+    "initIsDockerInit": true,
+    "initBytes": 708456,
+    "initSha256": "f17d5b17245e589a39aceabecb57ac05c56460f66955dd79bf21f63fcc8edcaf",
+    "nodeBytes": 124181928,
+    "nodeSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+    "nodeMatchesExpected": true,
+    "initMatchesExpectedNode": false
+  },
+  "hostProcesses": [
+    {
+      "pid": 88944,
+      "parentPid": 88921,
+      "kind": "docker-init"
+    },
+    {
+      "pid": 88957,
+      "parentPid": 88944,
+      "kind": "node"
+    }
+  ],
+  "dockerStatePid": 88944,
+  "firstRead": "首次固定1秒等待后日志尚为空，JSON解析失败；只读再次核日志已就绪，没有程序／权限失败，不重建容器。",
+  "absence": "docker-no-such-object",
+  "absenceStderrSha256": "3225f6287676228b340f0e41868893ed6189f45970b58fc5a2ce0d09d447cd07",
+  "absenceCheck": "停止与移除均成功；初次不存在断言只匹配大写No，Docker实际返回小写error: no such object，断言失败。此处仅只读实核已不存在，未重试删除。"
+}

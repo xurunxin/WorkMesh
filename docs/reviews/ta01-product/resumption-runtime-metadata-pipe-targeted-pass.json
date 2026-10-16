@@ -1,0 +1,17 @@
+{
+  "说明": "首轮根lint/typecheck通过，test的连接器管道提示断言失败，约10.37秒未观察到提示；原件没有子进程退出码或输出正文，根因未知。integration/conformance未执行，3容器3卷收尾。独立定向用例通过不关闭首败，原断言和预算未改，不是根test或完整支持通过。",
+  "sourceHeadAtStart": "26f6293992f01c5d192010b1e224c63d32c7e5c1",
+  "sourceHeadNow": "38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428",
+  "unchangedRuntimeInputs": 686,
+  "members": {
+    "result.json": {
+      "bytes": 517,
+      "sha256": "e029390a7818d45560032ade4c976c1b7b3d102105a633410cd88466fb423454"
+    },
+    "unit.log": {
+      "bytes": 981,
+      "sha256": "722553d6b581453a02c8182669204dcb29b4a9d32111bd6a9a629a5bb9c9baf2"
+    }
+  },
+  "selectedZipSha256": "53adcf2c0c3fe4dd95cbddc6549b49b84f0af9810cae8063c1fdc347964c38e1"
+}

@@ -1,0 +1,92 @@
+{
+  "说明": "本轮新增准确镜像配对后的本机核验；不是五根门禁、完整guest或Required结论。",
+  "toolBaseHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+  "archives": [
+    {
+      "index": "ci564-amd64-enterprise-first-failure.json",
+      "members": 11,
+      "zipSha256": "acefb1dd646c5e46c6a4fb1eb909fd16191223f30866330623b29f04f4efd95b"
+    },
+    {
+      "index": "ci564-amd64-personal-cancelled.json",
+      "members": 10,
+      "zipSha256": "cb733c9528581050f9aad443213a0dacfdce2b59c924e338be60f9618185ce9e"
+    },
+    {
+      "index": "ci564-amd64-team-full-guest-pass.json",
+      "members": 11,
+      "zipSha256": "a041fff209f00fa8312859b8840fa4ac886402c3804d2fe00be60cb3ffd83f1c"
+    },
+    {
+      "index": "ci564-arm64-enterprise-cancelled.json",
+      "members": 10,
+      "zipSha256": "21340515482e520d23b4ed720b4be85a67af6bfc1bf2a78f67c11b45f8845f97"
+    },
+    {
+      "index": "ci564-arm64-personal-cancelled.json",
+      "members": 10,
+      "zipSha256": "7c5c293764c0d5d7971f1cfa9cc6a4ac35657efdf53ffa12c07b451598b15978"
+    },
+    {
+      "index": "ci564-arm64-team-cancelled.json",
+      "members": 10,
+      "zipSha256": "86d5787e9ae83aeb4b87032bdde75461dbc7763c63585ac05c8f3d93a24ba5e5"
+    },
+    {
+      "index": "ci564-final-results.json",
+      "members": 27,
+      "zipSha256": "78e9c2be6cfef9fed5b2a286dc36e30a8ea0127e2d0157bc201337592aa8cb9c"
+    },
+    {
+      "index": "ci565-amd64-enterprise-full-guest-pass.json",
+      "members": 11,
+      "zipSha256": "797a89449532059180e52264831eed6485398a704c8f4dd190b33cce789b90a9"
+    },
+    {
+      "index": "ci565-amd64-personal-full-guest-pass.json",
+      "members": 11,
+      "zipSha256": "126cdec6aa265e223507448fbc144679385243a35defc5808867e596e7c703eb"
+    },
+    {
+      "index": "ci565-amd64-team-full-guest-pass.json",
+      "members": 11,
+      "zipSha256": "b3717ecb5c8ad08c84d12ad5bf30bf3bbb5da8e735e0acd0795d8f85ed7a4edc"
+    },
+    {
+      "index": "ci565-producers.json",
+      "members": 21,
+      "zipSha256": "40afc5ed1efca6c2017c9dc9bc6f0e9774fc2614070a52558404329808f28fa1"
+    },
+    {
+      "index": "resumption-mcp-exact-role-comparison.json",
+      "members": 37,
+      "zipSha256": "d37a535fcd07da6a2632097b770ab1e615103275b4028affd114e30158b0b5a6"
+    },
+    {
+      "index": "resumption-mcp-native-tcg-comparison.json",
+      "members": 47,
+      "zipSha256": "06395d75c0b4fbe3be21ad22d2a356b845de96c08df52f5aa87eb185bab779ec"
+    }
+  ],
+  "archiveMembersChecked": 227,
+  "twoPythonAstChecks": true,
+  "executedTcgToolsMatchCurrentBytes": true,
+  "productAndCiDiffEmpty": true,
+  "ciValidateExitCode": 0,
+  "integrationDocsExitCode": 0,
+  "selectedZipSha256": "0592f96ab202c933bb423ce2e391736e8c222777700fef274d46d0a2dbd653a3",
+  "members": {
+    "verification.json": {
+      "bytes": 2750,
+      "sha256": "0959890ec43f6102d6d885ac646ab58b388c9c0df80ce1298a84ba91a2c07482"
+    },
+    "ci-validate.log": {
+      "bytes": 4602,
+      "sha256": "8d2a9719026fe5b33d1d8caf43d593c86cf93a326fb9beef709a168859e69f71"
+    },
+    "integration-docs.log": {
+      "bytes": 300,
+      "sha256": "2c72d696e9457356583028dc542767ab41b77310153bfea19666938fef6b550b"
+    }
+  }
+}

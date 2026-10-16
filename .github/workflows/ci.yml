@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      native-diagnostic:
+        description: '仅定位 TA01 MCP 原生崩溃；不构成产品验收'
+        type: boolean
+        default: false
   workflow_call:
   schedule:
     - cron: '0 19 * * 0'
@@ -25,7 +30,7 @@ jobs:
   changes:
     name: Classify changes and validate CI selection
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     outputs:
       plan: ${{ steps.scope.outputs.plan }}
       packages: ${{ steps.scope.outputs.packages }}
@@ -38,6 +43,8 @@ jobs:
       agent-smoke: ${{ steps.scope.outputs.agent-smoke }}
       connector-platform: ${{ steps.scope.outputs.connector-platform }}
       connector-install: ${{ steps.scope.outputs.connector-install }}
+      server-build: ${{ steps.scope.outputs.server-build }}
+      server-install: ${{ steps.scope.outputs.server-install }}
     steps:
       - name: Check out comparison history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -886,9 +893,177 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  server-build:
+    name: Server candidate (${{ matrix.arch }})
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    needs: changes
+    if: ${{ needs.changes.outputs.server-build == 'true' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    outputs:
+      candidate-amd64: ${{ steps.binding.outputs.candidate-amd64 }}
+      candidate-arm64: ${{ steps.binding.outputs.candidate-arm64 }}
+      digest-amd64: ${{ steps.binding.outputs.digest-amd64 }}
+      digest-arm64: ${{ steps.binding.outputs.digest-arm64 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Check out exact server source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up exact Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+      - name: Activate exact pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.4 --activate
+      - name: Restore pnpm store cache
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Bind immutable candidate source
+        run: |
+          set -euo pipefail
+          mkdir -p ci-logs/server-build .tmp
+          git show -s --format='%H %T %P' HEAD > ci-logs/server-build/source.txt
+          git cat-file commit HEAD > ci-logs/server-build/source-commit.txt
+          sha256sum scripts/server-distribution/* infra/docker/server-installer.Dockerfile packages/config/src/deployment-profile.ts > ci-logs/server-build/input-sha256.txt
+          pnpm install --frozen-lockfile 2>&1 | tee ci-logs/server-build/source-install.log
+      - name: Check installer state and integrity gates
+        run: |
+          set -euo pipefail
+          python3 scripts/server-distribution/native_diagnostic_test.py 2>&1 | tee ci-logs/server-build/native-privacy.log
+          node --test scripts/server-distribution/install.test.mjs 2>&1 | tee ci-logs/server-build/unit.log
+      - name: Build immutable offline candidate
+        run: |
+          set -euo pipefail
+          node scripts/server-distribution/build.mjs --arch '${{ matrix.arch }}' --release "candidate-${GITHUB_SHA:0:12}" --output "$PWD/.tmp/server-distribution" 2>&1 | tee ci-logs/server-build/build.log
+          cp .tmp/server-distribution/manifest.json ci-logs/server-build/manifest.json
+          sha256sum .tmp/server-distribution/manifest.json > ci-logs/server-build/manifest-sha256.txt
+      - name: Retain immutable candidate once per architecture
+        id: candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: server-distribution-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .tmp/server-distribution
+          if-no-files-found: error
+          retention-days: 14
+      - name: Bind immutable candidate handoff
+        id: binding
+        run: |
+          set -euo pipefail
+          printf 'candidate-%s=%s\n' '${{ matrix.arch }}' '${{ steps.candidate.outputs.artifact-id }}' >> "$GITHUB_OUTPUT"
+          printf 'digest-%s=%s\n' '${{ matrix.arch }}' "$(sha256sum .tmp/server-distribution/manifest.json | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - name: Preserve producer source and logs
+        if: ${{ always() }}
+        run: |
+          mkdir -p ci-logs/server-build
+          git show -s --format='%H %T %P' HEAD > ci-logs/server-build/source-after.txt
+      - name: Upload exact server candidate receipts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: server-build-raw-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
+  server-install:
+    name: Server full installation (${{ matrix.arch }}, ${{ matrix.profile }})
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+      CANDIDATE_ID: ${{ matrix.arch == 'amd64' && needs.server-build.outputs.candidate-amd64 || needs.server-build.outputs.candidate-arm64 }}
+      CANDIDATE_SHA: ${{ matrix.arch == 'amd64' && needs.server-build.outputs.digest-amd64 || needs.server-build.outputs.digest-arm64 }}
+    needs: [changes, server-build]
+    if: ${{ needs.changes.outputs.server-install == 'true' }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 210
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, arm64]
+        profile: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.native-diagnostic == true && '["team"]' || '["personal","team","enterprise"]') }}
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - name: Check out exact server source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Prepare full guest tools and immutable source binding
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 qemu-system-arm qemu-utils qemu-efi-aarch64 genisoimage
+          mkdir -p ci-logs/server-install .tmp
+          git show -s --format='%H %T %P' HEAD > ci-logs/server-install/source.txt
+          git cat-file commit HEAD > ci-logs/server-install/source-commit.txt
+          sha256sum scripts/server-distribution/* infra/docker/server-installer.Dockerfile packages/config/src/deployment-profile.ts > ci-logs/server-install/input-sha256.txt
+      - name: Validate immutable producer handoff
+        run: |
+          set -euo pipefail
+          printf '%s' "$CANDIDATE_ID" | grep -Eq '^[1-9][0-9]*$'
+          printf '%s' "$CANDIDATE_SHA" | grep -Eq '^[a-f0-9]{64}$'
+          printf '{"artifactId":"%s","manifestSha256":"%s"}\n' "$CANDIDATE_ID" "$CANDIDATE_SHA" > ci-logs/server-install/producer.json
+      - name: Download immutable architecture candidate
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          artifact-ids: ${{ env.CANDIDATE_ID }}
+          merge-multiple: true
+          path: .tmp/server-distribution
+      - name: Verify producer manifest digest
+        run: |
+          set -euo pipefail
+          printf '%s  .tmp/server-distribution/manifest.json\n' "$CANDIDATE_SHA" | sha256sum --check
+          cp .tmp/server-distribution/manifest.json ci-logs/server-install/manifest.json
+          sha256sum .tmp/server-distribution/manifest.json > ci-logs/server-install/manifest-sha256.txt
+      - name: Execute installed configuration in full guest
+        run: |
+          set -euo pipefail
+          if test '${{ github.event_name }}' = workflow_dispatch && test '${{ inputs.native-diagnostic }}' = true; then
+            python3 scripts/server-distribution/run.py --native-diagnostic --arch '${{ matrix.arch }}' --profile '${{ matrix.profile }}' --artifacts "$PWD/.tmp/server-distribution" --source "$(git rev-parse HEAD)" --root "$PWD/.tmp/server-guest" 2>&1 | tee ci-logs/server-install/guest.log
+          else
+            python3 scripts/server-distribution/run.py --arch '${{ matrix.arch }}' --profile '${{ matrix.profile }}' --artifacts "$PWD/.tmp/server-distribution" --source "$(git rev-parse HEAD)" --root "$PWD/.tmp/server-guest" 2>&1 | tee ci-logs/server-install/guest.log
+          fi
+      - name: Preserve bounded guest evidence without secret disks
+        if: ${{ always() }}
+        run: |
+          set -euo pipefail
+          for file in result.json serial.log qemu-stderr.log; do
+            if test -f ".tmp/server-guest/$file"; then
+              cp ".tmp/server-guest/$file" "ci-logs/server-install/$file"
+            fi
+          done
+          git show -s --format='%H %T %P' HEAD > ci-logs/server-install/source-after.txt
+      - name: Upload exact server installation receipts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: server-install-raw-${{ matrix.arch }}-${{ matrix.profile }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ci-logs
+          if-no-files-found: error
+          retention-days: 14
+
   required-ci:
     name: Required CI
-    needs: [changes, source-gates, db-integration, api-integration, worker-integration, recovery-integration, agent-smoke, connector-platform, connector-install]
+    needs: [changes, source-gates, db-integration, api-integration, worker-integration, recovery-integration, agent-smoke, connector-platform, connector-install, server-build, server-install]
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5

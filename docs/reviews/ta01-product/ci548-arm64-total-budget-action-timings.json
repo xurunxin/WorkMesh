@@ -1,0 +1,382 @@
+{
+  "说明": "完整模式达到原150分钟总期限，receipts为空。固定操作finished包含预期拒绝，不等于产品通过。AMD64个人及团队profile-completed，企业仅health-ready；ARM64个人business-committed，升级链commit失败但无完整失败回执，具体原因未知。不得推定同因、关闭MCP139或宣称重启／完整支持通过。",
+  "runId": 38690073799,
+  "jobId": 116273926476,
+  "artifactId": 11958559095,
+  "sourceHead": "26f6293992f01c5d192010b1e224c63d32c7e5c1",
+  "sourceTree": "3ff91c2bad48d03b08d2dcbdfe05383a83a79d67",
+  "status": "failed",
+  "errorType": "TimeoutError",
+  "totalSeconds": 9000.776259107,
+  "guestVcpus": 4,
+  "guestRamMiB": 4096,
+  "scriptsMatch": true,
+  "progress": [
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "health-ready"
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "business-committed"
+    }
+  ],
+  "actions": [
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 230808
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 84123
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 82781
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 96917
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 99022
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "finished",
+      "elapsedMilliseconds": 1157457
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 952064
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 211544
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 259982
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 325793
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 202272
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 209271
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 211787
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 216505
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 932
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 850011
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 211066
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 243276
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "failed",
+      "elapsedMilliseconds": 280085
+    }
+  ],
+  "receiptPhases": [],
+  "manifestSha256": "57d0a767bfe5a98190780748873a294f94c43fcc1501f064b37e35879bef31bb",
+  "scripts": {
+    "native_diagnostic.py": "8125afe5cefc47f57884946824c3f20ea34a6c677572efb953d101a7d04c4e8d",
+    "run.py": "3a7a98e784aa4d9c15ff728485f07c233b216655577d48577759bde1e72ec40e",
+    "core_pipe.py": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c",
+    "native_diagnostic_test.py": "c94acb51651abe645638bfff397d085e13ba786c94ee716a72a8096e8755d29a",
+    "guest.py": "b2ee3d9bb51e2ed69e3ec15ce7d432a4a2c0cf6ddbbab9098b8ac4659e3f11ec"
+  },
+  "artifactZipSha256": "8054e6a59c4ffb5ceb0583fdaaed009940d2f2ae735f9502b4414b8616cb8ff3",
+  "selectedZipSha256": "8b15ecedb45165db2edac1a7e8e6970cc929cf4853614ac9435aede20c0771c3",
+  "members": {
+    "server-install/build.log": {
+      "bytes": 69350,
+      "sha256": "692b681c0c748980338974dfc34071121115bbe9d01020e56e122108bac4f05e"
+    },
+    "server-install/guest.log": {
+      "bytes": 396,
+      "sha256": "3bcd6cef45d6fef7b5c4e95d11446c5628cd06d3e9f4b99c68b09a1e5ced226b"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2174,
+      "sha256": "51511348cf5a7c18fb81c0bc97dc8105d5f614b36f6afe1495073f2f9f07386c"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "b79958f5c5aca545a5f52f619c886b11f6a907153f2707ffc8e7214e7a2e986c"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12409,
+      "sha256": "57d0a767bfe5a98190780748873a294f94c43fcc1501f064b37e35879bef31bb"
+    },
+    "server-install/native-privacy.log": {
+      "bytes": 106,
+      "sha256": "31cf1957eee9f44d5a7cbdf606d6f8fe532aa31259e4efd4e96d9318630d0a4b"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 70,
+      "sha256": "f67d820684df5e5a13ba7404d466280becee2265c99bdbcaaa0d3062ef66602c"
+    },
+    "server-install/result.json": {
+      "bytes": 3699,
+      "sha256": "db33d9b1a162a508caec52df929ee3795f4a5f2d9585b3126c25842f3d854914"
+    },
+    "server-install/serial.log": {
+      "bytes": 103053,
+      "sha256": "382664a4b16681b4bb5ff1b33651babf256d501b7ece7e72920ad4fa84dee408"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "6f6723d88c8ba3a8593224023c4f4891227fa8b22a2d48b4e8db84a05d45675e"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 263,
+      "sha256": "c1595def8e5c4e6ed1577e2e2e247a257bf484b9be5726afe3f1f05166eba88f"
+    },
+    "server-install/source-install.log": {
+      "bytes": 555,
+      "sha256": "ca0bbdc7c295d7d629d34df7665b9801e536e0a0391de90ce97941c24b59750c"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "6f6723d88c8ba3a8593224023c4f4891227fa8b22a2d48b4e8db84a05d45675e"
+    },
+    "server-install/unit.log": {
+      "bytes": 3537,
+      "sha256": "ffebcc948094cabb166f0837aed6e1f6ef4129f12def35a803e020fd5102f4f0"
+    }
+  }
+}

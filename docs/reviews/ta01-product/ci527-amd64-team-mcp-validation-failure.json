@@ -1,0 +1,327 @@
+{
+  "说明": "个人画像安装／业务／数据绑定拒绝／升级回退／完整备份／独立空目标恢复已执行通过；团队画像业务局部及升级健康、中断缺原件拒绝通过后，commit 的 MCP 业务读取失败。MCP 重启 1 次，无 OOM 记录；未采集 HTTP状态、响应、底层请求错误或该服务日志分类，原因未确定。未完成企业与完整 guest 重启。",
+  "runId": 38551031484,
+  "jobId": 115809078695,
+  "artifactId": 11892074474,
+  "sourceHead": "008ec90aaac9d14ff5cb603f5d5132922ae02441",
+  "sourceTree": "c99f5879291d500e702dc279ae3400eab5caac29",
+  "status": "failed",
+  "totalSeconds": 4518.6332899849995,
+  "scripts": {
+    "run.py": {
+      "sha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd",
+      "resultSha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd"
+    },
+    "guest.py": {
+      "sha256": "7d3450d4e011e99efc3ebd90e41f1ccffea305caad1cc2956c6bf92a83fdd199",
+      "resultSha256": "7d3450d4e011e99efc3ebd90e41f1ccffea305caad1cc2956c6bf92a83fdd199"
+    }
+  },
+  "artifactZipSha256": "1717607589c610fa551ab8919bcc196c1b83787b075e804e4f20c90a6c890233",
+  "selectedZipSha256": "2d7da9d2751fc0c236ada5d5537b8a2fdcd4520fcedcd8d9a0c5515b995b285a",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "37205fff62cc6782426a1ae8efdc5592c48ebe50fe582cecb580707acbed6ff8",
+      "bytes": 70746
+    },
+    "server-install/guest.log": {
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1",
+      "bytes": 396
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "b5365e41956e0e9351fa6f1b68cc0e6e51208e8998a8faa175cffb705431ce8d",
+      "bytes": 1606
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "f3e150c594dff27d463c807fb00701a15e2d5192dcb2a7bbd370dd69a57a19fa",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "372aec594b23b683117184b8be2302a282d11e3694c141a79ea830459c17bfd6",
+      "bytes": 12627
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "6d986fe0faa4f15f6471d1957263ac6f74126494e1f5cad4d8c63f12f4de48c7",
+      "bytes": 69
+    },
+    "server-install/result.json": {
+      "sha256": "cddb3c0a5bd1f6c41c794da3490e13a69657f892f73fa1251d21ace1132a5123",
+      "bytes": 63120
+    },
+    "server-install/serial.log": {
+      "sha256": "2d27e7e6185dbb6a01e984b5fb11ab8203ccdffbbfeddc31a6dabb03e07dbe88",
+      "bytes": 99232
+    },
+    "server-install/source-after.txt": {
+      "sha256": "b588c7c8b4a1f7bf3273c9d6fccaca27ffa7ef03752c157adba55b0dfa4bc046",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "e5e16bf896c297df534802e3f704418c5644b3701dfd1a91f0e724d4ebf05038",
+      "bytes": 268
+    },
+    "server-install/source-install.log": {
+      "sha256": "6e19d3bf6ce439254c5c0e608714807bdc7f1f25a33b46a5dfc3c6b36c3990c6",
+      "bytes": 615
+    },
+    "server-install/source.txt": {
+      "sha256": "b588c7c8b4a1f7bf3273c9d6fccaca27ffa7ef03752c157adba55b0dfa4bc046",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "bebcc2069b19d1a61b3fa0ed7fc965c1dc70c54107e68467233efbcbcbd28757",
+      "bytes": 2818
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "invalidCredentialCannotCommitCurrent",
+    "dataBindingChangesRejectedBeforeMutation",
+    "preMigrationFailureKeepsCurrent",
+    "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+    "upgradeKeepsOriginalVolumes",
+    "compatibleProgramRollback",
+    "completeEncryptedBackup",
+    "partialMigrationStopsIncompatibleRollback",
+    "restoreIntoEmptyTargetKeepsOriginal",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "invalidCredentialCannotCommitCurrent",
+    "preMigrationFailureKeepsCurrent",
+    "interruptedHealthWithoutPendingRejectsUnknownCandidate"
+  ],
+  "diagnostics": {
+    "exitCode": 1,
+    "command": "sh",
+    "stderrSha256": "c766bceafc7c0d1403230004e8048181e127876c313d7b0c8f10249d87531a83",
+    "categories": [],
+    "codes": [
+      "INSTALL_BUSINESS_VALIDATION_FAILED"
+    ],
+    "journal": {
+      "stage": "healthy",
+      "candidate": "372aec594b23b683117184b8be2302a282d11e3694c141a79ea830459c17bfd6",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-14T12:00:56.982Z",
+          "finishedAt": "2026-10-14T12:01:09.208Z"
+        },
+        {
+          "name": "drain-admission",
+          "status": "completed",
+          "startedAt": "2026-10-14T12:01:12.210Z",
+          "finishedAt": "2026-10-14T12:01:21.287Z"
+        },
+        {
+          "name": "complete-backup",
+          "status": "completed",
+          "startedAt": "2026-10-14T12:01:21.303Z",
+          "finishedAt": "2026-10-14T12:01:38.194Z"
+        },
+        {
+          "name": "apply-migration-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T12:01:38.295Z",
+          "finishedAt": "2026-10-14T12:01:52.757Z"
+        },
+        {
+          "name": "verify-health-and-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T12:01:55.037Z",
+          "finishedAt": "2026-10-14T12:03:40.064Z"
+        },
+        {
+          "name": "validate-business-read",
+          "status": "failed",
+          "startedAt": "2026-10-14T12:04:50.153Z"
+        }
+      ]
+    },
+    "installer": [],
+    "containers": [
+      {
+        "id": "14b3c1b5eae4ef7731695f1071874e0ec45529ffab5805ee28afe3db66c2f473",
+        "service": "mcp",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 1,
+        "health": "starting",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "048f9696eb202085293f72292493c9f238154bb97d865b0ac234a5663e4ae148",
+        "service": "api",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "29b0317ac802d1c1d426d38c4990136b95201431a0f05645f679722ce8f8c8b4",
+        "service": "worker",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "2147ec22127c9f4840a13ea73c598793ca2147328cada1de17845f055e6ac8f6",
+        "service": "migrate",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "probes": []
+      },
+      {
+        "id": "863c7c839ff23e41f93a44321564dbd88cee3b40c58a8b79b97b8ff7d5ca59b3",
+        "service": "minio-init",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "probes": []
+      },
+      {
+        "id": "2bdb95722e469fe234943521885169118c025b87764b50f4a7fe5439c9eadd5b",
+        "service": "postgres",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          }
+        ]
+      },
+      {
+        "id": "e1a65746811e946c76202a782627d9674efcde9eab99e140ea34a5f3a161748d",
+        "service": "redis",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          }
+        ]
+      },
+      {
+        "id": "3bbf9d8a370145731960cda5f284292f2f527c31d60817fe6a0c225918a36798",
+        "service": "minio",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      }
+    ]
+  }
+}

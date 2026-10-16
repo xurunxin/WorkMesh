@@ -1,0 +1,32 @@
+{
+  "sourceHead": "b670f3d0a468aa51a75ccbf2b77ec8aba79a8c7d",
+  "runId": 38447218904,
+  "jobId": 115469042476,
+  "artifactId": 11840207209,
+  "artifactUrl": "https://github.com/xurunxin/WorkMesh/actions/runs/38447218904/artifacts/11840207209",
+  "zipSha256": "480b21b48bcdf7b1b7639c09c232a3d4778b16e4c523dfe22e5496362935afb4",
+  "members": {
+    "result.json": {
+      "sha256": "13aa60b0a3068c599ac1e4546d6a652d6779ad02fa132e2d743c54e3999d0ff3",
+      "bytes": 2316
+    },
+    "source-after.txt": {
+      "sha256": "29f2529805c001e45f6ed6b6e694e86b849feed30253a96a88006640ac490c07",
+      "bytes": 83
+    },
+    "guest.log": {
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1",
+      "bytes": 396
+    },
+    "serial.log": {
+      "sha256": "b10328015be40bd137cda36a5a6f726a0c07aa6c0cfc8a9b84696d97a8522b99",
+      "bytes": 83583
+    },
+    "qemu-stderr.log": {
+      "sha256": "52c575fa5ff3295b601c90259a4330a05ab9abd6fa629ca58a4aa7ddc123a5f5",
+      "bytes": 69
+    }
+  },
+  "status": "failed",
+  "boundary": "仅封包成功；完整 guest 在 offlineNoDefaultRoute 后命令退出 125，未完成任一画像闭环。原回执只有退出码，没有原始 stderr，不倒填原因。"
+}

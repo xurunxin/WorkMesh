@@ -1,0 +1,225 @@
+{
+  "说明": "读取原首败后普通取消已失效405候选，未force；无候选或guest不补通过。此前CI559 ARM64继续运行。",
+  "capturedAt": "2026-10-15T22:11:25.807093+00:00",
+  "run": {
+    "id": 38813822284,
+    "head_sha": "405f880439c288b681a02e5f4fb35948513e3dc3",
+    "status": "completed",
+    "conclusion": "cancelled",
+    "created_at": "2026-10-15T21:58:23Z",
+    "updated_at": "2026-10-15T22:08:54Z"
+  },
+  "jobs": [
+    {
+      "id": 116694053846,
+      "name": "Classify changes and validate CI selection",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:00:07Z",
+      "completed_at": "2026-10-15T22:00:54Z"
+    },
+    {
+      "id": 116694398529,
+      "name": "Database integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:04:30Z"
+    },
+    {
+      "id": 116694398576,
+      "name": "Connector full installation (arm64)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:00:59Z",
+      "completed_at": "2026-10-15T22:07:46Z"
+    },
+    {
+      "id": 116694398601,
+      "name": "Complete disaster recovery",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:05:08Z"
+    },
+    {
+      "id": 116694398658,
+      "name": "API integration",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:07:30Z"
+    },
+    {
+      "id": 116694398722,
+      "name": "Connector native storage (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:02:57Z"
+    },
+    {
+      "id": 116694398728,
+      "name": "Agent construction and protocol smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:01:52Z"
+    },
+    {
+      "id": 116694398744,
+      "name": "Server candidate (arm64)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:00:58Z",
+      "completed_at": "2026-10-15T22:07:29Z"
+    },
+    {
+      "id": 116694398747,
+      "name": "Connector native storage (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:01:03Z",
+      "completed_at": "2026-10-15T22:03:28Z"
+    },
+    {
+      "id": 116694398759,
+      "name": "Connector full installation (amd64)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:00:57Z",
+      "completed_at": "2026-10-15T22:07:50Z"
+    },
+    {
+      "id": 116694398772,
+      "name": "Worker integration",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:07:28Z"
+    },
+    {
+      "id": 116694398777,
+      "name": "Source gates",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:07:29Z"
+    },
+    {
+      "id": 116694398829,
+      "name": "Server candidate (amd64)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:00:56Z",
+      "completed_at": "2026-10-15T22:07:28Z"
+    },
+    {
+      "id": 116694398931,
+      "name": "Connector native storage (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:00:57Z",
+      "completed_at": "2026-10-15T22:04:17Z"
+    },
+    {
+      "id": 116697055674,
+      "name": "Server full installation (${{ matrix.arch }}, ${{ matrix.profile }})",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-15T22:07:30Z",
+      "completed_at": "2026-10-15T22:07:30Z"
+    },
+    {
+      "id": 116697182100,
+      "name": "Required CI",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-15T22:07:53Z",
+      "completed_at": "2026-10-15T22:08:53Z"
+    }
+  ],
+  "selectedZipSha256": "bae3d291e1cb4379ea77c78a3d1c45b107bd941b6a48ec438a94da4361ca8aa5",
+  "members": {
+    "amd64/server-build/build.log": {
+      "bytes": 68639,
+      "sha256": "63f1da5cae6ff136a60ba5e3ee4e54d77ffad1b894b1067076569d6d6d8e7b0b"
+    },
+    "amd64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "b233d7ff8060280d4701c48bf9c27e3aaec2be251bcc10761d945ea45ef164f0"
+    },
+    "amd64/server-build/native-privacy.log": {
+      "bytes": 145,
+      "sha256": "2f869b783153b9f4e7415005bc121a93f7e5f6631c07253afde6ae3b7ea31474"
+    },
+    "amd64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "81761525bfb33abb3b32f87720145bd167ac847c8d75f79d92053ec9dd963160"
+    },
+    "amd64/server-build/source-commit.txt": {
+      "bytes": 238,
+      "sha256": "027278f0d96143225448531fa7692e5ada570b41b29c1c78763d43ecf57eda3d"
+    },
+    "amd64/server-build/source-install.log": {
+      "bytes": 553,
+      "sha256": "e75b43ddfeb33262ce5ae40660f231f2532b9690ef599e1e9b11d02c4dc4ae5f"
+    },
+    "amd64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "81761525bfb33abb3b32f87720145bd167ac847c8d75f79d92053ec9dd963160"
+    },
+    "amd64/server-build/unit.log": {
+      "bytes": 3805,
+      "sha256": "ce78baf51effdaa1da0199f8cce30efa7950f60d6a27ae1c7ab5ef8c5bc1b57b"
+    },
+    "amd64/artifact.json": {
+      "bytes": 465,
+      "sha256": "e62d7cbdc73b018d4b336191bc4ca0b32caefac72f7fe01a4cba8170f5bf029d"
+    },
+    "arm64/server-build/build.log": {
+      "bytes": 68774,
+      "sha256": "ef1c39c10a3c8012e447032fb3e8f4394f4102e04963bdb4519b37dec3c92591"
+    },
+    "arm64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "b233d7ff8060280d4701c48bf9c27e3aaec2be251bcc10761d945ea45ef164f0"
+    },
+    "arm64/server-build/native-privacy.log": {
+      "bytes": 145,
+      "sha256": "a58aba987b06665731837ed5d6f3a39fc6032ffe44f3859adf415626f2cfc983"
+    },
+    "arm64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "81761525bfb33abb3b32f87720145bd167ac847c8d75f79d92053ec9dd963160"
+    },
+    "arm64/server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "b1c72408e3031b7082d57ac658171d6e9c7fc78ca4c9467b522876b60bef1cad"
+    },
+    "arm64/server-build/source-commit.txt": {
+      "bytes": 238,
+      "sha256": "027278f0d96143225448531fa7692e5ada570b41b29c1c78763d43ecf57eda3d"
+    },
+    "arm64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "81761525bfb33abb3b32f87720145bd167ac847c8d75f79d92053ec9dd963160"
+    },
+    "arm64/server-build/unit.log": {
+      "bytes": 3804,
+      "sha256": "286b8e96c9ea6dc3368d0a2a6892b65f776542306c82d8d7a49281d1a6321eb0"
+    },
+    "arm64/artifact.json": {
+      "bytes": 465,
+      "sha256": "084f38857c7364601212dd81a0cbcff384bb69bf735fac14b02d59be8657a932"
+    },
+    "terminal.json": {
+      "bytes": 4252,
+      "sha256": "d39f7e7b035057379823f605b45c78ddccd0cd3a27721e9059e32d456c38a5c8"
+    },
+    "before-cancel.json": {
+      "bytes": 1649,
+      "sha256": "995f2b43eda588793e3bcf578afe6ebff59b20e82a8eda131dd08777ac4adbe6"
+    }
+  }
+}

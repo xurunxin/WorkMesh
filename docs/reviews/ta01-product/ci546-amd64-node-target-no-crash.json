@@ -1,0 +1,172 @@
+{
+  "说明": "正确Node子进程目标的显式自然诊断：个人原前序与团队业务、429局部通过；未捕获core。容器init与Node目标区分，8项Linux边界通过。未执行新增健康故障、团队升级恢复、企业或完整重启；诊断非零，不能关闭原MCP退出139或满足Required CI。",
+  "runId": 38659348638,
+  "jobId": 116176944544,
+  "artifactId": 11940111185,
+  "sourceHead": "6c20a93c3d7113d2750b8b6265abb06f28283b04",
+  "sourceTree": "54583c6d7b3c1d18d8ccb86465bd3b3153c7d1cd",
+  "nativeDiagnostic": true,
+  "status": "diagnostic-only",
+  "totalSeconds": 2318.240550417,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "8125afe5cefc47f57884946824c3f20ea34a6c677572efb953d101a7d04c4e8d",
+      "resultSha256": "8125afe5cefc47f57884946824c3f20ea34a6c677572efb953d101a7d04c4e8d"
+    },
+    "run.py": {
+      "sha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860",
+      "resultSha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "c94acb51651abe645638bfff397d085e13ba786c94ee716a72a8096e8755d29a",
+      "resultSha256": "c94acb51651abe645638bfff397d085e13ba786c94ee716a72a8096e8755d29a"
+    },
+    "guest.py": {
+      "sha256": "428a97e960a3d17a669eb257f194169031767954c4481afb78bf1e34d64027de",
+      "resultSha256": "428a97e960a3d17a669eb257f194169031767954c4481afb78bf1e34d64027de"
+    },
+    "core_pipe.py": {
+      "sha256": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c",
+      "resultSha256": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c"
+    }
+  },
+  "artifactZipSha256": "89ac60134136dff2edb540e6e27e176b12042d96414cc0476ab498b601a3c5c6",
+  "selectedZipSha256": "364363751a45514e3f0732c5eb6045312b543751c8ba69f31bd4e958e3088ef1",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "99aab536b6064759f29ef4ae4b2c8bc07d3da81d321f9d3de204079ad216a2ec",
+      "bytes": 70158
+    },
+    "server-install/guest.log": {
+      "sha256": "99a3a5d54bf45ef0f4dbbb62ce8802affb91e989f5de789e89e4a2911e6e24c9",
+      "bytes": 439
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "f5bb9d1c3ac3bb567a7daba1d2af3d67c4a2a5f43d672760048bf3d447be59a7",
+      "bytes": 2174
+    },
+    "server-install/manifest.json": {
+      "sha256": "da20769937b6b77c4d85a63a0825ceea61f13dc470779bb3fc2f7e74cf276e5c",
+      "bytes": 12627
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "c739944bf142bd1ea89f6bc4b7b3a515eb6f70fed25e918b157f2065089086f0",
+      "bytes": 105
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "6ff8cb6673e52248481ba0fa0eca3657ce430b443dbc93e93c7a3e25938b7877",
+      "bytes": 106
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/result.json": {
+      "sha256": "4ed835e8ee52869003fdec9f58395cf769353389b29c4dfcbe3bddf7df4235c2",
+      "bytes": 5700
+    },
+    "server-install/serial.log": {
+      "sha256": "d9007b50a2252a2c6b47262df1f2f7afd59a040947890013d379a775d5139357",
+      "bytes": 111898
+    },
+    "server-install/source-after.txt": {
+      "sha256": "e7da6524374027cdb123e50bef7c0300f5094bedd7e23c13d465d4b7ea475f82",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "68f901330942cc360d51bfe39844fc9f814bc469caa0032ad876eb396e047159",
+      "bytes": 264
+    },
+    "server-install/source-install.log": {
+      "sha256": "02d4e23347f44778247db32c86836f4984431867f5095881551cb2a5a3236b27",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "e7da6524374027cdb123e50bef7c0300f5094bedd7e23c13d465d4b7ea475f82",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "4a39f98536ab855c854cb1f04c9a8107d7a3ee2324a690760d4263a86ffea0b5",
+      "bytes": 3298
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "realCredentialRateLimit429",
+    "invalidCredentialCannotCommitCurrent",
+    "dataBindingChangesRejectedBeforeMutation",
+    "preMigrationFailureKeepsCurrent",
+    "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+    "upgradeKeepsOriginalVolumes",
+    "compatibleProgramRollback",
+    "completeEncryptedBackup",
+    "partialMigrationStopsIncompatibleRollback",
+    "restoreIntoEmptyTargetKeepsOriginal",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "realCredentialRateLimit429"
+  ],
+  "nativeTrace": {
+    "naturalRun": true,
+    "captured": false,
+    "registeredTarget": {
+      "pid": 34283,
+      "startTicks": 205170,
+      "executableDevice": 68,
+      "executableInode": 524873,
+      "executableBytes": 124181928
+    },
+    "containerInitPid": 34217
+  },
+  "preludeProfiles": [
+    {
+      "profile": "personal",
+      "status": "passed",
+      "checks": [
+        "workerPrivateCaActualHttpsProviderRead",
+        "authenticatedApi",
+        "duplicateIdempotency",
+        "firstTaskReadback",
+        "realMcpInstallationIdentity",
+        "realArtifactUploadDownload",
+        "redisOutageFailsClosedCredentials",
+        "lostWakeupStillReadsCommittedCursor",
+        "workerRestartRecoversDurableOutbox",
+        "concurrentRequests",
+        "realCredentialRateLimit429",
+        "invalidCredentialCannotCommitCurrent",
+        "dataBindingChangesRejectedBeforeMutation",
+        "preMigrationFailureKeepsCurrent",
+        "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+        "upgradeKeepsOriginalVolumes",
+        "compatibleProgramRollback",
+        "completeEncryptedBackup",
+        "partialMigrationStopsIncompatibleRollback",
+        "restoreIntoEmptyTargetKeepsOriginal"
+      ]
+    }
+  ]
+}

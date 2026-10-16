@@ -1,0 +1,306 @@
+{
+  "说明": "个人画像完整局部链通过；团队画像的直接 MCP 调用 RemoteDisconnected，发生于安装器业务校验前，故新增安装器请求诊断未触发。MCP 重启一次、无 OOM 记录；原件没有该服务日志分类，原因未知。",
+  "runId": 38564465610,
+  "jobId": 115855268882,
+  "artifactId": 11899790064,
+  "sourceHead": "991b394c0cae59367eb49eb1c4c85442f8e4403c",
+  "sourceTree": "af26f86d26c8f34e30253a5d8b678f751c17441c",
+  "status": "failed",
+  "totalSeconds": 3229.953533188,
+  "scripts": {
+    "run.py": {
+      "sha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd",
+      "resultSha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd"
+    },
+    "guest.py": {
+      "sha256": "7d3450d4e011e99efc3ebd90e41f1ccffea305caad1cc2956c6bf92a83fdd199",
+      "resultSha256": "7d3450d4e011e99efc3ebd90e41f1ccffea305caad1cc2956c6bf92a83fdd199"
+    }
+  },
+  "artifactZipSha256": "0bd3202b21260dd9660862a4980cdcf6c559395104c15d3a17658c56d15a6403",
+  "selectedZipSha256": "2a63baa9c54bd1611f2ffb4aa83b7e8a5fdeb21d7069ee0e0c2a02b9878c3c95",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "ee58269a1a2129dc4b2b95b1c0ee5509962dbb6cd705a81754530f10e805132c",
+      "bytes": 70762
+    },
+    "server-install/guest.log": {
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1",
+      "bytes": 396
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "b95bc044cd39fd8ea6d54e13912699914c9c93d584c0414912bd062c5594cd6a",
+      "bytes": 1717
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "756199270fc558471ff7c63a41658c9da75793658f085335e4685bfc582941c4",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "4a4d8f75d3c30e219e87538c4704a85fe33a507608c48b2b9c3820544cece0c6",
+      "bytes": 12627
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "b2846537b0d324cb76061c4f8a77c41543740b1fedc24ed94ad3ff8b6f48bc27",
+      "bytes": 69
+    },
+    "server-install/result.json": {
+      "sha256": "609e0fb4169dfa66f50b2153d023a464a13eba4fd224ea7c9872c1bd052c3cbe",
+      "bytes": 46352
+    },
+    "server-install/serial.log": {
+      "sha256": "52ca03ab87a7f2b906875186f546a2cc003e97959a6410fe5774b77635956ac5",
+      "bytes": 96222
+    },
+    "server-install/source-after.txt": {
+      "sha256": "92a2b020b90c129ea1abd8ade869ef1ca675e27c746f927be67710870eea17c4",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "4e09a14d373a3d7db45d585505529f309d013aa5c7f9b8d67b180a37ee54846b",
+      "bytes": 276
+    },
+    "server-install/source-install.log": {
+      "sha256": "e75b43ddfeb33262ce5ae40660f231f2532b9690ef599e1e9b11d02c4dc4ae5f",
+      "bytes": 553
+    },
+    "server-install/source.txt": {
+      "sha256": "92a2b020b90c129ea1abd8ade869ef1ca675e27c746f927be67710870eea17c4",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "fe26f5f86cb0cd6b94c4b4135ad2b3d4a4492adca5ba6ec93b8aa0b8c527e187",
+      "bytes": 3059
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "invalidCredentialCannotCommitCurrent",
+    "dataBindingChangesRejectedBeforeMutation",
+    "preMigrationFailureKeepsCurrent",
+    "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+    "upgradeKeepsOriginalVolumes",
+    "compatibleProgramRollback",
+    "completeEncryptedBackup",
+    "partialMigrationStopsIncompatibleRollback",
+    "restoreIntoEmptyTargetKeepsOriginal",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback"
+  ],
+  "diagnostics": {
+    "journal": {
+      "stage": "healthy",
+      "candidate": "4a4d8f75d3c30e219e87538c4704a85fe33a507608c48b2b9c3820544cece0c6",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-14T13:34:31.742Z",
+          "finishedAt": "2026-10-14T13:34:40.090Z"
+        },
+        {
+          "name": "start-data-services",
+          "status": "completed",
+          "startedAt": "2026-10-14T13:34:40.404Z",
+          "finishedAt": "2026-10-14T13:35:07.399Z"
+        },
+        {
+          "name": "initialize-locked-bucket",
+          "status": "completed",
+          "startedAt": "2026-10-14T13:35:07.475Z",
+          "finishedAt": "2026-10-14T13:35:16.128Z"
+        },
+        {
+          "name": "apply-migration-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T13:35:16.386Z",
+          "finishedAt": "2026-10-14T13:36:09.373Z"
+        },
+        {
+          "name": "verify-health-and-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T13:36:12.693Z",
+          "finishedAt": "2026-10-14T13:37:35.392Z"
+        }
+      ]
+    },
+    "installer": [],
+    "containers": [
+      {
+        "id": "1f3867db4ba766674cb01abcb7ea8e833e20bce5df925773099f4b824118ea42",
+        "service": "mcp",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 1,
+        "health": "starting",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "0a3a223dd05e0ae028ab98673dd9f4a732f86a96383e114b4ff847b6f197dbda",
+        "service": "api",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "d65da75fc18b4c8bee612393b43cf393998992fe4665338b1916616502d67f12",
+        "service": "worker",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "92da969c415ce18c635f921dcc7995a255faa3968f82a4d23c6263849811609b",
+        "service": "migrate",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "probes": []
+      },
+      {
+        "id": "e593c4d91aada110ebea76d72329ddfa33798956d3e69eb5d6d2c716046b04c8",
+        "service": "minio-init",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "probes": []
+      },
+      {
+        "id": "3c8da63014f2468b779863f66d105fc788558d874a15b0359522f9ae05d18aa1",
+        "service": "postgres",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          }
+        ]
+      },
+      {
+        "id": "2d960f2870e0023238db8fe0ec310a1810f9f29ea226be129e2f461187815f44",
+        "service": "redis",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          }
+        ]
+      },
+      {
+        "id": "e6e10120060101616708e83cd4e76bdd6e84b6cc9d045f3e8b73dc3857fa7c83",
+        "service": "minio",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      }
+    ]
+  }
+}

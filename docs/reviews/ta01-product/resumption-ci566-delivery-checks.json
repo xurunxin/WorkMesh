@@ -1,0 +1,168 @@
+{
+  "说明": "本轮新增原件/源绑定及本机静态检查，不代产品根因、原真实验收、根五门禁或最新Required。",
+  "baseHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+  "python": "3.11.15 (main, Jun  2 2026, 22:29:49) [MSC v.1944 64 bit (AMD64)]",
+  "node": "v22.19.0",
+  "ciValidate": {
+    "exitCode": 0,
+    "unitChecks": 24,
+    "registryEntries": 280,
+    "registryMembers": 61,
+    "registryErrors": []
+  },
+  "integrationDocs": {
+    "exitCode": 0,
+    "skillFiles": 4,
+    "localLinks": 98,
+    "restEndpoints": 35,
+    "mcpTools": 11,
+    "humanSyntax": "passed"
+  },
+  "optionalAutocorrect": {
+    "available": false,
+    "action": "按固定技能手检，不全局安装",
+    "initialCombinedShellExitCode": 1,
+    "reason": "两个pnpm检查均0，末尾可选Get-Command autocorrect未找到，非产品测试失败"
+  },
+  "nodeSyntaxChecks": 2,
+  "pythonActualHelperAstChecks": 8,
+  "firstBadWrapperSyntaxPreservedSeparately": true,
+  "gitDiffCheckExitCode": 0,
+  "productPathsUnchanged": true,
+  "localRootFiveCommandsRerun": false,
+  "sourceFiles": {
+    "docs/reviews/ta01-product/tools/mcp-readiness-initialize-probe.mjs": {
+      "bytes": 4728,
+      "sha256": "1691bead14148f18ea1de658c4182792974e2cac050d2e8c481be982309dcc8e"
+    },
+    "docs/reviews/ta01-product/tools/api-manifest-cost-probe.mjs": {
+      "bytes": 3543,
+      "sha256": "7026d7d6fff0d71e781037901dd1642342e790e4b92828c2b926644b614fb0d4"
+    }
+  },
+  "archives": [
+    {
+      "index": "ci566-amd64-personal-full-guest-pass.json",
+      "indexSha256": "f4473a113b07007fa335d69f5d7503bac0450ae8482432e5d7e72064d35dcad8",
+      "zipSha256": "8fbae50bfdac26beb2f1979646dd90a439c256c56478e1c810e763e6c1a5ddef",
+      "members": 11
+    },
+    {
+      "index": "ci566-amd64-team-first-failure.json",
+      "indexSha256": "878822a4fc6d5abaffafc26e295b6810f3d73b5c2a0544879d46aa4595a279ec",
+      "zipSha256": "654f03e1fbf9a60b8ccf2a59a55a08483513749546df552fdd854b1b7dcc42d9",
+      "members": 11
+    },
+    {
+      "index": "ci566-amd64-enterprise-full-guest-pass.json",
+      "indexSha256": "0cea4ee05578c602bbeb9e5b2b6914bf88f7d17ab06836f0d55c06607a59783d",
+      "zipSha256": "cf89eb5e9b23b3bf1bdd79fc77e3caf51de96c79cb64801bd9ad998498d1215b",
+      "members": 11
+    },
+    {
+      "index": "ci566-arm64-personal-first-failure.json",
+      "indexSha256": "79702243285a8c4009c53a7b23925e972ff777a1117dd491f18e30a30f76f005",
+      "zipSha256": "d1f2ecfbaaa0c74c2f5c43b29d212fd7716c26897ac56f889c95a1270e400c2e",
+      "members": 11
+    },
+    {
+      "index": "ci566-arm64-team-first-failure.json",
+      "indexSha256": "9ddd2c506b48da90a1bfb32d82e5278d2ea5b184384b29cac9b26a8dd04a836e",
+      "zipSha256": "be6c31cd6e9500b0c747bd83327d32203bf22be7321c11089c1deac8712854f5",
+      "members": 11
+    },
+    {
+      "index": "ci566-arm64-enterprise-first-failure.json",
+      "indexSha256": "abf656b3220ff8351dadcbb988df9f1fdcfc4f1f6d4c09c170754a4ae8221556",
+      "zipSha256": "42ef4c3e3511dcce32e00a799e3f9c107b52c2e3b38481d3060ddaa40813ad23",
+      "members": 11
+    },
+    {
+      "index": "ci566-final-results.json",
+      "indexSha256": "72d2073ef0be696f40450961d802a98f116130d8cd5fad246e8cfeaa78f3624c",
+      "zipSha256": "ed987938ad07978796f0d93482bf706527057a19be147a7bd127dee13e144762",
+      "members": 37
+    },
+    {
+      "index": "resumption-mcp-readiness-initialize-comparison.json",
+      "indexSha256": "11ead029a74aa4a34427858161857d826f547a65c9ea673e5a93c5b9a672fad0",
+      "zipSha256": "51771e06fc3292df8970d02dba0c20a38b458262b16484982056247604f55027",
+      "members": 30
+    },
+    {
+      "index": "resumption-api-manifest-arm-cost.json",
+      "indexSha256": "d33288bf254ba6d305ca1c6eb513716eeb3441c46b79410b26280391a40c48fb",
+      "zipSha256": "cab8be0681d2d719dc65dace9d8db3f3bd594cd0ad84a69430b6bea8ae69764d",
+      "members": 22
+    }
+  ],
+  "archivePairs": 9,
+  "archiveMembers": 155,
+  "gitFiltersPreserveBytes": [
+    "docs/reviews/ta01-product/ci566-amd64-enterprise-full-guest-pass.json",
+    "docs/reviews/ta01-product/ci566-amd64-enterprise-full-guest-pass.zip",
+    "docs/reviews/ta01-product/ci566-amd64-personal-full-guest-pass.json",
+    "docs/reviews/ta01-product/ci566-amd64-personal-full-guest-pass.zip",
+    "docs/reviews/ta01-product/ci566-amd64-team-first-failure.json",
+    "docs/reviews/ta01-product/ci566-amd64-team-first-failure.zip",
+    "docs/reviews/ta01-product/ci566-arm64-enterprise-first-failure.json",
+    "docs/reviews/ta01-product/ci566-arm64-enterprise-first-failure.zip",
+    "docs/reviews/ta01-product/ci566-arm64-personal-first-failure.json",
+    "docs/reviews/ta01-product/ci566-arm64-personal-first-failure.zip",
+    "docs/reviews/ta01-product/ci566-arm64-team-first-failure.json",
+    "docs/reviews/ta01-product/ci566-arm64-team-first-failure.zip",
+    "docs/reviews/ta01-product/ci566-final-results.json",
+    "docs/reviews/ta01-product/ci566-final-results.zip",
+    "docs/reviews/ta01-product/resumption-api-manifest-arm-cost.json",
+    "docs/reviews/ta01-product/resumption-api-manifest-arm-cost.zip",
+    "docs/reviews/ta01-product/resumption-mcp-readiness-initialize-comparison.json",
+    "docs/reviews/ta01-product/resumption-mcp-readiness-initialize-comparison.zip",
+    "docs/reviews/ta01-product/tools/api-manifest-cost-probe.mjs",
+    "docs/reviews/ta01-product/tools/mcp-readiness-initialize-probe.mjs"
+  ],
+  "writingSkillCommit": "ffda9353768dece8aabd26ccb3a4978025e9437c",
+  "observedAt": "2026-10-16T11:16:59.316546+00:00",
+  "selectedZipSha256": "29ecc7bb013cf54bc39a8a6dadafdf55553f9697d2bd6f5dac2dc45d602c4bda",
+  "members": {
+    "node-syntax/mcp-readiness-initialize-probe.mjs.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node-syntax/mcp-readiness-initialize-probe.mjs.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/mcp-readiness-initialize-probe.mjs": {
+      "bytes": 4728,
+      "sha256": "1691bead14148f18ea1de658c4182792974e2cac050d2e8c481be982309dcc8e"
+    },
+    "node-syntax/api-manifest-cost-probe.mjs.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "node-syntax/api-manifest-cost-probe.mjs.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source/api-manifest-cost-probe.mjs": {
+      "bytes": 3543,
+      "sha256": "7026d7d6fff0d71e781037901dd1642342e790e4b92828c2b926644b614fb0d4"
+    },
+    "git-diff-check.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ci-validate.log": {
+      "bytes": 4604,
+      "sha256": "3e6481f4a113820e3432026510885dbcac09413c3f3f7cdd9d7af51d24225897"
+    },
+    "integration-docs.log": {
+      "bytes": 300,
+      "sha256": "7ccd616b012bb123230c64913a4966b7593632730fc9a8bfc0d1f333c7e104c2"
+    },
+    "summary.json": {
+      "bytes": 5529,
+      "sha256": "cce3baf6900d53ffe0d9f46bdc2a15f6f41eb1cd10ac784384fcdbee5788f3da"
+    }
+  }
+}

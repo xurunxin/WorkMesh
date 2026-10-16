@@ -1,0 +1,1102 @@
+{
+  "runId": 38520305170,
+  "jobId": 115709562591,
+  "artifactId": 11875219104,
+  "artifactUrl": "https://github.com/xurunxin/WorkMesh/actions/runs/38520305170/artifacts/11875219104",
+  "originalArtifactZipSha256": "db1a13c60aa78d42754d3461928a13dd05003fb29bef724699de86d61c2b31bf",
+  "archiveScope": "逐字 server-install 原成员；未重复其他任务的 delivery-recovery 文件",
+  "archiveSha256": "3100ded154a3b00a60589d40241c2e91294f4dfe35cca4dd74422baac90161f0",
+  "members": {
+    "server-install/build.log": {
+      "bytes": 63720,
+      "sha256": "ff8412614ac648bef3f48d8ee94c62fdae0bebf2a7cc359d9c88c81d9c8f0946"
+    },
+    "server-install/guest.log": {
+      "bytes": 396,
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 1494,
+      "sha256": "397bb87a1af01674bf7c8afe9e99fcbe22b38dbd64989549819fd6e6a8295c0f"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "c6b21f07e6f160d32964735a9fd075cb348ef6d278efd79cf3bad873fed969de"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12842,
+      "sha256": "27f59f5a1792beb25fb9d9b7e060b361ea40c16ea4d1164eac57ba0e5bceae65"
+    },
+    "server-install/result.json": {
+      "bytes": 40913,
+      "sha256": "a14a554cfd0cc7ffcb97665675dc20b251fc24eb04bb36711b9a2992acdbdf27"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 69,
+      "sha256": "74d722924c8e1a695e7e87a67a4792bbd628045e532d0096319fd43a8be3c5a9"
+    },
+    "server-install/serial.log": {
+      "bytes": 89885,
+      "sha256": "eecf9083970506c919587e9ee422e0ea026cc59fed5d095a5bbeddd793f9c760"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "a5a8741a23ac4ba361414e3e02fd7b5ade6008aee46004e0010fa8d67d7844f1"
+    },
+    "server-install/source-install.log": {
+      "bytes": 555,
+      "sha256": "736e4863db4dc3226d21b5fd7e760da32f3001faf4847b2fc072fd3de477b044"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 268,
+      "sha256": "3619c2f8a1d2defdea3f8a278e5c9e64c24e4c22c3269cf513dbe542d3867798"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "a5a8741a23ac4ba361414e3e02fd7b5ade6008aee46004e0010fa8d67d7844f1"
+    },
+    "server-install/unit.log": {
+      "bytes": 2557,
+      "sha256": "c83db6a48d7b3f04fd7d378a73c828c57db237e701f7015f74437553873d1379"
+    }
+  },
+  "scriptGitBlobsMatch": {
+    "run.py": true,
+    "guest.py": true
+  },
+  "sourceHead": "da39ecb013f5f028aa4d843013f871ce6dc997a5",
+  "sourceTree": "5cdb30699e9c8365ab24fe2edc4d531e217b395f",
+  "status": "failed",
+  "receipts": [
+    {
+      "phase": "failure",
+      "errorType": "RuntimeError",
+      "diagnostics": {
+        "exitCode": 1,
+        "command": "sh",
+        "stderrSha256": "d238f44181ddcf03f5451cf9874fb0815ba9d816434b21b0d73c757670a8fd24",
+        "categories": [],
+        "codes": [
+          "INSTALL_DIAGNOSTIC",
+          "INSTALL_DOCKER_COMMAND_FAILED"
+        ],
+        "journal": {
+          "stage": "staged",
+          "candidate": "27f59f5a1792beb25fb9d9b7e060b361ea40c16ea4d1164eac57ba0e5bceae65",
+          "actions": [
+            {
+              "name": "import-images",
+              "status": "completed",
+              "startedAt": "2026-10-14T06:51:21.257Z",
+              "finishedAt": "2026-10-14T06:51:35.944Z"
+            },
+            {
+              "name": "drain-admission",
+              "status": "completed",
+              "startedAt": "2026-10-14T06:51:39.364Z",
+              "finishedAt": "2026-10-14T06:51:48.956Z"
+            },
+            {
+              "name": "complete-backup",
+              "status": "failed",
+              "startedAt": "2026-10-14T06:51:49.018Z",
+              "finishedAt": "2026-10-14T06:52:01.455Z"
+            }
+          ]
+        },
+        "installer": [
+          {
+            "exitCode": 1,
+            "timedOut": false,
+            "stderrSha256": "0cf869f6ae2fc41a01c1d2f930ba90c54b595cd52bf169c273ce68ae85949d4b",
+            "categories": []
+          }
+        ],
+        "containers": [
+          {
+            "id": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+            "service": "mcp",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          },
+          {
+            "id": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+            "service": "api",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": 1,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+              }
+            ]
+          },
+          {
+            "id": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+            "service": "worker",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": -1,
+                "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              {
+                "exitCode": -1,
+                "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+              }
+            ]
+          },
+          {
+            "id": "64db9ecc0bc3325199f774834299e930e7acdee21b1e26c8d67632a47787904a",
+            "service": "migrate",
+            "running": false,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": null,
+            "probes": []
+          },
+          {
+            "id": "9e3885ad0fc72fc1d23feb4ec45578c38f5688c64879dc165499ab0d94697f7e",
+            "service": "minio-init",
+            "running": false,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": null,
+            "probes": []
+          },
+          {
+            "id": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+            "service": "postgres",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": 0,
+                "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+              }
+            ]
+          },
+          {
+            "id": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+            "service": "minio",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          },
+          {
+            "id": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+            "service": "redis",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": 0,
+                "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+              }
+            ]
+          }
+        ]
+      },
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation",
+        "workerPrivateCaActualHttpsProviderRead",
+        "authenticatedApi",
+        "duplicateIdempotency",
+        "firstTaskReadback",
+        "realMcpInstallationIdentity",
+        "realArtifactUploadDownload",
+        "redisOutageFailsClosedCredentials",
+        "lostWakeupStillReadsCommittedCursor",
+        "workerRestartRecoversDurableOutbox",
+        "concurrentRequests",
+        "invalidCredentialCannotCommitCurrent",
+        "preMigrationFailureKeepsCurrent",
+        "interruptedHealthWithoutPendingRejectsUnknownCandidate"
+      ],
+      "samples": [
+        {
+          "phase": "idle",
+          "profile": "personal",
+          "monotonic": 915.698589225,
+          "stats": [
+            {
+              "BlockIO": "2.9MB / 0B",
+              "CPUPerc": "0.02%",
+              "Container": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "ID": "4b724596f23b",
+              "MemPerc": "9.37%",
+              "MemUsage": "35.98MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "3.72kB / 2.16kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "8.7MB / 0B",
+              "CPUPerc": "28.24%",
+              "Container": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "ID": "d61208b291fb",
+              "MemPerc": "11.38%",
+              "MemUsage": "72.8MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "20.6kB / 23.9kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "2.89MB / 0B",
+              "CPUPerc": "5.77%",
+              "Container": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "ID": "978eee1fd235",
+              "MemPerc": "14.89%",
+              "MemUsage": "66.73MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "1.11MB / 2.41MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.2MB / 96.8MB",
+              "CPUPerc": "16.74%",
+              "Container": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "ID": "e1e612ca06d2",
+              "MemPerc": "17.86%",
+              "MemUsage": "68.59MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "2.66MB / 1.14MB",
+              "PIDs": "8"
+            },
+            {
+              "BlockIO": "113MB / 164kB",
+              "CPUPerc": "0.12%",
+              "Container": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "ID": "f15d751d5150",
+              "MemPerc": "67.86%",
+              "MemUsage": "173.7MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "10.6kB / 4.49kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "7.05MB / 0B",
+              "CPUPerc": "2.56%",
+              "Container": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "ID": "8a6978e04183",
+              "MemPerc": "7.71%",
+              "MemUsage": "9.875MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "14.2kB / 8.62kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "image": "sha256:8d7f0cf547185e60b219850413f7c24de3617b99f3a5709eff024eedb5e8c6af",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6148726784 34318438400"
+          ]
+        },
+        {
+          "phase": "first-task",
+          "profile": "personal",
+          "monotonic": 930.304667384,
+          "stats": [
+            {
+              "BlockIO": "2.9MB / 0B",
+              "CPUPerc": "0.01%",
+              "Container": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "ID": "4b724596f23b",
+              "MemPerc": "9.40%",
+              "MemUsage": "36.09MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "4.3kB / 2.54kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "8.7MB / 0B",
+              "CPUPerc": "0.06%",
+              "Container": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "ID": "d61208b291fb",
+              "MemPerc": "11.67%",
+              "MemUsage": "74.67MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "81.7kB / 133kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "2.89MB / 0B",
+              "CPUPerc": "87.21%",
+              "Container": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "ID": "978eee1fd235",
+              "MemPerc": "17.46%",
+              "MemUsage": "78.21MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "1.22MB / 2.62MB",
+              "PIDs": "26"
+            },
+            {
+              "BlockIO": "39.2MB / 97MB",
+              "CPUPerc": "10.58%",
+              "Container": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "ID": "e1e612ca06d2",
+              "MemPerc": "19.37%",
+              "MemUsage": "74.38MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "2.98MB / 1.29MB",
+              "PIDs": "8"
+            },
+            {
+              "BlockIO": "113MB / 164kB",
+              "CPUPerc": "0.16%",
+              "Container": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "ID": "f15d751d5150",
+              "MemPerc": "67.86%",
+              "MemUsage": "173.7MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "10.6kB / 4.49kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "7.09MB / 0B",
+              "CPUPerc": "2.36%",
+              "Container": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "ID": "8a6978e04183",
+              "MemPerc": "7.82%",
+              "MemUsage": "10.01MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "19.3kB / 9.98kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "image": "sha256:8d7f0cf547185e60b219850413f7c24de3617b99f3a5709eff024eedb5e8c6af",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6149537792 34317627392"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 1041.670890569,
+          "stats": [
+            {
+              "BlockIO": "2.9MB / 0B",
+              "CPUPerc": "0.02%",
+              "Container": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "ID": "4b724596f23b",
+              "MemPerc": "12.41%",
+              "MemUsage": "47.64MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "729kB / 379kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "8.7MB / 0B",
+              "CPUPerc": "41.47%",
+              "Container": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "ID": "d61208b291fb",
+              "MemPerc": "13.51%",
+              "MemUsage": "86.44MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "261kB / 1.14MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "2.56MB / 0B",
+              "CPUPerc": "22.05%",
+              "Container": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "ID": "978eee1fd235",
+              "MemPerc": "14.78%",
+              "MemUsage": "66.2MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "64.2kB / 131kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.2MB / 107MB",
+              "CPUPerc": "77.34%",
+              "Container": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "ID": "e1e612ca06d2",
+              "MemPerc": "21.88%",
+              "MemUsage": "84.01MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "3.63MB / 1.63MB",
+              "PIDs": "11"
+            },
+            {
+              "BlockIO": "116MB / 221kB",
+              "CPUPerc": "0.41%",
+              "Container": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "ID": "f15d751d5150",
+              "MemPerc": "69.97%",
+              "MemUsage": "179.1MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "21.4kB / 9.8kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "0B / 0B",
+              "CPUPerc": "3.40%",
+              "Container": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "ID": "8a6978e04183",
+              "MemPerc": "2.58%",
+              "MemUsage": "3.309MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "5.79kB / 2.87kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "image": "sha256:8d7f0cf547185e60b219850413f7c24de3617b99f3a5709eff024eedb5e8c6af",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6150275072 34316890112"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 1049.214443345,
+          "stats": [
+            {
+              "BlockIO": "2.9MB / 0B",
+              "CPUPerc": "0.25%",
+              "Container": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "ID": "4b724596f23b",
+              "MemPerc": "12.41%",
+              "MemUsage": "47.64MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "729kB / 379kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "8.7MB / 0B",
+              "CPUPerc": "39.05%",
+              "Container": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "ID": "d61208b291fb",
+              "MemPerc": "13.78%",
+              "MemUsage": "88.16MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "346kB / 1.3MB",
+              "PIDs": "20"
+            },
+            {
+              "BlockIO": "2.56MB / 0B",
+              "CPUPerc": "48.42%",
+              "Container": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "ID": "978eee1fd235",
+              "MemPerc": "16.56%",
+              "MemUsage": "74.17MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "114kB / 227kB",
+              "PIDs": "26"
+            },
+            {
+              "BlockIO": "39.2MB / 108MB",
+              "CPUPerc": "31.30%",
+              "Container": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "ID": "e1e612ca06d2",
+              "MemPerc": "22.34%",
+              "MemUsage": "85.78MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "3.87MB / 1.75MB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "116MB / 221kB",
+              "CPUPerc": "26.25%",
+              "Container": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "ID": "f15d751d5150",
+              "MemPerc": "69.97%",
+              "MemUsage": "179.1MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "21.4kB / 9.8kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "0B / 0B",
+              "CPUPerc": "11.53%",
+              "Container": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "ID": "8a6978e04183",
+              "MemPerc": "2.58%",
+              "MemUsage": "3.309MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "9.2kB / 4.14kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "image": "sha256:8d7f0cf547185e60b219850413f7c24de3617b99f3a5709eff024eedb5e8c6af",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6150389760 34316775424"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 1058.817405988,
+          "stats": [
+            {
+              "BlockIO": "2.9MB / 0B",
+              "CPUPerc": "61.55%",
+              "Container": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "ID": "4b724596f23b",
+              "MemPerc": "14.51%",
+              "MemUsage": "55.71MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "730kB / 380kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "8.7MB / 0B",
+              "CPUPerc": "35.65%",
+              "Container": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "ID": "d61208b291fb",
+              "MemPerc": "13.44%",
+              "MemUsage": "86.04MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "433kB / 1.46MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "2.56MB / 0B",
+              "CPUPerc": "13.41%",
+              "Container": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "ID": "978eee1fd235",
+              "MemPerc": "14.73%",
+              "MemUsage": "66.01MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "142kB / 277kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.2MB / 109MB",
+              "CPUPerc": "37.22%",
+              "Container": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "ID": "e1e612ca06d2",
+              "MemPerc": "22.24%",
+              "MemUsage": "85.39MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "4.09MB / 1.86MB",
+              "PIDs": "11"
+            },
+            {
+              "BlockIO": "116MB / 221kB",
+              "CPUPerc": "0.20%",
+              "Container": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "ID": "f15d751d5150",
+              "MemPerc": "69.19%",
+              "MemUsage": "177.1MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "21.4kB / 9.8kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "0B / 0B",
+              "CPUPerc": "2.87%",
+              "Container": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "ID": "8a6978e04183",
+              "MemPerc": "2.58%",
+              "MemUsage": "3.309MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "12.8kB / 5.4kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "image": "sha256:8d7f0cf547185e60b219850413f7c24de3617b99f3a5709eff024eedb5e8c6af",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6150483968 34316681216"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 1068.415868158,
+          "stats": [
+            {
+              "BlockIO": "2.9MB / 0B",
+              "CPUPerc": "0.03%",
+              "Container": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "ID": "4b724596f23b",
+              "MemPerc": "12.41%",
+              "MemUsage": "47.64MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "730kB / 380kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "8.7MB / 0B",
+              "CPUPerc": "58.21%",
+              "Container": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "ID": "d61208b291fb",
+              "MemPerc": "13.44%",
+              "MemUsage": "86.02MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "466kB / 1.53MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "2.56MB / 0B",
+              "CPUPerc": "21.62%",
+              "Container": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "ID": "978eee1fd235",
+              "MemPerc": "14.81%",
+              "MemUsage": "66.34MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "194kB / 374kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.2MB / 110MB",
+              "CPUPerc": "56.01%",
+              "Container": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "ID": "e1e612ca06d2",
+              "MemPerc": "22.20%",
+              "MemUsage": "85.25MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "4.24MB / 1.94MB",
+              "PIDs": "11"
+            },
+            {
+              "BlockIO": "116MB / 221kB",
+              "CPUPerc": "0.66%",
+              "Container": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "ID": "f15d751d5150",
+              "MemPerc": "69.20%",
+              "MemUsage": "177.1MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "21.4kB / 9.8kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "0B / 0B",
+              "CPUPerc": "2.77%",
+              "Container": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "ID": "8a6978e04183",
+              "MemPerc": "2.58%",
+              "MemUsage": "3.309MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "14.9kB / 6.21kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "4b724596f23b5bfd2b071a1fa632b561e3621e31b75a6c21d741550c63ba57f6",
+              "image": "sha256:8d7f0cf547185e60b219850413f7c24de3617b99f3a5709eff024eedb5e8c6af",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d61208b291fbdab3f1a3beda82b666dbe7560745641833bf17622376b28279e6",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "978eee1fd235326b91ebd3173fd8f866e5df5962464b50b66e8f6b67fb7ff48e",
+              "image": "sha256:33857959cfb964f1c6d0f48ebb63ab6f3ae3d7f37ca72068a34e13b60d30bedb",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "e1e612ca06d28fbedbf93cfe43040cc8fcfaf6b6de77652cc28db3f160d07e13",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f15d751d5150d429c0f02ddf231ff675591f3e4af68ea9b460630133b5142840",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8a6978e0418391bbc7aab20a98d5ff21a12e3760c256d433073941fe33d3699c",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6150483968 34316681216"
+          ]
+        },
+        {
+          "phase": "concurrent-latency",
+          "count": 32,
+          "concurrency": 4,
+          "seconds": [
+            4.178736566999987,
+            4.560855384999968,
+            5.731449866000048,
+            6.594583016999877,
+            3.215435265999986,
+            3.1703058850000616,
+            2.658221451999907,
+            2.2277144039999257,
+            2.4957842409999103,
+            2.948280412000031,
+            3.9842352639998353,
+            4.482043515999976,
+            4.1675262640001165,
+            4.1565471530000195,
+            3.950327245000153,
+            3.8894315589998314,
+            3.6137228710001637,
+            3.5623772310000277,
+            3.4805196350000642,
+            2.877330605999987,
+            2.8189656680001463,
+            3.4870356139999785,
+            3.2175719029999073,
+            3.4210293920000368,
+            3.4320387739999205,
+            2.745387413999879,
+            2.625566216999914,
+            2.5269687019999765,
+            2.7413795729999038,
+            2.7916898880000645,
+            2.8331777280000097,
+            3.221719273999952
+          ]
+        }
+      ],
+      "hostUtc": 1791960860.036748,
+      "hostElapsed": 2150.733306219
+    }
+  ],
+  "totalSeconds": 2152.225471895
+}

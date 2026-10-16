@@ -79,3 +79,7 @@ sh "$HOME/.local/lib/workmesh-connector/current/uninstall.sh" --prefix "$HOME/.l
 | `INSTALL_FAILED`、`CONNECTOR_RELEASE_NATIVE_INVALID` | 核系统动态库、文件完整性及受审版本。使用仍可运行的旧入口；完整文件组与软件条件恢复后再试。 |
 
 安装故障不授权重建配对身份或删除系统秘密。连接故障按[故障处理](troubleshooting.md)中的既有安全下一步执行。
+
+## 服务端基础交付候选
+
+版本化服务端包的配置检查、安装、升级、程序回退和独立空目标恢复见 [服务端安装说明](server-installation.md)。当前处于 TA01 实现与验收阶段，尚未形成双架构三画像支持声明；连接器已交付能力沿原安装说明保留。

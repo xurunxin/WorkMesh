@@ -1,0 +1,21 @@
+{
+  "recordedUtc": "2026-10-14T05:09:48.265145+00:00",
+  "sourceHead": "9f686fd0188098961168690fbfbb40a157aafa4f",
+  "sourceTree": "82d593996af86cd63854e9e48a3f2bcb1ad4ec5e",
+  "coreSourceDiff": "",
+  "workingTreeHashes": {
+    "scripts/server-distribution/archive.mjs": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212",
+    "scripts/server-distribution/build.mjs": "118fe1a72322815ce9182b4120845c80a85b2e1ef5bbfcff4b3ce3793917e563",
+    "scripts/server-distribution/config.example.json": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a",
+    "scripts/server-distribution/diagnostics.mjs": "2d7c109338acfe9d790e2ca6ba16aab128f1c89dc0046e5bf579d82f5f9fec82",
+    "scripts/server-distribution/guest.py": "58d4916fd26473d8fb38fbdfe9502a46955ae2589e4ee81ca9a549f9992e51a4",
+    "scripts/server-distribution/install.mjs": "341bec40732738624093e55cb78e9aa7485df7d863914f2e7b1bd4437a8c9402",
+    "scripts/server-distribution/install.sh": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6",
+    "scripts/server-distribution/install.test.mjs": "b63a1cefa1e07b1a631866d316aa08094cb10f92ffd1274b2d6e9de89d7ea91c",
+    "scripts/server-distribution/journal.mjs": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06",
+    "scripts/server-distribution/manifest.mjs": "691c46a8e035a1acfe2321d8b0bb7d3c485705d68c03b4c85bb503da4171e26e",
+    "scripts/server-distribution/measure.mjs": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d",
+    "scripts/server-distribution/run.py": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd"
+  },
+  "bindingNote": "根检查使用当前工作树；apps/packages/API/schema/协议相对9f686fd0无差异。安装器单元按本索引mjs工作树执行；guest.py新故障注入未在CI522受测，不能将其结果冒为该修复通过。"
+}

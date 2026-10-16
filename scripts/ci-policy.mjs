@@ -5,7 +5,67 @@ import { fileURLToPath } from 'node:url'
 import { testConsumers } from './ci-test-inputs.mjs'
 
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'recovery-integration', 'agent-smoke', 'connector-platform', 'connector-install']
+export const checkIds = ['source-gates', 'db-integration', 'api-integration', 'worker-integration', 'recovery-integration', 'agent-smoke', 'connector-platform', 'connector-install', 'server-build', 'server-install']
+
+export function validateServerInstallEntrypoint(job, build) {
+  const failures = []
+  if (job?.env?.PYTHONDONTWRITEBYTECODE !== '1' || build?.env?.PYTHONDONTWRITEBYTECODE !== '1')
+    failures.push('server-install Python checks must not dirty the committed source with bytecode')
+  const architectures = [{ arch: 'amd64', runner: 'ubuntu-24.04' }, { arch: 'arm64', runner: 'ubuntu-24.04-arm' }]
+  const profileMatrix = '${{ fromJSON(github.event_name == \'workflow_dispatch\' && inputs.native-diagnostic == true && \'["team"]\' || \'["personal","team","enterprise"]\') }}'
+  if (JSON.stringify(build?.strategy?.matrix) !== JSON.stringify({ include: architectures })
+    || JSON.stringify(job?.strategy?.matrix) !== JSON.stringify({ arch: ['amd64', 'arm64'], profile: profileMatrix, include: architectures })
+    || [job, build].some(value => value?.['runs-on'] !== '${{ matrix.runner }}'
+      || value?.strategy?.['fail-fast'] !== false || value?.['continue-on-error']))
+    failures.push('server delivery must build both architectures and require all six ordinary configuration guests')
+  if (JSON.stringify(job?.needs) !== JSON.stringify(['changes', 'server-build'])
+    || job?.if !== '${{ needs.changes.outputs.server-install == \'true\' }}'
+    || build?.if !== '${{ needs.changes.outputs.server-build == \'true\' }}')
+    failures.push('server guests must depend on successful selected candidate producers')
+  const requireCommand = (owner, command) => {
+    const steps = owner?.steps?.filter(step => step.run?.includes(command)) ?? []
+    if (steps.length !== 1 || steps[0].if || steps[0]['continue-on-error']
+      || !steps[0].run.includes('set -euo pipefail') || steps[0].run.includes('|| true'))
+      failures.push(`server delivery must execute ${command} without skipping or masking failure`)
+  }
+  for (const command of ['node --test scripts/server-distribution/install.test.mjs',
+    'python3 scripts/server-distribution/native_diagnostic_test.py', 'node scripts/server-distribution/build.mjs --arch'])
+    requireCommand(build, command)
+  for (const command of ['python3 scripts/server-distribution/run.py --arch',
+    'printf \'%s\' "$CANDIDATE_ID"', 'sha256sum --check']) requireCommand(job, command)
+  const candidate = build?.steps?.find(step => step.id === 'candidate')
+  const download = job?.steps?.find(step => step.name === 'Download immutable architecture candidate')
+  const binding = build?.steps?.find(step => step.id === 'binding')?.run ?? ''
+  if (candidate?.uses !== 'actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02'
+    || candidate?.with?.path !== '.tmp/server-distribution' || candidate?.with?.['if-no-files-found'] !== 'error'
+    || candidate?.with?.overwrite || !binding.includes('steps.candidate.outputs.artifact-id')
+    || !binding.includes('sha256sum .tmp/server-distribution/manifest.json')
+    || download?.uses !== 'actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0'
+    || download?.with?.['artifact-ids'] !== '${{ env.CANDIDATE_ID }}' || download?.with?.['merge-multiple'] !== true
+    || download?.with?.path !== '.tmp/server-distribution' || download?.if || download?.['continue-on-error'])
+    failures.push('server guests must reuse the immutable producer artifact ID and independently bound manifest digest')
+  for (const arch of ['amd64', 'arm64']) {
+    for (const kind of ['candidate', 'digest']) {
+      if (build?.outputs?.[`${kind}-${arch}`] !== '${{ steps.binding.outputs.' + kind + '-' + arch + ' }}')
+        failures.push('each producer architecture needs a distinct artifact/digest output')
+    }
+  }
+  for (const [key, kind] of [['CANDIDATE_ID', 'candidate'], ['CANDIDATE_SHA', 'digest']]) {
+    const expected = '${{ matrix.arch == \'amd64\' && needs.server-build.outputs.' + kind + '-amd64 || needs.server-build.outputs.' + kind + '-arm64 }}'
+    if (job?.env?.[key] !== expected) failures.push('server handoff must select the matching architecture producer')
+  }
+  const guest = job?.steps?.find(step => step.name === 'Execute installed configuration in full guest')?.run ?? ''
+  if (!guest.includes("--profile '${{ matrix.profile }}'") || !guest.includes('--native-diagnostic')
+    || guest.split("--profile '${{ matrix.profile }}'").length !== 3 || guest.split('--profile').length !== 3
+    || !guest.includes("if test '${{ github.event_name }}' = workflow_dispatch && test '${{ inputs.native-diagnostic }}' = true; then"))
+    failures.push('native diagnosis must require explicit manual dispatch; normal CI must retain full acceptance')
+  const handoffOrder = ['Validate immutable producer handoff', 'Download immutable architecture candidate',
+    'Verify producer manifest digest', 'Execute installed configuration in full guest']
+    .map(name => job?.steps?.findIndex(step => step.name === name) ?? -1)
+  if (handoffOrder.some((index, ordinal) => index < 0 || (ordinal > 0 && index <= handoffOrder[ordinal - 1])))
+    failures.push('producer identity and manifest verification must precede guest execution')
+  return failures
+}
 
 export function validateConnectorInstallEntrypoint(job) {
   const failures = []
@@ -109,10 +169,13 @@ export function classifyChanges(paths, workspaces, { forceFull = false, mainPush
     }
   }
   const has = name => affected.has(`@workmesh/${name}`)
+  const serverDelivery = full || ['api', 'worker', 'mcp', 'contracts', 'db', 'config', 'recovery', 'artifact-storage'].some(has)
   const checks = {
     'source-gates': full || runtime.length > 0,
     'connector-platform': full || has('connector'),
     'connector-install': full || ['connector', 'api', 'mcp', 'contracts', 'db', 'config', 'agent-sdk'].some(has),
+    'server-build': serverDelivery,
+    'server-install': serverDelivery,
     'db-integration': full || has('db'),
     // API integration imports worker implementations directly in its fixtures.
     'api-integration': full || ['api', 'worker', 'fake-agent', 'mcp', 'agent-sdk', 'agent-runner', 'conformance'].some(has),

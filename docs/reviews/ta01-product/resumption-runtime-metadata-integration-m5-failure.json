@@ -1,0 +1,155 @@
+{
+  "说明": "38a8923原完整入口复验：lint/typecheck/test通过，integration在真实Pi/M5 producer complete_session未收tool result失败，内层真实MCP/Pi套件95通过1失败。nativeExit0但Runner ANSWER_INVALID、控制面EXECUTION_FAILED，0 captures不证明0请求，因为原夹具在解析和回调后才计数。DB/API前段已过；后续根Worker/recovery和独立test:conformance未执行。3容器3卷收尾，根因未知，不以CI绿色或单例通过盖过。事后临时观测源码另绑定并须恢复。",
+  "sourceHead": "38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428",
+  "canonicalInputCount": 686,
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-15T09:09:56.188Z",
+      "endedAt": "2026-10-15T09:10:26.393Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-15T09:10:27.592Z",
+      "endedAt": "2026-10-15T09:10:28.871Z",
+      "exitCode": 0
+    },
+    {
+      "label": "lint",
+      "command": "pnpm lint",
+      "startedAt": "2026-10-15T09:10:28.874Z",
+      "endedAt": "2026-10-15T09:12:11.351Z",
+      "exitCode": 0
+    },
+    {
+      "label": "typecheck",
+      "command": "pnpm typecheck",
+      "startedAt": "2026-10-15T09:12:11.353Z",
+      "endedAt": "2026-10-15T09:13:56.175Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test",
+      "command": "pnpm test",
+      "startedAt": "2026-10-15T09:13:56.178Z",
+      "endedAt": "2026-10-15T09:19:20.135Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-15T09:19:20.138Z",
+      "endedAt": "2026-10-15T09:54:56.407Z",
+      "exitCode": 1
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "2cdc8e69b8a949e1df94269394b78079b5c0b6ba19c71458994ef1a0614417f6",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "492c78abc0abfdf67617db4c14e72d7d14db30bb39183c39cc57b6dda3cce6ce",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "ad77416ed20a23697480d53b2ec72211ab61a90a24095c700a53d178825d560f",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-c0cb90b2-3347-42c7-a048-84712cd86ef1-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-c0cb90b2-3347-42c7-a048-84712cd86ef1-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-c0cb90b2-3347-42c7-a048-84712cd86ef1-s3-data",
+      "absent": true
+    }
+  ],
+  "failure": {
+    "turnId": "5a3d8365-ed33-4521-9b1a-c50327bf1412",
+    "nativeExit": 0,
+    "captures": 0,
+    "runtimeMs": 18880.09210000001,
+    "runnerCode": "RUNNER_ANSWER_INVALID",
+    "telemetry": [
+      {
+        "event": "workbench.turn.telemetry",
+        "turnId": "5a3d8365-ed33-4521-9b1a-c50327bf1412",
+        "sessionId": "9e67edee-6d02-44b0-9424-65b453d8ff9a",
+        "status": "failed",
+        "outcome": "failed",
+        "queueWaitMs": 3886,
+        "dispatchLagMs": 3722,
+        "runDurationMs": 14725,
+        "totalDurationMs": 18611,
+        "errorCode": "RUNNER_EXECUTION_FAILED"
+      }
+    ],
+    "failureSite": "joint-clients.conformance.test.ts:523 producer complete_session",
+    "actualCause": "unknown"
+  },
+  "members": {
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "canonical-source-after-failure.json": {
+      "bytes": 574,
+      "sha256": "e15e336b57236b83ddf1f7576426e172ef80ae5ee14f0ec2d5982dda22675073"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "418c6f70206134244f905e0efe6c9db74d573c3180c6bda89d76932d87e13eed"
+    },
+    "lint.log": {
+      "bytes": 5653,
+      "sha256": "c3f8640d96bf69ceac2c032e2dc03bef4d47249a85596885fa20fba6940af5d4"
+    },
+    "m5-failure-projection.json": {
+      "bytes": 709,
+      "sha256": "37720e14703fe8a819e4622a87a3f4c3b2b2e32361eb39f9a2c0cce10a8ae051"
+    },
+    "results.json": {
+      "bytes": 3573,
+      "sha256": "b2539b956c1db74caef92ae2e65c56614de4f9746418e290391184370abce5ae"
+    },
+    "runtime-input-before.json": {
+      "bytes": 81880,
+      "sha256": "2a94523face97893fe8ba62818ba444ea52982a303fb0699b947785ffe4878bb"
+    },
+    "test-integration.log": {
+      "bytes": 1959382,
+      "sha256": "20b5f7a3163bfe3117e989c1c36941740f3d92e1a99a24878d88a52a7828b7df"
+    },
+    "test.log": {
+      "bytes": 91815,
+      "sha256": "14d9290a2bbd014c08ee9c5f2789c05d15157d3a3808a507d76b465662ee1207"
+    },
+    "typecheck.log": {
+      "bytes": 6178,
+      "sha256": "7675dddcdb4d2a8c029500371e92b734cd90eff64766cecd667fce29e1530f3b"
+    },
+    "mcp/pi-5a3d8365-ed33-4521-9b1a-c50327bf1412.json": {
+      "bytes": 954,
+      "sha256": "587075337e709cd2b43387e99f216bb77ee5c429cc4a163840550b6faa5831c2"
+    },
+    "mcp/pi-5a3d8365-ed33-4521-9b1a-c50327bf1412-process.json": {
+      "bytes": 541,
+      "sha256": "54741c0412923e5b3933450de6f29d30ab46e4c6dac0615d314b7c0287ff066d"
+    }
+  },
+  "selectedZipSha256": "6298c3f1928585f5af44325a9b8626c245ff39752f9e95d142fa373913dd8540"
+}

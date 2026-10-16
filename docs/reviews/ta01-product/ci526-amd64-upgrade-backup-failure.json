@@ -1,0 +1,298 @@
+{
+  "说明": "个人画像健康与业务局部通过；首次兼容升级 complete-backup 失败，没有执行到本轮中断负例、回退或空目标恢复。原件没有 stdout 诊断、具体错误类型或 failure.json，根因仍未知。",
+  "runId": 38532340686,
+  "jobId": 115748746947,
+  "artifactId": 11880367899,
+  "sourceHead": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+  "sourceTree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406",
+  "manifestSha256": "8ff1f6b591ffcb940495da0dfacd12b256a604276c46ff82196c27f982c46f72",
+  "status": "failed",
+  "totalSeconds": 1722.486241172,
+  "scripts": {
+    "run.py": {
+      "sha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd",
+      "resultSha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd"
+    },
+    "guest.py": {
+      "sha256": "dcdf7c2a1ba893d1aae9d60bddcf222328452e01419b0629f210177bf92ab399",
+      "resultSha256": "dcdf7c2a1ba893d1aae9d60bddcf222328452e01419b0629f210177bf92ab399"
+    }
+  },
+  "artifactZipSha256": "97bd434ee1947353e262517271c7aa539f23b79d4491cd08d9624789c8d280c8",
+  "selectedZipSha256": "80881411fe4536e1fb22e0296f37cd795eb9a49f9eb404863582833e07b3b486",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "b8a65f410ed1028f137d2e5b80eeec847eafcfac1d043fa8502a15571b1b5259",
+      "bytes": 66943
+    },
+    "server-install/guest.log": {
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1",
+      "bytes": 396
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "7a19d1136cb352e5d3de86d463e38d77d28d9207053c8c4b265acaaf11f45204",
+      "bytes": 1494
+    },
+    "server-install/manifest.json": {
+      "sha256": "8ff1f6b591ffcb940495da0dfacd12b256a604276c46ff82196c27f982c46f72",
+      "bytes": 12845
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "c0408843f6caaed606af01552938b1990b8cb23bf22b2fa462aa783d38650d8b",
+      "bytes": 69
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "bcc9e6051211f8241909c10ff056a56fd5ea5d620379c17760f75f00a34baf86",
+      "bytes": 105
+    },
+    "server-install/result.json": {
+      "sha256": "1bde734230e6677b61cf628524219cb6044a683a79764b9715807b7c868a3753",
+      "bytes": 35864
+    },
+    "server-install/serial.log": {
+      "sha256": "e52561bccbc1ded1f7537fb19df696a999caa5545348d9f86b2192ad4e4e2d93",
+      "bytes": 88091
+    },
+    "server-install/source-after.txt": {
+      "sha256": "af8f0c96ba83be60ce21f02b7f37e40691bf1ed6fc9928bcf7cb03ecdb110597",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "d069be3e3902d8ba347ec9873e00deb788cff483d7d1659681a0a5435b887161",
+      "bytes": 269
+    },
+    "server-install/source-install.log": {
+      "sha256": "093c5c4d1673df9f61e504db931d4aa750f30319d5977659c3ec396b9d1090ab",
+      "bytes": 613
+    },
+    "server-install/source.txt": {
+      "sha256": "af8f0c96ba83be60ce21f02b7f37e40691bf1ed6fc9928bcf7cb03ecdb110597",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "33ad23dd991810d83382d46bf25c74ad1eed4d064aee251ba6a7117a8d0ed677",
+      "bytes": 2577
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "invalidCredentialCannotCommitCurrent",
+    "preMigrationFailureKeepsCurrent"
+  ],
+  "diagnostics": {
+    "exitCode": 1,
+    "command": "sh",
+    "stderrSha256": "89346b30fbc64b2aaab7d864786d56b24d05365f47fecc95f118a7aee1fa8caa",
+    "categories": [],
+    "codes": [
+      "INSTALL_DIAGNOSTIC",
+      "INSTALL_DOCKER_COMMAND_FAILED"
+    ],
+    "journal": {
+      "stage": "staged",
+      "candidate": "398a5c377826e5a5ac82435b0dc2816630a12b44953e644d20b1137e6b5c71cd",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-14T08:42:57.515Z",
+          "finishedAt": "2026-10-14T08:43:09.612Z"
+        },
+        {
+          "name": "drain-admission",
+          "status": "completed",
+          "startedAt": "2026-10-14T08:43:10.063Z",
+          "finishedAt": "2026-10-14T08:43:18.011Z"
+        },
+        {
+          "name": "complete-backup",
+          "status": "failed",
+          "startedAt": "2026-10-14T08:43:18.119Z",
+          "finishedAt": "2026-10-14T08:43:33.436Z"
+        }
+      ]
+    },
+    "installer": [
+      {
+        "exitCode": 1,
+        "timedOut": false,
+        "stderrSha256": "0cf869f6ae2fc41a01c1d2f930ba90c54b595cd52bf169c273ce68ae85949d4b",
+        "categories": [],
+        "recoveryCodes": [],
+        "providerCodes": []
+      }
+    ],
+    "containers": [
+      {
+        "id": "1bd7e934ef9c0e027365d4645f6376e389fe93c639489ed707dddce46b40a15b",
+        "service": "mcp",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 1,
+            "outputSha256": "f3e2ad536e14d5bc2e243f591f02eebb7b1885df4524359f60482a6a57926db0"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "c9ff3d14b3b1beb61d226ff49e067c2033a705d4d5cd96d13ddffb736e5c7468",
+        "service": "worker",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "80188bdcb9297899640797f3967ffa4fc9e70afa4dc5e9c8ffa5f6cd1a5b595b",
+        "service": "api",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "3c842b9b70d3a0429643b60e9095fa702ff48b98b4768880f081f4001fb863c2",
+        "service": "migrate",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "probes": []
+      },
+      {
+        "id": "43b699be6faef40d8271e701fdd6826103387d52e26c72020efb970e7c6a1d29",
+        "service": "minio-init",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "probes": []
+      },
+      {
+        "id": "6395029284efaff9f0637857a600a2f75613adfec201cf1babf21cf8728e9db8",
+        "service": "postgres",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+          }
+        ]
+      },
+      {
+        "id": "29c78d3a6d8a27d764a81f0f2d9a201ee82bbbdfb1ed7db49bb3acc783fb8a2b",
+        "service": "minio",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "4806d0d2a231b0dd870556048cdb64cc9d2fc465ffafd0643af32834795aece1",
+        "service": "redis",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "probes": [
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          },
+          {
+            "exitCode": 0,
+            "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+          }
+        ]
+      }
+    ]
+  }
+}

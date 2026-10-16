@@ -1,0 +1,71 @@
+{
+  "说明": "仅本轮工具/证据/文档适用检查；完整产品矩阵与Required仍失败。",
+  "observedAt": "2026-10-16T14:24:38.752125+00:00",
+  "verifiedPairs": {
+    "resumption-api-auth-pg-arm-1800-once": {
+      "zipSha256": "467d2cc8964f393cfbeac0defeb51ea2af1e2fb272526455d067bd0f428eb927",
+      "verifiedMembers": 57
+    },
+    "ci567-arm64-personal-first-failure": {
+      "zipSha256": "26244e66d588beb60e1f3b908a3d4ad81032cc5a176a2a476b83991aabe94cd4",
+      "verifiedMembers": 11
+    },
+    "ci567-arm64-team-first-failure": {
+      "zipSha256": "96c8e6574a20383f5c5e5fd3f462e5287f0ade96d888648f4f1daa323da69db8",
+      "verifiedMembers": 11
+    },
+    "ci567-arm64-enterprise-first-failure": {
+      "zipSha256": "8feca7594df6a0e503f094908f19b81b9577c1fb648b74b2143a727abc2653d3",
+      "verifiedMembers": 11
+    }
+  },
+  "actualToolSha256": "df8ee36d0900d90bd8ef61b93e69c04290cfcf0eb6060f772f2c4077ff0efb76",
+  "checks": [
+    {
+      "command": "node --check docs/reviews/ta01-product/tools/api-auth-pg-path-probe.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "Python ast.parse on 15 local actual helpers",
+      "exitCode": 0,
+      "scope": "运行后语法核验；实际启动前已另核当时脚本集合"
+    },
+    {
+      "command": "python3 /tmp/ta01-pipe-probe.py in owned controller",
+      "exitCode": 0,
+      "scope": "仅采集管道校准，非业务验证"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "exitCode": 0,
+      "tests": 24,
+      "registryEntries": 280,
+      "registryMembers": 61
+    },
+    {
+      "command": "pnpm check:integration-docs",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "logs": {
+    "ci-policy": {
+      "bytes": 2189,
+      "sha256": "bd6df95bf9a30e575be16afc31b562ed60e4044fa278b2002fee206ae0d9310d",
+      "text": "\r\n> workmesh@ ci:validate I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\r\n> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/retire-legacy-web.test.mjs scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs\r\n\r\n[ci:validate] OK: 12 jobs, 49 immutable action references, Node 22.19.0, pnpm@9.15.4\r\nRelease workflow validation passed.\r\nLite compose validation passed (7 services; 3 roles from one image; 55 documented variables; published: minio, api)\r\n✔ only the full inspected legacy Web IDs are removed, without volumes (4.4463ms)\r\n✔ reject another project before any mutation (0.8048ms)\r\n✔ reject another service before any mutation (0.2586ms)\r\n✔ reject another configuration before any mutation (0.1928ms)\r\n✔ reject another working directory before any mutation (0.2193ms)\r\n✔ reject identity changed just before stop before any mutation (0.2515ms)\r\n✔ unlisted orphan refuses the entire operation (0.3027ms)\r\n✔ receipts exclude container credentials, commands, custom labels and volume driver options (0.5038ms)\r\n✔ failed graceful stop preserves the container (0.3942ms)\r\n✔ 无Git/网络依赖读取双字节，精确旧路径/版本映射 (7.7286ms)\r\n✔ 相同字节共用member，所有逻辑版本保留 (1.4744ms)\r\n✔ 拒绝规范化后重复逻辑元组 (0.824ms)\r\n✔ 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符 (0.4033ms)\r\n✔ 拒绝规范化后重复ZIP member (0.5563ms)\r\n✔ 拒绝索引缺项/多项 (1.7621ms)\r\n✔ 拒绝索引重复元组 (0.7378ms)\r\n✔ 拒绝归档hash不符 (0.6322ms)\r\n✔ 拒绝伪造来源blob ID (0.7578ms)\r\n✔ 拒绝member bytes/hash不符 (0.8264ms)\r\n✔ 拒绝软链接 (1.0725ms)\r\n✔ 拒绝目录 (0.7427ms)\r\n✔ 拒绝设备 (0.9133ms)\r\n✔ 拒绝extra元数据/硬链接信息与加密flags (0.6618ms)\r\n✔ 拒绝本地路径不一致、重叠与解压超额 (0.9884ms)\r\nℹ tests 24\r\nℹ suites 0\r\nℹ pass 24\r\nℹ fail 0\r\nℹ cancelled 0\r\nℹ skipped 0\r\nℹ todo 0\r\nℹ duration_ms 386.1372\r\n{\"entries\":280,\"members\":61,\"bytes\":21268498,\"errors\":[]}\r\n"
+    },
+    "integration-docs": {
+      "bytes": 300,
+      "sha256": "008291236fd87e7042ddbabff3162a7cc62e3a2dc34896d2b86a405eb3bab821",
+      "text": "\r\n> workmesh@ check:integration-docs I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\r\n> node scripts/check-integration-docs.mjs\r\n\r\n{\"skillFiles\":4,\"localLinks\":99,\"restEndpoints\":35,\"mcpTools\":11,\"humanSyntax\":\"passed\",\"scope\":\"静态检查；真实请求与中文语义须另验\"}\r\n"
+    }
+  },
+  "unchangedProductAndWorkflowDiff": true,
+  "fiveRootChecksRerunLocally": false,
+  "fullProductAcceptance": false,
+  "latestRequiredPassed": false,
+  "autocorrect": "未找到，固定技能及references手检，未安装"
+}

@@ -1,0 +1,114 @@
+{
+  "说明": "独立团队自然运行完成局部业务与429，未捕获core；原退出139仍未解决。诊断缺原个人前序，不构成完整三画像、恢复或重启通过。",
+  "runId": 38616448204,
+  "jobId": 116033162871,
+  "artifactId": 11922366398,
+  "sourceHead": "b0613b24ccbdcfd64f2a9f86e1cfd4c5f3690110",
+  "sourceTree": "2863e5e5ad56af7d194ea6bb61ad4f486c027b28",
+  "nativeDiagnostic": true,
+  "status": "diagnostic-only",
+  "totalSeconds": 1194.7545694609998,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "743b421664650fa38a9644b7b1c35f07ea4b61cc8d2322b3f28ed4293dd7a083",
+      "resultSha256": "743b421664650fa38a9644b7b1c35f07ea4b61cc8d2322b3f28ed4293dd7a083"
+    },
+    "run.py": {
+      "sha256": "d2c6c564aaf7bb28119c0237249b1f97f207e1ad6ee0bb7436eb78970f63cd73",
+      "resultSha256": "d2c6c564aaf7bb28119c0237249b1f97f207e1ad6ee0bb7436eb78970f63cd73"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "51437c3bd987d7ec3246fcf7549eea5d3010678637d3377c88ea97801df0af52",
+      "resultSha256": "51437c3bd987d7ec3246fcf7549eea5d3010678637d3377c88ea97801df0af52"
+    },
+    "guest.py": {
+      "sha256": "8c3d3493bd0ea4ac19f6bc722785286c38eaff6a75739b5c1514eecf458815ea",
+      "resultSha256": "8c3d3493bd0ea4ac19f6bc722785286c38eaff6a75739b5c1514eecf458815ea"
+    },
+    "core_pipe.py": {
+      "sha256": "8199854874ccdac0bc95ccb07d17354e2a68b933577de4cb77d948119a9ba272",
+      "resultSha256": "8199854874ccdac0bc95ccb07d17354e2a68b933577de4cb77d948119a9ba272"
+    }
+  },
+  "artifactZipSha256": "fbab072b9cb7c3d0a121f95410da57541b18f234158aa59c02ab1ca34ab48c6f",
+  "selectedZipSha256": "879c24cd22fb9ca9403fb89876b20dc960c90e128dec43dccd3c89438c0d1fd1",
+  "members": {
+    "server-install/guest.log": {
+      "sha256": "f2c18c5d04ef28cf44df54473f97bf3d077746c4c62e9f6c02bb7a4bbb0edcd5",
+      "bytes": 439
+    },
+    "server-install/build.log": {
+      "sha256": "00078d63ad30e0f0c32cb5b7e4b6ac527248adb5dea36ae0fd8908af8843ab61",
+      "bytes": 69317
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "a173cc18ad09ca2236f2c3be2490a6a492e349b20ccb7561f4050a0829db1bd6",
+      "bytes": 2059
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "a4c7009870e3977535ef15371e294ac41cbb50d037cdc3c5c3f035636599cd5e",
+      "bytes": 105
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "ba8dd02bb7437942124041e01665b154f224dfbcb0a07cdebc0a6802f7ac9c74",
+      "bytes": 104
+    },
+    "server-install/manifest.json": {
+      "sha256": "c5146ace77256ed59b3004983e2ee375f4460210dab7dd1e7a5664b7a33bfef3",
+      "bytes": 12627
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/result.json": {
+      "sha256": "2cd5252f6fa45fa43788472fb2e21d5dfc76ce03ebbe59320795adfdf982fc21",
+      "bytes": 3292
+    },
+    "server-install/serial.log": {
+      "sha256": "f8725bbe20dee920a48d167beca1ce5711b1ec33fe0bfd414a802e260b8a6726",
+      "bytes": 106700
+    },
+    "server-install/source-after.txt": {
+      "sha256": "82511a047d54888d11e0b8961556336ffbdf2f7183e652dd2903ff45b849ea09",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "da5f7e664697dadb8e82ba18d70007e7027729b2781ca33114ba78ad5edc269b",
+      "bytes": 257
+    },
+    "server-install/source.txt": {
+      "sha256": "82511a047d54888d11e0b8961556336ffbdf2f7183e652dd2903ff45b849ea09",
+      "bytes": 83
+    },
+    "server-install/source-install.log": {
+      "sha256": "736e4863db4dc3226d21b5fd7e760da32f3001faf4847b2fc072fd3de477b044",
+      "bytes": 555
+    },
+    "server-install/unit.log": {
+      "sha256": "37166dbb6484e13c30aa63e3dc3af79df0217db72396e9bed21ffa59dc52a89a",
+      "bytes": 3060
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "realCredentialRateLimit429"
+  ],
+  "nativeTrace": {
+    "naturalRun": true,
+    "captured": false
+  }
+}

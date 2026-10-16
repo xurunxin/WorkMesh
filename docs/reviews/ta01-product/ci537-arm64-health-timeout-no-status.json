@@ -1,0 +1,140 @@
+{
+  "说明": "首次团队安装达到原1800秒期限，迁移完成，健康仍为intent，容器状态未收集成功。未到业务或原生诊断；具体错误未知。",
+  "runId": 38602869906,
+  "jobId": 115986724011,
+  "artifactId": 11920958476,
+  "sourceHead": "ec228240b13cd06041e803931fe238836fa72478",
+  "sourceTree": "fab06526a6f32851c9e76a9352709e74ace9b377",
+  "nativeDiagnostic": true,
+  "status": "diagnostic-only",
+  "totalSeconds": 6603.745065094,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e",
+      "resultSha256": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e"
+    },
+    "run.py": {
+      "sha256": "58e5f25dd4ad89599f98e47d34ff603275998d1f8f2276e680f1a89dfed39ce5",
+      "resultSha256": "58e5f25dd4ad89599f98e47d34ff603275998d1f8f2276e680f1a89dfed39ce5"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "31871f6c966a2c5ac7677e500770d1b70112098bd537178da4b2ffe0ed5f3828",
+      "resultSha256": "31871f6c966a2c5ac7677e500770d1b70112098bd537178da4b2ffe0ed5f3828"
+    },
+    "guest.py": {
+      "sha256": "3406f77f9a88d9bfef1ce43e5c3b02f3a8fc7a9edc87346ae4a9ee69f28d8fe7",
+      "resultSha256": "3406f77f9a88d9bfef1ce43e5c3b02f3a8fc7a9edc87346ae4a9ee69f28d8fe7"
+    }
+  },
+  "artifactZipSha256": "fd8faebc30e23d67e0f13174e512dca74c62184043e15cce2a0c5d4d7bf718b6",
+  "selectedZipSha256": "b093620b478bc7b4cd850bb4c3ea690878826b63523e08554ce356245244bcb3",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "8501032b096ed1c3785da68a386fb9cc264b98204cc7a89309f719e01aab2295",
+      "bytes": 69268
+    },
+    "server-install/guest.log": {
+      "sha256": "b3cdbad3b288fc706928b8fc03e0debe3502284beee6a26d1a0a2fec3ae9785c",
+      "bytes": 405
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "fb9361204c31c9605f9c56289d53b29548d7d424f380d1276d3c84824aefce53",
+      "bytes": 1952
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "7eb94cb21b7c9d1e3119d28a8a5796650725bc295d51af07ddcbddb4748d05a5",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "755780f8fa02ac2a35aac646084b42999640dab4c63bce34e40ffe54d43dbeed",
+      "bytes": 12409
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "feabb4add9e2ca3374e538560634d1ec97dc4f4ce89aab12f3d726e36ea9b2f6",
+      "bytes": 102
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "f32ad5a4223dd54111d1799d1dd93d8f31021b40830dd183b020d49a05f67b91",
+      "bytes": 70
+    },
+    "server-install/result.json": {
+      "sha256": "e4ff6c60b66dbde92a1dafdd4c6ca0cbd11f53ba6ed1c3129baddebe4ca9ca80",
+      "bytes": 5296
+    },
+    "server-install/serial.log": {
+      "sha256": "346d948a22b8ac6c768280c715ab4fc8e38a671f12b2d5917a8b6a8258105a5c",
+      "bytes": 104151
+    },
+    "server-install/source-after.txt": {
+      "sha256": "f207edfeb71e4b0bc10428bf29d18caaa5f91ce3d28c267f77acee85e0f16866",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "033dc1544e33827da9d4911a9d256f54b424e6b0455ce9457f5973c4457c6da3",
+      "bytes": 253
+    },
+    "server-install/source-install.log": {
+      "sha256": "ca0bbdc7c295d7d629d34df7665b9801e536e0a0391de90ce97941c24b59750c",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "f207edfeb71e4b0bc10428bf29d18caaa5f91ce3d28c267f77acee85e0f16866",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "b4231261edc3af9d4dbca6c41f5bfc08c6ad3427799e0cbc4f5c54cd2968c312",
+      "bytes": 3061
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment"
+  ],
+  "errorType": "TimeoutExpired",
+  "diagnostics": {
+    "command": "sh",
+    "timedOut": true,
+    "timeoutSeconds": 1800,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "journal": {
+      "stage": "migrated",
+      "candidate": "755780f8fa02ac2a35aac646084b42999640dab4c63bce34e40ffe54d43dbeed",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-14T18:30:42.003Z",
+          "finishedAt": "2026-10-14T18:31:14.015Z"
+        },
+        {
+          "name": "start-data-services",
+          "status": "completed",
+          "startedAt": "2026-10-14T18:31:14.236Z",
+          "finishedAt": "2026-10-14T18:35:37.964Z"
+        },
+        {
+          "name": "initialize-locked-bucket",
+          "status": "completed",
+          "startedAt": "2026-10-14T18:35:39.105Z",
+          "finishedAt": "2026-10-14T18:36:43.864Z"
+        },
+        {
+          "name": "apply-migration-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T18:36:45.384Z",
+          "finishedAt": "2026-10-14T18:45:01.428Z"
+        },
+        {
+          "name": "verify-health-and-ledger",
+          "status": "intent",
+          "startedAt": "2026-10-14T18:45:20.943Z"
+        }
+      ]
+    },
+    "installer": [],
+    "containerStatusUnavailable": true
+  }
+}

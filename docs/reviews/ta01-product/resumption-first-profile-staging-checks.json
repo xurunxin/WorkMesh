@@ -1,0 +1,48 @@
+{
+  "说明": "首画像暂存修正的准确源码与本机结果；此前405f880的七份归档及六脚本已逐字核实际Git blob，证明另附。",
+  "sourceBase": "405f880439c288b681a02e5f4fb35948513e3dc3",
+  "sourceDirty": true,
+  "selectedZipSha256": "e3652087abb87f6a8bd51c71b7864f65542d449080dc9cc7b30e823caa401cbd",
+  "members": {
+    "source/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "source/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    "source/guest.py": {
+      "bytes": 74572,
+      "sha256": "eab6dd6217ac14af569fbc9667fc4a9754c8237e73baabb60dcff1c915808d2a"
+    },
+    "source/native_diagnostic.py": {
+      "bytes": 11741,
+      "sha256": "c0f80cf555545af4264ca2f1a4167dad241811cf45acd5de52bd012adac819b5"
+    },
+    "source/native_diagnostic_test.py": {
+      "bytes": 56119,
+      "sha256": "4fc9a7e4347288d1e7047bb2ea08ab6938c2ae112fc3794a0ff3e5481cca35de"
+    },
+    "source/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    "checks/first-profile-staging-checks.log": {
+      "bytes": 151,
+      "sha256": "3f265a838434576d1bd3d40320e89fd7515ebc71d9fdc1524c98bcec84be45e8"
+    },
+    "checks/ci560-committed-proof.json": {
+      "bytes": 1530,
+      "sha256": "0dd0ce79269189336b3012c5841f13043b43676397e81f526cae6bd8e917e9cc"
+    },
+    "checks/ci560-before-cancel.json": {
+      "bytes": 1649,
+      "sha256": "995f2b43eda588793e3bcf578afe6ebff59b20e82a8eda131dd08777ac4adbe6"
+    },
+    "scope.json": {
+      "bytes": 1121,
+      "sha256": "9497ef65c936ab4d56ffd7459ea674af26d8c04a3cf8290120fcf79e886e3209"
+    }
+  }
+}
