@@ -20,7 +20,9 @@
 
 当前接续以[完整报告](current-delivery.md)及其准确原件为准，以下逐轮记录保留历史时态。CI561 的 `461c753` 在团队首次 MCP 身份读取、尚未 commit 时自然退出 139，旧 commit-only 捕获会漏该窗口。后续仅将显式诊断收窄到双架构团队画像，在原三次身份读取前准备完成；受拒不发请求，失败不重试。团队三次 commit 观察继续。普通六组合、Required 严格结果、全部请求／健康／安装／guest／捕获期限不变。
 
-新诊断窗口与同步准备的回归冻结在既有 `native_diagnostic_test.py`，包括普通三请求原参数、其他画像无新观察、准备受拒零请求、读取失败不重试且一次恢复、core 回执停止。CI 入口及 `ci-policy.test.mjs` 同步核显式团队和普通六组合，删除 profile、替换画像或逃离手动分支拒绝。52 项本机检查与真实 CI 校验入口通过；新路径未实测，不关闭根因或进入正式成果审。
+新诊断窗口与同步准备的回归冻结在既有 `native_diagnostic_test.py`，包括普通三请求原参数、其他画像无新观察、准备受拒零请求、读取失败不重试且一次恢复、core 回执停止。CI 入口及 `ci-policy.test.mjs` 同步核显式团队和普通六组合，删除 profile、替换画像或逃离手动分支拒绝。9c8的52项已在 CI562／563 四生产者实测，显式首次身份窗口两架构成功，AMD后来仍捕获139、ARM升级后仍业务读取超时；不关闭根因或进入正式成果审。
+
+CI562 普通团队 ARM64 的串口已报 commit 读取超时，但最终摘要等重型 Docker 诊断结束才上报，宿主先到150分钟，result.receipts为空。本轮在首个 Docker 探测前上报同一安全摘要，标 diagnosticsPending=true；允许原诊断在原总期限内继续，只有最终failure立即结束。只有pending失败也必须拒绝普通／诊断验收，不延时、不重试或增加私有数据。新增已创建回归冻结为 `GuestFailureProgress.test_pending_snapshot_precedes_docker_and_survives_aborted_collection`、`test_pending_failure_blocks_actual_host_completion_in_both_modes` 和 `test_only_literal_pending_true_defers_final_failure`。55项仅本机通过，新路径待新候选真实验证；原52项guest证据另保。
 
 创建 server-distribution 的安装、manifest、journal 测试及 apps/api/integration/deployment-profiles.integration.test.ts。沿 acceptance-matrix.md 冻结的名字覆盖安装、重复／并发、拒绝和 journal 中断、迁移失败、兼容程序回退、不兼容空目标恢复、原卷保留、限流 store 失败关闭、丢 hint／worker 重启、工件上传下载和完整备份恢复。所有断言使用真实接受状态与外部效果证据，不用 fake 结果代真实原子性和存储锁。
 

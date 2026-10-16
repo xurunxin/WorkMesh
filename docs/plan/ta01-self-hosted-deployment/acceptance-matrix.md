@@ -8,6 +8,23 @@
 
 旧控制面基线和 docs Required CI 不替代新候选包验收。用户已批准本阶段记录例外并继续。平台 Saved plan 字段仍未同步，当前依据仓库执行计划进入产品实现；产品验收已有局部真实结果，三画像双架构完整组合尚未通过；最新准确源码、首败及未测见 [接续记录](resumption.md)。
 
+## CI562 当前候选矩阵
+
+普通 CI562／run38831525243 与显式 CI563／run38831565958 均绑定 `9c8bbff749c1d2a52a3e6489dcec02d2d7c859af`。四份生产者原件已核 Linux 上 52 项 Python、16 项安装单元通过，六脚本与准确 Git、manifest 相符。普通矩阵继续六组合，显式诊断仅双架构团队，诊断失败不能当支持通过。
+
+| CI562 画像／架构 | 当前实际结果 | 证据 |
+| --- | --- | --- |
+| 个人 Lite／amd64 | success，完整重启证明齐全，4,068.43 s | [索引](../../reviews/ta01-product/ci562-amd64-personal-full-guest-pass.json) |
+| 团队／amd64 | success，完整重启证明齐全，2,485.96 s | [索引](../../reviews/ta01-product/ci562-amd64-team-full-guest-pass.json) |
+| 企业／amd64 | failure，首次健康后 API die139，MCP请求数0 | [首败](../../reviews/ta01-product/ci562-amd64-enterprise-first-failure.json) |
+| 个人 Lite／arm64 | failure，总150分钟，restore-empty只见开始，无完成回执 | [索引](../../reviews/ta01-product/ci562-arm64-personal-first-failure.json) |
+| 团队／arm64 | failure，总150分钟；此前串口commit业务超时，最终receipt未保存 | [索引](../../reviews/ta01-product/ci562-arm64-team-first-failure.json) |
+| 企业／arm64 | failure，总150分钟，restore-empty只见开始，无完成回执 | [索引](../../reviews/ta01-product/ci562-arm64-enterprise-first-failure.json) |
+
+CI562及Required job116795930709 failure，六组合全部结束、无取消，其余14作业成功。[双运行终态](../../reviews/ta01-product/ci562-ci563-final-results.json)保准确来源。本轮新增首败摘要提前上报及宿主pending failure仍拒绝验收的修正，55项仅为本机回归，新路径须绑定新候选实测，不冒9c8既有原件已验证。
+
+CI563 双团队及 Required job116795308066 均 failure。AMD64 首次身份读取、首次／升级 commit 三窗口原动作成功且无 core，第四个回退后 commit 捕获自然139，原业务失败。准确公开二进制匹配后只有 IC::UpdateState+128 和两个有界公开帧，handler 开始早于 journal 本次读取约7.23秒，不能认定该读取触发故障。ARM64 首次身份及首次 commit 成功无 core，升级后 get_work_item／id2 在30,394 ms 原期限到期，上游49,798 ms 完成200不补成功。见[ARM64原件索引](../../reviews/ta01-product/ci563-arm64-team-native-observation.json)及[当前报告](current-delivery.md)；旧成功不代当前矩阵或根因闭合。
+
 ## CI561 修正候选矩阵
 
 普通 CI561／run38815572580 绑定 `461c753c9ddca19e83a97fc31f4381427603a9ac`，tree 为 `af26442a7b06030642fa917c84dd57f5e55bf6f3`。双架构生产者各 47 项 Python、16 项安装单元通过，候选分别核准确源码、六脚本与 manifest；不能据此宣称六 guest 通过。

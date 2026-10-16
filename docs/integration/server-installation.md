@@ -4,7 +4,9 @@
 
 本卡正在实现保留 PostgreSQL、Redis 和 S3 的基础交付。以下入口及命令已有代码，双架构完整虚拟机验收尚未完成，当前候选不能作为发行包或已支持声明。Redis-free、filesystem、生产内网接入和物理设备最低配置仍未交付。
 
-普通 CI561 的 `461c753` 候选仅个人 AMD64 完整通过；团队首次 MCP 身份读取、企业回退后 commit 均自然退出 139。ARM64 个人／企业升级、团队回退后的 commit 均触发原 30 s socket 超时，上游较晚完整响应不代成功；整轮与 Required 失败，无取消。旧 CI558 的 `f53f20b` 三个 AMD64 成功原件保留，不套给新源码。准确状态及原件见 [验收矩阵](../plan/ta01-self-hosted-deployment/acceptance-matrix.md#ci561-修正候选矩阵)及[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。
+普通 CI562 的 `9c8bbff` 候选个人和团队 AMD64 完整通过；企业 AMD64 首次健康后 API 自然退出 139，尚无 MCP 请求。三组 ARM64 达原150分钟：个人／企业仅见空目标恢复开始，团队此前commit业务超时但故障采集未交最终receipt。显式 CI563 AMD64 团队回退窗口捕获 MCP139，ARM64 升级后的 get_work_item 原30秒到期、上游较晚200不补成功。两轮及 Required 均失败。当前原件、准确来源及终态见[验收矩阵](../plan/ta01-self-hosted-deployment/acceptance-matrix.md#ci562-当前候选矩阵)和[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。
+
+验收助手现先上报已构造的安全故障摘要，再继续原范围的容器诊断，避免摘要等到总期限后才丢失。diagnosticsPending=true 不允许验收通过；只收到这份失败回执、未收最终诊断也仍失败，原总期限保持。新增55项本机检查不能代新候选真实guest验证，更不代表139或迟响应根因已修复。
 
 ## 环境和候选
 
@@ -52,7 +54,7 @@ commit 实际校验 MCP 鉴权、读取所选工作项并核迁移账本，然�
 
 `stage` 先完成同样的候选与配置预检，再导入清单绑定的完整镜像集合，返回 staged-candidate 和实际镜像 ID。该步骤不启动部署容器、不生成运营密钥、不登记 current。后续 install 仍重新校验全部候选字节和镜像身份；暂存结果不替代安装验收。
 
-三画像均按上述 `check → stage → install` 顺序验收。独立 guest 的首个请求画像先暂存，按其实际 project 检查没有部署容器、current 或运营密钥。CI558 ARM64 企业曾因助手只给个人画像暂存，在首次安装中导入镜像并达到原 1,800 s 期限。本次只修助手的画像选择，保各命令原期限；尚待新候选真实验证，不据此宣称 ARM64 已支持或 MCP 139 已修复。
+三画像均按上述 `check → stage → install` 顺序验收。独立 guest 的首个请求画像先暂存，按其实际 project 检查没有部署容器、current 或运营密钥。CI558 ARM64 企业曾因助手只给个人画像暂存，在首次安装中导入镜像并达到原 1,800 s 期限。画像选择修正已在 CI561 六组真实完成 stage 和首次健康，各命令保原期限；后续业务仍有失败，不能据此宣称 ARM64 已支持或 MCP 139 已修复。
 
 首次安装生成相互分离的随机密钥，保存在安装目录的 `operator-keys.json`，权限为 `0600`。密钥不进入候选、journal、日志或结果摘要。运营者须单独保管备份密钥和主密钥，不能仅复制恢复 bundle。已有部署缺失密钥文件时停止，不重新生成密钥。
 

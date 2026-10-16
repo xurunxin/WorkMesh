@@ -18,7 +18,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import threading
 import time
 from native_diagnostic import safe_trace, NativeCrashWatcher, process_identity, binary_hash, node_process_pid
-from run import valid_receipt, complete_reboot_checks
+from run import valid_receipt, complete_reboot_checks, product_failed
 from core_pipe import memory_core
 from core_metadata import core_location
 import core_pipe
@@ -355,6 +355,67 @@ class CoreMetadata(unittest.TestCase):
 
 
 class GuestFailureProgress(unittest.TestCase):
+    def test_pending_snapshot_precedes_docker_and_survives_aborted_collection(self):
+        tree = ast.parse(Path(__file__).with_name('guest.py').read_text(encoding='utf8'))
+        main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'main')
+        handler = next(node for node in ast.walk(main) if isinstance(node, ast.ExceptHandler)
+                       and node.name == 'error' and isinstance(node.type, ast.Name) and node.type.id == 'Exception')
+        helper = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'report_failure')
+        class CollectionAborted(BaseException):
+            pass
+        reports = []
+        original = RuntimeError('private original error message')
+        with tempfile.TemporaryDirectory() as directory:
+            prefix = Path(directory)
+            journal = {'id': 'owned-test', 'stage': 'healthy', 'candidate': 'c' * 64, 'project': 'ta01-team',
+                       'actions': [{'name': 'validate-business-read', 'status': 'failed',
+                                    'diagnostics': {'method': 'tools/call', 'requestId': 2, 'timedOut': True}}]}
+            (prefix / 'journal.json').write_text(json.dumps(journal), encoding='utf8')
+            def docker_started(*_args, **_kwargs):
+                self.assertEqual(len(reports), 1)
+                self.assertTrue(reports[0]['diagnosticsPending'])
+                self.assertEqual(reports[0]['diagnostics']['installer'][0]['requestId'], 2)
+                raise CollectionAborted()
+            scope = {'json': json, 'Path': Path, 'os': os, 'hashlib': hashlib,
+                     'prefix': prefix, 'servers': [], 'native_diagnostic': False, 'error': original,
+                     'checks': ['authenticatedApi'], 'samples': [], 'diagnostics': {},
+                     'failure_progress': lambda *_args, **_kwargs: None,
+                     'report': lambda value: reports.append(json.loads(json.dumps(value))),
+                     'subprocess': SimpleNamespace(run=docker_started, TimeoutExpired=__import__('subprocess').TimeoutExpired,
+                                                   CalledProcessError=__import__('subprocess').CalledProcessError)}
+            exec(compile(ast.Module(body=[helper], type_ignores=[]), 'guest-failure-helper', 'exec'), scope)
+            with self.assertRaises(CollectionAborted):
+                exec(compile(ast.Module(body=handler.body, type_ignores=[]), 'guest-failure-path', 'exec'), scope)
+            scope['diagnostics']['laterProbe'] = 'not-in-preserved-snapshot'
+        self.assertEqual(reports[0]['phase'], 'failure')
+        self.assertEqual(reports[0]['errorType'], 'RuntimeError')
+        self.assertNotIn(str(original), json.dumps(reports))
+        self.assertNotIn('laterProbe', reports[0]['diagnostics'])
+        self.assertEqual(reports[0]['diagnostics']['journal']['actions'][0]['status'], 'failed')
+        self.assertTrue(valid_receipt(reports[0]))
+
+    def test_pending_failure_blocks_actual_host_completion_in_both_modes(self):
+        tree = ast.parse(Path(__file__).with_name('run.py').read_text(encoding='utf8'))
+        main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'main')
+        block = next(node for node in main.body if isinstance(node, ast.Try)
+                     and any(isinstance(child, ast.While) for child in node.body))
+        position = next(i for i, node in enumerate(block.body) if isinstance(node, ast.While))
+        completion = ast.Module(body=block.body[position + 1:], type_ignores=[])
+        receipts = [{'phase': 'before-reboot'}, {'phase': 'failure', 'diagnosticsPending': True}, {'phase': 'after-reboot'}]
+        for native in [False, True]:
+            scope = {'receipts': receipts, 'product_failed': product_failed,
+                     'options': SimpleNamespace(native_diagnostic=native), 'process': SimpleNamespace(returncode=0)}
+            with self.assertRaisesRegex(RuntimeError, 'installed product assertion failed'):
+                exec(compile(completion, 'host-completion', 'exec'), scope)
+        self.assertTrue(product_failed(receipts))
+        self.assertFalse(product_failed(receipts, finalized_only=True))
+        self.assertTrue(product_failed([*receipts, {'phase': 'failure'}], finalized_only=True))
+
+    def test_only_literal_pending_true_defers_final_failure(self):
+        for value in [None, False, 1, 'true', {}, []]:
+            self.assertTrue(product_failed([{'phase': 'failure', 'diagnosticsPending': value}], finalized_only=True))
+        self.assertFalse(product_failed([{'phase': 'before-reboot'}, {'phase': 'after-reboot'}]))
+
     @staticmethod
     def marker(name='failure_progress'):
         # Load only the pure projection; importing guest.py creates guest paths.

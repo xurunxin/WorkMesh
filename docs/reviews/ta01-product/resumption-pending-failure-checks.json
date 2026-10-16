@@ -1,0 +1,71 @@
+{
+  "说明": "修正团队ARM原首败在重型诊断期间被总期限遮住的证据延迟；不是139或迟响应根因修复。55项只为本机，真实guest待新候选；旧9c8实际52项和终态另保。",
+  "baseHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+  "sourceFiles": {
+    "scripts/server-distribution/core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+    "scripts/server-distribution/core_pipe.py": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+    "scripts/server-distribution/guest.py": "4c3b83f6b605563e99659426fffabda3dc137266fb557a60923302ae9ef65b0b",
+    "scripts/server-distribution/native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+    "scripts/server-distribution/native_diagnostic_test.py": "71d9ee72ca08741c5aedd7da6becf343958f82a1adae4cbb4f7ff1eb56d6fa4f",
+    "scripts/server-distribution/run.py": "3b8ef7fbed465eee3fee07d57b7c2552fb6f7c83e52f4a3e9711defbfdae6b6f"
+  },
+  "astFiles": 6,
+  "environment": {
+    "os": "Windows",
+    "python": "3.11.15",
+    "node": "22.19.0",
+    "pnpm": "9.15.4"
+  },
+  "checks": {
+    "python": "55 passed",
+    "ci:validate": "passed",
+    "check:integration-docs": "passed",
+    "git diff --check": "passed",
+    "rootFiveLocalRerun": false
+  },
+  "client90SecondsUnchangedFromF53ToBase": true,
+  "scope": "同一failure回执仅新增diagnosticsPending=true；先上报已有安全journal/installer/proxy事实，再做原Docker诊断。pending不能使普通或诊断验收成功。原150分钟和全部原业务/健康/安装期限不变。",
+  "selectedZipSha256": "e080fac5a77b6441e576172a40f55c4e6c896a9a6612bcff01ff1ad6a0fce495",
+  "members": {
+    "source/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "source/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    "source/guest.py": {
+      "bytes": 75902,
+      "sha256": "4c3b83f6b605563e99659426fffabda3dc137266fb557a60923302ae9ef65b0b"
+    },
+    "source/native_diagnostic.py": {
+      "bytes": 12173,
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94"
+    },
+    "source/native_diagnostic_test.py": {
+      "bytes": 66380,
+      "sha256": "71d9ee72ca08741c5aedd7da6becf343958f82a1adae4cbb4f7ff1eb56d6fa4f"
+    },
+    "source/run.py": {
+      "bytes": 14365,
+      "sha256": "3b8ef7fbed465eee3fee07d57b7c2552fb6f7c83e52f4a3e9711defbfdae6b6f"
+    },
+    "checks/pending-failure-checks.log": {
+      "bytes": 10068,
+      "sha256": "0d04fe70d44ea2b32f2f4684835201d70dae3104f1f5ae23c7ad72ecbb3df3b3"
+    },
+    "checks/pending-failure-ci-check.log": {
+      "bytes": 4604,
+      "sha256": "fe5a81b31d2afee99afd26645d5fcd1161c4225de8a0d33cf7f75ffa2ad758cc"
+    },
+    "checks/pending-failure-docs-check.log": {
+      "bytes": 300,
+      "sha256": "ae269f74eb17df9f454b6c31b0f637b27cc7720bd7ccd9fab0892fff53bf631f"
+    },
+    "checks.json": {
+      "bytes": 1621,
+      "sha256": "f43ac42daeebf6fe7c3096fd4a3c5840872c59a8eb9c3c5ecd831e7946dfbe44"
+    }
+  }
+}

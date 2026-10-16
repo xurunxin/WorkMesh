@@ -248,6 +248,14 @@ def report(value):
         assert response.status == 200
 
 
+def report_failure(error, *, pending=False):
+    value = {'phase': 'failure', 'errorType': type(error).__name__, 'diagnostics': diagnostics,
+             'completedChecks': checks, 'samples': samples}
+    if pending:
+        value['diagnosticsPending'] = True
+    report(value)
+
+
 def download():
     dist = ROOT / 'distribution'
     dist.mkdir(mode=0o700)
@@ -1080,6 +1088,12 @@ def main():
                     diagnostics['backupFailure'] = {'code': code if code in known else 'unknown',
                         'reportSha256': hashlib.sha256(failure_file.read_bytes()).hexdigest(),
                         'messageSha256': hashlib.sha256(failure.get('error', {}).get('message', '').encode()).hexdigest()}
+                # Preserve existing safe journal/request facts before Docker
+                # probes can consume the remaining, unchanged guest deadline.
+                try:
+                    report_failure(error, pending=True)
+                except OSError:
+                    diagnostics['pendingFailureReceiptUnavailable'] = True
                 # The outer Docker client may time out before the installer can
                 # finish its journal. Inspect only this installation's objects.
                 ids = subprocess.run(['docker', 'ps', '-aq', '--no-trunc', '--filter', 'label=com.docker.compose.project=' + journal['project']], capture_output=True, timeout=30)
@@ -1152,7 +1166,7 @@ def main():
                 diagnostics['journalUnavailable'] = True
             except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
                 diagnostics['containerStatusUnavailable'] = True
-        report({'phase': 'failure', 'errorType': type(error).__name__, 'diagnostics': diagnostics, 'completedChecks': checks, 'samples': samples})
+        report_failure(error)
         raise
     finally:
         for server in servers:

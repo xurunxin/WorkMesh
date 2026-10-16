@@ -31,6 +31,12 @@ def valid_receipt(value, native_diagnostic=False):
             and not __import__('re').search(r'wm[ips]_[A-Za-z0-9_-]{43}', json.dumps(value)))
 
 
+def product_failed(receipts, *, finalized_only=False):
+    return any(receipt['phase'] == 'failure'
+               and (not finalized_only or receipt.get('diagnosticsPending') is not True)
+               for receipt in receipts)
+
+
 def complete_reboot_checks(value, profiles=PROFILES):
     if (not isinstance(profiles, (list, tuple)) or not profiles
             or any(not isinstance(profile, str) or profile not in PROFILES for profile in profiles)
@@ -211,9 +217,13 @@ WantedBy=cloud-init.target
                         peak = max(peak, int(line.split()[1]) * 1024)
             if time.monotonic() - began > 150 * 60:
                 raise TimeoutError("product guest total budget reached")
-            if any(r["phase"] == "failure" for r in receipts):
+            if product_failed(receipts, finalized_only=True):
                 raise RuntimeError("installed product assertion failed")
             time.sleep(1)
+        # A partial failure receipt never permits acceptance, even if the guest
+        # exits before the expensive diagnostic collection can finish.
+        if product_failed(receipts):
+            raise RuntimeError("installed product assertion failed")
         if options.native_diagnostic:
             if process.returncode or not any(r["phase"] == "native-diagnostic" for r in receipts):
                 raise RuntimeError("missing native diagnosis")
