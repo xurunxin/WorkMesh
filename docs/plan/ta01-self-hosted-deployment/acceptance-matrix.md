@@ -8,11 +8,13 @@
 
 旧控制面基线和 docs Required CI 不替代新候选包验收。用户已批准本阶段记录例外并继续。平台 Saved plan 字段仍未同步，当前依据仓库执行计划进入产品实现；产品验收已有局部真实结果，三画像双架构完整组合尚未通过；最新准确源码、首败及未测见 [接续记录](resumption.md)。
 
-## CI564 证据修正候选
+## CI564 终态与 CI565 新候选
 
-当前受测源码为 `5371f16e24db94415155228dfc8ac149523573a0`。普通 CI564／run38846561914 的双架构生产者已核 Linux 上55项Python、16项安装单元通过，准确六脚本与manifest均匹配；六画像guest仍在运行，不能填支持通过。此前9c8的CI562／563均全终态失败，以下历史矩阵保准确来源。
+CI564／run38846561914绑定 `5371f16e24db94415155228dfc8ac149523573a0`，运行cancelled，Required job116816927133 failure。AMD64团队完整通过，企业回退后commit的initialize遇到MCP139。个人AMD64和三ARM均cancelled、缺result.json；只保可得串口，不补自然终态或通过。双生产者真实55项Python及16项安装单元通过，不代六guest。见[终态原件](../../reviews/ta01-product/ci564-final-results.json)。
 
-5371只修正首败证据提前上报，pending failure始终阻断验收。本轮五次原生Linux合成组件测量确认资格处理CPU成本，未复现139的有限样本不排除运行时或TCG问题，也不代ARM或完整安装。四项可证伪假设、原件与下一项定向验证见[当前交付报告](current-delivery.md)。没有追加整轮试跑、重跑或取消CI564，未改变原资源／期限／全部真实验收及P0/P1独审门禁。
+平台checkpoint为 `ac0a4d21deba15a23c8c7b40f671b59c41f30f37`，自动触发CI565／run38852474436，与旧运行取消的并发规则及时序一致；没有独立取消发起者字段，归属按推断保留。当前CI565双生产者已核55项／16项和六脚本／manifest，AMD64三画像已核完整重启通过，三ARM均失败、Required失败、无取消：企业首次正常commit为30,382 ms，个人／团队升级夹具commit为30,392／30,602 ms；晚200均不补成功，不能套旧结果。见[生产者原件](../../reviews/ta01-product/ci565-producers.json)。
+
+首败提前摘要已在CI564企业AMD实际送达，比最终诊断早85.72 s，最终仍失败；只为证据修正。固定Node／guest／精确QEMU版本的AMD64原生／TCG小组件与各12次零POST冷启动完成，并补准确CI563 MCP镜像角色各12组配对，以及CI565 ARM准确角色的12组合成补测；有限未139不排除故障，也不代ARM、完整已安装候选或原真实验收。具体时序、四项假设与未测见[当前报告](current-delivery.md)；原全部断言／期限和P0/P1独审、最新Required门禁保持。
 
 ## CI562 当前候选矩阵
 

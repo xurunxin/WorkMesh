@@ -1,0 +1,297 @@
+{
+  "说明": "平台checkpoint推送后作业取消；没有result，不能补造最终失败/成功、完整重启、回执或资源收尾。只保实际原件、准确源码及串口已记录事实。",
+  "sourceHead": "5371f16e24db94415155228dfc8ac149523573a0",
+  "sourceTree": "a1a0c341b64186963c9e2eccb23b1171d0feafef",
+  "scriptsMatchGit": true,
+  "scripts": {
+    "scripts/server-distribution/archive.mjs": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212",
+    "scripts/server-distribution/build.mjs": "a61331746e8c7ed05513707fcaf6f31d841fb585340dea4ed54398146ee9fe19",
+    "scripts/server-distribution/config.example.json": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a",
+    "scripts/server-distribution/configuration.mjs": "5e07457aa0503aca9202d119498ada09674e489eef91de7a00d2f132d882a560",
+    "scripts/server-distribution/core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+    "scripts/server-distribution/core_pipe.py": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+    "scripts/server-distribution/diagnostics.mjs": "3a800d9adf8dfc9153d400bba915fe559d68184b5ca72b9398ee8fa5978399ff",
+    "scripts/server-distribution/failure-recovery.mjs": "137d4e13ba07ed3fb2bc0c1dd29401b7da6a772b0f4768913fbd70c0de38eabb",
+    "scripts/server-distribution/guest.py": "4c3b83f6b605563e99659426fffabda3dc137266fb557a60923302ae9ef65b0b",
+    "scripts/server-distribution/install.mjs": "5dba8fc0bb4ab8d6b8e2220625bf5e51254d8565395cf70d817db13592d139fe",
+    "scripts/server-distribution/install.sh": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6",
+    "scripts/server-distribution/install.test.mjs": "4ca425fda60eb8dd5bc2de7622ea61101dd39354f754d0b55b3e98779792fc52",
+    "scripts/server-distribution/journal.mjs": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06",
+    "scripts/server-distribution/manifest.mjs": "1709701d6a6a57ff65d6dbfd70b0fb216cbd47599275d925debd470700e5d44c",
+    "scripts/server-distribution/mcp-response.mjs": "67b8d07a4a10fddef5c667d8f8adbe22d26144d7b584df742645a2863c3c2c20",
+    "scripts/server-distribution/measure.mjs": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d",
+    "scripts/server-distribution/native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+    "scripts/server-distribution/native_diagnostic_test.py": "71d9ee72ca08741c5aedd7da6becf343958f82a1adae4cbb4f7ff1eb56d6fa4f",
+    "scripts/server-distribution/run.py": "3b8ef7fbed465eee3fee07d57b7c2552fb6f7c83e52f4a3e9711defbfdae6b6f",
+    "scripts/server-distribution/verify-files-worker.mjs": "3fd13fe7a0065cbbc0d0bc91bf3f2f7cd70941bcbfdf1323e64e66e0fd5dc415"
+  },
+  "runId": 38846561914,
+  "jobId": 116800972574,
+  "artifactId": 12025184756,
+  "arch": "arm64",
+  "profile": "team",
+  "jobConclusion": "cancelled",
+  "resultPresent": false,
+  "producer": {
+    "artifactId": "12023303940",
+    "manifestSha256": "c3171763abafd0a93836a1a2902c9ca745b15da4b0f8478ac5e5c5d167f93d3a"
+  },
+  "artifactZipSha256": "9ced33e507ac84e7d81c7e2cbd78754fa1f67563313cb398087d5298671901f6",
+  "records": [
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 1,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 40421,
+      "userCpuMicroseconds": 23911352,
+      "systemCpuMicroseconds": 61022675
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 209702
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 40705,
+      "userCpuMicroseconds": 23841676,
+      "systemCpuMicroseconds": 62016524
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "team",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1133,
+      "userCpuMicroseconds": 837467,
+      "systemCpuMicroseconds": 613023
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "team",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 224,
+      "userCpuMicroseconds": 141786,
+      "systemCpuMicroseconds": 107792
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 73122
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 41585,
+      "userCpuMicroseconds": 24534034,
+      "systemCpuMicroseconds": 62216763
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "team",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1212,
+      "userCpuMicroseconds": 949432,
+      "systemCpuMicroseconds": 575035
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "team",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 205,
+      "userCpuMicroseconds": 147088,
+      "systemCpuMicroseconds": 84009
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 75078
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 40417,
+      "userCpuMicroseconds": 24025676,
+      "systemCpuMicroseconds": 60949563
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "team",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1095,
+      "userCpuMicroseconds": 840032,
+      "systemCpuMicroseconds": 567524
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "team",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 12369,
+      "userCpuMicroseconds": 571836,
+      "systemCpuMicroseconds": 309518
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 86708
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "team",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "team",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 40563,
+      "userCpuMicroseconds": 23687042,
+      "systemCpuMicroseconds": 61886275
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "team",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1186,
+      "userCpuMicroseconds": 850806,
+      "systemCpuMicroseconds": 639023
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "team",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 12448,
+      "userCpuMicroseconds": 743381,
+      "systemCpuMicroseconds": 475279
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "team",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 88843
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "team",
+      "action": "stage",
+      "state": "started"
+    }
+  ],
+  "members": {
+    "server-install/guest.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "0792c32127a614e51bd640b56b36541bf0c9f2e234081d335b7684ac3613d31f"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "b4261083b2fc99d4ac60853809c89d6995460cf603a5534fb3168307ba953c69"
+    },
+    "server-install/producer.json": {
+      "bytes": 113,
+      "sha256": "aaff780b22716fd3aa705547bbb4057af8a3c2b47de549e7d4c224e821111538"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12409,
+      "sha256": "c3171763abafd0a93836a1a2902c9ca745b15da4b0f8478ac5e5c5d167f93d3a"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-install/serial.log": {
+      "bytes": 91910,
+      "sha256": "9880dc0be4279fed6f7a9ba1ad3c46e5ac1bf2d295129423f5a409ef022d5259"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "38332a8ec9a85c40e5e68e80615ac4bc46ed7220e36b5b5a3bce857f54f1a3d7"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 265,
+      "sha256": "783f7fa1a33c0ce35ec5d83faf703ae1bc2f37292e8138a4a38e2e52f84aeee3"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "38332a8ec9a85c40e5e68e80615ac4bc46ed7220e36b5b5a3bce857f54f1a3d7"
+    }
+  },
+  "selectedZipSha256": "86d5787e9ae83aeb4b87032bdde75461dbc7763c63585ac05c8f3d93a24ba5e5"
+}

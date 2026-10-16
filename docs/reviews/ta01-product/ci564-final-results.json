@@ -1,0 +1,467 @@
+{
+  "说明": "CI564全部作业已终态，但运行cancelled；一组成功、一组真实失败、四组取消且没有result，不能写自然结束或补通过。后续CI565为平台checkpoint自动触发，不代原故障闭合。",
+  "sourceHead": "5371f16e24db94415155228dfc8ac149523573a0",
+  "run": {
+    "id": 38846561914,
+    "status": "completed",
+    "conclusion": "cancelled",
+    "head_sha": "5371f16e24db94415155228dfc8ac149523573a0",
+    "created_at": "2026-10-16T03:38:56Z",
+    "updated_at": "2026-10-16T04:50:27Z"
+  },
+  "jobs": [
+    {
+      "id": 116798320448,
+      "name": "Classify changes and validate CI selection",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:38:58Z",
+      "completed_at": "2026-10-16T03:39:41Z"
+    },
+    {
+      "id": 116798506579,
+      "name": "Source gates",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:57:07Z"
+    },
+    {
+      "id": 116798506629,
+      "name": "Agent construction and protocol smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:40:45Z"
+    },
+    {
+      "id": 116798506631,
+      "name": "Server candidate (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:46Z",
+      "completed_at": "2026-10-16T03:47:36Z"
+    },
+    {
+      "id": 116798506654,
+      "name": "Database integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:43:12Z"
+    },
+    {
+      "id": 116798506667,
+      "name": "Worker integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:47:29Z"
+    },
+    {
+      "id": 116798506668,
+      "name": "Complete disaster recovery",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:44:31Z"
+    },
+    {
+      "id": 116798506675,
+      "name": "Connector native storage (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:49Z",
+      "completed_at": "2026-10-16T03:42:04Z"
+    },
+    {
+      "id": 116798506676,
+      "name": "Connector full installation (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:43Z",
+      "completed_at": "2026-10-16T03:56:56Z"
+    },
+    {
+      "id": 116798506679,
+      "name": "Connector native storage (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:41:50Z"
+    },
+    {
+      "id": 116798506685,
+      "name": "Connector native storage (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:43Z",
+      "completed_at": "2026-10-16T03:42:54Z"
+    },
+    {
+      "id": 116798506708,
+      "name": "Connector full installation (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:46Z",
+      "completed_at": "2026-10-16T04:39:33Z"
+    },
+    {
+      "id": 116798506712,
+      "name": "Server candidate (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:49:14Z"
+    },
+    {
+      "id": 116798506728,
+      "name": "API integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:39:44Z",
+      "completed_at": "2026-10-16T03:53:04Z"
+    },
+    {
+      "id": 116800972501,
+      "name": "Server full installation (arm64, personal)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-16T03:49:18Z",
+      "completed_at": "2026-10-16T04:48:21Z"
+    },
+    {
+      "id": 116800972528,
+      "name": "Server full installation (amd64, team)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T03:49:16Z",
+      "completed_at": "2026-10-16T04:20:16Z"
+    },
+    {
+      "id": 116800972535,
+      "name": "Server full installation (arm64, enterprise)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-16T03:49:18Z",
+      "completed_at": "2026-10-16T04:48:22Z"
+    },
+    {
+      "id": 116800972536,
+      "name": "Server full installation (amd64, enterprise)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T03:49:16Z",
+      "completed_at": "2026-10-16T04:37:55Z"
+    },
+    {
+      "id": 116800972564,
+      "name": "Server full installation (amd64, personal)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-16T03:49:16Z",
+      "completed_at": "2026-10-16T04:49:35Z"
+    },
+    {
+      "id": 116800972574,
+      "name": "Server full installation (arm64, team)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started_at": "2026-10-16T03:49:18Z",
+      "completed_at": "2026-10-16T04:48:22Z"
+    },
+    {
+      "id": 116816927133,
+      "name": "Required CI",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T04:49:37Z",
+      "completed_at": "2026-10-16T04:50:26Z"
+    }
+  ],
+  "guests": [
+    {
+      "arch": "arm64",
+      "profile": "personal",
+      "jobId": 116800972501,
+      "conclusion": "cancelled",
+      "index": "ci564-arm64-personal-cancelled.json",
+      "indexSha256": "4a149c0444a45919757496ef7826763e67094a3d5d8c57b3b1052b57cce288a1",
+      "selectedZipSha256": "7c5c293764c0d5d7971f1cfa9cc6a4ac35657efdf53ffa12c07b451598b15978",
+      "artifactId": 12024994988,
+      "artifactZipSha256": "857dba2bccffa31f9f73dcd530511044c86e6e70c2b248b1dbb4489157265fe2",
+      "resultPresent": false,
+      "totalSeconds": null
+    },
+    {
+      "arch": "amd64",
+      "profile": "team",
+      "jobId": 116800972528,
+      "conclusion": "success",
+      "index": "ci564-amd64-team-full-guest-pass.json",
+      "indexSha256": "fad8d8bec91aa7d4b317f0c8640ca529db03af8bde9e540c7272e9b49b8d83c0",
+      "selectedZipSha256": "a041fff209f00fa8312859b8840fa4ac886402c3804d2fe00be60cb3ffd83f1c",
+      "artifactId": 12024429301,
+      "artifactZipSha256": "e78876c8e3c17f5d7863b277763ca69d282b0119c473ad6ec4a211b8ece4e87b",
+      "resultPresent": true,
+      "totalSeconds": 1783.099039641
+    },
+    {
+      "arch": "arm64",
+      "profile": "enterprise",
+      "jobId": 116800972535,
+      "conclusion": "cancelled",
+      "index": "ci564-arm64-enterprise-cancelled.json",
+      "indexSha256": "c71c79e8c7a2b0516877ae5896a769b2cbf90377dc473f5c357f068db4528215",
+      "selectedZipSha256": "21340515482e520d23b4ed720b4be85a67af6bfc1bf2a78f67c11b45f8845f97",
+      "artifactId": 12026012155,
+      "artifactZipSha256": "0706f3c75e32f7ec72bdd5593ec4e2e87647acc21081c7263bcc88f41f4a3eb5",
+      "resultPresent": false,
+      "totalSeconds": null
+    },
+    {
+      "arch": "amd64",
+      "profile": "enterprise",
+      "jobId": 116800972536,
+      "conclusion": "failure",
+      "index": "ci564-amd64-enterprise-first-failure.json",
+      "indexSha256": "4d2e5b8816e73e82af466f932a22ecd4dc654e6e622c2b8c7e1b595338cd9327",
+      "selectedZipSha256": "acefb1dd646c5e46c6a4fb1eb909fd16191223f30866330623b29f04f4efd95b",
+      "artifactId": 12025775764,
+      "artifactZipSha256": "7584aee6044e5874411e92537521b99c7879c67c7047ac2a85794bb561943bda",
+      "resultPresent": true,
+      "totalSeconds": 2821.1089340490003
+    },
+    {
+      "arch": "amd64",
+      "profile": "personal",
+      "jobId": 116800972564,
+      "conclusion": "cancelled",
+      "index": "ci564-amd64-personal-cancelled.json",
+      "indexSha256": "b4b68554b9633e02438d494ca54b19c88717de02d62dd16c96ece3afd66507e0",
+      "selectedZipSha256": "cb733c9528581050f9aad443213a0dacfdce2b59c924e338be60f9618185ce9e",
+      "artifactId": 12025527706,
+      "artifactZipSha256": "bd0733e2dbd3e4b44e0ae360dded5f5386e0fb6df8cd5f71c557b94be7a36628",
+      "resultPresent": false,
+      "totalSeconds": null
+    },
+    {
+      "arch": "arm64",
+      "profile": "team",
+      "jobId": 116800972574,
+      "conclusion": "cancelled",
+      "index": "ci564-arm64-team-cancelled.json",
+      "indexSha256": "cbbd359f8e2c5edd494f8b5021ead4c617e0123c8819bd8e4958629101c1af00",
+      "selectedZipSha256": "86d5787e9ae83aeb4b87032bdde75461dbc7763c63585ac05c8f3d93a24ba5e5",
+      "artifactId": 12025184756,
+      "artifactZipSha256": "9ced33e507ac84e7d81c7e2cbd78754fa1f67563313cb398087d5298671901f6",
+      "resultPresent": false,
+      "totalSeconds": null
+    }
+  ],
+  "producers": {
+    "amd64": {
+      "producerRawArtifact": 12023453463,
+      "candidateArtifact": 12024116322,
+      "head": "5371f16e24db94415155228dfc8ac149523573a0",
+      "tree": "a1a0c341b64186963c9e2eccb23b1171d0feafef",
+      "manifestSha256": "7bf943924acc816828d14eff80b80d0995c13f2dd079550cf10a2168e038d536",
+      "rawZipSha256": "b949bd0436aef9d9cffb1f54ead54256dbbda9b5fd6a984bcc758e8e3a5356e0",
+      "sourceFilesMatch": true,
+      "manifestKeys": [
+        "arch",
+        "bootstrapChunks",
+        "chunks",
+        "files",
+        "format",
+        "images",
+        "installerArchiveImage",
+        "installerImage",
+        "migrationLedger",
+        "release",
+        "runtimeFingerprint",
+        "source",
+        "tools"
+      ],
+      "source": {
+        "commit": "5371f16e24db94415155228dfc8ac149523573a0",
+        "tree": "a1a0c341b64186963c9e2eccb23b1171d0feafef"
+      },
+      "images": [
+        "api",
+        "installer",
+        "lite",
+        "mcp",
+        "minio",
+        "postgres",
+        "redis",
+        "worker"
+      ]
+    },
+    "arm64": {
+      "producerRawArtifact": 12023129852,
+      "candidateArtifact": 12023303940,
+      "head": "5371f16e24db94415155228dfc8ac149523573a0",
+      "tree": "a1a0c341b64186963c9e2eccb23b1171d0feafef",
+      "manifestSha256": "c3171763abafd0a93836a1a2902c9ca745b15da4b0f8478ac5e5c5d167f93d3a",
+      "rawZipSha256": "e8fb561f545bc256c4b6b4f9bb54af1ccd42f8b39ba2d1862cab91d1c7b8b0a5",
+      "sourceFilesMatch": true,
+      "manifestKeys": [
+        "arch",
+        "bootstrapChunks",
+        "chunks",
+        "files",
+        "format",
+        "images",
+        "installerArchiveImage",
+        "installerImage",
+        "migrationLedger",
+        "release",
+        "runtimeFingerprint",
+        "source",
+        "tools"
+      ],
+      "source": {
+        "commit": "5371f16e24db94415155228dfc8ac149523573a0",
+        "tree": "a1a0c341b64186963c9e2eccb23b1171d0feafef"
+      },
+      "images": [
+        "api",
+        "installer",
+        "lite",
+        "mcp",
+        "minio",
+        "postgres",
+        "redis",
+        "worker"
+      ]
+    }
+  },
+  "checkpoint": {
+    "head": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+    "parent": "5371f16e24db94415155228dfc8ac149523573a0",
+    "tree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae",
+    "subject": "chore: checkpoint 90b__5TIK9ohy6M3oQkVO"
+  },
+  "ci565Snapshot": {
+    "id": 38852474436,
+    "status": "in_progress",
+    "conclusion": null,
+    "head_sha": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+    "created_at": "2026-10-16T04:48:03Z",
+    "updated_at": "2026-10-16T05:00:23Z"
+  },
+  "cancellationAttribution": "执行者未调用cancel/rerun。平台checkpoint后四job取消，与本仓库ci-pull_request-228并发规则一致；GitHub接口未给独立取消发起者，因果归属为规则和时序推断。",
+  "observedAt": "2026-10-16T05:03:43.730673+00:00",
+  "selectedZipSha256": "78e9c2be6cfef9fed5b2a286dc36e30a8ea0127e2d0157bc201337592aa8cb9c",
+  "members": {
+    "producers.json": {
+      "bytes": 2051,
+      "sha256": "0fc9940486c1a7fdbc8ea0e037c75e851fe0a155352b34726104afdf88b321c3"
+    },
+    "amd64/server-build/build.log": {
+      "bytes": 69192,
+      "sha256": "31811dba2660927f206aa1d217bbb1a0951792a86ebc2b1c356a5bd134da21bd"
+    },
+    "amd64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "0792c32127a614e51bd640b56b36541bf0c9f2e234081d335b7684ac3613d31f"
+    },
+    "amd64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "f5d9bcab3e1e4ff9bd84b2d8a626b13071152b49d41f1e7777ff8712f3d5ba12"
+    },
+    "amd64/server-build/manifest.json": {
+      "bytes": 12627,
+      "sha256": "7bf943924acc816828d14eff80b80d0995c13f2dd079550cf10a2168e038d536"
+    },
+    "amd64/server-build/native-privacy.log": {
+      "bytes": 154,
+      "sha256": "41430f95a2859c70ab2e983817c1dd6ea06887b1629709dbaed3184ca6c5254a"
+    },
+    "amd64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "38332a8ec9a85c40e5e68e80615ac4bc46ed7220e36b5b5a3bce857f54f1a3d7"
+    },
+    "amd64/server-build/source-commit.txt": {
+      "bytes": 265,
+      "sha256": "783f7fa1a33c0ce35ec5d83faf703ae1bc2f37292e8138a4a38e2e52f84aeee3"
+    },
+    "amd64/server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "d13391a3b77fa53826e3c39c044f22e9e4dac8e50ed86e7dec0cc58e01e73e5c"
+    },
+    "amd64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "38332a8ec9a85c40e5e68e80615ac4bc46ed7220e36b5b5a3bce857f54f1a3d7"
+    },
+    "amd64/server-build/unit.log": {
+      "bytes": 3800,
+      "sha256": "bebcb469870f359fd9f482bb58d435f45dd32898f7545449bbc024459aca9bea"
+    },
+    "arm64/server-build/build.log": {
+      "bytes": 68314,
+      "sha256": "aa44a372745347aa5d337a28a55e6287a2881c8da90a71af99c5f6bc81373302"
+    },
+    "arm64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "0792c32127a614e51bd640b56b36541bf0c9f2e234081d335b7684ac3613d31f"
+    },
+    "arm64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "b4261083b2fc99d4ac60853809c89d6995460cf603a5534fb3168307ba953c69"
+    },
+    "arm64/server-build/manifest.json": {
+      "bytes": 12409,
+      "sha256": "c3171763abafd0a93836a1a2902c9ca745b15da4b0f8478ac5e5c5d167f93d3a"
+    },
+    "arm64/server-build/native-privacy.log": {
+      "bytes": 154,
+      "sha256": "646c96cdbe5880d84797ba52d314522b46c36ec812112eb73e9b2ac08fc6ba8d"
+    },
+    "arm64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "38332a8ec9a85c40e5e68e80615ac4bc46ed7220e36b5b5a3bce857f54f1a3d7"
+    },
+    "arm64/server-build/source-commit.txt": {
+      "bytes": 265,
+      "sha256": "783f7fa1a33c0ce35ec5d83faf703ae1bc2f37292e8138a4a38e2e52f84aeee3"
+    },
+    "arm64/server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "822071fb6a13d707ff51dfceb4ef9b601064b7bc706bc92f4bf98554d4d2d701"
+    },
+    "arm64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "38332a8ec9a85c40e5e68e80615ac4bc46ed7220e36b5b5a3bce857f54f1a3d7"
+    },
+    "arm64/server-build/unit.log": {
+      "bytes": 3803,
+      "sha256": "2e27f39534478dc59ed6cfdab27b496bad91901bdc0540169d7da1696e7e0fa2"
+    },
+    "summary.json": {
+      "bytes": 11820,
+      "sha256": "07052112f9a15ebfb2a7f7a63d37e5fbdbc588d0d480d0dd851b969356242cf4"
+    },
+    "checkpoint-commit.txt": {
+      "bytes": 290,
+      "sha256": "60be126e40c617d1280bef91bf99be7ea5923390f5a33570c2a9d67de0e76348"
+    },
+    "checkpoint-ci.yml": {
+      "bytes": 48931,
+      "sha256": "b943ed74a44c2f93fef89f1aac038a01998068b9a48c508a2bfcf48692a9cc2a"
+    },
+    "tools/archive-ci564-cancelled.py": {
+      "bytes": 3970,
+      "sha256": "6adca2264aba5baeb451f213f0590f4d8fbc1957056e4e47faffd2c11d787c2e"
+    },
+    "tools/archive-ci564-final.py": {
+      "bytes": 5248,
+      "sha256": "93ca3775097a1e0f43ec5541c5ef8a527c10848818f78f96f033d271ae346451"
+    },
+    "tools/inspect-ci564-producers.py": {
+      "bytes": 2180,
+      "sha256": "1d52d8b0d2be1c0f75b026761ae88af54d49989312c41d9748a30c9340a6bee7"
+    }
+  }
+}

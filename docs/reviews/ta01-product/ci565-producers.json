@@ -1,0 +1,170 @@
+{
+  "说明": "仅CI565双架构生产者原件；各55项Python和16项安装单元、6脚本及manifest已核准确ac0来源，不代表六guest或Required通过。",
+  "sourceHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+  "runId": 38852474436,
+  "producers": {
+    "amd64": {
+      "producerRawArtifact": 12026480230,
+      "candidateArtifact": 12026048774,
+      "head": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+      "tree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae",
+      "manifestSha256": "2e3c8fb0ccd1b4b918ba34afd77c7b725867f63bf313819bf11ebd55e25320b2",
+      "rawZipSha256": "6ff9765165b67df6e14d3ffea53c981cdef140252570cc8ce6c2f1dfa52bf6a4",
+      "sourceFilesMatch": true,
+      "manifestKeys": [
+        "arch",
+        "bootstrapChunks",
+        "chunks",
+        "files",
+        "format",
+        "images",
+        "installerArchiveImage",
+        "installerImage",
+        "migrationLedger",
+        "release",
+        "runtimeFingerprint",
+        "source",
+        "tools"
+      ],
+      "source": {
+        "commit": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+        "tree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae"
+      },
+      "images": [
+        "api",
+        "installer",
+        "lite",
+        "mcp",
+        "minio",
+        "postgres",
+        "redis",
+        "worker"
+      ]
+    },
+    "arm64": {
+      "producerRawArtifact": 12025533796,
+      "candidateArtifact": 12025743289,
+      "head": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+      "tree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae",
+      "manifestSha256": "24c11b5f274007c71e5907b1bd7934bcbda3ddd2fc0dc812f79765b81fe3861d",
+      "rawZipSha256": "0a4c1b39051565f0bd2a4a954be67f4c6dbb7aa0647b1acd5c3fc19dd6130d15",
+      "sourceFilesMatch": true,
+      "manifestKeys": [
+        "arch",
+        "bootstrapChunks",
+        "chunks",
+        "files",
+        "format",
+        "images",
+        "installerArchiveImage",
+        "installerImage",
+        "migrationLedger",
+        "release",
+        "runtimeFingerprint",
+        "source",
+        "tools"
+      ],
+      "source": {
+        "commit": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+        "tree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae"
+      },
+      "images": [
+        "api",
+        "installer",
+        "lite",
+        "mcp",
+        "minio",
+        "postgres",
+        "redis",
+        "worker"
+      ]
+    }
+  },
+  "selectedZipSha256": "40afc5ed1efca6c2017c9dc9bc6f0e9774fc2614070a52558404329808f28fa1",
+  "members": {
+    "producers.json": {
+      "bytes": 2051,
+      "sha256": "fc68b3ae021a4dab20163c236dd178d062c439e987e1b6e8c1328481b0d8f6b4"
+    },
+    "amd64/server-build/build.log": {
+      "bytes": 69026,
+      "sha256": "0844592bb120c7b58eb792e1cbf3e4412bf32cee91b8a472d1f36eacca544ed8"
+    },
+    "amd64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "0792c32127a614e51bd640b56b36541bf0c9f2e234081d335b7684ac3613d31f"
+    },
+    "amd64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "ff55b3d644a359e133f3764aa7294f4c02856a4d11b6d19539526fa169130caa"
+    },
+    "amd64/server-build/native-privacy.log": {
+      "bytes": 154,
+      "sha256": "05e3719640dec201f2d01d5731b701c80ebdd2d8c7dd23ba3b1ce5f013658766"
+    },
+    "amd64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "93adf0156f95cd24ac351e8afb50a6f0b5af7137ffe900f2340674fc8e5cf5c7"
+    },
+    "amd64/server-build/manifest.json": {
+      "bytes": 12627,
+      "sha256": "2e3c8fb0ccd1b4b918ba34afd77c7b725867f63bf313819bf11ebd55e25320b2"
+    },
+    "amd64/server-build/source-commit.txt": {
+      "bytes": 238,
+      "sha256": "7c3dec77ecece4c7097e7b2e528e4ec2614dd0217f507661d021b50eab7381ef"
+    },
+    "amd64/server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "30a57b44d26f8388da98bb74bbd4c3cde96a7160b92a4df6dd47b1818eab38d7"
+    },
+    "amd64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "93adf0156f95cd24ac351e8afb50a6f0b5af7137ffe900f2340674fc8e5cf5c7"
+    },
+    "amd64/server-build/unit.log": {
+      "bytes": 3803,
+      "sha256": "8ae24174841f8bbec315b76258b159ad8c7b8b1dab194adbe674a1a0e3099794"
+    },
+    "arm64/server-build/build.log": {
+      "bytes": 69374,
+      "sha256": "301e912dabe6e84ad20c1460c78137c4c549d59453122db86ff1644bbe58c8e4"
+    },
+    "arm64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "0792c32127a614e51bd640b56b36541bf0c9f2e234081d335b7684ac3613d31f"
+    },
+    "arm64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "cb71515adca59f4bf6ffa2b03f03255233ca5ace2fdea8b281b392017f058adf"
+    },
+    "arm64/server-build/manifest.json": {
+      "bytes": 12409,
+      "sha256": "24c11b5f274007c71e5907b1bd7934bcbda3ddd2fc0dc812f79765b81fe3861d"
+    },
+    "arm64/server-build/native-privacy.log": {
+      "bytes": 154,
+      "sha256": "d9a41fee2f00f9e7c4cd163e829e468777ee08de53eb355c2bcd082f5ee45800"
+    },
+    "arm64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "93adf0156f95cd24ac351e8afb50a6f0b5af7137ffe900f2340674fc8e5cf5c7"
+    },
+    "arm64/server-build/source-commit.txt": {
+      "bytes": 238,
+      "sha256": "7c3dec77ecece4c7097e7b2e528e4ec2614dd0217f507661d021b50eab7381ef"
+    },
+    "arm64/server-build/source-install.log": {
+      "bytes": 614,
+      "sha256": "0c7c4cf8298990ba992e94e4b87c150d55722cbab7a6ef43ca5fac9193d806d8"
+    },
+    "arm64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "93adf0156f95cd24ac351e8afb50a6f0b5af7137ffe900f2340674fc8e5cf5c7"
+    },
+    "arm64/server-build/unit.log": {
+      "bytes": 3802,
+      "sha256": "619e2169a8f4dc0c36c4cc70d024ccc993c210207ff6ead4939fa5ead174f026"
+    }
+  }
+}

@@ -421,7 +421,7 @@ class GuestFailureProgress(unittest.TestCase):
         # Load only the pure projection; importing guest.py creates guest paths.
         source = ast.parse(Path(__file__).with_name('guest.py').read_text(encoding='utf8'))
         function = next(node for node in source.body if isinstance(node, ast.FunctionDef) and node.name == name)
-        scope = {'json': json, 're': re}
+        scope = {'json': json, 're': re, 'hashlib': hashlib}
         exec(compile(ast.Module(body=[function], type_ignores=[]), 'guest-projection', 'exec'), scope)
         return scope[name]
 
@@ -1119,6 +1119,131 @@ class Events(unittest.TestCase):
         self.assertTrue(result['truncated'])
         with self.assertRaises(ValueError):
             GuestFailureProgress.marker('project_container_events')(b'', {'a': 'mcp'}, 90, 110)
+
+
+class ApiReadTimings(unittest.TestCase):
+    first = '00000000-0000-4000-8000-000000000001'
+    second = '00000000-0000-4000-8000-000000000002'
+    item = '00000000-0000-4000-8000-000000000003'
+
+    @staticmethod
+    def incoming(identifier, url='/api/v1/agent-capabilities?discovery=qualified', at=100010):
+        return {'time': at, 'reqId': identifier, 'msg': 'incoming request', 'req': {'method': 'GET', 'url': url}}
+
+    @staticmethod
+    def completed(identifier, at=100020):
+        return {'time': at, 'reqId': identifier, 'msg': 'request completed', 'res': {'statusCode': 200}, 'responseTime': 12.25}
+
+    def project(self, rows, since=100, until=101):
+        return GuestFailureProgress.marker('project_api_read_timings')(('\n'.join(map(json.dumps, rows))).encode(), since, until)
+
+    def test_pairs_only_fixed_read_routes_without_exporting_private_fields(self):
+        private = 'wmi_' + 'x' * 43
+        a = self.incoming(self.first)
+        a['req']['headers'] = {'authorization': private}
+        b = self.completed(self.first)
+        b.update(body=private, err={'message': private})
+        result = self.project([a, b, self.incoming(self.second, '/api/v1/work-items/' + self.item), self.completed(self.second)])
+        self.assertEqual([r['route'] for r in result['requests']], ['qualified-capabilities', 'work-item-read'])
+        self.assertEqual(result['requests'][0]['elapsedMilliseconds'], 12.25)
+        self.assertEqual(result['requests'][0]['outcome'], 'completed')
+        self.assertEqual(result['unpairedObserved'], 0)
+        self.assertTrue(result['tailMayOmitRequests'])
+        for value in [private, self.first, self.second, self.item, 'authorization', 'body']:
+            self.assertNotIn(value, json.dumps(result))
+
+    def test_invalid_or_non_read_records_never_become_timings(self):
+        good = self.completed(self.first)
+        bad = [{**good, 'responseTime': value} for value in [True, -1, float('nan'), float('inf'), 'private', 1500001]]
+        bad += [{**good, 'res': {'statusCode': value}} for value in [True, 99, 600, 'private']]
+        bad += [{**good, 'time': value} for value in [True, 100009, 'private']]
+        for row in bad:
+            with self.subTest(row=row):
+                self.assertEqual(self.project([self.incoming(self.first), row])['requests'], [])
+        for url in ['/healthz', '/api/v1/work-items/' + self.item + '?token=private', '/api/v1/agent-capabilities?discovery=qualified&token=private']:
+            self.assertEqual(self.project([self.incoming(self.first, url), good])['requests'], [])
+        self.assertEqual(self.project([[], 1, None, 'private'])['requests'], [])
+        errored = self.project([self.incoming(self.first), {**good, 'msg': 'request errored', 'err': {'message': 'private'}}])
+        self.assertEqual(errored['requests'][0]['outcome'], 'errored')
+
+    def test_window_excludes_previous_read_and_duplicate_ids_are_ambiguous(self):
+        rows = [self.incoming(self.first), self.completed(self.first)]
+        self.assertEqual(self.project(rows, 200, 201)['requests'], [])
+        result = self.project(rows + rows)
+        self.assertEqual(result['requests'], [])
+        self.assertEqual(result['ambiguousObserved'], 1)
+        self.assertEqual(self.project([rows[0]])['unpairedObserved'], 1)
+
+    def test_byte_and_record_limits_do_not_claim_complete_coverage(self):
+        project = GuestFailureProgress.marker('project_api_read_timings')
+        self.assertEqual(project(b'x' * 262145, 100, 101), {'available': False, 'reason': 'byte-limit'})
+        rows = []
+        for i in range(40):
+            identifier = f'00000000-0000-4000-8000-{i:012d}'
+            rows.extend([self.incoming(identifier), self.completed(identifier)])
+        result = self.project(rows)
+        self.assertEqual(len(result['requests']), 8)
+        self.assertTrue(result['truncated'])
+        self.assertTrue(result['tailMayOmitRequests'])
+        for since, until in [(True, 101), (100, float('nan')), (101, 100), (100, 1901)]:
+            with self.assertRaises(ValueError):
+                project(b'', since, until)
+
+    def test_existing_api_log_read_is_reused_and_failed_capture_is_not_retried(self):
+        import subprocess
+        from datetime import datetime, timezone
+        tree = ast.parse(Path(__file__).with_name('guest.py').read_text(encoding='utf8'))
+        main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'main')
+        handler = next(node for node in ast.walk(main) if isinstance(node, ast.ExceptHandler)
+                       and node.name == 'error' and isinstance(node.type, ast.Name) and node.type.id == 'Exception')
+        helper = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'report_failure')
+        block = ast.Try(body=[ast.Raise(exc=ast.Name(id='original', ctx=ast.Load()), cause=None)], handlers=[handler], orelse=[], finalbody=[])
+        code = compile(ast.fix_missing_locations(ast.Module(body=[helper, block], type_ignores=[])), 'guest-api-timing-path', 'exec')
+        for capture_fails in [False, True]:
+            with self.subTest(capture_fails=capture_fails), tempfile.TemporaryDirectory() as directory:
+                prefix = Path(directory)
+                now = time.time()
+                journal = {'id': 'owned-test', 'stage': 'healthy', 'candidate': 'c' * 64, 'project': 'ta01-team', 'installationId': 'owned',
+                    'actions': [{'name': 'validate-business-read', 'status': 'failed', 'startedAt': datetime.fromtimestamp(now - 3, timezone.utc).isoformat(),
+                                 'diagnostics': {'method': 'tools/call', 'requestId': 2, 'timedOut': True}}]}
+                (prefix / 'journal.json').write_text(json.dumps(journal), encoding='utf8')
+                identifier = 'a' * 64
+                info = {'Id': identifier, 'Config': {'Labels': {'io.workmesh.installation': 'owned',
+                    'io.workmesh.installation-root': hashlib.sha256(str(prefix).encode()).hexdigest(), 'com.docker.compose.service': 'api'}},
+                    'State': {'Running': True, 'ExitCode': 0, 'OOMKilled': False, 'Pid': -1, 'Health': {'Status': 'healthy', 'Log': []}}, 'RestartCount': 0}
+                raw = ('\n'.join(map(json.dumps, [self.incoming(self.first, at=int((now - 2) * 1000)), self.completed(self.first, at=int((now - 1) * 1000))]))).encode()
+                reports, log_reads, classifications = [], [], []
+                def docker(args, **kwargs):
+                    if args[:2] == ['docker', 'ps']:
+                        self.assertEqual(len(reports), 1)
+                        self.assertTrue(reports[0]['diagnosticsPending'])
+                        return SimpleNamespace(stdout=identifier.encode(), check_returncode=lambda: None)
+                    if args[:2] == ['docker', 'inspect']:
+                        return SimpleNamespace(stdout=json.dumps([info]).encode(), check_returncode=lambda: None)
+                    if args[:2] == ['docker', 'logs']:
+                        log_reads.append(args)
+                        if capture_fails:
+                            raise subprocess.TimeoutExpired(args, 30)
+                        return SimpleNamespace(stdout=raw, stderr=b'', returncode=0)
+                    if args[:2] == ['docker', 'run']:
+                        classifications.append(args)
+                        return SimpleNamespace(stdout=b'{"log":{},"probes":[]}', check_returncode=lambda: None)
+                    self.fail('unexpected diagnostic command')
+                scope = {'json': json, 'Path': Path, 'os': os, 'hashlib': hashlib, 'time': time, 'datetime': datetime,
+                    'prefix': prefix, 'servers': [], 'native_diagnostic': False, 'original': RuntimeError('private'),
+                    'checks': [], 'samples': [], 'diagnostics': {}, 'manifest': {}, 'helper_image': lambda _: 'owned-image',
+                    'project_api_read_timings': GuestFailureProgress.marker('project_api_read_timings'),
+                    'failure_progress': lambda *_a, **_k: None, 'collect_container_events': lambda *_: {'events': [], 'truncated': False},
+                    'report': lambda value: reports.append(json.loads(json.dumps(value))),
+                    'subprocess': SimpleNamespace(run=docker, TimeoutExpired=subprocess.TimeoutExpired, CalledProcessError=subprocess.CalledProcessError)}
+                with redirect_stdout(io.StringIO()), self.assertRaisesRegex(RuntimeError, '^private$'):
+                    exec(code, scope)
+                self.assertEqual(len(log_reads), 1)
+                self.assertEqual(len(classifications), 0 if capture_fails else 1)
+                self.assertEqual(len(reports), 2)
+                self.assertNotIn('apiReadTimings', reports[0]['diagnostics'])
+                if not capture_fails:
+                    self.assertEqual(reports[1]['diagnostics']['apiReadTimings']['requests'][0]['route'], 'qualified-capabilities')
 
 
 if __name__ == '__main__':

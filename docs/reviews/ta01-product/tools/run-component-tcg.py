@@ -5,6 +5,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 import subprocess
+import sys
 import threading
 import time
 import urllib.request
@@ -21,19 +22,28 @@ def sha(path):
 
 def main():
     root = Path('/opt/micro')
-    run = root / 'guest'
+    startup = '--startup-only' in sys.argv
+    exact_role = '--exact-mcp-role' in sys.argv
+    arm = '--arm64' in sys.argv
+    assert not arm or exact_role
+    run = root / ('guest-startup' if startup else 'guest')
     run.mkdir(exist_ok=False)
     expected_version = 'QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)'
-    version = subprocess.check_output(['qemu-system-x86_64', '--version']).decode().splitlines()[0]
+    qemu = 'qemu-system-aarch64' if arm else 'qemu-system-x86_64'
+    version = subprocess.check_output([qemu, '--version']).decode().splitlines()[0]
     assert version == expected_version
-    image = root / 'amd64.img'
+    arch = 'arm64' if arm else 'amd64'
+    image_sha = '1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55' if arm else '6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2'
+    image = root / (arch + '.img')
     if not image.exists():
-        urllib.request.urlretrieve('https://cloud-images.ubuntu.com/noble/20260926/noble-server-cloudimg-amd64.img', image)
-    assert sha(image) == '6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2'
+        urllib.request.urlretrieve('https://cloud-images.ubuntu.com/noble/20260926/noble-server-cloudimg-' + arch + '.img', image)
+    assert sha(image) == image_sha
     nonce = uuid.uuid4().hex
-    names = ['node-rootfs.tar.gz', 'runtime.tar', 'measurement.mjs']
-    expected = {'nonce': nonce, 'inputs': {name: sha(root / name) for name in names},
-                'nodeSha256': '638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328'}
+    names = ['node-rootfs.tar.gz', *([] if exact_role else ['runtime.tar']), 'startup.mjs' if startup else 'measurement.mjs']
+    node_sha = (root / 'node-sha256.txt').read_text().strip() if arm else '638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328'
+    assert len(node_sha) == 64 and all(c in '0123456789abcdef' for c in node_sha)
+    expected = {'nonce': nonce, 'architecture': arch, 'exactMcpRole': exact_role, 'case': 'startup-only' if startup else 'work-read', 'inputs': {name: sha(root / name) for name in names},
+                'nodeSha256': node_sha}
     receipts = []
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
@@ -73,13 +83,21 @@ def main():
                     str(run / 'user-data'), str(run / 'meta-data')], check=True, capture_output=True)
     subprocess.run(['qemu-img', 'create', '-f', 'qcow2', '-F', 'qcow2', '-b', str(image), str(run / 'root.qcow2'), '40G'],
                    check=True, capture_output=True)
-    args = ['qemu-system-x86_64', '-accel', 'tcg', '-m', '4096', '-smp', '4', '-display', 'none',
+    args = [qemu, '-accel', 'tcg', '-m', '4096', '-smp', '4', '-display', 'none',
             '-serial', 'file:' + str(run / 'serial.log'), '-netdev', 'user,id=net0', '-device', 'virtio-net-pci,netdev=net0',
             '-drive', 'if=virtio,format=qcow2,file=' + str(run / 'root.qcow2'),
             '-drive', 'if=virtio,format=raw,readonly=on,file=' + str(run / 'seed.iso')]
     began = time.monotonic()
     result = {'qemuVersion': version, 'imageSha256': sha(image), 'guestVcpus': 4, 'guestRamMiB': 4096,
               'inputs': expected, 'fullProductAcceptance': False, 'qemuCommand': args}
+    if arm:
+        firmware = Path('/usr/share/AAVMF/AAVMF_CODE.fd')
+        assert sha(firmware) == '545e2eda871a00dba51c0df48a34829fe3b0de6ec10ea760c75f1fc1c6a29dc5'
+        variables = run / 'vars.fd'
+        variables.write_bytes(Path('/usr/share/AAVMF/AAVMF_VARS.fd').read_bytes())
+        result['firmwareSha256'] = sha(firmware)
+        args += ['-machine', 'virt', '-cpu', 'max', '-drive', 'if=pflash,format=raw,readonly=on,file=' + str(firmware),
+                 '-drive', 'if=pflash,format=raw,file=' + str(variables)]
     process = None
     try:
         with (run / 'qemu-stderr.log').open('wb') as error:

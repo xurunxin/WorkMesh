@@ -120,6 +120,59 @@ def project_container_events(raw, roles, since_nano, until_nano):
     return {'events': events, 'truncated': truncated}
 
 
+def project_api_read_timings(raw, since, until):
+    # Parse only existing Fastify request pairs; never export raw log fields,
+    # URLs, parameters, credentials, error messages or response bodies.
+    if any(type(value) not in {int, float} or not 0 <= value < 253402300800 for value in [since, until]) or not 0 <= until - since <= 1800:
+        raise ValueError('API timing window unavailable')
+    if len(raw) > 262144:
+        return {'available': False, 'reason': 'byte-limit'}
+    uuid_pattern = r'[a-fA-F0-9]{8}-(?:[a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}'
+    pending, seen, ambiguous, requests = {}, set(), set(), []
+    lines = raw.splitlines()
+    for line in lines[-60:]:
+        if len(line) > 65536:
+            continue
+        try:
+            row = json.loads(line)
+        except (ValueError, RecursionError):
+            continue
+        if not isinstance(row, dict):
+            continue
+        identifier, at = row.get('reqId'), row.get('time')
+        if not isinstance(identifier, str) or not re.fullmatch(uuid_pattern, identifier) or type(at) not in {int, float} or not since * 1000 <= at <= until * 1000:
+            continue
+        if row.get('msg') == 'incoming request':
+            req = row.get('req')
+            if not isinstance(req, dict) or req.get('method') != 'GET' or not isinstance(req.get('url'), str):
+                continue
+            url = req['url']
+            route = 'qualified-capabilities' if url == '/api/v1/agent-capabilities?discovery=qualified' else (
+                'work-item-read' if re.fullmatch('/api/v1/work-items/' + uuid_pattern, url) else None)
+            if route is None:
+                continue
+            if identifier in seen:
+                ambiguous.add(identifier)
+                pending.pop(identifier, None)
+            else:
+                pending[identifier] = (route, at)
+                seen.add(identifier)
+        elif row.get('msg') in {'request completed', 'request errored'} and identifier in pending:
+            route, started = pending[identifier]
+            res, elapsed = row.get('res'), row.get('responseTime')
+            if not isinstance(res, dict) or type(res.get('statusCode')) is not int or not 100 <= res['statusCode'] <= 599 or type(elapsed) not in {int, float} or not 0 <= elapsed <= 1500000 or at < started:
+                continue
+            requests.append((identifier, {'route': route, 'status': res['statusCode'], 'elapsedMilliseconds': elapsed,
+                                         'outcome': 'completed' if row['msg'] == 'request completed' else 'errored',
+                                         'requestIdSha256': hashlib.sha256(identifier.encode()).hexdigest()}))
+            pending.pop(identifier)
+    safe = [value for identifier, value in requests if identifier not in ambiguous]
+    return {'available': True, 'sourceSha256': hashlib.sha256(raw).hexdigest(),
+            'windowSinceUtcSeconds': since, 'windowUntilUtcSeconds': until,
+            'requests': safe[-8:], 'unpairedObserved': len(pending), 'ambiguousObserved': len(ambiguous),
+            'truncated': len(lines) > 60 or len(safe) > 8, 'tailMayOmitRequests': True}
+
+
 def collect_container_events(journal, owned):
     # IDs and ownership labels were checked by the caller. Historical events
     # contain only fixed fields; never request the full Actor attributes.
@@ -1129,6 +1182,30 @@ def main():
                                 'clockTicksPerSecond': os.sysconf('SC_CLK_TCK')}
                         except (OSError, ValueError, IndexError):
                             entry['processUnavailable'] = True
+                    api_logs = {}
+                    last = journal['actions'][-1] if journal['actions'] else {}
+                    last_diagnostics = last.get('diagnostics') if isinstance(last, dict) else None
+                    apis = [info for info, entry in owned if entry['service'] == 'api']
+                    if len(apis) == 1 and isinstance(last_diagnostics, dict) and last.get('name') == 'validate-business-read' and last.get('status') == 'failed' and last_diagnostics.get('method') == 'tools/call':
+                        try:
+                            started = datetime.fromisoformat(last['startedAt'].replace('Z', '+00:00'))
+                            if started.tzinfo is None:
+                                raise ValueError('API timing window unavailable')
+                            identifier = apis[0]['Id']
+                            # Reuse this one existing log read in the classifier
+                            # below. A failed read is not retried. The initial
+                            # failure receipt has already been sent above.
+                            api_logs[identifier] = None
+                            logs = subprocess.run(['docker', 'logs', '--tail', '60', identifier], capture_output=True, timeout=30)
+                            api_logs[identifier] = logs
+                            if logs.returncode == 0:
+                                timing = project_api_read_timings(logs.stdout, started.timestamp(), time.time())
+                                diagnostics['apiReadTimings'] = timing
+                                print(json.dumps({'tag': 'ta01-api-read-timings', **timing}), flush=True)
+                            else:
+                                diagnostics['apiReadTimingsUnavailable'] = True
+                        except (OSError, ValueError, KeyError, subprocess.TimeoutExpired):
+                            diagnostics['apiReadTimingsUnavailable'] = True
                     failure_progress('owned-states', error, diagnostics, journal=journal, containers=projected)
                     if owned:
                         try:
@@ -1147,7 +1224,13 @@ def main():
                         # classifier receives bytes over stdin and emits fixed
                         # categories, bounded module locations and hashes.
                         try:
-                            logs = subprocess.run(['docker', 'logs', '--tail', '60', info['Id']], capture_output=True, timeout=30)
+                            if info['Id'] in api_logs:
+                                logs = api_logs[info['Id']]
+                                if logs is None:
+                                    entry['logClassificationUnavailable'] = 'API_LOG_CAPTURE_FAILED'
+                                    continue
+                            else:
+                                logs = subprocess.run(['docker', 'logs', '--tail', '60', info['Id']], capture_output=True, timeout=30)
                             code = "import{readFileSync}from'node:fs';import{commandFailure}from'/opt/workmesh/server-distribution/diagnostics.mjs';const p=JSON.parse(readFileSync(0,'utf8'));console.log(JSON.stringify({log:commandFailure({status:p.status,stdout:Buffer.from(p.stdout,'base64'),stderr:Buffer.from(p.stderr,'base64')}),probes:p.probes.map(v=>({exitCode:v.exitCode,failure:commandFailure({stderr:Buffer.from(v.output,'base64')})}))}));"
                             import base64
                             classified = subprocess.run(['docker', 'run', '--rm', '-i', '--pull', 'never', '--network', 'none',
