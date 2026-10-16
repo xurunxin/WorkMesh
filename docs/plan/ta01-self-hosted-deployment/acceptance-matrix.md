@@ -3,23 +3,13 @@
 本次按用户 2026-10-14 12:27 批准的新会话方式接续。PR227 为恢复来源，本次交付和条件合入走当前会话分支；旧树保全、真实主线及双架构首败见 [接续记录](resumption.md)。产品验收尚未完成。
 
 
-## CI567 在途观测与本轮组件测量
+## CI567终态与本轮单次组件测量
 
-CI567／run38893305755 绑定 `e2763da4dfdf25f7fc5c28c34a9619d4788f4541`。执行者 2026-10-16 12:43:17 UTC 核三组 AMD 完整重启通过，三组 ARM 仍在运行；Required 尚未齐备。下列 CI566 及更早章节继续保留各自历史来源，不套用新 head。
+CI567／run38893305755@e276终态failure，Required117011885049失败。三AMD完整重启证明保持；ARM个人／团队9000秒到期且无最终回执，最后分别restore-empty序号23／recover-old序号21开始；企业升级后commit序号16 tools/call30,443ms失败，API资格16,639.13ms／工作项8,430.75ms晚200不补成功。三份新原件各核22输入、六脚本及准确生产者，不套旧head或共同根因，见[当前报告](current-delivery.md)。
 
-| 画像 | AMD64 原件 | ARM64 当前状态 |
-| --- | --- | --- |
-| 个人 | [通过](../../reviews/ta01-product/ci567-amd64-personal-full-guest-pass.json)，job116950873995 | job116950873965，in_progress |
-| 团队 | [通过](../../reviews/ta01-product/ci567-amd64-team-full-guest-pass.json)，job116950873839 | job116950873874，in_progress |
-| 企业 | [通过](../../reviews/ta01-product/ci567-amd64-enterprise-full-guest-pass.json)，job116950873944 | job116950874189，in_progress |
+用户2026-10-16 21:48批准一次ARM组件总窗1800秒（增加600秒），不是产品／正式验收超时变更。该次[测量原件](../../reviews/ta01-product/resumption-api-auth-pg-arm-1800-once.json)实际1392.55秒、Node／PG／Redis／QEMU0，无宿主TERM；28条进度、156条连续Node事件、最终报告确认两个目标GET及8个供应请求。资格12,183.81ms／工作项3,034.26ms均在原30秒内，真实配对／逐请求鉴权／实时资格未替换。角色、ISO、PG参数、观测及缺少完整负载均保留；只证明本样本，不冒完整矩阵或关闭139。
 
-三份原件各核 22 输入、六脚本、准确生产者与 manifest，以及不同 boot_id／两次 kernel／QMP RESET 和 SHUTDOWN／QEMU 退出 0／重启后四项证明。只证明本候选本组合，同程序夹具和单轮通过不关闭历史 API／MCP139。
-
-本轮[原生真实身份与 PG 测量](../../reviews/ta01-product/resumption-api-auth-pg-path-comparison.json)有六份完整阶段记录及三份含受控行锁的记录。首次原生六个 HTTP 成功但 ALS 未传入，不能算内部测量成功。受控凭据 SELECT 与 PG 同模板统计及四份 Lock 采样对应，仅证明校准有效，不推原 CI 根因。两次固定 ARM 组件过程均达原 1,200 秒、无请求回执，实际请求数未知；供料和服务准备不冒 API 时间。独立 API 角色、inject、观测开销及个人 Lite 镜像差异见[当前报告](current-delivery.md)。
-
-新[预展开 ARM 小测](../../reviews/ta01-product/resumption-api-auth-pg-arm-preexpanded.json)只执行一次单对模式，VM 原 1,200 秒截止。8 条实时回执止于监测连接／迁移准备；目标开始／返回回执均无，实际目标 GET 数未知。Node／PG／Redis 最终状态缺失，QEMU0伴宿主TERM不算通过。公开输入全 tar SHA、固定 guest／Node／QEMU及4CPU／4GiB均核；只读ISO布局、独立API、观测开销与个人Lite差异保留。未追加第四次微测；任何组件增窗仅为待裁定选项，原业务和正式验收期限保持。
-
-产品代码、CI、原期限和支持矩阵均未改；资料提交用 `[skip ci]` 保留 CI567，不获得本 head 的 Required 成功结论。原根因、完整验收、仅 P0/P1 正式产品审及最新 Required 未齐，不进入合入。
+前三次1200秒incomplete与未知请求数保持，本次批准不倒填。仅此一次例外已用，不追加第五轮。原生六份完整阶段和行锁阳性对照仍只证明局部方法；PG执行含等待，CPU含多核，不从旧21.62秒或纯函数基线相减推根因。未改产品／CI／正式期限／支持矩阵，资料skip-ci没有本head成功Required；全部原真实验收、P0/P1正式产品审及最新Required齐前不合入。
 
 ## 当前基础产品验收范围
 

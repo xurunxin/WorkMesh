@@ -52,6 +52,8 @@ Client.prototype.query = function (...args) {
     }
     if (text === 'COMMIT' && trace.phase === 'identity') {
       trace.identityCommittedMs = performance.now() - trace.began;
+      progress('identity-committed', { correlationSha256: trace.correlationSha256,
+        label: trace.label, atMs: trace.identityCommittedMs });
       trace.phase = 'authorization';
     }
   };
@@ -67,9 +69,14 @@ Pool.prototype.connect = function (...args) {
   const trace = context.getStore();
   if (!trace) return connectOriginal.apply(this, args);
   const start = performance.now();
-  const finish = (error, client) => trace.acquires.push({ wallMs: performance.now() - start,
-    backendPid: client?.processID ?? null, status: error ? 'error' : 'completed',
-    waitingCount: this.waitingCount, totalCount: this.totalCount, idleCount: this.idleCount });
+  const finish = (error, client) => {
+    const row = { wallMs: performance.now() - start,
+      backendPid: client?.processID ?? null, status: error ? 'error' : 'completed',
+      waitingCount: this.waitingCount, totalCount: this.totalCount, idleCount: this.idleCount };
+    trace.acquires.push(row);
+    progress('pool-acquired', { correlationSha256: trace.correlationSha256,
+      label: trace.label, phase: trace.phase, ...row });
+  };
   if (typeof args[0] === 'function') {
     const callback = args[0];
     args[0] = (error, client, release) => { finish(error, client); callback(error, client, release); };
@@ -146,6 +153,7 @@ const report = { mode: 'real-api-auth-pg-path', nodeVersion: process.version,
 try {
   progress('migrations-started');
   await monitor.connect();
+  progress('monitor-connected');
   await dbModule.applyMigrations(setupDb);
   progress('migrations-finished');
   await monitor.query('CREATE EXTENSION pg_stat_statements');
@@ -255,6 +263,8 @@ try {
         wallMs: trace.wallMs, nodeCpu: trace.nodeCpu, eventLoopDelayMs: trace.eventLoopDelayMs,
         status: response.statusCode, sqlCount: trace.queries.length,
         identityCommittedMs: trace.identityCommittedMs, authorizedMs: trace.authorizedMs });
+      progress('request-observed', { trace: { ...trace, began: undefined,
+        phase: undefined, lastHandlerQueryCpu: undefined } });
       while (sampleActive) await new Promise(resolve => setTimeout(resolve, 1));
       expectStatus(response, 200);
       assert.ok(trace.identityCommittedMs !== undefined && trace.authorizedMs !== undefined
