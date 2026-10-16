@@ -2,6 +2,8 @@
 
 ## 当前状态
 
+现有原件尚不足以确定安全产品修复，当前停在[定向修复裁定关口](../plan/ta01-self-hosted-deployment/repair-decision-gate.md)。仅完成源码核对与候选验证方案，未改安装行为、接口或配置示例；新的企业ARM原路径取证未获批准、未执行，没有第五轮组件小测或新矩阵运行，原合入门禁保持。
+
 最新普通CI567／run38893305755@e276终态failure：三AMD已核完整重启通过，三ARM失败，Required117011885049失败。用户21:48批准的一次ARM组件1800秒例外已完成：实际1392.55秒、两个目标GET在原30秒内，Node／PG／Redis／QEMU0且无宿主TERM；前三次1200秒incomplete不倒填。独立API／只读ISO／额外观测不冒个人Lite同镜像或完整支持，不关闭旧API／MCP139。准确阶段和原件见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。本资料skip-ci提交无成功Required，不能合入。
 
 已归档的 CI566 受测为 `541f6ba`。AMD 个人及企业完整重启通过，团队 initialize 遇到 MCP 容器 139。ARM 个人 get_work_item 在 30,609 ms 失败；团队／企业达到原 150 分钟，upgrade 缺最终回执。整体及 Required 失败，六组无取消。
