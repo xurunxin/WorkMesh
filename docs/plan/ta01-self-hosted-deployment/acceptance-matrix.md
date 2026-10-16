@@ -2,6 +2,23 @@
 
 本次按用户 2026-10-14 12:27 批准的新会话方式接续。PR227 为恢复来源，本次交付和条件合入走当前会话分支；旧树保全、真实主线及双架构首败见 [接续记录](resumption.md)。产品验收尚未完成。
 
+
+## CI567 在途观测与本轮组件测量
+
+CI567／run38893305755 绑定 `e2763da4dfdf25f7fc5c28c34a9619d4788f4541`。执行者 2026-10-16 12:43:17 UTC 核三组 AMD 完整重启通过，三组 ARM 仍在运行；Required 尚未齐备。下列 CI566 及更早章节继续保留各自历史来源，不套用新 head。
+
+| 画像 | AMD64 原件 | ARM64 当前状态 |
+| --- | --- | --- |
+| 个人 | [通过](../../reviews/ta01-product/ci567-amd64-personal-full-guest-pass.json)，job116950873995 | job116950873965，in_progress |
+| 团队 | [通过](../../reviews/ta01-product/ci567-amd64-team-full-guest-pass.json)，job116950873839 | job116950873874，in_progress |
+| 企业 | [通过](../../reviews/ta01-product/ci567-amd64-enterprise-full-guest-pass.json)，job116950873944 | job116950874189，in_progress |
+
+三份原件各核 22 输入、六脚本、准确生产者与 manifest，以及不同 boot_id／两次 kernel／QMP RESET 和 SHUTDOWN／QEMU 退出 0／重启后四项证明。只证明本候选本组合，同程序夹具和单轮通过不关闭历史 API／MCP139。
+
+本轮[原生真实身份与 PG 测量](../../reviews/ta01-product/resumption-api-auth-pg-path-comparison.json)有六份完整阶段记录及三份含受控行锁的记录。首次原生六个 HTTP 成功但 ALS 未传入，不能算内部测量成功。受控凭据 SELECT 与 PG 同模板统计及四份 Lock 采样对应，仅证明校准有效，不推原 CI 根因。两次固定 ARM 组件过程均达原 1,200 秒、无请求回执，实际请求数未知；供料和服务准备不冒 API 时间。独立 API 角色、inject、观测开销及个人 Lite 镜像差异见[当前报告](current-delivery.md)。
+
+产品代码、CI、原期限和支持矩阵均未改；资料提交用 `[skip ci]` 保留 CI567，不获得本 head 的 Required 成功结论。原根因、完整验收、仅 P0/P1 正式产品审及最新 Required 未齐，不进入合入。
+
 ## 当前基础产品验收范围
 
 用户已批准基础产品及现有 Linux amd64／arm64 CI、干净完整 guest。此矩阵保留原 DoD 和九类要求；本轮新增验收只覆盖 PG／Redis／S3 三画像，Redis-free／filesystem 继续列为后续未交事项，不能记已实现或移除原提案。

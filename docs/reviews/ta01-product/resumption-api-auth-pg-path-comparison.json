@@ -1,0 +1,1807 @@
+{
+  "说明": "执行者直接测量：准确CI566独立API/PG/Redis角色与真实隔离配对凭据；不是个人Lite完整镜像、已安装组合、原CI内部时延分解或原生139根因证明。空上下文、首个ARM截止及后续修正分别保留。",
+  "startingDeliveryHead": "e2763da4dfdf25f7fc5c28c34a9619d4788f4541",
+  "productCandidateHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+  "productCandidateTree": "9d330d4aca890e4d1147315923e6c3f5f61b68f2",
+  "productSourceUnchangedThroughStartingDelivery": true,
+  "productSourceFiles": {
+    "apps/api/src/server.ts": {
+      "sha256": "3bf336a6f4a0a01bde0fcbcff57967670bc53cf002288796501cd4177d178457",
+      "blob": "ba019b20861d3d8551c59722e820238e01de65ee"
+    },
+    "apps/api/src/agent-connections.ts": {
+      "sha256": "e127accfa4a0b750b09fb1231689915ed1f60443195cdc3a358bebb1a9af95fd",
+      "blob": "0ad86be864c90a4078f61f46dc733de2b5a909eb"
+    },
+    "apps/api/src/authz/authorize.ts": {
+      "sha256": "6da5f9b7fc603b2f4aee8c18561c9f032fdf4f30113cbd112bbc9573770144a4",
+      "blob": "ac607b54c9f26e0c7648df382026184b3bfb2a9b"
+    },
+    "apps/api/src/client-profile.ts": {
+      "sha256": "cc4f4efd8a732daa0fe14e405b7f886054d3f98e36705eb47545034d16a0d51a",
+      "blob": "d032b13da21b16e3294910878d83151e62480ae1"
+    },
+    "apps/api/src/work-item-executors.ts": {
+      "sha256": "ef233f2acb74842981052a1cb9f0b96cf1da81d7e40480398868ad126bc7bd54",
+      "blob": "dff64b4e6aa1fa8e01da3e3a3cc7176065eddda2"
+    },
+    "packages/db/src/index.ts": {
+      "sha256": "af81326407144a6771a78d09b21b84eb4a0f3fd919572478c5e2b44b9381bd13",
+      "blob": "5c39a06e86ac2b90f4c8ca8969fa3299b143c2c3"
+    },
+    "packages/contracts/src/agent-discovery.ts": {
+      "sha256": "171c6625ea294162cd8f19cac023aeeed5bb3acfc6a53903308afe885a0e4334",
+      "blob": "e49e9a3f55cd9c445ab6d47794d8ed3885e17ffc"
+    },
+    "packages/config/src/index.ts": {
+      "sha256": "08bebea054b76d902984a70afd153d174b2297f58332d7700ad0eba4cb0dc6e7",
+      "blob": "4c37c2e8f76da975c857fb9417c3d12b1e0c48d3"
+    },
+    "docker-compose.lite.yml": {
+      "sha256": "81637573e5004237f275ce0351ae333c36a65da9de793b4954d788403e6b1435",
+      "blob": "47f5fe17e3e513b263cf6f593667cbc49eef8107"
+    }
+  },
+  "measurementFinalSha256": "f90333642beac7d92c3f5b07883438e4579f160169094211d50018cea843e843",
+  "actualMeasurementVersions": {
+    "armInitialExpected": "878a8ef37a8a811f46e7dbfaf3bf7e051edd1171dcb5fd03be6ce7d41c8bfa7b",
+    "nativeInitial": "878a8ef37a8a811f46e7dbfaf3bf7e051edd1171dcb5fd03be6ce7d41c8bfa7b",
+    "nativeContextFixed": "1b3be1893848f6f376e5a351b6c269b348822a3326098d7d039f684fcaf9b033",
+    "armSeed2Expected": "1b3be1893848f6f376e5a351b6c269b348822a3326098d7d039f684fcaf9b033",
+    "nativeLockControl": "f90333642beac7d92c3f5b07883438e4579f160169094211d50018cea843e843"
+  },
+  "analysis": {
+    "nativeInitial": {
+      "rows": [
+        {
+          "repeat": 0,
+          "label": "qualified-capabilities",
+          "status": 200,
+          "wallMs": 146.1371999999992,
+          "identityCommittedMs": null,
+          "authorizedMs": null,
+          "handlerTail": null,
+          "nodeCpu": {
+            "user": 178277,
+            "system": 46007
+          },
+          "responseBytes": 308929,
+          "control": null,
+          "instrumentationComplete": false,
+          "requestWithinOriginal30s": true,
+          "queryCount": 0,
+          "backendPids": [],
+          "unfinishedQueries": 0,
+          "perPhase": {},
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": null,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 3.4149,
+          "largestStatementPlanMs": 12.354500000000002
+        },
+        {
+          "repeat": 0,
+          "label": "work-item-read",
+          "status": 200,
+          "wallMs": 29.110499999998865,
+          "identityCommittedMs": null,
+          "authorizedMs": null,
+          "handlerTail": null,
+          "nodeCpu": {
+            "user": 8163,
+            "system": 1726
+          },
+          "responseBytes": 838,
+          "control": null,
+          "instrumentationComplete": false,
+          "requestWithinOriginal30s": true,
+          "queryCount": 0,
+          "backendPids": [],
+          "unfinishedQueries": 0,
+          "perPhase": {},
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": null,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.16699999999999998,
+          "largestStatementPlanMs": 3.0857
+        },
+        {
+          "repeat": 1,
+          "label": "qualified-capabilities",
+          "status": 200,
+          "wallMs": 52.97450000000026,
+          "identityCommittedMs": null,
+          "authorizedMs": null,
+          "handlerTail": null,
+          "nodeCpu": {
+            "user": 75956,
+            "system": 23616
+          },
+          "responseBytes": 308929,
+          "control": null,
+          "instrumentationComplete": false,
+          "requestWithinOriginal30s": true,
+          "queryCount": 0,
+          "backendPids": [],
+          "unfinishedQueries": 0,
+          "perPhase": {},
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": null,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.1066,
+          "largestStatementPlanMs": 2.6938
+        },
+        {
+          "repeat": 1,
+          "label": "work-item-read",
+          "status": 200,
+          "wallMs": 24.72320000000036,
+          "identityCommittedMs": null,
+          "authorizedMs": null,
+          "handlerTail": null,
+          "nodeCpu": {
+            "user": 12560,
+            "system": 831
+          },
+          "responseBytes": 838,
+          "control": null,
+          "instrumentationComplete": false,
+          "requestWithinOriginal30s": true,
+          "queryCount": 0,
+          "backendPids": [],
+          "unfinishedQueries": 0,
+          "perPhase": {},
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": null,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.1721,
+          "largestStatementPlanMs": 3.021
+        },
+        {
+          "repeat": 2,
+          "label": "qualified-capabilities",
+          "status": 200,
+          "wallMs": 46.69130000000041,
+          "identityCommittedMs": null,
+          "authorizedMs": null,
+          "handlerTail": null,
+          "nodeCpu": {
+            "user": 53025,
+            "system": 11270
+          },
+          "responseBytes": 308929,
+          "control": null,
+          "instrumentationComplete": false,
+          "requestWithinOriginal30s": true,
+          "queryCount": 0,
+          "backendPids": [],
+          "unfinishedQueries": 0,
+          "perPhase": {},
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": null,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.1197,
+          "largestStatementPlanMs": 2.7503
+        },
+        {
+          "repeat": 2,
+          "label": "work-item-read",
+          "status": 200,
+          "wallMs": 28.333200000000943,
+          "identityCommittedMs": null,
+          "authorizedMs": null,
+          "handlerTail": null,
+          "nodeCpu": {
+            "user": 107740,
+            "system": 2647
+          },
+          "responseBytes": 838,
+          "control": null,
+          "instrumentationComplete": false,
+          "requestWithinOriginal30s": true,
+          "queryCount": 0,
+          "backendPids": [],
+          "unfinishedQueries": 0,
+          "perPhase": {},
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": null,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.19019999999999998,
+          "largestStatementPlanMs": 3.4411
+        }
+      ],
+      "revokedReadStatus": 401,
+      "nodeVersion": "v22.19.0",
+      "executableSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+      "importsMs": 1120.195,
+      "postgresSettings": {
+        "version": "PostgreSQL 16.9 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit",
+        "max_connections": "20",
+        "track_activities": "on",
+        "track_planning": "on",
+        "track_io_timing": "on"
+      },
+      "limits": [
+        "SQL wall includes protocol encoding/decoding and callback scheduling; not pure DB wait",
+        "pg_stat_statements is isolated whole-database aggregate, may include nested/background work; do not subtract from request wall",
+        "250ms sampled waits can miss gaps; zero samples is unavailable, not proof of no lock",
+        "handler tail includes validation/serialization/common onSend; process CPU includes V8 threads and monitoring, not a CPU ratio",
+        "Node timer is cooperative; external wall check still rejects responses above30000ms",
+        "native x86_64 results do not estimate ARM TCG or original CI workload"
+      ]
+    },
+    "nativeContextFixed": {
+      "rows": [
+        {
+          "repeat": 0,
+          "label": "qualified-capabilities",
+          "status": 200,
+          "wallMs": 183.4878000000008,
+          "identityCommittedMs": 83.07340000000113,
+          "authorizedMs": 89.57490000000143,
+          "handlerTail": {
+            "wallMs": 88.97429999999986,
+            "nodeCpu": {
+              "user": 156280,
+              "system": 53938
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 183895,
+            "system": 68690
+          },
+          "responseBytes": 308929,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 45,
+          "backendPids": [
+            3620
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 43,
+              "clientSqlWallSumMs": 70.93739999999161
+            },
+            "authorization": {
+              "queries": 1,
+              "clientSqlWallSumMs": 5.436799999999494
+            },
+            "handler": {
+              "queries": 1,
+              "clientSqlWallSumMs": 2.004899999999907
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.15830000000096334,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 4.0492,
+          "largestStatementPlanMs": 15.5592
+        },
+        {
+          "repeat": 0,
+          "label": "work-item-read",
+          "status": 200,
+          "wallMs": 36.3109000000004,
+          "identityCommittedMs": 10.037500000000364,
+          "authorizedMs": 16.98869999999988,
+          "handlerTail": {
+            "wallMs": 0.6162999999996828,
+            "nodeCpu": {
+              "user": 607,
+              "system": 11
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 8247,
+            "system": 4501
+          },
+          "responseBytes": 838,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 17,
+          "backendPids": [
+            3620
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 12,
+              "clientSqlWallSumMs": 7.216400000002977
+            },
+            "authorization": {
+              "queries": 2,
+              "clientSqlWallSumMs": 5.871100000000297
+            },
+            "handler": {
+              "queries": 3,
+              "clientSqlWallSumMs": 16.12590000000091
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.07960000000093714,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.2004,
+          "largestStatementPlanMs": 4.1465
+        },
+        {
+          "repeat": 1,
+          "label": "qualified-capabilities",
+          "status": 200,
+          "wallMs": 71.46839999999975,
+          "identityCommittedMs": 9.102499999999054,
+          "authorizedMs": 14.48569999999927,
+          "handlerTail": {
+            "wallMs": 52.9900000000016,
+            "nodeCpu": {
+              "user": 82208,
+              "system": 32895
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 91858,
+            "system": 34877
+          },
+          "responseBytes": 308929,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 14,
+          "backendPids": [
+            3620
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 12,
+              "clientSqlWallSumMs": 7.572299999996176
+            },
+            "authorization": {
+              "queries": 1,
+              "clientSqlWallSumMs": 4.746000000001004
+            },
+            "handler": {
+              "queries": 1,
+              "clientSqlWallSumMs": 1.8125
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.05940000000009604,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.1226,
+          "largestStatementPlanMs": 3.0825
+        },
+        {
+          "repeat": 1,
+          "label": "work-item-read",
+          "status": 200,
+          "wallMs": 38.10109999999986,
+          "identityCommittedMs": 14.23450000000048,
+          "authorizedMs": 20.61410000000069,
+          "handlerTail": {
+            "wallMs": 0.27450000000135333,
+            "nodeCpu": {
+              "user": 284,
+              "system": 3
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 112323,
+            "system": 8094
+          },
+          "responseBytes": 838,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 17,
+          "backendPids": [
+            3620
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 12,
+              "clientSqlWallSumMs": 10.746600000000399
+            },
+            "authorization": {
+              "queries": 2,
+              "clientSqlWallSumMs": 5.568300000000818
+            },
+            "handler": {
+              "queries": 3,
+              "clientSqlWallSumMs": 15.49409999999807
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.3570999999992637,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.2314,
+          "largestStatementPlanMs": 3.7578
+        },
+        {
+          "repeat": 2,
+          "label": "qualified-capabilities",
+          "status": 200,
+          "wallMs": 53.302700000000186,
+          "identityCommittedMs": 10.87249999999949,
+          "authorizedMs": 16.707300000000032,
+          "handlerTail": {
+            "wallMs": 32.745200000001205,
+            "nodeCpu": {
+              "user": 36009,
+              "system": 16616
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 47219,
+            "system": 19678
+          },
+          "responseBytes": 308929,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 14,
+          "backendPids": [
+            3620
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 12,
+              "clientSqlWallSumMs": 7.831800000001749
+            },
+            "authorization": {
+              "queries": 1,
+              "clientSqlWallSumMs": 5.184400000000096
+            },
+            "handler": {
+              "queries": 1,
+              "clientSqlWallSumMs": 2.2399999999997817
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.057199999999284046,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.1523,
+          "largestStatementPlanMs": 3.2458
+        },
+        {
+          "repeat": 2,
+          "label": "work-item-read",
+          "status": 200,
+          "wallMs": 25.202400000000125,
+          "identityCommittedMs": 8.730999999999767,
+          "authorizedMs": 14.50799999999981,
+          "handlerTail": {
+            "wallMs": 0.23260000000118453,
+            "nodeCpu": {
+              "user": 230,
+              "system": 0
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 6969,
+            "system": 1455
+          },
+          "responseBytes": 838,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 17,
+          "backendPids": [
+            3620
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 12,
+              "clientSqlWallSumMs": 7.2906999999959226
+            },
+            "authorization": {
+              "queries": 2,
+              "clientSqlWallSumMs": 5.289899999999761
+            },
+            "handler": {
+              "queries": 3,
+              "clientSqlWallSumMs": 9.241800000001604
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.0511000000005879,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.1991,
+          "largestStatementPlanMs": 3.1188
+        }
+      ],
+      "revokedReadStatus": 401,
+      "nodeVersion": "v22.19.0",
+      "executableSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+      "importsMs": 1226.0411,
+      "postgresSettings": {
+        "version": "PostgreSQL 16.9 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit",
+        "max_connections": "20",
+        "track_activities": "on",
+        "track_planning": "on",
+        "track_io_timing": "on"
+      },
+      "limits": [
+        "SQL wall includes protocol encoding/decoding and callback scheduling; not pure DB wait",
+        "pg_stat_statements is isolated whole-database aggregate, may include nested/background work; do not subtract from request wall",
+        "250ms sampled waits can miss gaps; zero samples is unavailable, not proof of no lock",
+        "handler tail includes validation/serialization/common onSend; process CPU includes V8 threads and monitoring, not a CPU ratio",
+        "Node timer is cooperative; external wall check still rejects responses above30000ms",
+        "native x86_64 results do not estimate ARM TCG or original CI workload"
+      ]
+    },
+    "armInitial": {
+      "deadlineReached": true,
+      "receipts": 0,
+      "actualRequestCount": "unknown",
+      "internalStage": "unknown"
+    },
+    "nativeLockControl": {
+      "rows": [
+        {
+          "repeat": 0,
+          "label": "qualified-capabilities",
+          "status": 200,
+          "wallMs": 157.67069999999967,
+          "identityCommittedMs": 74.42029999999977,
+          "authorizedMs": 80.08680000000004,
+          "handlerTail": {
+            "wallMs": 73.46979999999985,
+            "nodeCpu": {
+              "user": 166499,
+              "system": 33741
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 190598,
+            "system": 43780
+          },
+          "responseBytes": 308929,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 45,
+          "backendPids": [
+            3956
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 43,
+              "clientSqlWallSumMs": 65.40820000000258
+            },
+            "authorization": {
+              "queries": 1,
+              "clientSqlWallSumMs": 4.85109999999986
+            },
+            "handler": {
+              "queries": 1,
+              "clientSqlWallSumMs": 1.8553000000001703
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.14919999999983702,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 3.4638999999999998,
+          "largestStatementPlanMs": 13.259500000000001
+        },
+        {
+          "repeat": 0,
+          "label": "work-item-read",
+          "status": 200,
+          "wallMs": 32.334499999999935,
+          "identityCommittedMs": 8.823699999999917,
+          "authorizedMs": 14.818900000000212,
+          "handlerTail": {
+            "wallMs": 0.7394000000003871,
+            "nodeCpu": {
+              "user": 743,
+              "system": 0
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 9323,
+            "system": 2323
+          },
+          "responseBytes": 838,
+          "control": null,
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 17,
+          "backendPids": [
+            3956
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 12,
+              "clientSqlWallSumMs": 6.960299999998824
+            },
+            "authorization": {
+              "queries": 2,
+              "clientSqlWallSumMs": 5.1203999999997905
+            },
+            "handler": {
+              "queries": 3,
+              "clientSqlWallSumMs": 14.291999999999462
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.06050000000050204,
+          "waitSamples": 0,
+          "observedWaitTypes": [],
+          "maxObservedBlockers": null,
+          "largestStatementExecMs": 0.21760000000000002,
+          "largestStatementPlanMs": 3.1566
+        },
+        {
+          "repeat": 0,
+          "label": "qualified-capabilities-lock-control",
+          "status": 200,
+          "wallMs": 1056.9717999999993,
+          "identityCommittedMs": 1010.6545999999998,
+          "authorizedMs": 1015.5460000000003,
+          "handlerTail": {
+            "wallMs": 37.677200000000084,
+            "nodeCpu": {
+              "user": 68551,
+              "system": 30260
+            },
+            "scope": "last handler SQL callback through onSend; includes JS validation and serialization"
+          },
+          "nodeCpu": {
+            "user": 80661,
+            "system": 34865
+          },
+          "responseBytes": 308929,
+          "control": {
+            "kind": "own credential row lock",
+            "blockerPid": 3957,
+            "requestedHoldSeconds": 1,
+            "heldWallMs": 1001.8613000000005
+          },
+          "instrumentationComplete": true,
+          "requestWithinOriginal30s": true,
+          "queryCount": 14,
+          "backendPids": [
+            3956
+          ],
+          "unfinishedQueries": 0,
+          "perPhase": {
+            "identity": {
+              "queries": 12,
+              "clientSqlWallSumMs": 1009.173899999997
+            },
+            "authorization": {
+              "queries": 1,
+              "clientSqlWallSumMs": 4.414899999999761
+            },
+            "handler": {
+              "queries": 1,
+              "clientSqlWallSumMs": 2.137800000000425
+            }
+          },
+          "clientQueryIntervalsNonoverlapping": true,
+          "maxAcquireMs": 0.056499999999687134,
+          "waitSamples": 4,
+          "observedWaitTypes": [
+            "Client",
+            "Lock"
+          ],
+          "maxObservedBlockers": 1,
+          "largestStatementExecMs": 1000.9094,
+          "largestStatementPlanMs": 2.7083
+        }
+      ],
+      "revokedReadStatus": 401,
+      "nodeVersion": "v22.19.0",
+      "executableSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+      "importsMs": 1098.2141,
+      "postgresSettings": {
+        "version": "PostgreSQL 16.9 on x86_64-pc-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit",
+        "max_connections": "20",
+        "track_activities": "on",
+        "track_planning": "on",
+        "track_io_timing": "on"
+      },
+      "limits": [
+        "SQL wall includes protocol encoding/decoding and callback scheduling; not pure DB wait",
+        "pg_stat_statements is isolated whole-database aggregate, may include nested/background work; do not subtract from request wall",
+        "250ms sampled waits can miss gaps; zero samples is unavailable, not proof of no lock",
+        "handler tail includes validation/serialization/common onSend; process CPU includes V8 threads and monitoring, not a CPU ratio",
+        "Node timer is cooperative; external wall check still rejects responses above30000ms",
+        "native x86_64 results do not estimate ARM TCG or original CI workload"
+      ]
+    },
+    "armSeed2": {
+      "result": {
+        "status": "incomplete",
+        "qemuExitCode": 0,
+        "deadlineReached": true,
+        "elapsedSeconds": 1207.2991729999776
+      },
+      "receipts": 0
+    }
+  },
+  "resources": {
+    "owner": "e709b575-7ba3-4c2b-9d71-703fdb919a43",
+    "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+    "repoDigests": [
+      "ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55"
+    ],
+    "containers": [
+      {
+        "id": "c16ddb510a49e23aa0a6de8959d619d70b3e4e7d240d44546e094adb6a73217e",
+        "purpose": "2 fixed-budget ARM component guests plus 3 native isolated API/PG/Redis probes; all relevant processes stopped before removal",
+        "exitCode": 137,
+        "oom": false,
+        "activeRelevantProcessesBeforeStop": 0,
+        "removedAndAbsent": true,
+        "creationPurpose": "qemu provisioning; no guest started"
+      }
+    ],
+    "scope": "未注入已有或生产凭据；三次原生过程中生成真实隔离测试身份并走原配对/授权路径。两次ARM实际请求数未知。所有测试密钥与数据仅留独有消费者，未归档磁盘或私有日志。",
+    "osExitCode": 0,
+    "apt-updateExitCode": 0,
+    "qemu-policyExitCode": 0,
+    "exactQemuPackageAvailable": true,
+    "aptInstallExitCode": 0,
+    "installedPackageRequests": [
+      "qemu-system-arm=1:8.2.2+ds-0ubuntu1.18",
+      "qemu-utils=1:8.2.2+ds-0ubuntu1.18",
+      "qemu-efi-aarch64=2024.02-2ubuntu0.10",
+      "ipxe-qemu=1.21.1+git-20220113.fbbdc3926-0ubuntu2",
+      "ipxe-qemu-256k-compat-efi-roms=1.0.0+git-20150424.a25a16d-0ubuntu5",
+      "genisoimage",
+      "python3",
+      "ca-certificates"
+    ],
+    "scopeCorrection": {
+      "oldGenericScope": "仅同锁定QEMU版本的小组件TCG对照，非完整产品验收；无宿主挂载、端口、Docker socket或真实凭据。",
+      "observedAt": "2026-10-16T12:42:25.174758+00:00",
+      "correction": "未注入已有或生产凭据；三次原生过程中生成真实隔离测试身份并走原配对/授权路径。两次ARM实际请求数未知。所有测试密钥与数据仅留独有消费者，未归档磁盘或私有日志。"
+    },
+    "beforeStopProcessProof": {
+      "matchingProcesses": [],
+      "active": 0
+    },
+    "stopExitCode": 0,
+    "sharedReferencesStillSame": {
+      "ubuntu:24.04": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+      "node:22.19.0-alpine3.21": "sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9",
+      "postgres:16.9-alpine": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+      "redis:7.4.5-alpine": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442"
+    },
+    "derivedTagClosure": [
+      {
+        "role": "api",
+        "tag": "workmesh-ta01-diagnostic/api:ci566-auth-pg-owned",
+        "outcome": "removed-and-absent"
+      },
+      {
+        "role": "postgres",
+        "tag": "workmesh-ta01-diagnostic/postgres:ci566-auth-pg-owned",
+        "outcome": "removed-and-absent"
+      },
+      {
+        "role": "redis",
+        "tag": "workmesh-ta01-diagnostic/redis:ci566-auth-pg-owned",
+        "outcome": "removed-and-absent"
+      },
+      {
+        "role": "api",
+        "tag": "workmesh-ta01-diagnostic/api:ci566-auth-pg-amd-owned",
+        "outcome": "removed-and-absent"
+      },
+      {
+        "role": "postgres",
+        "tag": "workmesh-ta01-diagnostic/postgres:ci566-auth-pg-amd-owned",
+        "outcome": "removed-and-absent"
+      },
+      {
+        "role": "redis",
+        "tag": "workmesh-ta01-diagnostic/redis:ci566-auth-pg-amd-owned",
+        "outcome": "removed-and-absent"
+      }
+    ],
+    "closedAt": "2026-10-16T12:43:02.975616+00:00",
+    "metadataUpdatedAt": "2026-10-16T12:44:03.756924+00:00"
+  },
+  "images": {
+    "arm64": {
+      "owner": "660966fe-b044-423f-912d-e619b7338652",
+      "roles": {
+        "api": {
+          "tag": "workmesh-ta01-diagnostic/api:ci566-auth-pg-owned",
+          "preexistingTag": false,
+          "image": {
+            "reference": "workmesh-server/api:candidate-56dc7a3972ff-arm64",
+            "id": "sha256:56e3d69affaf8525873cc282c83118bafc39dff246aa2f865d5e0697f8ec14d0",
+            "revision": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+            "archiveId": "sha256:5df96bb9838870bf996d7b7532395acf9b90833e5c06c51be901f78cde427b6d"
+          },
+          "actualImageId": "sha256:5df96bb9838870bf996d7b7532395acf9b90833e5c06c51be901f78cde427b6d",
+          "rootfs": {
+            "bytes": 60203258,
+            "sha256": "a9f84b90264349e538ff976b470453516da227457acbecee98965ac35dccf486",
+            "rawBytes": 202631680,
+            "rawSha256": "2242058ea4ac6501458b7e0068a9ec1890d7c6a6a5f96e69ef618ec05fbd42aa"
+          },
+          "keyFiles": {
+            "app/dist/server.js": {
+              "bytes": 72215,
+              "sha256": "b511c3ce89dc404b00ece5642829290c1ff74ad54a97417974e5f986836e5ea4"
+            },
+            "app/package.json": {
+              "bytes": 1288,
+              "sha256": "9165a49fffd7abab69f175dc00b746f4a65594d3d94680e848c470a84fe4dae7"
+            },
+            "usr/local/bin/node": {
+              "bytes": 122607048,
+              "sha256": "da2abd2c48f19561e35478d51583b068ab410f888a09f363bd131ab611392cb7"
+            }
+          },
+          "removeTagExitCode": 0,
+          "derivedTagRemoval": "removed-and-absent"
+        },
+        "postgres": {
+          "tag": "workmesh-ta01-diagnostic/postgres:ci566-auth-pg-owned",
+          "preexistingTag": false,
+          "image": {
+            "reference": "postgres:16.9-alpine",
+            "id": "sha256:9e9764474d0c70ceff17378a6eca55b00c98d2f4d564be06a8e82f2431b3caa2",
+            "revision": "",
+            "archiveId": "sha256:8b581113febdbab01eb2e54800d7c408ba59f973c15fe3b4319cb895ea93d792"
+          },
+          "actualImageId": "sha256:8b581113febdbab01eb2e54800d7c408ba59f973c15fe3b4319cb895ea93d792",
+          "rootfs": {
+            "bytes": 101053938,
+            "sha256": "db53c0cc6817a56a9abb36a9315f85c6d8c391f9d569fd410434fd115c1dc1e1",
+            "rawBytes": 269923840,
+            "rawSha256": "f0631ad6e01b237359f3028c231931fd24814d23d9275fc549b3af931bb4d780"
+          },
+          "keyFiles": {
+            "usr/local/bin/postgres": {
+              "bytes": 10431448,
+              "sha256": "6467407f2e9f49c9a327cd957c1ea52421ababb3ed01a94e55e105faf35569da"
+            },
+            "usr/local/lib/postgresql/pg_stat_statements.so": {
+              "bytes": 78488,
+              "sha256": "a6d7e4d879089defe5a1de880307faf9e93444f1162fb96e23e0e394f213d565"
+            }
+          },
+          "removeTagExitCode": 0,
+          "derivedTagRemoval": "removed-and-absent"
+        },
+        "redis": {
+          "tag": "workmesh-ta01-diagnostic/redis:ci566-auth-pg-owned",
+          "preexistingTag": false,
+          "image": {
+            "reference": "redis:7.4.5-alpine",
+            "id": "sha256:ff193672aa2e4dcab961338459336d0ddb6b5efdcc5cfc0ae828eebd3927930b",
+            "revision": "",
+            "archiveId": "sha256:714026e5432e02afdf3d5af4672b880896b00e41d243d1bd22e223a0b7807200"
+          },
+          "actualImageId": "sha256:714026e5432e02afdf3d5af4672b880896b00e41d243d1bd22e223a0b7807200",
+          "rootfs": {
+            "bytes": 16991315,
+            "sha256": "f0f4ad52c2d328ead6c9fe1009a331cae42166f48e9686031378c20cfdda5eb6",
+            "rawBytes": 42326016,
+            "rawSha256": "e0f258dcdd85087b59373b4e468b462cca5c868847d1b38faef35448dd69e85a"
+          },
+          "keyFiles": {
+            "usr/local/bin/redis-server": {
+              "bytes": 17039808,
+              "sha256": "38cd1ad7b011fa85e374e4ac7b3ce20eb797adae8b1ee38af398ba535c729883"
+            }
+          },
+          "removeTagExitCode": 0,
+          "derivedTagRemoval": "removed-and-absent"
+        }
+      },
+      "containers": [
+        {
+          "id": "4c6c6f1d1596d22f57743ef33db95004f61d9fbd9eac19968acfdd6c0eb3def0",
+          "role": "api",
+          "purpose": "export only; never started",
+          "removedAndAbsent": true
+        },
+        {
+          "id": "742e587731dead0f707c19432f7d6d2d96843d067ccd2e3c8a304111f7ede5db",
+          "role": "postgres",
+          "purpose": "export only; never started",
+          "removedAndAbsent": true
+        },
+        {
+          "id": "0f9570186ff0dcbe94906fbb7934b7e5b1188eb8341f185d21ab39abf09bfc45",
+          "role": "redis",
+          "purpose": "export only; never started",
+          "removedAndAbsent": true
+        }
+      ],
+      "loadExitCode": 0
+    },
+    "amd64": {
+      "owner": "5e5306d4-9ea2-49df-97b1-d5995e217e19",
+      "roles": {
+        "api": {
+          "tag": "workmesh-ta01-diagnostic/api:ci566-auth-pg-amd-owned",
+          "preexistingTag": false,
+          "image": {
+            "reference": "workmesh-server/api:candidate-56dc7a3972ff-amd64",
+            "id": "sha256:c2633991d2f98dbf94a8c4833829acc9a34de3258442c41687e75b097ba30e6a",
+            "revision": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+            "archiveId": "sha256:21d8220256357f8d16786e401fd31a9aa607664716cb057c447200482dc7d213"
+          },
+          "actualImageId": "sha256:21d8220256357f8d16786e401fd31a9aa607664716cb057c447200482dc7d213",
+          "rootfs": {
+            "bytes": 60816437,
+            "sha256": "b65c2a314c9509ccb1fdf9b9fb98d0f8f36ed2299bdc47c36e441f68e5f40b4d",
+            "rawBytes": 203970048,
+            "rawSha256": "f9a05c358518df0b732c8e18734dd906a0ef24951a61f7731bd500b41761b10a"
+          },
+          "keyFiles": {
+            "app/dist/server.js": {
+              "bytes": 72215,
+              "sha256": "b511c3ce89dc404b00ece5642829290c1ff74ad54a97417974e5f986836e5ea4"
+            },
+            "app/package.json": {
+              "bytes": 1288,
+              "sha256": "9165a49fffd7abab69f175dc00b746f4a65594d3d94680e848c470a84fe4dae7"
+            },
+            "usr/local/bin/node": {
+              "bytes": 124181928,
+              "sha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328"
+            }
+          },
+          "removeTagExitCode": 0,
+          "derivedTagRemoval": "removed-and-absent"
+        },
+        "postgres": {
+          "tag": "workmesh-ta01-diagnostic/postgres:ci566-auth-pg-amd-owned",
+          "preexistingTag": false,
+          "image": {
+            "reference": "postgres:16.9-alpine",
+            "id": "sha256:dca9c7aa70c71caf8bcc48c8ec40658c1fdf2d1e4e8d26bc27d4d18e030d779a",
+            "revision": "",
+            "archiveId": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911"
+          },
+          "actualImageId": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+          "rootfs": {
+            "bytes": 105669869,
+            "sha256": "f4f18a0d5521467185019f7902eaeb2b1f4ee4034cb75c5ad294981dcab59baa",
+            "rawBytes": 278344704,
+            "rawSha256": "56aacf7dbe8ed8d855580c7b56d1b268df7a322970eb91f14023807986fce838"
+          },
+          "keyFiles": {
+            "usr/local/bin/postgres": {
+              "bytes": 10758304,
+              "sha256": "39d66197750cb5777e6a80c5bdfb50c902b6dd73aed0b8e707b8b3a3b1805bcd"
+            },
+            "usr/local/lib/postgresql/pg_stat_statements.so": {
+              "bytes": 52632,
+              "sha256": "97db25dfdaad34d1fda0241650b0a53de3553cc5696584ce5963077550aa8ddd"
+            }
+          },
+          "removeTagExitCode": 0,
+          "derivedTagRemoval": "removed-and-absent"
+        },
+        "redis": {
+          "tag": "workmesh-ta01-diagnostic/redis:ci566-auth-pg-amd-owned",
+          "preexistingTag": false,
+          "image": {
+            "reference": "redis:7.4.5-alpine",
+            "id": "sha256:f218e591b571a4129aa29a8566b597d849fba21af7be853d31b03122b20db5e9",
+            "revision": "",
+            "archiveId": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442"
+          },
+          "actualImageId": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+          "rootfs": {
+            "bytes": 16636938,
+            "sha256": "3f82c2bf9c87082e3ed613976951568fd9fffc0b5ebb09bb4950f564a31084d9",
+            "rawBytes": 41982976,
+            "rawSha256": "004cad583b1b69b820be17741068652c84daa266894a3925dba1fe475aac9119"
+          },
+          "keyFiles": {
+            "usr/local/bin/redis-server": {
+              "bytes": 17032248,
+              "sha256": "11ec731d40ed8266ec197f9b95d0e3ba6d76eb9b033d3145b4eaf8c0b76a3d90"
+            }
+          },
+          "removeTagExitCode": 0,
+          "derivedTagRemoval": "removed-and-absent"
+        }
+      },
+      "containers": [
+        {
+          "id": "2a72d44343326c89015e526e6559bcf2e6c0411de017f38d8fa96804c99cfdc4",
+          "role": "api",
+          "purpose": "export only; never started",
+          "removedAndAbsent": true
+        },
+        {
+          "id": "c5c139005a28bc9de9d412894277af1380f873c49ad2a0e20e5d2e7047625a5d",
+          "role": "postgres",
+          "purpose": "export only; never started",
+          "removedAndAbsent": true
+        },
+        {
+          "id": "8068cf08dedb3a568dca29da9028776c652cb6a7291c7675758b7541f332ac87",
+          "role": "redis",
+          "purpose": "export only; never started",
+          "removedAndAbsent": true
+        }
+      ],
+      "loadExitCode": 0
+    }
+  },
+  "ci567Snapshot": {
+    "observedAt": "2026-10-16T12:43:17.485466+00:00",
+    "run": {
+      "id": 38893305755,
+      "run_number": 567,
+      "head_sha": "e2763da4dfdf25f7fc5c28c34a9619d4788f4541",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-10-16T11:22:08Z",
+      "updated_at": "2026-10-16T11:30:57Z"
+    },
+    "jobs": [
+      {
+        "id": 116947751642,
+        "name": "Classify changes and validate CI selection",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:22:11Z",
+        "completed_at": "2026-10-16T11:23:14Z"
+      },
+      {
+        "id": 116948144277,
+        "name": "Database integration",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:26:09Z"
+      },
+      {
+        "id": 116948144293,
+        "name": "Connector native storage (ubuntu-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:25:03Z"
+      },
+      {
+        "id": 116948144334,
+        "name": "Source gates",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:17Z",
+        "completed_at": "2026-10-16T11:42:31Z"
+      },
+      {
+        "id": 116948144370,
+        "name": "Complete disaster recovery",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:27:04Z"
+      },
+      {
+        "id": 116948144388,
+        "name": "Connector native storage (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:26:38Z"
+      },
+      {
+        "id": 116948144395,
+        "name": "API integration",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:38:06Z"
+      },
+      {
+        "id": 116948144399,
+        "name": "Agent construction and protocol smoke",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:24:18Z"
+      },
+      {
+        "id": 116948144419,
+        "name": "Connector native storage (macos-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:22Z",
+        "completed_at": "2026-10-16T11:25:37Z"
+      },
+      {
+        "id": 116948144480,
+        "name": "Connector full installation (amd64)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:40:54Z"
+      },
+      {
+        "id": 116948144496,
+        "name": "Worker integration",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:30:43Z"
+      },
+      {
+        "id": 116948144516,
+        "name": "Connector full installation (arm64)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:19Z",
+        "completed_at": "2026-10-16T12:23:47Z"
+      },
+      {
+        "id": 116948144546,
+        "name": "Server candidate (amd64)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:16Z",
+        "completed_at": "2026-10-16T11:30:24Z"
+      },
+      {
+        "id": 116948144757,
+        "name": "Server candidate (arm64)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:23:18Z",
+        "completed_at": "2026-10-16T11:30:52Z"
+      },
+      {
+        "id": 116950873839,
+        "name": "Server full installation (amd64, team)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:30:54Z",
+        "completed_at": "2026-10-16T12:13:53Z"
+      },
+      {
+        "id": 116950873874,
+        "name": "Server full installation (arm64, team)",
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-10-16T11:30:56Z",
+        "completed_at": null
+      },
+      {
+        "id": 116950873944,
+        "name": "Server full installation (amd64, enterprise)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:30:54Z",
+        "completed_at": "2026-10-16T12:02:02Z"
+      },
+      {
+        "id": 116950873965,
+        "name": "Server full installation (arm64, personal)",
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-10-16T11:30:56Z",
+        "completed_at": null
+      },
+      {
+        "id": 116950873995,
+        "name": "Server full installation (amd64, personal)",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-10-16T11:30:54Z",
+        "completed_at": "2026-10-16T12:08:05Z"
+      },
+      {
+        "id": 116950874189,
+        "name": "Server full installation (arm64, enterprise)",
+        "status": "in_progress",
+        "conclusion": null,
+        "started_at": "2026-10-16T11:30:56Z",
+        "completed_at": null
+      }
+    ],
+    "pr": {
+      "number": 228,
+      "draft": true,
+      "state": "open",
+      "merged": false,
+      "head": "e2763da4dfdf25f7fc5c28c34a9619d4788f4541"
+    },
+    "main": {
+      "ref": "refs/heads/main",
+      "sha": "c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8"
+    },
+    "executorCancelledOrRerun": false
+  },
+  "originalEvidence": "ci566-arm64-personal-first-failure.json",
+  "scopeLimits": [
+    "独立API角色，不是个人Lite完整镜像；跳过entrypoint，NODE_ENV=test仅禁止server导入自动listen，构造app前恢复production",
+    "原路由/身份/授权/真实PG/Redis；Fastify inject，无MCP/TLS/代理/Worker/S3/真实竞争负载，未控制物理宿主",
+    "本次PG max_connections20/shared_buffers64MB；原个人Lite为32MB及track_activities off；小测观测额外开销明确",
+    "250ms等待采样可能缺失，PG统计为整库聚合；handler尾段不等于单个纯函数，process CPU含V8多线程；禁止相减推旧SQL/CPU成本",
+    "原业务30秒、健康180秒、安装1800秒、完整guest150分钟不变；本轮另有有界组件开销，不宣称总开销不变",
+    "AMD139/API139/MCP139分别未闭；有限未复现不排除；完整验收/正式P0P1产品审/最新Required未齐不可合入"
+  ],
+  "fullProductAcceptance": false,
+  "productCodeChanged": false,
+  "workflowChanged": false,
+  "observedAt": "2026-10-16T12:49:16.562922+00:00",
+  "selectedZipSha256": "3a7ec3efd2801ffa34076d01900a51e24e57ef888aa97a4c87c3d4c27d95f6e1",
+  "members": {
+    "arm-http-initial/analyze.py": {
+      "bytes": 4238,
+      "sha256": "863404a45fce1934383f917b5b6f756035f8aeee250dd7021953a5cb22550bff"
+    },
+    "arm-http-initial/apt-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "arm-http-initial/apt-install.stdout": {
+      "bytes": 29789,
+      "sha256": "3be33e149d8fb0c1f2feb87f8fad9ced0180c9068fa0e6180b68564d6966f37c"
+    },
+    "arm-http-initial/apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/apt-update.stdout": {
+      "bytes": 1634,
+      "sha256": "a0b389dfac3aae6426a832c1c24c5ebd8312954f457766450e40239fba3fb1c2"
+    },
+    "arm-http-initial/archive.py": {
+      "bytes": 5443,
+      "sha256": "0ad714846d75ecb1a534ff2647f72273e52e8a88ef97f2382e5bf41f569874a9"
+    },
+    "arm-http-initial/artifact.json": {
+      "bytes": 221,
+      "sha256": "8dc1f972d70c3fb557fa1c7ec4edcbffb55a95970a7fc7513d768e51c6a00c3d"
+    },
+    "arm-http-initial/before-stop-processes.json": {
+      "bytes": 39,
+      "sha256": "01e2a01b14e73e819c7c8a24a5210b988420b9c532a8de28542f1fefdbf2ba1c"
+    },
+    "arm-http-initial/ci567-amd-remaining.json": {
+      "bytes": 481,
+      "sha256": "2198e70737665cf622e695cc72edc05d07e2f6a9b5a8fd10b70b4f4bb187b225"
+    },
+    "arm-http-initial/ci567-enterprise-inspection.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/ci567-enterprise-inspection.stdout": {
+      "bytes": 2424,
+      "sha256": "ef6b51bd093b892d8f95a1c654fc48aea9d52185e70e8c95ad5d4845fcce2a23"
+    },
+    "arm-http-initial/ci567-personal-inspection.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/ci567-personal-inspection.stdout": {
+      "bytes": 2473,
+      "sha256": "0c9111b2e34c2ac2880422d95567a59ae94551783099292ee889043961c7496e"
+    },
+    "arm-http-initial/ci567-snapshot.json": {
+      "bytes": 5516,
+      "sha256": "435b0022448a8f80a72ab628d35a064f44359e306faff3a40f4c9546dfab17ad"
+    },
+    "arm-http-initial/ci567-team-inspection.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/ci567-team-inspection.stdout": {
+      "bytes": 2400,
+      "sha256": "4112a64004edf36fa779ea0feaa4a3b43cdea328cf74731fe897d78350eef1b0"
+    },
+    "arm-http-initial/cleanup-inputs.ps1": {
+      "bytes": 2537,
+      "sha256": "ac2a2af16e17d99a98f24473380e4362273db2846d6e20730c1a69150ac43194"
+    },
+    "arm-http-initial/close-resources.py": {
+      "bytes": 4576,
+      "sha256": "8ae174ec07eb69cee1d34c9704eebac3beafd7ed1c33d77e6317c3c8ade8536f"
+    },
+    "arm-http-initial/controlled-lock-proof.json": {
+      "bytes": 3018,
+      "sha256": "4a85c112d8d0d9112fb77ec0b89f5329042136a5cb318449541b571a83d5eee4"
+    },
+    "arm-http-initial/controls.py": {
+      "bytes": 1874,
+      "sha256": "a1589185ab3956917528955b0eabe1dcdc26a9aa4ae6a0299449a3ed67e6b6c7"
+    },
+    "arm-http-initial/deleted-inputs.json": {
+      "bytes": 913,
+      "sha256": "c32ac888bf8ccb497a831dc5a04458d01fb3765640bc3f7f79d80dd6d85189c5"
+    },
+    "arm-http-initial/export.py": {
+      "bytes": 3317,
+      "sha256": "9b72ee96ac4484f3151a5f0814d6be0e5e2ed4802843d832a8a23a1db2caa4ba"
+    },
+    "arm-http-initial/extraction.json": {
+      "bytes": 54566,
+      "sha256": "389687a52f8ca4b70e2075019ba3258d9a76e498adf7a3c08feb25550744f782"
+    },
+    "arm-http-initial/fetch-select.py": {
+      "bytes": 5242,
+      "sha256": "2337f8da0a85d14635e31fe944aa7abbdf0074af35e93a843072e82ff274d771"
+    },
+    "arm-http-initial/finalize-metadata.py": {
+      "bytes": 2743,
+      "sha256": "408903c582ed19be053c97d9e36d723940fea0c9131caf491df65ab9eec0b0d8"
+    },
+    "arm-http-initial/finish-docs.py": {
+      "bytes": 3882,
+      "sha256": "e47b40aecda6a355833c70edb7ef49673ca6c9b23b0b26bc15cfa3f6a1429e57"
+    },
+    "arm-http-initial/firmware-sha256.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/firmware-sha256.stdout": {
+      "bytes": 97,
+      "sha256": "8745d56657c5a07a8f78546b48de89ca97c155e5bd3460fe1dbe1685197e7789"
+    },
+    "arm-http-initial/guest.py": {
+      "bytes": 7209,
+      "sha256": "2471ef24486955afb0cb0b6889630deaf011eaf4e5939aabf4611d9cacfccba9"
+    },
+    "arm-http-initial/image-resources.json": {
+      "bytes": 4447,
+      "sha256": "5ca48a8854788caa1d2b35268cb391a69e04c5a522379f04f5c4d57e1e165a08"
+    },
+    "arm-http-initial/input-progress.json": {
+      "bytes": 31,
+      "sha256": "cca20163e136d2168c737fb3621c77ba56bc42fdb4861345d0b48304f6779600"
+    },
+    "arm-http-initial/input-progress.py": {
+      "bytes": 1093,
+      "sha256": "6d4b24e54c3031fafd6c51e035001b827cdb869e26d90b1d934f8229114eea62"
+    },
+    "arm-http-initial/inspect-ci567-guest.py": {
+      "bytes": 5086,
+      "sha256": "98997be47351787f992bb6a6d72c9f8df5348a3c8eac7f40a6df65e44720ac3f"
+    },
+    "arm-http-initial/install.py": {
+      "bytes": 1983,
+      "sha256": "44ef429775dc6073dfff3c88c386474b254c9398a6de4e78150653a7b82f6b1e"
+    },
+    "arm-http-initial/manifest.json": {
+      "bytes": 12409,
+      "sha256": "391bd59c041d4a7d87a15573d2f03ff07edfddcf6b1233b6f092b75639fd29b4"
+    },
+    "arm-http-initial/node-sha256.txt": {
+      "bytes": 66,
+      "sha256": "a6ab60c78bda1977c34efc53b53853cc5fefcf5d597f3862bf84ec8f9c413b68"
+    },
+    "arm-http-initial/os.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/os.stdout": {
+      "bytes": 400,
+      "sha256": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763"
+    },
+    "arm-http-initial/outer-controls.json": {
+      "bytes": 246,
+      "sha256": "0ae14fd0dfc7c5e288a919436ec39afc58d2064eb40876d2c9722cd2a01736dd"
+    },
+    "arm-http-initial/outer-metadata.json": {
+      "bytes": 91,
+      "sha256": "e1e73fc45802c41494b4afd44bb924ee89d219e2709662bb4ea82db262d87c4c"
+    },
+    "arm-http-initial/poll.py": {
+      "bytes": 329,
+      "sha256": "87cc21c96985418bfed93474819c0e42a35b05f8d10f7d22878fe2a71dad8c42"
+    },
+    "arm-http-initial/prelaunch-errors.json": {
+      "bytes": 326,
+      "sha256": "6fac4daf1d8edb50aae69ea3beedccf27be5f15453341c3c78b7c05c3898e500"
+    },
+    "arm-http-initial/prepare-native.py": {
+      "bytes": 702,
+      "sha256": "3b762b052cfab457242f30285ef4be8396fc74a640788d9f6c0220c9a514d7d9"
+    },
+    "arm-http-initial/prepare-runner.py": {
+      "bytes": 1116,
+      "sha256": "dbd9d93879b58fd8cac02d8a2f6a138f33f8ecd5a339669da7095ba51b8f3a10"
+    },
+    "arm-http-initial/prepare-seed-2.py": {
+      "bytes": 3869,
+      "sha256": "d063057a02d45ff11ff6c2e5e0d873051943234846286363dceb0b300a8a4e9c"
+    },
+    "arm-http-initial/provision.py": {
+      "bytes": 2379,
+      "sha256": "08001e5a16be50c6b682b65c87bafcd7b0ee0624a352b2d8514d4928ecc698c0"
+    },
+    "arm-http-initial/qemu-packages.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/qemu-packages.stdout": {
+      "bytes": 226,
+      "sha256": "164c47f19553a1a6582b3502650537ad2db668e5cefef629a369d228c5d89566"
+    },
+    "arm-http-initial/qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/qemu-policy.stdout": {
+      "bytes": 414,
+      "sha256": "33520d077bb5c0d139106d9aa1383e4df982a3e1f8222f954377184c04ff44a9"
+    },
+    "arm-http-initial/qemu-sha256.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/qemu-sha256.stdout": {
+      "bytes": 95,
+      "sha256": "e406dc7f5e40070901c384076ca70ff4330843965317dd3ff04a5b8af105e756"
+    },
+    "arm-http-initial/qemu-stderr.log": {
+      "bytes": 70,
+      "sha256": "eaaed6bcfd101afa69a5a9d6ef1b182361c5bf3c93cd8da29d07655c06bd4edc"
+    },
+    "arm-http-initial/qemu-version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "arm-http-initial/read-ci567-amd-remaining.py": {
+      "bytes": 3062,
+      "sha256": "0f98df3c6e9c8379fefdf2a4c9de35115428041078b4452d74a30b22b5a508b9"
+    },
+    "arm-http-initial/read-ci567-enterprise.py": {
+      "bytes": 1142,
+      "sha256": "9244347f9d40392e31cd5dd92b19e9dd611b3ce57dae94e8d6aefb783867d01e"
+    },
+    "arm-http-initial/resources.json": {
+      "bytes": 3468,
+      "sha256": "4fee29906e94abb0dfeeb3e215cf8f33f392cc64c37d95a3110f286aefb920d0"
+    },
+    "arm-http-initial/result.json": {
+      "bytes": 1771,
+      "sha256": "f2453b4e2123444e3c39c5125c6a1b402ce2b8c4d73df823c65990963df6b620"
+    },
+    "arm-http-initial/rom-sha256.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/rom-sha256.stdout": {
+      "bytes": 100,
+      "sha256": "7b4716a03c587a9aa0b33eef581858795960b928e2c7f554c75ef932efbba885"
+    },
+    "arm-http-initial/run-guest.py": {
+      "bytes": 6635,
+      "sha256": "90fc9f6c32842fd0aa04fc23c9562dd7a6a83bf42f41c24bdb694d99308d7d54"
+    },
+    "arm-http-initial/runner-exit.json": {
+      "bytes": 23,
+      "sha256": "59c8897806c5f1945a06be2f82cf3d4acde140121a171535c6fe29caf3d9aaf5"
+    },
+    "arm-http-initial/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-http-initial/runner.stdout": {
+      "bytes": 99,
+      "sha256": "24f00db7d6e7297c525fe47297a0da4344f13139b440a0674c31f431f68ccc6b"
+    },
+    "arm-http-initial/serial.log": {
+      "bytes": 80952,
+      "sha256": "e503336c33e3e77a96424b297e50903cdb6731eeef27931517cf1ba979d98434"
+    },
+    "arm-http-initial/snapshot.py": {
+      "bytes": 1293,
+      "sha256": "94889445cde25f79d3d1af5a8cf43226d112bb3122b840d2218aefad1eb228fa"
+    },
+    "arm-http-initial/start-run.py": {
+      "bytes": 2517,
+      "sha256": "43049506a84080378ea83bee53cf6a30a803e8b1e9f392b28c71353bcb169cb6"
+    },
+    "arm-http-initial/used-context-measurement.mjs": {
+      "bytes": 13630,
+      "sha256": "1b3be1893848f6f376e5a351b6c269b348822a3326098d7d039f684fcaf9b033"
+    },
+    "arm-http-initial/used-first-measurement.mjs": {
+      "bytes": 12824,
+      "sha256": "878a8ef37a8a811f46e7dbfaf3bf7e051edd1171dcb5fd03be6ce7d41c8bfa7b"
+    },
+    "arm-http-initial/used-inputs.json": {
+      "bytes": 1097,
+      "sha256": "280fa4126e668741bb95b53ecfa65e82eb7e625b1526139ad77f9deb89ac3704"
+    },
+    "arm-http-initial/verify-ci567-enterprise.py": {
+      "bytes": 2477,
+      "sha256": "d7f56b55d58da3c43360b16c14c05f0a9673b61eee07ffeca8dbd3df055a1c77"
+    },
+    "native-initial/artifact.json": {
+      "bytes": 221,
+      "sha256": "357958fb3684183e923c24925ec67fda28819a870aeab00cea01508c7bb88640"
+    },
+    "native-initial/export.py": {
+      "bytes": 3324,
+      "sha256": "290da48f66a2b7ffbf545a2959abf8e0edfc9402259f2b817a29575697c4feb3"
+    },
+    "native-initial/extraction.json": {
+      "bytes": 54546,
+      "sha256": "9f7ec733b4099879a7810f295ee55431fef01a53c195fdaf8d6dd4a356e34f7f"
+    },
+    "native-initial/fetch-select.py": {
+      "bytes": 5253,
+      "sha256": "b684abf546e7480c0d280fb7c0766dda6db40f6801b0dfacce9bedbd98390d94"
+    },
+    "native-initial/image-resources.json": {
+      "bytes": 4459,
+      "sha256": "a8928e4cb539f46e9c985670f0eb84c30051152644ccf302db363861d785e56d"
+    },
+    "native-initial/inputs.json": {
+      "bytes": 462,
+      "sha256": "a06d23bae90bd452c5b0efbf1f193f63b4b657018231201395c21e5a0ac85feb"
+    },
+    "native-initial/manifest.json": {
+      "bytes": 12627,
+      "sha256": "1e8cb5c8e3eacc3e1de2be0f4bffbbf17e02beffa0b72cd0abe260f4c246c8c5"
+    },
+    "native-initial/native.py": {
+      "bytes": 5425,
+      "sha256": "bda0f552e3f4dcf408c6953194061a0aab724bf20170b61badb7f7e06c8401af"
+    },
+    "native-initial/node.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-initial/node.stdout": {
+      "bytes": 38913,
+      "sha256": "e8d06a251b6f3e7f918d9c3b38f592b5f6956c2ee7f9ff356d8cfd1489dcdaef"
+    },
+    "native-initial/prepare-context-2.py": {
+      "bytes": 889,
+      "sha256": "7df430f396eab4dcfab60d051a836b372085321cc87aaee49a5a137a19e379d6"
+    },
+    "native-initial/prepare-lock-control.py": {
+      "bytes": 1110,
+      "sha256": "b065c8c4b490ba4bfc3be92d89c9041a559f283dacbadf5ee85a290c80294bef"
+    },
+    "native-initial/result.json": {
+      "bytes": 63535,
+      "sha256": "ff14af6763372b8889bf233271730952c29b9b2e8cb3cb00ebbbd570244c5fbf"
+    },
+    "native-initial/runner-exit.json": {
+      "bytes": 17,
+      "sha256": "d45db54bba0c56e2691a52869729c0a3eade7f5d50545e7832a20e3262a9d422"
+    },
+    "native-initial/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-initial/runner.stdout": {
+      "bytes": 76,
+      "sha256": "82596bb0a03f4fbacaab8fe0a334ff972110d39443fa73697dcb66996b7a9f75"
+    },
+    "native-initial/start-native.py": {
+      "bytes": 1886,
+      "sha256": "6e07c0e0c517b617aea8842974a71a9754dcf476f4997d09f8683438e48fa2a8"
+    },
+    "native-initial/used-first-measurement.mjs": {
+      "bytes": 12824,
+      "sha256": "878a8ef37a8a811f46e7dbfaf3bf7e051edd1171dcb5fd03be6ce7d41c8bfa7b"
+    },
+    "native-context-fixed/inputs.json": {
+      "bytes": 462,
+      "sha256": "85e1dd8f294aa3b9855d57549d15d2e91d21473ca6beb62f9948a2d8a74294ea"
+    },
+    "native-context-fixed/native.py": {
+      "bytes": 5427,
+      "sha256": "eb64cb0b59acf7546bc0f9330154a1a97f449a97afa93b170d874015ecffc7fb"
+    },
+    "native-context-fixed/node.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-context-fixed/node.stdout": {
+      "bytes": 106961,
+      "sha256": "c5dc2bdc4e965e2fdc76b7c95bb50c7fb57e0e115032b9dda8f30be1c9a6d11a"
+    },
+    "native-context-fixed/result.json": {
+      "bytes": 154023,
+      "sha256": "07f5f6dff0136fc5fcc09b4c2932be3362c814875886f79aff08e65380da3661"
+    },
+    "native-context-fixed/runner-exit.json": {
+      "bytes": 17,
+      "sha256": "d45db54bba0c56e2691a52869729c0a3eade7f5d50545e7832a20e3262a9d422"
+    },
+    "native-context-fixed/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-context-fixed/runner.stdout": {
+      "bytes": 77,
+      "sha256": "f8f35df998ea401b4168ee48fc3b7a6318cc36cb2e27ab1b9ba3f64001b270c1"
+    },
+    "native-context-fixed/start-native.py": {
+      "bytes": 1933,
+      "sha256": "044875de54c509a8f85fa6446a14555b137525c448fb03759ddf64c2904405b9"
+    },
+    "native-context-fixed/used-measurement.mjs": {
+      "bytes": 13630,
+      "sha256": "1b3be1893848f6f376e5a351b6c269b348822a3326098d7d039f684fcaf9b033"
+    },
+    "native-lock-control/inputs.json": {
+      "bytes": 462,
+      "sha256": "01cce699828239032f4495fdb19ee82690c96cd8606f6ca1b05862d9a2426684"
+    },
+    "native-lock-control/native.py": {
+      "bytes": 5455,
+      "sha256": "a23b9214deba0b183e0147b6c0a57cb7af0cd3ac6565d5908b308117945e016b"
+    },
+    "native-lock-control/node.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-lock-control/node.stdout": {
+      "bytes": 79850,
+      "sha256": "1c4d5694c76e2f67fa4ab7c0407737061d2a2c91a6f5bfad2811412662f2beda"
+    },
+    "native-lock-control/result.json": {
+      "bytes": 110353,
+      "sha256": "4f237687a8c6c5345040c678d6a8bc79ab977591a56d75a9585e5cefe8beba42"
+    },
+    "native-lock-control/runner-exit.json": {
+      "bytes": 17,
+      "sha256": "d45db54bba0c56e2691a52869729c0a3eade7f5d50545e7832a20e3262a9d422"
+    },
+    "native-lock-control/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native-lock-control/runner.stdout": {
+      "bytes": 77,
+      "sha256": "46a756bfde048fefb38fde8ebadb83143dd34d3c00bb967c46b3cf218c1ea076"
+    },
+    "native-lock-control/start-native.py": {
+      "bytes": 1980,
+      "sha256": "141800679fefd06d5244e3c339224e80fc76b50a113cec6c2753c42eea81da08"
+    },
+    "arm-seed-2/changes.json": {
+      "bytes": 792,
+      "sha256": "1e069d3df3907b94e52fd5dec3a6f758acb0b116647bd20fc9e1da9b0b1f2146"
+    },
+    "arm-seed-2/guest.py": {
+      "bytes": 7634,
+      "sha256": "c491febac60f4222885098bfa5b1d02bbe34e331f065ab1b22c02679d8bd005a"
+    },
+    "arm-seed-2/qemu-stderr.log": {
+      "bytes": 70,
+      "sha256": "10a731a0d49a4267ca22198d25c42ae864ea921235be3e731e9cab9e537814bb"
+    },
+    "arm-seed-2/result.json": {
+      "bytes": 1791,
+      "sha256": "d6823c065706a67729aaff0f11f0d2c4b2b562201206289eeca07715db4df993"
+    },
+    "arm-seed-2/run-guest.py": {
+      "bytes": 6679,
+      "sha256": "4ef64c0b6d4461d90be0a079630d9016b964e784e7ab3ca6250763d9cbe15915"
+    },
+    "arm-seed-2/runner-exit.json": {
+      "bytes": 23,
+      "sha256": "59c8897806c5f1945a06be2f82cf3d4acde140121a171535c6fe29caf3d9aaf5"
+    },
+    "arm-seed-2/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "arm-seed-2/runner.stdout": {
+      "bytes": 99,
+      "sha256": "b1c3277c99d97ab7fb2b2270bd91e70f9dfbae4cc2f134de0a3b4d5cf264cd7b"
+    },
+    "arm-seed-2/serial.log": {
+      "bytes": 79162,
+      "sha256": "9fa316ab5ffaaa278a8168d4d659d01ff9bafdec8a20613a84b27faff79a8aea"
+    },
+    "arm-seed-2/start-run.py": {
+      "bytes": 2562,
+      "sha256": "26dd4edd18b18775e8901d44f18eedb427032071e11e09b0d77e6fad5d64ce07"
+    },
+    "arm-seed-2/used-inputs.json": {
+      "bytes": 1097,
+      "sha256": "2de54c269254de6f2a567639350a58522d99135f8dfc39fa22d992edd4663de8"
+    },
+    "tools/api-auth-pg-path-probe.mjs": {
+      "bytes": 14794,
+      "sha256": "f90333642beac7d92c3f5b07883438e4579f160169094211d50018cea843e843"
+    },
+    "product-source/apps/api/src/server.ts": {
+      "bytes": 74514,
+      "sha256": "3bf336a6f4a0a01bde0fcbcff57967670bc53cf002288796501cd4177d178457"
+    },
+    "product-source/apps/api/src/agent-connections.ts": {
+      "bytes": 66909,
+      "sha256": "e127accfa4a0b750b09fb1231689915ed1f60443195cdc3a358bebb1a9af95fd"
+    },
+    "product-source/apps/api/src/authz/authorize.ts": {
+      "bytes": 27066,
+      "sha256": "6da5f9b7fc603b2f4aee8c18561c9f032fdf4f30113cbd112bbc9573770144a4"
+    },
+    "product-source/apps/api/src/client-profile.ts": {
+      "bytes": 6314,
+      "sha256": "cc4f4efd8a732daa0fe14e405b7f886054d3f98e36705eb47545034d16a0d51a"
+    },
+    "product-source/apps/api/src/work-item-executors.ts": {
+      "bytes": 9293,
+      "sha256": "ef233f2acb74842981052a1cb9f0b96cf1da81d7e40480398868ad126bc7bd54"
+    },
+    "product-source/packages/db/src/index.ts": {
+      "bytes": 6700,
+      "sha256": "af81326407144a6771a78d09b21b84eb4a0f3fd919572478c5e2b44b9381bd13"
+    },
+    "product-source/packages/contracts/src/agent-discovery.ts": {
+      "bytes": 11964,
+      "sha256": "171c6625ea294162cd8f19cac023aeeed5bb3acfc6a53903308afe885a0e4334"
+    },
+    "product-source/packages/config/src/index.ts": {
+      "bytes": 16596,
+      "sha256": "08bebea054b76d902984a70afd153d174b2297f58332d7700ad0eba4cb0dc6e7"
+    },
+    "product-source/docker-compose.lite.yml": {
+      "bytes": 13792,
+      "sha256": "81637573e5004237f275ce0351ae333c36a65da9de793b4954d788403e6b1435"
+    },
+    "analysis.json": {
+      "bytes": 23132,
+      "sha256": "ab24f8d2451eb5017bd3d30e46ad4ad4379dffa23e1e1e2a142cdcdd1b69a57c"
+    },
+    "summary.json": {
+      "bytes": 46793,
+      "sha256": "006afa10f9ed19a740843d2b79b11f4a8bcb94516d240a497321b7e21d178727"
+    }
+  }
+}

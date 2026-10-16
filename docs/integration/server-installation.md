@@ -2,7 +2,9 @@
 
 ## 当前状态
 
-本轮真实受测为 `541f6ba`／CI566。AMD 个人及企业完整重启通过，团队 initialize 遇到 MCP 容器 139。ARM 个人 get_work_item 在 30,609 ms 失败；团队／企业达到原 150 分钟，upgrade 缺最终回执。整体及 Required 失败，六组无取消。
+最新观测为 CI567／run38893305755，绑定 `e2763da`：三组 AMD 已核完整重启通过，三组 ARM 仍在运行，Required 尚未齐备。新通过不关闭旧 API／MCP139。独立 API 角色的真实配对／PG 原生测量及行锁阳性对照已完成；两次 ARM 组件过程达原 1,200 秒、无请求回执，不冒个人 Lite 镜像复现或完整验收。准确来源与缺口见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。本次资料提交使用 `[skip ci]` 保留在途原运行，不能作为可合入候选。
+
+已归档的 CI566 受测为 `541f6ba`。AMD 个人及企业完整重启通过，团队 initialize 遇到 MCP 容器 139。ARM 个人 get_work_item 在 30,609 ms 失败；团队／企业达到原 150 分钟，upgrade 缺最终回执。整体及 Required 失败，六组无取消。
 
 个人 ARM 新 API 投影记录资格 21,622.81 ms、工作项 10,019.08 ms。两者 200 仍不补客户端成功；内部阶段及统一关联缺失，不能据此拆分 MCP CPU 或 SQL 时间。其余组合没有本次工具窗口，不能套同一根因。
 
