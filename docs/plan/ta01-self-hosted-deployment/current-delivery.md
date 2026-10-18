@@ -2,11 +2,13 @@
 
 ## 当前状态与来源
 
-本轮基于 `718c03408fe8b975917062bb1322eaf36c51c79c` 处理正式审查的两项 P1。第 1 项已实现修正并完成控制流回归，新候选完整 guest 尚待本次 CI；第 2 项仍未闭，已提交待批准的最小方案，未启动诊断 VM。PR228 保持 draft，不合入或发布。
+受测 head 为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`，parent 为 `718c03408fe8b975917062bb1322eaf36c51c79c`。CI570／run39169353227 已自然终态，17 个 job 全部 success，Required117818842379 成功。三画像原件及新增撤回断言已核；P1-1 正式复审尚未完成，P1-2 旧 API139／MCP139 仍未闭。PR228 保持 draft，不合入或发布。
+
+本轮只归档已完成的验收并更新资料。问题 `q-E6FuFFokBxxs6UpR6K9vC` 尚未收到用户答复；本次收尾指令不是诊断授权。没有启动 API／MCP 诊断 VM、重问或复制该问题，也没有改产品、重跑成功 CI、取消 job 或新增矩阵。以下结果来源于执行者本轮 GitHub API 和原件核验，不是正式独审结论。
 
 本轮支持范围仍为 Linux amd64 三画像，PG／Redis／S3、外置 Runner、原鉴权／资格／事件／通知／事务保证保持。ARM 服务端延期，连接器既有双架构不变。没有迁移、REST／MCP／事件合同变化，没有更换产品 Node／QEMU／guest、资源、设备或任何产品期限。
 
-开工本地与 PR 均核 head 为 718c034，工作树干净；只读 GitHub API 核 main 为 `c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8`。未操作共享缓存锁、旧树或其他远端。新修正只属于包含本文的新提交，不倒填到 8ff1f8b 或 CI568。
+产品修正开工时本地与 PR 均为 718c034，main 为 `c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8`。本轮收尾重新读取本地与 PR，均为 c7cf68a，工作树起初干净。未操作共享缓存锁、旧树或其他远端。修正属于 c7cf68a，不倒填到 8ff1f8b 或 CI568。
 
 ## P1：恢复后提交撤回候选
 
@@ -42,7 +44,7 @@ if (candidateWasWithdrawn(existing)) fail('INSTALL_CANDIDATE_WITHDRAWN')
 
 测试使用 Node 的 VM 模块隔离替身，实验性开关仅用于测试子进程，不用于产品 Node。源码实际执行而非复制一套状态机；Windows 仅在替身适配器中模拟 Linux 私有文件 mode。首轮夹具缺 PUBLIC_MCP_ORIGIN 的前置失败已修正，未启动部署或 VM。
 
-`guest.py` 还在原兼容升级链加入：B 健康待验证 → recover-old → 两个独立 installer oneshot commit 均报 `INSTALL_CANDIDATE_WITHDRAWN` → 显式重新 upgrade 建立不同 journal 并完成原备份／迁移／健康，随后沿原业务验证。新三项断言为 `withdrawnCandidateCommitRejected`、`restartedInstallerRejectsWithdrawnCandidate`、`explicitReupgradeRevalidates`。各 guest 原 4 vCPU／4 GiB／9000 秒及逐命令期限不变，新增断言尚未冒称真实通过。
+`guest.py` 在原兼容升级链加入：B 健康待验证 → recover-old → 两个独立 installer oneshot commit 均报 `INSTALL_CANDIDATE_WITHDRAWN` → 显式重新 upgrade 建立不同 journal 并完成原备份／迁移／健康，随后沿原业务验证。新三项断言为 `withdrawnCandidateCommitRejected`、`restartedInstallerRejectsWithdrawnCandidate`、`explicitReupgradeRevalidates`。CI570 三画像均已真实执行通过。这里的重启拒绝指全新安装器进程读取持久状态，完整系统重启的业务恢复另有证据。各 guest 原 4 vCPU／4 GiB／9000 秒及逐命令期限不变。
 
 ## P1：API139／MCP139 仍未闭
 
@@ -58,7 +60,23 @@ if (candidateWasWithdrawn(existing)) fail('INSTALL_CANDIDATE_WITHDRAWN')
 
 本机实际结果：安装单元 18 项通过（含上述真实文件控制流及新进程回归）；Python 60 项通过；guest AST、Node 语法检查通过；`pnpm ci:validate` 通过。接入文档检查和完整命令／字节摘要见[本次检查记录](../../reviews/ta01-product/recovered-candidate-checks.json)。这些不是新候选完整 guest 或五根检查的替代。
 
-本次为有明确因果修正的产品候选，正常提交触发一次既有 CI，用新源码／工件验证三画像和新增恢复断言；不 rerun CI568，不把普通产品验收当新增崩溃诊断的批准。准确新 head／run／当前阶段以 PR 短摘要及 GitHub 实际 ref 为准；未取得终态和原件的项目均不填通过。若 CI 在途，有价值运行保持，不追加 checkpoint 取消它。
+产品提交 c7cf68a 正常触发 CI570，本轮只取回其完成结果，没有 rerun。三画像均为普通完整验收，`nativeDiagnostic=false`；不把普通产品验收当作新增崩溃诊断的批准。[终态与来源索引](../../reviews/ta01-product/ci570-observed-status.json)保存 17 个 job 的准确 ID、时序、结果及下表原件绑定。
+
+| amd64 画像 | job | 总耗时／重启（秒） | 原始 artifact ID | 新三项断言 |
+| --- | --- | --- | --- | --- |
+| [个人](../../reviews/ta01-product/ci570-amd64-personal-full-guest-pass.json) | 117801087468 | 4893.67／249.82 | 12154815070 | 全部通过 |
+| [团队](../../reviews/ta01-product/ci570-amd64-team-full-guest-pass.json) | 117801087401 | 4479.22／266.67 | 12154590857 | 全部通过 |
+| [企业](../../reviews/ta01-product/ci570-amd64-enterprise-full-guest-pass.json) | 117801087484 | 2891.40／162.34 | 12152749057 | 全部通过 |
+
+三组候选 artifact 均为 `12152451241`，manifest SHA-256 均为 `360e2033a5eb72192c40b2a3a7ee6edec16a464fb58851fa2d8079eefccce98f`。源码 tree 为 `d4e4c1e40e16dc8e05285269716c62426bb41b32`。[生产者索引](../../reviews/ta01-product/ci570-amd64-producer.json)绑定原始 artifact12152047803、完整 manifest 及候选 ZIP 摘要；没有重复下载 427 MB 候选。
+
+生产者及三组各核 23 个发行输入的 Git blob／SHA、原 commit 对象及前后干净源码标识；三组另核六个执行脚本。23 项包含新增回归夹具，不能沿用旧 22 项数量。归档脚本首次沿用旧数量断言而停止；核原件后修正为 23，仅重做离线归档，没有重跑业务。原始 ZIP 均匹配 GitHub digest；每组完整 11 个安全成员按原字节入精选 ZIP，逐成员摘要保存在索引中。
+
+三组均核原固定 QEMU `8.2.2+ds-0ubuntu1.18`、guest SHA、4 vCPU／4 GiB、TCG、退出 0；两个 boot ID、kernel 和 QMP RESET／SHUTDOWN 完整。重启后认证 API、认证 MCP、工件字节及新 outbox 四项证明齐全。完整加密备份、兼容回退、不兼容账本拒绝、独立空目标恢复和原卷保留的原断言继续通过。新撤回断言核当前文件／卷／journal 不变，并要求显式新 upgrade 使用不同 journal、完整备份／迁移／健康和新业务验证。私有 journal、配置、数据库、密钥及磁盘不入库；安全 receipt 与准确 `guest.py` 是这些内部断言的证据，不能冒称已归档私有文件原件。
+
+[Required 与源码门禁日志](../../reviews/ta01-product/ci570-required-source-gates.json)保存安全原字节。lint／typecheck／test 及适用集成、conformance 的完成依据为本次正常 CI 的成功 job；本轮没有在本机重跑五根检查。连接器 ARM 成功只属于其既有范围，不恢复 ARM 服务端交付。受控安装器的同源不同候选验证仍不等于已发行历史程序对或裸 Compose 迁入验收。
+
+本轮 JSON／ZIP 资料按现有策略使用 `[skip ci]` 提交，避免无产品变化又触发全矩阵。受测 head 始终为 c7cf68a；后续资料 head 及准确 PR ref 在 PR 短正文单列，资料 head 没有自身成功 Required。CI570 成功不代表 P1-1 正式复审通过，更不关闭 P1-2。
 
 历史 CI568／run39160943688 仅绑定 `8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b`，17 job／三画像及 Required117791572117 成功；不覆盖新修正，也不关闭旧 139。准确完整对照、原件及资源账本见 [718c034 历史报告](https://github.com/xurunxin/WorkMesh/blob/718c03408fe8b975917062bb1322eaf36c51c79c/docs/plan/ta01-self-hosted-deployment/current-delivery.md)。原生／TCG 各 32 轮、595.16 秒的单次 amd64 样本和旧 ARM 全部记录保持，没有新 VM 或组件小测。
 

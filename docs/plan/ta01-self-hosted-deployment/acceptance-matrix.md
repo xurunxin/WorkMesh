@@ -2,7 +2,9 @@
 
 ## 本次恢复候选撤回修正
 
-基于718c034的P1修正要求：旧程序启动前持久化withdrawnAt并使validation失效；恢复后直接commit、安装器进程重启后commit均拒绝；显式重新upgrade须新journal和完整备份／迁移／健康／业务验证。控制流回归用真实状态文件及Docker／HTTPS替身，不冒完整部署通过。guest已增加对应三项断言，原4CPU／4GiB、9000秒和所有逐命令期限不变；新候选真实结果尚待本次CI，不套CI568。旧139继续阻断，新增诊断VM须先批准[具体方案](amd64-crash-investigation-plan.md)。
+基于 718c034 的 P1 修正已提交为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`。旧程序启动前持久化 withdrawnAt 并使 validation 失效；恢复后直接 commit、安装器进程重启后 commit 均拒绝；显式重新 upgrade 须新 journal 和完整备份／迁移／健康／业务验证。控制流替身回归与真实部署分列。CI570／run39169353227 的三画像完整 guest 均报告 `withdrawnCandidateCommitRejected`、`restartedInstallerRejectsWithdrawnCandidate`、`explicitReupgradeRevalidates` 通过；原 4 CPU／4 GiB、9000 秒及逐命令期限不变。三组各核 23 输入、六脚本、候选 artifact12152451241 及同一 manifest，完整恢复／系统重启证明齐全。准确原件见 [CI570 索引](../../reviews/ta01-product/ci570-observed-status.json)。
+
+17 个 job 全部 success，Required117818842379 成功，只绑定受测 c7cf68a；本次后续资料 skip-ci head 没有自身成功 Required。P1-1 正式复审尚未完成，P1-2 旧 139 继续阻断。问题 `q-E6FuFFokBxxs6UpR6K9vC` 未答复，[具体方案](amd64-crash-investigation-plan.md)未获批准；本轮没有新诊断 VM、重问、产品改动、重跑或取消 CI，不送审、不合入。
 
 ## 当前验收平台：Linux amd64
 
