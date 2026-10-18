@@ -1,0 +1,379 @@
+{
+  "说明": "一次原生与一次固定amd64 guest真实API/MCP联动对照；有限负样本，非完整候选验收或139修复。结果仅来源执行者。",
+  "sourceHead": "8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b",
+  "roleSources": {
+    "apiPostgresRedis": {
+      "head": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+      "provenance": "resumption-api-auth-pg-path-comparison.json"
+    },
+    "mcp": {
+      "head": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "provenance": "resumption-mcp-exact-role-comparison.json"
+    }
+  },
+  "appsPackagesUnchangedFrom9c8": true,
+  "nativeInputs": {
+    "api-rootfs.tar.gz": "b65c2a314c9509ccb1fdf9b9fb98d0f8f36ed2299bdc47c36e441f68e5f40b4d",
+    "postgres-rootfs.tar.gz": "f4f18a0d5521467185019f7902eaeb2b1f4ee4034cb75c5ad294981dcab59baa",
+    "redis-rootfs.tar.gz": "3f82c2bf9c87082e3ed613976951568fd9fffc0b5ebb09bb4950f564a31084d9",
+    "mcp-rootfs.tar.gz": "7f5c28b98d3df88b571135fd6ce0c53e4ca589155373430654a090baab419a9f",
+    "measurement.mjs": "56c23161f5978caac8b090fe392151a3bd1ec81f3c8bf55b57004fd14633286c",
+    "native.py": "fee913211a6c35a6157360554720f1128773ec0d76115167e3a7a51f97537636"
+  },
+  "tcgInputs": {
+    "api-rootfs.tar.gz": "b65c2a314c9509ccb1fdf9b9fb98d0f8f36ed2299bdc47c36e441f68e5f40b4d",
+    "postgres-rootfs.tar.gz": "f4f18a0d5521467185019f7902eaeb2b1f4ee4034cb75c5ad294981dcab59baa",
+    "redis-rootfs.tar.gz": "3f82c2bf9c87082e3ed613976951568fd9fffc0b5ebb09bb4950f564a31084d9",
+    "mcp-rootfs.tar.gz": "7f5c28b98d3df88b571135fd6ce0c53e4ca589155373430654a090baab419a9f",
+    "measurement.mjs": "56c23161f5978caac8b090fe392151a3bd1ec81f3c8bf55b57004fd14633286c",
+    "native.py": "4c47dd5bafbfce82cd1a423c68f7f3210ca2104d12793b2742685d7d65d376db"
+  },
+  "measurementBytesEqual": true,
+  "native": {
+    "kernel": "7.0.14-linuxkit",
+    "machine": "x86_64",
+    "nodeExitCode": 0,
+    "mcpExit": {
+      "code": 0,
+      "signal": null
+    },
+    "childExitCodes": {
+      "redis": 0,
+      "postgres": 0
+    },
+    "nodeSeconds": 11.305275299935602,
+    "harnessSeconds": 33.382431499892846,
+    "completedRounds": 32,
+    "mcpPostCount": 65,
+    "apiReadCounts": {
+      "qualified": 33,
+      "workItem": 32
+    },
+    "startupMcpHealthRequests": 2,
+    "fixtureInjectRequests": 8,
+    "revocationInjectRequests": 2,
+    "maxInitializeMs": 43.146999999999935,
+    "maxToolMs": 321.2446,
+    "initializeQualifiedReads": 0,
+    "revocationRejected": true,
+    "nodeSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328"
+  },
+  "tcg": {
+    "kernel": "6.8.0-142-generic",
+    "machine": "x86_64",
+    "nodeExitCode": 0,
+    "mcpExit": {
+      "code": 0,
+      "signal": null
+    },
+    "childExitCodes": {
+      "redis": 0,
+      "postgres": 0
+    },
+    "nodeSeconds": 243.8735224,
+    "harnessSeconds": 342.7201067,
+    "completedRounds": 32,
+    "mcpPostCount": 65,
+    "apiReadCounts": {
+      "qualified": 33,
+      "workItem": 32
+    },
+    "startupMcpHealthRequests": 13,
+    "fixtureInjectRequests": 8,
+    "revocationInjectRequests": 2,
+    "maxInitializeMs": 2631.5583000000042,
+    "maxToolMs": 12649.246599999984,
+    "initializeQualifiedReads": 0,
+    "revocationRejected": true,
+    "nodeSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328"
+  },
+  "vm": {
+    "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "qemuBinarySha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+    "guestSha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2",
+    "command": [
+      "qemu-system-x86_64",
+      "-accel",
+      "tcg",
+      "-m",
+      "4096",
+      "-smp",
+      "4",
+      "-display",
+      "none",
+      "-serial",
+      "file:/opt/real-api-mcp/guest/serial.log",
+      "-netdev",
+      "user,id=net0",
+      "-device",
+      "virtio-net-pci,netdev=net0",
+      "-drive",
+      "if=virtio,format=qcow2,file=/opt/real-api-mcp/guest/root.qcow2",
+      "-drive",
+      "if=virtio,format=raw,readonly=on,file=/opt/real-api-mcp/guest/seed.iso"
+    ],
+    "elapsedSeconds": 595.1578364999732,
+    "qemuExitCode": 0,
+    "deadlineReached": null,
+    "vmSecondsLimit": 1200,
+    "nodeSecondsLimit": 600,
+    "businessMsLimit": 30000
+  },
+  "receiptCount": 13,
+  "stageCount": 12,
+  "resourceLedgers": {
+    "native": {
+      "owner": "5b81da43-1685-4210-a96f-0974fad8dad7",
+      "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+      "beganAt": "2026-10-18T20:43:56.037989+00:00",
+      "purpose": "一次amd64原生真实API/MCP联动预检；旧准确角色/固定Node，无VM或产品修改",
+      "limits": {
+        "cpus": 4,
+        "memoryBytes": 4294967296,
+        "swapTotalBytes": 4294967296,
+        "nodeSeconds": 600,
+        "businessMs": 30000
+      },
+      "inputSha256": {
+        "api-rootfs.tar.gz": "b65c2a314c9509ccb1fdf9b9fb98d0f8f36ed2299bdc47c36e441f68e5f40b4d",
+        "postgres-rootfs.tar.gz": "f4f18a0d5521467185019f7902eaeb2b1f4ee4034cb75c5ad294981dcab59baa",
+        "redis-rootfs.tar.gz": "3f82c2bf9c87082e3ed613976951568fd9fffc0b5ebb09bb4950f564a31084d9",
+        "mcp-rootfs.tar.gz": "7f5c28b98d3df88b571135fd6ce0c53e4ca589155373430654a090baab419a9f",
+        "measurement.mjs": "56c23161f5978caac8b090fe392151a3bd1ec81f3c8bf55b57004fd14633286c",
+        "native.py": "fee913211a6c35a6157360554720f1128773ec0d76115167e3a7a51f97537636"
+      },
+      "newVm": false,
+      "hostInstall": false,
+      "containers": [
+        {
+          "id": "3dbb6be1a9d04386697cea29d4740a8d9deacd13e8051b529d638308688f2c9c"
+        }
+      ],
+      "boundaryVerified": true,
+      "apt-update": {
+        "exitCode": 0,
+        "stdoutSha256": "9af62e6404f3936afeb9e3b50b124b03ff321e9adf0d81432838af9b92b824c9",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "python": {
+        "exitCode": 0,
+        "stdoutSha256": "9bc16abd12a4bbe0124f4a8390b3dfcec4822bf1b60ee3e734647c5477f2d532",
+        "stderrSha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+      },
+      "externalNetworkDisconnectedBeforeBusiness": true,
+      "runnerExitCode": 0,
+      "runnerSeconds": 33.7339999997057,
+      "beforeStop": {
+        "Status": "running",
+        "Running": true,
+        "ExitCode": 0,
+        "OOMKilled": false
+      },
+      "removedAndAbsent": true
+    },
+    "tcg": {
+      "owner": "cd1c6f7f-936b-47f5-9b13-e719360ffcef",
+      "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+      "beganAt": "2026-10-18T20:56:35.309585+00:00",
+      "limits": {
+        "vmSeconds": 1200,
+        "nodeSeconds": 600,
+        "businessMs": 30000,
+        "cpus": 4,
+        "memoryBytes": 4294967296
+      },
+      "vmStarted": true,
+      "containers": [
+        {
+          "id": "cf32d1d4e330e2ea07a9c11ae90d73138dbc9e07604c3be4fde44cbab5ac4470"
+        }
+      ],
+      "hostInstall": false,
+      "boundaryVerified": true,
+      "apt-update": {
+        "exitCode": 0,
+        "stdoutSha256": "2ba6764218e22975655356fb549dce9df9bcb58e2bfbf18580e66d9c54023859"
+      },
+      "qemu-policy": {
+        "exitCode": 0,
+        "stdoutSha256": "bdfd3bb703abb8d4c1bc4cd53897f4c111e5ef2a528c22d4f7a08c623d0a2bda"
+      },
+      "exactQemuPackageAvailable": true,
+      "externalNetworkDisconnectedBeforeVm": true,
+      "vmCommand": [
+        "docker",
+        "exec",
+        "cf32d1d4e330e2ea07a9c11ae90d73138dbc9e07604c3be4fde44cbab5ac4470",
+        "python3",
+        "/opt/real-api-mcp/run-guest.py"
+      ],
+      "vmStartedAt": "2026-10-18T20:59:08.799970+00:00",
+      "runnerExitCode": 0,
+      "runnerSeconds": 598.8429999998771,
+      "beforeStop": {
+        "Status": "running",
+        "Running": true,
+        "ExitCode": 0,
+        "OOMKilled": false
+      },
+      "removedAndAbsent": true
+    }
+  },
+  "limits": [
+    "仅一次amd64 VM，1200秒总窗；Node600秒、请求30秒、健康180秒保持；未续ARM例外或追加运行。",
+    "独立旧API与MCP角色，跳过镜像entrypoint；混合来源不冒8ff完整镜像或个人Lite同镜像。",
+    "完整guest与原生kernel/存储/虚拟化不同；同Node/脚本不构成单变量性能归因。",
+    "真实路由inject供应8项并撤销2项；目标API/MCP跨独立进程真实HTTP。稀疏fixture，无Worker/S3/TLS/升级/恢复竞争负载。",
+    "PG max_connections20/shared_buffers64MB/统计配置为旧组件布局；不当三画像生产布局。",
+    "measurement.mjs的mode/name字面保留native以核同字节；外层QEMU命令、kernel和阶段决定实际TCG环境。",
+    "initialize零资格读取只拒绝直接资格成本解释；不排除之前动作或间歇性实现/依赖/VM故障。",
+    "没有SQL/CPU内部阶段分解；wall不可相减补成查询/计算/调度或139根因。"
+  ],
+  "selectedZipSha256": "79a5d1f92b30bce8d7e768f2380f5840cbe98fcc9697824daa1027630de98af9",
+  "members": {
+    "real-api-mcp-native/native.py": {
+      "bytes": 5847,
+      "sha256": "fee913211a6c35a6157360554720f1128773ec0d76115167e3a7a51f97537636"
+    },
+    "real-api-mcp-native/measurement.mjs": {
+      "bytes": 9814,
+      "sha256": "56c23161f5978caac8b090fe392151a3bd1ec81f3c8bf55b57004fd14633286c"
+    },
+    "real-api-mcp-native/inputs.json": {
+      "bytes": 554,
+      "sha256": "3695f0b91399e53fab45acbba23c7b2be78794cf2f332f7470a323bb6e97579a"
+    },
+    "real-api-mcp-native/host-input-paths.json": {
+      "bytes": 537,
+      "sha256": "b7c930e7ddf23677f387b7b11c5a12d0ca2d729db956cc626b27d86298f8f8f4"
+    },
+    "real-api-mcp-native/resources.json": {
+      "bytes": 1942,
+      "sha256": "6829753661abe0f1286602f6f0a08fa3c03e024dc9815dd195d95b370534a918"
+    },
+    "real-api-mcp-native/result.json": {
+      "bytes": 17020,
+      "sha256": "f233e8e4680d9d7dcf55a0031d7b5cf28922e69f0e732c9b855d6326e3d0f098"
+    },
+    "real-api-mcp-native/node.stdout": {
+      "bytes": 11469,
+      "sha256": "adbf05060763c4078c197728202adbd0268f577a74826829bb72b0408d16a874"
+    },
+    "real-api-mcp-native/node.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "real-api-mcp-native/runner.stdout": {
+      "bytes": 77,
+      "sha256": "3b1cbcd171ea81ce3819c947d1021e501281dc62da4c6f8fb9ec831daaa5f3ff"
+    },
+    "real-api-mcp-native/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "real-api-mcp-tcg-568-once/native.py": {
+      "bytes": 6028,
+      "sha256": "4c47dd5bafbfce82cd1a423c68f7f3210ca2104d12793b2742685d7d65d376db"
+    },
+    "real-api-mcp-tcg-568-once/measurement.mjs": {
+      "bytes": 9814,
+      "sha256": "56c23161f5978caac8b090fe392151a3bd1ec81f3c8bf55b57004fd14633286c"
+    },
+    "real-api-mcp-tcg-568-once/guest.py": {
+      "bytes": 2965,
+      "sha256": "55bc0da3bf244b111e009c0ab101d113133743eb3103d6d03baab98eee605b27"
+    },
+    "real-api-mcp-tcg-568-once/run-guest.py": {
+      "bytes": 4593,
+      "sha256": "6783967dd3512f4fb97bea9069dce435af0dc476f3d1a67c9fd1317ceb8ed019"
+    },
+    "real-api-mcp-tcg-568-once/inputs.json": {
+      "bytes": 554,
+      "sha256": "11b473d67d85566d1649d4c8fe3cbd79405ac2bb3f049ca86a0bf7d64008d71e"
+    },
+    "real-api-mcp-tcg-568-once/host-input-paths.json": {
+      "bytes": 549,
+      "sha256": "39adfbac6c985eb17563c86f203fb384597b23a507c910be7cfcf70538a63a1e"
+    },
+    "real-api-mcp-tcg-568-once/resources.json": {
+      "bytes": 1329,
+      "sha256": "502a5c63c3e9acd32371f68ed64298f94adb40b8fbbe1c5e12d0fd2611b442b1"
+    },
+    "real-api-mcp-tcg-568-once/attempt-started.json": {
+      "bytes": 92,
+      "sha256": "4b741f0d3d0ed2a5de7b323286c6812263b2c787f52099fe9c5032f32bf57a6f"
+    },
+    "real-api-mcp-tcg-568-once/started.json": {
+      "bytes": 1409,
+      "sha256": "c618007c0360a1b3479ca435142ae48e89654c074bbb75e8fb0fcf156b4d457c"
+    },
+    "real-api-mcp-tcg-568-once/result.json": {
+      "bytes": 25182,
+      "sha256": "5713ac53c9b32bef5858ab508463476e752a7b7ececce503ec34d6709c035e0c"
+    },
+    "real-api-mcp-tcg-568-once/receipts.ndjson": {
+      "bytes": 15494,
+      "sha256": "31b01e1fd7eb4854d91ce1926380378f6d530e2bfba97354fa1b309643d81dd4"
+    },
+    "real-api-mcp-tcg-568-once/serial.log": {
+      "bytes": 81725,
+      "sha256": "facae85709c854fd57a222ee6fb916679719c6638421c2fd19d3383ddcaf7a86"
+    },
+    "real-api-mcp-tcg-568-once/qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "real-api-mcp-tcg-568-once/runner.stdout": {
+      "bytes": 112,
+      "sha256": "2180039f58771285edeef9dcd60475c4a6a35c1fa9c1c823d32cb96f56963cde"
+    },
+    "real-api-mcp-tcg-568-once/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "real-api-mcp-tcg-568-once/process-names-before-stop.txt": {
+      "bytes": 78,
+      "sha256": "708384f409db5a1c8efd4774eb393d34dd87bfaaa8034e455d98e0ee9ea241fb"
+    },
+    "real-api-mcp-tcg-568-once/execution-commands.txt": {
+      "bytes": 1251,
+      "sha256": "345ed380c43867a9fc6d6b0ec6527a4cf08c417459648c53a864246f6c4a1dfc"
+    },
+    "real-api-mcp-tcg-568-once/qemu-policy.stdout": {
+      "bytes": 414,
+      "sha256": "bdfd3bb703abb8d4c1bc4cd53897f4c111e5ef2a528c22d4f7a08c623d0a2bda"
+    },
+    "real-api-mcp-tcg-568-once/tools-install.stdout": {
+      "bytes": 26550,
+      "sha256": "fd47c9251c9d58de7d9d78f65b83c9904ba01f2471b91b50c0347e8b4fc5e73b"
+    },
+    "real-api-mcp-tcg-568-once/tools-install.stderr": {
+      "bytes": 75,
+      "sha256": "c73194a66fa2a98e26ed31c52032df9278f77534de3ccb337a2d9b77014a5658"
+    },
+    "host-tools/start-real-api-mcp-native.py": {
+      "bytes": 4681,
+      "sha256": "2373f90a67c1f449cf4aedaca2c6e12f29128782ef973dca24e3982d601cb34b"
+    },
+    "host-tools/prepare-real-api-mcp-native.py": {
+      "bytes": 9015,
+      "sha256": "a8646b4decd95f2ec0bfaa11771b82dca6b65ac561a3fcd2359e750af822af1d"
+    },
+    "host-tools/provision-real-api-mcp-tcg-once.py": {
+      "bytes": 2272,
+      "sha256": "86e425db14ff5bb3ce5455fe6efa948b7e2e4c0fdc2002a4ad1edbeb33c91a4e"
+    },
+    "host-tools/prepare-real-api-mcp-tcg-once.py": {
+      "bytes": 1636,
+      "sha256": "90fdea0e153e52bbb5d2d032f79680a9d2670ce5aaae2bb600edba9a7164f7c4"
+    },
+    "host-tools/start-real-api-mcp-tcg-once.py": {
+      "bytes": 3562,
+      "sha256": "1e541850593ba82b8f7c2b623a2313647e965142adacd4b6c82d524d1e611a97"
+    },
+    "host-tools/collect-real-api-mcp-tcg-once.py": {
+      "bytes": 940,
+      "sha256": "b554d4bdd57d122aadd5c75623a98502e62bd1724bc1ab7c2ac4042bdb6b2e97"
+    }
+  }
+}
