@@ -17,6 +17,11 @@ export async function fileHash(file) {
   return digest.digest('hex')
 }
 export function fail(code) { throw new Error(code) }
+// Historical ARM manifests remain readable for evidence and compatibility checks.
+// New server delivery and installation are limited to the approved amd64 scope.
+export function assertSupportedArchitecture(arch) {
+  if (arch !== 'amd64') fail('INSTALL_UNSUPPORTED_PLATFORM')
+}
 const keys = (object, expected) => object && !Array.isArray(object) && typeof object === 'object'
   && Object.keys(object).sort().join(',') === expected.sort().join(',')
 const hex = (value, length) => typeof value === 'string' && new RegExp(`^[a-f0-9]{${length}}$`).test(value)

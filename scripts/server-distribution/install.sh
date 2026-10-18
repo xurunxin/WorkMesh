@@ -11,6 +11,8 @@ case "$prefix" in /*) ;; *) echo 'INSTALL_ABSOLUTE_PATH_REQUIRED' >&2; exit 1;; 
 case "$config" in /*) ;; *) echo 'INSTALL_ABSOLUTE_PATH_REQUIRED' >&2; exit 1;; esac
 [ "${#expected}" = 64 ] && ! printf '%s' "$expected" | grep -q '[^a-f0-9]' || exit 1
 [ "$(sha256sum "$bundle/manifest.json" | cut -d ' ' -f 1)" = "$expected" ] || { echo 'INSTALL_MANIFEST_DIGEST_MISMATCH' >&2; exit 1; }
+case "$(uname -s):$(uname -m)" in Linux:x86_64) ;; *) echo 'INSTALL_UNSUPPORTED_PLATFORM' >&2; exit 1;; esac
+[ "$(sed -n 's/^  "arch": "\([a-z0-9]*\)",$/\1/p' "$bundle/manifest.json")" = amd64 ] || { echo 'INSTALL_UNSUPPORTED_PLATFORM' >&2; exit 1; }
 docker compose version >/dev/null
 # Only the producer's canonical, digest-authenticated JSON layout is accepted.
 parts=$(sed -n '/^  "bootstrapChunks": \[/,/^  \],/p' "$bundle/manifest.json" | sed -n 's/^      "path": "\(chunks\/[a-f0-9]*\.tarpart\)",$/\1/p')

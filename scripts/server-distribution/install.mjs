@@ -4,7 +4,7 @@ import path from 'node:path'
 import { randomUUID, randomBytes } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 import https from 'node:https'
-import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible, canonicalJson } from './manifest.mjs'
+import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible, canonicalJson, assertSupportedArchitecture } from './manifest.mjs'
 import { atomicJson, privateDirectory, readState, validateJournal, withInstallLock } from './journal.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
 import { assertStableDataBindings } from './configuration.mjs'
@@ -333,6 +333,7 @@ export async function install(options, authority = undefined) {
   }
   await privateDirectory(prefix)
   const manifest = await measure('verify-bundle', () => verifyBundle(bundle, digest))
+  assertSupportedArchitecture(manifest.arch)
   const candidateManifestJson = await readFile(path.join(bundle, 'manifest.json'), 'utf8')
   if (hash(Buffer.from(candidateManifestJson)) !== digest) fail('INSTALL_MANIFEST_DIGEST_MISMATCH')
   const config = await readPrivateConfig(configFile)
@@ -351,8 +352,8 @@ export async function install(options, authority = undefined) {
       WORKMESH_BACKUP_ENCRYPTION_KEY: secret(), WORKMESH_BOOTSTRAP_TOKEN: randomBytes(32).toString('base64url'),
       PAGINATION_CURSOR_KEYS: 'primary:' + randomBytes(32).toString('base64url') }
   }
-  const arch = docker(['info', '--format', '{{.Architecture}}'])
-  if ((manifest.arch === 'amd64' ? 'x86_64' : 'aarch64') !== arch) fail('INSTALL_WRONG_ARCHITECTURE')
+  const platform = docker(['info', '--format', '{{.OSType}}/{{.Architecture}}'])
+  if (platform !== 'linux/x86_64') fail('INSTALL_WRONG_ARCHITECTURE')
   const helperId = loadedImage(manifest.images.installer, manifest.arch)
   const validator = authority ?? await measure('load-config-validator', appConfig)
   const rendered = await measure('render-config', () => render({ ...config, installationId: identity.id }, manifest, bundle, prefix, validator, keys))

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { mkdtemp, realpath, readFile, writeFile, mkdir, chmod, symlink, unlink, rmdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { hash, fileHash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible } from './manifest.mjs'
+import { hash, fileHash, validateManifest, verifyBundle, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible, assertSupportedArchitecture } from './manifest.mjs'
 import { privateDirectory, atomicJson, withInstallLock, readState, validateJournal } from './journal.mjs'
 import { ArchiveIdentities } from './archive.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
@@ -170,6 +170,19 @@ test('wrongArchitectureRejectedBeforeMutation and strict closed manifest schema'
     m => { m.images.runner = m.images.api }, m => { m.migrationLedger.push({ ...ledger[0] }) }]) {
     const invalid = manifest(); mutate(invalid); assert.throws(() => validateManifest(invalid), /INSTALL_/)
   }
+})
+
+test('deferredServerPlatformsRejectedBeforeBuildAndHistoricalManifestsRemainReadable', async () => {
+  assert.doesNotThrow(() => assertSupportedArchitecture('amd64'))
+  const historical = manifest(); historical.arch = 'arm64'
+  assert.equal(validateManifest(historical).arch, 'arm64')
+  for (const arch of ['arm64', '386', 'x64', 'win32', undefined])
+    assert.throws(() => assertSupportedArchitecture(arch), /INSTALL_UNSUPPORTED_PLATFORM/)
+  // No git or Docker is available: rejection must precede either subprocess and
+  // any output directory creation, even in this dirty source checkout.
+  await assert.rejects(promisify(execFile)(process.execPath,
+    [fileURLToPath(new URL('./build.mjs', import.meta.url)), '--arch', 'arm64', '--release', 'deferred', '--output', 'must-not-create-arm'],
+    { env: { ...process.env, PATH: '' } }), error => /INSTALL_UNSUPPORTED_PLATFORM/.test(error.stderr))
 })
 test('OCI archive identity is bound to the exact manifest and survives split tar headers', () => {
   const configId = 'sha256:' + 'a'.repeat(64)

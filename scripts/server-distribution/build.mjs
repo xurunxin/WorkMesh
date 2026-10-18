@@ -2,7 +2,7 @@ import { execFileSync, spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { fileHash, hash, validateManifest, fail } from './manifest.mjs'
+import { fileHash, hash, validateManifest, fail, assertSupportedArchitecture } from './manifest.mjs'
 import { ArchiveIdentities } from './archive.mjs'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
@@ -13,6 +13,7 @@ const run = (command, args, options = {}) => {
 const option = name => { const index = process.argv.indexOf(`--${name}`); return index < 0 ? undefined : process.argv[index + 1] }
 const output = option('output'), release = option('release'), arch = option('arch')
 if (!output || !release || !['amd64', 'arm64'].includes(arch)) fail('BUILD_ARGUMENTS_REQUIRED')
+assertSupportedArchitecture(arch)
 if (run('git', ['status', '--porcelain'])) fail('BUILD_CLEAN_COMMITTED_SOURCE_REQUIRED')
 const source = { commit: run('git', ['rev-parse', 'HEAD']), tree: run('git', ['rev-parse', 'HEAD^{tree}']) }
 const runtimeFingerprint = hash(execFileSync('git', ['ls-tree', '-r', '-z', source.commit,
@@ -22,8 +23,8 @@ const runtimeFingerprint = hash(execFileSync('git', ['ls-tree', '-r', '-z', sour
   'infra/docker/lite.Dockerfile', 'infra/docker/runtime-guard.mjs', 'infra/docker/prepare-production-deploy.mjs', 'infra/docker/healthcheck.sh',
   'infra/docker/entrypoint.sh', 'infra/docker/lite-entrypoint.sh', 'infra/docker/lite-dispatch.mjs'], { cwd: root }))
 if (!/^[a-z0-9][a-z0-9.-]{0,63}$/.test(release)) fail('BUILD_RELEASE_INVALID')
-const hostArch = run('docker', ['info', '--format', '{{.Architecture}}'])
-if ((arch === 'amd64' ? 'x86_64' : 'aarch64') !== hostArch) fail('BUILD_NATIVE_ARCH_REQUIRED')
+const hostPlatform = run('docker', ['info', '--format', '{{.OSType}}/{{.Architecture}}'])
+if (hostPlatform !== 'linux/x86_64') fail('BUILD_NATIVE_ARCH_REQUIRED')
 const directory = path.resolve(output)
 await mkdir(directory, { recursive: false, mode: 0o700 })
 await mkdir(path.join(directory, 'chunks'), { mode: 0o700 })

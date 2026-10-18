@@ -2,6 +2,10 @@
 
 ## 当前状态
 
+本轮服务端目标已按用户2026-10-19 03:41裁定收敛为 **Linux amd64（x86_64）**。ARM服务端延期，本轮不交付；Windows及32位x86不在范围。构建及安装入口拒绝延期／不支持的平台，启动器在导入镜像前拒绝非Linux x86_64宿主或非amd64清单。历史ARM清单只保格式解析和证据，不代表当前安装支持。连接器的Linux双架构交付保持，见[连接器安装](installation.md)。
+
+当前恢复amd64三画像实现及验收，以下旧ARM诊断关口不再执行。新候选／最新Required尚待验证，旧三AMD通过不代最终候选，间歇API139／MCP139仍未闭，不能据范围收敛宣称交付完成。安装配置、回退、恢复命令和保证保持，完整依据见[当前规格](../plan/ta01-self-hosted-deployment/current-spec-amd64.md)。
+
 现有原件尚不足以确定安全产品修复，当前停在[定向修复裁定关口](../plan/ta01-self-hosted-deployment/repair-decision-gate.md)。仅完成源码核对与候选验证方案，未改安装行为、接口或配置示例；新的企业ARM原路径取证未获批准、未执行，没有第五轮组件小测或新矩阵运行，原合入门禁保持。
 
 最新普通CI567／run38893305755@e276终态failure：三AMD已核完整重启通过，三ARM失败，Required117011885049失败。用户21:48批准的一次ARM组件1800秒例外已完成：实际1392.55秒、两个目标GET在原30秒内，Node／PG／Redis／QEMU0且无宿主TERM；前三次1200秒incomplete不倒填。独立API／只读ISO／额外观测不冒个人Lite同镜像或完整支持，不关闭旧API／MCP139。准确阶段和原件见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。本资料skip-ci提交无成功Required，不能合入。
@@ -24,7 +28,7 @@ CI564绑定 `5371f16`，最终运行cancelled、Required失败；只有AMD64团�
 
 ## 环境和候选
 
-目标为 Linux amd64 或 arm64，已有 Docker Engine、Docker Compose 和 POSIX sh。目标不需要源码、宿主 Node、pnpm 或 Python。安装器使用可信工具容器，沿用当前 Docker 访问权限；它不安装 Docker，也不修改设备权限。
+本轮目标为 Linux amd64（x86_64），已有 Docker Engine、Docker Compose 和 POSIX sh。目标不需要源码、宿主 Node、pnpm 或 Python。安装器使用可信工具容器，沿用当前 Docker 访问权限；它不安装 Docker，也不修改设备权限。非本轮平台返回 `INSTALL_UNSUPPORTED_PLATFORM`，Docker服务端平台不符返回 `INSTALL_WRONG_ARCHITECTURE`；构建Docker平台不符返回 `BUILD_NATIVE_ARCH_REQUIRED`。
 
 运营者提供 HTTPS 反向代理及可达的 API、MCP 和 S3 地址。三个地址须同时对实际客户端和服务容器可达。宿主只发布回环端口：API 3001、MCP 3002 和 S3 9000。企业画像要求私有 CA，其他画像可使用系统信任；代理白名单使用准确 CIDR，拒绝全网段信任。
 

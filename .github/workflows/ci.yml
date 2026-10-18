@@ -903,17 +903,13 @@ jobs:
     timeout-minutes: 90
     outputs:
       candidate-amd64: ${{ steps.binding.outputs.candidate-amd64 }}
-      candidate-arm64: ${{ steps.binding.outputs.candidate-arm64 }}
       digest-amd64: ${{ steps.binding.outputs.digest-amd64 }}
-      digest-arm64: ${{ steps.binding.outputs.digest-arm64 }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - arch: amd64
             runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
     steps:
       - name: Check out exact server source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -985,8 +981,8 @@ jobs:
     name: Server full installation (${{ matrix.arch }}, ${{ matrix.profile }})
     env:
       PYTHONDONTWRITEBYTECODE: '1'
-      CANDIDATE_ID: ${{ matrix.arch == 'amd64' && needs.server-build.outputs.candidate-amd64 || needs.server-build.outputs.candidate-arm64 }}
-      CANDIDATE_SHA: ${{ matrix.arch == 'amd64' && needs.server-build.outputs.digest-amd64 || needs.server-build.outputs.digest-arm64 }}
+      CANDIDATE_ID: ${{ needs.server-build.outputs.candidate-amd64 }}
+      CANDIDATE_SHA: ${{ needs.server-build.outputs.digest-amd64 }}
     needs: [changes, server-build]
     if: ${{ needs.changes.outputs.server-install == 'true' }}
     runs-on: ${{ matrix.runner }}
@@ -994,13 +990,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64, arm64]
+        arch: [amd64]
         profile: ${{ fromJSON(github.event_name == 'workflow_dispatch' && inputs.native-diagnostic == true && '["team"]' || '["personal","team","enterprise"]') }}
         include:
           - arch: amd64
             runner: ubuntu-24.04
-          - arch: arm64
-            runner: ubuntu-24.04-arm
     steps:
       - name: Check out exact server source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -1011,7 +1005,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y qemu-system-x86 qemu-system-arm qemu-utils qemu-efi-aarch64 genisoimage
+          sudo apt-get install -y qemu-system-x86 qemu-utils genisoimage
           mkdir -p ci-logs/server-install .tmp
           git show -s --format='%H %T %P' HEAD > ci-logs/server-install/source.txt
           git cat-file commit HEAD > ci-logs/server-install/source-commit.txt

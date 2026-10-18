@@ -43,7 +43,7 @@ Coordination 模式使用每请求 `X-WorkMesh-Installation-Token`，普通执�
 
 ## 候选包及安装状态机
 
-服务端交付采用离线 Docker 镜像集合和版本目录，不新增宿主 Node 前置。目标须已有 Docker Engine、Compose、匹配架构、足够空间及受保护环境文件。首批候选设计为 Linux amd64／arm64；现有双架构 CI 与完整 guest 已获批准，物理设备支持范围仍待实测，不把连接器 TCG 结果当成服务端证明。
+服务端交付采用离线 Docker 镜像集合和版本目录，不新增宿主 Node 前置。目标须已有 Docker Engine、Compose、匹配架构、足够空间及受保护环境文件。用户2026-10-19 03:41将本轮收敛为Linux amd64（x86_64），ARM服务端延期；旧双架构方案和失败原件保留。连接器既有双架构范围不变。物理设备范围仍待实测，不把连接器TCG结果当服务端证明，见[当前规格](current-spec-amd64.md)。
 
 包内包括应用及所有启动依赖的镜像归档、Compose、无秘密环境模板、配置校验入口、源提交／架构／镜像 ID／摘要／schema 兼容范围清单、摘要文件和操作说明。清单摘要只证明完整性；发布者身份来自受审来源。production 沿用既有签名、来源证明和 SBOM，不将本地 Lite tag 冒官方发行。
 

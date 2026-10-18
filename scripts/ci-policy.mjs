@@ -11,13 +11,13 @@ export function validateServerInstallEntrypoint(job, build) {
   const failures = []
   if (job?.env?.PYTHONDONTWRITEBYTECODE !== '1' || build?.env?.PYTHONDONTWRITEBYTECODE !== '1')
     failures.push('server-install Python checks must not dirty the committed source with bytecode')
-  const architectures = [{ arch: 'amd64', runner: 'ubuntu-24.04' }, { arch: 'arm64', runner: 'ubuntu-24.04-arm' }]
+  const architectures = [{ arch: 'amd64', runner: 'ubuntu-24.04' }]
   const profileMatrix = '${{ fromJSON(github.event_name == \'workflow_dispatch\' && inputs.native-diagnostic == true && \'["team"]\' || \'["personal","team","enterprise"]\') }}'
   if (JSON.stringify(build?.strategy?.matrix) !== JSON.stringify({ include: architectures })
-    || JSON.stringify(job?.strategy?.matrix) !== JSON.stringify({ arch: ['amd64', 'arm64'], profile: profileMatrix, include: architectures })
+    || JSON.stringify(job?.strategy?.matrix) !== JSON.stringify({ arch: ['amd64'], profile: profileMatrix, include: architectures })
     || [job, build].some(value => value?.['runs-on'] !== '${{ matrix.runner }}'
       || value?.strategy?.['fail-fast'] !== false || value?.['continue-on-error']))
-    failures.push('server delivery must build both architectures and require all six ordinary configuration guests')
+    failures.push('server delivery must build Linux amd64 and require all three ordinary configuration guests; ARM delivery is deferred')
   if (JSON.stringify(job?.needs) !== JSON.stringify(['changes', 'server-build'])
     || job?.if !== '${{ needs.changes.outputs.server-install == \'true\' }}'
     || build?.if !== '${{ needs.changes.outputs.server-build == \'true\' }}')
@@ -44,14 +44,16 @@ export function validateServerInstallEntrypoint(job, build) {
     || download?.with?.['artifact-ids'] !== '${{ env.CANDIDATE_ID }}' || download?.with?.['merge-multiple'] !== true
     || download?.with?.path !== '.tmp/server-distribution' || download?.if || download?.['continue-on-error'])
     failures.push('server guests must reuse the immutable producer artifact ID and independently bound manifest digest')
-  for (const arch of ['amd64', 'arm64']) {
+  if (Object.keys(build?.outputs ?? {}).sort().join(',') !== 'candidate-amd64,digest-amd64')
+    failures.push('server producer outputs must match the current amd64 delivery scope')
+  for (const arch of ['amd64']) {
     for (const kind of ['candidate', 'digest']) {
       if (build?.outputs?.[`${kind}-${arch}`] !== '${{ steps.binding.outputs.' + kind + '-' + arch + ' }}')
         failures.push('each producer architecture needs a distinct artifact/digest output')
     }
   }
   for (const [key, kind] of [['CANDIDATE_ID', 'candidate'], ['CANDIDATE_SHA', 'digest']]) {
-    const expected = '${{ matrix.arch == \'amd64\' && needs.server-build.outputs.' + kind + '-amd64 || needs.server-build.outputs.' + kind + '-arm64 }}'
+    const expected = '${{ needs.server-build.outputs.' + kind + '-amd64 }}'
     if (job?.env?.[key] !== expected) failures.push('server handoff must select the matching architecture producer')
   }
   const guest = job?.steps?.find(step => step.name === 'Execute installed configuration in full guest')?.run ?? ''

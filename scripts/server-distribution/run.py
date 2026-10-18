@@ -53,7 +53,7 @@ def complete_reboot_checks(value, profiles=PROFILES):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--arch", choices=IMAGES, required=True)
+    parser.add_argument("--arch", choices=('amd64',), required=True)
     parser.add_argument("--artifacts", required=True)
     parser.add_argument("--root", required=True)
     parser.add_argument("--source", required=True)

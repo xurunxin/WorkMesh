@@ -19,7 +19,7 @@ test('实际CI校验入口消费完整生产者与guest图及固定工件下载'
   assert.match(result.stdout, /\[ci:validate\] OK: 12 jobs/)
 })
 
-test('双架构候选只构建一次，六个画像 guest 全部必需且摘要交接不能绕过', () => {
+test('amd64候选只构建一次，三个画像guest全部必需且延期ARM不影响连接器', () => {
   const jobs = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs
   const original = { job: jobs['server-install'], build: jobs['server-build'] }
   assert.deepEqual(validateServerInstallEntrypoint(original.job, original.build), [])
@@ -29,7 +29,9 @@ test('双架构候选只构建一次，六个画像 guest 全部必需且摘要�
     value => { value.job.strategy.matrix.arch.pop() },
     value => { value.job.strategy.matrix.profile = value.job.strategy.matrix.profile.replace(',"enterprise"', '') },
     value => { value.job.strategy.matrix.profile = value.job.strategy.matrix.profile.replace('["team"]', '["personal"]') },
-    value => { value.job.strategy.matrix.exclude = [{ arch: 'arm64', profile: 'team' }] },
+    value => { value.job.strategy.matrix.exclude = [{ arch: 'amd64', profile: 'team' }] },
+    value => { value.build.strategy.matrix.include.push({ arch: 'arm64', runner: 'ubuntu-24.04-arm' }) },
+    value => { value.job.strategy.matrix.arch.push('arm64') },
     value => { delete value.build.env.PYTHONDONTWRITEBYTECODE },
     value => { delete value.job.env.PYTHONDONTWRITEBYTECODE },
     value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Execute installed configuration in full guest') },
@@ -39,7 +41,8 @@ test('双架构候选只构建一次，六个画像 guest 全部必需且摘要�
     value => { value.job.steps.find(step => step.name === 'Verify producer manifest digest').if = 'false' },
     value => { value.job.steps.find(step => step.name === 'Download immutable architecture candidate').with['artifact-ids'] = 'other-artifact' },
     value => { value.job.env.CANDIDATE_SHA = 'unbound' },
-    value => { value.build.outputs['digest-amd64'] = value.build.outputs['digest-arm64'] },
+    value => { value.build.outputs['digest-amd64'] = '${{ steps.binding.outputs.digest-arm64 }}' },
+    value => { value.build.outputs['digest-arm64'] = '${{ steps.binding.outputs.digest-arm64 }}' },
     value => { value.job.needs = ['changes'] },
     value => { value.job.steps.find(step => step.name === 'Execute installed configuration in full guest').run += ' --profile personal' },
     value => { const step = value.job.steps.find(step => step.name === 'Execute installed configuration in full guest'); step.run = step.run.replace("--profile '${{ matrix.profile }}'", '') },
