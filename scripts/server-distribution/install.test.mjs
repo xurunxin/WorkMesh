@@ -16,6 +16,15 @@ import { promisify } from 'node:util'
 import { fileURLToPath } from 'node:url'
 
 const temporary = async () => realpath(await mkdtemp(path.join(tmpdir(), 'workmesh-server-unit-')))
+
+test('recovered candidate cannot commit or resume across persisted commands; fresh upgrade revalidates', async () => {
+  const fixture = fileURLToPath(new URL('./install-recovery-fixture.mjs', import.meta.url))
+  const result = await promisify(execFile)(process.execPath, ['--experimental-vm-modules', fixture], { timeout: 30_000 })
+  const report = JSON.parse(result.stdout)
+  assert.equal(report.status, 'passed')
+  assert.equal(report.outcomes.length, 5)
+  assert.equal(report.realDockerOrHttp, false)
+})
 test('file digest includes a partial final block and changes when its final byte changes', async () => {
   const root = await temporary(), file = path.join(root, 'owned-hash-boundary.bin')
   const bytes = Buffer.alloc(1024 * 1024 + 37, 7)

@@ -146,6 +146,8 @@ CI 的 native-diagnostic 参数默认关闭，仅用于隔离 guest 的原生崩
 
 业务证明或凭据校验失败时，commit 保留待验证候选及维护状态，不登记 current。先核实际失败并修正证明；需要 recover-old 时仍核原候选、程序／依赖和账本兼容性，不按未切 current 推断数据未变。
 
+`recover-old` 在启动旧程序前先持久化 `withdrawnAt`，并清除当前 journal 的 `validation`。原 `pending.json` 保留作证据，已撤回候选不能提交：`commit` 返回 `INSTALL_CANDIDATE_WITHDRAWN`，新安装器进程重读状态后也拒绝。旧版本只有 `recovery.status=previous-restored` 的 journal 同样拒绝。需要再次升级时，显式执行原 `upgrade --maintenance-confirmed`，建立新 journal 并重新完成备份、迁移、健康和业务验证；不会复用旧的 awaiting-validation 快捷结果。若恢复中断，先处理该恢复，不能直接提交或恢复 pending 的快捷流程。原数据卷、兼容性和空目标恢复要求保持。
+
 当前可选原生诊断针对 CI549 的团队回退后 commit。前序保留普通模式的个人画像安装／升级／故障恢复／停止、团队业务及升级回退步骤和端口，再观察原提交命令；不执行企业及整机重启，不能构成三画像完整支持。旧诊断针对团队首次业务读取，其未复现记录保留，不能替代这个新首败场景。
 
 诊断注册先核镜像／只读根文件系统、PID／启动时间及程序文件身份；实际程序摘要延至崩溃处理时计算，减少请求前的完整读取。旧诊断未复现不代表普通模式退出139已解决，捕获方式的影响须与产品结果分开。

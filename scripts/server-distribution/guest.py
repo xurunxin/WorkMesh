@@ -779,6 +779,26 @@ def upgrade_recovery(dist, manifest, digest, prefix, config, *, include_failed_h
     assert (prefix / 'current.json').read_bytes() == current_bytes and volumes() == original_volumes
     checks.append('preMigrationFailureKeepsCurrent')
     assert install(upgrade, new_digest, prefix, config, 'upgrade', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
+    # Recovered A must not let a read from A register pending B. Each install
+    # command is a new installer process; both direct and restarted commands
+    # must reject before the business read. An explicit upgrade starts anew.
+    withdrawn_journal = json.loads((prefix / 'journal.json').read_text())
+    assert install(dist, digest, prefix, config, 'recover-old')['status'] == 'previous-restored'
+    recovered_journal_bytes = (prefix / 'journal.json').read_bytes()
+    recovered_journal = json.loads(recovered_journal_bytes)
+    assert recovered_journal['withdrawnAt'] and 'validation' not in recovered_journal
+    for _ in range(2):
+        install(upgrade, new_digest, prefix, config, 'commit', expected=1,
+                expected_code='INSTALL_CANDIDATE_WITHDRAWN', extra=['--validation', str(prefix / 'validation.json')])
+        assert (prefix / 'current.json').read_bytes() == current_bytes
+        assert volumes() == original_volumes
+        assert (prefix / 'journal.json').read_bytes() == recovered_journal_bytes
+    assert install(upgrade, new_digest, prefix, config, 'upgrade', extra=['--maintenance-confirmed'])['status'] == 'awaiting-validation'
+    fresh_journal = json.loads((prefix / 'journal.json').read_text())
+    assert fresh_journal['id'] != withdrawn_journal['id'] and 'withdrawnAt' not in fresh_journal and 'validation' not in fresh_journal
+    assert all(any(row['name'] == name and row['status'] == 'completed' for row in fresh_journal['actions'])
+               for name in ['complete-backup', 'apply-migration-ledger', 'verify-health-and-ledger'])
+    checks.extend(['withdrawnCandidateCommitRejected', 'restartedInstallerRejectsWithdrawnCandidate', 'explicitReupgradeRevalidates'])
     # Model an interruption after health started but before pending was written.
     # Mutate only this test's private installer files, never application data.
     journal_file = prefix / 'journal.json'

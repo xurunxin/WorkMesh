@@ -5,7 +5,7 @@ import { randomUUID, randomBytes } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 import https from 'node:https'
 import { verifyBundle, hash, fail, assertCompatibleLedger, assertCompatibleProgram, assertRecoveryCompatible, canonicalJson, assertSupportedArchitecture } from './manifest.mjs'
-import { atomicJson, privateDirectory, readState, validateJournal, withInstallLock } from './journal.mjs'
+import { atomicJson, privateDirectory, readState, validateJournal, withInstallLock, candidateWasWithdrawn } from './journal.mjs'
 import { commandFailure, containerStatus } from './diagnostics.mjs'
 import { assertStableDataBindings } from './configuration.mjs'
 import { readMcpReply, mcpReplyStatus } from './mcp-response.mjs'
@@ -251,6 +251,11 @@ async function recoverOld(previous, journal, journalFile) {
   assertRecoveryCompatible(previous.manifest, journal)
   assertOwnedDeployment(previous)
   assertCompatibleLedger(ledger(previous), previous.manifest.migrationLedger)
+  // Invalidate before Compose can restore old code, including a crash between
+  // successful recovery and its receipt. Keep the pending file as evidence.
+  journal.withdrawnAt ??= new Date().toISOString()
+  delete journal.validation
+  await atomicJson(journalFile, journal)
   await healthy(previous)
   journal.recovery = { status: 'previous-restored', migrationLedger: ledger(previous) }
   await atomicJson(journalFile, journal)
@@ -383,6 +388,7 @@ export async function install(options, authority = undefined) {
     const pendingFile = path.join(prefix, 'pending.json')
     const pending = await readState(pendingFile)
     if (action === 'commit') {
+      if (candidateWasWithdrawn(existing)) fail('INSTALL_CANDIDATE_WITHDRAWN')
       if (previous?.candidate === digest && existing?.stage === 'committed') return { status: 'already-installed', candidate: digest }
       if (previous?.candidate === digest && existing?.stage === 'healthy' && existing.validation?.candidate === digest) {
         assertOwnedDeployment(previous); assertCompatibleLedger(ledger(previous), previous.manifest.migrationLedger)
@@ -426,7 +432,7 @@ export async function install(options, authority = undefined) {
       const report = await oneShotRecovery(previous, 'restore', options.restoreBundle, target.environment)
       return { status: 'restored-empty-target', report, preservedVolumes: true, switched: false }
     }
-    if (existing?.stage === 'healthy' && pending?.candidate === digest && pending.configHash === configHash)
+    if (!candidateWasWithdrawn(existing) && existing?.stage === 'healthy' && pending?.candidate === digest && pending.configHash === configHash)
       return { status: 'awaiting-validation', candidate: digest, journalId: existing.id }
     if (existing && existing.stage !== 'committed' && existing.recovery?.status !== 'previous-restored') fail('INSTALL_INTERRUPTED_JOURNAL_RECOVERY_REQUIRED')
     if (previous?.candidate === digest) return { status: 'already-installed', candidate: digest }

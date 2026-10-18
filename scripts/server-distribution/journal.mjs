@@ -4,6 +4,8 @@ import { randomUUID } from 'node:crypto'
 import { fail } from './manifest.mjs'
 
 export const stages = ['verified', 'staged', 'backed_up', 'migrated', 'healthy', 'committed']
+export const candidateWasWithdrawn = journal => journal?.withdrawnAt !== undefined
+  || journal?.recovery?.status === 'previous-restored'
 export async function privateDirectory(directory, { create = false } = {}) {
   if (!path.isAbsolute(directory) || /[,\r\n\0]/.test(directory)) fail('INSTALL_UNSAFE_PATH')
   if (create) await mkdir(directory, { recursive: false, mode: 0o700 })
