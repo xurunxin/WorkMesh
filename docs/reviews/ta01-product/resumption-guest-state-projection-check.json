@@ -1,0 +1,13 @@
+{
+  "说明": "实际guest.py失败采集片段的本机隔离夹具；全部三角色状态先于分类保留，三个分类器超时不丢状态／不泄露异常正文。没有Docker或guest实测。首轮夹具漏注入allowed导致NameError，未执行完整片段；补测试输入后本轮通过，产品代码未因此改变。",
+  "sourceFileSha256": "22497f52c59b193d0bc2a490d86085c1ecde2017a16af5b12ed49cb1e2109999",
+  "status": "passed",
+  "ownedServices": [
+    "api",
+    "worker",
+    "mcp"
+  ],
+  "classifierFailures": 3,
+  "unownedExcluded": true,
+  "secretExcluded": true
+}

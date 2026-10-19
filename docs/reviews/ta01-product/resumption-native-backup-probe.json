@@ -1,0 +1,51 @@
+{
+  "owner": "da062eb9-c18b-4a06-8456-cbc53f71f720",
+  "source": {
+    "commit": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+    "tree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406"
+  },
+  "resources": [
+    {
+      "kind": "network",
+      "id": "889b4e203324c6edae50b7befe061d82257313194e40bc8909c1e67e9187cdc2",
+      "name": "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720-pg"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720-s3"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720-backup"
+    },
+    {
+      "kind": "container",
+      "id": "3af431899d6998672d5450caecebdee72ad158fc95cdc092d7d937a459e871c7",
+      "role": "pg"
+    },
+    {
+      "kind": "container",
+      "id": "6c7dddfce38287b5229c7bce4c6dd83fb7c22331fafd45d7a046c18e6b456cd8",
+      "role": "s3"
+    }
+  ],
+  "results": [
+    {
+      "nestedHelperExit": 0,
+      "stdoutSha256": "705e9903a4a2796c8149c41f1d50a27cfbd7818b9c268d76c2835f85bd24d73b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "removed": [
+    "6c7dddfce38287b5229c7bce4c6dd83fb7c22331fafd45d7a046c18e6b456cd8",
+    "3af431899d6998672d5450caecebdee72ad158fc95cdc092d7d937a459e871c7",
+    "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720-backup",
+    "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720-s3",
+    "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720-pg",
+    "ta01-backup-da062eb9-c18b-4a06-8456-cbc53f71f720"
+  ]
+}

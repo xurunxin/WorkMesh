@@ -1,0 +1,183 @@
+{
+  "说明": "已收尾本任务旧候选的重复解包目录；删除前逐项实核33个文件与本地完整ZIP一致，无reparse、进程或容器挂载引用，准确绝对路径限定在本工作区。已核完整ZIP仍本地保留，可逐文件恢复；这不是最终交付候选。逻辑字节不代物理释放。",
+  "source": {
+    "commit": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+    "tree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406"
+  },
+  "manifestSha256": "8ff1f6b591ffcb940495da0dfacd12b256a604276c46ff82196c27f982c46f72",
+  "archiveSha256": "714f51991706cba0af5a3bf7e11d2fb65a3f67de10a06d8d4df91d2310d25012",
+  "target": ".tmp/ta01-resumption/ci526-candidate-amd64",
+  "retainedArchive": ".tmp/ta01-resumption/ci526-candidate-amd64.zip",
+  "files": {
+    "docker-compose.lite.yml": {
+      "path": "docker-compose.lite.yml",
+      "sha256": "81637573e5004237f275ce0351ae333c36a65da9de793b4954d788403e6b1435",
+      "bytes": 13792
+    },
+    "docker-compose.production.yml": {
+      "path": "docker-compose.production.yml",
+      "sha256": "4d6b417ead7010d36cdc53cf33247de2ea3422c8503bc40ad4fbd5055731da52",
+      "bytes": 12730
+    },
+    "install.sh": {
+      "path": "install.sh",
+      "sha256": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6",
+      "bytes": 3146
+    },
+    "config.example.json": {
+      "path": "config.example.json",
+      "sha256": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a",
+      "bytes": 430
+    },
+    "chunks/b19caada708cc148309d1e98f742188613ff91679e20a36a31aab24af183f80e.tarpart": {
+      "path": "chunks/b19caada708cc148309d1e98f742188613ff91679e20a36a31aab24af183f80e.tarpart",
+      "sha256": "b19caada708cc148309d1e98f742188613ff91679e20a36a31aab24af183f80e",
+      "bytes": 50331648
+    },
+    "chunks/0d087a34b6ed1d4bdc02c7bdcbc80f7728a2a117ac8e7de591db3d9a911b314e.tarpart": {
+      "path": "chunks/0d087a34b6ed1d4bdc02c7bdcbc80f7728a2a117ac8e7de591db3d9a911b314e.tarpart",
+      "sha256": "0d087a34b6ed1d4bdc02c7bdcbc80f7728a2a117ac8e7de591db3d9a911b314e",
+      "bytes": 50331648
+    },
+    "chunks/5c1548997264ea9c64f1ec53df418ed6a3dd4b09b06d84e2c4424d19100f0771.tarpart": {
+      "path": "chunks/5c1548997264ea9c64f1ec53df418ed6a3dd4b09b06d84e2c4424d19100f0771.tarpart",
+      "sha256": "5c1548997264ea9c64f1ec53df418ed6a3dd4b09b06d84e2c4424d19100f0771",
+      "bytes": 50331648
+    },
+    "chunks/7ccdac92cf71c2d361889f43af93970db5587c6c562e666f378f7e725bb4ceda.tarpart": {
+      "path": "chunks/7ccdac92cf71c2d361889f43af93970db5587c6c562e666f378f7e725bb4ceda.tarpart",
+      "sha256": "7ccdac92cf71c2d361889f43af93970db5587c6c562e666f378f7e725bb4ceda",
+      "bytes": 50331648
+    },
+    "chunks/59e84a0f629f3b756dbf5f214d6405e122d1ef6017b827b267145e1f76861f4f.tarpart": {
+      "path": "chunks/59e84a0f629f3b756dbf5f214d6405e122d1ef6017b827b267145e1f76861f4f.tarpart",
+      "sha256": "59e84a0f629f3b756dbf5f214d6405e122d1ef6017b827b267145e1f76861f4f",
+      "bytes": 50331648
+    },
+    "chunks/468bcec78eb4b6eba6e9054069d7b81b1f977ecf42fe59dab0214a1990fcbd75.tarpart": {
+      "path": "chunks/468bcec78eb4b6eba6e9054069d7b81b1f977ecf42fe59dab0214a1990fcbd75.tarpart",
+      "sha256": "468bcec78eb4b6eba6e9054069d7b81b1f977ecf42fe59dab0214a1990fcbd75",
+      "bytes": 50331648
+    },
+    "chunks/164f65305bac23b56b7b06099707a5f4650e51c2fd0d79c049e5257a7254a33f.tarpart": {
+      "path": "chunks/164f65305bac23b56b7b06099707a5f4650e51c2fd0d79c049e5257a7254a33f.tarpart",
+      "sha256": "164f65305bac23b56b7b06099707a5f4650e51c2fd0d79c049e5257a7254a33f",
+      "bytes": 50331648
+    },
+    "chunks/1f7afcc33c6858ae62f222e3ce7249bad6e334a6255de390650fb2071b3ac257.tarpart": {
+      "path": "chunks/1f7afcc33c6858ae62f222e3ce7249bad6e334a6255de390650fb2071b3ac257.tarpart",
+      "sha256": "1f7afcc33c6858ae62f222e3ce7249bad6e334a6255de390650fb2071b3ac257",
+      "bytes": 50331648
+    },
+    "chunks/9a1a7a3a75c10ef060f21d85f06250fdc4a84dc7bbc7939bb13af5ac73ed00cf.tarpart": {
+      "path": "chunks/9a1a7a3a75c10ef060f21d85f06250fdc4a84dc7bbc7939bb13af5ac73ed00cf.tarpart",
+      "sha256": "9a1a7a3a75c10ef060f21d85f06250fdc4a84dc7bbc7939bb13af5ac73ed00cf",
+      "bytes": 50331648
+    },
+    "chunks/a7f42876faef3bd21a2a0c47f47902c8dda5bc1fa8626ff780988637477151c3.tarpart": {
+      "path": "chunks/a7f42876faef3bd21a2a0c47f47902c8dda5bc1fa8626ff780988637477151c3.tarpart",
+      "sha256": "a7f42876faef3bd21a2a0c47f47902c8dda5bc1fa8626ff780988637477151c3",
+      "bytes": 50331648
+    },
+    "chunks/1bd1d550dcd1c666163f3ec6d44ab7887d8789ba87aec255a871cf81900026aa.tarpart": {
+      "path": "chunks/1bd1d550dcd1c666163f3ec6d44ab7887d8789ba87aec255a871cf81900026aa.tarpart",
+      "sha256": "1bd1d550dcd1c666163f3ec6d44ab7887d8789ba87aec255a871cf81900026aa",
+      "bytes": 50331648
+    },
+    "chunks/dbc7102eed8af407f070bc5c5687cda27c1fc68bd93b0dee512cf27aa87c1471.tarpart": {
+      "path": "chunks/dbc7102eed8af407f070bc5c5687cda27c1fc68bd93b0dee512cf27aa87c1471.tarpart",
+      "sha256": "dbc7102eed8af407f070bc5c5687cda27c1fc68bd93b0dee512cf27aa87c1471",
+      "bytes": 50331648
+    },
+    "chunks/06538a1840b50690caf55d48aa0e90c74061ffb4d452477bb2dd683a0f354a16.tarpart": {
+      "path": "chunks/06538a1840b50690caf55d48aa0e90c74061ffb4d452477bb2dd683a0f354a16.tarpart",
+      "sha256": "06538a1840b50690caf55d48aa0e90c74061ffb4d452477bb2dd683a0f354a16",
+      "bytes": 50331648
+    },
+    "chunks/40b5259c07653ba8e9bc80e7a2e26ac5fe9f75acf1d0794c191d13b70e5ad70d.tarpart": {
+      "path": "chunks/40b5259c07653ba8e9bc80e7a2e26ac5fe9f75acf1d0794c191d13b70e5ad70d.tarpart",
+      "sha256": "40b5259c07653ba8e9bc80e7a2e26ac5fe9f75acf1d0794c191d13b70e5ad70d",
+      "bytes": 50331648
+    },
+    "chunks/2204febe25ee2e7e681ae5674c0b7e733d919ca44a332043c56c00ad879c5ad3.tarpart": {
+      "path": "chunks/2204febe25ee2e7e681ae5674c0b7e733d919ca44a332043c56c00ad879c5ad3.tarpart",
+      "sha256": "2204febe25ee2e7e681ae5674c0b7e733d919ca44a332043c56c00ad879c5ad3",
+      "bytes": 50331648
+    },
+    "chunks/66f18798684d1035844cafcabdcaf2f517c58583dfac33b44061f78163d43ccc.tarpart": {
+      "path": "chunks/66f18798684d1035844cafcabdcaf2f517c58583dfac33b44061f78163d43ccc.tarpart",
+      "sha256": "66f18798684d1035844cafcabdcaf2f517c58583dfac33b44061f78163d43ccc",
+      "bytes": 50331648
+    },
+    "chunks/652a465c096cd7a57a4a9fdcbd394ad8c06056b4fc868dcf97d84ec59d7a31fb.tarpart": {
+      "path": "chunks/652a465c096cd7a57a4a9fdcbd394ad8c06056b4fc868dcf97d84ec59d7a31fb.tarpart",
+      "sha256": "652a465c096cd7a57a4a9fdcbd394ad8c06056b4fc868dcf97d84ec59d7a31fb",
+      "bytes": 50331648
+    },
+    "chunks/a4da7e20408a4f1417bbd013ac8ef0259d16ed0f270c589a8626b05f13ce436a.tarpart": {
+      "path": "chunks/a4da7e20408a4f1417bbd013ac8ef0259d16ed0f270c589a8626b05f13ce436a.tarpart",
+      "sha256": "a4da7e20408a4f1417bbd013ac8ef0259d16ed0f270c589a8626b05f13ce436a",
+      "bytes": 50331648
+    },
+    "chunks/331afb99e3cc1b52b6f9970f4695653713331b67de26bac5cc6567ffffc67741.tarpart": {
+      "path": "chunks/331afb99e3cc1b52b6f9970f4695653713331b67de26bac5cc6567ffffc67741.tarpart",
+      "sha256": "331afb99e3cc1b52b6f9970f4695653713331b67de26bac5cc6567ffffc67741",
+      "bytes": 50331648
+    },
+    "chunks/2dbb7f876d34f9ce648827fc154da3056da9da5d5cac4bfabfefe86691269a25.tarpart": {
+      "path": "chunks/2dbb7f876d34f9ce648827fc154da3056da9da5d5cac4bfabfefe86691269a25.tarpart",
+      "sha256": "2dbb7f876d34f9ce648827fc154da3056da9da5d5cac4bfabfefe86691269a25",
+      "bytes": 50331648
+    },
+    "chunks/dc895feff1d4ba150aa23758b2c21484e65ea78da42e4de18c239ed0126c30cd.tarpart": {
+      "path": "chunks/dc895feff1d4ba150aa23758b2c21484e65ea78da42e4de18c239ed0126c30cd.tarpart",
+      "sha256": "dc895feff1d4ba150aa23758b2c21484e65ea78da42e4de18c239ed0126c30cd",
+      "bytes": 13551616
+    },
+    "chunks/82981c304893faaaf781f903fac6e42f96fa8ff00e05c5f38b01ca725545da80.tarpart": {
+      "path": "chunks/82981c304893faaaf781f903fac6e42f96fa8ff00e05c5f38b01ca725545da80.tarpart",
+      "sha256": "82981c304893faaaf781f903fac6e42f96fa8ff00e05c5f38b01ca725545da80",
+      "bytes": 50331648
+    },
+    "chunks/cf6573bba2e9c8534793b8f72c78a4c0669f424161027a763a732de91f04d03b.tarpart": {
+      "path": "chunks/cf6573bba2e9c8534793b8f72c78a4c0669f424161027a763a732de91f04d03b.tarpart",
+      "sha256": "cf6573bba2e9c8534793b8f72c78a4c0669f424161027a763a732de91f04d03b",
+      "bytes": 50331648
+    },
+    "chunks/ca8ddbb2d6dbbfd0001b774064b589a6758bdd720d057897a75e1ff77eec1c4e.tarpart": {
+      "path": "chunks/ca8ddbb2d6dbbfd0001b774064b589a6758bdd720d057897a75e1ff77eec1c4e.tarpart",
+      "sha256": "ca8ddbb2d6dbbfd0001b774064b589a6758bdd720d057897a75e1ff77eec1c4e",
+      "bytes": 50331648
+    },
+    "chunks/bb46a984ebf932c88ce507ac0073179452280e1fbdce1e76dc50de6bcc44a9c4.tarpart": {
+      "path": "chunks/bb46a984ebf932c88ce507ac0073179452280e1fbdce1e76dc50de6bcc44a9c4.tarpart",
+      "sha256": "bb46a984ebf932c88ce507ac0073179452280e1fbdce1e76dc50de6bcc44a9c4",
+      "bytes": 50331648
+    },
+    "chunks/75f716205b2cfa6bdb2ce3458d3c3a9a47ff77492bada062cdb5ec833b35d98a.tarpart": {
+      "path": "chunks/75f716205b2cfa6bdb2ce3458d3c3a9a47ff77492bada062cdb5ec833b35d98a.tarpart",
+      "sha256": "75f716205b2cfa6bdb2ce3458d3c3a9a47ff77492bada062cdb5ec833b35d98a",
+      "bytes": 50331648
+    },
+    "chunks/9c2d45d7ce56391063234f403cc7b3d59a5bec9c6f637cbff53ce55bf5f66b6f.tarpart": {
+      "path": "chunks/9c2d45d7ce56391063234f403cc7b3d59a5bec9c6f637cbff53ce55bf5f66b6f.tarpart",
+      "sha256": "9c2d45d7ce56391063234f403cc7b3d59a5bec9c6f637cbff53ce55bf5f66b6f",
+      "bytes": 50331648
+    },
+    "chunks/355db0fdfdf4ce78020953c91340a61db0996376c26eb20ed9512abe24b34cf1.tarpart": {
+      "path": "chunks/355db0fdfdf4ce78020953c91340a61db0996376c26eb20ed9512abe24b34cf1.tarpart",
+      "sha256": "355db0fdfdf4ce78020953c91340a61db0996376c26eb20ed9512abe24b34cf1",
+      "bytes": 22654464
+    },
+    "manifest.json": {
+      "sha256": "8ff1f6b591ffcb940495da0dfacd12b256a604276c46ff82196c27f982c46f72",
+      "bytes": 12845
+    }
+  },
+  "logicalBytes": 1344871871,
+  "status": "removed-duplicate-extraction",
+  "absoluteTarget": "C:\\Users\\xurx\\.tds\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\\.tmp\\ta01-resumption\\ci526-candidate-amd64",
+  "creationTimeUtc": "2026-10-14T08:53:54.7287818Z",
+  "activeReferences": 0,
+  "retainedArchiveExists": true
+}

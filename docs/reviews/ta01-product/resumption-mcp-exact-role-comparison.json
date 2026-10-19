@@ -1,0 +1,570 @@
+{
+  "说明": "准确CI563公开MCP角色镜像的AMD64原生/TCG有界组件配对；同Node/生产编译闭包，合成work:read，非完整已安装产品或ARM。有限未139不排除。",
+  "candidateSource": {
+    "commit": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+    "tree": "c07235f615836fae402d670ac932f6a9d484f347"
+  },
+  "toolBaseHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+  "extraction": {
+    "source": {
+      "commit": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "tree": "c07235f615836fae402d670ac932f6a9d484f347"
+    },
+    "sourceArtifact": {
+      "id": 12018111191,
+      "name": "server-distribution-amd64-38831565958-1",
+      "digest": "sha256:94370fb0d409fa6a3111220d491f4cd6eddad0bbd791e230afdb521ef49ad03e",
+      "expired": false,
+      "size_in_bytes": 427765945
+    },
+    "trustedManifestSha256": "62d76558ce5495cbe20b6315608b6717e00770c02d9759480d534b8446113a42",
+    "image": {
+      "reference": "workmesh-server/mcp:candidate-9c8bbff749c1-amd64",
+      "id": "sha256:7764f525a81985f29f6ef8a8218657b01681b1796d48261fd66c4ef3331104f3",
+      "revision": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "archiveId": "sha256:8bea5eb43fa3e9d70e157bc3058ed6fb10c689eba2215c65094568183afb085e"
+    },
+    "ownedTag": "workmesh-ta01-diagnostic/mcp:ci563-9c8-owned",
+    "originalIndex": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.oci.image.index.v1+json",
+      "manifests": [
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:bd83d29a0a9513a506fba8a9d69e3946604456a123ef3f9bab59a112429e11f2",
+          "size": 1769,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/api:candidate-9c8bbff749c1-amd64",
+            "org.opencontainers.image.ref.name": "candidate-9c8bbff749c1-amd64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:a2ac1d8117dcc33f9d6436af106e86e8a1a92de431f787a3b27fb77d107d0d00",
+          "size": 1769,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/worker:candidate-9c8bbff749c1-amd64",
+            "org.opencontainers.image.ref.name": "candidate-9c8bbff749c1-amd64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:8bea5eb43fa3e9d70e157bc3058ed6fb10c689eba2215c65094568183afb085e",
+          "size": 1769,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/mcp:candidate-9c8bbff749c1-amd64",
+            "org.opencontainers.image.ref.name": "candidate-9c8bbff749c1-amd64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:fa5fc05f686106bbf7d4ca8efbbbe63d0c23049c0fff0aacde6e8af0c89e4880",
+          "size": 2373,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/lite:candidate-9c8bbff749c1-amd64",
+            "org.opencontainers.image.ref.name": "candidate-9c8bbff749c1-amd64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+          "size": 1912,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/library/postgres:16.9-alpine",
+            "org.opencontainers.image.ref.name": "16.9-alpine"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+          "size": 1461,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/library/redis:7.4.5-alpine",
+            "org.opencontainers.image.ref.name": "7.4.5-alpine"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+          "size": 1314,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/rustfs/rustfs:1.0.0",
+            "org.opencontainers.image.ref.name": "1.0.0"
+          }
+        }
+      ]
+    },
+    "selectedManifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "config": {
+        "mediaType": "application/vnd.oci.image.config.v1+json",
+        "digest": "sha256:7764f525a81985f29f6ef8a8218657b01681b1796d48261fd66c4ef3331104f3",
+        "size": 10676
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:7003d23cc2176ec98ba2f8b3b4b9b5f144ef370e39bfcf6275a92b5064bc9261",
+          "size": 8111104
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:940555d0231140f4fd39bc5b640be6536424b9bc7a612a969ad58262e3a82fab",
+          "size": 148397056
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:09cc21dbf3536017cb1cd47b5e1ccdde3255d094bd8cbc1da335f01de6dd24ef",
+          "size": 5389312
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:44ba471d3b487e4a723afb7c7e94e8f54ecd92e324f0abb8e46575c6985a5ccd",
+          "size": 3584
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:2a68036f7843e1504929d24515f676f4f55a89cb996e54b9711454453983016b",
+          "size": 12481024
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:33333253844fb0f816b20e91966bb093f35a936d86812c947af2c5c42a8d6306",
+          "size": 1536
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:0fc9cb04b2259258732b6a2a7debddc03218460312d895937e1f8c2af9dda497",
+          "size": 19640320
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:00364ada2f56389ac57223517168336449910704bfe34896d6352cc0efc8e171",
+          "size": 10240
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:d01f1ec2f1e34e477a6a754b3271637daf1f17f74ef1f5d8c29f621fd4f2e1db",
+          "size": 6144
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:1f3c090194085acc2fdf6b0bb4a678b8f93011fdd81402f86e2540fa8136b528",
+          "size": 4096
+        }
+      ]
+    },
+    "selectedConfig": {
+      "architecture": "amd64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:7003d23cc2176ec98ba2f8b3b4b9b5f144ef370e39bfcf6275a92b5064bc9261",
+          "sha256:940555d0231140f4fd39bc5b640be6536424b9bc7a612a969ad58262e3a82fab",
+          "sha256:09cc21dbf3536017cb1cd47b5e1ccdde3255d094bd8cbc1da335f01de6dd24ef",
+          "sha256:44ba471d3b487e4a723afb7c7e94e8f54ecd92e324f0abb8e46575c6985a5ccd",
+          "sha256:2a68036f7843e1504929d24515f676f4f55a89cb996e54b9711454453983016b",
+          "sha256:33333253844fb0f816b20e91966bb093f35a936d86812c947af2c5c42a8d6306",
+          "sha256:0fc9cb04b2259258732b6a2a7debddc03218460312d895937e1f8c2af9dda497",
+          "sha256:00364ada2f56389ac57223517168336449910704bfe34896d6352cc0efc8e171",
+          "sha256:d01f1ec2f1e34e477a6a754b3271637daf1f17f74ef1f5d8c29f621fd4f2e1db",
+          "sha256:1f3c090194085acc2fdf6b0bb4a678b8f93011fdd81402f86e2540fa8136b528"
+        ]
+      }
+    },
+    "selectedBlobs": {
+      "blobs/sha256/00364ada2f56389ac57223517168336449910704bfe34896d6352cc0efc8e171": {
+        "bytes": 10240,
+        "sha256": "00364ada2f56389ac57223517168336449910704bfe34896d6352cc0efc8e171"
+      },
+      "blobs/sha256/09cc21dbf3536017cb1cd47b5e1ccdde3255d094bd8cbc1da335f01de6dd24ef": {
+        "bytes": 5389312,
+        "sha256": "09cc21dbf3536017cb1cd47b5e1ccdde3255d094bd8cbc1da335f01de6dd24ef"
+      },
+      "blobs/sha256/0fc9cb04b2259258732b6a2a7debddc03218460312d895937e1f8c2af9dda497": {
+        "bytes": 19640320,
+        "sha256": "0fc9cb04b2259258732b6a2a7debddc03218460312d895937e1f8c2af9dda497"
+      },
+      "blobs/sha256/1f3c090194085acc2fdf6b0bb4a678b8f93011fdd81402f86e2540fa8136b528": {
+        "bytes": 4096,
+        "sha256": "1f3c090194085acc2fdf6b0bb4a678b8f93011fdd81402f86e2540fa8136b528"
+      },
+      "blobs/sha256/2a68036f7843e1504929d24515f676f4f55a89cb996e54b9711454453983016b": {
+        "bytes": 12481024,
+        "sha256": "2a68036f7843e1504929d24515f676f4f55a89cb996e54b9711454453983016b"
+      },
+      "blobs/sha256/33333253844fb0f816b20e91966bb093f35a936d86812c947af2c5c42a8d6306": {
+        "bytes": 1536,
+        "sha256": "33333253844fb0f816b20e91966bb093f35a936d86812c947af2c5c42a8d6306"
+      },
+      "blobs/sha256/44ba471d3b487e4a723afb7c7e94e8f54ecd92e324f0abb8e46575c6985a5ccd": {
+        "bytes": 3584,
+        "sha256": "44ba471d3b487e4a723afb7c7e94e8f54ecd92e324f0abb8e46575c6985a5ccd"
+      },
+      "blobs/sha256/7003d23cc2176ec98ba2f8b3b4b9b5f144ef370e39bfcf6275a92b5064bc9261": {
+        "bytes": 8111104,
+        "sha256": "7003d23cc2176ec98ba2f8b3b4b9b5f144ef370e39bfcf6275a92b5064bc9261"
+      },
+      "blobs/sha256/7764f525a81985f29f6ef8a8218657b01681b1796d48261fd66c4ef3331104f3": {
+        "bytes": 10676,
+        "sha256": "7764f525a81985f29f6ef8a8218657b01681b1796d48261fd66c4ef3331104f3"
+      },
+      "blobs/sha256/8bea5eb43fa3e9d70e157bc3058ed6fb10c689eba2215c65094568183afb085e": {
+        "bytes": 1769,
+        "sha256": "8bea5eb43fa3e9d70e157bc3058ed6fb10c689eba2215c65094568183afb085e"
+      },
+      "blobs/sha256/940555d0231140f4fd39bc5b640be6536424b9bc7a612a969ad58262e3a82fab": {
+        "bytes": 148397056,
+        "sha256": "940555d0231140f4fd39bc5b640be6536424b9bc7a612a969ad58262e3a82fab"
+      },
+      "blobs/sha256/d01f1ec2f1e34e477a6a754b3271637daf1f17f74ef1f5d8c29f621fd4f2e1db": {
+        "bytes": 6144,
+        "sha256": "d01f1ec2f1e34e477a6a754b3271637daf1f17f74ef1f5d8c29f621fd4f2e1db"
+      }
+    },
+    "allApplicationChunksVerifiedTwice": true,
+    "originalIndexSha256": "c1a4c80eb3a020c86c5fcc0bc4b4f802ec5ff9307d9c7bcbd81da62822908040",
+    "derivedIndexSha256": "1614704fd3c445cd27582995a7d54488221eed261cbbd76a73d2df69cbec32e4",
+    "subsetBytes": 194068480
+  },
+  "nativeResources": {
+    "owner": "43d4ed58-e58f-43d6-9c8c-eec1cffa81db",
+    "sourceImage": {
+      "reference": "workmesh-server/mcp:candidate-9c8bbff749c1-amd64",
+      "id": "sha256:7764f525a81985f29f6ef8a8218657b01681b1796d48261fd66c4ef3331104f3",
+      "revision": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "archiveId": "sha256:8bea5eb43fa3e9d70e157bc3058ed6fb10c689eba2215c65094568183afb085e"
+    },
+    "containers": [
+      {
+        "id": "31b947338164491eddcbbe0d7478290f4469e02b350c4e5b0a2630166adf80e6",
+        "exitCode": 0,
+        "oom": false,
+        "removedAndAbsent": true
+      },
+      {
+        "id": "6aae3199c4eb9909dc3bffc5155c638acf992ff1c15cb6206e1dab3cd7f6e2f4",
+        "purpose": "export exact public CI563 MCP rootfs only, never started",
+        "removedAndAbsent": true
+      }
+    ],
+    "imagePreexisting": {
+      "workmesh-ta01-diagnostic/mcp:ci563-9c8-owned": false,
+      "sha256:7764f525a81985f29f6ef8a8218657b01681b1796d48261fd66c4ef3331104f3": false,
+      "sha256:8bea5eb43fa3e9d70e157bc3058ed6fb10c689eba2215c65094568183afb085e": false
+    },
+    "scope": "准确CI563 MCP角色的原生组件；只用合成work:read，无生产身份／服务。",
+    "loadExitCode": 0,
+    "loadStdoutSha256": "1accce5ccea1b8e2cddfe55e35d66400014f01d977a50e6f05ec83eff741bf28",
+    "actualImageId": "sha256:8bea5eb43fa3e9d70e157bc3058ed6fb10c689eba2215c65094568183afb085e",
+    "measurementSha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa",
+    "stdinSha256": "c84dda5b192fc6e72eb4f39d2f81a628c52351d7353d30c5f3ce35b459e5d889",
+    "exitCode": 0,
+    "stdoutSha256": "5f108e700eee5e0132b00fb47da48bdf265b8a0c0724df869b17666c284a2cb1",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrBytes": 0,
+    "rootfs": {
+      "uncompressedBytes": 166440448,
+      "uncompressedSha256": "d32a4a0d080968610e06cb7a2e4e43e756412800f02b2eba415bf213f193f2ea",
+      "gzipBytes": 55023127,
+      "gzipSha256": "7f5c28b98d3df88b571135fd6ce0c53e4ca589155373430654a090baab419a9f"
+    },
+    "localLedgerEncodingCorrection": {
+      "from": "cp936",
+      "originalSha256": "730d7f4c4db55420b2bcf26c7b5c1a41be75039939941ec6647bf07be2abbad7",
+      "reason": "导出辅助账本write_text遗漏encoding，按原字节解码为UTF-8；容器和输出身份保持。"
+    },
+    "ownedImageTagRemoved": true,
+    "imageConsumersBeforeRemoval": 0,
+    "sharedImagesRemoved": false,
+    "largeTemporaryFilesRemoved": [
+      {
+        "path": ".tmp/ta01-resumption/exact-mcp-9c8/candidate.zip",
+        "bytes": 427765945,
+        "sha256": "94370fb0d409fa6a3111220d491f4cd6eddad0bbd791e230afdb521ef49ad03e"
+      },
+      {
+        "path": ".tmp/ta01-resumption/exact-mcp-9c8/mcp-only.tar",
+        "bytes": 194068480,
+        "sha256": "88c22d9eb765f84da4172d0d2f2e2a2a2b06c4db3958a87b70382e9b06f1503b"
+      }
+    ]
+  },
+  "tcgResources": {
+    "owner": "2661d3eb-bb97-44af-a2c6-039ea4d7ce74",
+    "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+    "repoDigests": [
+      "ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55"
+    ],
+    "containers": [
+      {
+        "id": "94b07edfb7cb2a16bd50a6eecdcd9e8f76de11826cc2318de01491c6918f871d",
+        "purpose": "qemu provisioning; no guest started",
+        "exitCode": 137,
+        "oom": false,
+        "activeQemuCountBeforeStop": 0,
+        "removedAndAbsent": true
+      }
+    ],
+    "scope": "仅同锁定QEMU版本的小组件TCG对照，非完整产品验收；无宿主挂载、端口、Docker socket或真实凭据。",
+    "osExitCode": 0,
+    "apt-updateExitCode": 0,
+    "qemu-policyExitCode": 0,
+    "exactQemuPackageAvailable": true,
+    "aptInstallExitCode": 0,
+    "localLedgerEncodingCorrection": {
+      "from": "cp936",
+      "originalSha256": "80e65f783554b5a78ccec56d5ec1a45233499c721bec98f866d1dea0034ec6a0",
+      "reason": "本机辅助写账本遗漏encoding；尚未复制输入或启动guest，按原字节解码为UTF-8。"
+    },
+    "inputs": {
+      "node-rootfs.tar.gz": {
+        "bytes": 55023127,
+        "sha256": "7f5c28b98d3df88b571135fd6ce0c53e4ca589155373430654a090baab419a9f"
+      },
+      "amd64.img": {
+        "bytes": 625612288,
+        "sha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2"
+      },
+      "measurement.mjs": {
+        "bytes": 10186,
+        "sha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa"
+      },
+      "component-tcg-guest.py": {
+        "bytes": 5766,
+        "sha256": "69327152c2c9aa68c2ae381880793e69dadf0215d6a7441718c37c080112eaa0"
+      },
+      "run-component-tcg.py": {
+        "bytes": 5680,
+        "sha256": "83f4eb98ddc84b4ba1af7de8751530ff63b05892dd41e8879fc3f18934710cd1"
+      }
+    },
+    "resultCopyCorrection": "原辅助工具误读/opt/micro/tcg-result.json，产生零字节文件；实际为/opt/micro/guest/result.json。只取回既有原件，没有重跑guest。",
+    "privateGuestOverlaysRetained": false
+  },
+  "tcgControls": {
+    "NanoCpus": 4000000000,
+    "Memory": 4294967296,
+    "MemorySwap": 4294967296,
+    "Privileged": false,
+    "Devices": [],
+    "Binds": null,
+    "PortBindings": {},
+    "SecurityOpt": [
+      "no-new-privileges:true"
+    ],
+    "PidsLimit": 512
+  },
+  "tcgMetadata": {
+    "qemuSha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+    "kernel": "7.0.14-linuxkit",
+    "activeQemuCount": 0
+  },
+  "cases": {
+    "native": {
+      "importMilliseconds": 465.2942,
+      "qualifiedResponseBytes": 309710,
+      "qualifiedOperationCount": 287,
+      "requests": {
+        "initialize": {
+          "count": 12,
+          "wallMedianMs": 12.616399999999999,
+          "wallMaxMs": 87.06409999999994,
+          "fixtureCalls": []
+        },
+        "tools/call": {
+          "count": 12,
+          "wallMedianMs": 35.78015000000005,
+          "wallMaxMs": 110.22130000000004,
+          "fixtureCalls": [
+            "qualified",
+            "work-item"
+          ]
+        }
+      }
+    },
+    "tcg": {
+      "importMilliseconds": 11592.615,
+      "qualifiedResponseBytes": 309710,
+      "qualifiedOperationCount": 287,
+      "requests": {
+        "initialize": {
+          "count": 12,
+          "wallMedianMs": 196.07600000000457,
+          "wallMaxMs": 2281.916799999999,
+          "fixtureCalls": []
+        },
+        "tools/call": {
+          "count": 12,
+          "wallMedianMs": 876.9520000000011,
+          "wallMaxMs": 2527.7243000000017,
+          "fixtureCalls": [
+            "qualified",
+            "work-item"
+          ]
+        }
+      }
+    }
+  },
+  "limits": [
+    "原生使用可信候选镜像及其NODE_ENV=production；TCG使用该镜像导出的rootfs和同环境值，不重编译或安装依赖。两者均跳过生产entrypoint，直接测MCP HTTP图。",
+    "相同Node/锁定QEMU版本/固定guest；宿主kernel不同，CI无QEMU二进制SHA可比。",
+    "同进程fixture且仅两种合成work:read身份；scope/features/工作项合成，无真实API/PG/Redis/S3/代理/TLS和长期混合负载。",
+    "独立安装器30秒、健康与整体预算未改变，小组件30秒计时不代独立客户端抢占期限；CPU含同进程fixture。",
+    "不能用新AMD成功或有限负样本关闭旧API139/MCP139或ARM迟响应，不选择任何一种根因。",
+    "辅助账本本机编码和结果取回路径错误分别保留原字节/准确修正；无产品失败或小测重跑。"
+  ],
+  "selectedZipSha256": "d37a535fcd07da6a2632097b770ab1e615103275b4028affd114e30158b0b5a6",
+  "members": {
+    "artifact.json": {
+      "bytes": 221,
+      "sha256": "59b4349c34171a5075a196335b481777143960647ed3efdfe50355c2d3d0a297"
+    },
+    "close-image.py": {
+      "bytes": 1581,
+      "sha256": "1d8b36fdec30f14f04cc40f967ee8fece0eeaf1f98e5c01d0f4195417f719b89"
+    },
+    "collect-close.py": {
+      "bytes": 3182,
+      "sha256": "21460ee56497d304e4e4dc2f24c01e8d3508237ee9756bc66cf404d4aa9e248c"
+    },
+    "export.py": {
+      "bytes": 1749,
+      "sha256": "6b1c81702b8c4143734e0cca8a226bde881ca7ad15dad8a93f19ef5338509a6d"
+    },
+    "extraction.json": {
+      "bytes": 9931,
+      "sha256": "1499d5fd681e3c165b0726b0c2873e994c31e3aff1c1c0e281d9200cf014b389"
+    },
+    "install-qemu.py": {
+      "bytes": 971,
+      "sha256": "4430ba76dc1fd37f9481ecc9fbac5ed1e93234f5486d00f969ec06f062a317a6"
+    },
+    "manifest.json": {
+      "bytes": 12627,
+      "sha256": "62d76558ce5495cbe20b6315608b6717e00770c02d9759480d534b8446113a42"
+    },
+    "native-resources-cp936.original": {
+      "bytes": 2005,
+      "sha256": "730d7f4c4db55420b2bcf26c7b5c1a41be75039939941ec6647bf07be2abbad7"
+    },
+    "native-resources.json": {
+      "bytes": 2836,
+      "sha256": "ca64674c42c5dafc5055c280f6cf5f399d53c880f32d78dde6eab9e0dd96909f"
+    },
+    "native-result.json": {
+      "bytes": 18271,
+      "sha256": "d0a869705797ad64d0a0ab1b67742d86ce207194849479901e06b82874573ea6"
+    },
+    "provision.py": {
+      "bytes": 2344,
+      "sha256": "0984f96f95855f6a26fe710e8981294ae9bfdbc82f6de122ca981db78660de7d"
+    },
+    "run-native.py": {
+      "bytes": 4117,
+      "sha256": "93b51eeb90447d58a6ad560b197dd4bea2c5c52dc1fedaf7ce5c40512f4117ce"
+    },
+    "run-tcg.py": {
+      "bytes": 1906,
+      "sha256": "94b5570b4f917b8b4d460445b2d13bdd94292222c91b27cd991640fdac2c90ac"
+    },
+    "select-mcp.py": {
+      "bytes": 3873,
+      "sha256": "99ea1ef3f6ea6fd211254411bbeb9fb8b2d293540c8452d2fc9b40a2aef0bf7d"
+    },
+    "tcg/apt-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "tcg/apt-install.stdout": {
+      "bytes": 29217,
+      "sha256": "1fb67fb8072758738b57682f8d158c36d388af6ff7f6ac40e1045c364ee248d3"
+    },
+    "tcg/apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/apt-update.stdout": {
+      "bytes": 1635,
+      "sha256": "2bad36d1dca51e26ec94dbad8836bfff61f10022cdbda8151c2cbf76a06d3637"
+    },
+    "tcg/os.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/os.stdout": {
+      "bytes": 400,
+      "sha256": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763"
+    },
+    "tcg/outer-controls.json": {
+      "bytes": 244,
+      "sha256": "15cc8d7c83c3e4a22d1168f6d922717ecb8088ca3e88834f54200b67561640f7"
+    },
+    "tcg/outer-metadata.json": {
+      "bytes": 134,
+      "sha256": "3c9c7d15de10e4e792b2f26918f34ebca89e060197c72cc2222688d668e36dc4"
+    },
+    "tcg/qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/qemu-policy.stdout": {
+      "bytes": 414,
+      "sha256": "bdfd3bb703abb8d4c1bc4cd53897f4c111e5ef2a528c22d4f7a08c623d0a2bda"
+    },
+    "tcg/qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "tcg/resources-cp936.original": {
+      "bytes": 683,
+      "sha256": "80e65f783554b5a78ccec56d5ec1a45233499c721bec98f866d1dea0034ec6a0"
+    },
+    "tcg/resources.json": {
+      "bytes": 2085,
+      "sha256": "14c8ae79cb1af192532c07a1eed831b542d4e40a01eec2d439bb48fbc1379a49"
+    },
+    "tcg/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/runner.stdout": {
+      "bytes": 108,
+      "sha256": "7f269d841873ab9af48c31ee42bc9c82eff53aed7ca949096a4c7708b95b8c10"
+    },
+    "tcg/serial.log": {
+      "bytes": 81890,
+      "sha256": "fa5d325bab9635c17dfdc405801e01b195858f17fdfb8eeebcf8273b36101bc9"
+    },
+    "tcg/tcg-result-wrong-path.empty": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/tcg-result.json": {
+      "bytes": 23506,
+      "sha256": "95b3efffde0d48093f357bf540b9702c303ecf643c42f8fa09b0b199f0b1d2a8"
+    },
+    "tcg/used-component-tcg-guest.py": {
+      "bytes": 5766,
+      "sha256": "69327152c2c9aa68c2ae381880793e69dadf0215d6a7441718c37c080112eaa0"
+    },
+    "tcg/used-run-component-tcg.py": {
+      "bytes": 5680,
+      "sha256": "83f4eb98ddc84b4ba1af7de8751530ff63b05892dd41e8879fc3f18934710cd1"
+    },
+    "measurement.mjs": {
+      "bytes": 10186,
+      "sha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa"
+    },
+    "summary.json": {
+      "bytes": 18118,
+      "sha256": "618cd2dfb07909abb084c2e0507315ab17dd7ee2e043d6bb06dd3b36c2b5b16b"
+    }
+  }
+}

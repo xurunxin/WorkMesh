@@ -152,7 +152,7 @@ for (const name of applicationServices) {
     `${name} must use its explicit required full-image reference`,
   )
   assert(
-    service.healthcheck?.test?.includes('/app/healthcheck.mjs'),
+    service.healthcheck?.test?.includes('/app/healthcheck.sh'),
     `${name} must define its own healthcheck`,
   )
 }

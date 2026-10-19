@@ -1,0 +1,131 @@
+{
+  "说明": "CI549真实PG／S3灾备矩阵及恢复后API/Worker/MCP生产镜像smoke通过，不代离线安装三画像guest或完整重启。runner默认检出PR合成merge a39ca5a，实际checkout日志与Git API父/tree投影绑定；tree准确等于本分支38a8923。报告sourceBuildSha为测试夹具bbbb，不能当受测源码。只选七份根日志/报告，其他332成员未纳入所选原件；保完整下载ZIP摘要。",
+  "runId": 38710331571,
+  "job": {
+    "completed_at": "2026-10-15T09:10:23Z",
+    "conclusion": "success",
+    "id": 116340184245,
+    "name": "Complete disaster recovery",
+    "run_id": 38710331571,
+    "started_at": "2026-10-15T09:06:03Z",
+    "status": "completed"
+  },
+  "artifactId": 11960875998,
+  "workflowHead": "38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428",
+  "actualCheckout": {
+    "parents": [
+      "c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8",
+      "38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428"
+    ],
+    "sha": "a39ca5a600329797b7afe6c0fea46d997a3df520",
+    "tree": "ae9aac8747435c07b326da854e6d7c7161bdc4bd"
+  },
+  "branchTree": "ae9aac8747435c07b326da854e6d7c7161bdc4bd",
+  "fixtureSourceBuildSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "report": {
+    "schemaVersion": 1,
+    "status": "passed",
+    "startedAt": "2026-10-15T09:10:14.452Z",
+    "endedAt": "2026-10-15T09:10:15.823Z",
+    "manifestSha256": "5e21275b32c6a5f4ccee7ecbfa319ff14d59d70cc805706fede04f38758d022b",
+    "sourceBuildSha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "targetDatabaseCounts": [
+      {
+        "name": "workspaces",
+        "count": 1
+      },
+      {
+        "name": "artifacts",
+        "count": 1
+      },
+      {
+        "name": "artifact_upload_intents",
+        "count": 0
+      },
+      {
+        "name": "event_archive_segments",
+        "count": 1
+      },
+      {
+        "name": "provider_connections",
+        "count": 1
+      },
+      {
+        "name": "agent_webhook_secrets",
+        "count": 1
+      },
+      {
+        "name": "domain_events",
+        "count": 1
+      }
+    ],
+    "restoredObjectVersions": 3,
+    "restoredDeleteMarkers": 1,
+    "artifactObjectsVerified": 1,
+    "archiveObjectsVerified": 1,
+    "providerSecretsVerified": 1,
+    "webhookSecretsVerified": 1
+  },
+  "serviceSmoke": {
+    "schemaVersion": 1,
+    "status": "passed",
+    "startedAt": "2026-10-15T09:10:19.184Z",
+    "endedAt": "2026-10-15T09:10:19.307Z",
+    "checks": {
+      "apiReady": 200,
+      "workerReady": 200,
+      "mcpReady": 200,
+      "mcpInitialized": true,
+      "agentHeartbeat": 200,
+      "agentHeartbeatDurable": true
+    }
+  },
+  "artifactZipSha256": "63fc8fe1763ad1fdd24a351130a28a9c007b13e79941b974eb02eff88bb43991",
+  "selectedZipSha256": "0db467aab3331f57a196c9490960b60960d8dd17ce71bf2370ed0daa92b5a0aa",
+  "members": {
+    "build.log": {
+      "bytes": 37289,
+      "sha256": "1db9e2a7c5bd0abcb66d45bd1996ceab012bd2696297bd8b17c319be04ae9bcc"
+    },
+    "infrastructure.log": {
+      "bytes": 4274,
+      "sha256": "d0e6667238f3b9bdc64b44d9663b99719c23966958a594893d6ee7e36c92ba3c"
+    },
+    "install.log": {
+      "bytes": 615,
+      "sha256": "e882540ff29b44ef2ab08486dbb759afa8190d82c53e242e883222aae778efd8"
+    },
+    "recovery-integration.log": {
+      "bytes": 847,
+      "sha256": "6dadec4571bb1d534dc8b13fcaddb100dfa5d91556b4782cb812f1ff0cfc75c1"
+    },
+    "recovery-report.json": {
+      "bytes": 956,
+      "sha256": "66f4be97701ddc124a76f61b1ce50fba5b8e71d51f7a0ba4ee37d84d276cbff2"
+    },
+    "recovery-service-smoke.json": {
+      "bytes": 305,
+      "sha256": "74391e9abaf634b016161fe479de09d3fb95b6dde94c2d1d8b31de4283b408ae"
+    },
+    "recovery-service-smoke.log": {
+      "bytes": 374,
+      "sha256": "d6763f5d7c8426ca9eac3a6b666472e033500daf77c530a3016ca7f7dd6554c9"
+    },
+    "checkout-commit-projection.json": {
+      "bytes": 199,
+      "sha256": "0955e6fe444db38112124568537c7b9e496e2821740d3bdfd4c9fdf0648863be"
+    },
+    "job-projection.json": {
+      "bytes": 195,
+      "sha256": "8b1cf3b85510ab8ae0fbb4d408acb1e95efd75a6cd921ba5d40e65bddeed150b"
+    },
+    "branch-source.txt": {
+      "bytes": 123,
+      "sha256": "b031602c8cb9121024781222d96f411e720a09b777c858166c057f0f8a125e46"
+    },
+    "checkout-log-facts.json": {
+      "bytes": 385,
+      "sha256": "c7135d8a95e4e4dbc1a7f99b6a43d46eb12707c72c94544dbe245f6f657da24d"
+    }
+  }
+}

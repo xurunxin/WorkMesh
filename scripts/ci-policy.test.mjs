@@ -5,11 +5,62 @@ import { readFileSync, mkdtempSync, mkdirSync, writeFileSync } from 'node:fs'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { validateServerInstallEntrypoint } from './ci-policy.mjs'
 import { parse } from './ci-bootstrap/yaml.mjs'
 
 const workspaces = readWorkspaces()
 const classify = (paths, options) => classifyChanges(paths, workspaces, options)
 const results = plan => Object.fromEntries(['changes', ...checkIds].map(id => [id, { result: id === 'changes' || plan.checks[id] ? 'success' : 'skipped' }]))
+
+test('实际CI校验入口消费完整生产者与guest图及固定工件下载', () => {
+  const result = spawnSync(process.execPath, [fileURLToPath(new URL('./validate-ci.mjs', import.meta.url))], { encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stderr || result.stdout)
+  assert.match(result.stdout, /\[ci:validate\] OK: 12 jobs/)
+})
+
+test('amd64候选只构建一次，三个画像guest全部必需且延期ARM不影响连接器', () => {
+  const jobs = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs
+  const original = { job: jobs['server-install'], build: jobs['server-build'] }
+  assert.deepEqual(validateServerInstallEntrypoint(original.job, original.build), [])
+  assert.ok(jobs['required-ci'].needs.includes('server-build'))
+  for (const mutate of [
+    value => { value.build.strategy.matrix.include.pop() },
+    value => { value.job.strategy.matrix.arch.pop() },
+    value => { value.job.strategy.matrix.profile = value.job.strategy.matrix.profile.replace(',"enterprise"', '') },
+    value => { value.job.strategy.matrix.profile = value.job.strategy.matrix.profile.replace('["team"]', '["personal"]') },
+    value => { value.job.strategy.matrix.exclude = [{ arch: 'amd64', profile: 'team' }] },
+    value => { value.build.strategy.matrix.include.push({ arch: 'arm64', runner: 'ubuntu-24.04-arm' }) },
+    value => { value.job.strategy.matrix.arch.push('arm64') },
+    value => { delete value.build.env.PYTHONDONTWRITEBYTECODE },
+    value => { delete value.job.env.PYTHONDONTWRITEBYTECODE },
+    value => { value.job.steps = value.job.steps.filter(step => step.name !== 'Execute installed configuration in full guest') },
+    value => { value.job.steps.find(step => step.name === 'Execute installed configuration in full guest').if = 'false' },
+    value => { const step = value.job.steps.find(step => step.name === 'Execute installed configuration in full guest'); step.run = step.run.replace("'${{ inputs.native-diagnostic }}' = true", "true = true") },
+    value => { value.build.steps.find(step => step.name === 'Build immutable offline candidate')['continue-on-error'] = true },
+    value => { value.job.steps.find(step => step.name === 'Verify producer manifest digest').if = 'false' },
+    value => { value.job.steps.find(step => step.name === 'Download immutable architecture candidate').with['artifact-ids'] = 'other-artifact' },
+    value => { value.job.env.CANDIDATE_SHA = 'unbound' },
+    value => { value.build.outputs['digest-amd64'] = '${{ steps.binding.outputs.digest-arm64 }}' },
+    value => { value.build.outputs['digest-arm64'] = '${{ steps.binding.outputs.digest-arm64 }}' },
+    value => { value.job.needs = ['changes'] },
+    value => { value.job.steps.find(step => step.name === 'Execute installed configuration in full guest').run += ' --profile personal' },
+    value => { const step = value.job.steps.find(step => step.name === 'Execute installed configuration in full guest'); step.run = step.run.replace("--profile '${{ matrix.profile }}'", '') },
+    value => { const steps = value.job.steps; const left = steps.findIndex(step => step.name === 'Verify producer manifest digest'); const right = steps.findIndex(step => step.name === 'Execute installed configuration in full guest'); [steps[left], steps[right]] = [steps[right], steps[left]] },
+  ]) {
+    const invalid = structuredClone(original); mutate(invalid)
+    assert.ok(validateServerInstallEntrypoint(invalid.job, invalid.build).length)
+  }
+  for (const input of ['scripts/server-distribution/install.mjs', 'packages/config/src/deployment-profile.ts', 'apps/api/src/server.ts']) {
+    const plan = classify([input])
+    for (const id of ['server-build', 'server-install']) {
+      assert.equal(plan.checks[id], true)
+      for (const result of ['failure', 'skipped', 'cancelled']) {
+        const needs = results(plan); needs[id].result = result; assert.ok(evaluateResults(plan, needs).length)
+      }
+    }
+  }
+})
 
 test('自包含双架构完整安装不可丢 leg、跳过或吞失败', () => {
   const job = parse(readFileSync(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8')).jobs['connector-install']

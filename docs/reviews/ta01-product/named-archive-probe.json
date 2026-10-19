@@ -1,0 +1,46 @@
+{
+  "sourceHead": "b670f3d0a468aa51a75ccbf2b77ec8aba79a8c7d",
+  "experiment": "真实 Docker 双镜像带标签导出，流式读取元数据，无额外 tar 副本",
+  "references": {
+    "workmesh-server/archive-probe-installer:ta01-ci516": "sha256:fcb4b553a31aded073bc7df79a56399df44e4615cd025ac67ecc0deac00ba065",
+    "workmesh-server/archive-probe-mcp:ta01-ci516": "sha256:f7cc3e1a07f683aa31a27f78328fe373be5753abda221ebb8a60fcd3ef3fa7bd"
+  },
+  "index": {
+    "schemaVersion": 2,
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "manifests": [
+      {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "digest": "sha256:fcb4b553a31aded073bc7df79a56399df44e4615cd025ac67ecc0deac00ba065",
+        "size": 2225,
+        "annotations": {
+          "io.containerd.image.name": "docker.io/workmesh-server/archive-probe-installer:ta01-ci516",
+          "org.opencontainers.image.ref.name": "ta01-ci516"
+        }
+      },
+      {
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "digest": "sha256:f7cc3e1a07f683aa31a27f78328fe373be5753abda221ebb8a60fcd3ef3fa7bd",
+        "size": 1768,
+        "annotations": {
+          "io.containerd.image.name": "docker.io/workmesh-server/archive-probe-mcp:ta01-ci516",
+          "org.opencontainers.image.ref.name": "ta01-ci516"
+        }
+      }
+    ]
+  },
+  "manifestConfigIds": [
+    "blobs/sha256/1bb9723ad5448993fd942efed6daccfd7ac889495571c87525673c9f780a1939",
+    "blobs/sha256/24b3e07e41d739359803117144d87d359e200cb0b79840d7298a94e98ed1351b"
+  ],
+  "repoTags": [
+    [
+      "workmesh-server/archive-probe-installer:ta01-ci516"
+    ],
+    [
+      "workmesh-server/archive-probe-mcp:ta01-ci516"
+    ]
+  ],
+  "resourceBoundary": "两项本任务新标签指向已导入候选内容；镜像和共享层保留，未删其他资源。",
+  "result": "两个镜像均在 OCI index 和 classic manifest 中，不代完整 guest 验收"
+}

@@ -1,0 +1,54 @@
+{
+  "nodeSyntax": "passed",
+  "pythonAst": "passed",
+  "archivePairs": 11,
+  "archiveMembers": 202,
+  "firstCaseGitBindings": {
+    "mcp-component-probe.mjs": {
+      "gitAc0Sha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa",
+      "actualFirstCaseSha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa",
+      "gitBytesEqualUsed": true
+    },
+    "component-tcg-guest.py": {
+      "gitAc0Sha256": "a905ac52ff12bedf99bc18b1e6b2995dfdfd2a1b48708cdc80f918176b40d4a3",
+      "actualFirstCaseSha256": "a905ac52ff12bedf99bc18b1e6b2995dfdfd2a1b48708cdc80f918176b40d4a3",
+      "gitBytesEqualUsed": true
+    },
+    "run-component-tcg.py": {
+      "gitAc0Sha256": "c4bf40c7c60d5edbb739b50e7e680e51edb606e9af3f7c0b97f2c74439d2a676",
+      "actualFirstCaseSha256": "c4bf40c7c60d5edbb739b50e7e680e51edb606e9af3f7c0b97f2c74439d2a676",
+      "gitBytesEqualUsed": true
+    }
+  },
+  "rootFiveLocalRerun": false,
+  "说明": "本轮本机静态检查及准确原件核验，不代真实完整产品验收或根因修复。",
+  "commands": [
+    "node --check docs/reviews/ta01-product/tools/mcp-component-probe.mjs",
+    "node --check docs/reviews/ta01-product/tools/mcp-startup-probe.mjs",
+    "Python AST：tools下三个.py",
+    "pnpm ci:validate",
+    "pnpm check:integration-docs",
+    "git diff --check"
+  ],
+  "environment": {
+    "os": "Windows",
+    "node": "22.19.0",
+    "pnpm": "9.15.4",
+    "python": "3.11.15"
+  },
+  "selectedZipSha256": "ddb575986c290efd1b2b065b90419b5d0bceecff6048cb8f05e1cb7e66f348ff",
+  "members": {
+    "mcp-tcg-verification.json": {
+      "bytes": 967,
+      "sha256": "236d161efc2ad74cd3c39605949eb12f882dc416210335ec24b57b18f2b46dba"
+    },
+    "mcp-tcg-ci-check.log": {
+      "bytes": 4604,
+      "sha256": "68753954a8a5d933ab84518c833e4f0067cb66ace7776be17497adf299cfe755"
+    },
+    "mcp-tcg-docs-check.log": {
+      "bytes": 300,
+      "sha256": "2c72d696e9457356583028dc542767ab41b77310153bfea19666938fef6b550b"
+    }
+  }
+}

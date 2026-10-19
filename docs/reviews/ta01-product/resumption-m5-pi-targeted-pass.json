@@ -1,0 +1,79 @@
+{
+  "说明": "同一M5 Pi链定向复验通过、其余22项按-t未执行；不是完整integration、不关闭首轮未知原因，3容器3卷已收尾。首次临时入口缺npm_execpath在资源创建前拒绝；补准确已有pnpm.cjs后运行，锁定工具断言未改。",
+  "sourceHead": "6c20a93c3d7113d2750b8b6265abb06f28283b04",
+  "owner": "workmesh-docs-9db7eca6-213d-4345-9749-8abddf76c900",
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-15T00:32:58.081Z",
+      "endedAt": "2026-10-15T00:33:21.134Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-15T00:33:23.349Z",
+      "endedAt": "2026-10-15T00:33:24.925Z",
+      "exitCode": 0
+    },
+    {
+      "label": "m5-targeted-reproduction",
+      "command": "pnpm -C packages/conformance exec vitest run --config vitest.integration.config.ts src/joint-clients.conformance.test.ts -t 两个实际Pi Connection",
+      "startedAt": "2026-10-15T00:33:24.929Z",
+      "endedAt": "2026-10-15T00:35:39.374Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "5193407f89876e58785156cfd2d3cf071202b9e657c0f7ca0b80e25c16ec01e9",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "8a781335e8d0f945d4087ca90dbcedc49c5b5d22fe183c078ea3e882cf0e48f5",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "d15541cc5fb103567026f6a44dffc360ba2343419f9f155ea6397940b6377a56",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-9db7eca6-213d-4345-9749-8abddf76c900-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-9db7eca6-213d-4345-9749-8abddf76c900-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-9db7eca6-213d-4345-9749-8abddf76c900-s3-data",
+      "absent": true
+    }
+  ],
+  "members": {
+    "results.json": {
+      "bytes": 3165,
+      "sha256": "27059570c32a267ea0eae09d6cf08cf41b9bb250b165fbdd603b27d85bf8f2e2"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "c46258e3b8700a4f716a034b15466399e5b3c817bc8e3a189b8bfa55490f0645"
+    },
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "m5-targeted-reproduction.log": {
+      "bytes": 14798,
+      "sha256": "e79ae1567247f2346ce49ebe4b89b82789ff4dc2cb668fe54f399e2fdfabf845"
+    }
+  },
+  "selectedZipSha256": "814f6fbf73933721a54410e89b54e22791499f2fc1bd241a7838f420c9c57f03"
+}

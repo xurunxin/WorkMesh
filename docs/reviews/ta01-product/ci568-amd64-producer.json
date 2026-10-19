@@ -1,0 +1,89 @@
+{
+  "sourceHead": "8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b",
+  "sourceTree": "a280ef4bad31f6065af72d1403d3060b8a254ca7",
+  "runId": 39160943688,
+  "runNumber": 568,
+  "jobId": 117774122752,
+  "jobConclusion": "success",
+  "artifactId": 12149027495,
+  "rawZipSha256": "ef683552b8f34513346991353040076b4dfe197438dc214bc59817086fd02820",
+  "candidateArtifactId": 12149455692,
+  "manifestSha256": "0600e39bd4bbd1b4be8ad1b5692e5983f5b4f045c16f04b139f2edcfa8807468",
+  "tools": {
+    "producerNode": "v22.19.0",
+    "producerDocker": "Docker version 28.0.4, build b8034c0",
+    "installerNode": "v22.19.0",
+    "installerDocker": "Docker version 27.3.1, build ce1223035ac3ab8922717092e63a184cf67b493d",
+    "installerCompose": "Docker Compose version v2.31.0",
+    "pgDump": "pg_dump (PostgreSQL) 16.15",
+    "pgRestore": "pg_restore (PostgreSQL) 16.15"
+  },
+  "inputPathsMatchGit": [
+    "scripts/server-distribution/archive.mjs",
+    "scripts/server-distribution/build.mjs",
+    "scripts/server-distribution/config.example.json",
+    "scripts/server-distribution/configuration.mjs",
+    "scripts/server-distribution/core_metadata.py",
+    "scripts/server-distribution/core_pipe.py",
+    "scripts/server-distribution/diagnostics.mjs",
+    "scripts/server-distribution/failure-recovery.mjs",
+    "scripts/server-distribution/guest.py",
+    "scripts/server-distribution/install.mjs",
+    "scripts/server-distribution/install.sh",
+    "scripts/server-distribution/install.test.mjs",
+    "scripts/server-distribution/journal.mjs",
+    "scripts/server-distribution/manifest.mjs",
+    "scripts/server-distribution/mcp-response.mjs",
+    "scripts/server-distribution/measure.mjs",
+    "scripts/server-distribution/native_diagnostic.py",
+    "scripts/server-distribution/native_diagnostic_test.py",
+    "scripts/server-distribution/run.py",
+    "scripts/server-distribution/verify-files-worker.mjs",
+    "infra/docker/server-installer.Dockerfile",
+    "packages/config/src/deployment-profile.ts"
+  ],
+  "sourceCommitMatchesGit": true,
+  "runtimeFingerprintSameAsE276": true,
+  "toolsMatchE276": true,
+  "dependencyIdsMatchE276": true,
+  "scope": "仅生产者、单元及交接原件；三guest和Required终态另见ci568-observed-status.json，不关闭139",
+  "selectedZipSha256": "dfae6a7b6fc8b4b8f5883a7fa4b8cba16686909138302a0fff1d82d868c3c693",
+  "members": {
+    "server-build/build.log": {
+      "bytes": 68751,
+      "sha256": "9b1d8e83c04e63d6c6bee7df2c409af7291a72a0e494512324c20badb3b6c39e"
+    },
+    "server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "e5a2550efed3343eb3536025aa752df64a45ace17c3ed1d7c08b115270ab4380"
+    },
+    "server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "00cd0bd305ef8f5dd4eb1d41ac6ca2c918638436ae94fd4d489649fe431950b1"
+    },
+    "server-build/manifest.json": {
+      "bytes": 12627,
+      "sha256": "0600e39bd4bbd1b4be8ad1b5692e5983f5b4f045c16f04b139f2edcfa8807468"
+    },
+    "server-build/native-privacy.log": {
+      "bytes": 159,
+      "sha256": "c17e7a156be3698d4e4ae05103d65919629c77fc37cef262813394b75c9bb93f"
+    },
+    "server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "a21adddc9924606694b0f334b86222416af7e1301f4ff5ea0955e379e2aecd6d"
+    },
+    "server-build/source-commit.txt": {
+      "bytes": 253,
+      "sha256": "1811bebed9e51eb3a391de2f8e87090909c06b64d5f33b813d5b01eb123afa19"
+    },
+    "server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "a21adddc9924606694b0f334b86222416af7e1301f4ff5ea0955e379e2aecd6d"
+    },
+    "server-build/unit.log": {
+      "bytes": 4034,
+      "sha256": "da606001fcd1da4b87b2b07df84a743d5feeb8749bb14a96f0308b8758b2e0fb"
+    }
+  }
+}

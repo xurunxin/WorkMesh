@@ -177,6 +177,8 @@ services:
       S3_REGION: ${S3_REGION:-us-east-1}
     mem_limit: 64m
     logging: *logging
+    tmpfs:
+      - /data:rw,nosuid,nodev,size=16m
     restart: "no"
 
   migrate:
@@ -244,7 +246,7 @@ services:
     mem_limit: 640m
     logging: *logging
     healthcheck:
-      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3001/readyz"]
+      test: ["CMD", "sh", "/opt/workmesh/api/healthcheck.sh", "http://127.0.0.1:3001/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12
@@ -299,7 +301,7 @@ services:
     mem_limit: 448m
     logging: *logging
     healthcheck:
-      test: ["CMD", "node", "/opt/workmesh/api/healthcheck.mjs", "http://127.0.0.1:3003/readyz"]
+      test: ["CMD", "sh", "/opt/workmesh/api/healthcheck.sh", "http://127.0.0.1:3003/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12

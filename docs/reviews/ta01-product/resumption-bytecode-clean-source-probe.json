@@ -1,0 +1,26 @@
+{
+  "说明": "准确新测试在独有源码副本中复现未忽略研究助手缓存；仅关闭字节码后无缓存。此为构建前源码脏的可复现原因，不是安装或MCP产品通过。",
+  "withBytecode": {
+    "exitCode": 0,
+    "caches": [
+      "docs/reviews/b-ship/tcg/tools/__pycache__/run.cpython-311.pyc",
+      "scripts/server-distribution/__pycache__/native_diagnostic.cpython-311.pyc",
+      "scripts/server-distribution/__pycache__/run.cpython-311.pyc"
+    ],
+    "researchCacheIgnored": false,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "4a203f958ef9d765ff1f89816631e1bdf553b4acf1d56449f1d10ad92bb46ff3"
+  },
+  "withoutBytecode": {
+    "exitCode": 0,
+    "cacheCount": 0,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "4a203f958ef9d765ff1f89816631e1bdf553b4acf1d56449f1d10ad92bb46ff3"
+  },
+  "inputs": {
+    "scripts/server-distribution/run.py": "58e5f25dd4ad89599f98e47d34ff603275998d1f8f2276e680f1a89dfed39ce5",
+    "scripts/server-distribution/native_diagnostic.py": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e",
+    "scripts/server-distribution/native_diagnostic_test.py": "31871f6c966a2c5ac7677e500770d1b70112098bd537178da4b2ffe0ed5f3828",
+    "docs/reviews/b-ship/tcg/tools/run.py": "d7e56b6924177c8bde0d896b09bac217d529c73b78ca5de6d26b28b83f5132ea"
+  }
+}

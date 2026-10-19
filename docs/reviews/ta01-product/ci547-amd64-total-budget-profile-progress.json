@@ -1,0 +1,109 @@
+{
+  "说明": "4vCPU／4GiB完整模式达到原150分钟总期限，result无回执。serial固定标记只证明所列阶段：health-ready／business-committed不代画像完整闭环；profile-completed不代整机重启。不得由其他启动行补通过，不认定CPU为因或MCP139修复。",
+  "runId": 38674495529,
+  "jobId": 116225087450,
+  "artifactId": 11951140418,
+  "sourceHead": "066351bc64e2fc816c2d12ebc5e3efabed326a5d",
+  "sourceTree": "4053a294aedbc2918357c09b47564ad74bb110af",
+  "status": "failed",
+  "errorType": "TimeoutError",
+  "totalSeconds": 9001.176792567,
+  "guestVcpus": 4,
+  "guestRamMiB": 4096,
+  "manifestSha256": "f60633959963441946b2f24b2a2249651e5aafc689538b97ee4155ec29b55481",
+  "scripts": {
+    "native_diagnostic.py": "8125afe5cefc47f57884946824c3f20ea34a6c677572efb953d101a7d04c4e8d",
+    "run.py": "3a7a98e784aa4d9c15ff728485f07c233b216655577d48577759bde1e72ec40e",
+    "native_diagnostic_test.py": "c94acb51651abe645638bfff397d085e13ba786c94ee716a72a8096e8755d29a",
+    "guest.py": "5bf15cb12e9faeee5ba6adc5ff517cd9a30a6b30a4adc451692a49b540675141",
+    "core_pipe.py": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c"
+  },
+  "progress": [
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "health-ready"
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "business-committed"
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "profile-completed"
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "team",
+      "stage": "health-ready"
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "team",
+      "stage": "business-committed"
+    }
+  ],
+  "receipts": [],
+  "artifactZipSha256": "5a9046cddf6fa3d1d485b34db275aae8f5d75ee9cdf0f6099cf9043e23c376a4",
+  "selectedZipSha256": "940054805b9192ceb90a9bf4d94cea99b9e88ef14c8465bcf5d9e90ae908f2ba",
+  "members": {
+    "server-install/build.log": {
+      "bytes": 68236,
+      "sha256": "7d2353a4fe1e0f6ce23c352b4a5449005070a8baa19de277daf184bb2276dd1b"
+    },
+    "server-install/guest.log": {
+      "bytes": 396,
+      "sha256": "bd60eb498e624130776054a19512f1da4b84e9f84d0accfe5a3ae325147d0e69"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2174,
+      "sha256": "e24216d87d868647e34a258e7cb7cfbcc7d5a40054ada4b332459732e619071c"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "96fe7df1d819b3a86f61875dd12267a75b899b375524254c533128a38e1bfd98"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12627,
+      "sha256": "f60633959963441946b2f24b2a2249651e5aafc689538b97ee4155ec29b55481"
+    },
+    "server-install/native-privacy.log": {
+      "bytes": 106,
+      "sha256": "3d05864adaa7a067c6dd8f488b76741afad7cdf90e6cdbe6566339424de57b0f"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 69,
+      "sha256": "7a25719a51a8aa61c0d13555b4255a08e4911c2828fa1cdaa3654a6b2a73659f"
+    },
+    "server-install/result.json": {
+      "bytes": 3360,
+      "sha256": "4ecd22da85b9d71514c2446400821cf5de33bfcb70c35b6e9f0c0d9df5259b19"
+    },
+    "server-install/serial.log": {
+      "bytes": 102125,
+      "sha256": "033dc75dda6ceca5de1dd83727402368463af89cc898427b6b37021f75955a56"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "a837a8ff11c963bc79fb3b5d21592ddc34ce878c194255557de1b068da676907"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 259,
+      "sha256": "381a6ae6173434078c2e8dd469dab8db8e2a244d3e888a5f84cee540561705a2"
+    },
+    "server-install/source-install.log": {
+      "bytes": 615,
+      "sha256": "898f2a0b3e2a2b261265f8a573795995bcd8dbabfdcc300d6a3a5a1521094654"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "a837a8ff11c963bc79fb3b5d21592ddc34ce878c194255557de1b068da676907"
+    },
+    "server-install/unit.log": {
+      "bytes": 3302,
+      "sha256": "a8333600f0e15239c68e83be990a423a11a5bc0e81c2f1c8c895ae0cf9da0b62"
+    }
+  }
+}

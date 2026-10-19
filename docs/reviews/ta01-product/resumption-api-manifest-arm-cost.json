@@ -1,0 +1,334 @@
+{
+  "说明": "真实CI566个人ARM API耗时后的一次同源manifest纯函数基线；旧CI565 MCP角色的ARM Node，不是当前API镜像或真实请求。三次样本不作根因排除或SQL时间相减。",
+  "sourceBaseHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+  "roleSourceHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+  "roleEvidence": "resumption-mcp-arm-path-probe.json",
+  "realWindowEvidence": "ci566-arm64-personal-first-failure.json",
+  "sourceFiles": {
+    "packages/contracts/src/index.ts": "93c89d33c0d9d518b1a58754bd3424539f49cb86e278f107a94d441343bbfa95",
+    "packages/contracts/src/agent-discovery.ts": "171c6625ea294162cd8f19cac023aeeed5bb3acfc6a53903308afe885a0e4334",
+    "packages/config/src/index.ts": "08bebea054b76d902984a70afd153d174b2297f58332d7700ad0eba4cb0dc6e7",
+    "apps/api/src/client-profile.ts": "cc4f4efd8a732daa0fe14e405b7f886054d3f98e36705eb47545034d16a0d51a",
+    "apps/api/src/agent-connections.ts": "e127accfa4a0b750b09fb1231689915ed1f60443195cdc3a358bebb1a9af95fd",
+    "scripts/server-distribution/guest.py": "50f14839120b909f0422d95d801f1351c5639a5f00d7936fb54ef24b89844706"
+  },
+  "unchangedAlgorithmSource": true,
+  "nodeVersion": "22.19.0",
+  "nodeSha256": "da2abd2c48f19561e35478d51583b068ab410f888a09f363bd131ab611392cb7",
+  "measurementSha256": "7026d7d6fff0d71e781037901dd1642342e790e4b92828c2b926644b614fb0d4",
+  "rootfsSha256": "87c2d518dc4101b51cca10ecceba69a613adca7773ac0dc5f66591411cba9b59",
+  "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+  "qemuBinarySha256": "b511b60cc31479b71dfdd589e6c981ae37b20ef0e75adc5a57bb0d6737e9b30c",
+  "firmwareSha256": "545e2eda871a00dba51c0df48a34829fe3b0de6ec10ea760c75f1fc1c6a29dc5",
+  "guestImageSha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+  "guestKernel": "6.8.0-142-generic",
+  "host": {
+    "qemuSha256": "b511b60cc31479b71dfdd589e6c981ae37b20ef0e75adc5a57bb0d6737e9b30c",
+    "kernel": "7.0.14-linuxkit",
+    "machine": "x86_64",
+    "activeQemuCount": 0,
+    "activeNodeCount": 0
+  },
+  "guestVcpus": 4,
+  "guestRamMiB": 4096,
+  "nodeExitCode": 0,
+  "qemuExitCode": 0,
+  "nodeSeconds": 27.954929903999982,
+  "guestSeconds": 974.2988300999859,
+  "probe": {
+    "mode": "api-manifest-pure-cost",
+    "fullProductAcceptance": false,
+    "executableSha256": "da2abd2c48f19561e35478d51583b068ab410f888a09f363bd131ab611392cb7",
+    "importMilliseconds": 6844.747088,
+    "runs": [
+      {
+        "iteration": 0,
+        "manifest": {
+          "elapsedMilliseconds": 879.8408000000018,
+          "cpu": {
+            "user": 762190,
+            "system": 405103
+          }
+        },
+        "qualified": {
+          "elapsedMilliseconds": 4196.042800000003,
+          "cpu": {
+            "user": 6215849,
+            "system": 4585572
+          }
+        },
+        "serialize": {
+          "elapsedMilliseconds": 213.34780799999862,
+          "cpu": {
+            "user": 177868,
+            "system": 315314
+          }
+        },
+        "bytes": 308929,
+        "operationCount": 287,
+        "responseSha256": "77987723e50012d97994ba318b9e026e8f451c6c7957a6892f8f1755a8142478"
+      },
+      {
+        "iteration": 1,
+        "manifest": {
+          "elapsedMilliseconds": 151.8623039999984,
+          "cpu": {
+            "user": 228003,
+            "system": 115582
+          }
+        },
+        "qualified": {
+          "elapsedMilliseconds": 1548.9069920000002,
+          "cpu": {
+            "user": 2045426,
+            "system": 1762670
+          }
+        },
+        "serialize": {
+          "elapsedMilliseconds": 185.6424960000004,
+          "cpu": {
+            "user": 276838,
+            "system": 304293
+          }
+        },
+        "bytes": 308929,
+        "operationCount": 287,
+        "responseSha256": "77987723e50012d97994ba318b9e026e8f451c6c7957a6892f8f1755a8142478"
+      },
+      {
+        "iteration": 2,
+        "manifest": {
+          "elapsedMilliseconds": 165.2915040000007,
+          "cpu": {
+            "user": 227522,
+            "system": 163486
+          }
+        },
+        "qualified": {
+          "elapsedMilliseconds": 890.0203999999976,
+          "cpu": {
+            "user": 520797,
+            "system": 558716
+          }
+        },
+        "serialize": {
+          "elapsedMilliseconds": 79.2445919999991,
+          "cpu": {
+            "user": 28256,
+            "system": 51100
+          }
+        },
+        "bytes": 308929,
+        "operationCount": 287,
+        "responseSha256": "77987723e50012d97994ba318b9e026e8f451c6c7957a6892f8f1755a8142478"
+      }
+    ],
+    "features": {
+      "WORKMESH_BETA_MODEL_PRESETS": false,
+      "WORKMESH_BETA_PLANNING": false,
+      "WORKMESH_BETA_TEMPLATES": false,
+      "WORKMESH_BETA_COSTS": false,
+      "WORKMESH_BETA_GITEA": true,
+      "WORKMESH_BETA_OPERATIONS_UI": false,
+      "WORKMESH_BETA_COORDINATION_MCP": true,
+      "WORKMESH_EXPERIMENTAL_AUTOMATION": false,
+      "WORKMESH_EXPERIMENTAL_AGENT_LOOPS": false,
+      "WORKMESH_EXPERIMENTAL_A2A": false,
+      "WORKMESH_EXPERIMENTAL_EXTERNAL_WEBHOOKS": false,
+      "WORKMESH_EXPERIMENTAL_NOTIFICATION_CHANNELS": false,
+      "WORKMESH_EXPERIMENTAL_MULTI_RUNTIME": false
+    },
+    "featureOverrides": {
+      "WORKMESH_BETA_COORDINATION_MCP": "true",
+      "WORKMESH_BETA_GITEA": "true"
+    },
+    "inputFacts": {
+      "capabilities": [
+        "work:read"
+      ],
+      "supportedProtocols": [
+        "mcp"
+      ],
+      "sessionState": "executing",
+      "sessionRevision": 1,
+      "identity": {
+        "actorId": "00000000-0000-4000-8000-000000000001",
+        "sessionId": "00000000-0000-4000-8000-000000000002",
+        "credentialMode": "coordination_connection",
+        "sessionKind": "coordination",
+        "delegationRole": "coordinator",
+        "delegationScopeType": "team"
+      },
+      "substituteUuids": true,
+      "exactReceivedGuestResponse": false
+    },
+    "databaseQueries": 0,
+    "httpRequests": 0,
+    "authenticationExecuted": false
+  },
+  "measuredPartsSumMilliseconds": [
+    5289.231408000003,
+    1886.411791999999,
+    1134.5564959999974
+  ],
+  "runtimeDependenciesAdded": false,
+  "preflight": "角色无config包，在Node/VM启动前按准确源码确认13个feature默认false，只开受测guest Coordination/Gitea；不安装新依赖或改产品，代用UUID/Revision1，不称实收响应。",
+  "limits": "仅实际公共函数的生成/资格/JSON.stringify；不含鉴权、SQL、HTTP、Fastify钩子、真实API进程/负载/生产entrypoint。宿主x86_64，没有原生ARM对照。模块导入单列，不加进每请求成本；CPU只属测量Node进程，非比例。308929字节为合成响应，不填真实响应大小。不能从真实21.62秒扣本基线作为SQL时间。",
+  "fullProductAcceptance": false,
+  "resources": {
+    "owner": "e6e168ee-8753-4745-b959-a7ae723a1ff2",
+    "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+    "repoDigests": [
+      "ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55"
+    ],
+    "containers": [
+      {
+        "id": "582fff5d3f0d05397dcbbc6ab83be04843727582cf257397e76c5e5cd204c861",
+        "purpose": "qemu provisioning; no guest started",
+        "exitCode": 137,
+        "oom": false,
+        "activeQemuCountBeforeStop": 0,
+        "activeNodeCountBeforeStop": 0,
+        "removedAndAbsent": true
+      }
+    ],
+    "scope": "仅三次同源manifest纯函数成本，无HTTP/认证/SQL；13默认关闭、只开启原guest的Coordination/Gitea；代用UUID/Revision1，非实收manifest或完整产品验收。",
+    "osExitCode": 0,
+    "apt-updateExitCode": 0,
+    "qemu-policyExitCode": 0,
+    "exactQemuPackageAvailable": true,
+    "aptInstallExitCode": 0,
+    "installedPackageRequests": [
+      "qemu-system-arm=1:8.2.2+ds-0ubuntu1.18",
+      "qemu-utils=1:8.2.2+ds-0ubuntu1.18",
+      "qemu-efi-aarch64=2024.02-2ubuntu0.10",
+      "ipxe-qemu=1.21.1+git-20220113.fbbdc3926-0ubuntu2",
+      "ipxe-qemu-256k-compat-efi-roms=1.0.0+git-20150424.a25a16d-0ubuntu5",
+      "genisoimage",
+      "python3",
+      "ca-certificates"
+    ],
+    "inputs": {
+      "node-rootfs.tar.gz": {
+        "bytes": 54416367,
+        "sha256": "87c2d518dc4101b51cca10ecceba69a613adca7773ac0dc5f66591411cba9b59"
+      },
+      "arm64.img": {
+        "bytes": 620224512,
+        "sha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55"
+      },
+      "node-sha256.txt": {
+        "bytes": 66,
+        "sha256": "a6ab60c78bda1977c34efc53b53853cc5fefcf5d597f3862bf84ec8f9c413b68"
+      },
+      "measurement.mjs": {
+        "bytes": 3543,
+        "sha256": "7026d7d6fff0d71e781037901dd1642342e790e4b92828c2b926644b614fb0d4"
+      },
+      "component-tcg-guest.py": {
+        "bytes": 5870,
+        "sha256": "4a0e9f097b50a9ec2922718ad00bb62804e65270f2a8fb6fd893911966f32e2e"
+      },
+      "run-component-tcg.py": {
+        "bytes": 6665,
+        "sha256": "7f80eed7c5888e2ad5680c62306582d4ecbecd6fd2924b3c4275b48b7c2ec019"
+      }
+    },
+    "sourceBaseHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+    "roleSourceHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+    "privateGuestOverlaysRetained": false,
+    "finishedAt": "2026-10-16T11:07:55.599031+00:00"
+  },
+  "nextStep": "下一项针对真实实时身份/授权事务与PG/调度的同源固定阶段测量；本组无准确产品修复，不改期限、实时资格或锁/持久化保证。",
+  "selectedZipSha256": "cab8be0681d2d719dc65dace9d8db3f3bd594cd0ad84a69430b6bea8ae69764d",
+  "members": {
+    "provision.py": {
+      "bytes": 2342,
+      "sha256": "42ec1daaf13445573e5acc6a04d1a4b5f93a9835e062463a49efa1448016e090"
+    },
+    "install.py": {
+      "bytes": 1970,
+      "sha256": "47f7f0649e8b111edd28d791697b0768d49abf05c6a8544db10cddbdb6bb0cfc"
+    },
+    "resources.json": {
+      "bytes": 2398,
+      "sha256": "99afcfcbad1104d6460783cce20db4063350baf590a423a682ddbd6448abbede"
+    },
+    "apt-install.stdout": {
+      "bytes": 29789,
+      "sha256": "7b377464260ad687a676be55e7a42c5f6417c804f6463959d803d1c1a01c230d"
+    },
+    "apt-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "qemu-version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "firmware-sha256.stdout": {
+      "bytes": 97,
+      "sha256": "8745d56657c5a07a8f78546b48de89ca97c155e5bd3460fe1dbe1685197e7789"
+    },
+    "rom-sha256.stdout": {
+      "bytes": 100,
+      "sha256": "7b4716a03c587a9aa0b33eef581858795960b928e2c7f554c75ef932efbba885"
+    },
+    "used-component-tcg-guest.py": {
+      "bytes": 5870,
+      "sha256": "4a0e9f097b50a9ec2922718ad00bb62804e65270f2a8fb6fd893911966f32e2e"
+    },
+    "used-run-component-tcg.py": {
+      "bytes": 6665,
+      "sha256": "7f80eed7c5888e2ad5680c62306582d4ecbecd6fd2924b3c4275b48b7c2ec019"
+    },
+    "runner.stdout": {
+      "bytes": 107,
+      "sha256": "86e2e38a822e5a01bc80efa87ab1f1a1a21ff18f478c2e02d6e62c6f592e5d23"
+    },
+    "runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runner-exit.json": {
+      "bytes": 17,
+      "sha256": "d45db54bba0c56e2691a52869729c0a3eade7f5d50545e7832a20e3262a9d422"
+    },
+    "result.json": {
+      "bytes": 6444,
+      "sha256": "3392ffdf121558f77f266bf098a179f04e6c7e1e148e901ed45b4215251ed8c8"
+    },
+    "serial.log": {
+      "bytes": 104294,
+      "sha256": "0b9d97e7e178d288e991622ebb2fdb6b560599b872c7fcfdf04923f7c6898487"
+    },
+    "qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "outer-metadata.json": {
+      "bytes": 177,
+      "sha256": "038a78652385b986a093ba2bf9d0c7dd7bc9f94bfdaf2f8fdf21009dcf7d9d2b"
+    },
+    "outer-controls.json": {
+      "bytes": 246,
+      "sha256": "0ae14fd0dfc7c5e288a919436ec39afc58d2064eb40876d2c9722cd2a01736dd"
+    },
+    "measurement.mjs": {
+      "bytes": 3543,
+      "sha256": "7026d7d6fff0d71e781037901dd1642342e790e4b92828c2b926644b614fb0d4"
+    },
+    "feature-default-source.txt": {
+      "bytes": 659,
+      "sha256": "fdb942b790bc5668219f8c0ffd3da6a696e7a297ed5de5cfa63d88c30f5f04b1"
+    },
+    "summary.json": {
+      "bytes": 9473,
+      "sha256": "018521749cab97de074661cd4886f280a9fec019fa629f30bcdea15159342eb5"
+    }
+  }
+}

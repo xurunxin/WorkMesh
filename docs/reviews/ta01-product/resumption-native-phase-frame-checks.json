@@ -1,0 +1,51 @@
+{
+  "说明": "新增帧链、handler开始UTC和调试器固定阶段投影，本机最终46项通过；CI559实际仍是f53原40项。旧45项源码及日志独立保留，不冒新路径已经自然捕获。",
+  "sourceHead": "f53f20b85e680a4219ae9f22a58ff37de58c37d8",
+  "sourceIsDirty": true,
+  "pythonTests": 46,
+  "astFiles": 6,
+  "logSourceBindings": {
+    "logs/public-frame-chain-timestamp.log": "中间45项通过日志，加入阶段标记前的完整源码字节未单独捕获",
+    "logs/public-frame-chain-phase-final.log": "最终46项日志，对应本ZIP六份源码成员"
+  },
+  "realGuest": "pending",
+  "members": {
+    "scripts/server-distribution/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "scripts/server-distribution/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    "scripts/server-distribution/guest.py": {
+      "bytes": 74486,
+      "sha256": "d7a7a176498f8805d74361ad29b8bb5854fbf9ac8729ad6bdeb92803f69580f8"
+    },
+    "scripts/server-distribution/native_diagnostic.py": {
+      "bytes": 11741,
+      "sha256": "c0f80cf555545af4264ca2f1a4167dad241811cf45acd5de52bd012adac819b5"
+    },
+    "scripts/server-distribution/native_diagnostic_test.py": {
+      "bytes": 53303,
+      "sha256": "05c140abd1d5d8639d22a4feb9cb011a30c3296ec950cfd236118df20c5d7e21"
+    },
+    "scripts/server-distribution/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    "logs/public-frame-chain-timestamp.log": {
+      "bytes": 149,
+      "sha256": "abed0049cb5aee0b4f54302c1ae7940cff168a5fd13fdd3cb3dae83567d6d7cd"
+    },
+    "logs/public-frame-chain-phase-final.log": {
+      "bytes": 150,
+      "sha256": "3797aff4ff951cb6b28aa934d5d83e76dcd4b4e2fc48e1c0f3f29e9bae5077d9"
+    },
+    "scope.json": {
+      "bytes": 1128,
+      "sha256": "920262dc931dcf96993b575b546dd8f88b2750750db3be898f9d7816f377d527"
+    }
+  },
+  "selectedZipSha256": "c1af186afc15c1dd04e510a4ec458e412696deb31c81cdc3bdd2163641005d73"
+}

@@ -1,0 +1,56 @@
+{
+  "说明": "由1a5e525旧runPostgresTool片段提取的真实Node22子进程实验；子进程只读32MiB文件开头64字节、退出0，原父进程未处理EPIPE后退出1。Windows错误原字节与CI不同，不倒填CI600字节具体阶段。首轮夹具使用package cwd下相对路径导致ENOENT，未进入工具；修正为脚本目录后复现。新实现用只读FD；4项真实子进程单元通过。首次类型检查nullable stdout／stderr失败、首次测试深比较大Buffer超时保留；显式检查pipe并改为同字节Buffer.equals后通过，原5秒预算未改。完整PG／guest仍待新候选验收。",
+  "sourceHead": "1a5e5252a9c306cd3fa61b03fbd58061a09b338f",
+  "originalSourceFileSha256": "752f8aadc7900fed1201368ab794e01cb24d0a896c022fc170c706af20d273b7",
+  "fixedSourceFileSha256": "cf689022a327ee8299c826869a0eccda0b505d36a7480b4ed5885a20d61c3af1",
+  "node": "v22.19.0",
+  "platform": "win32",
+  "originalProbeExitCode": 1,
+  "originalUnhandledEpipe": true,
+  "inputBytes": 33554432,
+  "logs": {
+    "pg-early-input-exit-original.stdout": {
+      "sha256": "01bcfd588aaacc104e4cf6ac8aea39a4abf2d30c5c80762d2960c6b9fd3bea3c",
+      "bytes": 533
+    },
+    "pg-early-input-exit-original.stderr": {
+      "sha256": "a67b42dfe0948a26946edbc756d1a56f2bc7f4cd7a2c136c218bc9356deade63",
+      "bytes": 797
+    },
+    "pg-early-input-exit-original-retry1.stdout": {
+      "sha256": "01bcfd588aaacc104e4cf6ac8aea39a4abf2d30c5c80762d2960c6b9fd3bea3c",
+      "bytes": 533
+    },
+    "pg-early-input-exit-original-retry1.stderr": {
+      "sha256": "40d70e09e75e96dbb10de5ebb142d96cd1a582dde459c59d47e527edf53dd741",
+      "bytes": 1103
+    }
+  },
+  "selectedZipSha256": "c94fe103706780c18b7594184bb3366b50e3dc876f5504dcf2d9586c79fe8a03",
+  "members": {
+    "pg-early-input-exit-original.stdout": {
+      "bytes": 533,
+      "sha256": "01bcfd588aaacc104e4cf6ac8aea39a4abf2d30c5c80762d2960c6b9fd3bea3c"
+    },
+    "pg-early-input-exit-original.stderr": {
+      "bytes": 797,
+      "sha256": "a67b42dfe0948a26946edbc756d1a56f2bc7f4cd7a2c136c218bc9356deade63"
+    },
+    "pg-early-input-exit-original-retry1.stdout": {
+      "bytes": 533,
+      "sha256": "01bcfd588aaacc104e4cf6ac8aea39a4abf2d30c5c80762d2960c6b9fd3bea3c"
+    },
+    "pg-early-input-exit-original-retry1.stderr": {
+      "bytes": 1103,
+      "sha256": "40d70e09e75e96dbb10de5ebb142d96cd1a582dde459c59d47e527edf53dd741"
+    },
+    "pg-early-input-exit-original.mts": {
+      "bytes": 2845,
+      "sha256": "231cf95f87c14bfaa6f5ff8bd41a679a5f5de85926054bf752323a6868a6c5ad"
+    },
+    "pg-early-input-owned-cleanup.json": {
+      "bytes": 500,
+      "sha256": "e8c50f4f7e8822c9b0385a149fe99abc2fff1b48daccf890c929c79ee030896b"
+    }
+  }
+}

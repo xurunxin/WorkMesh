@@ -1,6 +1,8 @@
 import { randomBytes } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 import { featureDefinitions } from '@workmesh/contracts'
+import * as runtimeMetadata from '@workmesh/contracts/runtime-metadata'
+import { releaseMetadata } from '@workmesh/contracts'
 import {
   loadConfig,
   loadFeatureConfig,
@@ -8,6 +10,11 @@ import {
   loadReleaseInfo,
 } from './index.js'
 import { validateRuntimeEnvironment } from './runtime-secrets.mjs'
+
+it('keeps runtime metadata identical through the lightweight and public entries', () => {
+  expect(runtimeMetadata.featureDefinitions).toBe(featureDefinitions)
+  expect(runtimeMetadata.releaseMetadata).toBe(releaseMetadata)
+})
 
 const bootstrapMaterial = randomBytes(32)
 const bootstrapToken = bootstrapMaterial.toString('base64url')

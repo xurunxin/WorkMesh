@@ -1,0 +1,280 @@
+{
+  "observedAt": "2026-10-18T23:35:19.027730+00:00",
+  "source": "执行者本轮GitHub CLI/API读取与原件字节核验，非正式独审结论",
+  "runId": 39169353227,
+  "runNumber": 570,
+  "sourceHead": "c7cf68aaf279f771a2022d37d69b5651cdb66ace",
+  "sourceTree": "d4e4c1e40e16dc8e05285269716c62426bb41b32",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/39169353227",
+  "jobs": [
+    {
+      "databaseId": 117798982028,
+      "name": "Classify changes and validate CI selection",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:07Z",
+      "completedAt": "2026-10-18T21:47:52Z"
+    },
+    {
+      "databaseId": 117799150748,
+      "name": "Agent construction and protocol smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:53Z",
+      "completedAt": "2026-10-18T21:48:54Z"
+    },
+    {
+      "databaseId": 117799150763,
+      "name": "Connector native storage (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:54Z",
+      "completedAt": "2026-10-18T21:51:00Z"
+    },
+    {
+      "databaseId": 117799150772,
+      "name": "API integration",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:54Z",
+      "completedAt": "2026-10-18T22:02:42Z"
+    },
+    {
+      "databaseId": 117799150773,
+      "name": "Connector full installation (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:56Z",
+      "completedAt": "2026-10-18T22:51:37Z"
+    },
+    {
+      "databaseId": 117799150782,
+      "name": "Worker integration",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:53Z",
+      "completedAt": "2026-10-18T21:55:20Z"
+    },
+    {
+      "databaseId": 117799150786,
+      "name": "Complete disaster recovery",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:54Z",
+      "completedAt": "2026-10-18T21:52:18Z"
+    },
+    {
+      "databaseId": 117799150788,
+      "name": "Connector full installation (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:53Z",
+      "completedAt": "2026-10-18T21:58:18Z"
+    },
+    {
+      "databaseId": 117799150793,
+      "name": "Database integration",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:53Z",
+      "completedAt": "2026-10-18T21:51:18Z"
+    },
+    {
+      "databaseId": 117799150808,
+      "name": "Server candidate (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:54Z",
+      "completedAt": "2026-10-18T21:57:02Z"
+    },
+    {
+      "databaseId": 117799150813,
+      "name": "Connector native storage (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:48:00Z",
+      "completedAt": "2026-10-18T21:51:10Z"
+    },
+    {
+      "databaseId": 117799150852,
+      "name": "Source gates",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:53Z",
+      "completedAt": "2026-10-18T22:03:18Z"
+    },
+    {
+      "databaseId": 117799150870,
+      "name": "Connector native storage (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:47:53Z",
+      "completedAt": "2026-10-18T21:49:45Z"
+    },
+    {
+      "databaseId": 117801087401,
+      "name": "Server full installation (amd64, team)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:57:04Z",
+      "completedAt": "2026-10-18T23:13:00Z"
+    },
+    {
+      "databaseId": 117801087468,
+      "name": "Server full installation (amd64, personal)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:57:04Z",
+      "completedAt": "2026-10-18T23:19:53Z"
+    },
+    {
+      "databaseId": 117801087484,
+      "name": "Server full installation (amd64, enterprise)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:57:04Z",
+      "completedAt": "2026-10-18T22:46:58Z"
+    },
+    {
+      "databaseId": 117818842379,
+      "name": "Required CI",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T23:19:55Z",
+      "completedAt": "2026-10-18T23:21:06Z"
+    }
+  ],
+  "manifestSha256": "360e2033a5eb72192c40b2a3a7ee6edec16a464fb58851fa2d8079eefccce98f",
+  "candidateArtifact": {
+    "id": 12152451241,
+    "name": "server-distribution-amd64-39169353227-1",
+    "digest": "sha256:34232d14ff99ace33cf46477d6ea18ee78b03331dde8ccfbf10ee1921859d5bd",
+    "size_in_bytes": 427794541,
+    "expired": false,
+    "created_at": "2026-10-18T21:56:58Z"
+  },
+  "guestProofs": [
+    {
+      "profile": "personal",
+      "jobId": 117801087468,
+      "status": "passed",
+      "totalSeconds": 4893.66792641,
+      "rebootSeconds": 249.82058467099978,
+      "rawArtifact": {
+        "id": 12154815070,
+        "name": "server-install-raw-amd64-personal-39169353227-1",
+        "digest": "sha256:51aef69b94723e8d7c84bb8f01851e59fba9967b2f5cbda49731988fe4b8ea89",
+        "size_in_bytes": 2403848,
+        "expired": false,
+        "created_at": "2026-10-18T23:19:51Z"
+      },
+      "rawZipSha256": "51aef69b94723e8d7c84bb8f01851e59fba9967b2f5cbda49731988fe4b8ea89",
+      "manifestSha256": "360e2033a5eb72192c40b2a3a7ee6edec16a464fb58851fa2d8079eefccce98f",
+      "candidateArtifactId": 12152451241,
+      "newAssertions": [
+        "withdrawnCandidateCommitRejected",
+        "restartedInstallerRejectsWithdrawnCandidate",
+        "explicitReupgradeRevalidates"
+      ],
+      "bootBefore": "79e49e6f-4242-42b1-a4e8-e50154ea1d9b",
+      "bootAfter": "11218933-afd9-45bb-b659-233199fa82f6",
+      "businessAfterReboot": [
+        "authenticatedApiAfterReboot",
+        "authenticatedMcpAfterReboot",
+        "artifactBytesAfterReboot",
+        "newOutboxDeliveredAfterReboot"
+      ]
+    },
+    {
+      "profile": "team",
+      "jobId": 117801087401,
+      "status": "passed",
+      "totalSeconds": 4479.220523884,
+      "rebootSeconds": 266.67282048700054,
+      "rawArtifact": {
+        "id": 12154590857,
+        "name": "server-install-raw-amd64-team-39169353227-1",
+        "digest": "sha256:fb87b0cc4e36a739e0ffd8d49db3b61a563fbe77d2836c2980614368b0a3bd1c",
+        "size_in_bytes": 2401395,
+        "expired": false,
+        "created_at": "2026-10-18T23:12:59Z"
+      },
+      "rawZipSha256": "fb87b0cc4e36a739e0ffd8d49db3b61a563fbe77d2836c2980614368b0a3bd1c",
+      "manifestSha256": "360e2033a5eb72192c40b2a3a7ee6edec16a464fb58851fa2d8079eefccce98f",
+      "candidateArtifactId": 12152451241,
+      "newAssertions": [
+        "withdrawnCandidateCommitRejected",
+        "restartedInstallerRejectsWithdrawnCandidate",
+        "explicitReupgradeRevalidates"
+      ],
+      "bootBefore": "6230d6bd-3cf1-4c0a-8a2f-176589a0affb",
+      "bootAfter": "d0e51a8e-b029-4499-940b-bc7b09b8b1ac",
+      "businessAfterReboot": [
+        "authenticatedApiAfterReboot",
+        "authenticatedMcpAfterReboot",
+        "artifactBytesAfterReboot",
+        "newOutboxDeliveredAfterReboot"
+      ]
+    },
+    {
+      "profile": "enterprise",
+      "jobId": 117801087484,
+      "status": "passed",
+      "totalSeconds": 2891.404055182,
+      "rebootSeconds": 162.34186170099974,
+      "rawArtifact": {
+        "id": 12152749057,
+        "name": "server-install-raw-amd64-enterprise-39169353227-1",
+        "digest": "sha256:c0c70c8491827bd658744f6ef197db9950adc0d6360bf0bc5a3e7073518dbb50",
+        "size_in_bytes": 2398208,
+        "expired": false,
+        "created_at": "2026-10-18T22:46:55Z"
+      },
+      "rawZipSha256": "c0c70c8491827bd658744f6ef197db9950adc0d6360bf0bc5a3e7073518dbb50",
+      "manifestSha256": "360e2033a5eb72192c40b2a3a7ee6edec16a464fb58851fa2d8079eefccce98f",
+      "candidateArtifactId": 12152451241,
+      "newAssertions": [
+        "withdrawnCandidateCommitRejected",
+        "restartedInstallerRejectsWithdrawnCandidate",
+        "explicitReupgradeRevalidates"
+      ],
+      "bootBefore": "cd6b9ef8-3582-4d84-a251-f3c234c73314",
+      "bootAfter": "86b7fac9-25ac-4d8b-9bd6-6f03bcb8f33d",
+      "businessAfterReboot": [
+        "authenticatedApiAfterReboot",
+        "authenticatedMcpAfterReboot",
+        "artifactBytesAfterReboot",
+        "newOutboxDeliveredAfterReboot"
+      ]
+    }
+  ],
+  "assertionSource": {
+    "scripts/server-distribution/install.mjs": {
+      "gitBlob": "0866d8cd62da5fd15a8b7a4986e16e14ac658f22",
+      "sha256": "2ea8e9dd379b5dcac13abcc585638b8c4756650685864b5eab62171347c80c51"
+    },
+    "scripts/server-distribution/journal.mjs": {
+      "gitBlob": "25ef2bedfdaee87cce92bdc0e5ca2aebf9fe4615",
+      "sha256": "c5f58cdbcca5ddfb4c270251ae752ed191afc8f57727af3815321fb2422fe522"
+    },
+    "scripts/server-distribution/guest.py": {
+      "gitBlob": "a83505c859f5d88876572017453637f782b60631",
+      "sha256": "54bb28e2c336d8e63a68c5844d509498d8925f1223a442baf1219d229ed3b8c2"
+    }
+  },
+  "p1Status": {
+    "restoredCandidate": "实现、控制流与本候选三画像真实断言已验证；正式P1复审未完成",
+    "historic139": "API139/MCP139仍未闭；问题q-E6FuFFokBxxs6UpR6K9vC未答复，未批准或执行新诊断VM"
+  },
+  "thisTurn": "仅取回归档和更新资料；无产品改动，无rerun/cancel，无新矩阵或诊断VM",
+  "meaning": "只绑定c7cf68a受测候选；后续资料skip-ci head无自身成功Required，不能合入或发布",
+  "commands": [
+    "gh run view 39169353227 --repo xurunxin/WorkMesh --json databaseId,number,headSha,status,conclusion,jobs,url,event",
+    "gh api repos/xurunxin/WorkMesh/actions/runs/39169353227/artifacts",
+    "gh api repos/xurunxin/WorkMesh/actions/artifacts/<immutable-id>/zip",
+    "git cat-file commit c7cf68aaf279f771a2022d37d69b5651cdb66ace",
+    "git show c7cf68aaf279f771a2022d37d69b5651cdb66ace:<input-path>"
+  ]
+}

@@ -1,0 +1,2137 @@
+{
+  "sourceHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+  "sourceTree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae",
+  "status": "passed",
+  "totalSeconds": 1897.8954603639997,
+  "guestVcpus": 4,
+  "guestRamMiB": 4096,
+  "manifestSha256": "2e3c8fb0ccd1b4b918ba34afd77c7b725867f63bf313819bf11ebd55e25320b2",
+  "scripts": {
+    "native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+    "run.py": "3b8ef7fbed465eee3fee07d57b7c2552fb6f7c83e52f4a3e9711defbfdae6b6f",
+    "native_diagnostic_test.py": "71d9ee72ca08741c5aedd7da6becf343958f82a1adae4cbb4f7ff1eb56d6fa4f",
+    "guest.py": "4c3b83f6b605563e99659426fffabda3dc137266fb557a60923302ae9ef65b0b",
+    "core_pipe.py": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+    "core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+  },
+  "nativeDiagnostic": false,
+  "profilesRequested": [
+    "personal"
+  ],
+  "scope": "single-configuration",
+  "qemuExitCode": 0,
+  "qmpEvents": [
+    {
+      "event": "NIC_RX_FILTER_CHANGED",
+      "hostElapsed": 41.34302508599998
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 42.50273577600001
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 701.3256806039999
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 1360.310128218
+    },
+    {
+      "event": "RESET",
+      "hostElapsed": 1773.746477172
+    },
+    {
+      "event": "RESET",
+      "hostElapsed": 1773.753429714
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 1833.0103881989999
+    },
+    {
+      "event": "SHUTDOWN",
+      "hostElapsed": 1897.4577751220002
+    }
+  ],
+  "rebootSeconds": 126.74533667700007,
+  "说明": "原始完整guest结果；single-configuration只证明其准确画像与架构，不代六组合。诊断模式非支持验收；真实故障、未知和通过分别保留，不推旧故障已修复。",
+  "runId": 38852474436,
+  "jobId": 116819727381,
+  "artifactId": 12026403961,
+  "scriptsMatchGit": true,
+  "producer": {
+    "artifactId": "12026048774",
+    "manifestSha256": "2e3c8fb0ccd1b4b918ba34afd77c7b725867f63bf313819bf11ebd55e25320b2"
+  },
+  "receipts": [
+    {
+      "phase": "before-reboot",
+      "profilesRequested": [
+        "personal"
+      ],
+      "bootId": "91bb8e62-7d2a-44de-928e-dd400d25576e",
+      "kernel": "Linux server-product 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+      "profiles": [
+        {
+          "profile": "personal",
+          "status": "passed",
+          "checks": [
+            "workerPrivateCaActualHttpsProviderRead",
+            "authenticatedApi",
+            "duplicateIdempotency",
+            "firstTaskReadback",
+            "realMcpInstallationIdentity",
+            "realArtifactUploadDownload",
+            "redisOutageFailsClosedCredentials",
+            "lostWakeupStillReadsCommittedCursor",
+            "workerRestartRecoversDurableOutbox",
+            "concurrentRequests",
+            "realCredentialRateLimit429",
+            "invalidCredentialCannotCommitCurrent",
+            "dataBindingChangesRejectedBeforeMutation",
+            "preMigrationFailureKeepsCurrent",
+            "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+            "upgradeKeepsOriginalVolumes",
+            "compatibleProgramRollback",
+            "completeEncryptedBackup",
+            "partialMigrationStopsIncompatibleRollback",
+            "restoreIntoEmptyTargetKeepsOriginal",
+            "failedHealthStopsIncompatibleRuntimeAndKeepsVolumes"
+          ]
+        }
+      ],
+      "samples": [
+        {
+          "phase": "idle",
+          "profile": "personal",
+          "monotonic": 659.888319147,
+          "stats": [
+            {
+              "BlockIO": "8.32MB / 0B",
+              "CPUPerc": "0.01%",
+              "Container": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "ID": "770e1d010949",
+              "MemPerc": "11.02%",
+              "MemUsage": "42.31MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "2.72kB / 1.55kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "2.55MB / 0B",
+              "CPUPerc": "7.60%",
+              "Container": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "ID": "77ca9501d20a",
+              "MemPerc": "12.99%",
+              "MemUsage": "58.19MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "373kB / 805kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "393kB / 0B",
+              "CPUPerc": "0.30%",
+              "Container": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "ID": "87c831c202d5",
+              "MemPerc": "9.68%",
+              "MemUsage": "61.97MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "7.02kB / 7.32kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.4MB / 95.4MB",
+              "CPUPerc": "11.70%",
+              "Container": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "ID": "cccddfce9a73",
+              "MemPerc": "17.96%",
+              "MemUsage": "68.96MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "1.08MB / 404kB",
+              "PIDs": "8"
+            },
+            {
+              "BlockIO": "62.5MB / 139kB",
+              "CPUPerc": "0.26%",
+              "Container": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "ID": "898af7e45a11",
+              "MemPerc": "51.49%",
+              "MemUsage": "131.8MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "12.6kB / 5.36kB",
+              "PIDs": "18"
+            },
+            {
+              "BlockIO": "1.97MB / 0B",
+              "CPUPerc": "2.49%",
+              "Container": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "ID": "72e0b2aa1ad2",
+              "MemPerc": "3.96%",
+              "MemUsage": "5.066MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "7.98kB / 3.65kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "image": "sha256:6bbea22d39cb18803080a26e8c58549b33b4b491979c4ede6b9f738b3324a995",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6183686144 34283479040"
+          ]
+        },
+        {
+          "phase": "first-task",
+          "profile": "personal",
+          "monotonic": 670.829858674,
+          "stats": [
+            {
+              "BlockIO": "8.32MB / 0B",
+              "CPUPerc": "0.01%",
+              "Container": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "ID": "770e1d010949",
+              "MemPerc": "10.88%",
+              "MemUsage": "41.79MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "3.27kB / 1.85kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "3.78MB / 0B",
+              "CPUPerc": "33.48%",
+              "Container": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "ID": "77ca9501d20a",
+              "MemPerc": "13.43%",
+              "MemUsage": "60.19MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "464kB / 988kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "459kB / 0B",
+              "CPUPerc": "0.17%",
+              "Container": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "ID": "87c831c202d5",
+              "MemPerc": "10.23%",
+              "MemUsage": "65.45MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "70.3kB / 121kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.4MB / 95.7MB",
+              "CPUPerc": "17.87%",
+              "Container": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "ID": "cccddfce9a73",
+              "MemPerc": "19.73%",
+              "MemUsage": "75.78MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "1.34MB / 537kB",
+              "PIDs": "9"
+            },
+            {
+              "BlockIO": "62.5MB / 139kB",
+              "CPUPerc": "0.10%",
+              "Container": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "ID": "898af7e45a11",
+              "MemPerc": "51.49%",
+              "MemUsage": "131.8MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "13.8kB / 5.79kB",
+              "PIDs": "18"
+            },
+            {
+              "BlockIO": "2.04MB / 0B",
+              "CPUPerc": "2.39%",
+              "Container": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "ID": "72e0b2aa1ad2",
+              "MemPerc": "4.09%",
+              "MemUsage": "5.23MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "13.1kB / 4.92kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "image": "sha256:6bbea22d39cb18803080a26e8c58549b33b4b491979c4ede6b9f738b3324a995",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6184509440 34282655744"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 731.354895789,
+          "stats": [
+            {
+              "BlockIO": "8.38MB / 0B",
+              "CPUPerc": "0.01%",
+              "Container": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "ID": "770e1d010949",
+              "MemPerc": "13.74%",
+              "MemUsage": "52.77MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "731kB / 379kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "2.17MB / 0B",
+              "CPUPerc": "43.40%",
+              "Container": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "ID": "77ca9501d20a",
+              "MemPerc": "12.97%",
+              "MemUsage": "58.09MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "66.7kB / 135kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "459kB / 0B",
+              "CPUPerc": "92.38%",
+              "Container": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "ID": "87c831c202d5",
+              "MemPerc": "12.03%",
+              "MemUsage": "77.02MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "302kB / 1.24MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.4MB / 97.7MB",
+              "CPUPerc": "99.68%",
+              "Container": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "ID": "cccddfce9a73",
+              "MemPerc": "23.43%",
+              "MemUsage": "89.97MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "2.01MB / 882kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "65.3MB / 172kB",
+              "CPUPerc": "0.29%",
+              "Container": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "ID": "898af7e45a11",
+              "MemPerc": "53.52%",
+              "MemUsage": "137MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "24.8kB / 11.1kB",
+              "PIDs": "18"
+            },
+            {
+              "BlockIO": "2.71MB / 0B",
+              "CPUPerc": "27.33%",
+              "Container": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "ID": "72e0b2aa1ad2",
+              "MemPerc": "4.61%",
+              "MemUsage": "5.898MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "5.48kB / 2.38kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "image": "sha256:6bbea22d39cb18803080a26e8c58549b33b4b491979c4ede6b9f738b3324a995",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6185320448 34281844736"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 736.997568955,
+          "stats": [
+            {
+              "BlockIO": "8.38MB / 0B",
+              "CPUPerc": "0.01%",
+              "Container": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "ID": "770e1d010949",
+              "MemPerc": "13.74%",
+              "MemUsage": "52.77MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "732kB / 379kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "2.17MB / 0B",
+              "CPUPerc": "11.30%",
+              "Container": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "ID": "77ca9501d20a",
+              "MemPerc": "12.89%",
+              "MemUsage": "57.76MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "113kB / 216kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "459kB / 0B",
+              "CPUPerc": "20.17%",
+              "Container": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "ID": "87c831c202d5",
+              "MemPerc": "12.04%",
+              "MemUsage": "77.09MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "442kB / 1.52MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "39.4MB / 98.3MB",
+              "CPUPerc": "34.50%",
+              "Container": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "ID": "cccddfce9a73",
+              "MemPerc": "24.08%",
+              "MemUsage": "92.46MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "2.36MB / 1.05MB",
+              "PIDs": "13"
+            },
+            {
+              "BlockIO": "65.3MB / 172kB",
+              "CPUPerc": "0.30%",
+              "Container": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "ID": "898af7e45a11",
+              "MemPerc": "53.52%",
+              "MemUsage": "137MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "24.8kB / 11.1kB",
+              "PIDs": "18"
+            },
+            {
+              "BlockIO": "2.71MB / 0B",
+              "CPUPerc": "2.72%",
+              "Container": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "ID": "72e0b2aa1ad2",
+              "MemPerc": "4.61%",
+              "MemUsage": "5.902MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "13.1kB / 5.16kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "770e1d0109490f9ba4b9a23c15dfee460c4226011d2edb258c6dab1bdd76304d",
+              "image": "sha256:6bbea22d39cb18803080a26e8c58549b33b4b491979c4ede6b9f738b3324a995",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "77ca9501d20a78910046a4862b99ab8b905de9014e0adee51799d8ebffee6cfc",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "87c831c202d515c01defc9d35f20c751017c08993a1592af0427aa10fe4de75b",
+              "image": "sha256:1be3af30618046a11757624149d27145baed9029d6fc651b81cf8f60470399ca",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "cccddfce9a737f63023d558fc0c09279766806ac31a8afb71836178f730970c0",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "898af7e45a1187fcca84672b407018fcfbb99ba75c9a4613993eaa898bb26d81",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            },
+            {
+              "id": "72e0b2aa1ad2e4f9503937cef3a4fbd995b2569f8db114bd8a80ca334c59f6b4",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6185455616 34281709568"
+          ]
+        },
+        {
+          "phase": "concurrent-latency",
+          "count": 32,
+          "concurrency": 4,
+          "seconds": [
+            0.9535125520000065,
+            2.221295017999978,
+            3.1137489799999685,
+            3.456222184000012,
+            2.6650131950000286,
+            1.609161345000075,
+            0.8389666090000674,
+            0.6278946330000963,
+            0.6276635270000952,
+            0.6612099129999933,
+            0.7042954329999702,
+            0.8152627730000859,
+            0.8121516999999585,
+            0.7535098859999607,
+            0.8087960319999183,
+            0.7762651090000645,
+            0.8161843750000344,
+            1.0368119639999804,
+            1.1881641909999416,
+            1.131361169999991,
+            1.1067987140000923,
+            0.8870602249999138,
+            0.6354680800000096,
+            0.6259784970000055,
+            0.6318204650000325,
+            0.6112470719999692,
+            0.6337145590000546,
+            0.758284308000043,
+            0.9092671559999417,
+            0.9172695629999907,
+            0.8530234379999229,
+            0.6655908159999626
+          ]
+        },
+        {
+          "phase": "credential-rate-limit",
+          "profile": "personal",
+          "statuses": [
+            401,
+            429
+          ],
+          "retryAfterSeconds": 1
+        },
+        {
+          "phase": "incompatible-health-failure",
+          "profile": "personal",
+          "candidate": "b96351072d342e2a604d36294854953df0cec5b2419c7c1a9eb231ec8c3fb342",
+          "journalSha256": "0fb01fe9e9e2cd340b9e361f689677f15a4cb155d892f0063e86a69777126b4f",
+          "recovery": "stopped-restore-required",
+          "stoppedServices": [
+            "api",
+            "mcp",
+            "worker"
+          ]
+        }
+      ],
+      "resources": {
+        "cpu": "{\n   \"lscpu\": [\n      {\n         \"field\": \"Architecture:\",\n         \"data\": \"x86_64\"\n      },{\n         \"field\": \"CPU op-mode(s):\",\n         \"data\": \"32-bit, 64-bit\"\n      },{\n         \"field\": \"Address sizes:\",\n         \"data\": \"40 bits physical, 48 bits virtual\"\n      },{\n         \"field\": \"Byte Order:\",\n         \"data\": \"Little Endian\"\n      },{\n         \"field\": \"CPU(s):\",\n         \"data\": \"4\"\n      },{\n         \"field\": \"On-line CPU(s) list:\",\n         \"data\": \"0-3\"\n      },{\n         \"field\": \"Vendor ID:\",\n         \"data\": \"AuthenticAMD\"\n      },{\n         \"field\": \"BIOS Vendor ID:\",\n         \"data\": \"QEMU\"\n      },{\n         \"field\": \"Model name:\",\n         \"data\": \"QEMU Virtual CPU version 2.5+\"\n      },{\n         \"field\": \"BIOS Model name:\",\n         \"data\": \"pc-i440fx-noble-v2  CPU @ 2.0GHz\"\n      },{\n         \"field\": \"BIOS CPU family:\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"CPU family:\",\n         \"data\": \"15\"\n      },{\n         \"field\": \"Model:\",\n         \"data\": \"107\"\n      },{\n         \"field\": \"Thread(s) per core:\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"Core(s) per socket:\",\n         \"data\": \"4\"\n      },{\n         \"field\": \"Socket(s):\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"Stepping:\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"BogoMIPS:\",\n         \"data\": \"5192.29\"\n      },{\n         \"field\": \"Flags:\",\n         \"data\": \"fpu de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx lm rep_good nopl cpuid extd_apicid pni cx16 hypervisor lahf_lm cmp_legacy svm 3dnowprefetch vmmcall\"\n      },{\n         \"field\": \"Virtualization:\",\n         \"data\": \"AMD-V\"\n      },{\n         \"field\": \"L1d cache:\",\n         \"data\": \"256 KiB (4 instances)\"\n      },{\n         \"field\": \"L1i cache:\",\n         \"data\": \"256 KiB (4 instances)\"\n      },{\n         \"field\": \"L2 cache:\",\n         \"data\": \"2 MiB (4 instances)\"\n      },{\n         \"field\": \"L3 cache:\",\n         \"data\": \"64 MiB (4 instances)\"\n      },{\n         \"field\": \"NUMA node(s):\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"NUMA node0 CPU(s):\",\n         \"data\": \"0-3\"\n      },{\n         \"field\": \"Vulnerability Gather data sampling:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Indirect target selection:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Itlb multihit:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability L1tf:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Mds:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Meltdown:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Mmio stale data:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Reg file data sampling:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Retbleed:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Spec rstack overflow:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Spec store bypass:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Spectre v1:\",\n         \"data\": \"Mitigation; usercopy/swapgs barriers and __user pointer sanitization\"\n      },{\n         \"field\": \"Vulnerability Spectre v2:\",\n         \"data\": \"Mitigation; Retpolines; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\"\n      },{\n         \"field\": \"Vulnerability Srbds:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Tsa:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Tsx async abort:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Vmscape:\",\n         \"data\": \"Not affected\"\n      }\n   ]\n}\n",
+        "memory": [
+          "MemTotal:        4009148 kB",
+          "MemFree:          639688 kB",
+          "MemAvailable:    3420452 kB"
+        ],
+        "disk": [
+          "  1B-blocks       Used       Avail",
+          "40483942400 6207631360 34259533824"
+        ],
+        "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+        "docker": "Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2",
+        "compose": "Docker Compose version 2.40.3+ds1-0ubuntu1~24.04.1",
+        "hostNodeAvailable": false,
+        "hostPnpmAvailable": false
+      },
+      "offline": "no-default-route-and-pull-never",
+      "hostUtc": 1792128650.7966688,
+      "hostElapsed": 1753.6322403909999
+    },
+    {
+      "phase": "after-reboot",
+      "profilesRequested": [
+        "personal"
+      ],
+      "bootId": "8388edaa-eddf-4943-8018-906cdd0ca1ad",
+      "kernel": "Linux server-product 6.8.0-142-generic #142-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:24:27 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+      "restartedProfiles": [
+        "personal"
+      ],
+      "checks": [
+        {
+          "profile": "personal",
+          "checks": [
+            "authenticatedApiAfterReboot",
+            "authenticatedMcpAfterReboot",
+            "artifactBytesAfterReboot",
+            "newOutboxDeliveredAfterReboot"
+          ]
+        }
+      ],
+      "resources": {
+        "cpu": "{\n   \"lscpu\": [\n      {\n         \"field\": \"Architecture:\",\n         \"data\": \"x86_64\"\n      },{\n         \"field\": \"CPU op-mode(s):\",\n         \"data\": \"32-bit, 64-bit\"\n      },{\n         \"field\": \"Address sizes:\",\n         \"data\": \"40 bits physical, 48 bits virtual\"\n      },{\n         \"field\": \"Byte Order:\",\n         \"data\": \"Little Endian\"\n      },{\n         \"field\": \"CPU(s):\",\n         \"data\": \"4\"\n      },{\n         \"field\": \"On-line CPU(s) list:\",\n         \"data\": \"0-3\"\n      },{\n         \"field\": \"Vendor ID:\",\n         \"data\": \"AuthenticAMD\"\n      },{\n         \"field\": \"BIOS Vendor ID:\",\n         \"data\": \"QEMU\"\n      },{\n         \"field\": \"Model name:\",\n         \"data\": \"QEMU Virtual CPU version 2.5+\"\n      },{\n         \"field\": \"BIOS Model name:\",\n         \"data\": \"pc-i440fx-noble-v2  CPU @ 2.0GHz\"\n      },{\n         \"field\": \"BIOS CPU family:\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"CPU family:\",\n         \"data\": \"15\"\n      },{\n         \"field\": \"Model:\",\n         \"data\": \"107\"\n      },{\n         \"field\": \"Thread(s) per core:\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"Core(s) per socket:\",\n         \"data\": \"4\"\n      },{\n         \"field\": \"Socket(s):\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"Stepping:\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"BogoMIPS:\",\n         \"data\": \"5192.23\"\n      },{\n         \"field\": \"Flags:\",\n         \"data\": \"fpu de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx lm rep_good nopl cpuid extd_apicid pni cx16 hypervisor lahf_lm cmp_legacy svm 3dnowprefetch vmmcall\"\n      },{\n         \"field\": \"Virtualization:\",\n         \"data\": \"AMD-V\"\n      },{\n         \"field\": \"L1d cache:\",\n         \"data\": \"256 KiB (4 instances)\"\n      },{\n         \"field\": \"L1i cache:\",\n         \"data\": \"256 KiB (4 instances)\"\n      },{\n         \"field\": \"L2 cache:\",\n         \"data\": \"2 MiB (4 instances)\"\n      },{\n         \"field\": \"L3 cache:\",\n         \"data\": \"64 MiB (4 instances)\"\n      },{\n         \"field\": \"NUMA node(s):\",\n         \"data\": \"1\"\n      },{\n         \"field\": \"NUMA node0 CPU(s):\",\n         \"data\": \"0-3\"\n      },{\n         \"field\": \"Vulnerability Gather data sampling:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Indirect target selection:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Itlb multihit:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability L1tf:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Mds:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Meltdown:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Mmio stale data:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Reg file data sampling:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Retbleed:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Spec rstack overflow:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Spec store bypass:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Spectre v1:\",\n         \"data\": \"Mitigation; usercopy/swapgs barriers and __user pointer sanitization\"\n      },{\n         \"field\": \"Vulnerability Spectre v2:\",\n         \"data\": \"Mitigation; Retpolines; STIBP disabled; RSB filling; PBRSB-eIBRS Not affected; BHI Not affected\"\n      },{\n         \"field\": \"Vulnerability Srbds:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Tsa:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Tsx async abort:\",\n         \"data\": \"Not affected\"\n      },{\n         \"field\": \"Vulnerability Vmscape:\",\n         \"data\": \"Not affected\"\n      }\n   ]\n}\n",
+        "memory": [
+          "MemTotal:        4009148 kB",
+          "MemFree:         2739208 kB",
+          "MemAvailable:    3211096 kB"
+        ],
+        "disk": [
+          "  1B-blocks       Used       Avail",
+          "40483942400 6205796352 34261368832"
+        ],
+        "os": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+        "docker": "Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2",
+        "compose": "Docker Compose version 2.40.3+ds1-0ubuntu1~24.04.1",
+        "hostNodeAvailable": false,
+        "hostPnpmAvailable": false
+      },
+      "hostUtc": 1792128777.5420053,
+      "hostElapsed": 1880.377577068
+    }
+  ],
+  "records": [
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 8181,
+      "userCpuMicroseconds": 15642416,
+      "systemCpuMicroseconds": 4353957
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 45887
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 8156,
+      "userCpuMicroseconds": 15591342,
+      "systemCpuMicroseconds": 4362035
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 210,
+      "userCpuMicroseconds": 241399,
+      "systemCpuMicroseconds": 48222
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 46,
+      "userCpuMicroseconds": 51445,
+      "systemCpuMicroseconds": 14385
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 16645
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 8447,
+      "userCpuMicroseconds": 15912756,
+      "systemCpuMicroseconds": 4769905
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 417,
+      "userCpuMicroseconds": 557193,
+      "systemCpuMicroseconds": 57843
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 64,
+      "userCpuMicroseconds": 63262,
+      "systemCpuMicroseconds": 5655
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 17435
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 8075,
+      "userCpuMicroseconds": 15326148,
+      "systemCpuMicroseconds": 4227940
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 202,
+      "userCpuMicroseconds": 230950,
+      "systemCpuMicroseconds": 48294
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 2578,
+      "userCpuMicroseconds": 142972,
+      "systemCpuMicroseconds": 38181
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 18995
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 7953,
+      "userCpuMicroseconds": 15059945,
+      "systemCpuMicroseconds": 4172694
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 211,
+      "userCpuMicroseconds": 244707,
+      "systemCpuMicroseconds": 51578
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 2578,
+      "userCpuMicroseconds": 248694,
+      "systemCpuMicroseconds": 65526
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 19402
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 8026,
+      "userCpuMicroseconds": 15265614,
+      "systemCpuMicroseconds": 4074709
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 210,
+      "userCpuMicroseconds": 244626,
+      "systemCpuMicroseconds": 53771
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "render-config",
+      "elapsedMilliseconds": 2577,
+      "userCpuMicroseconds": 255654,
+      "systemCpuMicroseconds": 58932
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "import-images",
+      "elapsedMilliseconds": 132201,
+      "userCpuMicroseconds": 3558968,
+      "systemCpuMicroseconds": 6221822
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "finished",
+      "elapsedMilliseconds": 153449
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 8313,
+      "userCpuMicroseconds": 15680462,
+      "systemCpuMicroseconds": 4520754
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 346,
+      "userCpuMicroseconds": 483087,
+      "systemCpuMicroseconds": 61464
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 2678,
+      "userCpuMicroseconds": 169293,
+      "systemCpuMicroseconds": 30505
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "import-images",
+      "elapsedMilliseconds": 5489,
+      "userCpuMicroseconds": 96908,
+      "systemCpuMicroseconds": 81808
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "start-data-services",
+      "elapsedMilliseconds": 17568,
+      "userCpuMicroseconds": 15576,
+      "systemCpuMicroseconds": 11324
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "initialize-locked-bucket",
+      "elapsedMilliseconds": 4489,
+      "userCpuMicroseconds": 47513,
+      "systemCpuMicroseconds": 6378
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 25634,
+      "userCpuMicroseconds": 27559,
+      "systemCpuMicroseconds": 16291
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 53661,
+      "userCpuMicroseconds": 82497,
+      "systemCpuMicroseconds": 25407
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 132707
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "health-ready"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10496,
+      "userCpuMicroseconds": 16863588,
+      "systemCpuMicroseconds": 5217493
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 233,
+      "userCpuMicroseconds": 273962,
+      "systemCpuMicroseconds": 57943
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3134,
+      "userCpuMicroseconds": 187523,
+      "systemCpuMicroseconds": 59588
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 25994
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10904,
+      "userCpuMicroseconds": 17742840,
+      "systemCpuMicroseconds": 5056584
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 334,
+      "userCpuMicroseconds": 377220,
+      "systemCpuMicroseconds": 54595
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3068,
+      "userCpuMicroseconds": 259855,
+      "systemCpuMicroseconds": 68814
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 2045,
+      "userCpuMicroseconds": 743131,
+      "systemCpuMicroseconds": 61793
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 34009
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10329,
+      "userCpuMicroseconds": 17104704,
+      "systemCpuMicroseconds": 4997962
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 202,
+      "userCpuMicroseconds": 248893,
+      "systemCpuMicroseconds": 32935
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3114,
+      "userCpuMicroseconds": 156315,
+      "systemCpuMicroseconds": 45564
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 4554,
+      "userCpuMicroseconds": 818659,
+      "systemCpuMicroseconds": 79695
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 32719
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10478,
+      "userCpuMicroseconds": 17251093,
+      "systemCpuMicroseconds": 4842924
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 281,
+      "userCpuMicroseconds": 316252,
+      "systemCpuMicroseconds": 59582
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3210,
+      "userCpuMicroseconds": 144334,
+      "systemCpuMicroseconds": 38975
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 25108
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "business-committed"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9824,
+      "userCpuMicroseconds": 16887691,
+      "systemCpuMicroseconds": 4812805
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 267,
+      "userCpuMicroseconds": 297963,
+      "systemCpuMicroseconds": 63152
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3792,
+      "userCpuMicroseconds": 433218,
+      "systemCpuMicroseconds": 52152
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 25266
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10573,
+      "userCpuMicroseconds": 17665058,
+      "systemCpuMicroseconds": 4997630
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 309,
+      "userCpuMicroseconds": 359590,
+      "systemCpuMicroseconds": 56642
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3388,
+      "userCpuMicroseconds": 171157,
+      "systemCpuMicroseconds": 53798
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 24789
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9587,
+      "userCpuMicroseconds": 16669964,
+      "systemCpuMicroseconds": 4660250
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 250,
+      "userCpuMicroseconds": 281098,
+      "systemCpuMicroseconds": 50252
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 2929,
+      "userCpuMicroseconds": 187540,
+      "systemCpuMicroseconds": 44099
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 24341
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 103
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9663,
+      "userCpuMicroseconds": 16754062,
+      "systemCpuMicroseconds": 4791557
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 287,
+      "userCpuMicroseconds": 320852,
+      "systemCpuMicroseconds": 76815
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3932,
+      "userCpuMicroseconds": 426758,
+      "systemCpuMicroseconds": 42783
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "import-images",
+      "elapsedMilliseconds": 7581,
+      "userCpuMicroseconds": 182499,
+      "systemCpuMicroseconds": 112378
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 4810,
+      "userCpuMicroseconds": 7699,
+      "systemCpuMicroseconds": 6190
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 13323,
+      "userCpuMicroseconds": 51013,
+      "systemCpuMicroseconds": 8669
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 15782,
+      "userCpuMicroseconds": 30508,
+      "systemCpuMicroseconds": 8082
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 65684,
+      "userCpuMicroseconds": 99980,
+      "systemCpuMicroseconds": 22699
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 138686
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11552,
+      "userCpuMicroseconds": 19106581,
+      "systemCpuMicroseconds": 5590109
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 325,
+      "userCpuMicroseconds": 356168,
+      "systemCpuMicroseconds": 91980
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4371,
+      "userCpuMicroseconds": 374790,
+      "systemCpuMicroseconds": 41769
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 29468
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10744,
+      "userCpuMicroseconds": 18491875,
+      "systemCpuMicroseconds": 5446947
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 362,
+      "userCpuMicroseconds": 516046,
+      "systemCpuMicroseconds": 45036
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3156,
+      "userCpuMicroseconds": 235773,
+      "systemCpuMicroseconds": 31517
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 27525
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11317,
+      "userCpuMicroseconds": 18886829,
+      "systemCpuMicroseconds": 5461923
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 247,
+      "userCpuMicroseconds": 281909,
+      "systemCpuMicroseconds": 57984
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3202,
+      "userCpuMicroseconds": 179229,
+      "systemCpuMicroseconds": 60730
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 7502,
+      "userCpuMicroseconds": 839134,
+      "systemCpuMicroseconds": 84484
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 38240
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10670,
+      "userCpuMicroseconds": 18263822,
+      "systemCpuMicroseconds": 5300734
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 374,
+      "userCpuMicroseconds": 406766,
+      "systemCpuMicroseconds": 92078
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3275,
+      "userCpuMicroseconds": 172443,
+      "systemCpuMicroseconds": 25468
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "import-images",
+      "elapsedMilliseconds": 6753,
+      "userCpuMicroseconds": 119078,
+      "systemCpuMicroseconds": 97724
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 4509,
+      "userCpuMicroseconds": 21082,
+      "systemCpuMicroseconds": 6338
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 10441,
+      "userCpuMicroseconds": 46477,
+      "systemCpuMicroseconds": 9614
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 14506,
+      "userCpuMicroseconds": 19786,
+      "systemCpuMicroseconds": 4849
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 65831,
+      "userCpuMicroseconds": 110780,
+      "systemCpuMicroseconds": 32920
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "finished",
+      "elapsedMilliseconds": 137703
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12382,
+      "userCpuMicroseconds": 19278428,
+      "systemCpuMicroseconds": 5704180
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 611,
+      "userCpuMicroseconds": 537144,
+      "systemCpuMicroseconds": 81425
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3500,
+      "userCpuMicroseconds": 213331,
+      "systemCpuMicroseconds": 45724
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 7401,
+      "userCpuMicroseconds": 934844,
+      "systemCpuMicroseconds": 116186
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 39937
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10581,
+      "userCpuMicroseconds": 17989086,
+      "systemCpuMicroseconds": 5098347
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 323,
+      "userCpuMicroseconds": 321052,
+      "systemCpuMicroseconds": 73925
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3069,
+      "userCpuMicroseconds": 191523,
+      "systemCpuMicroseconds": 31357
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "import-images",
+      "elapsedMilliseconds": 6601,
+      "userCpuMicroseconds": 149930,
+      "systemCpuMicroseconds": 100620
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "finished",
+      "elapsedMilliseconds": 38818
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9860,
+      "userCpuMicroseconds": 16775410,
+      "systemCpuMicroseconds": 4858197
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 257,
+      "userCpuMicroseconds": 278382,
+      "systemCpuMicroseconds": 64506
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3006,
+      "userCpuMicroseconds": 185606,
+      "systemCpuMicroseconds": 46867
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "state": "finished",
+      "elapsedMilliseconds": 50413
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11461,
+      "userCpuMicroseconds": 18945453,
+      "systemCpuMicroseconds": 5510093
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 490,
+      "userCpuMicroseconds": 629223,
+      "systemCpuMicroseconds": 148515
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4076,
+      "userCpuMicroseconds": 319886,
+      "systemCpuMicroseconds": 70037
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 56184
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10389,
+      "userCpuMicroseconds": 17342569,
+      "systemCpuMicroseconds": 5235998
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 357,
+      "userCpuMicroseconds": 389684,
+      "systemCpuMicroseconds": 88198
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3300,
+      "userCpuMicroseconds": 186658,
+      "systemCpuMicroseconds": 38486
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "import-images",
+      "elapsedMilliseconds": 8768,
+      "userCpuMicroseconds": 198902,
+      "systemCpuMicroseconds": 115409
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 4347,
+      "userCpuMicroseconds": 5972,
+      "systemCpuMicroseconds": 6424
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 10999,
+      "userCpuMicroseconds": 55288,
+      "systemCpuMicroseconds": 8306
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 11516,
+      "userCpuMicroseconds": 28640,
+      "systemCpuMicroseconds": 3298
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 46915,
+      "userCpuMicroseconds": 284255,
+      "systemCpuMicroseconds": 86830
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 122581
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "profile-completed"
+    }
+  ],
+  "artifactZipSha256": "0ea68a05bd8826ac2ce0c144b9d7ba66d81337c63d9e37097eb29b75e0bf2feb",
+  "members": {
+    "server-install/guest.log": {
+      "bytes": 38,
+      "sha256": "e85ba2ea0cce671ddfe7bde3badfa2e81ee9d88a793ebdd25fa0936b9660dee4"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "0792c32127a614e51bd640b56b36541bf0c9f2e234081d335b7684ac3613d31f"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "ff55b3d644a359e133f3764aa7294f4c02856a4d11b6d19539526fa169130caa"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12627,
+      "sha256": "2e3c8fb0ccd1b4b918ba34afd77c7b725867f63bf313819bf11ebd55e25320b2"
+    },
+    "server-install/producer.json": {
+      "bytes": 113,
+      "sha256": "e6dd427241ba2b0fe2154079614a68cefa6a93ce127cf69ef4c7176314df5314"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-install/result.json": {
+      "bytes": 37601,
+      "sha256": "e33699f01f0dcf58e03e0265b321488929358129bc61b7840cfa63daef56fa02"
+    },
+    "server-install/serial.log": {
+      "bytes": 255882,
+      "sha256": "afe2260cd8259338e58a024bb617ec8baceee4dfaee5fd328d204c21b5a2b958"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "93adf0156f95cd24ac351e8afb50a6f0b5af7137ffe900f2340674fc8e5cf5c7"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 238,
+      "sha256": "7c3dec77ecece4c7097e7b2e528e4ec2614dd0217f507661d021b50eab7381ef"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "93adf0156f95cd24ac351e8afb50a6f0b5af7137ffe900f2340674fc8e5cf5c7"
+    }
+  },
+  "selectedZipSha256": "126cdec6aa265e223507448fbc144679385243a35defc5808867e596e7c703eb"
+}

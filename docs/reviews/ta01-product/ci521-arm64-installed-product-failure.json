@@ -1,0 +1,104 @@
+{
+  "runId": 38461233576,
+  "jobId": 115518768527,
+  "artifactId": 11852357945,
+  "artifactUrl": "https://github.com/xurunxin/WorkMesh/actions/runs/38461233576/artifacts/11852357945",
+  "sourceHead": "93e70603372966fe97d8c12364319c613cefb3c5",
+  "sourceTree": "91579a20247080608d5111a0670d6f71a21d9a1c",
+  "zipSha256": "0f77d9cc92a5d9d1e589233ea822d2cc4ead5c8b2f20c554ed6b013bd1dd6622",
+  "bytes": 2372179,
+  "members": {
+    "server-install/build.log": {
+      "bytes": 63457,
+      "sha256": "fd2c5af0171f36343a17be0d2a5d4c61c61046630ae1980c20b68e9febd64553"
+    },
+    "server-install/guest.log": {
+      "bytes": 396,
+      "sha256": "676cd344cad46ca719c808678a2df26822e9ff15e007a865560fa9fdc4e2e42a"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 1384,
+      "sha256": "96849e9f32dca13a874c3e50839bb0c8eac4a28f88d818d179f74083f6bca1b5"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "2c93892e273ae8198ada3cbfd839a805be2525e4f9fa8af786dc41ae927918d7"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12626,
+      "sha256": "8234caebfe78d4b91b298a9912f645309d29b4ec04f2aa23d23f50490a968b1b"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 70,
+      "sha256": "008e9a801345c082ccb1717479e461b5e5102879cf57ef34d91a370675b929d7"
+    },
+    "server-install/result.json": {
+      "bytes": 3796,
+      "sha256": "8b5e0b18a9d8d3322bf4382c51948e118cb5cdff4839c5b30745c0b0f3724527"
+    },
+    "server-install/serial.log": {
+      "bytes": 100233,
+      "sha256": "b080c7d2961075a440fcbf61d11c371ec066b456c37106374d14d7ef123d447b"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "994343ae0c31b836f19c73dfb8fcf4d2b77b456750b7a948d541e18ade702c28"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 277,
+      "sha256": "329c945f95c7a0db31bf1799502f071b26c3a3c28d1efa07c4a181657463cc57"
+    },
+    "server-install/source-install.log": {
+      "bytes": 555,
+      "sha256": "ca0bbdc7c295d7d629d34df7665b9801e536e0a0391de90ce97941c24b59750c"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "994343ae0c31b836f19c73dfb8fcf4d2b77b456750b7a948d541e18ade702c28"
+    },
+    "server-install/unit.log": {
+      "bytes": 1836,
+      "sha256": "08f92fe1db262d0729712f28965e5b5e7beeeccbf0e1208ca4aa02b5a3ae60a7"
+    }
+  },
+  "scriptGitBlobsMatch": {
+    "run.py": true,
+    "guest.py": true
+  },
+  "receipts": [
+    {
+      "phase": "failure",
+      "errorType": "TimeoutExpired",
+      "diagnostics": {
+        "journal": {
+          "stage": "staged",
+          "candidate": "8234caebfe78d4b91b298a9912f645309d29b4ec04f2aa23d23f50490a968b1b",
+          "actions": [
+            {
+              "name": "import-images",
+              "status": "completed"
+            },
+            {
+              "name": "start-data-services",
+              "status": "completed"
+            },
+            {
+              "name": "initialize-locked-bucket",
+              "status": "intent"
+            }
+          ]
+        }
+      },
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation"
+      ],
+      "samples": [],
+      "hostUtc": 1791928357.8545375,
+      "hostElapsed": 5104.899089782
+    }
+  ],
+  "status": "failed",
+  "totalSeconds": 5106.38692807
+}

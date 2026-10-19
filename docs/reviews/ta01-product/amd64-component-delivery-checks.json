@@ -1,0 +1,92 @@
+{
+  "sourceHead": "8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b",
+  "observedAt": "2026-10-18T21:18:41.154768+00:00",
+  "scope": "纯证据及状态文档；没有产品修复，不代139闭合或最终资料head的Required",
+  "commands": [
+    {
+      "command": "python .tmp/ta01-resumption/package-real-api-mcp-comparison.py",
+      "result": "passed; 36原始成员，未重跑测量"
+    },
+    {
+      "command": "python .tmp/ta01-resumption/finalize-ci568-evidence.py",
+      "result": "passed; 17终态success，三组各22输入/六脚本/重启证明"
+    },
+    {
+      "command": "pnpm check:integration-docs",
+      "result": {
+        "skillFiles": 4,
+        "localLinks": 102,
+        "restEndpoints": 35,
+        "mcpTools": 11,
+        "humanSyntax": "passed",
+        "scope": "静态检查；真实请求与中文语义须另验"
+      },
+      "stdoutSha256": "855bd0248333ef985074926b7750fe33ce1b2c4288ecf829f7adb25181d044f4"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "python .tmp/ta01-resumption/check-component-delivery-evidence.py",
+      "result": "passed; ZIP成员原字节/SHA/计数及固定令牌形状检查"
+    }
+  ],
+  "archives": [
+    {
+      "path": "docs/reviews/ta01-product/amd64-bootstrap-platform-boundary.zip",
+      "members": 8,
+      "sha256": "a5dfaa719841a9595a48c4947c08d5cdb4a8afd6179885cdb12b926100e2d9b1",
+      "expectedGitBlob": "0a7a08b62a9dd0660c44f28a8c5bc340e9602d01"
+    },
+    {
+      "path": "docs/reviews/ta01-product/amd64-real-api-mcp-comparison.zip",
+      "members": 36,
+      "sha256": "79a5d1f92b30bce8d7e768f2380f5840cbe98fcc9697824daa1027630de98af9",
+      "expectedGitBlob": "d35716956f7bb3fc90e0c072f2cc5b2142813b89"
+    },
+    {
+      "path": "docs/reviews/ta01-product/ci568-amd64-producer.zip",
+      "members": 9,
+      "sha256": "dfae6a7b6fc8b4b8f5883a7fa4b8cba16686909138302a0fff1d82d868c3c693",
+      "expectedGitBlob": "cdfd61c5e37fa07f13092c051c938227784363f4"
+    },
+    {
+      "path": "docs/reviews/ta01-product/ci568-amd64-personal-full-guest-pass.zip",
+      "members": 11,
+      "sha256": "b64cecd2dc6583994bc65ba626ee176e1efabb98d410dbcc715224b93700641c",
+      "expectedGitBlob": "01d445856a8cde2893c445d8b42e712200ce0ace"
+    },
+    {
+      "path": "docs/reviews/ta01-product/ci568-amd64-team-full-guest-pass.zip",
+      "members": 11,
+      "sha256": "25b9f97570e65cb80cf140da4b968dfe21ec6a2944f41a3c53b225c2960bd2dd",
+      "expectedGitBlob": "66df44bc893edc33394be116bc98d4fa5dd58bb2"
+    },
+    {
+      "path": "docs/reviews/ta01-product/ci568-amd64-enterprise-full-guest-pass.zip",
+      "members": 11,
+      "sha256": "24b7ba9a593ffacb4dc5501214b24ae383ae36b3960a5ffd34c62ef36126d512",
+      "expectedGitBlob": "cfd6f2e863045b3ce23017ec92851288791e5a47"
+    }
+  ],
+  "preflightFailures": [
+    "一次归档包装修改命令引号错误，未启动业务或VM",
+    "归档器Windows默认GBK读取中文投影失败；显式UTF8修正后仅重做只读归档",
+    "资料核对器最初错误假定文档检查输出字段；按实际humanSyntax结构解析后重核原stdout，未重跑产品"
+  ],
+  "writing": {
+    "skillCommit": "ffda9353768dece8aabd26ccb3a4978025e9437c",
+    "references": [
+      "typography",
+      "manual-structure"
+    ],
+    "autocorrect": "unavailable; manual review"
+  },
+  "notRun": [
+    "没有新的完整矩阵、第二次amd64 VM、ARM取证或139修复实验",
+    "本机未重跑五根门禁；CI568@8ff的对应job均已真实成功"
+  ],
+  "apiSchemaEventChanges": false,
+  "formalReviewOrMerge": false
+}

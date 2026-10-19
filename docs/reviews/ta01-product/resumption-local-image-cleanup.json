@@ -1,0 +1,96 @@
+{
+  "说明": "仅收尾本任务先前不存在且准确登记的五个旧候选程序镜像及私有探针镜像；全量容器身份预检无消费者。PG／Redis／RustFS、其他容器／镜像／卷均保留，不prune、不force；不声称物理净释放。远端CI使用独立runner，不引用这些本地镜像。",
+  "startedUtc": 1792015723.9089284,
+  "source": {
+    "commit": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+    "tree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406"
+  },
+  "ledgerSha256": "71ef3ec2123678addc9b9a42249e9ebc1d2be73b7db2728f334d3a4ab6d736b0",
+  "consumerImages": [
+    {
+      "id": "435a3e99922977daa2dbfe4f075881a0ebfcdac93f2c42b9bbdda43a38ddd093",
+      "image": "sha256:776a126b63deaba3dd69b997bbc4c9b0e26035ea2e70b7df0df7691a1132d4c6"
+    },
+    {
+      "id": "b5ff8e68d8b42d5206e16e17fab676cbb5ee4f8c003dce20092045cf16e74327",
+      "image": "sha256:cec9f139f45e93c5c69c60f8b07cfad9f43f4ef6b6a6cd917527fea5ff2e3dea"
+    }
+  ],
+  "targets": [
+    {
+      "role": "api",
+      "id": "sha256:8cef341f64c420cccd4dde83c065d1d6bc126ab7a9a945b13b59518ae88c84f3",
+      "tag": "workmesh-server/api:candidate-519bb321dddf-amd64"
+    },
+    {
+      "role": "worker",
+      "id": "sha256:d585e6b249f47039b1563d81ca4e8d47f6d05fb976557cfac4c1b109e8a046c2",
+      "tag": "workmesh-server/worker:candidate-519bb321dddf-amd64"
+    },
+    {
+      "role": "mcp",
+      "id": "sha256:0d7781b93a4c0e4329238487bdd428d6aeacfdeb5572039b2d612459f17e0163",
+      "tag": "workmesh-server/mcp:candidate-519bb321dddf-amd64"
+    },
+    {
+      "role": "lite",
+      "id": "sha256:0d0e4272e3cf4c8b2f5e3c4c362cf2b52d88e9d8128e49427eaaeec5564e52e6",
+      "tag": "workmesh-server/lite:candidate-519bb321dddf-amd64"
+    },
+    {
+      "role": "installer",
+      "id": "sha256:42f787a5c9361f2e773997ddea050fd86d6d5b1253ab31f6e90fb61aed2481b7",
+      "tag": "workmesh-server/installer:candidate-519bb321dddf-amd64"
+    },
+    {
+      "role": "slim-installer-probe",
+      "id": "sha256:78a20b0f027acd6492437f5ce274e524778c7efbd68d23b2af98b199a33d5ccf",
+      "tag": "workmesh-server/slim-installer-probe:ta01-resumption"
+    }
+  ],
+  "results": [
+    {
+      "id": "sha256:8cef341f64c420cccd4dde83c065d1d6bc126ab7a9a945b13b59518ae88c84f3",
+      "exitCode": 0,
+      "stdoutSha256": "d08e03067b1a699d4b1a74eeeea0d3c0a471518478c1c0340cba380cc9cc872a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absence": "docker-no-such-image"
+    },
+    {
+      "id": "sha256:d585e6b249f47039b1563d81ca4e8d47f6d05fb976557cfac4c1b109e8a046c2",
+      "exitCode": 0,
+      "stdoutSha256": "9b7af4b1eb20318787fe9ab71c21f4159fb508c43b952b2cb392d2b48fa57b54",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absence": "docker-no-such-image"
+    },
+    {
+      "id": "sha256:0d7781b93a4c0e4329238487bdd428d6aeacfdeb5572039b2d612459f17e0163",
+      "exitCode": 0,
+      "stdoutSha256": "ab63bc868cff0b165cd408f103a4a8dad0fb6293d518ec7276728e19ef96806d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absence": "docker-no-such-image"
+    },
+    {
+      "id": "sha256:0d0e4272e3cf4c8b2f5e3c4c362cf2b52d88e9d8128e49427eaaeec5564e52e6",
+      "exitCode": 0,
+      "stdoutSha256": "73ab345606ba42cccab9b696aab070613125597d5ae2da18f51e3245fde10da4",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absence": "docker-no-such-image"
+    },
+    {
+      "id": "sha256:42f787a5c9361f2e773997ddea050fd86d6d5b1253ab31f6e90fb61aed2481b7",
+      "exitCode": 0,
+      "stdoutSha256": "d18ca1f1e2a20982e2aec2b3f6f5090ef4261471023f26a9a72bc5ac87241760",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absence": "docker-no-such-image"
+    },
+    {
+      "id": "sha256:78a20b0f027acd6492437f5ce274e524778c7efbd68d23b2af98b199a33d5ccf",
+      "exitCode": 0,
+      "stdoutSha256": "2bcfbb8f5bc2c47237a6dacaf5b4f4f4089ff98f56ac2c2614224ed6ab8b5e35",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absence": "docker-no-such-image"
+    }
+  ],
+  "completedUtc": 1792015736.7213898
+}

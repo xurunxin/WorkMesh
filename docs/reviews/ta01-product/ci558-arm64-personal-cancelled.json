@@ -1,0 +1,54 @@
+{
+  "说明": "取消原件；缺失 result.json 不补造产品失败、完整画像通过或 guest 收尾。运行源码归属来自 GitHub run，不冒缺失 result 的受测源码摘要。",
+  "runId": 38801221509,
+  "jobId": 116655073308,
+  "artifactId": 12009149086,
+  "jobConclusion": "cancelled",
+  "runHead": "f53f20b85e680a4219ae9f22a58ff37de58c37d8",
+  "resultPresent": false,
+  "result": null,
+  "artifactZipSha256": "cfd410f5fb4f6d71cbc79ef01329004d2436df2f9e5175636beb57dd1e6e9245",
+  "selectedZipSha256": "93f6a7d03168d9e2363c35e423a8ccccdd2ef439c6622e03db975702b0200c05",
+  "members": {
+    "server-install/guest.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "5e684e7ae260e0a8e1ae68be5e4ff1d45181abed0bad8ee897faa94fa171a010"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "07c0ad6d52e4f486808b2e64ea83205ed7c7c4cb2dfdf22db562166ef0e289c0"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12409,
+      "sha256": "896e587970de424a180db568fe4547e06baf6cbdfec56b1f06ea3e35ab5fdeac"
+    },
+    "server-install/producer.json": {
+      "bytes": 113,
+      "sha256": "50bb03d551dcadcb9bbad8bfffc953ba8011a447d52d87ce6803cb785e3bc9ee"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "server-install/serial.log": {
+      "bytes": 98330,
+      "sha256": "b41bcc56418918215ff38ade2120b882a1fb52ec29d7ddea4adf20b95f76fc55"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "4cd7b0dbf43a5a5f7e463cea3d5ce14cd3c80f6b5c57992b9d81a114d396717d"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 256,
+      "sha256": "03f59a786d107b2879390eacff1151d18c637f195284a0a9227b4b469818ba63"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "4cd7b0dbf43a5a5f7e463cea3d5ce14cd3c80f6b5c57992b9d81a114d396717d"
+    }
+  }
+}

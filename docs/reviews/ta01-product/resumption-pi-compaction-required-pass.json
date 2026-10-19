@@ -1,0 +1,135 @@
+{
+  "说明": "无临时观测或preload的原五门禁通过，起点38a8923加正式Pi摘要测试修正。695个输入前后相同；根recovery opt-in仍跳过，真实恢复另见CI549组件原件。不是离线三画像或整机重启验收。",
+  "sourceHead": "38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428",
+  "sourceIsDirty": true,
+  "inputCount": 695,
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-15T10:35:42.083Z",
+      "endedAt": "2026-10-15T10:36:07.466Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-15T10:36:08.747Z",
+      "endedAt": "2026-10-15T10:36:09.998Z",
+      "exitCode": 0
+    },
+    {
+      "label": "lint",
+      "command": "pnpm lint",
+      "startedAt": "2026-10-15T10:36:10.001Z",
+      "endedAt": "2026-10-15T10:36:38.282Z",
+      "exitCode": 0
+    },
+    {
+      "label": "typecheck",
+      "command": "pnpm typecheck",
+      "startedAt": "2026-10-15T10:36:38.284Z",
+      "endedAt": "2026-10-15T10:37:55.972Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test",
+      "command": "pnpm test",
+      "startedAt": "2026-10-15T10:37:55.975Z",
+      "endedAt": "2026-10-15T10:45:57.911Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-15T10:45:57.914Z",
+      "endedAt": "2026-10-15T11:28:45.804Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-conformance",
+      "command": "pnpm test:conformance",
+      "startedAt": "2026-10-15T11:28:45.807Z",
+      "endedAt": "2026-10-15T11:28:49.072Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "536510cc227f39e8dbf2bec2db303759bed0d84454c7d890ec924f14883acf04",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "00c938853f40b21454c17b69fa862ca0a003b46a42fd625cd88612b6b086c67d",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "0dbf7d4ab885914f8b81661e8b8317edcd3f466449b3cc3dc88cd2ccf01c3a61",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-fdf95ce1-47b0-4e91-a042-40cc8b25b07f-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-fdf95ce1-47b0-4e91-a042-40cc8b25b07f-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-fdf95ce1-47b0-4e91-a042-40cc8b25b07f-s3-data",
+      "absent": true
+    }
+  ],
+  "selectedZipSha256": "aa4a5a65de5f56155abe5eeee1233ec3acbf256ca186e4d96c9f3987e0a9a565",
+  "members": {
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "8e9a82d02be89ccc163b62fc53672342b9341ad35cb71dc29977e9d47e21e3c4"
+    },
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "lint.log": {
+      "bytes": 5704,
+      "sha256": "4b819c0c06482edf9fd67cf02a031a384b5ac5ebab6a495fcea1ca273f34a922"
+    },
+    "typecheck.log": {
+      "bytes": 6223,
+      "sha256": "ea46ec1871502df5e4bfa48c2b6b874fc65d53a49bc9d5c524d9007321a6e1f5"
+    },
+    "test.log": {
+      "bytes": 91992,
+      "sha256": "a5dca6776d1e363cf81d93b24053fee90b8afaa6db616015a15901ce8ad792b4"
+    },
+    "test-integration.log": {
+      "bytes": 2216927,
+      "sha256": "ae670fccf9d509876e0f074b1e9ef08fc3c4f696a4ad7578b8eb49c092ae0fe8"
+    },
+    "test-conformance.log": {
+      "bytes": 466,
+      "sha256": "a431b668dc9d513b6b9fd6001007d61e9ba07806585136b3202d4d965725f22a"
+    },
+    "results.json": {
+      "bytes": 3775,
+      "sha256": "f879f15fe51bdc283f70c8d3649546852413d7de5aaa565af0c2d2f250358d06"
+    },
+    "input-before.json": {
+      "bytes": 82930,
+      "sha256": "8e203ade40869b4de41b1fe2306e8cd117a87789a6255ccc8cc104f324b9b2e2"
+    },
+    "input-after.json": {
+      "bytes": 82696,
+      "sha256": "08514613b28f2dec1aa5ad47dfaee10a82fcc7765d20fe679954dbad4c530923"
+    }
+  }
+}

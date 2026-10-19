@@ -1,0 +1,89 @@
+{
+  "observedAt": "2026-10-18T19:53:19.314945+00:00",
+  "inputHead": "1de9bf3d777901796247af916139d4bfa36e6811",
+  "sourceDirty": true,
+  "checks": [
+    {
+      "command": [
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\node-v22.19.0-win-x64\\node.exe",
+        "--test",
+        "scripts/ci-policy.test.mjs"
+      ],
+      "label": "ci-policy",
+      "exitCode": 0,
+      "bytes": 5211,
+      "sha256": "3c54bcd521a977e8c54f8ce00b727d33e74c0c59c9c1c6da8fdb966a4540a5db",
+      "output": "TAP version 13\n# Subtest: 实际CI校验入口消费完整生产者与guest图及固定工件下载\nok 1 - 实际CI校验入口消费完整生产者与guest图及固定工件下载\n  ---\n  duration_ms: 579.6492\n  type: 'test'\n  ...\n# Subtest: amd64候选只构建一次，三个画像guest全部必需且延期ARM不影响连接器\nok 2 - amd64候选只构建一次，三个画像guest全部必需且延期ARM不影响连接器\n  ---\n  duration_ms: 79.7595\n  type: 'test'\n  ...\n# Subtest: 自包含双架构完整安装不可丢 leg、跳过或吞失败\nok 3 - 自包含双架构完整安装不可丢 leg、跳过或吞失败\n  ---\n  duration_ms: 52.2453\n  type: 'test'\n  ...\n# Subtest: 纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败\nok 4 - 纯后端 Lite 部署验收不能删除、条件跳过或吞掉失败\n  ---\n  duration_ms: 39.889\n  type: 'test'\n  ...\n# Subtest: 开发镜像构建接线不能被删除、跳过或吞掉失败\nok 5 - 开发镜像构建接线不能被删除、跳过或吞掉失败\n  ---\n  duration_ms: 32.8572\n  type: 'test'\n  ...\n# Subtest: classification bootstrap locks only YAML and cannot bypass policy or evidence\nok 6 - classification bootstrap locks only YAML and cannot bypass policy or evidence\n  ---\n  duration_ms: 243.2\n  type: 'test'\n  ...\n# Subtest: YAML semantics preserve flow maps, aliases and literal command bodies\nok 7 - YAML semantics preserve flow maps, aliases and literal command bodies\n  ---\n  duration_ms: 3.335\n  type: 'test'\n  ...\n# Subtest: 连接器改动必须实际运行平台矩阵，失败/跳过不能放行\nok 8 - 连接器改动必须实际运行平台矩阵，失败/跳过不能放行\n  ---\n  duration_ms: 0.3101\n  type: 'test'\n  ...\n# Subtest: known prose on PR and main avoids every install/service/test job\nok 9 - known prose on PR and main avoids every install/service/test job\n  ---\n  duration_ms: 0.7405\n  type: 'test'\n  ...\n# Subtest: retired workspace paths fail closed to full without a browser check\nok 10 - retired workspace paths fail closed to full without a browser check\n  ---\n  duration_ms: 0.9264\n  type: 'test'\n  ...\n# Subtest: backend assets and fake-agent changes require API checks\nok 11 - backend assets and fake-agent changes require API checks\n  ---\n  duration_ms: 0.3648\n  type: 'test'\n  ...\n# Subtest: API and worker changes retain destructive recovery and real backend integration\nok 12 - API and worker changes retain destructive recovery and real backend integration\n  ---\n  duration_ms: 0.2838\n  type: 'test'\n  ...\n# Subtest: cross-workspace lock audits are selected without inventing runtime dependency cycles\nok 13 - cross-workspace lock audits are selected without inventing runtime dependency cycles\n  ---\n  duration_ms: 0.6879\n  type: 'test'\n  ...\n# Subtest: upstream contracts/domain/db/config changes include transitive consumers\nok 14 - upstream contracts/domain/db/config changes include transitive consumers\n  ---\n  duration_ms: 0.3325\n  type: 'test'\n  ...\n# Subtest: protocol changes retain SDK consumers, conformance and direct backend imports\nok 15 - protocol changes retain SDK consumers, conformance and direct backend imports\n  ---\n  duration_ms: 0.1911\n  type: 'test'\n  ...\n# Subtest: root config, unknown/deleted workspaces and executable-looking docs fail closed to full\nok 16 - root config, unknown/deleted workspaces and executable-looking docs fail closed to full\n  ---\n  duration_ms: 0.58\n  type: 'test'\n  ...\n# Subtest: main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full\nok 17 - main code changes, empty diff, manual/scheduled/reusable CI and merge queues always run full\n  ---\n  duration_ms: 0.4246\n  type: 'test'\n  ...\n# Subtest: PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full\nok 18 - PR uses merge-base, main push uses before/after, renames include both paths, missing history runs full\n  ---\n  duration_ms: 0.9302\n  type: 'test'\n  ...\n# Subtest: aggregate rejects failure, cancellation and accidental skips for every required job\nok 19 - aggregate rejects failure, cancellation and accidental skips for every required job\n  ---\n  duration_ms: 0.6412\n  type: 'test'\n  ...\n# Subtest: aggregate only accepts planned skips and rejects incomplete/malformed decisions\nok 20 - aggregate only accepts planned skips and rejects incomplete/malformed decisions\n  ---\n  duration_ms: 4.2986\n  type: 'test'\n  ...\n# Subtest: MCP discovery consumers require real conformance and propagate failed or skipped job\nok 21 - MCP discovery consumers require real conformance and propagate failed or skipped job\n  ---\n  duration_ms: 0.5226\n  type: 'test'\n  ...\n# Subtest: real workflow semantic mutations cannot silently omit MCP conformance\nok 22 - real workflow semantic mutations cannot silently omit MCP conformance\n  ---\n  duration_ms: 33.3072\n  type: 'test'\n  ...\n# Subtest: controlled CRLF evidence preserves bytes and all other whitespace gates\nok 23 - controlled CRLF evidence preserves bytes and all other whitespace gates\n  ---\n  duration_ms: 1390.8972\n  type: 'test'\n  ...\n1..23\n# tests 23\n# suites 0\n# pass 23\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 2771.1307\n"
+    },
+    {
+      "command": [
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\node-v22.19.0-win-x64\\node.exe",
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\tools\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "ci:validate"
+      ],
+      "label": "ci-validate",
+      "exitCode": 0,
+      "bytes": 4439,
+      "sha256": "ea17ad80c3212307aad059fc348e986c00759b9fb179fe62cd9d239dd76e820c",
+      "output": "\n> workmesh@ ci:validate I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\n> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/retire-legacy-web.test.mjs scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs\n\n[ci:validate] OK: 12 jobs, 49 immutable action references, Node 22.19.0, pnpm@9.15.4\nRelease workflow validation passed.\nLite compose validation passed (7 services; 3 roles from one image; 55 documented variables; published: minio, api)\nTAP version 13\n# Subtest: only the full inspected legacy Web IDs are removed, without volumes\nok 1 - only the full inspected legacy Web IDs are removed, without volumes\n  ---\n  duration_ms: 4.8936\n  type: 'test'\n  ...\n# Subtest: reject another project before any mutation\nok 2 - reject another project before any mutation\n  ---\n  duration_ms: 0.8517\n  type: 'test'\n  ...\n# Subtest: reject another service before any mutation\nok 3 - reject another service before any mutation\n  ---\n  duration_ms: 0.2382\n  type: 'test'\n  ...\n# Subtest: reject another configuration before any mutation\nok 4 - reject another configuration before any mutation\n  ---\n  duration_ms: 0.2095\n  type: 'test'\n  ...\n# Subtest: reject another working directory before any mutation\nok 5 - reject another working directory before any mutation\n  ---\n  duration_ms: 0.2105\n  type: 'test'\n  ...\n# Subtest: reject identity changed just before stop before any mutation\nok 6 - reject identity changed just before stop before any mutation\n  ---\n  duration_ms: 0.2552\n  type: 'test'\n  ...\n# Subtest: unlisted orphan refuses the entire operation\nok 7 - unlisted orphan refuses the entire operation\n  ---\n  duration_ms: 0.2883\n  type: 'test'\n  ...\n# Subtest: receipts exclude container credentials, commands, custom labels and volume driver options\nok 8 - receipts exclude container credentials, commands, custom labels and volume driver options\n  ---\n  duration_ms: 0.5323\n  type: 'test'\n  ...\n# Subtest: failed graceful stop preserves the container\nok 9 - failed graceful stop preserves the container\n  ---\n  duration_ms: 0.89\n  type: 'test'\n  ...\n# Subtest: 无Git/网络依赖读取双字节，精确旧路径/版本映射\nok 10 - 无Git/网络依赖读取双字节，精确旧路径/版本映射\n  ---\n  duration_ms: 9.0926\n  type: 'test'\n  ...\n# Subtest: 相同字节共用member，所有逻辑版本保留\nok 11 - 相同字节共用member，所有逻辑版本保留\n  ---\n  duration_ms: 1.6697\n  type: 'test'\n  ...\n# Subtest: 拒绝规范化后重复逻辑元组\nok 12 - 拒绝规范化后重复逻辑元组\n  ---\n  duration_ms: 1.2979\n  type: 'test'\n  ...\n# Subtest: 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符\nok 13 - 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符\n  ---\n  duration_ms: 0.509\n  type: 'test'\n  ...\n# Subtest: 拒绝规范化后重复ZIP member\nok 14 - 拒绝规范化后重复ZIP member\n  ---\n  duration_ms: 0.5292\n  type: 'test'\n  ...\n# Subtest: 拒绝索引缺项/多项\nok 15 - 拒绝索引缺项/多项\n  ---\n  duration_ms: 1.8521\n  type: 'test'\n  ...\n# Subtest: 拒绝索引重复元组\nok 16 - 拒绝索引重复元组\n  ---\n  duration_ms: 0.6534\n  type: 'test'\n  ...\n# Subtest: 拒绝归档hash不符\nok 17 - 拒绝归档hash不符\n  ---\n  duration_ms: 0.7121\n  type: 'test'\n  ...\n# Subtest: 拒绝伪造来源blob ID\nok 18 - 拒绝伪造来源blob ID\n  ---\n  duration_ms: 1.0279\n  type: 'test'\n  ...\n# Subtest: 拒绝member bytes/hash不符\nok 19 - 拒绝member bytes/hash不符\n  ---\n  duration_ms: 1.3137\n  type: 'test'\n  ...\n# Subtest: 拒绝软链接\nok 20 - 拒绝软链接\n  ---\n  duration_ms: 0.9197\n  type: 'test'\n  ...\n# Subtest: 拒绝目录\nok 21 - 拒绝目录\n  ---\n  duration_ms: 0.4043\n  type: 'test'\n  ...\n# Subtest: 拒绝设备\nok 22 - 拒绝设备\n  ---\n  duration_ms: 0.3618\n  type: 'test'\n  ...\n# Subtest: 拒绝extra元数据/硬链接信息与加密flags\nok 23 - 拒绝extra元数据/硬链接信息与加密flags\n  ---\n  duration_ms: 0.705\n  type: 'test'\n  ...\n# Subtest: 拒绝本地路径不一致、重叠与解压超额\nok 24 - 拒绝本地路径不一致、重叠与解压超额\n  ---\n  duration_ms: 2.851\n  type: 'test'\n  ...\n1..24\n# tests 24\n# suites 0\n# pass 24\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 318.7436\n{\"entries\":280,\"members\":61,\"bytes\":21268498,\"errors\":[]}\n"
+    },
+    {
+      "command": [
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\node-v22.19.0-win-x64\\node.exe",
+        "D:\\Cache\\TEMP\\workmesh-ta00-nf20n0st\\tools\\node_modules\\pnpm\\bin\\pnpm.cjs",
+        "check:integration-docs"
+      ],
+      "label": "integration-docs",
+      "exitCode": 0,
+      "bytes": 296,
+      "sha256": "855bd0248333ef985074926b7750fe33ce1b2c4288ecf829f7adb25181d044f4",
+      "output": "\n> workmesh@ check:integration-docs I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\n> node scripts/check-integration-docs.mjs\n\n{\"skillFiles\":4,\"localLinks\":102,\"restEndpoints\":35,\"mcpTools\":11,\"humanSyntax\":\"passed\",\"scope\":\"静态检查；真实请求与中文语义须另验\"}\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "label": "diff-check",
+      "exitCode": 0,
+      "bytes": 690,
+      "sha256": "9f2146af9cd8979ff067b2cb1c721d0afda520f5912e97b97e417577e2e26621",
+      "output": "warning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/README.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/deployment-design.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/server-distribution/build.mjs', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/server-distribution/install.mjs', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'scripts/server-distribution/install.test.mjs', CRLF will be replaced by LF the next time Git touches it\n"
+    }
+  ],
+  "connectorWorkflowUnchanged": true,
+  "connectorBlockSha256": "5ae0c49a686f766fc52b6eb49bb588e091bca4f90a4abffaf396d5d573c6736d",
+  "serverArchitectures": [
+    "amd64"
+  ],
+  "profiles": [
+    "personal",
+    "team",
+    "enterprise"
+  ],
+  "scope": "本轮范围/工具/静态检查；不是最终候选或139根因验证",
+  "installerTests": {
+    "count": 17,
+    "passed": 17,
+    "logPath": ".tmp/ta01-resumption/amd64-scope-install-with-curl.log",
+    "logSha256": "fb8b5612abcb6fea6343bba47fd58eedd385771dd11d2c4b90f22ef6822df3a4",
+    "probeImage": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+    "log": "TAP version 13\r\n# Subtest: file digest includes a partial final block and changes when its final byte changes\r\nok 1 - file digest includes a partial final block and changes when its final byte changes\r\n  ---\r\n  duration_ms: 30.0568\r\n  type: 'test'\r\n  ...\r\n# Subtest: failed health stops runtime before recovery; stop rejection never restarts or retries\r\nok 2 - failed health stops runtime before recovery; stop rejection never restarts or retries\r\n  ---\r\n  duration_ms: 3.0953\r\n  type: 'test'\r\n  ...\r\n# Subtest: native readiness probe rejects errors, redirects and incomplete responses within its deadline\r\nok 3 - native readiness probe rejects errors, redirects and incomplete responses within its deadline\r\n  ---\r\n  duration_ms: 9549.5531\r\n  type: 'test'\r\n  ...\r\n# Subtest: Docker diagnostics preserve failure categories without argv, secrets or raw output\r\nok 4 - Docker diagnostics preserve failure categories without argv, secrets or raw output\r\n  ---\r\n  duration_ms: 10.9629\r\n  type: 'test'\r\n  ...\r\n# Subtest: wrongArchitectureRejectedBeforeMutation and strict closed manifest schema\r\nok 5 - wrongArchitectureRejectedBeforeMutation and strict closed manifest schema\r\n  ---\r\n  duration_ms: 4.3154\r\n  type: 'test'\r\n  ...\r\n# Subtest: deferredServerPlatformsRejectedBeforeBuildAndHistoricalManifestsRemainReadable\r\nok 6 - deferredServerPlatformsRejectedBeforeBuildAndHistoricalManifestsRemainReadable\r\n  ---\r\n  duration_ms: 168.1004\r\n  type: 'test'\r\n  ...\r\n# Subtest: OCI archive identity is bound to the exact manifest and survives split tar headers\r\nok 7 - OCI archive identity is bound to the exact manifest and survives split tar headers\r\n  ---\r\n  duration_ms: 2.6607\r\n  type: 'test'\r\n  ...\r\n# Subtest: offlineDependencyClosure verifies actual bytes before an image is imported\r\nok 8 - offlineDependencyClosure verifies actual bytes before an image is imported\r\n  ---\r\n  duration_ms: 218.5869\r\n  type: 'test'\r\n  ...\r\n# Subtest: parallel closure checks every group and partial tail before continuing and rejects missing files\r\nok 9 - parallel closure checks every group and partial tail before continuing and rejects missing files\r\n  ---\r\n  duration_ms: 317.3443\r\n  type: 'test'\r\n  ...\r\n# Subtest: compatibleProgramRollback rejects prefix, unknown rows and changed checksums\r\nok 10 - compatibleProgramRollback rejects prefix, unknown rows and changed checksums\r\n  ---\r\n  duration_ms: 19.5734\r\n  type: 'test'\r\n  ...\r\n# Subtest: same schema does not authorize rollback into changed program semantics\r\nok 11 - same schema does not authorize rollback into changed program semantics\r\n  ---\r\n  duration_ms: 0.6344\r\n  type: 'test'\r\n  ...\r\n# Subtest: interrupted health intent cannot bypass program compatibility without pending state\r\nok 12 - interrupted health intent cannot bypass program compatibility without pending state\r\n  ---\r\n  duration_ms: 1.0998\r\n  type: 'test'\r\n  ...\r\n# Subtest: concurrentInstallHasOneOwner and lock is released after failure\r\nok 13 - concurrentInstallHasOneOwner and lock is released after failure\r\n  ---\r\n  duration_ms: 139.3394\r\n  type: 'test'\r\n  ...\r\n# Subtest: invalidInstallJournalRefused and atomic write exposes only a complete state\r\nok 14 - invalidInstallJournalRefused and atomic write exposes only a complete state\r\n  ---\r\n  duration_ms: 118.5185\r\n  type: 'test'\r\n  ...\r\n# Subtest: rejects unsafe paths rather than changing directory permissions\r\nok 15 - rejects unsafe paths rather than changing directory permissions\r\n  ---\r\n  duration_ms: 4.1107\r\n  type: 'test'\r\n  ...\r\n# Subtest: version changes preserve existing volumes, data namespace and cryptographic identity\r\nok 16 - version changes preserve existing volumes, data namespace and cryptographic identity\r\n  ---\r\n  duration_ms: 1.6973\r\n  type: 'test'\r\n  ...\r\n# Subtest: business MCP read selects its unique response and ignores preceding SSE notifications\r\nok 17 - business MCP read selects its unique response and ignores preceding SSE notifications\r\n  ---\r\n  duration_ms: 1.012\r\n  type: 'test'\r\n  ...\r\n1..17\r\n# tests 17\r\n# suites 0\r\n# pass 17\r\n# fail 0\r\n# cancelled 0\r\n# skipped 0\r\n# todo 0\r\n# duration_ms 10846.9232\r\n"
+  },
+  "pythonTests": {
+    "count": 60,
+    "passed": 60,
+    "source": "本轮工具返回原输出，未另存原始日志，不补造文件SHA"
+  },
+  "firstFailures": [
+    "编辑误触连接器ARM矩阵，策略负例阻断；已恢复原块并核逐字相同",
+    "Windows未提供健康探针镜像ID，安装单元1失败",
+    "旧MCP归档镜像缺curl，安装单元1失败；依赖镜像精确ID复验17通过"
+  ],
+  "newArmVm": false,
+  "dispatchedOrRerunOrCancelled": false,
+  "product139Closed": false,
+  "latestCandidateAcceptance": "待推送绑定新候选",
+  "fullRootChecksLocallyRerun": false
+}

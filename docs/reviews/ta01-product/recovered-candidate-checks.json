@@ -1,0 +1,53 @@
+{
+  "inputHead": "718c03408fe8b975917062bb1322eaf36c51c79c",
+  "sourceSnapshots": {
+    "scripts/server-distribution/install.mjs": {
+      "sha256": "2ea8e9dd379b5dcac13abcc585638b8c4756650685864b5eab62171347c80c51",
+      "bytes": 36588,
+      "expectedGitBlob": "0866d8cd62da5fd15a8b7a4986e16e14ac658f22"
+    },
+    "scripts/server-distribution/journal.mjs": {
+      "sha256": "c5f58cdbcca5ddfb4c270251ae752ed191afc8f57727af3815321fb2422fe522",
+      "bytes": 2991,
+      "expectedGitBlob": "25ef2bedfdaee87cce92bdc0e5ca2aebf9fe4615"
+    },
+    "scripts/server-distribution/install.test.mjs": {
+      "sha256": "e1898b43f5b8d591bfbf783411e6d1ba6da6e6cbb266abf85a85563378946314",
+      "bytes": 25084,
+      "expectedGitBlob": "6b61b8c1887629a00f46ee49cbfdbed7a9519375"
+    },
+    "scripts/server-distribution/install-recovery-fixture.mjs": {
+      "sha256": "e4cd88437950a826c716d9d90ae21a08035e93deaee63734da15fd304f932d1c",
+      "bytes": 14789,
+      "expectedGitBlob": "5b719084c1a63629feee5c3b83b0ae24d98f0f46"
+    },
+    "scripts/server-distribution/guest.py": {
+      "sha256": "54bb28e2c336d8e63a68c5844d509498d8925f1223a442baf1219d229ed3b8c2",
+      "bytes": 83065,
+      "expectedGitBlob": "a83505c859f5d88876572017453637f782b60631"
+    }
+  },
+  "results": {
+    "installTests": 18,
+    "pythonTests": 60,
+    "guestAst": "passed",
+    "nodeSyntax": "passed",
+    "ciValidate": "passed",
+    "integrationDocs": {
+      "skillFiles": 4,
+      "localLinks": 102,
+      "restEndpoints": 35,
+      "mcpTools": 11,
+      "humanSyntax": "passed",
+      "scope": "静态检查；真实请求与中文语义须另验"
+    },
+    "diffCheck": "passed"
+  },
+  "scope": "只验证本次修复，原CI568不代新候选；新guest断言待普通CI；两个139未闭。",
+  "fixturePreflight": "首轮夹具缺PUBLIC_MCP_ORIGIN；修正后仅复验控制流，无部署/VM。最终源码统一LF后记录最终结果，早期日志保留临时目录。",
+  "hostInstallOrNewDiagnosticVm": false,
+  "testOnlyNodeFlag": "--experimental-vm-modules；产品运行时标志未改",
+  "resources": "测试私有目录按realpath校验收尾；健康镜像原ID、--rm及/data tmpfs，标签残留0；共享数据/旧树/未知卷/受拒目标保持。",
+  "sourceSkills": "zh-tech-writing ffda9353768dece8aabd26ccb3a4978025e9437c; typography/manual-structure; autocorrect unavailable/manual",
+  "latestCandidateCi": "尚待新提交触发；未执行新诊断VM、未复审合入或发布"
+}

@@ -1,0 +1,207 @@
+{
+  "说明": "首次安装 1800 秒命令预算耗尽；镜像导入 20 分 36 秒，迁移仍 intent，migrate 正在运行。没有 OOM 或重启；未取得画像业务闭环、备份或恢复结果。不得认定与 amd64 同因。",
+  "runId": 38532340686,
+  "jobId": 115748746944,
+  "artifactId": 11883288478,
+  "sourceHead": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+  "sourceTree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406",
+  "status": "failed",
+  "totalSeconds": 5127.215567019,
+  "scripts": {
+    "run.py": {
+      "sha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd",
+      "resultSha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd"
+    },
+    "guest.py": {
+      "sha256": "dcdf7c2a1ba893d1aae9d60bddcf222328452e01419b0629f210177bf92ab399",
+      "resultSha256": "dcdf7c2a1ba893d1aae9d60bddcf222328452e01419b0629f210177bf92ab399"
+    }
+  },
+  "artifactZipSha256": "a25f2254d6f5d83e89341d1e75b64c2bacb8ee2c275baf1394f22690a73fc34c",
+  "selectedZipSha256": "0316cb445b9f7b6aa7c03b1b43880da0e7f41fe4a31ee536b82e353fce4c78d8",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "2f02fbf543e998c5f191d9a0e46c5ca0222f9d7fbc908ed760730338b1579532",
+      "bytes": 65443
+    },
+    "server-install/guest.log": {
+      "sha256": "676cd344cad46ca719c808678a2df26822e9ff15e007a865560fa9fdc4e2e42a",
+      "bytes": 396
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "7a19d1136cb352e5d3de86d463e38d77d28d9207053c8c4b265acaaf11f45204",
+      "bytes": 1494
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "fec35a0542adc1dab19fb7b8b8dd339c6db858935b5e740eb509a16756b8254e",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "d738fdb1e3a04707ac30d36124a40eafdc9a1da8db5a7e5f5efa39e337c34767",
+      "bytes": 12627
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "e39ac7fce9f1b1b9744fa0ec155701a4169b92c58f2c70324d59e99a629b9976",
+      "bytes": 70
+    },
+    "server-install/result.json": {
+      "sha256": "ea8aed621978837c830f4f29771d0291b08cc76ae4df1ccca4b464e13482a5bd",
+      "bytes": 7362
+    },
+    "server-install/serial.log": {
+      "sha256": "03bb23cc44598681997ff132c3b6baedaa5c2783d81631fbcfae6061e4376a18",
+      "bytes": 100835
+    },
+    "server-install/source-after.txt": {
+      "sha256": "af8f0c96ba83be60ce21f02b7f37e40691bf1ed6fc9928bcf7cb03ecdb110597",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "d069be3e3902d8ba347ec9873e00deb788cff483d7d1659681a0a5435b887161",
+      "bytes": 269
+    },
+    "server-install/source-install.log": {
+      "sha256": "8543541b73d536ea7e124904ef8fbe1ff9fb42cc0256917f544df98f86135a5d",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "af8f0c96ba83be60ce21f02b7f37e40691bf1ed6fc9928bcf7cb03ecdb110597",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "9d009ff91a108d69efd94f18155ea51ece12b1d2125c76dea8a9cd0942f9176f",
+      "bytes": 2577
+    }
+  },
+  "receipts": [
+    {
+      "phase": "failure",
+      "errorType": "TimeoutExpired",
+      "diagnostics": {
+        "command": "sh",
+        "timedOut": true,
+        "timeoutSeconds": 1800,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "6abe12d1bafbb00df95d0f88dc7845c003fbaffc1b0ed81454fa8b1b2c8340f6",
+        "journal": {
+          "stage": "backed_up",
+          "candidate": "d738fdb1e3a04707ac30d36124a40eafdc9a1da8db5a7e5f5efa39e337c34767",
+          "actions": [
+            {
+              "name": "import-images",
+              "status": "completed",
+              "startedAt": "2026-10-14T09:14:34.127Z",
+              "finishedAt": "2026-10-14T09:35:10.285Z"
+            },
+            {
+              "name": "start-data-services",
+              "status": "completed",
+              "startedAt": "2026-10-14T09:35:10.755Z",
+              "finishedAt": "2026-10-14T09:39:40.848Z"
+            },
+            {
+              "name": "initialize-locked-bucket",
+              "status": "completed",
+              "startedAt": "2026-10-14T09:39:41.005Z",
+              "finishedAt": "2026-10-14T09:40:51.877Z"
+            },
+            {
+              "name": "apply-migration-ledger",
+              "status": "intent",
+              "startedAt": "2026-10-14T09:40:52.194Z"
+            }
+          ]
+        },
+        "installer": [],
+        "containers": [
+          {
+            "id": "14013ed215446902342e1558319afa2234f2750c787a281ab5c4de0058a19cce",
+            "service": "migrate",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": null,
+            "probes": []
+          },
+          {
+            "id": "a68f3477fbb8d26f55027bb58bcf5b94cf769d62cdd0a6080f9c7deeb7f5d04d",
+            "service": "postgres",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": 0,
+                "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+              }
+            ]
+          },
+          {
+            "id": "46a24224623a9b8c0b5ba92ef6ead8eb0c8da286daaff2eccf6bb0ff8f78ee78",
+            "service": "redis",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": 0,
+                "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+              }
+            ]
+          },
+          {
+            "id": "9322a4a3143ff8ed099a7698dfbfe85d9f17482c2e7cd13a0709aed9f8c36059",
+            "service": "minio",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "probes": [
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              {
+                "exitCode": 0,
+                "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          }
+        ]
+      },
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation"
+      ],
+      "hostUtc": 1791970921.5437891,
+      "hostElapsed": 5126.728208166
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "owner": "4506b5ea-abf3-4c99-9abf-f901fef1120e",
+  "source": {
+    "commit": "98aeb2d65c28ce19b81358b1a04f8974f21569c2",
+    "tree": "8a64faca5aaf62af86f3b620a8f57e3dfc4cc406"
+  },
+  "resources": [
+    {
+      "kind": "network",
+      "id": "a5859b48031f44d0d07f8ef3a5d5559da8557e31539042c6081354867609b8d7",
+      "name": "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e-pg"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e-s3"
+    },
+    {
+      "kind": "volume",
+      "name": "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e-backup"
+    },
+    {
+      "kind": "container",
+      "id": "340624cef10159e6cdba78857418da86adcf66b410eb03cce5c46e631af731ac",
+      "role": "pg"
+    },
+    {
+      "kind": "container",
+      "id": "31cde5d8f6c868b603f7a5928c9ead8d3068665b69a44ddc9149a5542d5f07ca",
+      "role": "s3"
+    }
+  ],
+  "results": [],
+  "removed": [
+    "31cde5d8f6c868b603f7a5928c9ead8d3068665b69a44ddc9149a5542d5f07ca",
+    "340624cef10159e6cdba78857418da86adcf66b410eb03cce5c46e631af731ac",
+    "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e-backup",
+    "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e-s3",
+    "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e-pg",
+    "ta01-backup-4506b5ea-abf3-4c99-9abf-f901fef1120e"
+  ]
+}
