@@ -4,7 +4,7 @@
 
 基于 718c034 的 P1 修正已提交为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`。旧程序启动前持久化 withdrawnAt 并使 validation 失效；恢复后直接 commit、安装器进程重启后 commit 均拒绝；显式重新 upgrade 须新 journal 和完整备份／迁移／健康／业务验证。控制流替身回归与真实部署分列。CI570／run39169353227 的三画像完整 guest 均报告 `withdrawnCandidateCommitRejected`、`restartedInstallerRejectsWithdrawnCandidate`、`explicitReupgradeRevalidates` 通过；原 4 CPU／4 GiB、9000 秒及逐命令期限不变。三组各核 23 输入、六脚本、候选 artifact12152451241 及同一 manifest，完整恢复／系统重启证明齐全。准确原件见 [CI570 索引](../../reviews/ta01-product/ci570-observed-status.json)。
 
-17 个 job 全部 success，Required117818842379 成功，只绑定受测 c7cf68a；本次后续资料 skip-ci head 没有自身成功 Required。P1-1 正式复审尚未完成，P1-2 旧 139 继续阻断。问题 `q-E6FuFFokBxxs6UpR6K9vC` 未答复，[具体方案](amd64-crash-investigation-plan.md)未获批准；本轮没有新诊断 VM、重问、产品改动、重跑或取消 CI，不送审、不合入。
+17 个 job 全部 success，Required117818842379 成功，只绑定受测 c7cf68a；后续资料 skip-ci head 没有自身成功 Required。P1-1 已收到正式复审确认闭合，P1-2 旧 139 继续阻断。用户对原问题 `q-E6FuFFokBxxs6UpR6K9vC` 回答“先取API窗口（推荐）”，唯一一次 A 已执行：678.69秒，外层OOM／QEMU -9，无目标或最终回执，目标请求数unknown，不是139阴性样本。准确结果见[本次索引](../../reviews/ta01-product/amd64-api-crash-window-a.json)；新的VM／外层预算选项继续[待裁定](amd64-crash-investigation-plan.md#本次-a-的实际结果与新关口)，不自动补跑。B未执行；本轮无产品改动、重跑或取消CI，不送审、不合入。
 
 ## 当前验收平台：Linux amd64
 

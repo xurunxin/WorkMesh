@@ -4,9 +4,9 @@
 
 本轮服务端目标已按用户2026-10-19 03:41裁定收敛为 **Linux amd64（x86_64）**。ARM服务端延期，本轮不交付；Windows及32位x86不在范围。构建及安装入口拒绝延期／不支持的平台，启动器在导入镜像前拒绝非Linux x86_64宿主或非amd64清单。历史ARM清单只保格式解析和证据，不代表当前安装支持。连接器的Linux双架构交付保持，见[连接器安装](installation.md)。
 
-当前受测为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`。CI570／run39169353227 三画像完整 guest、17 个 job 及 Required117818842379 全部成功。三画像均已验证撤回后提交拒绝、全新安装器进程重读后拒绝、显式重新升级完整验证，并保留恢复与系统重启证明，见[准确原件索引](../reviews/ta01-product/ci570-observed-status.json)。P1-1 正式复审未完成，间歇 API139／MCP139 仍未闭；后续资料 skip-ci head 没有自身成功 Required，不能据绿色宣称交付完成。安装命令与保证保持，完整依据见[当前规格](../plan/ta01-self-hosted-deployment/current-spec-amd64.md)。
+当前受测为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`。CI570／run39169353227 三画像完整 guest、17 个 job 及 Required117818842379 全部成功。三画像均已验证撤回后提交拒绝、全新安装器进程重读后拒绝、显式重新升级完整验证，并保留恢复与系统重启证明，见[准确原件索引](../reviews/ta01-product/ci570-observed-status.json)。P1-1 已由正式复审确认闭合，间歇 API139／MCP139 仍未闭；后续资料 skip-ci head 没有自身成功 Required，不能据绿色宣称交付完成。安装命令与保证保持，完整依据见[当前规格](../plan/ta01-self-hosted-deployment/current-spec-amd64.md)。
 
-安装器撤回状态修正已由上述候选验证；旧 139 仍停在[定向修复裁定关口](../plan/ta01-self-hosted-deployment/repair-decision-gate.md)。问题 `q-E6FuFFokBxxs6UpR6K9vC` 未答复，新增 API／MCP 诊断 VM 未获批准或执行。本轮只归档结果，不改产品或接口示例，不重跑／取消 CI。下面 ARM 及早期 CI 记录保留为历史，不能用作当前诊断授权或覆盖 CI570 的准确结果。
+安装器撤回状态修正已由上述候选验证并复审闭合。用户现对原问题 `q-E6FuFFokBxxs6UpR6K9vC` 回答“先取API窗口（推荐）”，仅批准旧 CI562 企业 API 的一次有界窗口，未批准 MCP 窗口或追加实验。准确回执与未闭项见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。产品和接口示例不改，不重跑／取消 CI。下面 ARM、早期 CI 及先前等批记录保留为历史，不能扩成本次授权或覆盖 CI570 的准确结果。
 
 最新普通CI567／run38893305755@e276终态failure：三AMD已核完整重启通过，三ARM失败，Required117011885049失败。用户21:48批准的一次ARM组件1800秒例外已完成：实际1392.55秒、两个目标GET在原30秒内，Node／PG／Redis／QEMU0且无宿主TERM；前三次1200秒incomplete不倒填。独立API／只读ISO／额外观测不冒个人Lite同镜像或完整支持，不关闭旧API／MCP139。准确阶段和原件见[当前报告](../plan/ta01-self-hosted-deployment/current-delivery.md)。本资料skip-ci提交无成功Required，不能合入。
 

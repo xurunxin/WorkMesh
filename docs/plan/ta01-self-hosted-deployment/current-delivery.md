@@ -2,13 +2,34 @@
 
 ## 当前状态与来源
 
-受测 head 为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`，parent 为 `718c03408fe8b975917062bb1322eaf36c51c79c`。CI570／run39169353227 已自然终态，17 个 job 全部 success，Required117818842379 成功。三画像原件及新增撤回断言已核；P1-1 正式复审尚未完成，P1-2 旧 API139／MCP139 仍未闭。PR228 保持 draft，不合入或发布。
+受测 head 为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`，parent 为 `718c03408fe8b975917062bb1322eaf36c51c79c`。CI570／run39169353227 已自然终态，17 个 job 全部 success，Required117818842379 成功。三画像原件及新增撤回断言已核；P1-1 已由本会话收到的正式复审反馈确认闭合，未发现新增 P0／P1；P1-2 旧 API139／MCP139 仍未闭。PR228 保持 draft，不合入或发布。
 
-本轮只归档已完成的验收并更新资料。问题 `q-E6FuFFokBxxs6UpR6K9vC` 尚未收到用户答复；本次收尾指令不是诊断授权。没有启动 API／MCP 诊断 VM、重问或复制该问题，也没有改产品、重跑成功 CI、取消 job 或新增矩阵。以下结果来源于执行者本轮 GitHub API 和原件核验，不是正式独审结论。
+CI570 的归档收尾已提交为 `ef372816e518e86530f11708739feaaa51ce5bff`，当时原取证问题尚未答复，也没有新诊断 VM。用户本次已对该原问题回答“先取API窗口（推荐）”，仅批准已入库方案 A 的一次窗口。准确执行结果在下节单列；没有重问、复制问题、改产品、重跑／取消 CI 或追加矩阵。CI 原件核验来源于执行者；P1-1 闭合另外来源于本会话正式复审反馈，不能把两者混作同一结论。
 
 本轮支持范围仍为 Linux amd64 三画像，PG／Redis／S3、外置 Runner、原鉴权／资格／事件／通知／事务保证保持。ARM 服务端延期，连接器既有双架构不变。没有迁移、REST／MCP／事件合同变化，没有更换产品 Node／QEMU／guest、资源、设备或任何产品期限。
 
 产品修正开工时本地与 PR 均为 718c034，main 为 `c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8`。本轮收尾重新读取本地与 PR，均为 c7cf68a，工作树起初干净。未操作共享缓存锁、旧树或其他远端。修正属于 c7cf68a，不倒填到 8ff1f8b 或 CI568。
+
+## 本次 API 窗口：外层 OOM，取证不完整
+
+本轮开工及 PR 资料 head 为 `ef372816e518e86530f11708739feaaa51ce5bff`。用户已批准原方案 A，准确批准正文及该提交下的方案 Git blob 已保存。唯一一次执行命令为 `python .tmp/ta01-resumption/api-crash-window-a/execute_once.py`；它调用专用容器内 `python3 /opt/api-window/run_window.py`。VM 总窗上限 9000 秒，外层命令 9030 秒仅作清理后备，不是 VM 或产品延长许可。没有第二次 VM、MCP 窗口或矩阵。
+
+[完整安全索引](../../reviews/ta01-product/amd64-api-crash-window-a.json)及对应 ZIP 保存实际脚本、原件、阶段与收尾。诊断候选为 CI562 的 `9c8bbff749c1d2a52a3e6489dcec02d2d7c859af`，artifact12018130672、manifest `c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b`。原 ZIP 摘要匹配，31 个文件／分块和 8 角色的 132 个 OCI blob 闭包已核；旧首败的 22 输入、原 commit 对象、六个助手脚本亦匹配 Git。复制到容器的三份新增诊断脚本匹配本轮冻结摘要；这些是取证包装，不是产品源码改动。
+
+| 实际观察 | 结果及边界 |
+| --- | --- |
+| 固定输入 | QEMU 8.2.2+ds-0ubuntu1.18 及二进制 SHA、guest SHA、4 vCPU／4 GiB／40 GiB 设备保持；阶段确认内核 6.8.0-142-generic、GDB 15.1-1ubuntu1~24.04.1。旧原件的 Docker 29.1.3／Compose 2.40.3 包版本也匹配 |
+| 最早安全阶段 | `driver-started` 在 VM 宿主计时 609.61 秒落盘；仅一条阶段回执，无原安装动作、目标请求或最终回执，不能假定阶段后的实际调用数 |
+| 终态 | VM 678.69 秒，QEMU 退出 -9；外层 runner 退出 0只表示已写测量结果，不是诊断成功。未达 9000 秒截止，无正常 SHUTDOWN或完整最终回执 |
+| 新首败证据 | 准确外层容器有 Docker oom 事件，停止前 Running=true／OOMKilled=true。没有内存峰值或 OOM 受害 PID原件，不外推具体被杀进程的完整机制 |
+| 未测 | 实际目标请求数 unknown；API Node身份、运行时二进制摘要、注册覆盖、core 和公开帧均未取得。不能写成未复现 139或证明原调用通过 |
+| 停止／收尾 | QEMU已结束后仅余控制 sleep 和收尾 shell；按完整 ID／owner核无宿主挂载／设备／端口，定向 stop、rm并核不存在。随后 PID1 的 die137属于收尾，不是 API139或新的业务结论 |
+
+执行者错误沿用了组件测量的外层 `--memory 4g --memory-swap 4g` 上限，完整 guest 自身也配置 4 GiB。外层的 QEMU 及缓存开销没有合适余量；本次 OOM是测量封装失败的证据。guest 磁盘、应用数据库、密钥及原始服务日志没有导出。没有修改 Node／QEMU／应用、资源或期限后重试。
+
+本次静态核验缩小了“错误候选／脚本／OCI 闭包”这一输入缺口，但目标尚未取得回执，产品实现、依赖运行时与 TCG 三个旧 139解释均未受到有效检验。外层 OOM／QEMU SIGKILL不等于旧 API／MCP SIGSEGV，不能合并根因，也不据此修改产品。
+
+下一项可检验方案已写入[原取证计划的新关口](amd64-crash-investigation-plan.md#本次-a-的实际结果与新关口)：若另获批准，仅将专用外层容器上限从 4 GiB 改为 6 GiB，再取一台同样的 A；guest、产品、原期限和单次停止条件保持，容量不足不启动，不改全局配置或其他项目。该选项尚未批准或执行；本次单台许可已消耗，当前停回关口。P1-1 保持复审闭合，P1-2 继续阻断，不送审、不合入、不发布。
 
 ## P1：恢复后提交撤回候选
 
@@ -48,7 +69,7 @@ if (candidateWasWithdrawn(existing)) fail('INSTALL_CANDIDATE_WITHDRAWN')
 
 ## P1：API139／MCP139 仍未闭
 
-**方案已形成，不代表第 2 项已修复。批准前不启动新的诊断 VM。**
+**第 2 项仍未修复。用户只批准 A 的一次 API 窗口；B 及追加实验未获批准。**
 
 [最小取证方案](amd64-crash-investigation-plan.md)分别绑定：CI562／9c8bbff 企业 API 的序号 8 install 后首个业务初始化窗口，以及 CI566／541f6ba 团队回退后序号 18 commit／initialize 窗口。两者都发生于普通 amd64 验收；相关应用源码无变化，完整镜像身份不同。现有帧及阴性样本不能区分产品、运行依赖与 TCG。
 
@@ -76,7 +97,7 @@ if (candidateWasWithdrawn(existing)) fail('INSTALL_CANDIDATE_WITHDRAWN')
 
 [Required 与源码门禁日志](../../reviews/ta01-product/ci570-required-source-gates.json)保存安全原字节。lint／typecheck／test 及适用集成、conformance 的完成依据为本次正常 CI 的成功 job；本轮没有在本机重跑五根检查。连接器 ARM 成功只属于其既有范围，不恢复 ARM 服务端交付。受控安装器的同源不同候选验证仍不等于已发行历史程序对或裸 Compose 迁入验收。
 
-本轮 JSON／ZIP 资料按现有策略使用 `[skip ci]` 提交，避免无产品变化又触发全矩阵。受测 head 始终为 c7cf68a；后续资料 head 及准确 PR ref 在 PR 短正文单列，资料 head 没有自身成功 Required。CI570 成功不代表 P1-1 正式复审通过，更不关闭 P1-2。
+本轮 JSON／ZIP 资料按现有策略使用 `[skip ci]` 提交，避免无产品变化又触发全矩阵。受测 head 始终为 c7cf68a；后续资料 head 及准确 PR ref 在 PR 短正文单列，资料 head 没有自身成功 Required。CI570 成功本身不代表 P1-1 正式复审通过。随后已收到正式复审确认 P1-1 闭合；P1-2 仍未闭。
 
 历史 CI568／run39160943688 仅绑定 `8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b`，17 job／三画像及 Required117791572117 成功；不覆盖新修正，也不关闭旧 139。准确完整对照、原件及资源账本见 [718c034 历史报告](https://github.com/xurunxin/WorkMesh/blob/718c03408fe8b975917062bb1322eaf36c51c79c/docs/plan/ta01-self-hosted-deployment/current-delivery.md)。原生／TCG 各 32 轮、595.16 秒的单次 amd64 样本和旧 ARM 全部记录保持，没有新 VM 或组件小测。
 
