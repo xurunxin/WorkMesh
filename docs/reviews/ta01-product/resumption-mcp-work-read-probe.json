@@ -1,0 +1,48 @@
+{
+  "说明": "补测合成work:read身份；features及scope仍为合成值，不冒真实guest资格响应。原五次测量保持原脚本/原件，新脚本不倒填旧结果。",
+  "sourceHead": "5371f16e24db94415155228dfc8ac149523573a0",
+  "inputsIndex": "resumption-mcp-component-probe.json",
+  "inputsIndexSha256": "a916a8991580617b77271c53c6502d62b70bd30e92ddf011fc3547a8be73b313",
+  "previousFiveCasesZipSha256": "03e49d9f675ea77c28f51b8d98595e9a9f6d15b3fc484f34c3a916883b000797",
+  "measurementSha256": "d0260ebb5ae15d06bae626b71798a75e7141fecf8278e8228d4556a52395bad2",
+  "qualifiedResponseBytes": 309710,
+  "qualifiedOperations": 287,
+  "qualifiedWallMedianMs": 71.25389999999993,
+  "qualifiedCpuMedianMs": 59.190999999999995,
+  "toolWallMedianMs": 106.2768500000002,
+  "toolCpuMedianMs": 115.69,
+  "finiteSampleNo139": true,
+  "fullGuestAcceptance": false,
+  "containerClosed": true,
+  "selectedZipSha256": "91bab52b5c6898dab4a80111f65be0944f70580e75847b5555cd074f83466cab",
+  "members": {
+    "resources-work-read.json": {
+      "bytes": 656,
+      "sha256": "9453e3fd08fd93a781cc13e4a86992b417a763e367980d86606a45c3a99ae133"
+    },
+    "work-read-result.json": {
+      "bytes": 19667,
+      "sha256": "c2a5a1a0f330fba878dc067c26dcf5da4ec5cbdc14298b82422d4f5672534558"
+    },
+    "work-read-stdout.log": {
+      "bytes": 13042,
+      "sha256": "838c8d1061aa5545ca2fcec1fbfc79a15b3a65c2a6153b8cecb77805a65aad15"
+    },
+    "work-read-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "measurement.mjs": {
+      "bytes": 10147,
+      "sha256": "d0260ebb5ae15d06bae626b71798a75e7141fecf8278e8228d4556a52395bad2"
+    },
+    "run-mcp-component-work-read.py": {
+      "bytes": 4576,
+      "sha256": "73a03121457877d6a41e6ba5eff66fcbed0a9b7c5777ecf9bc01be0f7e7df2b1"
+    },
+    "summary.json": {
+      "bytes": 899,
+      "sha256": "9db007f947047aec66328c12464639fe8cdb21a2ace7bcff1d1fb6c55302558d"
+    }
+  }
+}

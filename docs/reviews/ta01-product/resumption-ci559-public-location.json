@@ -1,0 +1,45 @@
+{
+  "说明": "真实CI559 AMD64的目标SHA与公开镜像Node完全相同后，匹配V8 IC::UpdateState+128及公开指令边界；没有完整栈，不单独证明指针为何失效。不含core、私有寄存器、栈内存或大二进制／索引。",
+  "runId": 38801222595,
+  "jobId": 116656730219,
+  "sourceHead": "f53f20b85e680a4219ae9f22a58ff37de58c37d8",
+  "targetBinarySha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+  "function": {
+    "symbol": "_ZN2v88internal2IC11UpdateStateENS0_6HandleINS0_6ObjectEEES4_",
+    "elfAddress": 20361504,
+    "bytes": 253,
+    "offsetInFunction": 128
+  },
+  "faultInstruction": {
+    "address": 20361632,
+    "bytes": "488b40ff",
+    "instruction": "mov rax,[rax-1]"
+  },
+  "analysisDependency": {
+    "package": "iced_x86-1.21.0-cp38-abi3-win_amd64.whl",
+    "sourceUrl": "https://files.pythonhosted.org/packages/04/9e/ab21c70472b605bbcaca5a181cfda56b0750b061f4a946192888142ec37c/iced_x86-1.21.0-cp38-abi3-win_amd64.whl",
+    "sha256": "04e04a8cc49ca7d89448fb78e3bab4ae364cf1fc888c996540a791c9999077c1",
+    "bytes": 886006,
+    "version": "1.21.0",
+    "scope": "task-local; no global install"
+  },
+  "members": {
+    "ci559-public-location-match.json": {
+      "bytes": 992,
+      "sha256": "548fbfb6c5b0db5ec78e1ddfe597864589730ab8ada3d6a0b98146927f9c3c5d"
+    },
+    "ci559-public-function-disassembly.json": {
+      "bytes": 9484,
+      "sha256": "36621e87c05ebe359b272a92d6b0319afc109b765ea1a301ee8d43ca070b71de"
+    },
+    "resolve-ci559-public-location.py": {
+      "bytes": 1747,
+      "sha256": "3b7aa22cb428174ff6096ff02b0b2e012ca1fb3cb85716373fb38b482f6b9ef4"
+    },
+    "decode-ci559-public-function.py": {
+      "bytes": 3813,
+      "sha256": "ffe03bf1afc62daa40e90757ce140f5d803a9ada4db0a4e40a33bfa94beff734"
+    }
+  },
+  "selectedZipSha256": "9071f89cfa97b1dbda4ed165ebf2834738b342efac54579008fbf009ab9842d0"
+}

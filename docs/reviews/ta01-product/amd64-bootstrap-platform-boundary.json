@@ -1,0 +1,84 @@
+{
+  "sourceHead": "8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b",
+  "oldSourceHead": "1de9bf3d777901796247af916139d4bfa36e6811",
+  "observedAt": "2026-10-18T20:18:22.939163+00:00",
+  "scope": "Linux amd64容器内启动器拒绝边界；合成最小manifest，不是有效完整发行包或安装验收，不测139",
+  "containerId": "0c9fc7e7f9a3ccb92f66de719c163ac6551c22858de9ee563dc85d923a86dbd9",
+  "owner": "28518378-c2c9-430e-9568-318b202dfd05",
+  "nodeOrGuestStarted": false,
+  "result": {
+    "owner": "28518378-c2c9-430e-9568-318b202dfd05",
+    "imageId": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+    "sourceHead": "8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b",
+    "oldSourceHead": "1de9bf3d777901796247af916139d4bfa36e6811",
+    "beganAt": "2026-10-18T20:15:04.115021+00:00",
+    "newVm": false,
+    "scope": "Linux amd64容器内启动器拒绝边界；合成最小manifest，不是有效完整发行包或安装验收，不测139",
+    "scripts": {
+      "old": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6",
+      "new": "ff0fe239b72f2981fd3691ffab2e843e1e40fe414ebc5adff803ba6f70917a1a"
+    },
+    "containerId": "0c9fc7e7f9a3ccb92f66de719c163ac6551c22858de9ee563dc85d923a86dbd9",
+    "identityAndBoundaryVerified": true,
+    "exitCode": 0,
+    "seconds": 0.5929999998770654,
+    "stdout": "old_arm\t127\t0\t1\t0\nnew_arm\t1\t1\t0\t0\nnew_amd64\t127\t0\t1\t0\n",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "boundaryAssertionsPassed": true,
+    "beforeCleanup": {
+      "Status": "exited",
+      "Running": false,
+      "ExitCode": 0,
+      "OOMKilled": false
+    }
+  },
+  "cleanupReconciliation": {
+    "observedAt": "2026-10-18T20:17:05.604086+00:00",
+    "containerId": "0c9fc7e7f9a3ccb92f66de719c163ac6551c22858de9ee563dc85d923a86dbd9",
+    "inspectExitCode": 1,
+    "inspectStdout": "[]\n",
+    "inspectStderr": "error: no such object: 0c9fc7e7f9a3ccb92f66de719c163ac6551c22858de9ee563dc85d923a86dbd9\n",
+    "removedAndAbsent": true,
+    "originalHelperError": "Measured process and boundary assertions passed; final absence check only matched case-sensitive No such. Original helper exited AssertionError; no business rerun.",
+    "scope": "补充只读核准确已移除容器，不重试删除"
+  },
+  "originalRunnerExitCode": 1,
+  "measuredShellExitCode": 0,
+  "businessOrMeasurementRerun": false,
+  "meaning": "新ARM清单在Docker前明确拒绝；amd64仅继续到缺Docker预检，非完整安装通过。收尾大小写分类首败及只读补核保留。",
+  "selectedZipSha256": "a5dfaa719841a9595a48c4947c08d5cdb4a8afd6179885cdb12b926100e2d9b1",
+  "members": {
+    "cleanup-reconciliation.json": {
+      "bytes": 602,
+      "sha256": "1e709be1b172a015405df41cc840f4e2bf4be0eede3aa54b31c6ff1803c2002c"
+    },
+    "harness.sh": {
+      "bytes": 9707,
+      "sha256": "8ec7c012078e700292e55f9faa0ea922d13399a5f29e1132ccf333d8d21dce15"
+    },
+    "new-install.sh": {
+      "bytes": 3397,
+      "sha256": "ff0fe239b72f2981fd3691ffab2e843e1e40fe414ebc5adff803ba6f70917a1a"
+    },
+    "old-install.sh": {
+      "bytes": 3146,
+      "sha256": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6"
+    },
+    "result.json": {
+      "bytes": 1166,
+      "sha256": "d2e6b27eec425e8e481a5c125c36d9b577cce22164075c953685ee519b5c6d0a"
+    },
+    "stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout.txt": {
+      "bytes": 54,
+      "sha256": "0d907439423f3320173dbf3f87ae6ea251d833683bec3d1565019f5c69b64365"
+    },
+    "actual-runner.py": {
+      "bytes": 5204,
+      "sha256": "8778922c6c35d6c7a7cca7cfb4da3cb36bb5066b95b3d78257c29fd4c9e8ced8"
+    }
+  }
+}

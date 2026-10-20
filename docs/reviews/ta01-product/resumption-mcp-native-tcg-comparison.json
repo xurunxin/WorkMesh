@@ -1,0 +1,365 @@
+{
+  "说明": "固定Node/guest/QEMU的隔离AMD64组件原生/TCG对照及零POST进程冷启动；不代完整已安装候选、真实授权/PG/Redis/S3或ARM。有限未139不排除。",
+  "componentSourceHead": "5371f16e24db94415155228dfc8ac149523573a0",
+  "toolBaseHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+  "componentSourceUnchangedAtToolBase": true,
+  "cases": {
+    "native": {
+      "importMilliseconds": 478.51210000000003,
+      "qualifiedResponseBytes": 309710,
+      "measurementSha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa",
+      "requests": {
+        "initialize": {
+          "count": 12,
+          "wallMedianMs": 11.849350000000072,
+          "wallMaxMs": 85.05930000000001,
+          "cpuMedianMs": 14.999500000000001,
+          "fixtureCalls": [],
+          "qualifiedWallMedianMs": null
+        },
+        "tools/call": {
+          "count": 12,
+          "wallMedianMs": 40.25664999999992,
+          "wallMaxMs": 128.69150000000002,
+          "cpuMedianMs": 64.70150000000001,
+          "fixtureCalls": [
+            "qualified",
+            "work-item"
+          ],
+          "qualifiedWallMedianMs": 24.599199999999996
+        }
+      }
+    },
+    "tcg": {
+      "importMilliseconds": 10714.3321,
+      "qualifiedResponseBytes": 309710,
+      "measurementSha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa",
+      "requests": {
+        "initialize": {
+          "count": 12,
+          "wallMedianMs": 198.25504999999976,
+          "wallMaxMs": 1784.097600000001,
+          "cpuMedianMs": 254.727,
+          "fixtureCalls": [],
+          "qualifiedWallMedianMs": null
+        },
+        "tools/call": {
+          "count": 12,
+          "wallMedianMs": 724.0747499999998,
+          "wallMaxMs": 1922.6572000000015,
+          "cpuMedianMs": 1206.4265,
+          "fixtureCalls": [
+            "qualified",
+            "work-item"
+          ],
+          "qualifiedWallMedianMs": 373.86794999999984
+        }
+      }
+    }
+  },
+  "coldStartup": {
+    "native": {
+      "processes": 12,
+      "allExitZero": true,
+      "mcpPosts": 0,
+      "qualifiedReads": 0,
+      "readinessRequests": 24,
+      "importMedianMs": 295.51649999999995,
+      "measurementSha256": "f9ab3d7f0fda95de8a2c12744c5242b3ca6f59c38032076af71f16887ad92393"
+    },
+    "tcg": {
+      "processes": 12,
+      "allExitZero": true,
+      "mcpPosts": 0,
+      "qualifiedReads": 0,
+      "readinessRequests": 24,
+      "importMedianMs": 6972.5638,
+      "measurementSha256": "f9ab3d7f0fda95de8a2c12744c5242b3ca6f59c38032076af71f16887ad92393"
+    }
+  },
+  "controls": {
+    "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+    "containerId": "6f48c1decb510a7556e5c340a95b39eda5c50b895f1443cfab625fe105b61a20",
+    "hostConfig": {
+      "Memory": 4294967296,
+      "MemorySwap": 4294967296,
+      "NanoCpus": 4000000000,
+      "PidsLimit": 512,
+      "Privileged": false,
+      "CapAdd": null,
+      "Devices": [],
+      "Binds": null,
+      "PortBindings": {}
+    },
+    "mounts": []
+  },
+  "outerMetadata": {
+    "qemuPackage": "1:8.2.2+ds-0ubuntu1.18",
+    "qemuBinarySha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+    "outerKernel": "7.0.14-linuxkit",
+    "activeQemuCount": 0
+  },
+  "resources": {
+    "owner": "baa69125-0297-44c0-a6eb-6d5fd2bb87ef",
+    "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+    "repoDigests": [
+      "ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55"
+    ],
+    "containers": [
+      {
+        "id": "6f48c1decb510a7556e5c340a95b39eda5c50b895f1443cfab625fe105b61a20",
+        "purpose": "qemu provisioning; no guest started",
+        "stopped": true,
+        "exitCode": 137,
+        "oom": false,
+        "removedAndAbsent": true
+      },
+      {
+        "id": "74fe90c9db7e2dba275294045890efc8e3ebf4410be1cedfbb469c73b0e2aa4b",
+        "purpose": "export public cached Node rootfs only",
+        "imageId": "sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9",
+        "removedAndAbsent": true
+      }
+    ],
+    "scope": "仅同锁定QEMU版本的小组件TCG对照，非完整产品验收；无宿主挂载、端口、Docker socket或真实凭据。",
+    "osExitCode": 0,
+    "apt-updateExitCode": 0,
+    "qemu-policyExitCode": 0,
+    "exactQemuPackageAvailable": true,
+    "aptInstallExitCode": 0,
+    "ledgerCorrection": "并行provision旧副本覆盖导出条目；按先前工具实际读取的完整ID及当前只读absent补登记，未重导出或重删。",
+    "inputs": {
+      "node-rootfs.tar.gz": {
+        "bytes": 61066811,
+        "sha256": "5d4146b3e88a9c5fdd919c416747a25d71bc1f7a433d832b1e5afa85ca57fc2c"
+      },
+      "runtime.tar": {
+        "bytes": 20080640,
+        "sha256": "9a2982594b0a0cd22f3ba63092260f16e4d0209842e54a00f51e74af5c1578f9"
+      },
+      "measurement.mjs": {
+        "bytes": 10186,
+        "sha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa"
+      },
+      "component-tcg-guest.py": {
+        "bytes": 4767,
+        "sha256": "a905ac52ff12bedf99bc18b1e6b2995dfdfd2a1b48708cdc80f918176b40d4a3"
+      },
+      "run-component-tcg.py": {
+        "bytes": 5407,
+        "sha256": "c4bf40c7c60d5edbb739b50e7e680e51edb606e9af3f7c0b97f2c74439d2a676"
+      }
+    },
+    "probeSourceHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+    "publicGuestImageCache": {
+      "path": ".tmp/ta01-resumption/local-guest-image-cache/amd64-6a81c375.img",
+      "bytes": 625612288,
+      "sha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2"
+    },
+    "activeQemuCountBeforeStop": 0,
+    "privateGuestOverlaysRetained": false,
+    "sharedImagesRemoved": false
+  },
+  "nodeBaseImageId": "sha256:6b2127043c2faa4f15cdcdeb65a39fc9afbecf5559301898b754bbff561a8aa9",
+  "limits": [
+    "相同组件/Node/公开基础镜像rootfs；完整生产MCP镜像的apk升级、生产打包、API/PG和真实负载未覆盖。",
+    "原生Docker宿主与Ubuntu TCG guest的kernel不同，QEMU只核版本和本地二进制SHA，CI没有可比QEMU二进制SHA。",
+    "work:read身份、scope/features/工作项均为合成，真实资格响应大小未知。",
+    "HTTP客户端与合成API同进程，CPU含fixture；30秒计时不等同独立安装器客户端的抢占期限。",
+    "冷启动每进程只有两次健康读取及2秒等待，不覆盖真实长期待命或混合负载；零POST未复现不证明业务请求是必要条件。",
+    "首次VM使用ac0工具原件；冷启动VM使用本轮准确source快照并禁止core落盘。两VM均Node0/QEMU0，无原生捕获，不冒故障关闭。",
+    "控制容器在两个QEMU均退出且无活动QEMU后stop，容器exit137不是Node139，OOM=false。"
+  ],
+  "observedAt": "2026-10-16T05:15:15.131608+00:00",
+  "selectedZipSha256": "06395d75c0b4fbe3be21ad22d2a356b845de96c08df52f5aa87eb185bab779ec",
+  "members": {
+    "tcg/tcg-result.json": {
+      "bytes": 23508,
+      "sha256": "45bb394c2e8aa178a8e229754bd9b5d98e0718bf074f080128774961ce873edd"
+    },
+    "tcg/tcg-serial.log": {
+      "bytes": 81047,
+      "sha256": "8b732c7f76ae976371d1574d196d39d615df3c3480f6f2d09317a7c1ab0e5a7d"
+    },
+    "tcg/tcg-qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/tcg-host.stdout": {
+      "bytes": 108,
+      "sha256": "95b62330f5a06a5a0ed366310327e623ee2498771ba2f5ee3efbf240afbbb60e"
+    },
+    "tcg/tcg-host.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/tcg-host-exit.json": {
+      "bytes": 17,
+      "sha256": "d45db54bba0c56e2691a52869729c0a3eade7f5d50545e7832a20e3262a9d422"
+    },
+    "tcg/tcg-startup-result.json": {
+      "bytes": 11675,
+      "sha256": "92e481fa4cd6663a00eb7668fee1f36f37595358f346a91dd381633713b4114e"
+    },
+    "tcg/tcg-startup-serial.log": {
+      "bytes": 81429,
+      "sha256": "0f0176c64230963ba28cb78f02c8420983d080b3cb5c5e033f9b18eb17c82aee"
+    },
+    "tcg/tcg-startup-qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/tcg-startup-host.stdout": {
+      "bytes": 108,
+      "sha256": "98e9b8506d990475e0b4f701486f94dc85c40329b5f707b2e145bdfe9a676793"
+    },
+    "tcg/tcg-startup-host.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/tcg-startup-host-exit.json": {
+      "bytes": 17,
+      "sha256": "d45db54bba0c56e2691a52869729c0a3eade7f5d50545e7832a20e3262a9d422"
+    },
+    "tcg/outer-container-controls.json": {
+      "bytes": 443,
+      "sha256": "6c1d54b4ab92da25ba5491c4ed53c7610d7f0e46a2e8cf1c22e0ad6ff2acda25"
+    },
+    "tcg/outer-metadata.json": {
+      "bytes": 186,
+      "sha256": "c694ceb0184650282a0cea5694de8c36fab42f90fb8f505adad093091855532a"
+    },
+    "tcg/resources.json": {
+      "bytes": 2409,
+      "sha256": "1bbe6ee517bb4be6a641d678d1f1e8b466abb49a6b432173bd9abbf3c5ea189c"
+    },
+    "tcg/startup-inputs.json": {
+      "bytes": 283,
+      "sha256": "0032eeb2eb6f189a9f91fad718dcde577b1d73850a992fb769ec333ea23bf3b8"
+    },
+    "tcg/used-first-component-tcg-guest.py": {
+      "bytes": 4767,
+      "sha256": "a905ac52ff12bedf99bc18b1e6b2995dfdfd2a1b48708cdc80f918176b40d4a3"
+    },
+    "tcg/used-first-run-component-tcg.py": {
+      "bytes": 5407,
+      "sha256": "c4bf40c7c60d5edbb739b50e7e680e51edb606e9af3f7c0b97f2c74439d2a676"
+    },
+    "tcg/used-first-measurement.mjs": {
+      "bytes": 10186,
+      "sha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa"
+    },
+    "tcg/used-startup-component-tcg-guest.py": {
+      "bytes": 5497,
+      "sha256": "e58c48082d6b3390fed1fb86d50cb92272c0997749b69afe2a9f2bf986b58c1e"
+    },
+    "tcg/used-startup-run-component-tcg.py": {
+      "bytes": 5577,
+      "sha256": "7e6630b100d99d11b1b8e6dba5db1f03575d7744e2ede70909c19fd48d517c71"
+    },
+    "tcg/used-startup-startup.mjs": {
+      "bytes": 3683,
+      "sha256": "f9ab3d7f0fda95de8a2c12744c5242b3ca6f59c38032076af71f16887ad92393"
+    },
+    "tcg/qemu-version.txt": {
+      "bytes": 61,
+      "sha256": "3d98b902a44bb888a128c3b9b29b0302f0ffd61631bb289f5c57cbb9bdd8147c"
+    },
+    "tcg/os.stdout": {
+      "bytes": 400,
+      "sha256": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763"
+    },
+    "tcg/os.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/apt-update.stdout": {
+      "bytes": 1635,
+      "sha256": "6554f4db0dc29a360a4f6b0b7b9b76f16b0288b4a2da13ba35900c1b74d6434d"
+    },
+    "tcg/apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/qemu-policy.stdout": {
+      "bytes": 414,
+      "sha256": "bdfd3bb703abb8d4c1bc4cd53897f4c111e5ef2a528c22d4f7a08c623d0a2bda"
+    },
+    "tcg/qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/apt-install.stdout": {
+      "bytes": 29222,
+      "sha256": "188aca438cfabb618d4a5aa351340cb3f5b32714dfb66b27df6b0d50e22008b1"
+    },
+    "tcg/apt-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "native/matched-native-result.json": {
+      "bytes": 17464,
+      "sha256": "5344de8e16ee7e387769dbae49a453c29abe4447e96a5fd013f34f86e2f8da7a"
+    },
+    "native/matched-native-stdout.log": {
+      "bytes": 11679,
+      "sha256": "c13345ad5afae5e07b602bf2255c1a8d07f8feba9c3bc72fc05a12a8c637b92a"
+    },
+    "native/matched-native-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native/resources-matched-native.json": {
+      "bytes": 656,
+      "sha256": "bc0b9d0c56c0234a4462405cf910ce314d941e5450659c5bbf8b91dc69f66b20"
+    },
+    "native/startup-native-result.json": {
+      "bytes": 8218,
+      "sha256": "9fa3bf2e5f0c6b9b6c50c8f55bb87cecb48c7045a93c798cdb86fe9ddbe8e7e6"
+    },
+    "native/startup-native-stdout.log": {
+      "bytes": 6062,
+      "sha256": "34524a6081a2b3c86a07aa5b4c3ec2cdfb6d7fff8693db1dcddc0ec06ac2f25e"
+    },
+    "native/startup-native-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "native/resources-startup-native.json": {
+      "bytes": 656,
+      "sha256": "e7cbdfba38a8bb01186f59c2e293150fb5f91644582c9288f2401f38826a318f"
+    },
+    "preparation/provision-component-tcg.py": {
+      "bytes": 2307,
+      "sha256": "80a16cc20fae729108ec9887a9a566dc820fcfc6eff2837a9cbe610edf162ccd"
+    },
+    "preparation/export-node-component-root.py": {
+      "bytes": 2170,
+      "sha256": "b34d14918874261204a486db47b59c9b978a76bba6da3c4aa1c4a1b8529048e8"
+    },
+    "preparation/prepare-component-tcg-inputs.py": {
+      "bytes": 2660,
+      "sha256": "a493d02ea4595180a93b7cc7e49856e5f00ff3b6673b83860a99f962abe26115"
+    },
+    "preparation/run-mcp-component-matched-native.py": {
+      "bytes": 4602,
+      "sha256": "b4c650373dc881100a82d34fbabbc7298c1eb85e33bf6d06cea717bf82e44c11"
+    },
+    "preparation/run-mcp-component-startup-native.py": {
+      "bytes": 4568,
+      "sha256": "49545ce97a36603bc9765621c3656fb6dc3982bf01cda469d7a9acc01a4390b6"
+    },
+    "preparation/close-component-tcg.py": {
+      "bytes": 2589,
+      "sha256": "dcd27e578bd64bbcd6896ba2726ef9c5033757b06b87649467fdb20b184c421f"
+    },
+    "preparation/archive-mcp-tcg-comparison.py": {
+      "bytes": 8533,
+      "sha256": "c6a2472d6f816fdc65bae7498e1efdc1302caa800a95375b9efeff80cade644a"
+    },
+    "summary.json": {
+      "bytes": 6883,
+      "sha256": "93ba49816bb48367b8ca1d32062dd6b2fd1899a93844cf426dcde001b59b1134"
+    }
+  }
+}

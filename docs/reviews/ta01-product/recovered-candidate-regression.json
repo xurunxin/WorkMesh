@@ -1,0 +1,131 @@
+{
+  "observedAt": "2026-10-18T21:45:46.035050+00:00",
+  "inputHead": "718c03408fe8b975917062bb1322eaf36c51c79c",
+  "oldGitBlob": "56d3a8e565e1a9023067c4136ca921ba94a8e928",
+  "oldSourceSha256": "818073c93c19ee7085769aaabdf09475192e11c8bfe713aee251829f54040188",
+  "sourceSnapshots": {
+    "scripts/server-distribution/install.mjs": {
+      "sha256": "2ea8e9dd379b5dcac13abcc585638b8c4756650685864b5eab62171347c80c51",
+      "bytes": 36588,
+      "expectedGitBlob": "0866d8cd62da5fd15a8b7a4986e16e14ac658f22"
+    },
+    "scripts/server-distribution/journal.mjs": {
+      "sha256": "c5f58cdbcca5ddfb4c270251ae752ed191afc8f57727af3815321fb2422fe522",
+      "bytes": 2991,
+      "expectedGitBlob": "25ef2bedfdaee87cce92bdc0e5ca2aebf9fe4615"
+    },
+    "scripts/server-distribution/install.test.mjs": {
+      "sha256": "e1898b43f5b8d591bfbf783411e6d1ba6da6e6cbb266abf85a85563378946314",
+      "bytes": 25084,
+      "expectedGitBlob": "6b61b8c1887629a00f46ee49cbfdbed7a9519375"
+    },
+    "scripts/server-distribution/install-recovery-fixture.mjs": {
+      "sha256": "e4cd88437950a826c716d9d90ae21a08035e93deaee63734da15fd304f932d1c",
+      "bytes": 14789,
+      "expectedGitBlob": "5b719084c1a63629feee5c3b83b0ae24d98f0f46"
+    },
+    "scripts/server-distribution/guest.py": {
+      "sha256": "54bb28e2c336d8e63a68c5844d509498d8925f1223a442baf1219d229ed3b8c2",
+      "bytes": 83065,
+      "expectedGitBlob": "a83505c859f5d88876572017453637f782b60631"
+    }
+  },
+  "newOutcomes": {
+    "status": "passed",
+    "outcomes": [
+      "recovery-before-effects-and-direct-commit-refused",
+      "persisted-withdrawal-refuses-restarted-command",
+      "explicit-reupgrade-uses-new-journal-and-new-proof",
+      "interrupted-recovery-cannot-commit-or-resume-pending",
+      "legacy-restored-journal-also-rejected"
+    ],
+    "realDockerOrHttp": false,
+    "actualFilesystem": true
+  },
+  "oldOutcome": {
+    "status": "old-bug-reproduced",
+    "runningProgram": "a",
+    "registeredCandidate": "b",
+    "realDockerOrHttp": false
+  },
+  "scope": "真实installer源码/真实状态文件；Docker、HTTPS、config适配器为替身；新Node进程重读拒绝实际执行；非完整部署或整机重启验收。",
+  "selectedZipSha256": "f54b5594981ae0f7c4f8522a3c2b2ceef6eee5330125de7938915f34795ee905",
+  "members": {
+    "scripts/server-distribution/install.mjs": {
+      "bytes": 36588,
+      "sha256": "2ea8e9dd379b5dcac13abcc585638b8c4756650685864b5eab62171347c80c51"
+    },
+    "scripts/server-distribution/journal.mjs": {
+      "bytes": 2991,
+      "sha256": "c5f58cdbcca5ddfb4c270251ae752ed191afc8f57727af3815321fb2422fe522"
+    },
+    "scripts/server-distribution/install.test.mjs": {
+      "bytes": 25084,
+      "sha256": "e1898b43f5b8d591bfbf783411e6d1ba6da6e6cbb266abf85a85563378946314"
+    },
+    "scripts/server-distribution/install-recovery-fixture.mjs": {
+      "bytes": 14789,
+      "sha256": "e4cd88437950a826c716d9d90ae21a08035e93deaee63734da15fd304f932d1c"
+    },
+    "scripts/server-distribution/guest.py": {
+      "bytes": 83065,
+      "sha256": "54bb28e2c336d8e63a68c5844d509498d8925f1223a442baf1219d229ed3b8c2"
+    },
+    "before/718c034-install.mjs": {
+      "bytes": 36174,
+      "sha256": "818073c93c19ee7085769aaabdf09475192e11c8bfe713aee251829f54040188"
+    },
+    "logs/old-control-flow.stdout": {
+      "bytes": 104,
+      "sha256": "2d48d180b41ebf27a461edabefdf9f4d626179381398fc127d94b41fefa07c56"
+    },
+    "logs/old-control-flow.stderr": {
+      "bytes": 173,
+      "sha256": "4f9a6dc1c0a06e49738e3408dda0d92ebcae1350ff2d3bda5573d8b8bddba86f"
+    },
+    "logs/new-control-flow-final.stdout": {
+      "bytes": 330,
+      "sha256": "d9d6b6a1804566fc7ce7b3dcb0c3176b1f5206a7c9ad09a3e653a1402a5d3ce9"
+    },
+    "logs/new-control-flow-final.stderr": {
+      "bytes": 175,
+      "sha256": "d08295a7a2bd2fad83dbcb43ffe0e34d5f3194daf5228a928b1de09abce86365"
+    },
+    "logs/install-tests-final.stdout": {
+      "bytes": 4273,
+      "sha256": "52bfe7915a3e4a6fd28cedc523a375f38f2498a5a1af92c308fd0a32248f0b40"
+    },
+    "logs/install-tests-final.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "logs/python-tests.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "logs/python-tests.stderr": {
+      "bytes": 164,
+      "sha256": "0a97d1709c50e120cf183601bf9dc50b26167859c2e42b6470ad8012324d29e7"
+    },
+    "logs/ci-validate.stdout": {
+      "bytes": 4444,
+      "sha256": "736497dcc3fa75cda0b984511aee4bc2e693c4cebdd97a2487d82440cd062d07"
+    },
+    "logs/ci-validate.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "logs/integration-docs.stdout": {
+      "bytes": 296,
+      "sha256": "855bd0248333ef985074926b7750fe33ce1b2c4288ecf829f7adb25181d044f4"
+    },
+    "logs/integration-docs.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "execution.json": {
+      "bytes": 2027,
+      "sha256": "82778723de9dd091ac89f351e4fc0b3213bf88aa5de198ba9fed564057bcd634"
+    }
+  }
+}

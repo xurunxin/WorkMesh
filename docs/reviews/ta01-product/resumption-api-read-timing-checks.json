@@ -1,0 +1,172 @@
+{
+  "说明": "当前增量本机核验：60项Python、真实Fastify inject日志格式、三Node工具语法、四Python AST、当前归档完整性。不是CI565受测源码或新guest实测，不代根五门禁或Required。",
+  "baseHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+  "python": "3.11.15 (main, Jun  2 2026, 22:29:49) [MSC v.1944 64 bit (AMD64)]",
+  "pythonTests": 60,
+  "fastifyInjectPairs": 2,
+  "listenerStarted": false,
+  "nodeSyntaxChecks": 3,
+  "pythonAstChecks": 4,
+  "ciValidateExitCode": 0,
+  "integrationDocsExitCode": 0,
+  "archives": [
+    {
+      "index": "ci564-amd64-personal-cancelled.json",
+      "members": 10,
+      "zipSha256": "cb733c9528581050f9aad443213a0dacfdce2b59c924e338be60f9618185ce9e"
+    },
+    {
+      "index": "ci564-arm64-enterprise-cancelled.json",
+      "members": 10,
+      "zipSha256": "21340515482e520d23b4ed720b4be85a67af6bfc1bf2a78f67c11b45f8845f97"
+    },
+    {
+      "index": "ci564-arm64-personal-cancelled.json",
+      "members": 10,
+      "zipSha256": "7c5c293764c0d5d7971f1cfa9cc6a4ac35657efdf53ffa12c07b451598b15978"
+    },
+    {
+      "index": "ci564-arm64-team-cancelled.json",
+      "members": 10,
+      "zipSha256": "86d5787e9ae83aeb4b87032bdde75461dbc7763c63585ac05c8f3d93a24ba5e5"
+    },
+    {
+      "index": "ci564-final-results.json",
+      "members": 27,
+      "zipSha256": "78e9c2be6cfef9fed5b2a286dc36e30a8ea0127e2d0157bc201337592aa8cb9c"
+    },
+    {
+      "index": "ci565-amd64-enterprise-full-guest-pass.json",
+      "members": 11,
+      "zipSha256": "797a89449532059180e52264831eed6485398a704c8f4dd190b33cce789b90a9"
+    },
+    {
+      "index": "ci565-amd64-personal-full-guest-pass.json",
+      "members": 11,
+      "zipSha256": "126cdec6aa265e223507448fbc144679385243a35defc5808867e596e7c703eb"
+    },
+    {
+      "index": "ci565-amd64-team-full-guest-pass.json",
+      "members": 11,
+      "zipSha256": "b3717ecb5c8ad08c84d12ad5bf30bf3bbb5da8e735e0acd0795d8f85ed7a4edc"
+    },
+    {
+      "index": "ci565-arm64-enterprise-first-failure.json",
+      "members": 11,
+      "zipSha256": "3779a20c7dbad4dc22ebfbac09a7da04f8ecf6309b309d7f5beb0abf9f800952"
+    },
+    {
+      "index": "ci565-arm64-personal-first-failure.json",
+      "members": 11,
+      "zipSha256": "7c5bbafa6ba4f0d9a7d7cde35ed3cba06012b238895d6265e3b0952b2fb75876"
+    },
+    {
+      "index": "ci565-arm64-team-first-failure.json",
+      "members": 11,
+      "zipSha256": "cbf5e2f5134e43d77d9ac89780aa5f1389e46093c8ff3adb58191862d17f8c9c"
+    },
+    {
+      "index": "ci565-final-results.json",
+      "members": 27,
+      "zipSha256": "18de4db7aa89a1fbedd532110b4918a0bba9e5a07d4581f163af4305bb5ef6a6"
+    },
+    {
+      "index": "ci565-producers.json",
+      "members": 21,
+      "zipSha256": "40afc5ed1efca6c2017c9dc9bc6f0e9774fc2614070a52558404329808f28fa1"
+    },
+    {
+      "index": "resumption-mcp-arm-path-probe.json",
+      "members": 48,
+      "zipSha256": "243656e4f18362238c44dd633660058442bc4158c3b4a54e47bb96331cdd1dc4"
+    },
+    {
+      "index": "resumption-mcp-exact-role-checks.json",
+      "members": 3,
+      "zipSha256": "0592f96ab202c933bb423ce2e391736e8c222777700fef274d46d0a2dbd653a3"
+    },
+    {
+      "index": "resumption-mcp-exact-role-comparison.json",
+      "members": 37,
+      "zipSha256": "d37a535fcd07da6a2632097b770ab1e615103275b4028affd114e30158b0b5a6"
+    },
+    {
+      "index": "resumption-mcp-native-tcg-comparison.json",
+      "members": 47,
+      "zipSha256": "06395d75c0b4fbe3be21ad22d2a356b845de96c08df52f5aa87eb185bab779ec"
+    },
+    {
+      "index": "resumption-mcp-tcg-checks.json",
+      "members": 3,
+      "zipSha256": "ddb575986c290efd1b2b065b90419b5d0bceecff6048cb8f05e1cb7e66f348ff"
+    }
+  ],
+  "archiveMembersChecked": 319,
+  "sourceFiles": {
+    "scripts/server-distribution/guest.py": {
+      "bytes": 81346,
+      "sha256": "50f14839120b909f0422d95d801f1351c5639a5f00d7936fb54ef24b89844706"
+    },
+    "scripts/server-distribution/native_diagnostic_test.py": {
+      "bytes": 75394,
+      "sha256": "e1460c60e874c19da92e62ae4544fa084c3483ff45ad9ae3395ef6d3cc064b87"
+    },
+    "docs/reviews/ta01-product/tools/component-tcg-guest.py": {
+      "bytes": 5868,
+      "sha256": "21680e9f37b2651399907ac390cf69000e869e0197e88d0e9f8737751cb31fc0"
+    },
+    "docs/reviews/ta01-product/tools/run-component-tcg.py": {
+      "bytes": 6652,
+      "sha256": "4040f6d6288dc708cf332fbfc6216894a2d83d6f91992516d555b87bbd7645b5"
+    },
+    "docs/reviews/ta01-product/tools/probe-api-log-format.mjs": {
+      "bytes": 1884,
+      "sha256": "71b172bf4f3b35a97b9239406df82a211f2cab0b916e89dfa95d9d06b87f8089"
+    }
+  },
+  "applicationAndCiWorkflowDiffEmpty": true,
+  "guestCollectionChanged": true,
+  "selectedZipSha256": "16edcb0cfffb674dad1b51d08d187e7adf820d9997835868e7128c335958868a",
+  "members": {
+    "verification.json": {
+      "bytes": 4692,
+      "sha256": "cbbf919c9da36aaee9c493c58a65ebe269ab882f907468c75ffb9877ffa1dea2"
+    },
+    "python-tests.log": {
+      "bytes": 164,
+      "sha256": "8cb95af0ce96acf3a84137ee7adc4c4ee1efac394ff9a311e2eb120d79427c4b"
+    },
+    "ci-validate.log": {
+      "bytes": 4603,
+      "sha256": "68be60cf492fbb622a3b5f24621c43dfe609a07ffeba9a4ba8b724bff20a9946"
+    },
+    "integration-docs.log": {
+      "bytes": 300,
+      "sha256": "2c72d696e9457356583028dc542767ab41b77310153bfea19666938fef6b550b"
+    },
+    "fastify-format-verification.json": {
+      "bytes": 1392,
+      "sha256": "b656d3bd36cf7700a774cf9dd8ba081dba2392aebb45c6e48abd4a75362ca440"
+    },
+    "source/scripts/server-distribution/guest.py": {
+      "bytes": 81346,
+      "sha256": "50f14839120b909f0422d95d801f1351c5639a5f00d7936fb54ef24b89844706"
+    },
+    "source/scripts/server-distribution/native_diagnostic_test.py": {
+      "bytes": 75394,
+      "sha256": "e1460c60e874c19da92e62ae4544fa084c3483ff45ad9ae3395ef6d3cc064b87"
+    },
+    "source/docs/reviews/ta01-product/tools/component-tcg-guest.py": {
+      "bytes": 5868,
+      "sha256": "21680e9f37b2651399907ac390cf69000e869e0197e88d0e9f8737751cb31fc0"
+    },
+    "source/docs/reviews/ta01-product/tools/run-component-tcg.py": {
+      "bytes": 6652,
+      "sha256": "4040f6d6288dc708cf332fbfc6216894a2d83d6f91992516d555b87bbd7645b5"
+    },
+    "source/docs/reviews/ta01-product/tools/probe-api-log-format.mjs": {
+      "bytes": 1884,
+      "sha256": "71b172bf4f3b35a97b9239406df82a211f2cab0b916e89dfa95d9d06b87f8089"
+    }
+  }
+}

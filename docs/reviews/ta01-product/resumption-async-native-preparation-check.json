@@ -1,0 +1,26 @@
+{
+  "说明": "实际guest.py异步诊断准备片段的隔离调度夹具；就绪路径没有额外串行Docker检查，迟到明确拒绝，测量首败保留并恢复已成功设置，准备拒绝不重试。没有真实线程／Docker／Linux内核或guest实测。",
+  "sourceFileSha256": "5700469e1a191646705ba9754615cabfffed649e0449ef5e43f4b2d5333a46d6",
+  "results": [
+    {
+      "scenario": "ready",
+      "errorType": null,
+      "restores": 0
+    },
+    {
+      "scenario": "late",
+      "errorType": "RuntimeError",
+      "restores": 1
+    },
+    {
+      "scenario": "measurement-failed",
+      "errorType": "ValueError",
+      "restores": 1
+    },
+    {
+      "scenario": "preparation-rejected",
+      "errorType": "PermissionError",
+      "restores": 0
+    }
+  ]
+}

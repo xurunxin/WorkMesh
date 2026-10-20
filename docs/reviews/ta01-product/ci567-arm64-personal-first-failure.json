@@ -1,0 +1,1328 @@
+{
+  "sourceHead": "e2763da4dfdf25f7fc5c28c34a9619d4788f4541",
+  "sourceTree": "51b58c10c4c0a13a89884f0f7551b9d482b9c44b",
+  "status": "failed",
+  "errorType": "TimeoutError",
+  "totalSeconds": 9000.761006228,
+  "guestVcpus": 4,
+  "guestRamMiB": 4096,
+  "manifestSha256": "12eb5978a939da8d643caf70bc14e8b13326cdec5f3cf82f0c3b2f0ec212fa1f",
+  "scripts": {
+    "native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+    "run.py": "3b8ef7fbed465eee3fee07d57b7c2552fb6f7c83e52f4a3e9711defbfdae6b6f",
+    "core_pipe.py": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+    "core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+    "native_diagnostic_test.py": "e1460c60e874c19da92e62ae4544fa084c3483ff45ad9ae3395ef6d3cc064b87",
+    "guest.py": "50f14839120b909f0422d95d801f1351c5639a5f00d7936fb54ef24b89844706"
+  },
+  "nativeDiagnostic": false,
+  "profilesRequested": [
+    "personal"
+  ],
+  "scope": "single-configuration",
+  "qmpEvents": [
+    {
+      "event": "NIC_RX_FILTER_CHANGED",
+      "hostElapsed": 267.043964843
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 268.81844038199995
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 926.6492952230001
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 1584.6446432349999
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 2242.666894297
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 2901.6926440820002
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 3559.716383715
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 4217.744456558
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 4875.770387544
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 5533.799077811
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 6192.821937473
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 6850.849992878
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 7508.874001024
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 8166.900055322
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 8824.925928545
+    },
+    {
+      "event": "SHUTDOWN",
+      "hostElapsed": 9000.494147011
+    }
+  ],
+  "说明": "原始完整guest结果；single-configuration只证明其准确画像与架构，不代六组合。诊断模式非支持验收；真实故障、未知和通过分别保留，不推旧故障已修复。",
+  "runId": 38893305755,
+  "jobId": 116950873965,
+  "artifactId": 12050558724,
+  "scriptsMatchGit": true,
+  "producer": {
+    "artifactId": "12043116531",
+    "manifestSha256": "12eb5978a939da8d643caf70bc14e8b13326cdec5f3cf82f0c3b2f0ec212fa1f"
+  },
+  "receipts": [],
+  "records": [
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 39581,
+      "userCpuMicroseconds": 22814582,
+      "systemCpuMicroseconds": 60873374
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 196735
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 38238,
+      "userCpuMicroseconds": 22202816,
+      "systemCpuMicroseconds": 58756606
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1165,
+      "userCpuMicroseconds": 897813,
+      "systemCpuMicroseconds": 589341
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 196,
+      "userCpuMicroseconds": 144180,
+      "systemCpuMicroseconds": 79202
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 69691
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 38027,
+      "userCpuMicroseconds": 22088635,
+      "systemCpuMicroseconds": 58049636
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1242,
+      "userCpuMicroseconds": 1196128,
+      "systemCpuMicroseconds": 487623
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 200,
+      "userCpuMicroseconds": 151739,
+      "systemCpuMicroseconds": 69994
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 70632
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 39069,
+      "userCpuMicroseconds": 22205569,
+      "systemCpuMicroseconds": 59601323
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1000,
+      "userCpuMicroseconds": 782255,
+      "systemCpuMicroseconds": 500661
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 11600,
+      "userCpuMicroseconds": 584444,
+      "systemCpuMicroseconds": 406380
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 81764
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 39020,
+      "userCpuMicroseconds": 22518983,
+      "systemCpuMicroseconds": 59338516
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1011,
+      "userCpuMicroseconds": 744359,
+      "systemCpuMicroseconds": 547970
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 11251,
+      "userCpuMicroseconds": 459428,
+      "systemCpuMicroseconds": 279894
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 83444
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 39707,
+      "userCpuMicroseconds": 23131434,
+      "systemCpuMicroseconds": 60195502
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1265,
+      "userCpuMicroseconds": 1188817,
+      "systemCpuMicroseconds": 511068
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "render-config",
+      "elapsedMilliseconds": 11606,
+      "userCpuMicroseconds": 501377,
+      "systemCpuMicroseconds": 305458
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "import-images",
+      "elapsedMilliseconds": 1001995,
+      "userCpuMicroseconds": 8477875,
+      "systemCpuMicroseconds": 56359520
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "finished",
+      "elapsedMilliseconds": 1086623
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 38563,
+      "userCpuMicroseconds": 22940760,
+      "systemCpuMicroseconds": 59552552
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1023,
+      "userCpuMicroseconds": 802475,
+      "systemCpuMicroseconds": 503219
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 11484,
+      "userCpuMicroseconds": 516837,
+      "systemCpuMicroseconds": 324702
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "import-images",
+      "elapsedMilliseconds": 25261,
+      "userCpuMicroseconds": 443460,
+      "systemCpuMicroseconds": 722263
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "start-data-services",
+      "elapsedMilliseconds": 115621,
+      "userCpuMicroseconds": 45099,
+      "systemCpuMicroseconds": 68966
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "initialize-locked-bucket",
+      "elapsedMilliseconds": 24022,
+      "userCpuMicroseconds": 64134,
+      "systemCpuMicroseconds": 36163
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 195096,
+      "userCpuMicroseconds": 41421,
+      "systemCpuMicroseconds": 46436
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 326878,
+      "userCpuMicroseconds": 167345,
+      "systemCpuMicroseconds": 214194
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 803305
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "health-ready"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 93075,
+      "userCpuMicroseconds": 27319789,
+      "systemCpuMicroseconds": 74044358
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1750,
+      "userCpuMicroseconds": 1083015,
+      "systemCpuMicroseconds": 807109
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 20158,
+      "userCpuMicroseconds": 625902,
+      "systemCpuMicroseconds": 452152
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 180471
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 88418,
+      "userCpuMicroseconds": 27369028,
+      "systemCpuMicroseconds": 73788843
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 2696,
+      "userCpuMicroseconds": 1251444,
+      "systemCpuMicroseconds": 947217
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 19931,
+      "userCpuMicroseconds": 542196,
+      "systemCpuMicroseconds": 519019
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 8887,
+      "userCpuMicroseconds": 1928852,
+      "systemCpuMicroseconds": 1248333
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 229242
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 83416,
+      "userCpuMicroseconds": 26561814,
+      "systemCpuMicroseconds": 73364268
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 2044,
+      "userCpuMicroseconds": 1033841,
+      "systemCpuMicroseconds": 885431
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 17527,
+      "userCpuMicroseconds": 524124,
+      "systemCpuMicroseconds": 459083
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 32343,
+      "userCpuMicroseconds": 1953883,
+      "systemCpuMicroseconds": 967934
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 219583
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 86595,
+      "userCpuMicroseconds": 26177182,
+      "systemCpuMicroseconds": 73697178
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1766,
+      "userCpuMicroseconds": 973175,
+      "systemCpuMicroseconds": 823281
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 17344,
+      "userCpuMicroseconds": 543420,
+      "systemCpuMicroseconds": 414402
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 167976
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "business-committed"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 82891,
+      "userCpuMicroseconds": 26302544,
+      "systemCpuMicroseconds": 72538636
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1887,
+      "userCpuMicroseconds": 920577,
+      "systemCpuMicroseconds": 833157
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 17216,
+      "userCpuMicroseconds": 955607,
+      "systemCpuMicroseconds": 678513
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 159083
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 80812,
+      "userCpuMicroseconds": 25777319,
+      "systemCpuMicroseconds": 71968736
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1465,
+      "userCpuMicroseconds": 984194,
+      "systemCpuMicroseconds": 717289
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 18842,
+      "userCpuMicroseconds": 889338,
+      "systemCpuMicroseconds": 508385
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 166601
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 85947,
+      "userCpuMicroseconds": 27452794,
+      "systemCpuMicroseconds": 73602985
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1628,
+      "userCpuMicroseconds": 908691,
+      "systemCpuMicroseconds": 799340
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 21700,
+      "userCpuMicroseconds": 906296,
+      "systemCpuMicroseconds": 498007
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 168029
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 372
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 79049,
+      "userCpuMicroseconds": 25094523,
+      "systemCpuMicroseconds": 70972896
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1342,
+      "userCpuMicroseconds": 786864,
+      "systemCpuMicroseconds": 678774
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 19869,
+      "userCpuMicroseconds": 942906,
+      "systemCpuMicroseconds": 469983
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "import-images",
+      "elapsedMilliseconds": 49721,
+      "userCpuMicroseconds": 486376,
+      "systemCpuMicroseconds": 890256
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 27765,
+      "userCpuMicroseconds": 60561,
+      "systemCpuMicroseconds": 67059
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 70087,
+      "userCpuMicroseconds": 127213,
+      "systemCpuMicroseconds": 118057
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 55449,
+      "userCpuMicroseconds": 35777,
+      "systemCpuMicroseconds": 48939
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 277520,
+      "userCpuMicroseconds": 184161,
+      "systemCpuMicroseconds": 252822
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 670698
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 86409,
+      "userCpuMicroseconds": 26744342,
+      "systemCpuMicroseconds": 73322312
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 2275,
+      "userCpuMicroseconds": 978421,
+      "systemCpuMicroseconds": 910464
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 18416,
+      "userCpuMicroseconds": 524997,
+      "systemCpuMicroseconds": 491165
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 175931
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 83241,
+      "userCpuMicroseconds": 26606351,
+      "systemCpuMicroseconds": 72550245
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1581,
+      "userCpuMicroseconds": 926911,
+      "systemCpuMicroseconds": 773198
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 18126,
+      "userCpuMicroseconds": 542548,
+      "systemCpuMicroseconds": 478825
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 163883
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 84651,
+      "userCpuMicroseconds": 26654097,
+      "systemCpuMicroseconds": 71915089
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1839,
+      "userCpuMicroseconds": 1001991,
+      "systemCpuMicroseconds": 789219
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 16674,
+      "userCpuMicroseconds": 543891,
+      "systemCpuMicroseconds": 444983
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 46016,
+      "userCpuMicroseconds": 2250845,
+      "systemCpuMicroseconds": 1072635
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 230673
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 82711,
+      "userCpuMicroseconds": 25945418,
+      "systemCpuMicroseconds": 72337039
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 2341,
+      "userCpuMicroseconds": 1084055,
+      "systemCpuMicroseconds": 943568
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "render-config",
+      "elapsedMilliseconds": 18563,
+      "userCpuMicroseconds": 862586,
+      "systemCpuMicroseconds": 522529
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "import-images",
+      "elapsedMilliseconds": 43024,
+      "userCpuMicroseconds": 471616,
+      "systemCpuMicroseconds": 994701
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 26692,
+      "userCpuMicroseconds": 7711,
+      "systemCpuMicroseconds": 60730
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 71386,
+      "userCpuMicroseconds": 99097,
+      "systemCpuMicroseconds": 144541
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 56251,
+      "userCpuMicroseconds": 83716,
+      "systemCpuMicroseconds": 48653
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 282677,
+      "userCpuMicroseconds": 217545,
+      "systemCpuMicroseconds": 210076
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "finished",
+      "elapsedMilliseconds": 681881
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 86280,
+      "userCpuMicroseconds": 27190207,
+      "systemCpuMicroseconds": 72626488
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 2438,
+      "userCpuMicroseconds": 1066959,
+      "systemCpuMicroseconds": 953962
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 19976,
+      "userCpuMicroseconds": 586829,
+      "systemCpuMicroseconds": 441911
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 42847,
+      "userCpuMicroseconds": 2136380,
+      "systemCpuMicroseconds": 1028205
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 230944
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 85717,
+      "userCpuMicroseconds": 26430654,
+      "systemCpuMicroseconds": 73468497
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 1624,
+      "userCpuMicroseconds": 886963,
+      "systemCpuMicroseconds": 888942
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "render-config",
+      "elapsedMilliseconds": 17135,
+      "userCpuMicroseconds": 885891,
+      "systemCpuMicroseconds": 440445
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "import-images",
+      "elapsedMilliseconds": 53430,
+      "userCpuMicroseconds": 530222,
+      "systemCpuMicroseconds": 945731
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "finished",
+      "elapsedMilliseconds": 250650
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "state": "started"
+    }
+  ],
+  "artifactZipSha256": "07007c01a6d4f51aac36e1a08d0001b3bc258a0a81ad59df2a519edd4919b73d",
+  "members": {
+    "server-install/guest.log": {
+      "bytes": 396,
+      "sha256": "862b59c3c6b4109dc53fe5a28a2f5380a8ed355a3fb1ce0f400fe5f62067bc45"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "757d93c2ddc33ac1eb8a4038288eae55e5994613e5616919054a1d16c4e280d5"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "c36a138070eae822c3c651b98fac2d3999c809e8fdd1f1a7909bbfcf013a716b"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12409,
+      "sha256": "12eb5978a939da8d643caf70bc14e8b13326cdec5f3cf82f0c3b2f0ec212fa1f"
+    },
+    "server-install/producer.json": {
+      "bytes": 113,
+      "sha256": "d4405c3bcb4d2b4966e5be8f8cbe345d73b3d4ffed9d30df4bd887a3b0145cb1"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 70,
+      "sha256": "232935dc479ac7400472ca332c54b8e1013ee666347fe381919d30c9bc2f21bd"
+    },
+    "server-install/result.json": {
+      "bytes": 3868,
+      "sha256": "8ab443353d9382b01710a2b18bbc07fb55aea4d0d532a27579cd6f567447da7e"
+    },
+    "server-install/serial.log": {
+      "bytes": 121510,
+      "sha256": "601cb4fc4deb30d39d4d406a7846f7389cc2c5a92f2fc7c559654c7ae6612319"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "0074b5d422a0d889fbbeb94d8aedca63d0e55eee6bb65cf535a41c1b8d5e7c22"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 260,
+      "sha256": "c0be91cb749034fead6bae67773d75e6eb4db3a90c52873d6da60de1dc058ae0"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "0074b5d422a0d889fbbeb94d8aedca63d0e55eee6bb65cf535a41c1b8d5e7c22"
+    }
+  },
+  "selectedZipSha256": "26244e66d588beb60e1f3b908a3d4ad81032cc5a176a2a476b83991aabe94cd4",
+  "allSourceInputsMatchGit": true,
+  "allSourceInputCount": 22,
+  "guestShapeMatchesJob": true,
+  "architecture": "arm64",
+  "lastObservedAction": {
+    "tag": "ta01-install-action",
+    "sequence": 23,
+    "profile": "personal",
+    "action": "restore-empty",
+    "state": "started"
+  },
+  "actualFailureBoundary": "原9000秒总窗截止；无最终回执，不推该动作内部阶段或恢复完成。"
+}

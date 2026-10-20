@@ -1,0 +1,254 @@
+{
+  "observedAt": "2026-10-20T03:44:44.526267+00:00",
+  "sourceHead": "970565f9a2dff382dc60e98391666828b7644f1c",
+  "scope": "仅既有材料静态读取、摘要核验和准确容器ID只读inspect；无GDB、候选程序或实验执行。",
+  "archive": {
+    "path": "docs/reviews/ta01-product/amd64-api-crash-window-a-6g-once.zip",
+    "gitBlob": "e9008a5703d24d9fe762be39ac40474688e75ead",
+    "bytes": 166889,
+    "sha256": "9bcabf1a3651c4ef67910db396d5e0be45f67ffa47d02f30d2770e4c5a2098d0"
+  },
+  "index": {
+    "path": "docs/reviews/ta01-product/amd64-api-crash-window-a-6g-once.json",
+    "gitBlob": "23809b479bc44747c9282c118b5e756ddddbf2c0",
+    "bytes": 74440,
+    "sha256": "6131d5270974db11a12625bbfa79677ec23c452cc4e83a4760b42109ff0e21f3"
+  },
+  "archiveMembersVerified": 64,
+  "runtimeSourceBindings": [
+    {
+      "path": "scripts/server-distribution/core_pipe.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "gitBlob": "6147207ec5174a9833bd96e68be1776de591f4f0",
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    {
+      "path": "scripts/server-distribution/core_metadata.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "gitBlob": "31f9504d898577612b5c7cb1fb9ff8ffedca4c82",
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    {
+      "path": "scripts/server-distribution/native_diagnostic.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "gitBlob": "eeb22419acc88d50da44f0655d6b2ddb89dbb219",
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94"
+    },
+    {
+      "path": "scripts/server-distribution/guest.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "gitBlob": "cd32a1e34e17c61ab0cb939f41b5965a6e7b303a",
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe"
+    },
+    {
+      "path": "scripts/server-distribution/run.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "gitBlob": "ef1decf02e5a988e1198c236448c1e5b490db543",
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    {
+      "path": "scripts/server-distribution/native_diagnostic_test.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "gitBlob": "7aa440c5c548bdfdeb50e50ba297c965d028654a",
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815"
+    }
+  ],
+  "materialAvailability": {
+    "core": "本次只在guest匿名memfd短暂存在，源码finally关闭；准确外层已不存在。授权账本和限定目录未发现留存core或qcow2。没有可供离线重解析的本次原core。",
+    "rawGdbStdoutStderr": "未在源码中持久化或列入本次64成员导出；只有safe_trace摘要和阶段。71字节各自的原输出未保，不重建或冒称可读。",
+    "gdbProjection": {
+      "exitCode": null,
+      "stdoutSha256": "97c02d3b8a5efb3ccf1aa62331dff7e1e3105f87a7efec9a0808ac6bdee43b0e",
+      "stderrSha256": "2a54f1833617702c1b501faffdb3a65a9290d48ba094d226ee44de0fab39cadc",
+      "stdoutBytes": 71,
+      "stderrBytes": 71,
+      "sigsegv": false,
+      "symbols": [],
+      "debuggerStages": [
+        "before-binary",
+        "after-binary"
+      ],
+      "categories": [],
+      "ptraceRejected": false
+    },
+    "captureId": "8d882dc312b14f6aace16e52c98497a4",
+    "coreBytes": 127713280,
+    "coreSha256": "961dccc55ffc4e33ce6dfa861ea4d6ce9cff50041903203a0a2ad1dd5f2f0cf0",
+    "containerProbe": {
+      "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+      "exitCode": 1,
+      "safeError": "no such object",
+      "stderrSha256": "e74bcb7cbdf8396b5d663518078378febec618dc0b0596efde1e52d64ab7dd16"
+    },
+    "localPathChecks": [
+      {
+        "root": "I:\\tds_workspace\\workspaces\\01a1572a-7aeb-7b6d-b7e8-83e89c2b723d\\.tmp\\ta01-resumption\\api-crash-window-a-6g-once",
+        "filesExaminedByName": 95,
+        "guestDirectoryExists": false,
+        "rawCoreOrGuestCandidates": [],
+        "debuggerNamedFiles": [
+          "gdb-policy.stdout"
+        ]
+      },
+      {
+        "root": "I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\\.tmp\\ta01-resumption\\api-crash-window-a-6g-once",
+        "filesExaminedByName": 68,
+        "guestDirectoryExists": false,
+        "rawCoreOrGuestCandidates": [],
+        "debuggerNamedFiles": [
+          "gdb-policy.stdout"
+        ]
+      },
+      {
+        "root": "I:\\tds_workspace\\workspaces\\01a1572a-7aeb-7b6d-b7e8-83e89c2b723d\\.tmp\\ta01-recovery",
+        "filesExaminedByName": 28,
+        "guestDirectoryExists": false,
+        "rawCoreOrGuestCandidates": [],
+        "debuggerNamedFiles": []
+      }
+    ],
+    "boundary": "没有扫描其他项目、未知目录、共享数据或Docker内部存储；不宣称全机不存在任何其他core。私有旧日志备份未打开，不是本次core留存证明。"
+  },
+  "publicBinary": {
+    "path": "I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\\.tmp\\ta01-resumption\\public-node-symbols\\node",
+    "bytes": 124181928,
+    "sha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+    "symbolIndexSha256": "0e360d773217d9bd4a55ea5bbe4ebdbc05326ec017d2cdcf78606a6f42302399",
+    "actualRunOrNewDownload": false
+  },
+  "evidenceFacts": {
+    "apiWindow": {
+      "target": {
+        "attempts": 1,
+        "startedGuestMonotonic": 2400.712737596,
+        "localCorrelationSha256": "75aae94cfa07ab89f4bd58d00b52d3ab07885eb9f910d179a117a51d49c68b8f",
+        "observerRegisteredBeforeRequest": true,
+        "completed": false,
+        "errorType": "RemoteDisconnected",
+        "elapsedMilliseconds": 31296,
+        "finishedGuestMonotonic": 2432.209206596
+      },
+      "coreLocation": {
+        "architecture": "amd64",
+        "signal": 11,
+        "signalCode": -6,
+        "faultModule": "node",
+        "executableSegment": true,
+        "nodeFileOffset": 20361632,
+        "nodeElfAddress": 20361632,
+        "publicFrameChain": {
+          "method": "frame-pointers",
+          "frames": [
+            {
+              "lookupNodeElfAddress": 20411144,
+              "returnSiteNodeElfAddress": 20411145
+            },
+            {
+              "lookupNodeElfAddress": 30266485,
+              "returnSiteNodeElfAddress": 30266486
+            }
+          ],
+          "stopped": "caller-outside-public-node"
+        }
+      },
+      "apiState": {
+        "Running": true,
+        "ExitCode": 139,
+        "OOMKilled": false,
+        "RestartCount": 1
+      },
+      "apiEvents": {
+        "events": [
+          {
+            "timeNano": 1792466888631096500,
+            "event": "die",
+            "id": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+            "service": "api",
+            "exitCode": 139
+          }
+        ],
+        "truncated": false
+      },
+      "qemuExitCode": 0,
+      "qmpEvents": [
+        {
+          "event": "NIC_RX_FILTER_CHANGED",
+          "hostElapsed": 147.458584100008
+        },
+        {
+          "event": "SHUTDOWN",
+          "hostElapsed": 2538.6711121000117
+        }
+      ],
+      "outerMemoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n"
+    },
+    "mcpEvidence": {
+      "path": "docs/reviews/ta01-product/ci566-amd64-team-first-failure.json",
+      "gitBlob": "b65bcd3bc9d4e1bfcdef75bed01fc46b50f2e3cf",
+      "bytes": 171557,
+      "sha256": "878822a4fc6d5abaffafc26e295b6810f3d73b5c2a0544879d46aa4595a279ec"
+    },
+    "oldOomEvidence": {
+      "path": "docs/reviews/ta01-product/amd64-api-crash-window-a.json",
+      "gitBlob": "afa48f926f0f391e94e87caafa06b8376befa576",
+      "bytes": 11260,
+      "sha256": "9aa4a4d0924634e5ffe12fabe94e9b794969ac8a21e03c6af4a847eef5450a47"
+    }
+  },
+  "limits": "安全公开帧不携带JS调用点、私有寄存器操作数或完整栈；UTC与monotonic不混算，登记、断连、die事件不证明请求触发。",
+  "verification": {
+    "at": "2026-10-20T03:49:02.840831+00:00",
+    "hostNode": "v25.4.0",
+    "commands": [
+      {
+        "command": [
+          "node",
+          "scripts/check-integration-docs.mjs"
+        ],
+        "exitCode": 0,
+        "stdout": "{\"skillFiles\":4,\"localLinks\":104,\"restEndpoints\":35,\"mcpTools\":11,\"humanSyntax\":\"passed\",\"scope\":\"静态检查；真实请求与中文语义须另验\"}\n",
+        "stderr": "",
+        "stdoutSha256": "a228ad9794a0714b2299c0090b066a7e31a54fcd891420be02c8e27c7f08f1ab",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "checkedPlanLinks": 39,
+    "markdownWhitespace": "passed",
+    "noVmDebuggerProductCiOrReviewRun": true,
+    "scope": "本轮仅静态文档与材料校验；没有执行新方案夹具、原候选或产品，不代五根门禁。"
+  },
+  "auditArchive": {
+    "sha256": "44bef00b4f004532230d877a88acd4e7f7c01f531bc93a5130fb87b8e03d257f",
+    "members": {
+      "materials-audit.json": {
+        "bytes": 8083,
+        "sha256": "2bf619e1732ba88e582ac73f9a4c91dfadaeb7a28dcb6b0971e0bf498a1b8525"
+      },
+      "audit-materials.py": {
+        "bytes": 5770,
+        "sha256": "97ca324e8f8bf35f4d39d2423e2f25bc0760a72bdc72258e355716fb1ff10e22"
+      },
+      "static-verification.json": {
+        "bytes": 1163,
+        "sha256": "add08c7888c9329eb38ad635dc85e64318f24ded5efbaec5c8c60780595ccb54"
+      },
+      "publish-audit.py": {
+        "bytes": 3446,
+        "sha256": "0074542a90fdc560e102097c6760018df304d15e380c944595d4497668332a6e"
+      }
+    },
+    "scope": "仅安全审计、静态校验和审计脚本；没有原core、内存、秘密、GDB会话原文或磁盘。"
+  }
+}

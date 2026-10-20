@@ -1,0 +1,66 @@
+{
+  "说明": "构建前干净源码门禁拒绝；没有候选安装或guest结果。原件未记录git porcelain具体脏路径，不补造路径。独有源码副本另复现新增测试导入研究助手生成未忽略的__pycache__，关闭字节码后无缓存；干净已提交源码门禁保持。",
+  "runId": 38601090241,
+  "jobId": 115980611501,
+  "artifactId": 11913736602,
+  "arch": "amd64",
+  "sourceHead": "e5ad38a652ec44b3c08e23e586156a8318647c22",
+  "sourceTree": "2579c4f4339d9c610404fb8bb2d3b028a5215164",
+  "status": "build-rejected",
+  "code": "BUILD_CLEAN_COMMITTED_SOURCE_REQUIRED",
+  "hasResult": false,
+  "scripts": {
+    "run.py": {
+      "sha256": "58e5f25dd4ad89599f98e47d34ff603275998d1f8f2276e680f1a89dfed39ce5",
+      "inputSha256Matches": true
+    },
+    "guest.py": {
+      "sha256": "3406f77f9a88d9bfef1ce43e5c3b02f3a8fc7a9edc87346ae4a9ee69f28d8fe7",
+      "inputSha256Matches": true
+    },
+    "native_diagnostic.py": {
+      "sha256": "77abe41c17067acad6594ac3ba3f382292b34c78f21823389e2dcaffda4c819e",
+      "inputSha256Matches": true
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "31871f6c966a2c5ac7677e500770d1b70112098bd537178da4b2ffe0ed5f3828",
+      "inputSha256Matches": true
+    }
+  },
+  "artifactZipSha256": "68c0e2567c9fcfc21bd8be6e81becae3b86592767d302026a82fc80227c2aec3",
+  "selectedZipSha256": "a198da322f6a7961aaffb12b0b40de9edfccd23cab3825054dbaaf14cb63b9af",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "a30a5f29b671fa4e57db4e627c812f5b9e33edcc4bd19c2700d2f791afb43516",
+      "bytes": 677
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "fb9361204c31c9605f9c56289d53b29548d7d424f380d1276d3c84824aefce53",
+      "bytes": 1952
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "feabb4add9e2ca3374e538560634d1ec97dc4f4ce89aab12f3d726e36ea9b2f6",
+      "bytes": 102
+    },
+    "server-install/source-after.txt": {
+      "sha256": "d50341422f10ee1fc5eecfc3e77baa76aea11c6b176b29f928ee95ff82ee34a6",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "1a59a9ff90177d4528f1f82b9c4ca7098b8dfeb862a219bf63074de69074f694",
+      "bytes": 251
+    },
+    "server-install/source-install.log": {
+      "sha256": "7d31682d9902fd1841e746209d96263e0b7a9379c7eba5792ee2ae1ed5788168",
+      "bytes": 615
+    },
+    "server-install/source.txt": {
+      "sha256": "d50341422f10ee1fc5eecfc3e77baa76aea11c6b176b29f928ee95ff82ee34a6",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "9d01a95c02a54e6d5e89bea2f1bd2f8abd8aa1198e80a812eb6ad9ad243ddbe3",
+      "bytes": 3056
+    }
+  }
+}

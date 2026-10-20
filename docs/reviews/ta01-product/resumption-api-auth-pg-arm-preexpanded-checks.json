@@ -1,0 +1,53 @@
+{
+  "说明": "只核本轮工具/归档/文档；ARM1200秒真实小测失败且目标回执缺失，不能作产品或Required通过。",
+  "observedAt": "2026-10-16T13:34:41.687158+00:00",
+  "archive": {
+    "sha256": "fb5ea507797346f82de084e1ec4a389aeee7d184ad4bf6be77c44da88f85cc4f",
+    "verifiedMembers": 47,
+    "actualToolMatches": true
+  },
+  "checks": [
+    {
+      "command": "node --check docs/reviews/ta01-product/tools/api-auth-pg-path-probe.mjs",
+      "exitCode": 0
+    },
+    {
+      "command": "Python ast.parse on 12 actual local helper files",
+      "exitCode": 0,
+      "scope": "运行后语法核验，不冒12个脚本全部曾在启动前运行"
+    },
+    {
+      "command": "pnpm ci:validate",
+      "exitCode": 0,
+      "tests": 24,
+      "registryEntries": 280,
+      "registryMembers": 61,
+      "scope": "注册表61成员与本轮另核47成员分开"
+    },
+    {
+      "command": "pnpm check:integration-docs",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "logs": {
+    "ci-policy": {
+      "bytes": 2187,
+      "sha256": "6a89a3836d844add835a003b238d861cc3fabd50a6ea29f330082881f68fa74d",
+      "text": "\r\n> workmesh@ ci:validate I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\r\n> node scripts/validate-ci.mjs && node scripts/validate-release-workflows.mjs && node scripts/validate-lite-compose.mjs && node --test scripts/retire-legacy-web.test.mjs scripts/verify-raw-evidence-archive.test.mjs && node scripts/verify-raw-evidence-archive.mjs\r\n\r\n[ci:validate] OK: 12 jobs, 49 immutable action references, Node 22.19.0, pnpm@9.15.4\r\nRelease workflow validation passed.\r\nLite compose validation passed (7 services; 3 roles from one image; 55 documented variables; published: minio, api)\r\n✔ only the full inspected legacy Web IDs are removed, without volumes (4.2338ms)\r\n✔ reject another project before any mutation (0.7452ms)\r\n✔ reject another service before any mutation (0.1936ms)\r\n✔ reject another configuration before any mutation (0.2056ms)\r\n✔ reject another working directory before any mutation (0.2329ms)\r\n✔ reject identity changed just before stop before any mutation (0.2348ms)\r\n✔ unlisted orphan refuses the entire operation (0.3017ms)\r\n✔ receipts exclude container credentials, commands, custom labels and volume driver options (0.4909ms)\r\n✔ failed graceful stop preserves the container (0.4501ms)\r\n✔ 无Git/网络依赖读取双字节，精确旧路径/版本映射 (6.835ms)\r\n✔ 相同字节共用member，所有逻辑版本保留 (1.4477ms)\r\n✔ 拒绝规范化后重复逻辑元组 (0.8715ms)\r\n✔ 拒绝越界/盘符/UNC/反斜杠/保留名/尾点/控制字符 (0.457ms)\r\n✔ 拒绝规范化后重复ZIP member (0.541ms)\r\n✔ 拒绝索引缺项/多项 (1.7678ms)\r\n✔ 拒绝索引重复元组 (0.5456ms)\r\n✔ 拒绝归档hash不符 (0.4739ms)\r\n✔ 拒绝伪造来源blob ID (0.7664ms)\r\n✔ 拒绝member bytes/hash不符 (0.8485ms)\r\n✔ 拒绝软链接 (0.6949ms)\r\n✔ 拒绝目录 (0.3481ms)\r\n✔ 拒绝设备 (0.6156ms)\r\n✔ 拒绝extra元数据/硬链接信息与加密flags (0.6181ms)\r\n✔ 拒绝本地路径不一致、重叠与解压超额 (0.9708ms)\r\nℹ tests 24\r\nℹ suites 0\r\nℹ pass 24\r\nℹ fail 0\r\nℹ cancelled 0\r\nℹ skipped 0\r\nℹ todo 0\r\nℹ duration_ms 313.2813\r\n{\"entries\":280,\"members\":61,\"bytes\":21268498,\"errors\":[]}\r\n"
+    },
+    "integration-docs": {
+      "bytes": 300,
+      "sha256": "008291236fd87e7042ddbabff3162a7cc62e3a2dc34896d2b86a405eb3bab821",
+      "text": "\r\n> workmesh@ check:integration-docs I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\r\n> node scripts/check-integration-docs.mjs\r\n\r\n{\"skillFiles\":4,\"localLinks\":99,\"restEndpoints\":35,\"mcpTools\":11,\"humanSyntax\":\"passed\",\"scope\":\"静态检查；真实请求与中文语义须另验\"}\r\n"
+    }
+  },
+  "unchangedProductAndWorkflowDiff": true,
+  "fiveRootChecksRerunLocally": false,
+  "autocorrect": "本机缺失；按固定中文技能和适用references手检，未安装",
+  "fullProductAcceptance": false,
+  "latestRequiredPassed": false
+}

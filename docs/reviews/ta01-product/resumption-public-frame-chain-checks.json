@@ -1,0 +1,51 @@
+{
+  "说明": "新帧指针观察只读取当前线程已捕获、可写且非执行的单一栈段，16字节对齐、递增链、距SP最多1 MiB、最多12帧；只导出唯一映射到公开Node执行段的返回代码位置。省略FP、缺页、环、重叠映射、JIT／其他模块即停，不扫描栈、不猜完整调用链。",
+  "sourceHead": "f53f20b85e680a4219ae9f22a58ff37de58c37d8",
+  "sourceIsDirty": true,
+  "pythonTests": 45,
+  "astFiles": 6,
+  "logSourceBindings": {
+    "logs/public-frame-chain-first.log": "中间44项通过日志，未单独捕获该版完整源码字节",
+    "logs/public-frame-chain-final.log": "最终45项日志，对应本ZIP六份源码成员"
+  },
+  "realGuest": "pending",
+  "members": {
+    "scripts/server-distribution/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "scripts/server-distribution/core_pipe.py": {
+      "bytes": 4940,
+      "sha256": "7327c70bae987e6098df7cd0d61ba1b839645df3538f8c329bbbbda3d7a40866"
+    },
+    "scripts/server-distribution/guest.py": {
+      "bytes": 74486,
+      "sha256": "d7a7a176498f8805d74361ad29b8bb5854fbf9ac8729ad6bdeb92803f69580f8"
+    },
+    "scripts/server-distribution/native_diagnostic.py": {
+      "bytes": 11561,
+      "sha256": "61fb0d9ba42733007cd9e884d86603d1e3857721cfe4fb5c15c0aff68b7ec5dd"
+    },
+    "scripts/server-distribution/native_diagnostic_test.py": {
+      "bytes": 52338,
+      "sha256": "a92e06c3b8ccf7ae014e5e292ae552cb7398f6a6ccbedef3b64d1b9b3ef8fb70"
+    },
+    "scripts/server-distribution/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    "logs/public-frame-chain-first.log": {
+      "bytes": 148,
+      "sha256": "d094b0333edad15329416fecfaee78ccc80a3c973ba7af420a05e448ec020455"
+    },
+    "logs/public-frame-chain-final.log": {
+      "bytes": 149,
+      "sha256": "ed5c7d7cb97639c67736adb475bf7b4f2cce02d841fc7c1286251a7799779302"
+    },
+    "scope.json": {
+      "bytes": 1022,
+      "sha256": "8320326d74622de471a0c74004187c794856db5e10e3688810ba9cbc9deb886e"
+    }
+  },
+  "selectedZipSha256": "e17e4fc2f00d8bf9e98130142d96c0164b670500f3e5ba04b9aa52a2b6613c71"
+}

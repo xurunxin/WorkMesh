@@ -1,0 +1,72 @@
+{
+  "说明": "正常取消后的原成员保全；没有 result.json，安装结论与首败原因未知。候选源码通过 manifest 与原 source 文件保留，不将串口进度或取消冒验收结果。",
+  "runId": 38551031484,
+  "jobId": 115809078773,
+  "artifactId": 11893645473,
+  "sourceHead": "008ec90aaac9d14ff5cb603f5d5132922ae02441",
+  "sourceTree": "c99f5879291d500e702dc279ae3400eab5caac29",
+  "status": "cancelled",
+  "hasResult": false,
+  "scripts": {
+    "run.py": {
+      "sha256": "ca766e779a4eb0ace2da1a74b2273c04602907c36252259eb43885158ba26dbd",
+      "note": "没有 result.json，不能核 guest 实际执行摘要或补写通过。"
+    },
+    "guest.py": {
+      "sha256": "7d3450d4e011e99efc3ebd90e41f1ccffea305caad1cc2956c6bf92a83fdd199",
+      "note": "没有 result.json，不能核 guest 实际执行摘要或补写通过。"
+    }
+  },
+  "artifactZipSha256": "700474acc04945642c436d56f624606b55c1f1b1d9aba7be82183ea24239398d",
+  "selectedZipSha256": "643d44fae5d2d1f1c645e5d5c7d0fdfada1f5317fa5bdd1889df37f6af0be390",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "3059398c99f8f79d06e28a1bbe160d57cc53e9cc8c8596d508dcc09c064bf479",
+      "bytes": 68666
+    },
+    "server-install/guest.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "b5365e41956e0e9351fa6f1b68cc0e6e51208e8998a8faa175cffb705431ce8d",
+      "bytes": 1606
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "dbe4a740eb7df5708a47a77b9b62def68fdfdc24696f0307140f0956cbc3eb83",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "07ca010a4842f6e6cdfb0cc0a73bb93f50d4d54be855a8058df2758dcad2371d",
+      "bytes": 12409
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "server-install/serial.log": {
+      "sha256": "8a982949c4c1718ad42242aabae434945129d9bf40b81ebb44ab168548b33fc2",
+      "bytes": 101431
+    },
+    "server-install/source-after.txt": {
+      "sha256": "b588c7c8b4a1f7bf3273c9d6fccaca27ffa7ef03752c157adba55b0dfa4bc046",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "e5e16bf896c297df534802e3f704418c5644b3701dfd1a91f0e724d4ebf05038",
+      "bytes": 268
+    },
+    "server-install/source-install.log": {
+      "sha256": "ca0bbdc7c295d7d629d34df7665b9801e536e0a0391de90ce97941c24b59750c",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "b588c7c8b4a1f7bf3273c9d6fccaca27ffa7ef03752c157adba55b0dfa4bc046",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "641a0dbf7e18dc6320914773ca10e6b6fe5a231747c0f6295c163504785d0efc",
+      "bytes": 2817
+    }
+  }
+}

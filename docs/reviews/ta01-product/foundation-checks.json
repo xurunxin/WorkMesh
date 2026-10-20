@@ -1,0 +1,104 @@
+{
+  "sourceHead": "47b1c123cb803eccb42d6a0e3ff5ecbb1378ecda",
+  "sourceBinding": "根五项与恢复使用当前工作树；核心 TS、schema、API 稳定，CLI 后续改动另列当前工作树哈希，不能将这批根结果当 CLI guest 验收",
+  "archiveSha256": "fc470430964814548fee85f10dc2d965c98f917f0554653154295eca97c177cf",
+  "members": [
+    {
+      "path": "build-2.log",
+      "bytes": 6344,
+      "sha256": "d84f8f3a468a618d8878eb55e583d6c0ecb7bdbe7d042af5379cccd956b26b00"
+    },
+    {
+      "path": "unit-5.log",
+      "bytes": 1647,
+      "sha256": "9f51d962d47c64a2722fe9cbf973504c15fd0aa66f0de8f76193ca055946fa96"
+    },
+    {
+      "path": "linux-unit.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "required-2.log",
+      "bytes": 443,
+      "sha256": "dfaa82fb5666d4beea00bc6b8bdc444161e2c62eea9e789de4727ea8c0f94cf0"
+    },
+    {
+      "path": "recovery.log",
+      "bytes": 377,
+      "sha256": "2d4f31db1215922410ea86801cd48b224955797260badde55903ca95b598bb2a"
+    },
+    {
+      "path": "required-checks-2/artifact-bucket.log",
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    {
+      "path": "required-checks-2/examples.log",
+      "bytes": 885,
+      "sha256": "ae60bbc46595ba2ca8533808d6e31dfce2632f2ebc830fdf5a83a6b54a517bd9"
+    },
+    {
+      "path": "required-checks-2/lint.log",
+      "bytes": 5641,
+      "sha256": "a6e98c24c14af8ffc88eb348a54c61b12412c6bad03c9629776586d5386bfa06"
+    },
+    {
+      "path": "required-checks-2/results.json",
+      "bytes": 3775,
+      "sha256": "ade918e6fd103048af3b3913fd6c96fa60a63603276f27174168ea19706b22a1"
+    },
+    {
+      "path": "required-checks-2/test-conformance.log",
+      "bytes": 466,
+      "sha256": "08ac6240eac224889d31f84be0b793d1054a830f9d88fc8eb48d86d7bff0e85a"
+    },
+    {
+      "path": "required-checks-2/test-integration.log",
+      "bytes": 2216885,
+      "sha256": "7008eeccec2695474584257ec03ac5fdd5679ba49873b7ad069532ff74c4e2e4"
+    },
+    {
+      "path": "required-checks-2/test.log",
+      "bytes": 91082,
+      "sha256": "8497f37687532ff1bdc5580ab29079440f9ae872f8dab42b2386acc58c86e586"
+    },
+    {
+      "path": "required-checks-2/typecheck.log",
+      "bytes": 6166,
+      "sha256": "0a9e1cc66561dc8771652b2d41b9031a2965026d1f444cf73898581e4e0bfcbb"
+    },
+    {
+      "path": "recovery-checks/artifact-bucket.log",
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    {
+      "path": "recovery-checks/examples.log",
+      "bytes": 885,
+      "sha256": "c47b1cbf591b5c9c980271e37bfa6fc29736e54342780c007782a0881f05bddd"
+    },
+    {
+      "path": "recovery-checks/results.json",
+      "bytes": 3047,
+      "sha256": "13a6d587de2148622ea0aae65cc9dda15d2c4a2c8e5941049c2cc8dcfaa65ea0"
+    },
+    {
+      "path": "recovery-checks/test-integration-recovery.log",
+      "bytes": 862,
+      "sha256": "8d647cef3736be8c73e243e609f752b5fff713344e3c615c3bb14756512494ff"
+    }
+  ],
+  "currentCliWorktreeSha256": {
+    "scripts/server-distribution/build.mjs": "da7e25c002479dc23170853859d825e581cce9ad687dc1be5ccdc9c8534c9e99",
+    "scripts/server-distribution/config.example.json": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a",
+    "scripts/server-distribution/guest.py": "f7d2fd8ca932edc711061fe9d1743fe8aceeaab675d459bae53db3c9bfe9d1bc",
+    "scripts/server-distribution/install.mjs": "08679800b11f0784b619a0b45a70296c5499bb2ead5e8416173241af47e0e821",
+    "scripts/server-distribution/install.sh": "117a16a1fcd1387f8eacfa05ce2cc4553628abaf73057f2b108e0b7f1b269958",
+    "scripts/server-distribution/install.test.mjs": "09189843eb330d115db50d99355203bb8d12ff4d6fa2508fe0419c940fef7e1d",
+    "scripts/server-distribution/journal.mjs": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06",
+    "scripts/server-distribution/manifest.mjs": "ccd03307ec73a481b0589ca824c7bd077cb9efc32f1562b85818ce04c2bd21a6",
+    "scripts/server-distribution/measure.mjs": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d",
+    "scripts/server-distribution/run.py": "c684bb8a822c8f52cee5ef9c060b0b27eb2e891c89dfa69658690a2688708885"
+  }
+}

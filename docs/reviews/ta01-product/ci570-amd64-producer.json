@@ -1,0 +1,191 @@
+{
+  "sourceHead": "c7cf68aaf279f771a2022d37d69b5651cdb66ace",
+  "sourceTree": "d4e4c1e40e16dc8e05285269716c62426bb41b32",
+  "runId": 39169353227,
+  "jobId": 117799150808,
+  "artifact": {
+    "id": 12152047803,
+    "name": "server-build-raw-amd64-39169353227-1",
+    "digest": "sha256:e086b769b523b02e3a80f14efd09f6eabb43949ecf41c0c413d93498c22f21f4",
+    "size_in_bytes": 2349875,
+    "expired": false,
+    "created_at": "2026-10-18T21:57:00Z"
+  },
+  "rawZipSha256": "e086b769b523b02e3a80f14efd09f6eabb43949ecf41c0c413d93498c22f21f4",
+  "candidateArtifact": {
+    "id": 12152451241,
+    "name": "server-distribution-amd64-39169353227-1",
+    "digest": "sha256:34232d14ff99ace33cf46477d6ea18ee78b03331dde8ccfbf10ee1921859d5bd",
+    "size_in_bytes": 427794541,
+    "expired": false,
+    "created_at": "2026-10-18T21:56:58Z"
+  },
+  "manifestSha256": "360e2033a5eb72192c40b2a3a7ee6edec16a464fb58851fa2d8079eefccce98f",
+  "inputPathsMatchGit": [
+    {
+      "path": "scripts/server-distribution/archive.mjs",
+      "sha256": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212",
+      "gitBlob": "5e25b4692dbd03ec0ba08c20f6c2ab10898d5230"
+    },
+    {
+      "path": "scripts/server-distribution/build.mjs",
+      "sha256": "c91ae6d416627c36aac62748247d0ed04278624a0d39e3446bed6540b794eaa4",
+      "gitBlob": "68cfce129c6f8fc8bc4086c246ca1dd9ea2a18e2"
+    },
+    {
+      "path": "scripts/server-distribution/config.example.json",
+      "sha256": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a",
+      "gitBlob": "ca0d8cd6ad7c17e97a52960ef346f06de600a653"
+    },
+    {
+      "path": "scripts/server-distribution/configuration.mjs",
+      "sha256": "5e07457aa0503aca9202d119498ada09674e489eef91de7a00d2f132d882a560",
+      "gitBlob": "36cdb45bc8297f0b38c5b1af6a9189155ede4a03"
+    },
+    {
+      "path": "scripts/server-distribution/core_metadata.py",
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+      "gitBlob": "31f9504d898577612b5c7cb1fb9ff8ffedca4c82"
+    },
+    {
+      "path": "scripts/server-distribution/core_pipe.py",
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+      "gitBlob": "6147207ec5174a9833bd96e68be1776de591f4f0"
+    },
+    {
+      "path": "scripts/server-distribution/diagnostics.mjs",
+      "sha256": "3a800d9adf8dfc9153d400bba915fe559d68184b5ca72b9398ee8fa5978399ff",
+      "gitBlob": "c2b8aad52fde33759bd2cf93461a8653cc5981d9"
+    },
+    {
+      "path": "scripts/server-distribution/failure-recovery.mjs",
+      "sha256": "137d4e13ba07ed3fb2bc0c1dd29401b7da6a772b0f4768913fbd70c0de38eabb",
+      "gitBlob": "e1f56500766296c1a3302e483718f8ac5fe596b4"
+    },
+    {
+      "path": "scripts/server-distribution/guest.py",
+      "sha256": "54bb28e2c336d8e63a68c5844d509498d8925f1223a442baf1219d229ed3b8c2",
+      "gitBlob": "a83505c859f5d88876572017453637f782b60631"
+    },
+    {
+      "path": "scripts/server-distribution/install-recovery-fixture.mjs",
+      "sha256": "e4cd88437950a826c716d9d90ae21a08035e93deaee63734da15fd304f932d1c",
+      "gitBlob": "5b719084c1a63629feee5c3b83b0ae24d98f0f46"
+    },
+    {
+      "path": "scripts/server-distribution/install.mjs",
+      "sha256": "2ea8e9dd379b5dcac13abcc585638b8c4756650685864b5eab62171347c80c51",
+      "gitBlob": "0866d8cd62da5fd15a8b7a4986e16e14ac658f22"
+    },
+    {
+      "path": "scripts/server-distribution/install.sh",
+      "sha256": "ff0fe239b72f2981fd3691ffab2e843e1e40fe414ebc5adff803ba6f70917a1a",
+      "gitBlob": "f1ca8f6262eee55ad8ed2ab6c471b5c9565bfab0"
+    },
+    {
+      "path": "scripts/server-distribution/install.test.mjs",
+      "sha256": "e1898b43f5b8d591bfbf783411e6d1ba6da6e6cbb266abf85a85563378946314",
+      "gitBlob": "6b61b8c1887629a00f46ee49cbfdbed7a9519375"
+    },
+    {
+      "path": "scripts/server-distribution/journal.mjs",
+      "sha256": "c5f58cdbcca5ddfb4c270251ae752ed191afc8f57727af3815321fb2422fe522",
+      "gitBlob": "25ef2bedfdaee87cce92bdc0e5ca2aebf9fe4615"
+    },
+    {
+      "path": "scripts/server-distribution/manifest.mjs",
+      "sha256": "6cb166ce1d84386db8fb5659bcdd2124eef4954cf26e35f4e4f67150e5591bc6",
+      "gitBlob": "d339ed8d4e76205aeb33beed7479d819a75fce83"
+    },
+    {
+      "path": "scripts/server-distribution/mcp-response.mjs",
+      "sha256": "67b8d07a4a10fddef5c667d8f8adbe22d26144d7b584df742645a2863c3c2c20",
+      "gitBlob": "347d2196cffd83febbb4133c3b8ffa1e97386910"
+    },
+    {
+      "path": "scripts/server-distribution/measure.mjs",
+      "sha256": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d",
+      "gitBlob": "ca837bae5c83895e071f1d6d7ed84822ec17ef60"
+    },
+    {
+      "path": "scripts/server-distribution/native_diagnostic.py",
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+      "gitBlob": "eeb22419acc88d50da44f0655d6b2ddb89dbb219"
+    },
+    {
+      "path": "scripts/server-distribution/native_diagnostic_test.py",
+      "sha256": "e1460c60e874c19da92e62ae4544fa084c3483ff45ad9ae3395ef6d3cc064b87",
+      "gitBlob": "baca81a7fa246219307c4bebf3f94b33c269bfe6"
+    },
+    {
+      "path": "scripts/server-distribution/run.py",
+      "sha256": "ab80fe35515417ea4af4aef375108fe791a4cc450f8af1805f5330dbe688fedc",
+      "gitBlob": "fd102dbe755d01b77743791e32c99d92f6bdcf83"
+    },
+    {
+      "path": "scripts/server-distribution/verify-files-worker.mjs",
+      "sha256": "3fd13fe7a0065cbbc0d0bc91bf3f2f7cd70941bcbfdf1323e64e66e0fd5dc415",
+      "gitBlob": "73db5ec040785f1f8b2e7ac508e39267cdad2ac8"
+    },
+    {
+      "path": "infra/docker/server-installer.Dockerfile",
+      "sha256": "1bf7b4319b0b47f21b8ebebc130966f1950c77cc61faf9c7be7ac9c7d190056f",
+      "gitBlob": "9fde8f70dba6c7b448cbfa1633677e8dca6d84d1"
+    },
+    {
+      "path": "packages/config/src/deployment-profile.ts",
+      "sha256": "537600a484aa31f6ae1ac038e57d7e9e8fa871c5738dd22265ed4ea1c415afaa",
+      "gitBlob": "55b386c905d8cfc8747308e3f1721a19c4bde390"
+    }
+  ],
+  "sourceCommitMatchesGit": true,
+  "tools": {
+    "producerNode": "v22.19.0",
+    "producerDocker": "Docker version 28.0.4, build b8034c0",
+    "installerNode": "v22.19.0",
+    "installerDocker": "Docker version 27.3.1, build ce1223035ac3ab8922717092e63a184cf67b493d",
+    "installerCompose": "Docker Compose version v2.31.0",
+    "pgDump": "pg_dump (PostgreSQL) 16.15",
+    "pgRestore": "pg_restore (PostgreSQL) 16.15"
+  },
+  "scope": "生产者原始安全成员；省略依赖安装日志，不下载巨大候选副本。三画像原件另列，不关闭历史139。",
+  "selectedZipSha256": "e18f432c30e89132a7c3baeafc0d2d47ebe0a3188e5873415a255b92b5cc6aa5",
+  "members": {
+    "server-build/build.log": {
+      "bytes": 68861,
+      "sha256": "3a132f1979f9eb121d8fb9749d4864766db1f8e395b24b7f9e70be3490128393"
+    },
+    "server-build/input-sha256.txt": {
+      "bytes": 2526,
+      "sha256": "1b0c524f3e2fdeb45d9ebe87238d7f134d4c41b69aca5f911d45a7a77309c4dd"
+    },
+    "server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "8ee1587fd3f1c1aea2fc10cc368a0cfdfe735d9fb1a93bbef1f45147e7ec4110"
+    },
+    "server-build/manifest.json": {
+      "bytes": 12627,
+      "sha256": "360e2033a5eb72192c40b2a3a7ee6edec16a464fb58851fa2d8079eefccce98f"
+    },
+    "server-build/native-privacy.log": {
+      "bytes": 159,
+      "sha256": "247935c591b73590a1ba1fcbc8531ab07929d399467198775f195d8ddfdc3949"
+    },
+    "server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "1e45713726548b18f95b4b76645cfcb365c9812380e8b8e9bdf71faa60df0cb0"
+    },
+    "server-build/source-commit.txt": {
+      "bytes": 266,
+      "sha256": "01b45f75ac86ea2189ff4582cf962a7f7806ded4288a899221326ddcfe98cd3d"
+    },
+    "server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "1e45713726548b18f95b4b76645cfcb365c9812380e8b8e9bdf71faa60df0cb0"
+    },
+    "server-build/unit.log": {
+      "bytes": 4301,
+      "sha256": "0f54d0911d306b7975ebe2289cf56e674e31a824130516b1fcbe923157314925"
+    }
+  }
+}

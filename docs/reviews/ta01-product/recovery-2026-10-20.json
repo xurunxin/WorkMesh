@@ -1,0 +1,225 @@
+{
+  "source": "新会话恢复前的旧工作树、被忽略材料清单、同次准备原字节与只读审计。独立于后续运行终态。",
+  "branch": "tds/conv-01a1572a-7aeb-7b6d-b7e8-83e89c2b723d",
+  "oldHead": "1a2e562f1d5df8680ff5cf71362d148e447d8e58",
+  "githubMain": "c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8",
+  "oldTreeRealpath": "I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2",
+  "newTreeRealpath": "I:\\tds_workspace\\workspaces\\01a1572a-7aeb-7b6d-b7e8-83e89c2b723d",
+  "integration": "在当前会话分支正常快进；旧远端、旧树和准备容器保留；无reset、clean或删除共享锁。",
+  "inventory": {
+    "files": 4840,
+    "bytes": 4605349252,
+    "originalBytesPreservedLocally": true,
+    "archiveContainsInventoryNotAllPrivateOrLargeFiles": true
+  },
+  "sameAttemptCopiedFiles": 68,
+  "copyVerifiedByteForByte": true,
+  "sourceBindings": [
+    {
+      "path": "scripts/server-distribution/native_diagnostic.py",
+      "gitBlob": "eeb22419acc88d50da44f0655d6b2ddb89dbb219",
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94"
+    },
+    {
+      "path": "scripts/server-distribution/run.py",
+      "gitBlob": "ef1decf02e5a988e1198c236448c1e5b490db543",
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    {
+      "path": "scripts/server-distribution/native_diagnostic_test.py",
+      "gitBlob": "7aa440c5c548bdfdeb50e50ba297c965d028654a",
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815"
+    },
+    {
+      "path": "scripts/server-distribution/guest.py",
+      "gitBlob": "cd32a1e34e17c61ab0cb939f41b5965a6e7b303a",
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe"
+    },
+    {
+      "path": "scripts/server-distribution/core_pipe.py",
+      "gitBlob": "6147207ec5174a9833bd96e68be1776de591f4f0",
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    {
+      "path": "scripts/server-distribution/core_metadata.py",
+      "gitBlob": "31f9504d898577612b5c7cb1fb9ff8ffedca4c82",
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    }
+  ],
+  "selectedZipSha256": "474ab63fafd74658ee96d059c5bfbcadb0f7ff56f75563d1da68b72faf384275",
+  "members": {
+    "old-preparation/actual-api_identity.py": {
+      "bytes": 1083,
+      "sha256": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+    },
+    "old-preparation/actual-diagnostic_guest.py": {
+      "bytes": 9168,
+      "sha256": "7c5d41aae7050dc075ab1fffcf00fc03a28ba35b4e7219a3df28475bb0b10c1d"
+    },
+    "old-preparation/actual-run_window.py": {
+      "bytes": 9521,
+      "sha256": "f11c337dcbd83fea4062c31f9f4e4a79d1a17d8d77942ea9fb8129fbdcb4f05d"
+    },
+    "old-preparation/actual-script-reconciliation.json": {
+      "bytes": 442,
+      "sha256": "745c2648498841e54ca3f534369c267cb1923ff193cfda4720683eb62246ca1a"
+    },
+    "old-preparation/api_identity.py": {
+      "bytes": 1083,
+      "sha256": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+    },
+    "old-preparation/apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "old-preparation/apt-update.stdout": {
+      "bytes": 1639,
+      "sha256": "17cd2b7950fa7805633abf076974c10f670190616ef3a881526ac0c7db463edf"
+    },
+    "old-preparation/artifact.json": {
+      "bytes": 221,
+      "sha256": "3f2f4fa1879069cae292e0101432d76f5945b00e754978746a9b98299990f187"
+    },
+    "old-preparation/authorization.json": {
+      "bytes": 930,
+      "sha256": "e48312310e3ae0717a348b6dc42fbe6dc3f6ea17d773f5ec49ef6c87c45255c9"
+    },
+    "old-preparation/cache-input-recheck.json": {
+      "bytes": 323,
+      "sha256": "0dce1e41801ca53cf2dfdc6bed30720ca8f304dddf2dade545984c345ea4308d"
+    },
+    "old-preparation/capacity-before-provision.json": {
+      "bytes": 370,
+      "sha256": "ace1dd3048da5cb28c423fe87b02d6c0aaa6af5ff6d6ee5146c194ba1c12bf28"
+    },
+    "old-preparation/diagnostic_guest.py": {
+      "bytes": 9168,
+      "sha256": "7c5d41aae7050dc075ab1fffcf00fc03a28ba35b4e7219a3df28475bb0b10c1d"
+    },
+    "old-preparation/execute_once.py": {
+      "bytes": 4850,
+      "sha256": "62882b71054343e49480cd39562344f9ac8201e28317e3348ad5914fbd8bd243"
+    },
+    "old-preparation/gdb-policy.stdout": {
+      "bytes": 293,
+      "sha256": "3c5d744028d84a94f9d41657aee984b39ccec3925b6000028dc6c22c4afc779c"
+    },
+    "old-preparation/input-preflight.json": {
+      "bytes": 1748,
+      "sha256": "1a6e7b964f4b708c211ede17b0adfd6bb6358d03e5e389cc5457bd646b8909df"
+    },
+    "old-preparation/instrumentation-boundary.json": {
+      "bytes": 530,
+      "sha256": "251d815278887a1e3d8b107952005706fcf09a964057dd90255a81d01ee41504"
+    },
+    "old-preparation/manifest.json": {
+      "bytes": 12627,
+      "sha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b"
+    },
+    "old-preparation/oci-closure.json": {
+      "bytes": 29050,
+      "sha256": "2bde01ec61e804e93fbf8a8b3745c9b44554a97950fa7c869d603afeeb272f12"
+    },
+    "old-preparation/original-source-bindings.json": {
+      "bytes": 5120,
+      "sha256": "ba7663969c704652781aa29432d71b8cd0001116a9cac17f99b634b5d8b00dbf"
+    },
+    "old-preparation/outer-cgroup-preflight.json": {
+      "bytes": 90,
+      "sha256": "2b717075bbc6de8f3785c40198922e56b04378bf64e4326a78eda1d25bb941cc"
+    },
+    "old-preparation/plan-at-approval-31c13bed.md": {
+      "bytes": 11924,
+      "sha256": "859c648eeb96eed5447e4466690c0013f230ea1019e79a79396be9f6811ada86"
+    },
+    "old-preparation/qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "old-preparation/qemu-policy.stdout": {
+      "bytes": 823,
+      "sha256": "38419e19b79fcc88b9ffcc00a83a89b1eb35e21881ef9307233aba20e473076e"
+    },
+    "old-preparation/qemu-sha.stdout": {
+      "bytes": 94,
+      "sha256": "5798d2b7f16830c2aec1526df2364d6f80d455f4f300ce9f95ac047bd3cddd5a"
+    },
+    "old-preparation/qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "old-preparation/resources.json": {
+      "bytes": 967,
+      "sha256": "2eba9ef6aae8fa7c21be8b164be61acc96532d864e682c509dcd15e9182f0096"
+    },
+    "old-preparation/resumption-audit.json": {
+      "bytes": 477,
+      "sha256": "e7e1295e1cc91d61e454bf47f928f8fd486202df1a6789a33c25aa4521fff483"
+    },
+    "old-preparation/run_window.py": {
+      "bytes": 9521,
+      "sha256": "f11c337dcbd83fea4062c31f9f4e4a79d1a17d8d77942ea9fb8129fbdcb4f05d"
+    },
+    "old-preparation/tool-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "old-preparation/tool-install.stdout": {
+      "bytes": 29326,
+      "sha256": "2d7c795dad5aabfed7c4751d2dd3fb80c2a93411277515f84e4dc8505bf7b850"
+    },
+    "original-source/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "original-source/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    "original-source/guest.py": {
+      "bytes": 75400,
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe"
+    },
+    "original-source/native_diagnostic.py": {
+      "bytes": 12173,
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94"
+    },
+    "original-source/native_diagnostic_test.py": {
+      "bytes": 61675,
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815"
+    },
+    "original-source/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    "recovery/old-file-inventory.json": {
+      "bytes": 1133501,
+      "sha256": "b489f130826961e0af03aa528627929d0e8834875122f963dd44450a874de090"
+    },
+    "recovery/prelaunch-audit.json": {
+      "bytes": 5105,
+      "sha256": "1dd7441ca545ad9ecded509ad22799f1be4f33a75f02485cb9bed9bf8e509b70"
+    },
+    "recovery/preserve.py": {
+      "bytes": 1436,
+      "sha256": "4cc93a9a00a30174dd27da699defb9224078966fd1794e2e8a8f66421c35b8e0"
+    },
+    "recovery/audit.py": {
+      "bytes": 3276,
+      "sha256": "23c1ada698b773d5ee8d33ac8647641f3595d4c7f005df8d810baae78890c8ee"
+    },
+    "recovery/github-main.json": {
+      "bytes": 41,
+      "sha256": "d316d4515c6df9fead3764f958565eca94eb535bb63cfa9a31862a539030ff20"
+    },
+    "recovery/github-pr228.json": {
+      "bytes": 171,
+      "sha256": "c3b7af3e8a26a615421cb3e2fef3b8e467356ba0b0770b1fc9e8cd9d43542dc1"
+    },
+    "recovery/old-worktree-status.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "privacy": "只归档安全准备脚本、公开候选元数据、哈希清单和事件投影；不归档私有配置、数据库、密钥或guest磁盘。"
+}

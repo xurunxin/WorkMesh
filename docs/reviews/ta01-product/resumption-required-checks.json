@@ -1,0 +1,138 @@
+{
+  "sourceHeadAtRunStart": "9f686fd0188098961168690fbfbb40a157aafa4f",
+  "sourceBinding": "根检查使用工作树；apps/packages/OpenAPI/schema/协议未变。后续CLI与healthcheck修改不冒本轮完整候选受测。",
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32",
+  "archiveSha256": "2bb135d4bbc8741824a4a99ac9b1e586e902a03345e70563dd72e9b665b2bd69",
+  "members": {
+    "results.json": {
+      "bytes": 3775,
+      "sha256": "bb3b5b0225d3862d5351769df365083c60351395cc4682e617e1f71b45ae3499"
+    },
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "107ab85325f82d5a1e2ea8c2bbff0eb210a149086c6fc892f8de72de273e5bcc"
+    },
+    "lint.log": {
+      "bytes": 5640,
+      "sha256": "aba6793245496335f66186118f0b6997026bfb14c6c8e83af49506d8d6b1e50c"
+    },
+    "test-conformance.log": {
+      "bytes": 466,
+      "sha256": "a431b668dc9d513b6b9fd6001007d61e9ba07806585136b3202d4d965725f22a"
+    },
+    "test-integration.log": {
+      "bytes": 2215918,
+      "sha256": "ca95316190422b86c9d56fcb6aae4669348a09107a8418a7c445baa71e5d0cf1"
+    },
+    "test.log": {
+      "bytes": 90747,
+      "sha256": "2ee6a63ccc7e3a38e91ffee98289007bc71d9a7b8652dd6315d31cff200ee077"
+    },
+    "typecheck.log": {
+      "bytes": 6166,
+      "sha256": "9e24022103a53a74fbcbccde1b8549a59b45668fd4116ac31f30ea89c9572dab"
+    }
+  },
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-14T05:00:13.713Z",
+      "endedAt": "2026-10-14T05:00:57.877Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-14T05:01:03.539Z",
+      "endedAt": "2026-10-14T05:01:05.004Z",
+      "exitCode": 0
+    },
+    {
+      "label": "lint",
+      "command": "pnpm lint",
+      "startedAt": "2026-10-14T05:01:05.007Z",
+      "endedAt": "2026-10-14T05:03:08.320Z",
+      "exitCode": 0
+    },
+    {
+      "label": "typecheck",
+      "command": "pnpm typecheck",
+      "startedAt": "2026-10-14T05:03:08.323Z",
+      "endedAt": "2026-10-14T05:04:54.356Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test",
+      "command": "pnpm test",
+      "startedAt": "2026-10-14T05:04:54.360Z",
+      "endedAt": "2026-10-14T05:13:00.465Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-14T05:13:00.467Z",
+      "endedAt": "2026-10-14T05:57:16.383Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-conformance",
+      "command": "pnpm test:conformance",
+      "startedAt": "2026-10-14T05:57:16.386Z",
+      "endedAt": "2026-10-14T05:57:19.183Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "7d8735f02b74050f733c1c9f297c15b52fae190828cb38d7187a53504a3f33af",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "1bb54e86dca7888a40352310f818282003f7a53936f85fa4fdacb4251fc521bc",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "d6c72603aa49516383fe2e851cd343a63f4b821869c4078653c5dc2ca786661a",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-7cb111ee-2da3-4e33-927b-3df438d95d8a-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-7cb111ee-2da3-4e33-927b-3df438d95d8a-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-7cb111ee-2da3-4e33-927b-3df438d95d8a-s3-data",
+      "absent": true
+    }
+  ],
+  "workingTreeAtArchive": {
+    "scripts/server-distribution/archive.mjs": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212",
+    "scripts/server-distribution/build.mjs": "118fe1a72322815ce9182b4120845c80a85b2e1ef5bbfcff4b3ce3793917e563",
+    "scripts/server-distribution/diagnostics.mjs": "2d7c109338acfe9d790e2ca6ba16aab128f1c89dc0046e5bf579d82f5f9fec82",
+    "scripts/server-distribution/install.mjs": "341bec40732738624093e55cb78e9aa7485df7d863914f2e7b1bd4437a8c9402",
+    "scripts/server-distribution/install.test.mjs": "8ed75ec7a596c952699c477fdbaa28919bbb7e8b640ced918e99423f650f085f",
+    "scripts/server-distribution/journal.mjs": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06",
+    "scripts/server-distribution/manifest.mjs": "691c46a8e035a1acfe2321d8b0bb7d3c485705d68c03b4c85bb503da4171e26e",
+    "scripts/server-distribution/measure.mjs": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d",
+    "scripts/server-distribution/guest.py": "463d8c873e57a9883624a681a35d5f19ed7a1e02061fe205d3b1e6abfe3eda33",
+    "infra/docker/healthcheck.mjs": "28334308da288c32f83b22bfec457fef3828934717a204186588bd7217d50e89"
+  },
+  "headAtArchive": "4a9df2ab2b30c2d88de972646ff7fb8009d32c28"
+}

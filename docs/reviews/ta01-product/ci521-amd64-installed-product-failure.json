@@ -1,0 +1,119 @@
+{
+  "runId": 38461233576,
+  "jobId": 115518768389,
+  "artifactId": 11848603252,
+  "artifactUrl": "https://github.com/xurunxin/WorkMesh/actions/runs/38461233576/artifacts/11848603252",
+  "sourceHead": "93e70603372966fe97d8c12364319c613cefb3c5",
+  "sourceTree": "91579a20247080608d5111a0670d6f71a21d9a1c",
+  "zipSha256": "f0c7cca5ad9dc3f3838d2d2ad150a7e9147f709f805a395b72dd292feb684f0e",
+  "bytes": 2372652,
+  "members": {
+    "server-install/build.log": {
+      "bytes": 64015,
+      "sha256": "8928c18fa0a957c4cefc3c5f8f823271952b488eea16e287d13ba0151ceb7bbc"
+    },
+    "server-install/guest.log": {
+      "bytes": 396,
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 1384,
+      "sha256": "96849e9f32dca13a874c3e50839bb0c8eac4a28f88d818d179f74083f6bca1b5"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "a4649b22a332de07d895cd9d880ca68083d353cc0dc44b1f30f9df8dc32dfff2"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12841,
+      "sha256": "355d55ec8e283a01b01ab4a55911a3175ea4fa10c003dcaf4682f629028ea2ed"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 69,
+      "sha256": "48d30d995a3459025bbd0ba05cf6ae7296231231ea72290c8722556b77375adb"
+    },
+    "server-install/result.json": {
+      "bytes": 3534,
+      "sha256": "09e27cf2997408e945f917025cccb97ed013738f2a146dffda8fa39dd2f0d6b1"
+    },
+    "server-install/serial.log": {
+      "bytes": 85598,
+      "sha256": "79442bc051d5c6259875e259376a72bb63c581560f4fee84b2e0cd773e70cf63"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "994343ae0c31b836f19c73dfb8fcf4d2b77b456750b7a948d541e18ade702c28"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 277,
+      "sha256": "329c945f95c7a0db31bf1799502f071b26c3a3c28d1efa07c4a181657463cc57"
+    },
+    "server-install/source-install.log": {
+      "bytes": 615,
+      "sha256": "20601f960c9319b27be0cf750f4bd27bf50d407ca5b4520dd7c9df9c9197a432"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "994343ae0c31b836f19c73dfb8fcf4d2b77b456750b7a948d541e18ade702c28"
+    },
+    "server-install/unit.log": {
+      "bytes": 1838,
+      "sha256": "f9f02a85770b77c8f4f38ddafb1e3c08c5f092989b830371e49d15928817ea77"
+    }
+  },
+  "scriptGitBlobsMatch": {
+    "run.py": true,
+    "guest.py": true
+  },
+  "receipts": [
+    {
+      "phase": "failure",
+      "errorType": "RuntimeError",
+      "diagnostics": {
+        "exitCode": 1,
+        "command": "sh",
+        "stderrSha256": "2603f1190ae52419d64c23412b34d1d9b168adf7bd7b20ce817404d8bcae5d13",
+        "categories": [],
+        "codes": [
+          "INSTALL_DOCKER_COMMAND_FAILED"
+        ],
+        "journal": {
+          "stage": "migrated",
+          "candidate": "355d55ec8e283a01b01ab4a55911a3175ea4fa10c003dcaf4682f629028ea2ed",
+          "actions": [
+            {
+              "name": "import-images",
+              "status": "completed"
+            },
+            {
+              "name": "start-data-services",
+              "status": "completed"
+            },
+            {
+              "name": "initialize-locked-bucket",
+              "status": "completed"
+            },
+            {
+              "name": "apply-migration-ledger",
+              "status": "completed"
+            },
+            {
+              "name": "verify-health-and-ledger",
+              "status": "failed"
+            }
+          ]
+        }
+      },
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation"
+      ],
+      "samples": [],
+      "hostUtc": 1791924862.6443958,
+      "hostElapsed": 1515.0920099600003
+    }
+  ],
+  "status": "failed",
+  "totalSeconds": 1516.085983244
+}

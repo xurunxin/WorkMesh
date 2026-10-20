@@ -99,6 +99,8 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD is required}
       S3_BUCKET: ${S3_BUCKET:-workmesh-artifacts}
       S3_REGION: ${S3_REGION:-us-east-1}
+    tmpfs:
+      - /data:rw,nosuid,nodev,size=16m
     restart: "no"
 
   migrate:
@@ -161,7 +163,7 @@ services:
       minio-init: { condition: service_completed_successfully }
       migrate: { condition: service_completed_successfully }
     healthcheck:
-      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3001/readyz"]
+      test: ["CMD", "sh", "/app/healthcheck.sh", "http://127.0.0.1:3001/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12
@@ -215,7 +217,7 @@ services:
       minio-init: { condition: service_completed_successfully }
       migrate: { condition: service_completed_successfully }
     healthcheck:
-      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3003/readyz"]
+      test: ["CMD", "sh", "/app/healthcheck.sh", "http://127.0.0.1:3003/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12
@@ -245,7 +247,7 @@ services:
     depends_on:
       api: { condition: service_healthy }
     healthcheck:
-      test: ["CMD", "node", "/app/healthcheck.mjs", "http://127.0.0.1:3002/readyz"]
+      test: ["CMD", "sh", "/app/healthcheck.sh", "http://127.0.0.1:3002/readyz"]
       interval: 10s
       timeout: 3s
       retries: 12

@@ -1,0 +1,779 @@
+{
+  "说明": "amd64个人画像完成限流、升级回退、备份、空目标恢复及新增真实健康失败后的停止／原卷保留；随后团队直接MCP连接断开，exit139、重启一次，当前无OOM记录但不推断历史无OOM；原因仍未定位。企业和完整重启未执行。",
+  "runId": 38622067427,
+  "jobId": 116052270126,
+  "artifactId": 11924599104,
+  "sourceHead": "39edad1703016901ef679336c58ff5522870d4e0",
+  "sourceTree": "a7472bc93230b82f2061474382f7334c726a0797",
+  "nativeDiagnostic": false,
+  "status": "failed",
+  "totalSeconds": 2796.404172182,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "743b421664650fa38a9644b7b1c35f07ea4b61cc8d2322b3f28ed4293dd7a083",
+      "resultSha256": "743b421664650fa38a9644b7b1c35f07ea4b61cc8d2322b3f28ed4293dd7a083"
+    },
+    "run.py": {
+      "sha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860",
+      "resultSha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "c176f031e0d56cf9fc1e60690790e2cff671063f89dbfe350565fc14f1ec17ea",
+      "resultSha256": "c176f031e0d56cf9fc1e60690790e2cff671063f89dbfe350565fc14f1ec17ea"
+    },
+    "guest.py": {
+      "sha256": "f6b3fc78103a5728a7aafd7f616c42f56c6735e28e2c14cd048b7a88c647257a",
+      "resultSha256": "f6b3fc78103a5728a7aafd7f616c42f56c6735e28e2c14cd048b7a88c647257a"
+    },
+    "core_pipe.py": {
+      "sha256": "8199854874ccdac0bc95ccb07d17354e2a68b933577de4cb77d948119a9ba272",
+      "resultSha256": "8199854874ccdac0bc95ccb07d17354e2a68b933577de4cb77d948119a9ba272"
+    }
+  },
+  "artifactZipSha256": "1c45c61b731f4977f1d21df77790c0f9c24397abc774761d9b85589eaaaead86",
+  "selectedZipSha256": "f0fab6c75ba952d4ca8ca0f3f5d2ae4c5d4109325c2a36b476cd62623f50daaa",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "5d13be115281741f308d5454978527c3823fcdf76c3a129b21f6c9fe05c43d24",
+      "bytes": 68951
+    },
+    "server-install/guest.log": {
+      "sha256": "a1e2c1797701332cafd46af161c0712d2674dab29fba24d77efe3b7ace86a538",
+      "bytes": 396
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "b3182e1e017a172f2a442ea50e588fa81b0550389452eb8aeb381aafdcf4c9ff",
+      "bytes": 2174
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "9814a534c0376b271e223a4fa77cf30fb00d5977bb6615cfd8adc8bb738159c0",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "b225006c1c3544914a3e1d3b01530b2a5d28e76e8c056b48465c4ba3c966f77e",
+      "bytes": 12627
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "0027d35b45398a7ba9c68b451bc8527aca33ffb26ebe324bb5ebae44c6342cff",
+      "bytes": 105
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "9be4a6bb383436694dfbb50577a662b1f47a4185268cd9a215102c89f009d4ab",
+      "bytes": 69
+    },
+    "server-install/serial.log": {
+      "sha256": "88d9c8e1636914e38790ad2e1c4a2e12d31f1c095634ea975f297e9388110f9a",
+      "bytes": 97854
+    },
+    "server-install/source-after.txt": {
+      "sha256": "74cd374b823a119b51bfb4cd0f4c997edf15f1d993707d3b4ec9f7a70ffdaeec",
+      "bytes": 83
+    },
+    "server-install/result.json": {
+      "sha256": "cc9c2a6da278b02fc0f67c3e44bc02ce8571a85fa6ebc00e4314a4e85dcb405c",
+      "bytes": 64650
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "e58ed23703ec14a73b2ad3018ec5fb5d8e2c046d0af2a6f0d3dab1d028003e1f",
+      "bytes": 320
+    },
+    "server-install/source-install.log": {
+      "sha256": "736e4863db4dc3226d21b5fd7e760da32f3001faf4847b2fc072fd3de477b044",
+      "bytes": 555
+    },
+    "server-install/source.txt": {
+      "sha256": "74cd374b823a119b51bfb4cd0f4c997edf15f1d993707d3b4ec9f7a70ffdaeec",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "46b3edf189bca6331414f5a1c6167d2343ee2cb947330e37f5185e47bd4302c1",
+      "bytes": 3300
+    }
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback",
+    "realMcpInstallationIdentity",
+    "realArtifactUploadDownload",
+    "redisOutageFailsClosedCredentials",
+    "lostWakeupStillReadsCommittedCursor",
+    "workerRestartRecoversDurableOutbox",
+    "concurrentRequests",
+    "realCredentialRateLimit429",
+    "invalidCredentialCannotCommitCurrent",
+    "dataBindingChangesRejectedBeforeMutation",
+    "preMigrationFailureKeepsCurrent",
+    "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+    "upgradeKeepsOriginalVolumes",
+    "compatibleProgramRollback",
+    "completeEncryptedBackup",
+    "partialMigrationStopsIncompatibleRollback",
+    "restoreIntoEmptyTargetKeepsOriginal",
+    "failedHealthStopsIncompatibleRuntimeAndKeepsVolumes",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "workerPrivateCaActualHttpsProviderRead",
+    "authenticatedApi",
+    "duplicateIdempotency",
+    "firstTaskReadback"
+  ],
+  "errorType": "RemoteDisconnected",
+  "diagnostics": {
+    "guestResources": {
+      "memory": {
+        "MemTotalKiB": 4009852,
+        "MemAvailableKiB": 3155160,
+        "SwapTotalKiB": 0,
+        "SwapFreeKiB": 0
+      },
+      "loadAverage": [
+        4.97,
+        4.2,
+        3.82
+      ],
+      "runnableTasks": 5,
+      "totalTasks": 310
+    },
+    "journal": {
+      "stage": "healthy",
+      "candidate": "b225006c1c3544914a3e1d3b01530b2a5d28e76e8c056b48465c4ba3c966f77e",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-14T20:05:18.663Z",
+          "finishedAt": "2026-10-14T20:05:26.301Z"
+        },
+        {
+          "name": "start-data-services",
+          "status": "completed",
+          "startedAt": "2026-10-14T20:05:26.362Z",
+          "finishedAt": "2026-10-14T20:05:51.705Z"
+        },
+        {
+          "name": "initialize-locked-bucket",
+          "status": "completed",
+          "startedAt": "2026-10-14T20:05:51.810Z",
+          "finishedAt": "2026-10-14T20:05:58.177Z"
+        },
+        {
+          "name": "apply-migration-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T20:05:58.453Z",
+          "finishedAt": "2026-10-14T20:06:28.947Z"
+        },
+        {
+          "name": "verify-health-and-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T20:06:31.363Z",
+          "finishedAt": "2026-10-14T20:07:48.571Z"
+        }
+      ]
+    },
+    "installer": [],
+    "containers": [
+      {
+        "id": "74e220f1cb186cbaab40f8effe83c346dc2a1cc79ce37ea1f4480e197a35c9ef",
+        "service": "mcp",
+        "running": true,
+        "exitCode": 139,
+        "oom": false,
+        "restarts": 1,
+        "health": "unhealthy",
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdoutSha256": "f6b97c93285f320fbbd852b6a4d48d483719c681e399cfa75e2e89b4917e72e9",
+          "stderrBytes": 0,
+          "stdoutBytes": 39,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": [
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "8e2a224b6d06dba0c99aa3ff2f4c816f6bc3c78cd4793ef3f83a489b98f306d2",
+        "service": "api",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdoutSha256": "b932c4d58f407f9f0ad8b64f573c348070d125dee8f86affc6a5742043c9ade6",
+          "stderrBytes": 0,
+          "stdoutBytes": 14184,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": [
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "92b3c075b3d44cf4cbd0f5a1d6b9c1e2402962c988ba51dd240818f734c2e06f",
+        "service": "worker",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderrBytes": 0,
+          "stdoutBytes": 0,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": [
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "66685310682c0c0a0976cb380e532c7624403f020b58f073aa6fa0990cf593da",
+        "service": "migrate",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdoutSha256": "bfe0b16ad836207f6178b993b529d597f6365728c824773e9b6c0980ae0ca3d4",
+          "stderrBytes": 0,
+          "stdoutBytes": 19,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": []
+      },
+      {
+        "id": "a3b6f2990e315f313e0624c44bc7f57f50c3aa4649df69f56e85100d8359ceb0",
+        "service": "minio-init",
+        "running": false,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": null,
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stderrBytes": 0,
+          "stdoutBytes": 0,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": []
+      },
+      {
+        "id": "4c9d01a67e077d1594241f0273e4aec2daa447fe6d578d5d6edbc2806f546560",
+        "service": "postgres",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "f138b19b7e1eaabcce288d7b902e0394f2a11db8dd159743e066e14161b99ad1",
+          "stdoutSha256": "33d69642045af95e51e1e7b7e4a3e108e218e9d896194b1c23e659c0e3fbb885",
+          "stderrBytes": 896,
+          "stdoutBytes": 2330,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": [
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 39,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 39,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 39,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "20a545bccfe2509cf89c60c4f5f7c5b1db40cce7811fe295e9fdadb7195240bf",
+        "service": "redis",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdoutSha256": "3e56133dbc5a7f343373a05cae69bec353fe14e36eec36f72ff2ad2eb49c6aa4",
+          "stderrBytes": 0,
+          "stdoutBytes": 1235,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": [
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 5,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 5,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 5,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          }
+        ]
+      },
+      {
+        "id": "11fae54bea16c363c6ab1a6368e8c02c4a38bcc9f26897735f39fa54547da159",
+        "service": "minio",
+        "running": true,
+        "exitCode": 0,
+        "oom": false,
+        "restarts": 0,
+        "health": "healthy",
+        "log": {
+          "exitCode": 0,
+          "timedOut": false,
+          "stderrSha256": "8932c1e815bd7b7812960bb57d3755a50e4f47de0afa1e19d6a44abe44b21adc",
+          "stdoutSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+          "stderrBytes": 568,
+          "stdoutBytes": 104,
+          "errorTypes": [],
+          "recoveryFrames": [],
+          "databaseFrames": [],
+          "mcpFrames": [],
+          "transportFrames": [],
+          "postgresCodes": [],
+          "categories": [],
+          "recoveryCodes": [],
+          "providerCodes": []
+        },
+        "probes": [
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          },
+          {
+            "exitCode": 0,
+            "failure": {
+              "exitCode": null,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "healthFailureSamples": [
+    {
+      "phase": "incompatible-health-failure",
+      "profile": "personal",
+      "candidate": "e81b37d2b9446dcd11d6e558ac82ad6e4a4b6af633b1e36b8eeafbe1c9ac899a",
+      "journalSha256": "7d7756ecd19536fdf0390a963c38f06e201b6c2edbc9e7d9f474221c2adac819",
+      "recovery": "stopped-restore-required",
+      "stoppedServices": [
+        "api",
+        "mcp",
+        "worker"
+      ]
+    }
+  ]
+}

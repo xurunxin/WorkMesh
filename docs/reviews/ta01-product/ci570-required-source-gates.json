@@ -1,0 +1,72 @@
+{
+  "sourceHead": "c7cf68aaf279f771a2022d37d69b5651cdb66ace",
+  "runId": 39169353227,
+  "requiredJobId": 117818842379,
+  "sourceGatesJobId": 117799150852,
+  "rawArtifacts": [
+    {
+      "id": 12154482391,
+      "name": "required-ci-raw-39169353227-1",
+      "digest": "sha256:a2a272858ecb6df6657c9f63dddda658efd04dda8d655aeb084a8e4b0a8c5fee",
+      "size_in_bytes": 2329655,
+      "expired": false,
+      "created_at": "2026-10-18T23:21:03Z"
+    },
+    {
+      "id": 12152441975,
+      "name": "source-gates-raw-39169353227-1",
+      "digest": "sha256:84038cbebe98e920a577d67ae19700b4ab13d9291c64643d05ce71a4d98cf5bc",
+      "size_in_bytes": 2586342,
+      "expired": false,
+      "created_at": "2026-10-18T22:03:15Z"
+    }
+  ],
+  "scope": "终态聚合与源码门禁安全日志；job结论来自GitHub。日志无独立checkout SHA，不把PR合成checkout冒作候选原始commit；三guest与生产者另核准确源码。",
+  "selectedZipSha256": "4abdc22d23c576661d08c385250b41e66b5c73c520a46239dbeff776fbd3452c",
+  "members": {
+    "required-ci.log": {
+      "bytes": 268,
+      "sha256": "ae647758e03e638aad6d449fbd682de205ef53a70f25b123be0a56fd46aeb39d"
+    },
+    "lint.log": {
+      "bytes": 192,
+      "sha256": "8e4bc2a427fc2299f120096752a5db8e6e03d0680bddfb84a1d5cb789a2b8da2"
+    },
+    "test.log": {
+      "bytes": 81845,
+      "sha256": "870308a345599034f23085cd9680964084698ff229558624763f293dd32bdabd"
+    },
+    "typecheck.log": {
+      "bytes": 4632,
+      "sha256": "bd38be84ee571a4c1f17937a284428258cf323951ba8269b019900461d8d0ef6"
+    },
+    "collection/archive-ci570.py": {
+      "bytes": 9505,
+      "sha256": "0a2e86cc3280e973640f714943bfad897bf73781e0b7d148b920e6b04fca76b9"
+    },
+    "collection/result.json": {
+      "bytes": 730,
+      "sha256": "6b644280a1e8a3ca583f4aae4598f7b44b925ed0e1b5a6216aa6fa7da2e7e74b"
+    }
+  },
+  "collection": {
+    "scope": "离线归档，不执行安装或诊断",
+    "firstAttempt": "旧归档辅助脚本沿用22输入数量断言，核23个输入字节后拒绝；确认新增install-recovery-fixture.mjs后改为23再归档，无业务重跑",
+    "finalCommand": "python .tmp/ta01-resumption/archive-ci570.py",
+    "exitCode": 0,
+    "integrationDocs": {
+      "command": "pnpm check:integration-docs",
+      "exitCode": 0,
+      "skillFiles": 4,
+      "localLinks": 103,
+      "restEndpoints": 35,
+      "mcpTools": 11,
+      "scope": "仅静态检查"
+    },
+    "diffCheck": {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    "privateData": "未归档私有配置、journal、密钥、DB、磁盘或原始服务日志；仅已核安全成员"
+  }
+}

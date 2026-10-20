@@ -1,0 +1,95 @@
+{
+  "说明": "原完整integration和conformance入口复验通过，首次M5未知原因失败与定向局部通过另保，不倒填已修根因。661运行输入实核一致，诊断Python及文档修订另列，不冒完整guest／Required／独审通过。恢复及保留升级的opt-in在普通integration跳过，真实恢复另有6c20a93通过原件；不将skip填PASS。3容器3卷均核不存在。",
+  "sourceHead": "6c20a93c3d7113d2750b8b6265abb06f28283b04",
+  "owner": "workmesh-docs-dc7e67cd-50b0-42ee-b758-6ac778d66569",
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-15T00:37:26.277Z",
+      "endedAt": "2026-10-15T00:37:49.561Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-15T00:37:50.936Z",
+      "endedAt": "2026-10-15T00:37:52.229Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration",
+      "command": "pnpm test:integration",
+      "startedAt": "2026-10-15T00:37:52.232Z",
+      "endedAt": "2026-10-15T01:23:29.776Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-conformance",
+      "command": "pnpm test:conformance",
+      "startedAt": "2026-10-15T01:23:29.780Z",
+      "endedAt": "2026-10-15T01:23:32.725Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "cd3b4f66bcf2759299d0eec1669d29847d620f6a42cb3ce5bcb46bd41d8b3eb2",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "e78a2ec1fb1b5d1fe3ff96222660df6d763e533f3545713785799727540815f2",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "e9e65a91dd94005b7e517d0c796cb406ac77066180f07c8a7106481e2170efff",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-dc7e67cd-50b0-42ee-b758-6ac778d66569-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-dc7e67cd-50b0-42ee-b758-6ac778d66569-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-dc7e67cd-50b0-42ee-b758-6ac778d66569-s3-data",
+      "absent": true
+    }
+  ],
+  "members": {
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "b3f257cc3774b3d7bbdefb7051679ebde32efbe3a07466177af1c2dc3e74a760"
+    },
+    "results.json": {
+      "bytes": 3231,
+      "sha256": "01e1bd1d83b449e94676908de0a0f298fd9cf395605d7e3cddc4a82346af411d"
+    },
+    "runtime-input-match-after-recheck.json": {
+      "bytes": 79231,
+      "sha256": "5501ecac512f7b1157335aba1ae188246e7123cf556f05176fc496256e98e634"
+    },
+    "test-conformance.log": {
+      "bytes": 466,
+      "sha256": "a431b668dc9d513b6b9fd6001007d61e9ba07806585136b3202d4d965725f22a"
+    },
+    "test-integration.log": {
+      "bytes": 2218343,
+      "sha256": "e80d5ff0c7d029d7a574cb6c4a2445400d551e4e708b6b3a9550bfd033c4c199"
+    }
+  },
+  "selectedZipSha256": "3c0a6d9cd66e548d2e4aec7ed3ce12e1317cfdce0cdc3cba82f46d29770e9317",
+  "runtimeInputFiles": 661
+}

@@ -1,0 +1,5367 @@
+{
+  "sourceHead": "f53f20b85e680a4219ae9f22a58ff37de58c37d8",
+  "sourceTree": "6868b31ac93f90d6bfb9e5149f2f01421426a2f8",
+  "status": "diagnostic-only",
+  "errorType": "RuntimeError",
+  "totalSeconds": 3179.093673865,
+  "guestVcpus": 4,
+  "guestRamMiB": 4096,
+  "manifestSha256": "91abade31f83519c6b8dd6c8d86b38ab7d1c65f094136d68415195f69ad04fb5",
+  "scripts": {
+    "native_diagnostic.py": "61fb0d9ba42733007cd9e884d86603d1e3857721cfe4fb5c15c0aff68b7ec5dd",
+    "run.py": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014",
+    "native_diagnostic_test.py": "4424e8bf0eb9fa0d4290807728a909f4bcd017ae3cae910879ae01b5908590a7",
+    "guest.py": "d7a7a176498f8805d74361ad29b8bb5854fbf9ac8729ad6bdeb92803f69580f8",
+    "core_pipe.py": "b80f03c1718122ffdb2bd03bb86ab2b21f477230be78e873add6a877efdbefdd",
+    "core_metadata.py": "6c6ecdf0dd5ddeb3040157d8b19bba7ba01ca5323fceda9f5a14b82cfb19de4e"
+  },
+  "nativeDiagnostic": true,
+  "profilesRequested": [
+    "personal",
+    "team",
+    "enterprise"
+  ],
+  "scope": "all-profiles",
+  "qmpEvents": [
+    {
+      "event": "NIC_RX_FILTER_CHANGED",
+      "hostElapsed": 51.98749824500001
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 52.780465424
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 711.414397903
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 1370.400032433
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 2029.3852370949999
+    },
+    {
+      "event": "RTC_CHANGE",
+      "hostElapsed": 2688.372229201
+    },
+    {
+      "event": "SHUTDOWN",
+      "hostElapsed": 3178.604204611
+    }
+  ],
+  "说明": "原始完整guest结果；single-configuration只证明其准确画像与架构，不代六组合。诊断模式非支持验收；真实故障、未知和通过分别保留，不推旧故障已修复。",
+  "runId": 38801222595,
+  "jobId": 116656730219,
+  "artifactId": 12007982474,
+  "scriptsMatchGit": true,
+  "producer": {
+    "artifactId": "12004383197",
+    "manifestSha256": "91abade31f83519c6b8dd6c8d86b38ab7d1c65f094136d68415195f69ad04fb5"
+  },
+  "receipts": [
+    {
+      "phase": "native-diagnostic",
+      "windowComplete": true,
+      "nativeTrace": {
+        "target": "personal-initial-commit",
+        "operationSucceeded": true,
+        "preparedBeforeBusiness": true,
+        "preparedUtcEpoch": 1792097553.2127264,
+        "businessStartedUtcEpoch": 1792097586.352,
+        "naturalRun": true,
+        "captured": false,
+        "coreObserved": false,
+        "registeredTarget": {
+          "pid": 6645,
+          "startTicks": 74276,
+          "executableDevice": 63,
+          "executableInode": 524863,
+          "executableBytes": 124181928
+        },
+        "captureId": "f9aef640e21647f0b4fac9bc9c1f6c63",
+        "containerInitPid": 6575
+      },
+      "hostUtc": 1792097684.6476438,
+      "hostElapsed": 1085.574184936
+    },
+    {
+      "phase": "native-diagnostic",
+      "windowComplete": true,
+      "nativeTrace": {
+        "target": "personal-upgrade-commit",
+        "operationSucceeded": true,
+        "preparedBeforeBusiness": true,
+        "preparedUtcEpoch": 1792098026.1809924,
+        "businessStartedUtcEpoch": 1792098057.984,
+        "naturalRun": true,
+        "captured": false,
+        "coreObserved": false,
+        "registeredTarget": {
+          "pid": 20311,
+          "startTicks": 133509,
+          "executableDevice": 55,
+          "executableInode": 524863,
+          "executableBytes": 124181928
+        },
+        "captureId": "21ff43e488904238879ac85e9754cd6f",
+        "containerInitPid": 20260
+      },
+      "hostUtc": 1792098158.411743,
+      "hostElapsed": 1559.338283619
+    },
+    {
+      "phase": "native-diagnostic",
+      "windowComplete": true,
+      "nativeTrace": {
+        "target": "personal-rollback-commit",
+        "operationSucceeded": true,
+        "preparedBeforeBusiness": true,
+        "preparedUtcEpoch": 1792098320.5379953,
+        "businessStartedUtcEpoch": 1792098350.203,
+        "naturalRun": true,
+        "captured": false,
+        "coreObserved": false,
+        "registeredTarget": {
+          "pid": 27827,
+          "startTicks": 169324,
+          "executableDevice": 55,
+          "executableInode": 524863,
+          "executableBytes": 124181928
+        },
+        "captureId": "fb4822b563bb4349b384f97731efcb13",
+        "containerInitPid": 27776
+      },
+      "hostUtc": 1792098449.2071557,
+      "hostElapsed": 1850.133696148
+    },
+    {
+      "phase": "native-diagnostic",
+      "windowComplete": true,
+      "nativeTrace": {
+        "target": "team-initial-commit",
+        "operationSucceeded": true,
+        "preparedBeforeBusiness": true,
+        "preparedUtcEpoch": 1792099269.6538801,
+        "businessStartedUtcEpoch": 1792099298.195,
+        "naturalRun": true,
+        "captured": false,
+        "coreObserved": false,
+        "registeredTarget": {
+          "pid": 48575,
+          "startTicks": 262763,
+          "executableDevice": 115,
+          "executableInode": 524863,
+          "executableBytes": 124181928
+        },
+        "captureId": "95bb2649bd5443b391218bf1614b4a59",
+        "containerInitPid": 48490
+      },
+      "hostUtc": 1792099396.4377468,
+      "hostElapsed": 2797.364287145
+    },
+    {
+      "phase": "failure",
+      "errorType": "RuntimeError",
+      "diagnostics": {
+        "exitCode": 1,
+        "command": "sh",
+        "stderrSha256": "54b41e1aa24d8cac70d6a65b82ba24c02d1ca1a00d4bce2a66fbf0af15713149",
+        "categories": [],
+        "codes": [
+          "INSTALL_BUSINESS_VALIDATION_TIMEOUT",
+          "INSTALL_DIAGNOSTIC",
+          "INSTALL_TIMING"
+        ],
+        "mcpProxyProgress": [
+          {
+            "profile": "personal",
+            "requestsObserved": 11,
+            "truncated": true,
+            "requests": [
+              {
+                "sequence": 4,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 412,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 5,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 587,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 6,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 414,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 7,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 2560,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 8,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 739,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 9,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 4789,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 10,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 972,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 11,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 3386,
+                "upstreamStatus": 200
+              }
+            ]
+          },
+          {
+            "profile": "team",
+            "requestsObserved": 8,
+            "truncated": false,
+            "requests": [
+              {
+                "sequence": 1,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 681,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 2,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 3616,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 3,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 1753,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 4,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 638,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 5,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 452,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 6,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 200,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 7,
+                "stage": "client-complete",
+                "elapsedMilliseconds": 2448,
+                "upstreamStatus": 200
+              },
+              {
+                "sequence": 8,
+                "stage": "request-sent",
+                "elapsedMilliseconds": 11,
+                "failed": true,
+                "errorType": "RemoteDisconnected"
+              }
+            ]
+          }
+        ],
+        "guestResources": {
+          "memory": {
+            "MemTotalKiB": 4009148,
+            "MemAvailableKiB": 3165216,
+            "SwapTotalKiB": 0,
+            "SwapFreeKiB": 0
+          },
+          "loadAverage": [
+            3.72,
+            3.47,
+            2.98
+          ],
+          "runnableTasks": 3,
+          "totalTasks": 309
+        },
+        "nativeTrace": {
+          "target": "team-upgrade-commit",
+          "operationSucceeded": false,
+          "preparedBeforeBusiness": true,
+          "preparedUtcEpoch": 1792099643.51602,
+          "businessStartedUtcEpoch": 1792099682.795,
+          "naturalRun": true,
+          "captureId": "c0b7ea674db640bf9253ee3577467919",
+          "captured": false,
+          "coreCaptured": true,
+          "captureStage": "debugger",
+          "targetBinarySha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+          "coreBytes": 111050752,
+          "coreSha256": "bbb3a594aceb0a64c85c99dbb2d8b2b0fd7cec7a7ae80e2d7f8f9737361ac592",
+          "location": {
+            "architecture": "amd64",
+            "signal": 11,
+            "signalCode": -6,
+            "faultModule": "node",
+            "executableSegment": true,
+            "nodeFileOffset": 20361632,
+            "nodeElfAddress": 20361632
+          },
+          "captureErrorType": "TimeoutExpired",
+          "debuggerTimedOut": true,
+          "trace": {
+            "exitCode": null,
+            "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stderrSha256": "2a54f1833617702c1b501faffdb3a65a9290d48ba094d226ee44de0fab39cadc",
+            "stdoutBytes": 0,
+            "stderrBytes": 71,
+            "sigsegv": false,
+            "symbols": [],
+            "categories": [],
+            "ptraceRejected": false
+          },
+          "captureElapsedMilliseconds": 65107,
+          "registeredTarget": {
+            "pid": 55466,
+            "startTicks": 294750,
+            "executableDevice": 53,
+            "executableInode": 524863,
+            "executableBytes": 124181928
+          },
+          "containerInitPid": 55411,
+          "coreObserved": true
+        },
+        "journal": {
+          "stage": "healthy",
+          "candidate": "d6c625facb34d613a2295c65d2a769900b7becf6f83bd7937436f44819933c2e",
+          "actions": [
+            {
+              "name": "import-images",
+              "status": "completed",
+              "startedAt": "2026-10-15T21:24:22.960Z",
+              "finishedAt": "2026-10-15T21:24:30.944Z"
+            },
+            {
+              "name": "drain-admission",
+              "status": "completed",
+              "startedAt": "2026-10-15T21:24:31.003Z",
+              "finishedAt": "2026-10-15T21:24:37.195Z"
+            },
+            {
+              "name": "complete-backup",
+              "status": "completed",
+              "startedAt": "2026-10-15T21:24:37.249Z",
+              "finishedAt": "2026-10-15T21:24:48.818Z"
+            },
+            {
+              "name": "apply-migration-ledger",
+              "status": "completed",
+              "startedAt": "2026-10-15T21:24:48.931Z",
+              "finishedAt": "2026-10-15T21:25:02.405Z"
+            },
+            {
+              "name": "verify-health-and-ledger",
+              "status": "completed",
+              "startedAt": "2026-10-15T21:25:04.726Z",
+              "finishedAt": "2026-10-15T21:26:13.098Z"
+            },
+            {
+              "name": "validate-business-read",
+              "status": "failed",
+              "startedAt": "2026-10-15T21:28:02.795Z"
+            }
+          ]
+        },
+        "installer": [
+          {
+            "operation": "mcp-business-read",
+            "method": "initialize",
+            "requestId": 1,
+            "requestFinished": true,
+            "responseStarted": false,
+            "responseCompleted": false,
+            "responseBytes": 0,
+            "elapsedMilliseconds": 30588,
+            "timedOut": true,
+            "containers": [
+              {
+                "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+                "service": "mcp",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 1,
+                    "outputSha256": "60e78184096d3a96796ed0e61650d2bd7cfcfc19e822262a579586abbd3901ad",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "60e78184096d3a96796ed0e61650d2bd7cfcfc19e822262a579586abbd3901ad",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 77,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [
+                        "healthTimeout"
+                      ],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 1,
+                    "outputSha256": "b761affda7f9aeade7b58cd63883a1981991770f0fbd4202de4e0cfccfcdc97d",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "b761affda7f9aeade7b58cd63883a1981991770f0fbd4202de4e0cfccfcdc97d",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 77,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [
+                        "healthTimeout"
+                      ],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 1,
+                    "outputSha256": "b761affda7f9aeade7b58cd63883a1981991770f0fbd4202de4e0cfccfcdc97d",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "b761affda7f9aeade7b58cd63883a1981991770f0fbd4202de4e0cfccfcdc97d",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 77,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [
+                        "healthTimeout"
+                      ],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "dd1b301838fd70e63c62f4fe0f928587dbe725a093139416ca53abe447e94a6e",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 117,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "id": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+                "service": "worker",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "fd305f7663c582f04d3a8524f8d48c4fd1de376cd38a7a69e1faa832cc1f799d",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 1047,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [
+                    "unhandledErrorEvent"
+                  ],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "id": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+                "service": "api",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "c60529cef6b6795ec6f7f38fa917e5f4fd09c9e91e525ddc45138b9fd1fe12d9",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 8951,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "id": "a4519fa0fe2658bbbc4afa6b8412b0a4f1e6121734e59f4223da7bd093b1b13a",
+                "service": "migrate",
+                "status": "exited",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": null,
+                "probes": [],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "60204a2f331c15503ee18719b1b7172096e101bd6a88f0d23a40b721ece2bb0d",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 57,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "id": "6408cdbce25792e8ef062a5d7c313a36677262e2967f22529c7a7511d812da1f",
+                "service": "minio-init",
+                "status": "exited",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": null,
+                "probes": [],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "id": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+                "service": "postgres",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 39,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 39,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 39,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "cd2ff73503987c113d910c8256226036d8a63a54ba9cc56fb6943b998eb320a6",
+                  "stdoutSha256": "58062a92b1886345e5cf16b86cf53a51d81f91c737ae0c8f4d79df032f275780",
+                  "stderrBytes": 1514,
+                  "stdoutBytes": 1547,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "id": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+                "service": "redis",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 5,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 5,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 5,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "7308afbd76a5c7f86cb5bcfe94a05330cc8dcd38d73578ec7284dbe18f947057",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 3421,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "id": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+                "service": "minio",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "failure": {
+                      "exitCode": null,
+                      "timedOut": false,
+                      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                      "stderrBytes": 0,
+                      "stdoutBytes": 0,
+                      "errorTypes": [],
+                      "recoveryFrames": [],
+                      "databaseFrames": [],
+                      "mcpFrames": [],
+                      "transportFrames": [],
+                      "postgresCodes": [],
+                      "categories": [],
+                      "recoveryCodes": [],
+                      "providerCodes": []
+                    }
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "8932c1e815bd7b7812960bb57d3755a50e4f47de0afa1e19d6a44abe44b21adc",
+                  "stdoutSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+                  "stderrBytes": 568,
+                  "stdoutBytes": 104,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+            "service": "mcp",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 1,
+            "health": "starting",
+            "process": {
+              "userTicks": 15,
+              "systemTicks": 13,
+              "threads": 1,
+              "startTicks": 311528,
+              "clockTicksPerSecond": 100
+            },
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "dd1b301838fd70e63c62f4fe0f928587dbe725a093139416ca53abe447e94a6e",
+              "stderrBytes": 0,
+              "stdoutBytes": 117,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": [
+              {
+                "exitCode": 1,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "b761affda7f9aeade7b58cd63883a1981991770f0fbd4202de4e0cfccfcdc97d",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 77,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [
+                    "healthTimeout"
+                  ],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 1,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "b761affda7f9aeade7b58cd63883a1981991770f0fbd4202de4e0cfccfcdc97d",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 77,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [
+                    "healthTimeout"
+                  ],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 1,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "60e78184096d3a96796ed0e61650d2bd7cfcfc19e822262a579586abbd3901ad",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 77,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [
+                    "healthTimeout"
+                  ],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              }
+            ]
+          },
+          {
+            "id": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+            "service": "worker",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "process": {
+              "userTicks": 26,
+              "systemTicks": 21,
+              "threads": 1,
+              "startTicks": 290874,
+              "clockTicksPerSecond": 100
+            },
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "fd305f7663c582f04d3a8524f8d48c4fd1de376cd38a7a69e1faa832cc1f799d",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 1047,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [
+                "unhandledErrorEvent"
+              ],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": [
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              }
+            ]
+          },
+          {
+            "id": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+            "service": "api",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "process": {
+              "userTicks": 26,
+              "systemTicks": 21,
+              "threads": 1,
+              "startTicks": 290873,
+              "clockTicksPerSecond": 100
+            },
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "79a2a8d401c3aac7e462fe13bde33d88e51630a1de7eb6c6f1e5c21d441ac207",
+              "stderrBytes": 0,
+              "stdoutBytes": 13216,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": [
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              }
+            ]
+          },
+          {
+            "id": "a4519fa0fe2658bbbc4afa6b8412b0a4f1e6121734e59f4223da7bd093b1b13a",
+            "service": "migrate",
+            "running": false,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": null,
+            "processUnavailable": true,
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "60204a2f331c15503ee18719b1b7172096e101bd6a88f0d23a40b721ece2bb0d",
+              "stderrBytes": 0,
+              "stdoutBytes": 57,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": []
+          },
+          {
+            "id": "6408cdbce25792e8ef062a5d7c313a36677262e2967f22529c7a7511d812da1f",
+            "service": "minio-init",
+            "running": false,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": null,
+            "processUnavailable": true,
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stderrBytes": 0,
+              "stdoutBytes": 0,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": []
+          },
+          {
+            "id": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+            "service": "postgres",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "process": {
+              "userTicks": 77,
+              "systemTicks": 138,
+              "threads": 1,
+              "startTicks": 237105,
+              "clockTicksPerSecond": 100
+            },
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "ce5d7bd7cbd3c1d4b3e47b7bdee061920ef3bd59f17844cbd4dcd801e3446dc7",
+              "stdoutSha256": "7e9953713a6b2cc72bcd3a60f485f48f0f433f2d4d85ffaac81a84ad6211ebd8",
+              "stderrBytes": 1615,
+              "stdoutBytes": 2208,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": [
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 39,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 39,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 39,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              }
+            ]
+          },
+          {
+            "id": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+            "service": "redis",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "process": {
+              "userTicks": 1546,
+              "systemTicks": 463,
+              "threads": 6,
+              "startTicks": 255564,
+              "clockTicksPerSecond": 100
+            },
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "stdoutSha256": "7308afbd76a5c7f86cb5bcfe94a05330cc8dcd38d73578ec7284dbe18f947057",
+              "stderrBytes": 0,
+              "stdoutBytes": 3421,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": [
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 5,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 5,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 5,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              }
+            ]
+          },
+          {
+            "id": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+            "service": "minio",
+            "running": true,
+            "exitCode": 0,
+            "oom": false,
+            "restarts": 0,
+            "health": "healthy",
+            "process": {
+              "userTicks": 1485,
+              "systemTicks": 406,
+              "threads": 18,
+              "startTicks": 237106,
+              "clockTicksPerSecond": 100
+            },
+            "log": {
+              "exitCode": 0,
+              "timedOut": false,
+              "stderrSha256": "8932c1e815bd7b7812960bb57d3755a50e4f47de0afa1e19d6a44abe44b21adc",
+              "stdoutSha256": "4acb979406458bad7f93d938512824163c88c9e0e347fb49b72ac20312bf7655",
+              "stderrBytes": 568,
+              "stdoutBytes": 104,
+              "errorTypes": [],
+              "recoveryFrames": [],
+              "databaseFrames": [],
+              "mcpFrames": [],
+              "transportFrames": [],
+              "postgresCodes": [],
+              "categories": [],
+              "recoveryCodes": [],
+              "providerCodes": []
+            },
+            "probes": [
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              },
+              {
+                "exitCode": 0,
+                "failure": {
+                  "exitCode": null,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "stderrBytes": 0,
+                  "stdoutBytes": 0,
+                  "errorTypes": [],
+                  "recoveryFrames": [],
+                  "databaseFrames": [],
+                  "mcpFrames": [],
+                  "transportFrames": [],
+                  "postgresCodes": [],
+                  "categories": [],
+                  "recoveryCodes": [],
+                  "providerCodes": []
+                }
+              }
+            ]
+          }
+        ],
+        "containerEvents": {
+          "events": [
+            {
+              "timeNano": 1792099724850979125,
+              "event": "die",
+              "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "service": "mcp",
+              "exitCode": 139
+            }
+          ],
+          "truncated": false
+        },
+        "databaseBudget": {
+          "available": true,
+          "maxConnections": 100,
+          "backendsIncludingDiagnostic": 3,
+          "trackActivitiesEnabled": true
+        }
+      },
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation",
+        "candidateStagedBeforeDeployment",
+        "workerPrivateCaActualHttpsProviderRead",
+        "authenticatedApi",
+        "duplicateIdempotency",
+        "firstTaskReadback",
+        "realMcpInstallationIdentity",
+        "realArtifactUploadDownload",
+        "redisOutageFailsClosedCredentials",
+        "lostWakeupStillReadsCommittedCursor",
+        "workerRestartRecoversDurableOutbox",
+        "concurrentRequests",
+        "realCredentialRateLimit429",
+        "invalidCredentialCannotCommitCurrent",
+        "dataBindingChangesRejectedBeforeMutation",
+        "preMigrationFailureKeepsCurrent",
+        "interruptedHealthWithoutPendingRejectsUnknownCandidate",
+        "upgradeKeepsOriginalVolumes",
+        "compatibleProgramRollback",
+        "completeEncryptedBackup",
+        "partialMigrationStopsIncompatibleRollback",
+        "restoreIntoEmptyTargetKeepsOriginal",
+        "failedHealthStopsIncompatibleRuntimeAndKeepsVolumes",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation",
+        "workerPrivateCaActualHttpsProviderRead",
+        "authenticatedApi",
+        "duplicateIdempotency",
+        "firstTaskReadback",
+        "realMcpInstallationIdentity",
+        "realArtifactUploadDownload",
+        "redisOutageFailsClosedCredentials",
+        "lostWakeupStillReadsCommittedCursor",
+        "workerRestartRecoversDurableOutbox",
+        "concurrentRequests",
+        "realCredentialRateLimit429",
+        "invalidCredentialCannotCommitCurrent",
+        "preMigrationFailureKeepsCurrent",
+        "interruptedHealthWithoutPendingRejectsUnknownCandidate"
+      ],
+      "samples": [
+        {
+          "phase": "idle",
+          "profile": "personal",
+          "monotonic": 793.376032194,
+          "stats": [
+            {
+              "BlockIO": "10.4MB / 0B",
+              "CPUPerc": "47.10%",
+              "Container": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "ID": "b26e31548ec9",
+              "MemPerc": "11.01%",
+              "MemUsage": "42.26MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "3.18kB / 1.85kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "7.99MB / 0B",
+              "CPUPerc": "38.93%",
+              "Container": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "ID": "b0e2b8a1d0b8",
+              "MemPerc": "9.78%",
+              "MemUsage": "62.59MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "7.46kB / 7.72kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "11.6MB / 0B",
+              "CPUPerc": "8.79%",
+              "Container": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "ID": "79dbaa2fd994",
+              "MemPerc": "14.45%",
+              "MemUsage": "64.75MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "472kB / 1.02MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "15.1MB / 95.5MB",
+              "CPUPerc": "11.27%",
+              "Container": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "ID": "c4f7450f8feb",
+              "MemPerc": "12.67%",
+              "MemUsage": "48.64MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "1.27MB / 493kB",
+              "PIDs": "8"
+            },
+            {
+              "BlockIO": "860kB / 0B",
+              "CPUPerc": "4.30%",
+              "Container": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "ID": "3912c86b34fd",
+              "MemPerc": "3.15%",
+              "MemUsage": "4.035MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "9.11kB / 4.4kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "116MB / 139kB",
+              "CPUPerc": "31.76%",
+              "Container": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "ID": "54ec443ddfa2",
+              "MemPerc": "71.26%",
+              "MemUsage": "182.4MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "15kB / 6.11kB",
+              "PIDs": "18"
+            }
+          ],
+          "state": [
+            {
+              "id": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            },
+            {
+              "id": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6201810944 34265354240"
+          ]
+        },
+        {
+          "phase": "first-task",
+          "profile": "personal",
+          "monotonic": 805.849416495,
+          "stats": [
+            {
+              "BlockIO": "10.4MB / 0B",
+              "CPUPerc": "0.52%",
+              "Container": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "ID": "b26e31548ec9",
+              "MemPerc": "11.05%",
+              "MemUsage": "42.43MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "3.66kB / 2.16kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "7.99MB / 0B",
+              "CPUPerc": "0.19%",
+              "Container": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "ID": "b0e2b8a1d0b8",
+              "MemPerc": "10.27%",
+              "MemUsage": "65.72MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "71.4kB / 122kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "11.6MB / 0B",
+              "CPUPerc": "23.85%",
+              "Container": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "ID": "79dbaa2fd994",
+              "MemPerc": "15.05%",
+              "MemUsage": "67.44MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "566kB / 1.21MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "15.1MB / 95.9MB",
+              "CPUPerc": "19.77%",
+              "Container": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "ID": "c4f7450f8feb",
+              "MemPerc": "14.08%",
+              "MemUsage": "54.07MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "1.56MB / 638kB",
+              "PIDs": "8"
+            },
+            {
+              "BlockIO": "938kB / 0B",
+              "CPUPerc": "3.27%",
+              "Container": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "ID": "3912c86b34fd",
+              "MemPerc": "3.48%",
+              "MemUsage": "4.457MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "14.5kB / 5.81kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "116MB / 139kB",
+              "CPUPerc": "0.48%",
+              "Container": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "ID": "54ec443ddfa2",
+              "MemPerc": "71.26%",
+              "MemUsage": "182.4MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "16.2kB / 6.54kB",
+              "PIDs": "18"
+            }
+          ],
+          "state": [
+            {
+              "id": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            },
+            {
+              "id": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6202478592 34264686592"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 882.950983637,
+          "stats": [
+            {
+              "BlockIO": "10.4MB / 0B",
+              "CPUPerc": "0.10%",
+              "Container": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "ID": "b26e31548ec9",
+              "MemPerc": "14.09%",
+              "MemUsage": "54.09MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "733kB / 380kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "7.99MB / 0B",
+              "CPUPerc": "54.58%",
+              "Container": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "ID": "b0e2b8a1d0b8",
+              "MemPerc": "12.06%",
+              "MemUsage": "77.18MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "264kB / 1.16MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "0B / 0B",
+              "CPUPerc": "29.76%",
+              "Container": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "ID": "79dbaa2fd994",
+              "MemPerc": "12.85%",
+              "MemUsage": "57.56MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "55kB / 111kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "15.1MB / 98MB",
+              "CPUPerc": "132.08%",
+              "Container": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "ID": "c4f7450f8feb",
+              "MemPerc": "19.43%",
+              "MemUsage": "74.6MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "2.18MB / 960kB",
+              "PIDs": "14"
+            },
+            {
+              "BlockIO": "2.56MB / 0B",
+              "CPUPerc": "30.72%",
+              "Container": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "ID": "3912c86b34fd",
+              "MemPerc": "4.50%",
+              "MemUsage": "5.754MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "6.26kB / 2.64kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "119MB / 197kB",
+              "CPUPerc": "0.32%",
+              "Container": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "ID": "54ec443ddfa2",
+              "MemPerc": "74.93%",
+              "MemUsage": "191.8MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "27.2kB / 11.9kB",
+              "PIDs": "19"
+            }
+          ],
+          "state": [
+            {
+              "id": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            },
+            {
+              "id": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6203400192 34263764992"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 888.468159417,
+          "stats": [
+            {
+              "BlockIO": "10.4MB / 0B",
+              "CPUPerc": "0.02%",
+              "Container": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "ID": "b26e31548ec9",
+              "MemPerc": "14.08%",
+              "MemUsage": "54.09MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "733kB / 381kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "7.99MB / 0B",
+              "CPUPerc": "58.60%",
+              "Container": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "ID": "b0e2b8a1d0b8",
+              "MemPerc": "12.17%",
+              "MemUsage": "77.86MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "372kB / 1.37MB",
+              "PIDs": "20"
+            },
+            {
+              "BlockIO": "0B / 0B",
+              "CPUPerc": "57.08%",
+              "Container": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "ID": "79dbaa2fd994",
+              "MemPerc": "13.10%",
+              "MemUsage": "58.71MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "88.4kB / 171kB",
+              "PIDs": "21"
+            },
+            {
+              "BlockIO": "15.1MB / 98.4MB",
+              "CPUPerc": "101.62%",
+              "Container": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "ID": "c4f7450f8feb",
+              "MemPerc": "19.20%",
+              "MemUsage": "73.71MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "2.45MB / 1.09MB",
+              "PIDs": "14"
+            },
+            {
+              "BlockIO": "2.56MB / 0B",
+              "CPUPerc": "29.03%",
+              "Container": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "ID": "3912c86b34fd",
+              "MemPerc": "4.50%",
+              "MemUsage": "5.754MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "10.2kB / 4.08kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "119MB / 197kB",
+              "CPUPerc": "38.67%",
+              "Container": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "ID": "54ec443ddfa2",
+              "MemPerc": "74.93%",
+              "MemUsage": "191.8MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "28.3kB / 12.3kB",
+              "PIDs": "19"
+            }
+          ],
+          "state": [
+            {
+              "id": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            },
+            {
+              "id": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6203539456 34263625728"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "personal",
+          "monotonic": 894.430109568,
+          "stats": [
+            {
+              "BlockIO": "10.4MB / 0B",
+              "CPUPerc": "0.03%",
+              "Container": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "ID": "b26e31548ec9",
+              "MemPerc": "14.08%",
+              "MemUsage": "54.09MiB / 384MiB",
+              "Name": "ta01-personal-mcp-1",
+              "NetIO": "734kB / 381kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "7.99MB / 0B",
+              "CPUPerc": "0.09%",
+              "Container": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "ID": "b0e2b8a1d0b8",
+              "MemPerc": "12.06%",
+              "MemUsage": "77.18MiB / 640MiB",
+              "Name": "ta01-personal-api-1",
+              "NetIO": "444kB / 1.52MB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "0B / 0B",
+              "CPUPerc": "20.95%",
+              "Container": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "ID": "79dbaa2fd994",
+              "MemPerc": "12.89%",
+              "MemUsage": "57.75MiB / 448MiB",
+              "Name": "ta01-personal-worker-1",
+              "NetIO": "138kB / 265kB",
+              "PIDs": "19"
+            },
+            {
+              "BlockIO": "15.1MB / 98.7MB",
+              "CPUPerc": "26.38%",
+              "Container": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "ID": "c4f7450f8feb",
+              "MemPerc": "19.09%",
+              "MemUsage": "73.3MiB / 384MiB",
+              "Name": "ta01-personal-postgres-1",
+              "NetIO": "2.66MB / 1.19MB",
+              "PIDs": "13"
+            },
+            {
+              "BlockIO": "2.56MB / 0B",
+              "CPUPerc": "21.59%",
+              "Container": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "ID": "3912c86b34fd",
+              "MemPerc": "4.50%",
+              "MemUsage": "5.754MiB / 128MiB",
+              "Name": "ta01-personal-redis-1",
+              "NetIO": "14.2kB / 5.53kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "119MB / 197kB",
+              "CPUPerc": "0.55%",
+              "Container": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "ID": "54ec443ddfa2",
+              "MemPerc": "74.90%",
+              "MemUsage": "191.8MiB / 256MiB",
+              "Name": "ta01-personal-minio-1",
+              "NetIO": "28.4kB / 12.3kB",
+              "PIDs": "18"
+            }
+          ],
+          "state": [
+            {
+              "id": "b26e31548ec978d92e9da73cf60472feb4ec48c825f80a96867e6e8f926034c7",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "b0e2b8a1d0b86f849eadb49e08e51f73b4217868c771bcb111b9d31ad031eec2",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 671088640,
+              "nanoCpus": 0
+            },
+            {
+              "id": "79dbaa2fd994d5a17f53e7adb73314e4cdbcc74d86811888f4c6240ed7dab72c",
+              "image": "sha256:deef92af3d01ff7f82fc969a639fdd79886f51ffdf26cce9f572615c4b085f22",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 469762048,
+              "nanoCpus": 0
+            },
+            {
+              "id": "c4f7450f8feb8c92a7ca6dea15ca12fdda2c76f9f18135b74750413cdccd7027",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 402653184,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3912c86b34fd7fa289d5885ced0771a8b1e3bf139ecc3fdbed88f811648c6759",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 134217728,
+              "nanoCpus": 0
+            },
+            {
+              "id": "54ec443ddfa264a2e7007266b4fa9ad3fe9b227357bf4fdaafde5b2281f6b33c",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 268435456,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6203576320 34263588864"
+          ]
+        },
+        {
+          "phase": "concurrent-latency",
+          "count": 32,
+          "concurrency": 4,
+          "seconds": [
+            1.4516990609999993,
+            2.197987600000033,
+            2.7586879880000197,
+            3.4015249849999236,
+            2.636177764000081,
+            2.2130175229999622,
+            1.9366513820000364,
+            1.5366761029999907,
+            1.1267738349999945,
+            1.1080414300000712,
+            1.5472058270000844,
+            1.7117900109999482,
+            1.8314478009999675,
+            1.8826884260000725,
+            1.4744407649999403,
+            1.4093103830000473,
+            1.297783142999947,
+            1.3066965090000622,
+            1.5279436700000133,
+            1.782827394999913,
+            2.18689921400005,
+            2.1954561129999774,
+            1.8663277939999716,
+            1.4835414260001016,
+            1.0760865130000639,
+            1.07106885099995,
+            1.2611536420000675,
+            1.3636284599999726,
+            1.318113842999992,
+            1.18905204400005,
+            1.050957045999894,
+            1.0049995680000166
+          ]
+        },
+        {
+          "phase": "credential-rate-limit",
+          "profile": "personal",
+          "statuses": [
+            401,
+            429
+          ],
+          "retryAfterSeconds": 1
+        },
+        {
+          "phase": "incompatible-health-failure",
+          "profile": "personal",
+          "candidate": "18d231c5b667fa74e5858cf0973bb29ae8bcce30102d68081b8cc862ca4ad370",
+          "journalSha256": "f23226e520fa0585e65dc9a1a0c5bd4177b76bc44404f6f3a8139b2213ca5c00",
+          "recovery": "stopped-restore-required",
+          "stoppedServices": [
+            "api",
+            "mcp",
+            "worker"
+          ]
+        },
+        {
+          "phase": "idle",
+          "profile": "team",
+          "monotonic": 2525.067547593,
+          "stats": [
+            {
+              "BlockIO": "2.02MB / 0B",
+              "CPUPerc": "0.02%",
+              "Container": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "ID": "6542b293cb0a",
+              "MemPerc": "1.21%",
+              "MemUsage": "47.33MiB / 3.823GiB",
+              "Name": "ta01-team-mcp-1",
+              "NetIO": "2.72kB / 1.55kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "6.82MB / 0B",
+              "CPUPerc": "14.17%",
+              "Container": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "ID": "8c5c6f0b50fc",
+              "MemPerc": "1.12%",
+              "MemUsage": "43.9MiB / 3.823GiB",
+              "Name": "ta01-team-worker-1",
+              "NetIO": "410kB / 885kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "14.7MB / 0B",
+              "CPUPerc": "0.13%",
+              "Container": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "ID": "3ff289cb7682",
+              "MemPerc": "1.48%",
+              "MemUsage": "57.77MiB / 3.823GiB",
+              "Name": "ta01-team-api-1",
+              "NetIO": "7.16kB / 7.45kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "4.33MB / 96.7MB",
+              "CPUPerc": "52.64%",
+              "Container": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "ID": "7361819023af",
+              "MemPerc": "1.22%",
+              "MemUsage": "47.94MiB / 3.823GiB",
+              "Name": "ta01-team-postgres-1",
+              "NetIO": "1.15MB / 440kB",
+              "PIDs": "9"
+            },
+            {
+              "BlockIO": "57.3kB / 8.19kB",
+              "CPUPerc": "3.60%",
+              "Container": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "ID": "f604a083b102",
+              "MemPerc": "0.08%",
+              "MemUsage": "3.258MiB / 3.823GiB",
+              "Name": "ta01-team-redis-1",
+              "NetIO": "8.34kB / 3.85kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "795kB / 139kB",
+              "CPUPerc": "0.18%",
+              "Container": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "ID": "d0d93f12272c",
+              "MemPerc": "1.97%",
+              "MemUsage": "77.02MiB / 3.823GiB",
+              "Name": "ta01-team-minio-1",
+              "NetIO": "12.3kB / 5.23kB",
+              "PIDs": "18"
+            }
+          ],
+          "state": [
+            {
+              "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "image": "sha256:867082d7998d6b778cb0a0981776acd734dd5504674a01172a7cde42280a9a68",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "image": "sha256:cf2a8ffe3c81565c6589f2f254ace2d59119ccc5cc4c0c9ae0e7f324d728a00e",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6301782016 34165383168"
+          ]
+        },
+        {
+          "phase": "first-task",
+          "profile": "team",
+          "monotonic": 2536.944582837,
+          "stats": [
+            {
+              "BlockIO": "2.02MB / 0B",
+              "CPUPerc": "0.03%",
+              "Container": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "ID": "6542b293cb0a",
+              "MemPerc": "1.21%",
+              "MemUsage": "47.47MiB / 3.823GiB",
+              "Name": "ta01-team-mcp-1",
+              "NetIO": "3.27kB / 1.85kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "6.82MB / 0B",
+              "CPUPerc": "38.22%",
+              "Container": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "ID": "8c5c6f0b50fc",
+              "MemPerc": "1.21%",
+              "MemUsage": "47.28MiB / 3.823GiB",
+              "Name": "ta01-team-worker-1",
+              "NetIO": "495kB / 1.05MB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "14.7MB / 0B",
+              "CPUPerc": "0.08%",
+              "Container": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "ID": "3ff289cb7682",
+              "MemPerc": "1.56%",
+              "MemUsage": "61.22MiB / 3.823GiB",
+              "Name": "ta01-team-api-1",
+              "NetIO": "69.2kB / 118kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "4.4MB / 97.2MB",
+              "CPUPerc": "19.38%",
+              "Container": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "ID": "7361819023af",
+              "MemPerc": "1.36%",
+              "MemUsage": "53.27MiB / 3.823GiB",
+              "Name": "ta01-team-postgres-1",
+              "NetIO": "1.43MB / 577kB",
+              "PIDs": "9"
+            },
+            {
+              "BlockIO": "77.8kB / 32.8kB",
+              "CPUPerc": "2.15%",
+              "Container": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "ID": "f604a083b102",
+              "MemPerc": "0.09%",
+              "MemUsage": "3.492MiB / 3.823GiB",
+              "Name": "ta01-team-redis-1",
+              "NetIO": "13.6kB / 5.25kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "795kB / 139kB",
+              "CPUPerc": "0.35%",
+              "Container": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "ID": "d0d93f12272c",
+              "MemPerc": "1.97%",
+              "MemUsage": "77.03MiB / 3.823GiB",
+              "Name": "ta01-team-minio-1",
+              "NetIO": "13.5kB / 5.67kB",
+              "PIDs": "18"
+            }
+          ],
+          "state": [
+            {
+              "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "image": "sha256:867082d7998d6b778cb0a0981776acd734dd5504674a01172a7cde42280a9a68",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "image": "sha256:cf2a8ffe3c81565c6589f2f254ace2d59119ccc5cc4c0c9ae0e7f324d728a00e",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6302449664 34164715520"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "team",
+          "monotonic": 2601.781642483,
+          "stats": [
+            {
+              "BlockIO": "2.02MB / 0B",
+              "CPUPerc": "0.14%",
+              "Container": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "ID": "6542b293cb0a",
+              "MemPerc": "2.03%",
+              "MemUsage": "79.52MiB / 3.823GiB",
+              "Name": "ta01-team-mcp-1",
+              "NetIO": "731kB / 379kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "786kB / 0B",
+              "CPUPerc": "27.63%",
+              "Container": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "ID": "8c5c6f0b50fc",
+              "MemPerc": "2.47%",
+              "MemUsage": "96.89MiB / 3.823GiB",
+              "Name": "ta01-team-worker-1",
+              "NetIO": "64.8kB / 133kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "14.7MB / 0B",
+              "CPUPerc": "123.58%",
+              "Container": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "ID": "3ff289cb7682",
+              "MemPerc": "1.97%",
+              "MemUsage": "77MiB / 3.823GiB",
+              "Name": "ta01-team-api-1",
+              "NetIO": "271kB / 1.17MB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "4.43MB / 99.3MB",
+              "CPUPerc": "97.96%",
+              "Container": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "ID": "7361819023af",
+              "MemPerc": "1.73%",
+              "MemUsage": "67.59MiB / 3.823GiB",
+              "Name": "ta01-team-postgres-1",
+              "NetIO": "2.04MB / 897kB",
+              "PIDs": "13"
+            },
+            {
+              "BlockIO": "2.22MB / 0B",
+              "CPUPerc": "4.45%",
+              "Container": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "ID": "f604a083b102",
+              "MemPerc": "0.14%",
+              "MemUsage": "5.414MiB / 3.823GiB",
+              "Name": "ta01-team-redis-1",
+              "NetIO": "5.75kB / 2.5kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "1.03MB / 197kB",
+              "CPUPerc": "0.52%",
+              "Container": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "ID": "d0d93f12272c",
+              "MemPerc": "2.14%",
+              "MemUsage": "83.86MiB / 3.823GiB",
+              "Name": "ta01-team-minio-1",
+              "NetIO": "24.6kB / 11.1kB",
+              "PIDs": "19"
+            }
+          ],
+          "state": [
+            {
+              "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "image": "sha256:867082d7998d6b778cb0a0981776acd734dd5504674a01172a7cde42280a9a68",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "image": "sha256:cf2a8ffe3c81565c6589f2f254ace2d59119ccc5cc4c0c9ae0e7f324d728a00e",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6303420416 34163744768"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "team",
+          "monotonic": 2606.961654696,
+          "stats": [
+            {
+              "BlockIO": "2.02MB / 0B",
+              "CPUPerc": "0.03%",
+              "Container": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "ID": "6542b293cb0a",
+              "MemPerc": "2.03%",
+              "MemUsage": "79.52MiB / 3.823GiB",
+              "Name": "ta01-team-mcp-1",
+              "NetIO": "732kB / 379kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "786kB / 0B",
+              "CPUPerc": "4.40%",
+              "Container": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "ID": "8c5c6f0b50fc",
+              "MemPerc": "2.48%",
+              "MemUsage": "96.95MiB / 3.823GiB",
+              "Name": "ta01-team-worker-1",
+              "NetIO": "92.3kB / 184kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "14.7MB / 0B",
+              "CPUPerc": "54.31%",
+              "Container": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "ID": "3ff289cb7682",
+              "MemPerc": "1.98%",
+              "MemUsage": "77.36MiB / 3.823GiB",
+              "Name": "ta01-team-api-1",
+              "NetIO": "394kB / 1.41MB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "4.43MB / 99.6MB",
+              "CPUPerc": "66.58%",
+              "Container": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "ID": "7361819023af",
+              "MemPerc": "1.78%",
+              "MemUsage": "69.63MiB / 3.823GiB",
+              "Name": "ta01-team-postgres-1",
+              "NetIO": "2.27MB / 1.01MB",
+              "PIDs": "13"
+            },
+            {
+              "BlockIO": "2.25MB / 0B",
+              "CPUPerc": "4.94%",
+              "Container": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "ID": "f604a083b102",
+              "MemPerc": "0.14%",
+              "MemUsage": "5.41MiB / 3.823GiB",
+              "Name": "ta01-team-redis-1",
+              "NetIO": "11.2kB / 4.45kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "1.03MB / 197kB",
+              "CPUPerc": "33.49%",
+              "Container": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "ID": "d0d93f12272c",
+              "MemPerc": "2.14%",
+              "MemUsage": "83.86MiB / 3.823GiB",
+              "Name": "ta01-team-minio-1",
+              "NetIO": "24.6kB / 11.1kB",
+              "PIDs": "19"
+            }
+          ],
+          "state": [
+            {
+              "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "image": "sha256:867082d7998d6b778cb0a0981776acd734dd5504674a01172a7cde42280a9a68",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "image": "sha256:cf2a8ffe3c81565c6589f2f254ace2d59119ccc5cc4c0c9ae0e7f324d728a00e",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6303555584 34163609600"
+          ]
+        },
+        {
+          "phase": "concurrent-load",
+          "profile": "team",
+          "monotonic": 2612.617311303,
+          "stats": [
+            {
+              "BlockIO": "2.02MB / 0B",
+              "CPUPerc": "0.01%",
+              "Container": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "ID": "6542b293cb0a",
+              "MemPerc": "1.01%",
+              "MemUsage": "39.38MiB / 3.823GiB",
+              "Name": "ta01-team-mcp-1",
+              "NetIO": "732kB / 379kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "786kB / 0B",
+              "CPUPerc": "12.78%",
+              "Container": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "ID": "8c5c6f0b50fc",
+              "MemPerc": "2.49%",
+              "MemUsage": "97.41MiB / 3.823GiB",
+              "Name": "ta01-team-worker-1",
+              "NetIO": "146kB / 284kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "14.7MB / 0B",
+              "CPUPerc": "19.82%",
+              "Container": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "ID": "3ff289cb7682",
+              "MemPerc": "1.97%",
+              "MemUsage": "77.03MiB / 3.823GiB",
+              "Name": "ta01-team-api-1",
+              "NetIO": "439kB / 1.51MB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "4.43MB / 100MB",
+              "CPUPerc": "16.65%",
+              "Container": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "ID": "7361819023af",
+              "MemPerc": "1.73%",
+              "MemUsage": "67.62MiB / 3.823GiB",
+              "Name": "ta01-team-postgres-1",
+              "NetIO": "2.5MB / 1.12MB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "2.26MB / 12.3kB",
+              "CPUPerc": "2.62%",
+              "Container": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "ID": "f604a083b102",
+              "MemPerc": "0.14%",
+              "MemUsage": "5.414MiB / 3.823GiB",
+              "Name": "ta01-team-redis-1",
+              "NetIO": "14.4kB / 5.63kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "1.03MB / 197kB",
+              "CPUPerc": "5.38%",
+              "Container": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "ID": "d0d93f12272c",
+              "MemPerc": "2.14%",
+              "MemUsage": "83.79MiB / 3.823GiB",
+              "Name": "ta01-team-minio-1",
+              "NetIO": "25.7kB / 11.5kB",
+              "PIDs": "18"
+            }
+          ],
+          "state": [
+            {
+              "id": "6542b293cb0ad66fee8ff5588e3c49c50579cb7e072288245ae7ee39d21b2778",
+              "image": "sha256:7c88535a0f55d56e1657a84caeeeb419cfcd3431aad3eb2176551b7f266309b4",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "8c5c6f0b50fcd35f906dd091f461d850416287d495cc9f00dad33e255a64feac",
+              "image": "sha256:867082d7998d6b778cb0a0981776acd734dd5504674a01172a7cde42280a9a68",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3ff289cb76822e08103f54b5cd622267bbfdab86a22111718996bd5e3171536e",
+              "image": "sha256:cf2a8ffe3c81565c6589f2f254ace2d59119ccc5cc4c0c9ae0e7f324d728a00e",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "7361819023af4d6e64156fdfdb0dae14bdacc27539e468182716760296902239",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f604a083b102e8d7fbd9f325d524bf8008d601106b4b93d5b44dd573db47781d",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d0d93f12272ccc3187fc0b34f72f0360da3d9a6849341c99cf1794df377a5549",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6303567872 34163597312"
+          ]
+        },
+        {
+          "phase": "concurrent-latency",
+          "count": 32,
+          "concurrency": 4,
+          "seconds": [
+            0.9930902740002239,
+            1.6341266219997124,
+            2.3029494249999516,
+            3.013737706000029,
+            2.3832890329999827,
+            1.9502334929998142,
+            1.5684543980000853,
+            1.252543040999626,
+            1.4403706299999612,
+            1.5939155109999774,
+            1.5918519749998268,
+            1.4267698690000543,
+            1.1243094100000235,
+            0.9565716849997443,
+            0.9677767940002013,
+            0.9033667170001536,
+            1.5256356279996908,
+            1.7711529560001509,
+            1.781764560999818,
+            1.9634766859999218,
+            1.297530395999729,
+            1.1592704049999156,
+            1.206227504999788,
+            1.1600693320001483,
+            1.234898309000073,
+            1.1923390570000265,
+            1.0775753849998182,
+            1.0223211509996872,
+            1.0817835379998542,
+            1.009044047000316,
+            0.9937689889998182,
+            0.9845080240002062
+          ]
+        },
+        {
+          "phase": "credential-rate-limit",
+          "profile": "team",
+          "statuses": [
+            401,
+            429
+          ],
+          "retryAfterSeconds": 1
+        }
+      ],
+      "hostUtc": 1792099777.1776164,
+      "hostElapsed": 3178.104157391
+    }
+  ],
+  "records": [
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9518,
+      "userCpuMicroseconds": 18187603,
+      "systemCpuMicroseconds": 5002291
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 1,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 51558
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9305,
+      "userCpuMicroseconds": 17754794,
+      "systemCpuMicroseconds": 5010206
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 275,
+      "userCpuMicroseconds": 316626,
+      "systemCpuMicroseconds": 64936
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 59,
+      "userCpuMicroseconds": 58831,
+      "systemCpuMicroseconds": 11426
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 2,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 19140
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10248,
+      "userCpuMicroseconds": 19390211,
+      "systemCpuMicroseconds": 5320470
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 399,
+      "userCpuMicroseconds": 433791,
+      "systemCpuMicroseconds": 82786
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 49,
+      "userCpuMicroseconds": 41172,
+      "systemCpuMicroseconds": 9675
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 3,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 20665
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10177,
+      "userCpuMicroseconds": 19168418,
+      "systemCpuMicroseconds": 5617000
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 274,
+      "userCpuMicroseconds": 331666,
+      "systemCpuMicroseconds": 57206
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3137,
+      "userCpuMicroseconds": 173458,
+      "systemCpuMicroseconds": 39152
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 4,
+      "profile": "personal",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 24392
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9480,
+      "userCpuMicroseconds": 18184627,
+      "systemCpuMicroseconds": 5180407
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 244,
+      "userCpuMicroseconds": 287236,
+      "systemCpuMicroseconds": 45898
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 2998,
+      "userCpuMicroseconds": 177793,
+      "systemCpuMicroseconds": 48640
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 5,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 23278
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9533,
+      "userCpuMicroseconds": 18202214,
+      "systemCpuMicroseconds": 5059036
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 238,
+      "userCpuMicroseconds": 272375,
+      "systemCpuMicroseconds": 58099
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3016,
+      "userCpuMicroseconds": 171110,
+      "systemCpuMicroseconds": 56813
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "phase": "import-images",
+      "elapsedMilliseconds": 154133,
+      "userCpuMicroseconds": 4494427,
+      "systemCpuMicroseconds": 7524931
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 6,
+      "profile": "personal",
+      "action": "stage",
+      "state": "finished",
+      "elapsedMilliseconds": 178018
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9953,
+      "userCpuMicroseconds": 18974566,
+      "systemCpuMicroseconds": 5557201
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 486,
+      "userCpuMicroseconds": 599396,
+      "systemCpuMicroseconds": 96639
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3289,
+      "userCpuMicroseconds": 251978,
+      "systemCpuMicroseconds": 58052
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "import-images",
+      "elapsedMilliseconds": 7268,
+      "userCpuMicroseconds": 106117,
+      "systemCpuMicroseconds": 131930
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "start-data-services",
+      "elapsedMilliseconds": 24190,
+      "userCpuMicroseconds": 21708,
+      "systemCpuMicroseconds": 12927
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "initialize-locked-bucket",
+      "elapsedMilliseconds": 5831,
+      "userCpuMicroseconds": 36321,
+      "systemCpuMicroseconds": 10801
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 27922,
+      "userCpuMicroseconds": 27296,
+      "systemCpuMicroseconds": 7312
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 69781,
+      "userCpuMicroseconds": 85537,
+      "systemCpuMicroseconds": 27682
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 7,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 165945
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "health-ready"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12491,
+      "userCpuMicroseconds": 19684296,
+      "systemCpuMicroseconds": 6167648
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 406,
+      "userCpuMicroseconds": 423749,
+      "systemCpuMicroseconds": 101110
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4197,
+      "userCpuMicroseconds": 420688,
+      "systemCpuMicroseconds": 57454
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 8,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 33614
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 13137,
+      "userCpuMicroseconds": 20575763,
+      "systemCpuMicroseconds": 6090472
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 358,
+      "userCpuMicroseconds": 400171,
+      "systemCpuMicroseconds": 69806
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4270,
+      "userCpuMicroseconds": 221158,
+      "systemCpuMicroseconds": 54906
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 1940,
+      "userCpuMicroseconds": 761298,
+      "systemCpuMicroseconds": 108337
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 9,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 43160
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12387,
+      "userCpuMicroseconds": 20279219,
+      "systemCpuMicroseconds": 6157035
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 314,
+      "userCpuMicroseconds": 353331,
+      "systemCpuMicroseconds": 74716
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3854,
+      "userCpuMicroseconds": 264559,
+      "systemCpuMicroseconds": 49663
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 6371,
+      "userCpuMicroseconds": 833648,
+      "systemCpuMicroseconds": 84377
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 10,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 42351
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12208,
+      "userCpuMicroseconds": 19878851,
+      "systemCpuMicroseconds": 6118736
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 394,
+      "userCpuMicroseconds": 395142,
+      "systemCpuMicroseconds": 79086
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4366,
+      "userCpuMicroseconds": 455261,
+      "systemCpuMicroseconds": 48350
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 11,
+      "profile": "personal",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 32187
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "business-committed"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 13979,
+      "userCpuMicroseconds": 21917005,
+      "systemCpuMicroseconds": 6595918
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 332,
+      "userCpuMicroseconds": 369981,
+      "systemCpuMicroseconds": 75886
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3788,
+      "userCpuMicroseconds": 207335,
+      "systemCpuMicroseconds": 65450
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 12,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 31201
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11630,
+      "userCpuMicroseconds": 19677744,
+      "systemCpuMicroseconds": 6000492
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 269,
+      "userCpuMicroseconds": 313682,
+      "systemCpuMicroseconds": 54732
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4553,
+      "userCpuMicroseconds": 432367,
+      "systemCpuMicroseconds": 49634
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 13,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 31068
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12486,
+      "userCpuMicroseconds": 20486583,
+      "systemCpuMicroseconds": 6262484
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 422,
+      "userCpuMicroseconds": 567335,
+      "systemCpuMicroseconds": 75696
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3931,
+      "userCpuMicroseconds": 231678,
+      "systemCpuMicroseconds": 48934
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 14,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 30692
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 15,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 115
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11372,
+      "userCpuMicroseconds": 19434955,
+      "systemCpuMicroseconds": 5949478
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 451,
+      "userCpuMicroseconds": 460179,
+      "systemCpuMicroseconds": 102786
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3640,
+      "userCpuMicroseconds": 210071,
+      "systemCpuMicroseconds": 58569
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "import-images",
+      "elapsedMilliseconds": 8190,
+      "userCpuMicroseconds": 133720,
+      "systemCpuMicroseconds": 109842
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 5734,
+      "userCpuMicroseconds": 30242,
+      "systemCpuMicroseconds": 5267
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 11453,
+      "userCpuMicroseconds": 85721,
+      "systemCpuMicroseconds": 17956
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 14487,
+      "userCpuMicroseconds": 17777,
+      "systemCpuMicroseconds": 8560
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 71793,
+      "userCpuMicroseconds": 149655,
+      "systemCpuMicroseconds": 29499
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 16,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 147987
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 13444,
+      "userCpuMicroseconds": 20745233,
+      "systemCpuMicroseconds": 6344536
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 441,
+      "userCpuMicroseconds": 482380,
+      "systemCpuMicroseconds": 75909
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3197,
+      "userCpuMicroseconds": 204521,
+      "systemCpuMicroseconds": 35034
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 17,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 31088
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12098,
+      "userCpuMicroseconds": 19839726,
+      "systemCpuMicroseconds": 6288991
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 346,
+      "userCpuMicroseconds": 378406,
+      "systemCpuMicroseconds": 89248
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4415,
+      "userCpuMicroseconds": 615926,
+      "systemCpuMicroseconds": 79577
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 18,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 30115
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12210,
+      "userCpuMicroseconds": 20231527,
+      "systemCpuMicroseconds": 5981450
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 446,
+      "userCpuMicroseconds": 576676,
+      "systemCpuMicroseconds": 105154
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4229,
+      "userCpuMicroseconds": 235323,
+      "systemCpuMicroseconds": 53253
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 8747,
+      "userCpuMicroseconds": 884594,
+      "systemCpuMicroseconds": 74925
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 19,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 43089
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12632,
+      "userCpuMicroseconds": 20437191,
+      "systemCpuMicroseconds": 6269185
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 360,
+      "userCpuMicroseconds": 415218,
+      "systemCpuMicroseconds": 90259
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3976,
+      "userCpuMicroseconds": 237767,
+      "systemCpuMicroseconds": 61195
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "import-images",
+      "elapsedMilliseconds": 10668,
+      "userCpuMicroseconds": 184955,
+      "systemCpuMicroseconds": 125090
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 6150,
+      "userCpuMicroseconds": 20849,
+      "systemCpuMicroseconds": 10764
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 13987,
+      "userCpuMicroseconds": 41049,
+      "systemCpuMicroseconds": 15616
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 17529,
+      "userCpuMicroseconds": 25276,
+      "systemCpuMicroseconds": 6233
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 68179,
+      "userCpuMicroseconds": 108313,
+      "systemCpuMicroseconds": 31502
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 20,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "finished",
+      "elapsedMilliseconds": 158247
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12085,
+      "userCpuMicroseconds": 18996602,
+      "systemCpuMicroseconds": 5655285
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 276,
+      "userCpuMicroseconds": 301734,
+      "systemCpuMicroseconds": 50071
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3624,
+      "userCpuMicroseconds": 220665,
+      "systemCpuMicroseconds": 45989
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 7369,
+      "userCpuMicroseconds": 914583,
+      "systemCpuMicroseconds": 101401
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 21,
+      "profile": "personal",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 39556
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11377,
+      "userCpuMicroseconds": 19067303,
+      "systemCpuMicroseconds": 5751429
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 237,
+      "userCpuMicroseconds": 269966,
+      "systemCpuMicroseconds": 60225
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3307,
+      "userCpuMicroseconds": 174978,
+      "systemCpuMicroseconds": 45986
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "phase": "import-images",
+      "elapsedMilliseconds": 7981,
+      "userCpuMicroseconds": 149020,
+      "systemCpuMicroseconds": 93792
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 22,
+      "profile": "personal",
+      "action": "rollback",
+      "state": "finished",
+      "elapsedMilliseconds": 41456
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11479,
+      "userCpuMicroseconds": 18833011,
+      "systemCpuMicroseconds": 5611405
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 309,
+      "userCpuMicroseconds": 356907,
+      "systemCpuMicroseconds": 60747
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3749,
+      "userCpuMicroseconds": 176108,
+      "systemCpuMicroseconds": 41117
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 23,
+      "profile": "personal",
+      "action": "restore-empty",
+      "state": "finished",
+      "elapsedMilliseconds": 65248
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11477,
+      "userCpuMicroseconds": 19494020,
+      "systemCpuMicroseconds": 5604317
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 659,
+      "userCpuMicroseconds": 750825,
+      "systemCpuMicroseconds": 100980
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3195,
+      "userCpuMicroseconds": 236166,
+      "systemCpuMicroseconds": 50332
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 24,
+      "profile": "personal",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 58845
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10998,
+      "userCpuMicroseconds": 18246061,
+      "systemCpuMicroseconds": 5730382
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 354,
+      "userCpuMicroseconds": 364510,
+      "systemCpuMicroseconds": 91919
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3228,
+      "userCpuMicroseconds": 197026,
+      "systemCpuMicroseconds": 51348
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "import-images",
+      "elapsedMilliseconds": 7138,
+      "userCpuMicroseconds": 199974,
+      "systemCpuMicroseconds": 109561
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 5991,
+      "userCpuMicroseconds": 20867,
+      "systemCpuMicroseconds": 10628
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 10469,
+      "userCpuMicroseconds": 86912,
+      "systemCpuMicroseconds": 19201
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 13268,
+      "userCpuMicroseconds": 23254,
+      "systemCpuMicroseconds": 10344
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 48226,
+      "userCpuMicroseconds": 288576,
+      "systemCpuMicroseconds": 91887
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 25,
+      "profile": "personal",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 126807
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "personal",
+      "stage": "profile-completed"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 26,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 26,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9759,
+      "userCpuMicroseconds": 18531428,
+      "systemCpuMicroseconds": 5359455
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 26,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 18135
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 27,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 27,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9995,
+      "userCpuMicroseconds": 18718765,
+      "systemCpuMicroseconds": 5658597
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 27,
+      "profile": "team",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 305,
+      "userCpuMicroseconds": 340136,
+      "systemCpuMicroseconds": 75352
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 27,
+      "profile": "team",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 62,
+      "userCpuMicroseconds": 55401,
+      "systemCpuMicroseconds": 11998
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 27,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 20694
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 28,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 28,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9532,
+      "userCpuMicroseconds": 18115597,
+      "systemCpuMicroseconds": 5334395
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 28,
+      "profile": "team",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 442,
+      "userCpuMicroseconds": 578108,
+      "systemCpuMicroseconds": 82513
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 28,
+      "profile": "team",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 84,
+      "userCpuMicroseconds": 71632,
+      "systemCpuMicroseconds": 17813
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 28,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 20237
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 29,
+      "profile": "team",
+      "action": "check",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 29,
+      "profile": "team",
+      "action": "check",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 9219,
+      "userCpuMicroseconds": 17569132,
+      "systemCpuMicroseconds": 5072417
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 29,
+      "profile": "team",
+      "action": "check",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 275,
+      "userCpuMicroseconds": 306241,
+      "systemCpuMicroseconds": 62741
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 29,
+      "profile": "team",
+      "action": "check",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3422,
+      "userCpuMicroseconds": 208083,
+      "systemCpuMicroseconds": 53398
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 29,
+      "profile": "team",
+      "action": "check",
+      "state": "finished",
+      "elapsedMilliseconds": 22307
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 30,
+      "profile": "team",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 30,
+      "profile": "team",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10222,
+      "userCpuMicroseconds": 19462653,
+      "systemCpuMicroseconds": 5700830
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 30,
+      "profile": "team",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 322,
+      "userCpuMicroseconds": 358108,
+      "systemCpuMicroseconds": 77451
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 30,
+      "profile": "team",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3270,
+      "userCpuMicroseconds": 230502,
+      "systemCpuMicroseconds": 45402
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 30,
+      "profile": "team",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 25142
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10128,
+      "userCpuMicroseconds": 19049080,
+      "systemCpuMicroseconds": 5670406
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 424,
+      "userCpuMicroseconds": 451703,
+      "systemCpuMicroseconds": 96456
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3767,
+      "userCpuMicroseconds": 226779,
+      "systemCpuMicroseconds": 91342
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "import-images",
+      "elapsedMilliseconds": 8961,
+      "userCpuMicroseconds": 206435,
+      "systemCpuMicroseconds": 175316
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "start-data-services",
+      "elapsedMilliseconds": 23714,
+      "userCpuMicroseconds": 5631,
+      "systemCpuMicroseconds": 17704
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "initialize-locked-bucket",
+      "elapsedMilliseconds": 6733,
+      "userCpuMicroseconds": 16123,
+      "systemCpuMicroseconds": 9436
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 34613,
+      "userCpuMicroseconds": 30986,
+      "systemCpuMicroseconds": 6735
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 59812,
+      "userCpuMicroseconds": 117664,
+      "systemCpuMicroseconds": 40999
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 31,
+      "profile": "team",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 165603
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "team",
+      "stage": "health-ready"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 32,
+      "profile": "team",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 32,
+      "profile": "team",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 12303,
+      "userCpuMicroseconds": 19525146,
+      "systemCpuMicroseconds": 5659442
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 32,
+      "profile": "team",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 533,
+      "userCpuMicroseconds": 648469,
+      "systemCpuMicroseconds": 101311
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 32,
+      "profile": "team",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3588,
+      "userCpuMicroseconds": 204619,
+      "systemCpuMicroseconds": 48478
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 32,
+      "profile": "team",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 29282
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 33,
+      "profile": "team",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 33,
+      "profile": "team",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 14006,
+      "userCpuMicroseconds": 19953557,
+      "systemCpuMicroseconds": 5863439
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 33,
+      "profile": "team",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 244,
+      "userCpuMicroseconds": 284862,
+      "systemCpuMicroseconds": 54932
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 33,
+      "profile": "team",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3269,
+      "userCpuMicroseconds": 208566,
+      "systemCpuMicroseconds": 35173
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 33,
+      "profile": "team",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 1975,
+      "userCpuMicroseconds": 730164,
+      "systemCpuMicroseconds": 76767
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 33,
+      "profile": "team",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 40756
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 34,
+      "profile": "team",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 34,
+      "profile": "team",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 10922,
+      "userCpuMicroseconds": 18338178,
+      "systemCpuMicroseconds": 5553009
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 34,
+      "profile": "team",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 247,
+      "userCpuMicroseconds": 282730,
+      "systemCpuMicroseconds": 69858
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 34,
+      "profile": "team",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4612,
+      "userCpuMicroseconds": 399987,
+      "systemCpuMicroseconds": 49044
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 34,
+      "profile": "team",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 6645,
+      "userCpuMicroseconds": 840765,
+      "systemCpuMicroseconds": 72450
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 34,
+      "profile": "team",
+      "action": "commit",
+      "state": "finished",
+      "elapsedMilliseconds": 38556
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 35,
+      "profile": "team",
+      "action": "install",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 35,
+      "profile": "team",
+      "action": "install",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11678,
+      "userCpuMicroseconds": 19086872,
+      "systemCpuMicroseconds": 5529830
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 35,
+      "profile": "team",
+      "action": "install",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 437,
+      "userCpuMicroseconds": 582660,
+      "systemCpuMicroseconds": 85384
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 35,
+      "profile": "team",
+      "action": "install",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3460,
+      "userCpuMicroseconds": 218106,
+      "systemCpuMicroseconds": 50585
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 35,
+      "profile": "team",
+      "action": "install",
+      "state": "finished",
+      "elapsedMilliseconds": 30285
+    },
+    {
+      "tag": "ta01-progress",
+      "profile": "team",
+      "stage": "business-committed"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 36,
+      "profile": "team",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 36,
+      "profile": "team",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 206
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 11942,
+      "userCpuMicroseconds": 19894085,
+      "systemCpuMicroseconds": 6006231
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 296,
+      "userCpuMicroseconds": 342630,
+      "systemCpuMicroseconds": 70241
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3339,
+      "userCpuMicroseconds": 215949,
+      "systemCpuMicroseconds": 44502
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "import-images",
+      "elapsedMilliseconds": 7951,
+      "userCpuMicroseconds": 131618,
+      "systemCpuMicroseconds": 103858
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "drain-admission",
+      "elapsedMilliseconds": 6167,
+      "userCpuMicroseconds": 20947,
+      "systemCpuMicroseconds": 10384
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "complete-backup",
+      "elapsedMilliseconds": 11557,
+      "userCpuMicroseconds": 69716,
+      "systemCpuMicroseconds": 11589
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "apply-migration-ledger",
+      "elapsedMilliseconds": 13447,
+      "userCpuMicroseconds": 27710,
+      "systemCpuMicroseconds": 7424
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "phase": "verify-health-and-ledger",
+      "elapsedMilliseconds": 68333,
+      "userCpuMicroseconds": 98938,
+      "systemCpuMicroseconds": 33014
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 37,
+      "profile": "team",
+      "action": "upgrade",
+      "state": "finished",
+      "elapsedMilliseconds": 143361
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 38,
+      "profile": "team",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 38,
+      "profile": "team",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 13219,
+      "userCpuMicroseconds": 20834840,
+      "systemCpuMicroseconds": 6413889
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 38,
+      "profile": "team",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 466,
+      "userCpuMicroseconds": 431876,
+      "systemCpuMicroseconds": 114288
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 38,
+      "profile": "team",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 4841,
+      "userCpuMicroseconds": 440506,
+      "systemCpuMicroseconds": 62110
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 38,
+      "profile": "team",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 34323
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 39,
+      "profile": "team",
+      "action": "recover-old",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 39,
+      "profile": "team",
+      "action": "recover-old",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 13586,
+      "userCpuMicroseconds": 21524741,
+      "systemCpuMicroseconds": 6835687
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 39,
+      "profile": "team",
+      "action": "recover-old",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 478,
+      "userCpuMicroseconds": 509400,
+      "systemCpuMicroseconds": 109372
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 39,
+      "profile": "team",
+      "action": "recover-old",
+      "phase": "render-config",
+      "elapsedMilliseconds": 3802,
+      "userCpuMicroseconds": 265680,
+      "systemCpuMicroseconds": 86612
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 39,
+      "profile": "team",
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 32606
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 40,
+      "profile": "team",
+      "action": "commit",
+      "state": "started"
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 40,
+      "profile": "team",
+      "action": "commit",
+      "phase": "verify-bundle",
+      "elapsedMilliseconds": 16344,
+      "userCpuMicroseconds": 22348638,
+      "systemCpuMicroseconds": 6922406
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 40,
+      "profile": "team",
+      "action": "commit",
+      "phase": "load-config-validator",
+      "elapsedMilliseconds": 441,
+      "userCpuMicroseconds": 465137,
+      "systemCpuMicroseconds": 113750
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 40,
+      "profile": "team",
+      "action": "commit",
+      "phase": "render-config",
+      "elapsedMilliseconds": 5572,
+      "userCpuMicroseconds": 580443,
+      "systemCpuMicroseconds": 86854
+    },
+    {
+      "tag": "ta01-installer-phase",
+      "sequence": 40,
+      "profile": "team",
+      "action": "commit",
+      "phase": "validate-business-read",
+      "elapsedMilliseconds": 30625,
+      "userCpuMicroseconds": 532090,
+      "systemCpuMicroseconds": 76673
+    },
+    {
+      "tag": "ta01-install-action",
+      "sequence": 40,
+      "profile": "team",
+      "action": "commit",
+      "state": "failed",
+      "elapsedMilliseconds": 78846
+    },
+    {
+      "tag": "ta01-failure",
+      "stage": "caught",
+      "errorType": "RuntimeError",
+      "command": "sh",
+      "exitCode": 1,
+      "stderrSha256": "54b41e1aa24d8cac70d6a65b82ba24c02d1ca1a00d4bce2a66fbf0af15713149",
+      "codes": [
+        "INSTALL_BUSINESS_VALIDATION_TIMEOUT"
+      ]
+    },
+    {
+      "tag": "ta01-failure",
+      "stage": "journal",
+      "errorType": "RuntimeError",
+      "command": "sh",
+      "exitCode": 1,
+      "stderrSha256": "54b41e1aa24d8cac70d6a65b82ba24c02d1ca1a00d4bce2a66fbf0af15713149",
+      "codes": [
+        "INSTALL_BUSINESS_VALIDATION_TIMEOUT"
+      ],
+      "journalStage": "healthy",
+      "lastAction": "validate-business-read",
+      "lastActionStatus": "failed"
+    },
+    {
+      "tag": "ta01-failure",
+      "stage": "owned-states",
+      "errorType": "RuntimeError",
+      "command": "sh",
+      "exitCode": 1,
+      "stderrSha256": "54b41e1aa24d8cac70d6a65b82ba24c02d1ca1a00d4bce2a66fbf0af15713149",
+      "codes": [
+        "INSTALL_BUSINESS_VALIDATION_TIMEOUT"
+      ],
+      "journalStage": "healthy",
+      "lastAction": "validate-business-read",
+      "lastActionStatus": "failed",
+      "containers": [
+        {
+          "service": "mcp",
+          "running": true,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 1,
+          "health": "starting"
+        },
+        {
+          "service": "worker",
+          "running": true,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 0,
+          "health": "healthy"
+        },
+        {
+          "service": "api",
+          "running": true,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 0,
+          "health": "healthy"
+        },
+        {
+          "service": "migrate",
+          "running": false,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 0
+        },
+        {
+          "service": "minio-init",
+          "running": false,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 0
+        },
+        {
+          "service": "postgres",
+          "running": true,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 0,
+          "health": "healthy"
+        },
+        {
+          "service": "redis",
+          "running": true,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 0,
+          "health": "healthy"
+        },
+        {
+          "service": "minio",
+          "running": true,
+          "oom": false,
+          "exitCode": 0,
+          "restarts": 0,
+          "health": "healthy"
+        }
+      ]
+    }
+  ],
+  "artifactZipSha256": "b4896f04521ed617ad61c258e2e0451cb09675894deab4d7155933ae0eef79d3",
+  "members": {
+    "server-install/guest.log": {
+      "bytes": 405,
+      "sha256": "1fba350fffcd8dede6289fda79dc0d48423f82b88d26d385df87a247c653033c"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "5e684e7ae260e0a8e1ae68be5e4ff1d45181abed0bad8ee897faa94fa171a010"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "27d477c1110d3f9b57ccb0ae7214cdc18acee6d8ab8358e6090c40abf208db78"
+    },
+    "server-install/producer.json": {
+      "bytes": 113,
+      "sha256": "e82b1b09c653af582dc600e360ea0dba3c5700c235e029b1b4355318517309d7"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12627,
+      "sha256": "91abade31f83519c6b8dd6c8d86b38ab7d1c65f094136d68415195f69ad04fb5"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 69,
+      "sha256": "d10965862dd91ca6abcd263e51cc4547bb435393f6eea1f56ef97452edb0f9f1"
+    },
+    "server-install/result.json": {
+      "bytes": 119574,
+      "sha256": "bccd883800d14e21f44b7edba337f8cd1fee2f70765acdd133e4ef361caffa70"
+    },
+    "server-install/serial.log": {
+      "bytes": 159394,
+      "sha256": "74c98ad1d1fdbc678dcf6c262dbddd68cebeb2fe1e6b99c08f0e2802b687bb46"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "4cd7b0dbf43a5a5f7e463cea3d5ce14cd3c80f6b5c57992b9d81a114d396717d"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 256,
+      "sha256": "03f59a786d107b2879390eacff1151d18c637f195284a0a9227b4b469818ba63"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "4cd7b0dbf43a5a5f7e463cea3d5ce14cd3c80f6b5c57992b9d81a114d396717d"
+    }
+  },
+  "selectedZipSha256": "c18ca03783b5a44e272167b31a5819761e4b0109fd2d5494ec3652193c292d89"
+}

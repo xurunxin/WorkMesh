@@ -1,0 +1,39 @@
+{
+  "observedUtc": "2026-10-20T06:23:24.511432+00:00",
+  "scope": "本次静态资料核验；不代产品、五根或Required CI",
+  "hostNode": "v25.4.0",
+  "zipMembersVerified": 95,
+  "sourceGitBlobBindingsVerified": 6,
+  "runtimeDiagnosticFilesVerified": 5,
+  "allPythonMembersAstPassed": true,
+  "zipByteBoundary": "逐字核ZIP成员及来源Git blob；ZIP提交后还须核实际Git对象；JSON本地与Git行尾分算",
+  "indexMetadataCorrection": "coreHandlerRuntime修正为真实ZIP成员clock_core_pipe.py；95成员原字节及ZIP不改，原生成器保留其原字节",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "scripts/check-integration-docs.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"skillFiles\":4,\"localLinks\":104,\"restEndpoints\":35,\"mcpTools\":11,\"humanSyntax\":\"passed\",\"scope\":\"静态检查；真实请求与中文语义须另验\"}\n",
+      "stderr": "",
+      "stdoutSha256": "a228ad9794a0714b2299c0090b066a7e31a54fcd891420be02c8e27c7f08f1ab",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "style": "仓库固定zh-tech-writing及typography/manual-structure已手检；autocorrect缺失，不安装全局",
+  "productChanges": "无产品、迁移、API/MCP/事件、配置或保证变更；接入命令与示例继续适用",
+  "unrun": "产品验收、五根检查、CI、成果审和合入均未重做；P1-2仍未闭"
+}

@@ -1,0 +1,331 @@
+{
+  "runId": 38513459463,
+  "jobId": 115687131993,
+  "artifactId": 11872283083,
+  "artifactUrl": "https://github.com/xurunxin/WorkMesh/actions/runs/38513459463/artifacts/11872283083",
+  "originalArtifactZipSha256": "9e83d5397d2c66d31b14f766f3ac35e8f35e6c4394b0d6b8707eeb2b2c0b3879",
+  "archiveScope": "原 artifact 的 server-install 成员，逐字保留；其他任务的 delivery-recovery 成员没有重复归档",
+  "archiveSha256": "73f71592fd47b6dffe2d17e8aa7945bd1ed6cb7ab89d86ddded289b1f8e8dda9",
+  "members": {
+    "server-install/guest.log": {
+      "bytes": 396,
+      "sha256": "e1d2c3bcca48310199cce0ea0e114e340fdd984733350f20583415962cdb6ee1"
+    },
+    "server-install/input-sha256.txt": {
+      "bytes": 1494,
+      "sha256": "1f24df70f42aa0b679dd1bfcd33459c0a71c50466a3ab971d13c891a36eb67cf"
+    },
+    "server-install/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "6fd0a257929f5c1e8495c408bcc54faca39f36225867459d5fbde37c1e63be05"
+    },
+    "server-install/build.log": {
+      "bytes": 63896,
+      "sha256": "41b2e8e4b3518753f26f060ef8d7fb79cd9410a4c4a465ebf24b61230ca24e85"
+    },
+    "server-install/manifest.json": {
+      "bytes": 12841,
+      "sha256": "c29bc3a43f79c19a5984a9e486d52655d1339de3ae5e099c1a0c5993d6c81259"
+    },
+    "server-install/qemu-stderr.log": {
+      "bytes": 69,
+      "sha256": "79e9e8cb641824c64a1d2ae3d94b8356e48529c08ff8ba460d79e6fab81af402"
+    },
+    "server-install/result.json": {
+      "bytes": 11492,
+      "sha256": "c5f5ce629008ae5e8f4ea6bc2d7628fa63bdd59836b0c30be0c17b08f8456aa1"
+    },
+    "server-install/serial.log": {
+      "bytes": 86128,
+      "sha256": "8d8dab92f536be3434ec3c5e1aece17f50aaa035c485e352885408b3e62b599b"
+    },
+    "server-install/source-after.txt": {
+      "bytes": 83,
+      "sha256": "b1b5f1677fe6fce319b59e6116c1a27ce123f481b5c08626071c94179e80b719"
+    },
+    "server-install/source-commit.txt": {
+      "bytes": 314,
+      "sha256": "cd920586dc0d2bd2adf83c6a6505a2b1e602414b98a424ef8a7a11996bbfbb5f"
+    },
+    "server-install/source-install.log": {
+      "bytes": 555,
+      "sha256": "d9b39131a7fafed3c1ddfd6221f912a5276af97e97f450d7b467bc82060451a3"
+    },
+    "server-install/source.txt": {
+      "bytes": 83,
+      "sha256": "b1b5f1677fe6fce319b59e6116c1a27ce123f481b5c08626071c94179e80b719"
+    },
+    "server-install/unit.log": {
+      "bytes": 2073,
+      "sha256": "0eef7c2c416b732ddd8d29202f89fe67427f1f14081b533ba9a283d226749822"
+    }
+  },
+  "scriptGitBlobsMatch": {
+    "run.py": true,
+    "guest.py": true
+  },
+  "sourceHead": "9f686fd0188098961168690fbfbb40a157aafa4f",
+  "sourceTree": "82d593996af86cd63854e9e48a3f2bcb1ad4ec5e",
+  "status": "failed",
+  "receipts": [
+    {
+      "phase": "failure",
+      "errorType": "RuntimeError",
+      "diagnostics": {
+        "exitCode": 1,
+        "command": "sh",
+        "stderrSha256": "b5450d76426d77fc083fcb16c187439ae1fdf0f3c28bb7864d1bba44b61bf716",
+        "categories": [],
+        "codes": [
+          "INSTALL_DIAGNOSTIC",
+          "INSTALL_DOCKER_COMMAND_FAILED"
+        ],
+        "journal": {
+          "stage": "migrated",
+          "candidate": "c29bc3a43f79c19a5984a9e486d52655d1339de3ae5e099c1a0c5993d6c81259",
+          "actions": [
+            {
+              "name": "import-images",
+              "status": "completed"
+            },
+            {
+              "name": "start-data-services",
+              "status": "completed"
+            },
+            {
+              "name": "initialize-locked-bucket",
+              "status": "completed"
+            },
+            {
+              "name": "apply-migration-ledger",
+              "status": "completed"
+            },
+            {
+              "name": "verify-health-and-ledger",
+              "status": "failed"
+            }
+          ]
+        },
+        "installer": [
+          {
+            "exitCode": 1,
+            "timedOut": false,
+            "stderrSha256": "4407db540f46813bd4c70eb5ffd1c8bcc2c2d925c08685bc13a423df37039509",
+            "categories": [
+              "unhealthy"
+            ],
+            "containers": [
+              {
+                "id": "35af0c15f946461ec4915ca209d079e146b423a5d3ca914ca019a29d460d606b",
+                "service": "mcp",
+                "status": "created",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": null,
+                "probes": [],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "categories": []
+                }
+              },
+              {
+                "id": "54487acc2f86ffb3b3c15ec20c5cfa138a918bca004dc14b171fe00f0f63cfb2",
+                "service": "worker",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "unhealthy",
+                "probes": [
+                  {
+                    "exitCode": -1,
+                    "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+                  },
+                  {
+                    "exitCode": -1,
+                    "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+                  },
+                  {
+                    "exitCode": -1,
+                    "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "3edcf4e0dcd9f073ccabd33b37779dca281a7d6f6d7beb2cf930fc655ad4aacd",
+                  "categories": []
+                }
+              },
+              {
+                "id": "4a11655d60fdc52121e55942ab9fcef14dea9296c7c827da0e9210184962ef08",
+                "service": "api",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "unhealthy",
+                "probes": [
+                  {
+                    "exitCode": -1,
+                    "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+                  },
+                  {
+                    "exitCode": -1,
+                    "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+                  },
+                  {
+                    "exitCode": -1,
+                    "outputSha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9"
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "908a1c766f3203ff51f98838f5b7ec60d89ca87c02994955e9437a9d7e21727c",
+                  "categories": []
+                }
+              },
+              {
+                "id": "d2d9e1625628fece0b6a73c3987756c595e2241664064f7e0f4eca8bfcf92917",
+                "service": "migrate",
+                "status": "exited",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": null,
+                "probes": [],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "29a8de89c712dd675776bbf237d661872805b11ab5ed62127b13784fc9fe7371",
+                  "categories": []
+                }
+              },
+              {
+                "id": "0e44a3d0f3f5020a9193cc5357d4b9e4e1af4f9078775beae30ed9fe9b9d1353",
+                "service": "minio-init",
+                "status": "exited",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": null,
+                "probes": [],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                  "categories": []
+                }
+              },
+              {
+                "id": "caa1e2c3817634fd4b97d88c53efc12079cfd350f8aa6c8ba9ac37117c2406e3",
+                "service": "postgres",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "f65a06d12c78be4ce11dc662c4ebf525a1da13786331065f0fe973c6df5ddd29"
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "e24ef717ab62064e97d023a21a22f7b64b6f9e7ef7a6e3a20a2c602847058a23",
+                  "categories": []
+                }
+              },
+              {
+                "id": "0b1236d266435c0b8a14d37479d92aeff24f4c38739b63e80ec003ab933d47af",
+                "service": "redis",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "9597e5d74f44f182ebb56b65a79c6b1b84829735af1ff583d44c3384d8a0a45e"
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "c58ed464599cdb8010e4da557793f929e7c7437e9eb953e9570834238d352e00",
+                  "categories": []
+                }
+              },
+              {
+                "id": "f6e9f1e449c9cbba00b1232fc5e7a767a3960986eecb4ae3be37f42bf82572e0",
+                "service": "minio",
+                "status": "running",
+                "exitCode": 0,
+                "oom": false,
+                "restarts": 0,
+                "health": "healthy",
+                "probes": [
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  },
+                  {
+                    "exitCode": 0,
+                    "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  }
+                ],
+                "log": {
+                  "exitCode": 0,
+                  "timedOut": false,
+                  "stderrSha256": "1dd432c5c54aef05be510a36971ff14d93112d5b08e931eebc52fbf35f6e2f6e",
+                  "categories": []
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation"
+      ],
+      "samples": [],
+      "hostUtc": 1791955568.3087826,
+      "hostElapsed": 1505.1871441170001
+    }
+  ],
+  "totalSeconds": 1506.1779071310002,
+  "probeOutputMatch": {
+    "literal": "Health check exceeded timeout (3s)",
+    "sha256": "47fc2b7c25c041f2a74f0656d25405a141ef89395367a347602d56e3493d44b9",
+    "matchesAllApiWorkerProbes": true
+  }
+}

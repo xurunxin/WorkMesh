@@ -1,0 +1,419 @@
+{
+  "说明": "CI561六组合真实终态。首次stage与健康已实际完成，不代后续业务／恢复／重启成功。只有AMD个人完整通过，其余失败，无取消。后续52项诊断不冒本轮真实47项版本。",
+  "capturedAt": "2026-10-16T00:44:41.333877+00:00",
+  "run": {
+    "id": 38815572580,
+    "head_sha": "461c753c9ddca19e83a97fc31f4381427603a9ac",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-10-15T22:13:06Z",
+    "updated_at": "2026-10-16T00:42:51Z"
+  },
+  "jobs": [
+    {
+      "id": 116699260486,
+      "name": "Classify changes and validate CI selection",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:08Z",
+      "completed_at": "2026-10-15T22:13:56Z"
+    },
+    {
+      "id": 116699583813,
+      "name": "Worker integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:21:35Z"
+    },
+    {
+      "id": 116699583859,
+      "name": "Complete disaster recovery",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:18:47Z"
+    },
+    {
+      "id": 116699583875,
+      "name": "API integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:14:00Z",
+      "completed_at": "2026-10-15T22:30:46Z"
+    },
+    {
+      "id": 116699583889,
+      "name": "Source gates",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:33:34Z"
+    },
+    {
+      "id": 116699583897,
+      "name": "Agent construction and protocol smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:14:54Z"
+    },
+    {
+      "id": 116699583902,
+      "name": "Database integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:17:06Z"
+    },
+    {
+      "id": 116699583926,
+      "name": "Connector native storage (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:16:16Z"
+    },
+    {
+      "id": 116699583940,
+      "name": "Connector full installation (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:14:00Z",
+      "completed_at": "2026-10-15T23:13:16Z"
+    },
+    {
+      "id": 116699583981,
+      "name": "Connector native storage (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:14:03Z",
+      "completed_at": "2026-10-15T22:16:31Z"
+    },
+    {
+      "id": 116699583983,
+      "name": "Connector native storage (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:14:00Z",
+      "completed_at": "2026-10-15T22:17:23Z"
+    },
+    {
+      "id": 116699584000,
+      "name": "Connector full installation (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:32:08Z"
+    },
+    {
+      "id": 116699584002,
+      "name": "Server candidate (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:14:00Z",
+      "completed_at": "2026-10-15T22:22:05Z"
+    },
+    {
+      "id": 116699584154,
+      "name": "Server candidate (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:13:58Z",
+      "completed_at": "2026-10-15T22:23:20Z"
+    },
+    {
+      "id": 116703256260,
+      "name": "Server full installation (arm64, team)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-15T22:23:24Z",
+      "completed_at": "2026-10-16T00:37:25Z"
+    },
+    {
+      "id": 116703256288,
+      "name": "Server full installation (amd64, personal)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-15T22:23:22Z",
+      "completed_at": "2026-10-15T23:33:00Z"
+    },
+    {
+      "id": 116703256367,
+      "name": "Server full installation (arm64, personal)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-15T22:23:24Z",
+      "completed_at": "2026-10-16T00:36:16Z"
+    },
+    {
+      "id": 116703256409,
+      "name": "Server full installation (amd64, team)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-15T22:23:22Z",
+      "completed_at": "2026-10-15T22:46:11Z"
+    },
+    {
+      "id": 116703256439,
+      "name": "Server full installation (amd64, enterprise)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-15T22:23:22Z",
+      "completed_at": "2026-10-15T23:09:43Z"
+    },
+    {
+      "id": 116703256610,
+      "name": "Server full installation (arm64, enterprise)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-15T22:23:24Z",
+      "completed_at": "2026-10-16T00:41:29Z"
+    },
+    {
+      "id": 116749221401,
+      "name": "Required CI",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T00:41:31Z",
+      "completed_at": "2026-10-16T00:42:50Z"
+    }
+  ],
+  "profiles": [
+    {
+      "arch": "amd64",
+      "profile": "personal",
+      "jobId": 116703256288,
+      "conclusion": "success",
+      "artifactId": 12013864413,
+      "artifactZipSha256": "ee2635a8550d50db295f43dd5eb5927ea104f6d9911c8497cc61ecbf55ab69d2",
+      "selectedZipSha256": "475af72b9cb9844aefd329e3be516d3f6ff4ed0a5faf1d8c97abd7040e49d1ce",
+      "index": "ci561-amd64-personal-full-guest-pass.json",
+      "stageCompleted": {
+        "tag": "ta01-install-action",
+        "sequence": 6,
+        "profile": "personal",
+        "action": "stage",
+        "state": "finished",
+        "elapsedMilliseconds": 315815
+      },
+      "healthReady": {
+        "tag": "ta01-progress",
+        "profile": "personal",
+        "stage": "health-ready"
+      },
+      "totalSeconds": 4101.905347949
+    },
+    {
+      "arch": "amd64",
+      "profile": "team",
+      "jobId": 116703256409,
+      "conclusion": "failure",
+      "artifactId": 12012302165,
+      "artifactZipSha256": "d3300e29ce780ccce204cc0ff0c10c8667de9091014cf9aec9ac3f0cd14e07b6",
+      "selectedZipSha256": "d0c716d70afd52b0c2bfc2bfea97ca84da0dba50c0ab27438e859e9970d4fd61",
+      "index": "ci561-amd64-team-first-failure.json",
+      "stageCompleted": {
+        "tag": "ta01-install-action",
+        "sequence": 6,
+        "profile": "team",
+        "action": "stage",
+        "state": "finished",
+        "elapsedMilliseconds": 278506
+      },
+      "healthReady": {
+        "tag": "ta01-progress",
+        "profile": "team",
+        "stage": "health-ready"
+      },
+      "totalSeconds": 1277.676688109
+    },
+    {
+      "arch": "amd64",
+      "profile": "enterprise",
+      "jobId": 116703256439,
+      "conclusion": "failure",
+      "artifactId": 12014020629,
+      "artifactZipSha256": "6b715f0e66d1fab3c36cebe6e1e7a2398d5bc91187f48db67598ebbdb6040032",
+      "selectedZipSha256": "18930414aff2b62b10a41b39d8aa15ff6dbb869b5acb6c11908e5923902c8a25",
+      "index": "ci561-amd64-enterprise-first-failure.json",
+      "stageCompleted": {
+        "tag": "ta01-install-action",
+        "sequence": 6,
+        "profile": "enterprise",
+        "action": "stage",
+        "state": "finished",
+        "elapsedMilliseconds": 308513
+      },
+      "healthReady": {
+        "tag": "ta01-progress",
+        "profile": "enterprise",
+        "stage": "health-ready"
+      },
+      "totalSeconds": 2705.891808957
+    },
+    {
+      "arch": "arm64",
+      "profile": "personal",
+      "jobId": 116703256367,
+      "conclusion": "failure",
+      "artifactId": 12016758210,
+      "artifactZipSha256": "a90053ad29f5c13e72268dead237747617f54cb745007d6982e781f026dde9b0",
+      "selectedZipSha256": "054d30145d63d384ace8b1d50882a014c86f8cfda11451919a2d085b17ab5e91",
+      "index": "ci561-arm64-personal-first-failure.json",
+      "stageCompleted": {
+        "tag": "ta01-install-action",
+        "sequence": 6,
+        "profile": "personal",
+        "action": "stage",
+        "state": "finished",
+        "elapsedMilliseconds": 1054771
+      },
+      "healthReady": {
+        "tag": "ta01-progress",
+        "profile": "personal",
+        "stage": "health-ready"
+      },
+      "totalSeconds": 7876.919209905
+    },
+    {
+      "arch": "arm64",
+      "profile": "team",
+      "jobId": 116703256260,
+      "conclusion": "failure",
+      "artifactId": 12016837950,
+      "artifactZipSha256": "fe6ead5eb1544b962991c5a9d282489842d275d8fceaacf52676d75015edc1a1",
+      "selectedZipSha256": "fe56f071dc93880bbc2ac285ce7a49eba83c50a4da1abdcad4ea1e9d2bfe2ec3",
+      "index": "ci561-arm64-team-first-failure.json",
+      "stageCompleted": {
+        "tag": "ta01-install-action",
+        "sequence": 6,
+        "profile": "team",
+        "action": "stage",
+        "state": "finished",
+        "elapsedMilliseconds": 1024382
+      },
+      "healthReady": {
+        "tag": "ta01-progress",
+        "profile": "team",
+        "stage": "health-ready"
+      },
+      "totalSeconds": 7960.359619292
+    },
+    {
+      "arch": "arm64",
+      "profile": "enterprise",
+      "jobId": 116703256610,
+      "conclusion": "failure",
+      "artifactId": 12017325834,
+      "artifactZipSha256": "f6910e4c1dacecfc723f74807ebbb6c9f2f176ba04f24064c3bb64887adde7f7",
+      "selectedZipSha256": "58f227e9673a85cd35373c1065428f91ce63b0f714572f82af2b7f7797046218",
+      "index": "ci561-arm64-enterprise-first-failure.json",
+      "stageCompleted": {
+        "tag": "ta01-install-action",
+        "sequence": 6,
+        "profile": "enterprise",
+        "action": "stage",
+        "state": "finished",
+        "elapsedMilliseconds": 1182175
+      },
+      "healthReady": {
+        "tag": "ta01-progress",
+        "profile": "enterprise",
+        "stage": "health-ready"
+      },
+      "totalSeconds": 8201.294492444002
+    }
+  ],
+  "selectedZipSha256": "6852fe103f10ed6913564712715b65f43af29f6a139c4729c0c37d63930712f4",
+  "members": {
+    "amd64/server-build/build.log": {
+      "bytes": 69028,
+      "sha256": "8274e1039900fc88f64b0f37a3a673a98dc0f90ab48d4b8a57515fb7ddf00536"
+    },
+    "amd64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "57ecc1f4b927ace72b3941aafa0f3f321641c422cfdc092132d08014dca1e5cd"
+    },
+    "amd64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "669a1625e7b96228bb34da3f83e1b13a7369b06636b383eb9299388eb4cd2b9a"
+    },
+    "amd64/server-build/manifest.json": {
+      "bytes": 12627,
+      "sha256": "bba4ade2c0a25641aa2d3380a05e97446122789c45f21e526c8f0060149f040d"
+    },
+    "amd64/server-build/native-privacy.log": {
+      "bytes": 146,
+      "sha256": "67d4a733a1b3318410ed1df4597a6c97b2fc5230105de48e3489fa60c2843e05"
+    },
+    "amd64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "cb8141fe69d3bd1c9136c6f4213b00f2557abd6cf4bcbc2179a22ea49ccdb3d6"
+    },
+    "amd64/server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "c398a07d4ed85b372e68ce918bbd4ebb44f4eb36d97530d61b116735f9dd517f"
+    },
+    "amd64/server-build/source-commit.txt": {
+      "bytes": 255,
+      "sha256": "c01bdec18815069f66ea1f81daf90f8305d991330a0631038873d8f0a3db34cc"
+    },
+    "amd64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "cb8141fe69d3bd1c9136c6f4213b00f2557abd6cf4bcbc2179a22ea49ccdb3d6"
+    },
+    "amd64/server-build/unit.log": {
+      "bytes": 3807,
+      "sha256": "eab3d8f485990c28ad9013be807abf072de9e7de5209d341111a6842d8444481"
+    },
+    "arm64/server-build/build.log": {
+      "bytes": 68834,
+      "sha256": "bc83699a5fc2758244e6f3a37d8a94822e2e229c81029d88048f585ea6cbc065"
+    },
+    "arm64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "57ecc1f4b927ace72b3941aafa0f3f321641c422cfdc092132d08014dca1e5cd"
+    },
+    "arm64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "b6576c3c3047d8b1be7f2c25bd158fba9af55ea54ce83373fc5b31b6b7ecd2d1"
+    },
+    "arm64/server-build/manifest.json": {
+      "bytes": 12409,
+      "sha256": "5961d87b90bb30161d0c99661064b51ff5d93360b34549efd428aebc51f7b94d"
+    },
+    "arm64/server-build/native-privacy.log": {
+      "bytes": 146,
+      "sha256": "ddcdce34a87ed6befdadd12779d99c1ffe889fc2d38fafdcc343c964143e1ed7"
+    },
+    "arm64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "cb8141fe69d3bd1c9136c6f4213b00f2557abd6cf4bcbc2179a22ea49ccdb3d6"
+    },
+    "arm64/server-build/source-commit.txt": {
+      "bytes": 255,
+      "sha256": "c01bdec18815069f66ea1f81daf90f8305d991330a0631038873d8f0a3db34cc"
+    },
+    "arm64/server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "40eec94ba5ad783b82dc9c5c5741ff751df3e67759b7899e612bdef8e122878a"
+    },
+    "arm64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "cb8141fe69d3bd1c9136c6f4213b00f2557abd6cf4bcbc2179a22ea49ccdb3d6"
+    },
+    "arm64/server-build/unit.log": {
+      "bytes": 3802,
+      "sha256": "c76349b349675e843861628278637dd8cf8e27162312e76ec5970baadc43411b"
+    },
+    "producer.json": {
+      "bytes": 2051,
+      "sha256": "6e8cc8ea01607d4b1fbc603fda591944578d165220297fdd7b972630e633ec20"
+    },
+    "terminal.json": {
+      "bytes": 10294,
+      "sha256": "09f8adecd30fd169d2a768f8dcca2c635a8b440ce7b111ed649a1c6d4bba5d10"
+    }
+  }
+}

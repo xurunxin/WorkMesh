@@ -1,0 +1,24 @@
+{
+  "说明": "只准备既有公开镜像的ELF函数范围索引；目标进程二进制SHA尚未匹配，不能作为崩溃位置／根因证明。ZIP不含Node二进制或完整符号索引，保源镜像身份、解析脚本、准确摘要和独有容器收尾。",
+  "targetBinaryMatch": "pending",
+  "binarySha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+  "binaryBytes": 124181928,
+  "symbols": 100811,
+  "indexBytes": 10669495,
+  "indexSha256": "0e360d773217d9bd4a55ea5bbe4ebdbc05326ec017d2cdcf78606a6f42302399",
+  "members": {
+    "results.json": {
+      "bytes": 951,
+      "sha256": "5d3eaddc221f8add1a6f9ea4696269ffedf79e1bb0e1cbc49728d94d73d4dc1d"
+    },
+    "public-node-symbols.py": {
+      "bytes": 6418,
+      "sha256": "a4298ba26ebe4027e2b92d3c8b4539a487aeeef9f7089fa5032caff16ff0a2a4"
+    },
+    "index-header.json": {
+      "bytes": 683,
+      "sha256": "33ea711f330ef37d6e638a9b42d0730bb678e952f8cc3dc455dcf81d44f3bf89"
+    }
+  },
+  "selectedZipSha256": "8544459bce43ea0873b651287e100ab76f28e8b1c80235ff672cb50166f15d8d"
+}

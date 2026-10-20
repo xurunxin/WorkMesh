@@ -1,0 +1,194 @@
+{
+  "observedAt": "2026-10-18T21:16:37.988118+00:00",
+  "source": "执行者本轮GitHub CLI/API读取投影，非Chief或独审结论",
+  "runId": 39160943688,
+  "runNumber": 568,
+  "headSha": "8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/xurunxin/WorkMesh/actions/runs/39160943688",
+  "jobs": [
+    {
+      "databaseId": 117773927559,
+      "name": "Classify changes and validate CI selection",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:55:23Z",
+      "completedAt": "2026-10-18T19:56:14Z"
+    },
+    {
+      "databaseId": 117774122608,
+      "name": "Database integration",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T19:59:24Z"
+    },
+    {
+      "databaseId": 117774122614,
+      "name": "Source gates",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T20:14:14Z"
+    },
+    {
+      "databaseId": 117774122623,
+      "name": "Complete disaster recovery",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T20:01:12Z"
+    },
+    {
+      "databaseId": 117774122636,
+      "name": "API integration",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T20:11:34Z"
+    },
+    {
+      "databaseId": 117774122648,
+      "name": "Connector native storage (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:22Z",
+      "completedAt": "2026-10-18T19:58:54Z"
+    },
+    {
+      "databaseId": 117774122710,
+      "name": "Worker integration",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T20:03:51Z"
+    },
+    {
+      "databaseId": 117774122720,
+      "name": "Connector full installation (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T20:10:12Z"
+    },
+    {
+      "databaseId": 117774122722,
+      "name": "Agent construction and protocol smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T19:57:22Z"
+    },
+    {
+      "databaseId": 117774122752,
+      "name": "Server candidate (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T20:05:31Z"
+    },
+    {
+      "databaseId": 117774122754,
+      "name": "Connector full installation (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:18Z",
+      "completedAt": "2026-10-18T20:57:05Z"
+    },
+    {
+      "databaseId": 117774122783,
+      "name": "Connector native storage (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T19:58:58Z"
+    },
+    {
+      "databaseId": 117774122807,
+      "name": "Connector native storage (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T19:56:16Z",
+      "completedAt": "2026-10-18T19:57:57Z"
+    },
+    {
+      "databaseId": 117776215698,
+      "name": "Server full installation (amd64, personal)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T20:05:33Z",
+      "completedAt": "2026-10-18T21:02:26Z"
+    },
+    {
+      "databaseId": 117776215723,
+      "name": "Server full installation (amd64, team)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T20:05:33Z",
+      "completedAt": "2026-10-18T21:12:45Z"
+    },
+    {
+      "databaseId": 117776215746,
+      "name": "Server full installation (amd64, enterprise)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T20:05:32Z",
+      "completedAt": "2026-10-18T21:13:37Z"
+    },
+    {
+      "databaseId": 117791572117,
+      "name": "Required CI",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-18T21:13:40Z",
+      "completedAt": "2026-10-18T21:14:35Z"
+    }
+  ],
+  "meaning": "准确8ff候选的CI终态；不关闭旧API/MCP139，不表示资料提交head已通过Required",
+  "guestProofs": [
+    {
+      "profile": "personal",
+      "status": "passed",
+      "seconds": 3325.114033363,
+      "rebootSeconds": 205.6322285189999,
+      "rawArtifactId": 12150314146,
+      "rawZipSha256": "6f2f8c58559df90fff5a374c89aeb9ad31779637bcbbc786294674e9416d8beb",
+      "inputsVerified": 22,
+      "scriptsVerified": 6
+    },
+    {
+      "profile": "team",
+      "status": "passed",
+      "seconds": 3924.996136515,
+      "rebootSeconds": 238.19616968499986,
+      "rawArtifactId": 12150981269,
+      "rawZipSha256": "f6623f09c129093743baeecfe6bcf9a98aebe60c8960ed92723cfb3b50ff5aaf",
+      "inputsVerified": 22,
+      "scriptsVerified": 6
+    },
+    {
+      "profile": "enterprise",
+      "status": "passed",
+      "seconds": 4010.720424533,
+      "rebootSeconds": 240.8321613119997,
+      "rawArtifactId": 12150527677,
+      "rawZipSha256": "a2fedad617a7a25b327f72830f043afde4f4aed30b91ad828ea57a22b50cf03d",
+      "inputsVerified": 22,
+      "scriptsVerified": 6
+    }
+  ],
+  "sourceGatesCheckout": {
+    "sourceGateCheckoutCommitCandidates": [
+      "f4c7ce06507c9b08dd79bd020a347254afb65da4"
+    ],
+    "rawLogBytes": 244343,
+    "rawLogSha256": "b88b91e9da3268614c956b4dc0f24e090fca1629fd3c1f2393b6866a02070547",
+    "extraction": "git log -1 --format=%H之后最多3行中的40位SHA，未保原始私有测试输出",
+    "tree": "a280ef4bad31f6065af72d1403d3060b8a254ca7",
+    "parents": [
+      "c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8",
+      "8ff1f8bf87b1593ff4833b1ab1358e71f8a23a8b"
+    ]
+  }
+}

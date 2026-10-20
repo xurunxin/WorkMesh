@@ -1,0 +1,45 @@
+{
+  "说明": "首轮根lint/typecheck通过，test的连接器管道提示断言失败，约10.37秒未观察到提示；原件没有子进程退出码或输出正文，根因未知。integration/conformance未执行，3容器3卷收尾。独立定向用例通过不关闭首败，原断言和预算未改，不是根test或完整支持通过。",
+  "sourceHeadAtStart": "26f6293992f01c5d192010b1e224c63d32c7e5c1",
+  "sourceHeadNow": "38a8923e267ff60b9b3aaf2df6c9f6f23a2e8428",
+  "unchangedRuntimeInputs": 686,
+  "members": {
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "c1ad10d2f7907905e6effc78e5bcedfe986d2352ad477aca46303566da243062"
+    },
+    "input-before.json": {
+      "bytes": 2878605,
+      "sha256": "22d5aefc891ca0916e7c5513b2b75eea2e26d5bd8e16eb2de2b6b2698aeed88b"
+    },
+    "lint.log": {
+      "bytes": 5640,
+      "sha256": "197daae70f6e98b545755526f22224a9b211c7c32ed264afb19812b388a3dbbc"
+    },
+    "results.json": {
+      "bytes": 3371,
+      "sha256": "e417d0f0ee526ca244301b6089c3bf7bbd811f06e6d9e5f4099a6baf0a63c183"
+    },
+    "source-code-recheck-after-failure.json": {
+      "bytes": 237,
+      "sha256": "c92c4c2b79893d054c926a48a53c4369b30ade063bcd116433477af47ff340a8"
+    },
+    "source-code-recheck-before-push.json": {
+      "bytes": 146,
+      "sha256": "7781cf0cae0e7a76fa768aa0b75621be79743c2d7c44729d9d04923ffba3251d"
+    },
+    "test.log": {
+      "bytes": 82903,
+      "sha256": "4404983034713f91c7c5d3c96000ec5ac2d0bb6a7dbd107875b4bd4aff3a2c8e"
+    },
+    "typecheck.log": {
+      "bytes": 6166,
+      "sha256": "4f7bba200ae8981da54bd5b75af8b2af2f00616fde52a2366aa602c0ca5ec8de"
+    }
+  },
+  "selectedZipSha256": "fc0be29358be05532c11a97ac0baf57134f3db680667098c3d0bfd6575ff78da"
+}

@@ -1,0 +1,81 @@
+{
+  "sourceHeadAtRunStart": "4a9df2ab2b30c2d88de972646ff7fb8009d32c28",
+  "sourceBinding": "recovery opt-in 使用当前工作树中不变的 apps/packages/SQL；不代安装器完整候选验收。",
+  "archiveSha256": "05d27f076149cc9d911210a35492543c141f35959def68382e9554a630470bfe",
+  "members": {
+    "results.json": {
+      "bytes": 3047,
+      "sha256": "4111fe924642325b602737a36e1cd1601e29ea941018ae560ba30dc1dbc45ff6"
+    },
+    "artifact-bucket.log": {
+      "bytes": 28,
+      "sha256": "c575c46e303f80b490fc5a1bf11f70b5ffbf630ad8bb849ac423bd52e223f6b8"
+    },
+    "examples.log": {
+      "bytes": 885,
+      "sha256": "b3ac9ce6df89576d752e85682f8d0f3dbedfdf69659e058d47897d5a2ceff37a"
+    },
+    "test-integration-recovery.log": {
+      "bytes": 864,
+      "sha256": "4138d20ffea0b5b6b8d7b84a0bb672c3dd5d38b012c45d27929f65eab3cdeefe"
+    }
+  },
+  "checks": [
+    {
+      "label": "examples",
+      "command": "pnpm -C packages/conformance exec tsx examples/verify-integration.ts",
+      "startedAt": "2026-10-14T05:58:38.677Z",
+      "endedAt": "2026-10-14T05:59:01.857Z",
+      "exitCode": 0
+    },
+    {
+      "label": "artifact-bucket",
+      "command": "pnpm -C packages/artifact-storage exec node --input-type=module -e import {S3Client,CreateBucketCommand,HeadBucketCommand} from \"@aws-sdk/client-s3\"; const c=new S3Client({endpoint:process.env.S3_ENDPOINT,region:process.env.S3_REGION,forcePathStyle:true,credentials:{accessKeyId:process.env.S3_ACCESS_KEY_ID,secretAccessKey:process.env.S3_SECRET_ACCESS_KEY}}); await c.send(new CreateBucketCommand({Bucket:process.env.S3_BUCKET})); await c.send(new HeadBucketCommand({Bucket:process.env.S3_BUCKET})); c.destroy(); console.log(\"owned artifact bucket ready\");",
+      "startedAt": "2026-10-14T05:59:04.347Z",
+      "endedAt": "2026-10-14T05:59:05.622Z",
+      "exitCode": 0
+    },
+    {
+      "label": "test-integration-recovery",
+      "command": "pnpm test:integration:recovery",
+      "startedAt": "2026-10-14T05:59:06.275Z",
+      "endedAt": "2026-10-14T05:59:24.281Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": [
+    {
+      "kind": "container",
+      "id": "c35008a199f06e3af71eab698a8da27f26e1017061d4ab4b2fbf03ede6d8b40d",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "e3a99de9ca728b4a467eb6acd4202921c506a38a01a169ca027f754793471c78",
+      "absent": true
+    },
+    {
+      "kind": "container",
+      "id": "4d59d77a114b706da329586e3bce816eba540de13f1f2eedb3f5c79470f3c357",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-ff66cc8b-b343-4526-90d6-1cb37247311f-pg-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-ff66cc8b-b343-4526-90d6-1cb37247311f-redis-data",
+      "absent": true
+    },
+    {
+      "kind": "volume",
+      "name": "workmesh-docs-ff66cc8b-b343-4526-90d6-1cb37247311f-s3-data",
+      "absent": true
+    }
+  ],
+  "node": "v22.19.0",
+  "pnpm": "9.15.4",
+  "platform": "win32"
+}

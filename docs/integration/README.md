@@ -33,3 +33,7 @@ OpenAPI、共享 Zod 合同和已注册路由决定参数。历史 ADR 的页面
 接口或功能变更须在同次交付中更新相关说明、配置、示例和参考。执行步骤见[同步维护规则](../documentation-maintenance.md)，固定写作技能见[来源与使用方式](../skills/zh-tech-writing/README.md)。本版源码、命令与实际验证见[校验记录](../reviews/api-mcp-docs/verification.md)。
 
 安装与升级入口：[连接器离线安装](installation.md)。当前产品验证状态见该页引用的交付记录。
+
+## 服务端基础交付候选
+
+版本化服务端包的配置检查、安装、升级、程序回退和独立空目标恢复见 [服务端安装说明](server-installation.md)。用户2026-10-19将本轮服务端收敛为Linux amd64（x86_64），ARM服务端延期，仍待三画像最终候选验收及139问题闭合。连接器既有Linux amd64／arm64能力沿原安装说明保留；本轮不对外发版。

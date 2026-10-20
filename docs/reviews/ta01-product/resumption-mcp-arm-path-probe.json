@@ -1,0 +1,685 @@
+{
+  "说明": "CI565准确ARM MCP角色的单次有界组件路径测量。首次QEMU缺ROM在guest启动前退出1、零请求；按CI准确依赖修复后一次补测，Node/QEMU均0。x86宿主跨架构TCG，不是原生ARM/TCG配对，不能外推CI根因或关闭旧139。",
+  "candidateSource": {
+    "commit": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+    "tree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae"
+  },
+  "candidateArtifact": {
+    "id": 12025743289,
+    "name": "server-distribution-arm64-38852474436-1",
+    "digest": "sha256:fd2a3b5a924fe5165be25de19068bb88efb798f0dccad00ea07a38b1a983725e",
+    "expired": false,
+    "size_in_bytes": 416166247
+  },
+  "trustedManifestSha256": "24c11b5f274007c71e5907b1bd7934bcbda3ddd2fc0dc812f79765b81fe3861d",
+  "image": {
+    "reference": "workmesh-server/mcp:candidate-c322564ed9f6-arm64",
+    "id": "sha256:34665e3aeadd96dfe6f9eac67d661ad792015a6d4cb03e9d44483202fca64702",
+    "revision": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+    "archiveId": "sha256:192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660"
+  },
+  "actualImageId": "sha256:192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660",
+  "extraction": {
+    "source": {
+      "commit": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+      "tree": "533b47b03da5a1c68083eb470b069b26f2e3c4ae"
+    },
+    "sourceArtifact": {
+      "id": 12025743289,
+      "name": "server-distribution-arm64-38852474436-1",
+      "digest": "sha256:fd2a3b5a924fe5165be25de19068bb88efb798f0dccad00ea07a38b1a983725e",
+      "expired": false,
+      "size_in_bytes": 416166247
+    },
+    "trustedManifestSha256": "24c11b5f274007c71e5907b1bd7934bcbda3ddd2fc0dc812f79765b81fe3861d",
+    "image": {
+      "reference": "workmesh-server/mcp:candidate-c322564ed9f6-arm64",
+      "id": "sha256:34665e3aeadd96dfe6f9eac67d661ad792015a6d4cb03e9d44483202fca64702",
+      "revision": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+      "archiveId": "sha256:192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660"
+    },
+    "ownedTag": "workmesh-ta01-diagnostic/mcp:ci565-ac0-arm-owned",
+    "originalIndex": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.oci.image.index.v1+json",
+      "manifests": [
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:b1ee264bba9f666a40a11d79041b6df44ecb110eff929c8eaa4fcc83a83195f6",
+          "size": 1769,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/api:candidate-c322564ed9f6-arm64",
+            "org.opencontainers.image.ref.name": "candidate-c322564ed9f6-arm64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:a8586798814458ebc12038e18112445246e0a5fb783852bd6b225e2d8e12c6ff",
+          "size": 1769,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/worker:candidate-c322564ed9f6-arm64",
+            "org.opencontainers.image.ref.name": "candidate-c322564ed9f6-arm64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660",
+          "size": 1769,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/mcp:candidate-c322564ed9f6-arm64",
+            "org.opencontainers.image.ref.name": "candidate-c322564ed9f6-arm64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:ca2d50d887fb72fd5ee9de9d088a70a99b8418b4b2a59bc463430df1180248f7",
+          "size": 2373,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/workmesh-server/lite:candidate-c322564ed9f6-arm64",
+            "org.opencontainers.image.ref.name": "candidate-c322564ed9f6-arm64"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:8b581113febdbab01eb2e54800d7c408ba59f973c15fe3b4319cb895ea93d792",
+          "size": 1912,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/library/postgres:16.9-alpine",
+            "org.opencontainers.image.ref.name": "16.9-alpine"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:714026e5432e02afdf3d5af4672b880896b00e41d243d1bd22e223a0b7807200",
+          "size": 1461,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/library/redis:7.4.5-alpine",
+            "org.opencontainers.image.ref.name": "7.4.5-alpine"
+          }
+        },
+        {
+          "mediaType": "application/vnd.oci.image.manifest.v1+json",
+          "digest": "sha256:6d0074e477821ac030882c0df2f5ec8028a5bbb8101eb2dee629e21e48e51dc1",
+          "size": 1314,
+          "annotations": {
+            "io.containerd.image.name": "docker.io/rustfs/rustfs:1.0.0",
+            "org.opencontainers.image.ref.name": "1.0.0"
+          }
+        }
+      ]
+    },
+    "selectedManifest": {
+      "schemaVersion": 2,
+      "mediaType": "application/vnd.oci.image.manifest.v1+json",
+      "config": {
+        "mediaType": "application/vnd.oci.image.config.v1+json",
+        "digest": "sha256:34665e3aeadd96dfe6f9eac67d661ad792015a6d4cb03e9d44483202fca64702",
+        "size": 10677
+      },
+      "layers": [
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:31d48dc5ebd795176e7747f30d646d971d64a6c3e467601c59fb733ef6870fd6",
+          "size": 8451584
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:47cfae22d72d5a43d3bd94c24687f0bac400094915e615c20645f3423d254845",
+          "size": 145870848
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:a19ade72609e72b24af41392bfbfeb9e95b810ee213862af03478e9ce0a1ba0d",
+          "size": 5389312
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:873d0dfbe1dbc71dad3e8af1a7509c14fb3da4395c3fb1797581139786a5805d",
+          "size": 3584
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:58338a1108b3948e977cfa7939403fe6af0e0f7e0214ff10a71632237adcbd6a",
+          "size": 12977152
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:5d9d518bc0ead8e9c1147f4965c6794de929a4966df3d4dffce4bc40f614ee0e",
+          "size": 1536
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:87b322331d776982ba8d7b90ab8f43201d5dde59d851a4a5d075e9a5a7814e33",
+          "size": 19640320
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:3404df2ddceea048ade212a649ac38baa296cbd9c6a0f502e937db5178815415",
+          "size": 10240
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:756a2a97ba1fcadc94915245a6333e2e69c8e7da132d46b4119f6a5175590ed1",
+          "size": 6144
+        },
+        {
+          "mediaType": "application/vnd.oci.image.layer.v1.tar",
+          "digest": "sha256:e645e6146ba29976353b8007355610a623cda576354b72d7e3091bab3de9cc2f",
+          "size": 4096
+        }
+      ]
+    },
+    "selectedConfig": {
+      "architecture": "arm64",
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:31d48dc5ebd795176e7747f30d646d971d64a6c3e467601c59fb733ef6870fd6",
+          "sha256:47cfae22d72d5a43d3bd94c24687f0bac400094915e615c20645f3423d254845",
+          "sha256:a19ade72609e72b24af41392bfbfeb9e95b810ee213862af03478e9ce0a1ba0d",
+          "sha256:873d0dfbe1dbc71dad3e8af1a7509c14fb3da4395c3fb1797581139786a5805d",
+          "sha256:58338a1108b3948e977cfa7939403fe6af0e0f7e0214ff10a71632237adcbd6a",
+          "sha256:5d9d518bc0ead8e9c1147f4965c6794de929a4966df3d4dffce4bc40f614ee0e",
+          "sha256:87b322331d776982ba8d7b90ab8f43201d5dde59d851a4a5d075e9a5a7814e33",
+          "sha256:3404df2ddceea048ade212a649ac38baa296cbd9c6a0f502e937db5178815415",
+          "sha256:756a2a97ba1fcadc94915245a6333e2e69c8e7da132d46b4119f6a5175590ed1",
+          "sha256:e645e6146ba29976353b8007355610a623cda576354b72d7e3091bab3de9cc2f"
+        ]
+      }
+    },
+    "selectedBlobs": {
+      "blobs/sha256/192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660": {
+        "bytes": 1769,
+        "sha256": "192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660"
+      },
+      "blobs/sha256/31d48dc5ebd795176e7747f30d646d971d64a6c3e467601c59fb733ef6870fd6": {
+        "bytes": 8451584,
+        "sha256": "31d48dc5ebd795176e7747f30d646d971d64a6c3e467601c59fb733ef6870fd6"
+      },
+      "blobs/sha256/3404df2ddceea048ade212a649ac38baa296cbd9c6a0f502e937db5178815415": {
+        "bytes": 10240,
+        "sha256": "3404df2ddceea048ade212a649ac38baa296cbd9c6a0f502e937db5178815415"
+      },
+      "blobs/sha256/34665e3aeadd96dfe6f9eac67d661ad792015a6d4cb03e9d44483202fca64702": {
+        "bytes": 10677,
+        "sha256": "34665e3aeadd96dfe6f9eac67d661ad792015a6d4cb03e9d44483202fca64702"
+      },
+      "blobs/sha256/47cfae22d72d5a43d3bd94c24687f0bac400094915e615c20645f3423d254845": {
+        "bytes": 145870848,
+        "sha256": "47cfae22d72d5a43d3bd94c24687f0bac400094915e615c20645f3423d254845"
+      },
+      "blobs/sha256/58338a1108b3948e977cfa7939403fe6af0e0f7e0214ff10a71632237adcbd6a": {
+        "bytes": 12977152,
+        "sha256": "58338a1108b3948e977cfa7939403fe6af0e0f7e0214ff10a71632237adcbd6a"
+      },
+      "blobs/sha256/5d9d518bc0ead8e9c1147f4965c6794de929a4966df3d4dffce4bc40f614ee0e": {
+        "bytes": 1536,
+        "sha256": "5d9d518bc0ead8e9c1147f4965c6794de929a4966df3d4dffce4bc40f614ee0e"
+      },
+      "blobs/sha256/756a2a97ba1fcadc94915245a6333e2e69c8e7da132d46b4119f6a5175590ed1": {
+        "bytes": 6144,
+        "sha256": "756a2a97ba1fcadc94915245a6333e2e69c8e7da132d46b4119f6a5175590ed1"
+      },
+      "blobs/sha256/873d0dfbe1dbc71dad3e8af1a7509c14fb3da4395c3fb1797581139786a5805d": {
+        "bytes": 3584,
+        "sha256": "873d0dfbe1dbc71dad3e8af1a7509c14fb3da4395c3fb1797581139786a5805d"
+      },
+      "blobs/sha256/87b322331d776982ba8d7b90ab8f43201d5dde59d851a4a5d075e9a5a7814e33": {
+        "bytes": 19640320,
+        "sha256": "87b322331d776982ba8d7b90ab8f43201d5dde59d851a4a5d075e9a5a7814e33"
+      },
+      "blobs/sha256/a19ade72609e72b24af41392bfbfeb9e95b810ee213862af03478e9ce0a1ba0d": {
+        "bytes": 5389312,
+        "sha256": "a19ade72609e72b24af41392bfbfeb9e95b810ee213862af03478e9ce0a1ba0d"
+      },
+      "blobs/sha256/e645e6146ba29976353b8007355610a623cda576354b72d7e3091bab3de9cc2f": {
+        "bytes": 4096,
+        "sha256": "e645e6146ba29976353b8007355610a623cda576354b72d7e3091bab3de9cc2f"
+      }
+    },
+    "allApplicationChunksVerifiedTwice": true,
+    "originalIndexSha256": "4985bd74f0a97a636fbdde07fe270edbd91c18131171c81dffd154764c8b2043",
+    "derivedIndexSha256": "a3449fc39dbe23841cd1a0ca7d112d5b9e92f3a2a35c674bc8ae2235328c05cd",
+    "subsetBytes": 192378880
+  },
+  "firstAttempt": {
+    "qemuExitCode": 1,
+    "seconds": 0.7938583000213839,
+    "receipts": 0,
+    "guestBooted": false,
+    "reason": "failed to find romfile efi-virtio.rom",
+    "resultSha256": "2347170eaf736386e6755835de181a434f32b89075a5fa043b7382a6a4e1d156"
+  },
+  "resources": {
+    "image": {
+      "owner": "4008149f-8a87-4e94-b593-7bddc912185d",
+      "image": {
+        "reference": "workmesh-server/mcp:candidate-c322564ed9f6-arm64",
+        "id": "sha256:34665e3aeadd96dfe6f9eac67d661ad792015a6d4cb03e9d44483202fca64702",
+        "revision": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+        "archiveId": "sha256:192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660"
+      },
+      "containers": [
+        {
+          "id": "562ca9e9d69f7d97ae0046f59aa7f80512c9e2a17b9a82805f098b4ec13855fa",
+          "purpose": "export exact public ARM MCP rootfs, never started",
+          "removedAndAbsent": true
+        }
+      ],
+      "preexisting": {
+        "workmesh-ta01-diagnostic/mcp:ci565-ac0-arm-owned": false,
+        "sha256:34665e3aeadd96dfe6f9eac67d661ad792015a6d4cb03e9d44483202fca64702": false,
+        "sha256:192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660": false
+      },
+      "loadExitCode": 0,
+      "actualImageId": "sha256:192de7b9974eff4e355c354d849d125632592b94a22d17c4482dc40794482660",
+      "rootfs": {
+        "bytes": 54416367,
+        "sha256": "87c2d518dc4101b51cca10ecceba69a613adca7773ac0dc5f66591411cba9b59",
+        "rawBytes": 164425216,
+        "rawSha256": "c3c837ebf2c2fd591a75e959f5c8a4f44ed26fbec5fc4a182206fa8017557ed9"
+      },
+      "nodeSha256": "da2abd2c48f19561e35478d51583b068ab410f888a09f363bd131ab611392cb7",
+      "ownedImageTagRemoved": true,
+      "sharedImagesRemoved": false,
+      "removedLargeInputs": [
+        {
+          "path": ".tmp/ta01-resumption/mcp-arm-565-micro/candidate.zip",
+          "bytes": 416166247,
+          "sha256": "fd2a3b5a924fe5165be25de19068bb88efb798f0dccad00ea07a38b1a983725e"
+        },
+        {
+          "path": ".tmp/ta01-resumption/mcp-arm-565-micro/mcp-only.tar",
+          "bytes": 192378880,
+          "sha256": "4345ed95670b268b7977b5f27318ca9697b33dc1d809cd747463f9976178e613"
+        },
+        {
+          "path": ".tmp/ta01-resumption/mcp-arm-565-micro/ci-arm-job-api.log",
+          "bytes": 81596,
+          "sha256": "f76a625c9fa4c6acf655868fe225c11925876455f38933e5230c66d5126ad303"
+        }
+      ]
+    },
+    "tcg": {
+      "owner": "3da2d65c-a8eb-4612-85c6-a1f5793c99ff",
+      "imageId": "sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55",
+      "repoDigests": [
+        "ubuntu@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55"
+      ],
+      "containers": [
+        {
+          "id": "ceff2be5c3befff2f73c9e965b63d98dec49051fe7e7bf13e880a98b8b4a91e6",
+          "purpose": "qemu provisioning; no guest started",
+          "exitCode": 137,
+          "oom": false,
+          "activeQemuCountBeforeStop": 0,
+          "removedAndAbsent": true
+        }
+      ],
+      "scope": "仅同锁定QEMU版本的小组件TCG对照，非完整产品验收；无宿主挂载、端口、Docker socket或真实凭据。",
+      "osExitCode": 0,
+      "apt-updateExitCode": 0,
+      "qemu-policyExitCode": 0,
+      "exactQemuPackageAvailable": true,
+      "firmware-policyExitCode": 0,
+      "apt-installExitCode": 0,
+      "inputs": {
+        "node-rootfs.tar.gz": {
+          "bytes": 54416367,
+          "sha256": "87c2d518dc4101b51cca10ecceba69a613adca7773ac0dc5f66591411cba9b59"
+        },
+        "node-sha256.txt": {
+          "bytes": 66,
+          "sha256": "a6ab60c78bda1977c34efc53b53853cc5fefcf5d597f3862bf84ec8f9c413b68"
+        },
+        "ci-inputs.json": {
+          "bytes": 1345,
+          "sha256": "b52b5e1cda913f8ad5046230c357540cfdd3b83a0ad3578fe5398e5b425fa2f7"
+        },
+        "measurement.mjs": {
+          "bytes": 10186,
+          "sha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa"
+        },
+        "component-tcg-guest.py": {
+          "bytes": 5868,
+          "sha256": "21680e9f37b2651399907ac390cf69000e869e0197e88d0e9f8737751cb31fc0"
+        },
+        "run-component-tcg.py": {
+          "bytes": 6652,
+          "sha256": "4040f6d6288dc708cf332fbfc6216894a2d83d6f91992516d555b87bbd7645b5"
+        }
+      },
+      "firstAttempt": {
+        "qemuExitCode": 1,
+        "seconds": 0.7938583000213839,
+        "receipts": 0,
+        "guestBooted": false,
+        "reason": "failed to find romfile efi-virtio.rom",
+        "resultSha256": "2347170eaf736386e6755835de181a434f32b89075a5fa043b7382a6a4e1d156"
+      },
+      "romInstallExitCode": 0,
+      "publicGuestImageCache": {
+        "path": ".tmp/ta01-resumption/local-guest-image-cache/arm64-1d6bffe6.img",
+        "bytes": 620224512,
+        "sha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55"
+      },
+      "privateGuestOverlaysRetained": false
+    }
+  },
+  "metadata": {
+    "qemuSha256": "b511b60cc31479b71dfdd589e6c981ae37b20ef0e75adc5a57bb0d6737e9b30c",
+    "hostArchitecture": "x86_64",
+    "kernel": "7.0.14-linuxkit",
+    "activeQemuCount": 0
+  },
+  "controls": {
+    "NanoCpus": 4000000000,
+    "Memory": 4294967296,
+    "MemorySwap": 4294967296,
+    "Privileged": false,
+    "Devices": [],
+    "Binds": null,
+    "PortBindings": {},
+    "SecurityOpt": [
+      "no-new-privileges:true"
+    ],
+    "PidsLimit": 512
+  },
+  "sourceCiInputs": {
+    "imageSha256": "1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55",
+    "imageUrl": "https://cloud-images.ubuntu.com/noble/20260926/noble-server-cloudimg-arm64.img",
+    "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "firmwareSha256": "545e2eda871a00dba51c0df48a34829fe3b0de6ec10ea760c75f1fc1c6a29dc5",
+    "qemuCommand": [
+      "qemu-system-aarch64",
+      "-accel",
+      "tcg",
+      "-m",
+      "4096",
+      "-smp",
+      "4",
+      "-display",
+      "none",
+      "-serial",
+      "file:/home/runner/work/WorkMesh/WorkMesh/.tmp/server-guest/serial.log",
+      "-qmp",
+      "unix:/home/runner/work/WorkMesh/WorkMesh/.tmp/server-guest/qmp.sock,server=on,wait=off",
+      "-netdev",
+      "user,id=net0",
+      "-device",
+      "virtio-net-pci,netdev=net0",
+      "-machine",
+      "virt",
+      "-cpu",
+      "max",
+      "-drive",
+      "if=pflash,format=raw,readonly=on,file=/usr/share/AAVMF/AAVMF_CODE.fd",
+      "-drive",
+      "if=pflash,format=raw,file=/home/runner/work/WorkMesh/WorkMesh/.tmp/server-guest/vars.fd",
+      "-drive",
+      "if=virtio,format=qcow2,file=/home/runner/work/WorkMesh/WorkMesh/.tmp/server-guest/root.qcow2",
+      "-drive",
+      "if=virtio,format=raw,readonly=on,file=/home/runner/work/WorkMesh/WorkMesh/.tmp/server-guest/seed.iso"
+    ],
+    "guestVcpus": 4,
+    "guestRamMiB": 4096
+  },
+  "sourceCiRomDependency": {
+    "run": 38852474436,
+    "job": 116819727487,
+    "sourceHead": "ac0a4d21deba15a23c8c7b40f671b59c41f30f37",
+    "rawLogSha256": "f76a625c9fa4c6acf655868fe225c11925876455f38933e5230c66d5126ad303",
+    "selectedLines": [
+      "2026-10-16T05:01:07.0820892Z   gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-x ipxe-qemu",
+      "2026-10-16T05:01:07.0821456Z   ipxe-qemu-256k-compat-efi-roms libaa1 libasyncns0 libavc1394-0",
+      "2026-10-16T05:01:07.1210014Z   gstreamer1.0-x ipxe-qemu ipxe-qemu-256k-compat-efi-roms libaa1 libasyncns0",
+      "2026-10-16T05:01:09.2437575Z Get:42 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 ipxe-qemu all 1.21.1+git-20220113.fbbdc3926-0ubuntu2 [1565 kB]",
+      "2026-10-16T05:01:09.2825473Z Get:43 http://ports.ubuntu.com/ubuntu-ports noble/main arm64 ipxe-qemu-256k-compat-efi-roms all 1.0.0+git-20150424.a25a16d-0ubuntu5 [548 kB]",
+      "2026-10-16T05:01:15.1993020Z Selecting previously unselected package ipxe-qemu.",
+      "2026-10-16T05:01:15.2172843Z Preparing to unpack .../41-ipxe-qemu_1.21.1+git-20220113.fbbdc3926-0ubuntu2_all.deb ...",
+      "2026-10-16T05:01:15.2181174Z Unpacking ipxe-qemu (1.21.1+git-20220113.fbbdc3926-0ubuntu2) ...",
+      "2026-10-16T05:01:15.2487738Z Selecting previously unselected package ipxe-qemu-256k-compat-efi-roms.",
+      "2026-10-16T05:01:15.2666682Z Preparing to unpack .../42-ipxe-qemu-256k-compat-efi-roms_1.0.0+git-20150424.a25a16d-0ubuntu5_all.deb ...",
+      "2026-10-16T05:01:15.2674720Z Unpacking ipxe-qemu-256k-compat-efi-roms (1.0.0+git-20150424.a25a16d-0ubuntu5) ...",
+      "2026-10-16T05:01:19.5505522Z Setting up ipxe-qemu (1.21.1+git-20220113.fbbdc3926-0ubuntu2) ...",
+      "2026-10-16T05:01:19.5603283Z Setting up ipxe-qemu-256k-compat-efi-roms (1.0.0+git-20150424.a25a16d-0ubuntu5) ..."
+    ],
+    "priorCliLogRead": {
+      "exitCode": 1,
+      "stdoutBytes": 0,
+      "stderrNotRetained": true
+    }
+  },
+  "measurements": {
+    "importMilliseconds": 21542.823200000003,
+    "nodeSeconds": 81.93309199999999,
+    "guestSeconds": 1028.606866999995,
+    "qualifiedBytes": 309710,
+    "qualifiedOperations": 287,
+    "sdkConstructorMedianMs": 15.373447999998461,
+    "workmeshConstructorMedianMs": 385.9127040000021,
+    "requests": {
+      "initialize": {
+        "count": 12,
+        "medianMs": 431.0372479999969,
+        "maxMs": 3148.2463040000002,
+        "fixtureCalls": [],
+        "qualifiedMedianMs": null
+      },
+      "tools/call": {
+        "count": 12,
+        "medianMs": 1844.5710960000033,
+        "maxMs": 4089.2402079999956,
+        "fixtureCalls": [
+          "qualified",
+          "work-item"
+        ],
+        "qualifiedMedianMs": 865.9038960000034
+      }
+    }
+  },
+  "limits": [
+    "无原生ARM对照；本机宿主x86_64，CI宿主实际ISA及负载不能由标签或本地结果替代。",
+    "固定guest/Node/固件与QEMU版本；本地QEMU二进制SHA不等于已核CI二进制SHA，ROM只核CI包版本和本地摘要。",
+    "合成work:read身份及309710字节资格，不是实际API/PG/Redis/S3/代理或完整VM服务负载，真实资格响应大小仍未知。",
+    "同进程HTTP客户端与fixture；30秒计时不等独立安装器抢占期限，CPU含fixture；不延长原产品期限。",
+    "组件有限未139/30秒不排除原故障；首次ROM错误不是产品首败，未禁用ROM、AppArmor或修改设备/镜像以补成功。",
+    "本轮额外本机ARM小测的实际VM耗时单独披露，不能声称合计检查开销不变；未手动追加整轮或新的CI诊断作业。"
+  ],
+  "selectedZipSha256": "243656e4f18362238c44dd633660058442bc4158c3b4a54e47bb96331cdd1dc4",
+  "members": {
+    "artifact.json": {
+      "bytes": 219,
+      "sha256": "136fe9ef87157b8fa264f43802b42bf176c302dc5861633adf9d59906dc3323c"
+    },
+    "ci-inputs.json": {
+      "bytes": 1345,
+      "sha256": "b52b5e1cda913f8ad5046230c357540cfdd3b83a0ad3578fe5398e5b425fa2f7"
+    },
+    "ci-rom-dependency.json": {
+      "bytes": 1913,
+      "sha256": "e5cd50e178475a02e0bb1cc3b1edc1f4451b3e0796c37e017ea5446ebb10f020"
+    },
+    "collect-close.py": {
+      "bytes": 3224,
+      "sha256": "00954078866ede50f5e31dd9e7a538c20c85340447a56dcc2fa39866aa5d2332"
+    },
+    "continue-after-rom-path.py": {
+      "bytes": 1325,
+      "sha256": "6a33ea7c47ba4f27aa3f11aea89f0fe4ac6cff038be074fbceacf1a0432cd928"
+    },
+    "export-role.py": {
+      "bytes": 2979,
+      "sha256": "772f374a3811290332ab52325207c2bb9eb91086e6203ec18c114e7bdb0e67c3"
+    },
+    "extraction.json": {
+      "bytes": 9935,
+      "sha256": "be3b7742bc1d54f19b882e15a9866b2bfa2bb25feee86bcabe7a2559394c1ea7"
+    },
+    "image-resources.json": {
+      "bytes": 2004,
+      "sha256": "7e87aaeb55c110323a29e8ad9708b2f9d26eb7c5969e4e390b1964b410a05aff"
+    },
+    "install-qemu.py": {
+      "bytes": 1450,
+      "sha256": "ee3ec89d332e0d91411f6a07fcf6eb958d89b3936e2aa0694b67f07b215071e2"
+    },
+    "manifest.json": {
+      "bytes": 12409,
+      "sha256": "24c11b5f274007c71e5907b1bd7934bcbda3ddd2fc0dc812f79765b81fe3861d"
+    },
+    "node-sha256.txt": {
+      "bytes": 66,
+      "sha256": "a6ab60c78bda1977c34efc53b53853cc5fefcf5d597f3862bf84ec8f9c413b68"
+    },
+    "provision.py": {
+      "bytes": 2348,
+      "sha256": "25f757d3a2c38dc3b49b3b8c75089175f6aa152fc9b65008bb6e166ea20c26bf"
+    },
+    "repair-rom-run.py": {
+      "bytes": 2664,
+      "sha256": "e32a282bf31e8befdd548c5ec4d8f46c733f6d9689220de7e5aa8285037a7fb3"
+    },
+    "run-tcg.py": {
+      "bytes": 1912,
+      "sha256": "88106681102b096269021c74b1983d56a3c58f47663b2648845acab9ce77d46a"
+    },
+    "select-mcp.py": {
+      "bytes": 3942,
+      "sha256": "e0d1e39d6d4cf3953d88dc132133ed3e88ec42fa91a9c2e9e8aaea0db15b8f67"
+    },
+    "tcg/apt-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "tcg/apt-install.stdout": {
+      "bytes": 28907,
+      "sha256": "c4c6bc617d845ac902fc5e31f9afef16ab4870ee715e48959c598c79304e6a3d"
+    },
+    "tcg/apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/apt-update.stdout": {
+      "bytes": 1635,
+      "sha256": "078a35ddbdc6c91fe24b3b41564a60f79e8bbef292897cb1a220103836bc29d7"
+    },
+    "tcg/firmware-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/firmware-policy.stdout": {
+      "bytes": 367,
+      "sha256": "fc348570ca464cf29e44d70b0fa14f4c3b1f9d9fccff6c0799dfc363942b326a"
+    },
+    "tcg/firmware-sha256.stdout": {
+      "bytes": 97,
+      "sha256": "8745d56657c5a07a8f78546b48de89ca97c155e5bd3460fe1dbe1685197e7789"
+    },
+    "tcg/first-missing-rom-qemu-stderr.log": {
+      "bytes": 97,
+      "sha256": "6ac906552a976f461111d06c364b46c8b563677918dfdd27bf019bc9c8d6903a"
+    },
+    "tcg/first-missing-rom-runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/first-missing-rom-runner.stdout": {
+      "bytes": 99,
+      "sha256": "8b403dced909e82e3cba6559e378d62cef9cfbf1cd8f1d76b24fd063dd939c36"
+    },
+    "tcg/first-missing-rom-serial.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/first-missing-rom-tcg-result.json": {
+      "bytes": 1541,
+      "sha256": "2347170eaf736386e6755835de181a434f32b89075a5fa043b7382a6a4e1d156"
+    },
+    "tcg/os.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/os.stdout": {
+      "bytes": 400,
+      "sha256": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763"
+    },
+    "tcg/outer-controls.json": {
+      "bytes": 244,
+      "sha256": "15cc8d7c83c3e4a22d1168f6d922717ecb8088ca3e88834f54200b67561640f7"
+    },
+    "tcg/outer-metadata.json": {
+      "bytes": 164,
+      "sha256": "013594dce4e7cde46dcf9bca9a61dd3aeba061fc8b72d383c7f6244926eee208"
+    },
+    "tcg/qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/qemu-policy.stdout": {
+      "bytes": 414,
+      "sha256": "33520d077bb5c0d139106d9aa1383e4df982a3e1f8222f954377184c04ff44a9"
+    },
+    "tcg/qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "tcg/resources.json": {
+      "bytes": 2320,
+      "sha256": "4486d0e0721bf84ba526ed147bb28cd8b990d21268e80f4f04f56667c5897681"
+    },
+    "tcg/rom-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "tcg/rom-install.stdout": {
+      "bytes": 1856,
+      "sha256": "a29ac99baf00cced9e48c559b861867fd0aef695878989e73939320c9041fd07"
+    },
+    "tcg/rom-installed-paths.json": {
+      "bytes": 621,
+      "sha256": "28d6ed6e5a2a30addc6b23d7f56399b269db97f96a1c46f1df9afdf816f8aec7"
+    },
+    "tcg/rom-proof.json": {
+      "bytes": 162,
+      "sha256": "e75b330613937bcbf601511867b876e77b2bcd7020c4fe08e98dc021f4d71c81"
+    },
+    "tcg/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tcg/runner.stdout": {
+      "bytes": 107,
+      "sha256": "0e874250f5164ac54a4d3543f91a227f9b3c7f4de494c46fad699391721e0c5d"
+    },
+    "tcg/serial.log": {
+      "bytes": 101774,
+      "sha256": "e773121c129c71db35042984b50ddafbde4a8e88aaf6de7c1302a517abe94f34"
+    },
+    "tcg/tcg-result.json": {
+      "bytes": 23897,
+      "sha256": "dada47b9dffe7acb3745f451ef8d5e5904901420f3886ebf23db47d934122725"
+    },
+    "tcg/used-component-tcg-guest.py": {
+      "bytes": 5868,
+      "sha256": "21680e9f37b2651399907ac390cf69000e869e0197e88d0e9f8737751cb31fc0"
+    },
+    "tcg/used-run-component-tcg.py": {
+      "bytes": 6652,
+      "sha256": "4040f6d6288dc708cf332fbfc6216894a2d83d6f91992516d555b87bbd7645b5"
+    },
+    "measurement.mjs": {
+      "bytes": 10186,
+      "sha256": "fc54c22063842f42cb37e6534b2853b5a95abc118f87c4ebaa7f6abdeff532fa"
+    },
+    "summary.json": {
+      "bytes": 21817,
+      "sha256": "611cd51ff8b5550fb5ca2d5f50a5edbc6a73ac4b857f33626820ff04f6fa6f4e"
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "approvedSourceCommit": "3a11c37bff907c52de44e1df04e63b95eed282e6",
+  "approvedSourcePath": "docs/plan/ta01-self-hosted-deployment/amd64-139-public-source-analysis.md",
+  "approvedSourceGitBlob": "5c587b7b7028e222de466d26195939fae348e417",
+  "authorization": "用户在上轮裁定卡选择“限定摘要上游询证（推荐）”；仅一次准确正文外发及回读，无附件／本仓库链接／新运行",
+  "repository": "nodejs/node",
+  "actorLogin": "xurunxin",
+  "title": "Node 22.19.0 在 IC::UpdateState+128 的重复 SIGSEGV 询证",
+  "body": "在隔离 Linux amd64 全系统 TCG 环境中，Node 22.19.0 的公开 ELF（124181928 字节，SHA256：638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328）有重复 SIGSEGV 安全位置记录。V8 版本字符串为 12.4.254.21-node.29。\n公开 PC 为 IC::UpdateState+128／ELF 0x136b1a0，字节 488b40ff。静态对应 IsString(*name)；有界公开返回位置分别为 Runtime_LoadIC_Miss+974 或 Runtime_StoreIC_Miss+264，下一层为 Builtins_CEntry_Return1_ArgvOnStack_NoBuiltinExit+53。没有完整栈、私有操作数或可分享 core，不能认定同一根因。QEMU 版本为 Ubuntu 1:8.2.2+ds-0ubuntu1.18，guest 为 4 vCPU／4 GiB、kernel 6.8.0-142-generic。\n#55261 对应的修正语句已存在于该公开 ELF；#59740 的 OpenSSL 栈与此位置不同。有限无故障样本不能排除间歇故障。请问该源码路径是否有可指向的已知不变量违例／修复 commit，以及不涉及私有值的最小判别观测？目前没有可分享的最小复现，未据此升级运行时或改代码。",
+  "bodyUtf8Bytes": 1051,
+  "bodySha256": "cfb0fd8c0cd1ad4bda6ccfd8db52cd831f3ffe7403c38f45b11b465a765b339e",
+  "preflight": {
+    "existingLocalAttemptLedger": false,
+    "exactTitleSearchByCurrentAuthor": [],
+    "command": [
+      "gh",
+      "issue",
+      "list",
+      "--repo",
+      "nodejs/node",
+      "--author",
+      "@me",
+      "--state",
+      "all",
+      "--search",
+      "IC::UpdateState+128 in:title",
+      "--limit",
+      "20",
+      "--json",
+      "number,title,url,createdAt"
+    ]
+  },
+  "observedUtc": "2026-10-20T15:50:41.634408+00:00",
+  "maximumSubmissionAndReadbackSeconds": 60,
+  "postAttempts": 1,
+  "readbackAttempts": 1,
+  "status": "created-and-exact-readback-verified",
+  "privateArtifactsOrRepositoryLinkSent": false,
+  "newRuntimeVmGdbLoadCiReviewMerge": false,
+  "attemptStartedUtc": "2026-10-20T15:50:41.638407+00:00",
+  "postReceipt": {
+    "exitCode": 0,
+    "stdoutBytes": 3362,
+    "stdoutSha256": "f2e927092301be1f765b25f8e5c0a2dc087e66de47420dea64aed6007a33fe8f",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "issue": {
+    "number": 66881,
+    "html_url": "https://github.com/nodejs/node/issues/66881",
+    "state": "open",
+    "created_at": "2026-10-20T15:51:06Z",
+    "title": "Node 22.19.0 在 IC::UpdateState+128 的重复 SIGSEGV 询证",
+    "body": "在隔离 Linux amd64 全系统 TCG 环境中，Node 22.19.0 的公开 ELF（124181928 字节，SHA256：638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328）有重复 SIGSEGV 安全位置记录。V8 版本字符串为 12.4.254.21-node.29。\n公开 PC 为 IC::UpdateState+128／ELF 0x136b1a0，字节 488b40ff。静态对应 IsString(*name)；有界公开返回位置分别为 Runtime_LoadIC_Miss+974 或 Runtime_StoreIC_Miss+264，下一层为 Builtins_CEntry_Return1_ArgvOnStack_NoBuiltinExit+53。没有完整栈、私有操作数或可分享 core，不能认定同一根因。QEMU 版本为 Ubuntu 1:8.2.2+ds-0ubuntu1.18，guest 为 4 vCPU／4 GiB、kernel 6.8.0-142-generic。\n#55261 对应的修正语句已存在于该公开 ELF；#59740 的 OpenSSL 栈与此位置不同。有限无故障样本不能排除间歇故障。请问该源码路径是否有可指向的已知不变量违例／修复 commit，以及不涉及私有值的最小判别观测？目前没有可分享的最小复现，未据此升级运行时或改代码。",
+    "comments": 0,
+    "authorLogin": "xurunxin"
+  },
+  "readbackReceipt": {
+    "exitCode": 0,
+    "stdoutBytes": 3362,
+    "stdoutSha256": "f2e927092301be1f765b25f8e5c0a2dc087e66de47420dea64aed6007a33fe8f",
+    "stderrBytes": 0,
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "readbackObservedUtc": "2026-10-20T15:50:46.665393+00:00",
+  "bodyReadbackSha256": "cfb0fd8c0cd1ad4bda6ccfd8db52cd831f3ffe7403c38f45b11b465a765b339e",
+  "exactApprovedBodyReadback": true,
+  "issueStateAtReadback": "open",
+  "commentsAtReadback": 0,
+  "finishedUtc": "2026-10-20T15:50:46.665393+00:00",
+  "submissionAndReadbackSeconds": 5.015999999828637,
+  "automaticRetry": false,
+  "nextGate": "首个实质回复或7自然日取早回关口；本脚本不建后台任务、不追问、不执行上游建议",
+  "postCommand": [
+    "gh",
+    "api",
+    "--method",
+    "POST",
+    "repos/nodejs/node/issues",
+    "--input",
+    "I:\\tds_workspace\\workspaces\\01a1572a-7aeb-7b6d-b7e8-83e89c2b723d\\.tmp\\ta01-public-analysis\\approved-issue-payload.json"
+  ],
+  "readbackCommand": [
+    "gh",
+    "api",
+    "repos/nodejs/node/issues/66881"
+  ],
+  "outboundPayload": {
+    "jsonUtf8Bytes": 1139,
+    "sha256": "963f4e409fa40ed7614f1c29fe236ffcd8336e5608e727b6fafc7e9e6f4e04fa",
+    "fields": [
+      "title",
+      "body"
+    ],
+    "attachments": 0
+  },
+  "staticChecks": {
+    "approvedGitBodyEqualsSentAndReadBack": true,
+    "currentDocBodyPreserved": true,
+    "integrationDocsCommand": [
+      "node",
+      "scripts/check-integration-docs.mjs"
+    ],
+    "integrationDocsExitCode": 0,
+    "gitDiffCheckExitCode": 0,
+    "noAdditionalUpstreamReadOrWriteDuringVerification": true,
+    "scope": "正文与来源一致性、静态文档检查；不代表139因果、产品门禁或上游已确认"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "说明": "修正真实validator调用、生产者和六画像工件名、只对执行源码的job保锁定Node/pnpm、显式固定下载action、准确日志忽略；干净源码与所有Required保持。",
+  "sourceHead": "73102d9af6b26490cc20302b02c83da378159fdc",
+  "sourceIsDirty": true,
+  "checks": {
+    "ciPolicy": 23,
+    "ciValidateExitCode": 0,
+    "embeddedCiValidateTests": 24
+  },
+  "members": {
+    ".github/workflows/ci.yml": {
+      "bytes": 48896,
+      "sha256": "b0b98334180cdc7e6e1b2ebae2aab5fe859651ee63aa6d126b89bd2eef1ace7a"
+    },
+    ".gitignore": {
+      "bytes": 1494,
+      "sha256": "7583aab6d781a75d391005a56813da2c7ca81b5e8a35d924244f1aae68f75c1e"
+    },
+    "scripts/ci-policy.mjs": {
+      "bytes": 20310,
+      "sha256": "0c359766033035cd6c3b96d29c7ecd718527cd4fc06a5eef428f97153a98d6ac"
+    },
+    "scripts/ci-policy.test.mjs": {
+      "bytes": 23286,
+      "sha256": "e624df75140eb3de41a964e432a541bf702dfa4c82fdef88e5fef213a4daa198"
+    },
+    "scripts/validate-ci.mjs": {
+      "bytes": 31737,
+      "sha256": "291ada8aa6f1335596ef542f8f751709db39d5d8a80e9c0c54c42f40ea20e466"
+    },
+    "logs/ci-handoff-validator-first.log": {
+      "bytes": 7486,
+      "sha256": "c9c1169a0db1cf6a090b178d7c119b7af8b6902f07c7ad5a50f1a33c373fe21d"
+    },
+    "logs/ci-handoff-validator-final.log": {
+      "bytes": 5369,
+      "sha256": "9dae0d52be1ca3fa0c2cf2e4705c189dda9a282361a41baca9722108ed422969"
+    },
+    "logs/ci-handoff-full-validation.log": {
+      "bytes": 4604,
+      "sha256": "6bac4ecc0f27aea00106927d800d5de91030ec6049b3a6fa8115052f884e4490"
+    },
+    "scope.json": {
+      "bytes": 562,
+      "sha256": "af04cd8a6e81c3c0280428b85603966bba484ba51618c12c3125c79d44084821"
+    }
+  },
+  "selectedZipSha256": "42d665f9e2ce625632dfbee755f1dc44bc71b97e191d5c6badb70b8735a69869"
+}

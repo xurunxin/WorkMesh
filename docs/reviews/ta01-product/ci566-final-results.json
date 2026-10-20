@@ -1,0 +1,944 @@
+{
+  "说明": "CI566终态、六guest与双生产者分别绑定541准确候选；旧原生故障与ARM失败未闭，不把单组合成功补作完整支持。新事实均来源执行者。",
+  "sourceHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+  "sourceTree": "9d330d4aca890e4d1147315923e6c3f5f61b68f2",
+  "run": {
+    "id": 38871063733,
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+    "created_at": "2026-10-16T08:02:39Z",
+    "updated_at": "2026-10-16T10:44:27Z"
+  },
+  "jobs": [
+    {
+      "id": 116874999979,
+      "name": "Classify changes and validate CI selection",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:02:42Z",
+      "completed_at": "2026-10-16T08:03:44Z"
+    },
+    {
+      "id": 116875381412,
+      "name": "Connector full installation (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:46Z",
+      "completed_at": "2026-10-16T08:19:09Z"
+    },
+    {
+      "id": 116875381444,
+      "name": "Worker integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:46Z",
+      "completed_at": "2026-10-16T08:12:21Z"
+    },
+    {
+      "id": 116875381448,
+      "name": "Connector native storage (macos-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:50Z",
+      "completed_at": "2026-10-16T08:05:44Z"
+    },
+    {
+      "id": 116875381465,
+      "name": "Connector full installation (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:49Z",
+      "completed_at": "2026-10-16T09:05:44Z"
+    },
+    {
+      "id": 116875381470,
+      "name": "Agent construction and protocol smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:46Z",
+      "completed_at": "2026-10-16T08:04:41Z"
+    },
+    {
+      "id": 116875381511,
+      "name": "API integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:47Z",
+      "completed_at": "2026-10-16T08:20:44Z"
+    },
+    {
+      "id": 116875381529,
+      "name": "Database integration",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:46Z",
+      "completed_at": "2026-10-16T08:07:25Z"
+    },
+    {
+      "id": 116875381534,
+      "name": "Server candidate (arm64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:48Z",
+      "completed_at": "2026-10-16T08:11:56Z"
+    },
+    {
+      "id": 116875381544,
+      "name": "Complete disaster recovery",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:47Z",
+      "completed_at": "2026-10-16T08:08:29Z"
+    },
+    {
+      "id": 116875381556,
+      "name": "Source gates",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:46Z",
+      "completed_at": "2026-10-16T08:22:47Z"
+    },
+    {
+      "id": 116875381589,
+      "name": "Connector native storage (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:47Z",
+      "completed_at": "2026-10-16T08:07:28Z"
+    },
+    {
+      "id": 116875381627,
+      "name": "Server candidate (amd64)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:47Z",
+      "completed_at": "2026-10-16T08:11:15Z"
+    },
+    {
+      "id": 116875381658,
+      "name": "Connector native storage (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:03:46Z",
+      "completed_at": "2026-10-16T08:05:39Z"
+    },
+    {
+      "id": 116878340358,
+      "name": "Server full installation (arm64, enterprise)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T08:12:00Z",
+      "completed_at": "2026-10-16T10:43:26Z"
+    },
+    {
+      "id": 116878340364,
+      "name": "Server full installation (amd64, personal)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:11:58Z",
+      "completed_at": "2026-10-16T09:24:35Z"
+    },
+    {
+      "id": 116878340374,
+      "name": "Server full installation (arm64, personal)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T08:12:00Z",
+      "completed_at": "2026-10-16T10:25:00Z"
+    },
+    {
+      "id": 116878340578,
+      "name": "Server full installation (arm64, team)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T08:12:00Z",
+      "completed_at": "2026-10-16T10:43:29Z"
+    },
+    {
+      "id": 116878340581,
+      "name": "Server full installation (amd64, enterprise)",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-10-16T08:11:58Z",
+      "completed_at": "2026-10-16T09:20:16Z"
+    },
+    {
+      "id": 116878340605,
+      "name": "Server full installation (amd64, team)",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T08:11:58Z",
+      "completed_at": "2026-10-16T09:00:59Z"
+    },
+    {
+      "id": 116933988732,
+      "name": "Required CI",
+      "status": "completed",
+      "conclusion": "failure",
+      "started_at": "2026-10-16T10:43:31Z",
+      "completed_at": "2026-10-16T10:44:27Z"
+    }
+  ],
+  "guests": [
+    {
+      "arch": "arm64",
+      "profile": "enterprise",
+      "jobId": 116878340358,
+      "conclusion": "failure",
+      "index": "ci566-arm64-enterprise-first-failure.json",
+      "artifactId": 12041052864,
+      "rawZipSha256": "0b50fd62e7f0ef4c5fcaa116f95b1a2fb1ebfa3b471cd5ae96fa2ee2e051eed2",
+      "totalSeconds": 9001.059500793,
+      "indexSha256": "abf656b3220ff8351dadcbb988df9f1fdcfc4f1f6d4c09c170754a4ae8221556",
+      "selectedZipSha256": "42ef4c3e3511dcce32e00a799e3f9c107b52c2e3b38481d3060ddaa40813ad23"
+    },
+    {
+      "arch": "amd64",
+      "profile": "personal",
+      "jobId": 116878340364,
+      "conclusion": "success",
+      "index": "ci566-amd64-personal-full-guest-pass.json",
+      "artifactId": 12036888468,
+      "rawZipSha256": "b640a763c9eb7aeca4f8509fb0337f540232277109b56b74f26e4238331529a9",
+      "totalSeconds": 4274.100879087,
+      "indexSha256": "f4473a113b07007fa335d69f5d7503bac0450ae8482432e5d7e72064d35dcad8",
+      "selectedZipSha256": "8fbae50bfdac26beb2f1979646dd90a439c256c56478e1c810e763e6c1a5ddef"
+    },
+    {
+      "arch": "arm64",
+      "profile": "personal",
+      "jobId": 116878340374,
+      "conclusion": "failure",
+      "index": "ci566-arm64-personal-first-failure.json",
+      "artifactId": 12039324604,
+      "rawZipSha256": "54d2cb7d64fc715046c006a3f397ae7d03492badb18705fa39a7b83692af64f7",
+      "totalSeconds": 7889.160652328,
+      "indexSha256": "79702243285a8c4009c53a7b23925e972ff777a1117dd491f18e30a30f76f005",
+      "selectedZipSha256": "d1f2ecfbaaa0c74c2f5c43b29d212fd7716c26897ac56f889c95a1270e400c2e"
+    },
+    {
+      "arch": "arm64",
+      "profile": "team",
+      "jobId": 116878340578,
+      "conclusion": "failure",
+      "index": "ci566-arm64-team-first-failure.json",
+      "artifactId": 12040529179,
+      "rawZipSha256": "fd88cf100c5e5cb4add9089ee47a4427ad95b7f7285e7885c3cc40f5b32230fe",
+      "totalSeconds": 9001.249314494999,
+      "indexSha256": "9ddd2c506b48da90a1bfb32d82e5278d2ea5b184384b29cac9b26a8dd04a836e",
+      "selectedZipSha256": "be6c31cd6e9500b0c747bd83327d32203bf22be7321c11089c1deac8712854f5"
+    },
+    {
+      "arch": "amd64",
+      "profile": "enterprise",
+      "jobId": 116878340581,
+      "conclusion": "success",
+      "index": "ci566-amd64-enterprise-full-guest-pass.json",
+      "artifactId": 12037031899,
+      "rawZipSha256": "0bc4aa75252c82728ff4512e63f42fd5bbec6f365f716ec57cb6942a0645106a",
+      "totalSeconds": 4016.891874674,
+      "indexSha256": "0cea4ee05578c602bbeb9e5b2b6914bf88f7d17ab06836f0d55c06607a59783d",
+      "selectedZipSha256": "cf89eb5e9b23b3bf1bdd79fc77e3caf51de96c79cb64801bd9ad998498d1215b"
+    },
+    {
+      "arch": "amd64",
+      "profile": "team",
+      "jobId": 116878340605,
+      "conclusion": "failure",
+      "index": "ci566-amd64-team-first-failure.json",
+      "artifactId": 12036196564,
+      "rawZipSha256": "6c7a12bd5a74a0373eeadc41716e410f67d186614a00e5e1df3a4dbc8e63b787",
+      "totalSeconds": 2830.52461177,
+      "indexSha256": "878822a4fc6d5abaffafc26e295b6810f3d73b5c2a0544879d46aa4595a279ec",
+      "selectedZipSha256": "654f03e1fbf9a60b8ccf2a59a55a08483513749546df552fdd854b1b7dcc42d9"
+    }
+  ],
+  "producers": {
+    "amd64": {
+      "producerRawArtifact": 12033364276,
+      "candidateArtifact": 12033760634,
+      "head": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+      "tree": "9d330d4aca890e4d1147315923e6c3f5f61b68f2",
+      "manifestSha256": "1e8cb5c8e3eacc3e1de2be0f4bffbbf17e02beffa0b72cd0abe260f4c246c8c5",
+      "rawZipSha256": "9a77307ae4f2cd22dc95fd93d72ebfade5e7362dc170a093b72c5c947be3ab2f",
+      "sourceFilesMatch": true,
+      "sourceFileCount": 22,
+      "pythonTests": 60,
+      "installationTests": 16,
+      "source": {
+        "commit": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+        "tree": "9d330d4aca890e4d1147315923e6c3f5f61b68f2"
+      }
+    },
+    "arm64": {
+      "producerRawArtifact": 12033183625,
+      "candidateArtifact": 12032934001,
+      "head": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+      "tree": "9d330d4aca890e4d1147315923e6c3f5f61b68f2",
+      "manifestSha256": "391bd59c041d4a7d87a15573d2f03ff07edfddcf6b1233b6f092b75639fd29b4",
+      "rawZipSha256": "0b1c6b5497ec87a2a84984090d280b43833d1cd75de258299f584e772e97f817",
+      "sourceFilesMatch": true,
+      "sourceFileCount": 22,
+      "pythonTests": 60,
+      "installationTests": 16,
+      "source": {
+        "commit": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+        "tree": "9d330d4aca890e4d1147315923e6c3f5f61b68f2"
+      }
+    }
+  },
+  "amd64TeamAnalysis": {
+    "说明": "仅从CI566团队AMD原件与准确源码派生的事实核验，不是产品根因或支持验收通过。",
+    "sourceHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+    "runId": 38871063733,
+    "jobId": 116878340605,
+    "artifactId": 12036196564,
+    "rawZipSha256": "6c7a12bd5a74a0373eeadc41716e410f67d186614a00e5e1df3a4dbc8e63b787",
+    "selectedIndexSha256": "878822a4fc6d5abaffafc26e295b6810f3d73b5c2a0544879d46aa4595a279ec",
+    "sourceInputs": {
+      "scripts/server-distribution/archive.mjs": "23164e79a8ee0e8fcfe98983d2741b3722f538aa29b29544659e5e9b677bd212",
+      "scripts/server-distribution/build.mjs": "a61331746e8c7ed05513707fcaf6f31d841fb585340dea4ed54398146ee9fe19",
+      "scripts/server-distribution/config.example.json": "6dcfca890c4432375ba30729da88c31260744c5abd0c8d16a247759110e5959a",
+      "scripts/server-distribution/configuration.mjs": "5e07457aa0503aca9202d119498ada09674e489eef91de7a00d2f132d882a560",
+      "scripts/server-distribution/core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+      "scripts/server-distribution/core_pipe.py": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+      "scripts/server-distribution/diagnostics.mjs": "3a800d9adf8dfc9153d400bba915fe559d68184b5ca72b9398ee8fa5978399ff",
+      "scripts/server-distribution/failure-recovery.mjs": "137d4e13ba07ed3fb2bc0c1dd29401b7da6a772b0f4768913fbd70c0de38eabb",
+      "scripts/server-distribution/guest.py": "50f14839120b909f0422d95d801f1351c5639a5f00d7936fb54ef24b89844706",
+      "scripts/server-distribution/install.mjs": "5dba8fc0bb4ab8d6b8e2220625bf5e51254d8565395cf70d817db13592d139fe",
+      "scripts/server-distribution/install.sh": "a2b84f919bae00b413d4773a5fe91ca56a59d03bd9896088346bf19a89cc97b6",
+      "scripts/server-distribution/install.test.mjs": "4ca425fda60eb8dd5bc2de7622ea61101dd39354f754d0b55b3e98779792fc52",
+      "scripts/server-distribution/journal.mjs": "4cf60e39f3d854ca96f935000aefa4c5dfe92133698209090635c83403e9cc06",
+      "scripts/server-distribution/manifest.mjs": "1709701d6a6a57ff65d6dbfd70b0fb216cbd47599275d925debd470700e5d44c",
+      "scripts/server-distribution/mcp-response.mjs": "67b8d07a4a10fddef5c667d8f8adbe22d26144d7b584df742645a2863c3c2c20",
+      "scripts/server-distribution/measure.mjs": "517dd8ec066670e01fb4852392a98cd876f9cd1e8781b1606ef41427f9503b6d",
+      "scripts/server-distribution/native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+      "scripts/server-distribution/native_diagnostic_test.py": "e1460c60e874c19da92e62ae4544fa084c3483ff45ad9ae3395ef6d3cc064b87",
+      "scripts/server-distribution/run.py": "3b8ef7fbed465eee3fee07d57b7c2552fb6f7c83e52f4a3e9711defbfdae6b6f",
+      "scripts/server-distribution/verify-files-worker.mjs": "3fd13fe7a0065cbbc0d0bc91bf3f2f7cd70941bcbfdf1323e64e66e0fd5dc415",
+      "infra/docker/server-installer.Dockerfile": "1bf7b4319b0b47f21b8ebebc130966f1950c77cc61faf9c7be7ac9c7d190056f",
+      "packages/config/src/deployment-profile.ts": "537600a484aa31f6ae1ac038e57d7e9e8fa871c5738dd22265ed4ea1c415afaa"
+    },
+    "sourceBeforeAfterMatchesGit": true,
+    "earliestUnexpectedFailedAction": {
+      "sequence": 18,
+      "action": "commit",
+      "previousSequence": 17,
+      "previousAction": "rollback",
+      "previousOutcome": "finished",
+      "lastJournalAction": {
+        "name": "validate-business-read",
+        "status": "failed",
+        "startedAt": "2026-10-16T08:59:02.578Z"
+      }
+    },
+    "businessRead": {
+      "operation": "mcp-business-read",
+      "method": "initialize",
+      "requestId": 1,
+      "requestFinished": true,
+      "responseStarted": false,
+      "responseCompleted": false,
+      "responseBytes": 0,
+      "elapsedMilliseconds": 2766,
+      "networkCode": "ECONNRESET"
+    },
+    "apiTimingProjection": {
+      "selection": "not-selected-for-initialize",
+      "serialTagCount": 0,
+      "resultProjectionPresent": false,
+      "guardSource": "scripts/server-distribution/guest.py",
+      "guardSourceSha256": "50f14839120b909f0422d95d801f1351c5639a5f00d7936fb54ef24b89844706",
+      "apiClientBoundaryMilliseconds": null,
+      "explanation": "本组method=initialize，不满足既有tools/call条件；原件只有API日志哈希，没有原日志，不能回算API耗时或假定零请求。"
+    },
+    "mcpContainer": {
+      "id": "adb00ab6e8f777b805c3516a498568b75bc407034c8e9a56bd517200d93e9df4",
+      "running": true,
+      "health": "starting",
+      "restarts": 1,
+      "oom": false,
+      "log": {
+        "exitCode": 0,
+        "timedOut": false,
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdoutSha256": "d5a7f743e30087ca5e1a31e6eb9bbf2fb06cbe8b940836d802b36e3b346a51ab",
+        "stderrBytes": 0,
+        "stdoutBytes": 234,
+        "errorTypes": [],
+        "recoveryFrames": [],
+        "databaseFrames": [],
+        "mcpFrames": [],
+        "transportFrames": [],
+        "postgresCodes": [],
+        "categories": [],
+        "recoveryCodes": [],
+        "providerCodes": []
+      }
+    },
+    "boundedEvents": {
+      "events": [
+        {
+          "timeNano": 1792141146936165836,
+          "event": "die",
+          "id": "adb00ab6e8f777b805c3516a498568b75bc407034c8e9a56bd517200d93e9df4",
+          "service": "mcp",
+          "exitCode": 139
+        }
+      ],
+      "truncated": false
+    },
+    "earlierMcpSamples": [
+      {
+        "phase": "idle",
+        "monotonic": 1408.948933183,
+        "state": {
+          "id": "adb00ab6e8f777b805c3516a498568b75bc407034c8e9a56bd517200d93e9df4",
+          "image": "sha256:fafec0dfeaf180dd29d613bb39a633e23529f64000c4f281d1ff4896b9146bbf",
+          "oom": false,
+          "restarts": 1,
+          "memoryLimit": 0,
+          "nanoCpus": 0
+        }
+      },
+      {
+        "phase": "first-task",
+        "monotonic": 1432.90142741,
+        "state": {
+          "id": "adb00ab6e8f777b805c3516a498568b75bc407034c8e9a56bd517200d93e9df4",
+          "image": "sha256:fafec0dfeaf180dd29d613bb39a633e23529f64000c4f281d1ff4896b9146bbf",
+          "oom": false,
+          "restarts": 1,
+          "memoryLimit": 0,
+          "nanoCpus": 0
+        }
+      },
+      {
+        "phase": "concurrent-load",
+        "monotonic": 1571.875200883,
+        "state": {
+          "id": "adb00ab6e8f777b805c3516a498568b75bc407034c8e9a56bd517200d93e9df4",
+          "image": "sha256:fafec0dfeaf180dd29d613bb39a633e23529f64000c4f281d1ff4896b9146bbf",
+          "oom": false,
+          "restarts": 1,
+          "memoryLimit": 0,
+          "nanoCpus": 0
+        }
+      },
+      {
+        "phase": "concurrent-load",
+        "monotonic": 1582.281248187,
+        "state": {
+          "id": "adb00ab6e8f777b805c3516a498568b75bc407034c8e9a56bd517200d93e9df4",
+          "image": "sha256:fafec0dfeaf180dd29d613bb39a633e23529f64000c4f281d1ff4896b9146bbf",
+          "oom": false,
+          "restarts": 1,
+          "memoryLimit": 0,
+          "nanoCpus": 0
+        }
+      },
+      {
+        "phase": "concurrent-load",
+        "monotonic": 1591.378976797,
+        "state": {
+          "id": "adb00ab6e8f777b805c3516a498568b75bc407034c8e9a56bd517200d93e9df4",
+          "image": "sha256:fafec0dfeaf180dd29d613bb39a633e23529f64000c4f281d1ff4896b9146bbf",
+          "oom": false,
+          "restarts": 1,
+          "memoryLimit": 0,
+          "nanoCpus": 0
+        }
+      }
+    ],
+    "earlierRestartCause": "unknown; samples already show restart=1; current event window is journal scoped, not complete process history",
+    "pendingHostElapsed": 2742.5045380050005,
+    "finalHostElapsed": 2830.036837396,
+    "sameHostClockDiagnosticsGapSeconds": 87.53229939099947,
+    "guest": {
+      "arch": "amd64",
+      "accelerator": "tcg",
+      "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+      "guestRamMiB": 4096,
+      "guestVcpus": 4,
+      "imageSha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2",
+      "imageUrl": "https://cloud-images.ubuntu.com/noble/20260926/noble-server-cloudimg-amd64.img"
+    },
+    "unchangedProductSourceComparedToExactRoleMicro": {
+      "from": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "to": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+      "paths": [
+        "apps",
+        "packages",
+        "infra/docker",
+        "pnpm-lock.yaml"
+      ],
+      "diffBytes": 0,
+      "binaryEqualityProved": false
+    },
+    "exclusions": {
+      "qualifiedReadCostExplainsThisInitialize": false,
+      "originalThirtySecondDeadlineExceeded": false,
+      "postFailureApiLogProjectionCausedThisFailure": false,
+      "nodeDependencyOrTcgRootCauseProved": false
+    },
+    "executorActions": {
+      "cancelCalls": 0,
+      "rerunCalls": 0,
+      "newWholeMatrixDispatches": 0,
+      "newMicroRuntimeRuns": 0,
+      "newDiagnosticFields": 0
+    },
+    "observedAt": "2026-10-16T09:16:15.004051+00:00"
+  },
+  "arm64PersonalAnalysis": {
+    "说明": "CI566 ARM个人action19同程序升级夹具commit；真实已有API投影与串口一致、源码及日志哈希一致，不作跨进程CPU分解或晚200补成功。",
+    "sourceHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+    "runId": 38871063733,
+    "jobId": 116878340374,
+    "artifactId": 12039324604,
+    "rawZipSha256": "54d2cb7d64fc715046c006a3f397ae7d03492badb18705fa39a7b83692af64f7",
+    "selectedIndexSha256": "79702243285a8c4009c53a7b23925e972ff777a1117dd491f18e30a30f76f005",
+    "expectedProducer": {
+      "artifactId": "12032934001",
+      "manifestSha256": "391bd59c041d4a7d87a15573d2f03ff07edfddcf6b1233b6f092b75639fd29b4"
+    },
+    "fixtureManifest": "70cd214a827cb7d303db143f5e3a6e5750172fa0d3f7b0dfab6a98751e32e7aa",
+    "previousAction": {
+      "sequence": 18,
+      "action": "recover-old",
+      "state": "finished",
+      "elapsedMilliseconds": 165245
+    },
+    "firstUnexpectedAction": {
+      "sequence": 19,
+      "action": "commit",
+      "state": "failed",
+      "elapsedMilliseconds": 254031
+    },
+    "journal": {
+      "stage": "healthy",
+      "candidate": "70cd214a827cb7d303db143f5e3a6e5750172fa0d3f7b0dfab6a98751e32e7aa",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-16T10:02:44.468Z",
+          "finishedAt": "2026-10-16T10:03:31.314Z"
+        },
+        {
+          "name": "drain-admission",
+          "status": "completed",
+          "startedAt": "2026-10-16T10:03:31.996Z",
+          "finishedAt": "2026-10-16T10:04:02.570Z"
+        },
+        {
+          "name": "complete-backup",
+          "status": "completed",
+          "startedAt": "2026-10-16T10:04:02.746Z",
+          "finishedAt": "2026-10-16T10:05:12.389Z"
+        },
+        {
+          "name": "apply-migration-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-16T10:05:12.582Z",
+          "finishedAt": "2026-10-16T10:06:10.264Z"
+        },
+        {
+          "name": "verify-health-and-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-16T10:06:19.768Z",
+          "finishedAt": "2026-10-16T10:10:53.289Z"
+        },
+        {
+          "name": "validate-business-read",
+          "status": "failed",
+          "startedAt": "2026-10-16T10:19:40.065Z"
+        }
+      ]
+    },
+    "businessRead": [
+      {
+        "operation": "mcp-business-read",
+        "method": "tools/call",
+        "requestId": 2,
+        "requestFinished": true,
+        "responseStarted": false,
+        "responseCompleted": false,
+        "responseBytes": 0,
+        "elapsedMilliseconds": 30609,
+        "timedOut": true
+      }
+    ],
+    "apiReadTimings": {
+      "available": true,
+      "sourceSha256": "9ced45e65d94c22150a06ddfae65f56d4da64b9046adf6695555150b4de4aa4a",
+      "windowSinceUtcSeconds": 1792145980.065,
+      "windowUntilUtcSeconds": 1792146055.455507,
+      "requests": [
+        {
+          "route": "qualified-capabilities",
+          "status": 200,
+          "elapsedMilliseconds": 21622.81418700004,
+          "outcome": "completed",
+          "requestIdSha256": "6fcf8175f34a5baed9e5b0bbebe2263be11c1027cbd6dcf4b2a34fc69af27e07"
+        },
+        {
+          "route": "work-item-read",
+          "status": 200,
+          "elapsedMilliseconds": 10019.07581499999,
+          "outcome": "completed",
+          "requestIdSha256": "b9d1d52ffa5f8d4a75e85dadfd15481ea871234432f00ea813b79f5e491daa82"
+        }
+      ],
+      "unpairedObserved": 0,
+      "ambiguousObserved": 0,
+      "truncated": false,
+      "tailMayOmitRequests": true
+    },
+    "apiLogProjection": {
+      "exitCode": 0,
+      "timedOut": false,
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSha256": "9ced45e65d94c22150a06ddfae65f56d4da64b9046adf6695555150b4de4aa4a",
+      "stderrBytes": 0,
+      "stdoutBytes": 13688,
+      "errorTypes": [],
+      "recoveryFrames": [],
+      "databaseFrames": [],
+      "mcpFrames": [],
+      "transportFrames": [],
+      "postgresCodes": [],
+      "categories": [],
+      "recoveryCodes": [],
+      "providerCodes": []
+    },
+    "proxyProgress": [
+      {
+        "profile": "personal",
+        "requestsObserved": 9,
+        "truncated": true,
+        "requests": [
+          {
+            "sequence": 2,
+            "stage": "client-complete",
+            "elapsedMilliseconds": 30013,
+            "upstreamStatus": 200
+          },
+          {
+            "sequence": 3,
+            "stage": "client-complete",
+            "elapsedMilliseconds": 16307,
+            "upstreamStatus": 200
+          },
+          {
+            "sequence": 4,
+            "stage": "client-complete",
+            "elapsedMilliseconds": 710,
+            "upstreamStatus": 200
+          },
+          {
+            "sequence": 5,
+            "stage": "client-complete",
+            "elapsedMilliseconds": 2082,
+            "upstreamStatus": 200
+          },
+          {
+            "sequence": 6,
+            "stage": "client-complete",
+            "elapsedMilliseconds": 2154,
+            "upstreamStatus": 200
+          },
+          {
+            "sequence": 7,
+            "stage": "client-complete",
+            "elapsedMilliseconds": 16250,
+            "upstreamStatus": 200
+          },
+          {
+            "sequence": 8,
+            "stage": "client-complete",
+            "elapsedMilliseconds": 3012,
+            "upstreamStatus": 200
+          },
+          {
+            "sequence": 9,
+            "stage": "upstream-complete",
+            "elapsedMilliseconds": 37996,
+            "upstreamStatus": 200,
+            "failed": true,
+            "errorType": "OtherError"
+          }
+        ]
+      }
+    ],
+    "apiRecordedDurationsSumMilliseconds": 31641.89000200003,
+    "sumIsEndToEndOrCpuDecomposition": false,
+    "crossProcessCorrelationProved": false,
+    "boundedEvents": {
+      "events": [],
+      "truncated": false
+    },
+    "lateDatabaseBudget": {
+      "available": true,
+      "maxConnections": 20,
+      "backendsIncludingDiagnostic": 4,
+      "trackActivitiesEnabled": false
+    },
+    "lateStates": [
+      {
+        "id": "7fa4ba5749150d13c7d984b3917b076124f42085acea1464a1f53476754145c6",
+        "service": "mcp",
+        "health": "healthy",
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      },
+      {
+        "id": "a88ea42bcb227643df10eb006086479f45da674e224a9655cbcf46b9ae9a3985",
+        "service": "worker",
+        "health": "healthy",
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      },
+      {
+        "id": "b83efb3c7a3b39d73fab640c4328a5085f71aff00d766e171cee124cce8396d9",
+        "service": "api",
+        "health": "healthy",
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      },
+      {
+        "id": "f71ca7152714ec6404a0b5e7d479643dce3e846ff6889f18ab67f5b486ff14e0",
+        "service": "migrate",
+        "health": null,
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      },
+      {
+        "id": "f124e72615340ef3dd62fbea17e8bf8127deafe0a97affa9f5716388ea9ecd53",
+        "service": "minio-init",
+        "health": null,
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      },
+      {
+        "id": "d9f478fb4ccabd9623b508a0aed971c0a935e6f45b38d2a6ba4f37b1d68e9009",
+        "service": "postgres",
+        "health": "healthy",
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      },
+      {
+        "id": "df1eb73ec79138034c84aad60b054eb3f92d1c20b5eda6199ca116da6cfc42d6",
+        "service": "redis",
+        "health": "healthy",
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      },
+      {
+        "id": "2fc1ac6d80dda54743aeebe2e9e4acc68e70c862984a63794756aea92854546f",
+        "service": "minio",
+        "health": "healthy",
+        "oom": false,
+        "restarts": 0,
+        "exitCode": 0
+      }
+    ],
+    "pendingHostElapsed": 7642.03386111,
+    "finalHostElapsed": 7888.190104561,
+    "sameHostClockGapSeconds": 246.1562434510006,
+    "conclusion": "本窗口真实API记录资格21.62秒、工作项10.02秒，客户端仍30.609秒无头/体失败；没有内部SQL/锁/CPU/调度或跨请求精确起止，不能据求和/相减归为MCP CPU。与AMD initialize139分别保留。"
+  },
+  "freshRefs": {
+    "observedAt": "2026-10-16T10:21:15.327914+00:00",
+    "mainRef": "refs/heads/main",
+    "mainCommit": "c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8",
+    "pr": {
+      "headRefName": "tds/conv-01a138ab-2566-7f87-9d06-5b16bebd86c2",
+      "headRefOid": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+      "isDraft": true,
+      "mergedAt": null,
+      "state": "OPEN",
+      "title": "feat(deployment): add tiered offline server delivery"
+    }
+  },
+  "sourceGatesCheckout": {
+    "jobId": 116875381556,
+    "runId": 38871063733,
+    "rawLogSha256": "cbbcbe376316efc67de8e055a29d3dd76827be06354fbedd11af346fb18cd844",
+    "rawLogBytes": 246553,
+    "actualCheckoutCommit": "56dc7a3972ffc8c1ac8bf65d08ec7216152749d8",
+    "actualCheckoutTree": "9d330d4aca890e4d1147315923e6c3f5f61b68f2",
+    "parents": [
+      "c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8",
+      "541f6ba64841915801a1ccb123f9adb7f61ebe17"
+    ],
+    "workflowHead": "541f6ba64841915801a1ccb123f9adb7f61ebe17",
+    "actualTreeEqualsInstalledCandidate": true
+  },
+  "sourceGatesRawArtifact": {
+    "artifactId": 12034950019,
+    "rawZipSha256": "3e3af7d32c9ca75bd75e25b498e207cc7a2e13b81037dc70c7987438ee0b10a5",
+    "selectedLogsOnly": true
+  },
+  "executorOperations": "执行者只读等待有价值的CI566原运行全部终态后归档，未调用cancel/rerun，未手动追加整轮；完成一次固定条件的健康读取/initialize原生与TCG有界对照，独有资源已收尾。产品、诊断字段、CI、锁定运行时和原验收期限不变。",
+  "observedAt": "2026-10-16T10:48:21.528382+00:00",
+  "selectedZipSha256": "ed987938ad07978796f0d93482bf706527057a19be147a7bd127dee13e144762",
+  "members": {
+    "initial-live-snapshot.json": {
+      "bytes": 86981,
+      "sha256": "851331e9c95e0bacb514b53cd733a6d585880167ac52073879f3e387b7462677"
+    },
+    "last-live-snapshot.json": {
+      "bytes": 90843,
+      "sha256": "1e9aaf033f917aa5b7cffb8ee5fa699b77593883df04379d0d8ad4c7340aa106"
+    },
+    "producers.json": {
+      "bytes": 1305,
+      "sha256": "6bf0d13117564e5c592e446e5708826f07425a1389ecd5a7ebaac1f19e1f4740"
+    },
+    "amd64/server-build/build.log": {
+      "bytes": 68558,
+      "sha256": "20d7049f4ce907fb42750f82d7faf096dafbf0bdd73530f46d3ac61ad353bd5a"
+    },
+    "amd64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "757d93c2ddc33ac1eb8a4038288eae55e5994613e5616919054a1d16c4e280d5"
+    },
+    "amd64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "1d6e2d0dee8e92c9acbf0dd2bbb4f5c5b09f1904265369285830d5b00cc1803a"
+    },
+    "amd64/server-build/manifest.json": {
+      "bytes": 12627,
+      "sha256": "1e8cb5c8e3eacc3e1de2be0f4bffbbf17e02beffa0b72cd0abe260f4c246c8c5"
+    },
+    "amd64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "1862a914272d5fd420e408875e58dd65038321e01efdc681dc39ec4e6cdc1c98"
+    },
+    "amd64/server-build/native-privacy.log": {
+      "bytes": 159,
+      "sha256": "251d4de83d3f5fe24bf10063c04f6afa4a3ddc121a89d150145b582d4177cdbf"
+    },
+    "amd64/server-build/source-commit.txt": {
+      "bytes": 258,
+      "sha256": "e56c2113fb565dcf062862dc92f348ac8f4569dec4efda6acc343d80aca5ada8"
+    },
+    "amd64/server-build/source-install.log": {
+      "bytes": 555,
+      "sha256": "d9b39131a7fafed3c1ddfd6221f912a5276af97e97f450d7b467bc82060451a3"
+    },
+    "amd64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "1862a914272d5fd420e408875e58dd65038321e01efdc681dc39ec4e6cdc1c98"
+    },
+    "amd64/server-build/unit.log": {
+      "bytes": 3796,
+      "sha256": "8c0b5c4734e9687dd7529855ec8643ecdadf05c897e606edef22c741a1c28d57"
+    },
+    "arm64/server-build/build.log": {
+      "bytes": 68679,
+      "sha256": "9558414596d89dc3418fb92a607ccdeb8aa1e61fc9d8e597fa66fd82d2698e67"
+    },
+    "arm64/server-build/input-sha256.txt": {
+      "bytes": 2403,
+      "sha256": "757d93c2ddc33ac1eb8a4038288eae55e5994613e5616919054a1d16c4e280d5"
+    },
+    "arm64/server-build/manifest-sha256.txt": {
+      "bytes": 105,
+      "sha256": "b560652004318f8d134e7490e0ca6b1a52a54267862cff60987874ae4c81c223"
+    },
+    "arm64/server-build/manifest.json": {
+      "bytes": 12409,
+      "sha256": "391bd59c041d4a7d87a15573d2f03ff07edfddcf6b1233b6f092b75639fd29b4"
+    },
+    "arm64/server-build/native-privacy.log": {
+      "bytes": 159,
+      "sha256": "bf84b5607e5afc8cbe64cf8edb3b5b9f9a55d52b62cb63e4e40b4d084847d9ea"
+    },
+    "arm64/server-build/source-after.txt": {
+      "bytes": 83,
+      "sha256": "1862a914272d5fd420e408875e58dd65038321e01efdc681dc39ec4e6cdc1c98"
+    },
+    "arm64/server-build/source-commit.txt": {
+      "bytes": 258,
+      "sha256": "e56c2113fb565dcf062862dc92f348ac8f4569dec4efda6acc343d80aca5ada8"
+    },
+    "arm64/server-build/source-install.log": {
+      "bytes": 615,
+      "sha256": "0fad9bb0dbeadcc392d688b895e4450ee582563ad0a12fbc2038835c7218d49f"
+    },
+    "arm64/server-build/source.txt": {
+      "bytes": 83,
+      "sha256": "1862a914272d5fd420e408875e58dd65038321e01efdc681dc39ec4e6cdc1c98"
+    },
+    "arm64/server-build/unit.log": {
+      "bytes": 3803,
+      "sha256": "6c606442d5fd304cb7e5eff4a826fbfe8aa04aae5aa338cfc6eee622321ea7e5"
+    },
+    "source-gates/checkout.json": {
+      "bytes": 538,
+      "sha256": "5ad5043d3e4ae46aff527f6b3a0046d84e511696b17c327195862cec669a3762"
+    },
+    "source-gates/checkout-selected.txt": {
+      "bytes": 140,
+      "sha256": "9aeedae01a708f4bc2784a60f2827557b6f5aba5a44304935e2152e529f7ab3d"
+    },
+    "fresh-refs.json": {
+      "bytes": 437,
+      "sha256": "b93250e5351883ab5dffda7cdbeab17ae85596f6f6ffea0654402219e9f3e72e"
+    },
+    "source-gates/lint.log": {
+      "bytes": 192,
+      "sha256": "8e4bc2a427fc2299f120096752a5db8e6e03d0680bddfb84a1d5cb789a2b8da2"
+    },
+    "source-gates/typecheck.log": {
+      "bytes": 4635,
+      "sha256": "62ca260d01966c3bfe33a33bd1be750ac59e3d2441862d74a0c896c870660dd0"
+    },
+    "source-gates/test.log": {
+      "bytes": 84989,
+      "sha256": "804b520650ddde6565782ee8afea8518172dde0dc4520be9a1fd0e9b3f26f60a"
+    },
+    "source-gates/ci-validate.log": {
+      "bytes": 4463,
+      "sha256": "225772aebabebcfe8f3ceb87fe00cb9f1dcff82acdc94c5f8ae9a421e3812c69"
+    },
+    "source-gates/clean-tree.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "amd64-team-analysis.json": {
+      "bytes": 8552,
+      "sha256": "ce4ee4adde08312593a81993b9291f1f2913c8d9aae63f866678cba8561df979"
+    },
+    "arm64-personal-analysis.json": {
+      "bytes": 7792,
+      "sha256": "a10dfe15a07dc4c54cacfab5e4521e765b9a7d0fda0a1d6f3b859ec803484b40"
+    },
+    "tools/inspect-ci566-guest.py": {
+      "bytes": 5086,
+      "sha256": "ab942681b8c74485e8029add5b9062aad6321093d73b79fbf0e39473eecba572"
+    },
+    "tools/preserve-ci566-terminal-guests.py": {
+      "bytes": 3847,
+      "sha256": "801366dc203c6bff6de2b4ae4bfffcdf60278a2e438cf3c0ed62b0675076b157"
+    },
+    "tools/archive-ci566-final.py": {
+      "bytes": 5796,
+      "sha256": "2d949aefd29032c991c2bfaad627e588b8f0d23332625dd2a48874164e9ba6ca"
+    },
+    "summary.json": {
+      "bytes": 29014,
+      "sha256": "fafa052687dd3bbb8e6a8a5270b1c98931e3f7478c9ceafa2a2f574329b8cc13"
+    }
+  }
+}

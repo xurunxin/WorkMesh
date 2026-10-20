@@ -1,0 +1,159 @@
+{
+  "说明": "ARM64保原前序诊断在首次个人安装达到1800秒期限；迁移完成、健康intent，容器状态不可得，未到团队或原生捕获。资源只是快照，不认定启动根因。",
+  "runId": 38639536008,
+  "jobId": 116111695409,
+  "artifactId": 11935238734,
+  "sourceHead": "e4124a49b4efce3c9b39702324d3d8646fe70532",
+  "sourceTree": "0fa07cc55fdc4528020370408023945d90e15d12",
+  "nativeDiagnostic": true,
+  "status": "diagnostic-only",
+  "totalSeconds": 6791.532574082001,
+  "scripts": {
+    "native_diagnostic.py": {
+      "sha256": "494bcc4db2f0cd86a54e13a26153c4c0d7fe6ffb6d72607cf8a152379caca58c",
+      "resultSha256": "494bcc4db2f0cd86a54e13a26153c4c0d7fe6ffb6d72607cf8a152379caca58c"
+    },
+    "run.py": {
+      "sha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860",
+      "resultSha256": "39ef205a15ba2e08dff50fc2ede5f20eb901edd080e34d7de14f2cb465e1a860"
+    },
+    "core_pipe.py": {
+      "sha256": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c",
+      "resultSha256": "133bda343768f7aab9e9e5c163b412611fb7f48c06826eba44378543959b2d3c"
+    },
+    "native_diagnostic_test.py": {
+      "sha256": "c0760b15e8294beb32db96a53dd6f8b677d0bd6e44cc8f254502db9d80bb53be",
+      "resultSha256": "c0760b15e8294beb32db96a53dd6f8b677d0bd6e44cc8f254502db9d80bb53be"
+    },
+    "guest.py": {
+      "sha256": "9c2f0d4bc52b792b9f5ca41c53227b6b1e1d2b13de24dc40ad91fd548e663cec",
+      "resultSha256": "9c2f0d4bc52b792b9f5ca41c53227b6b1e1d2b13de24dc40ad91fd548e663cec"
+    }
+  },
+  "artifactZipSha256": "3faa35b376517c451c39f35a35d92f10cd798a4d4b9efa1d78ee5ff45e58a915",
+  "selectedZipSha256": "23e36684cd8e52dcd1059a49c5ac60fcf9ba93679e3e2a02e2eb062a47e9e7a1",
+  "members": {
+    "server-install/build.log": {
+      "sha256": "2dec8482271f0f21ac26f99b35ca9f48c676aadb41d3e419b81cc78d15103d5c",
+      "bytes": 68700
+    },
+    "server-install/guest.log": {
+      "sha256": "125c985264d6602699b8e9a79b7ec25fec3a5207db458504d67ec2bac5dc6117",
+      "bytes": 405
+    },
+    "server-install/input-sha256.txt": {
+      "sha256": "0b8f63ce7669086b6aa9e729bb767e35c0af1b438f1610ea5c8c36a49931f957",
+      "bytes": 2174
+    },
+    "server-install/manifest-sha256.txt": {
+      "sha256": "dda6c1864d83fad24405d94f0a43caa807c1958309931799feb8a4d0c54e9ca7",
+      "bytes": 105
+    },
+    "server-install/manifest.json": {
+      "sha256": "1c5254337b549d3ac2cf99ac749e849be666fd0fb00c87d134c31eedb359cc42",
+      "bytes": 12409
+    },
+    "server-install/native-privacy.log": {
+      "sha256": "0797a603f79e55a5612211749887a547eca16fda33260dc9b3baf57657cc4f17",
+      "bytes": 105
+    },
+    "server-install/qemu-stderr.log": {
+      "sha256": "f4366e0e5c45bb5c3189497b2fd5704be72cf6a34980a4092886fe96612d4705",
+      "bytes": 70
+    },
+    "server-install/result.json": {
+      "sha256": "7a72f0a0ed51821483b080004ae402e44748a8b24076b8c3f72a107d1261c955",
+      "bytes": 5754
+    },
+    "server-install/serial.log": {
+      "sha256": "5b378fd33263499be45d82c6a734f08ee0583fa3bdf198c645a738aeb9c85152",
+      "bytes": 109528
+    },
+    "server-install/source-after.txt": {
+      "sha256": "eae932bbd21d5e9835c0a939e14bb9b3c20584cbd2728d388509f09f042ac076",
+      "bytes": 83
+    },
+    "server-install/source-commit.txt": {
+      "sha256": "8007c6e5f87d561a6c825f9140adf4fd7cef5064a56acddff67e437ccd8a6a3d",
+      "bytes": 264
+    },
+    "server-install/source-install.log": {
+      "sha256": "2d9c77ab3cd2697f717e99498d215baefb20eebf59b17b68fbe14833efd43a5c",
+      "bytes": 615
+    },
+    "server-install/source.txt": {
+      "sha256": "eae932bbd21d5e9835c0a939e14bb9b3c20584cbd2728d388509f09f042ac076",
+      "bytes": 83
+    },
+    "server-install/unit.log": {
+      "sha256": "e465dbc2b1687cf2d192a80f41ba0b6781c24fa6d5468dcff3a8d82b840f9504",
+      "bytes": 3299
+    }
+  },
+  "errorType": "TimeoutExpired",
+  "diagnostics": {
+    "command": "sh",
+    "timedOut": true,
+    "timeoutSeconds": 1800,
+    "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "guestResources": {
+      "memory": {
+        "MemTotalKiB": 3995108,
+        "MemAvailableKiB": 3166984,
+        "SwapTotalKiB": 0,
+        "SwapFreeKiB": 0
+      },
+      "loadAverage": [
+        51.71,
+        30.24,
+        16.61
+      ],
+      "runnableTasks": 44,
+      "totalTasks": 446
+    },
+    "journal": {
+      "stage": "migrated",
+      "candidate": "1c5254337b549d3ac2cf99ac749e849be666fd0fb00c87d134c31eedb359cc42",
+      "actions": [
+        {
+          "name": "import-images",
+          "status": "completed",
+          "startedAt": "2026-10-14T22:52:09.235Z",
+          "finishedAt": "2026-10-14T22:52:40.992Z"
+        },
+        {
+          "name": "start-data-services",
+          "status": "completed",
+          "startedAt": "2026-10-14T22:52:41.228Z",
+          "finishedAt": "2026-10-14T22:56:44.949Z"
+        },
+        {
+          "name": "initialize-locked-bucket",
+          "status": "completed",
+          "startedAt": "2026-10-14T22:56:46.760Z",
+          "finishedAt": "2026-10-14T22:57:57.183Z"
+        },
+        {
+          "name": "apply-migration-ledger",
+          "status": "completed",
+          "startedAt": "2026-10-14T22:57:59.127Z",
+          "finishedAt": "2026-10-14T23:05:56.854Z"
+        },
+        {
+          "name": "verify-health-and-ledger",
+          "status": "intent",
+          "startedAt": "2026-10-14T23:06:15.956Z"
+        }
+      ]
+    },
+    "installer": [],
+    "containerStatusUnavailable": true
+  },
+  "completedChecks": [
+    "offlineNoDefaultRoute",
+    "unsupportedCombinationsRejected",
+    "projectLockRejectsBeforeDeploymentMutation",
+    "candidateStagedBeforeDeployment"
+  ]
+}

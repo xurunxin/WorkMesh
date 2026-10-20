@@ -1,0 +1,290 @@
+{
+  "source": "执行者本次单一已批准API窗口的原始安全回执、Docker归属事件与源码字节核对；非正式产品验收或139闭合",
+  "branchBaseline": "ef372816e518e86530f11708739feaaa51ce5bff",
+  "applicationSourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+  "authorization": {
+    "source": "本会话用户反馈对原问题的回答；未另发问题或把此前收尾当批准",
+    "questionId": "q-E6FuFFokBxxs6UpR6K9vC",
+    "question": "第1项修正已提交，新CI570在途。第2项仍缺旧139因果证据；是否批准已入库方案中的一个定向窗口？仅一台amd64 VM、最多9000秒，固定原Node/QEMU/guest、4CPU/4GiB和30秒业务期限，首败或目标动作完成即停，不重试、不继续另一窗口。",
+    "answer": "先取API窗口（推荐）",
+    "selectedWindow": "A",
+    "mcpWindowAuthorized": false,
+    "planSourceHead": "ef372816e518e86530f11708739feaaa51ce5bff",
+    "planGitBlob": "23cbaf60f247beb16cac0de1c811f17c20ed2b9b",
+    "planSha256": "09dbdf9610c481cf52f851388f83ec1a3735c4fa76ea036261041a5699a4b3a7",
+    "reviewSource": "本会话在此批准之前收到的reviewer反馈：P1-1已解决，本轮未发现新增P0/P1；P1-2保持未闭。未在本轮重开review或冒称139闭合。",
+    "clientSourceClarification": "原9c8 Client首次身份HTTP为90秒，安装器产品读取30秒。本次只截断到原auth/install，保原90秒调用参数；产品30秒不变且未追加MCP调用。"
+  },
+  "candidate": {
+    "id": 12018130672,
+    "name": "server-distribution-amd64-38831525243-1",
+    "digest": "sha256:b4d72ee34777688f87dcbe77c3781b4d1d73cade37558b4f565675b179a2ff58",
+    "size_in_bytes": 427789057,
+    "expired": false
+  },
+  "manifestSha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+  "inputIdentity": {
+    "candidateFilesAndChunks": 31,
+    "ociRoles": 8,
+    "ociBlobs": 132,
+    "oldSourceInputsMatched": 22,
+    "originalScriptsMatched": 6
+  },
+  "result": {
+    "status": "incomplete-or-failed",
+    "totalSeconds": 678.685383999953,
+    "qemuExitCode": -9,
+    "actualTargetAttempts": "unknown",
+    "final": null,
+    "receipts": [
+      {
+        "nonce": "7f18c1c3b3a942c5b7929beff27a4d76",
+        "kind": "stage",
+        "stage": "driver-started",
+        "guestMonotonic": 596.653592735,
+        "sinceDriverSeconds": 2.4632951999999477,
+        "kernel": "6.8.0-142-generic",
+        "gdbVersion": "GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1",
+        "hostUtc": 1792388852.1188421,
+        "hostElapsed": 609.6076514000306
+      }
+    ],
+    "qmpEvents": [
+      {
+        "event": "NIC_RX_FILTER_CHANGED",
+        "hostElapsed": 96.92595870001242
+      }
+    ]
+  },
+  "deadlineReached": false,
+  "outerCommandExitCode": 0,
+  "meaningOfExitZero": "只表示收集器写完结果，不能冒作VM成功；QEMU -9且无最终目标回执",
+  "actualRuntimeApiNodeIdentity": "unavailable",
+  "captureCoverage": "无API身份注册或core回执，不能声称覆盖/无崩溃/阴性样本",
+  "firstObservedFailure": {
+    "qemuSignal": "SIGKILL",
+    "outerContainerOomKilled": true,
+    "ownedDockerEvents": [
+      {
+        "timeNano": 1792388920675594400,
+        "event": "oom",
+        "id": "98e5552526cd2f49d36b4700ce1128293fa9969871ee9b920c9a7245faccfad5",
+        "exitCode": ""
+      },
+      {
+        "timeNano": 1792388934133249900,
+        "event": "stop",
+        "id": "98e5552526cd2f49d36b4700ce1128293fa9969871ee9b920c9a7245faccfad5",
+        "exitCode": ""
+      },
+      {
+        "timeNano": 1792388934136876100,
+        "event": "die",
+        "id": "98e5552526cd2f49d36b4700ce1128293fa9969871ee9b920c9a7245faccfad5",
+        "exitCode": "137"
+      }
+    ],
+    "caveat": "没有OOM受害PID或内存峰值，不能外推具体被杀PID机制；后续PID1 die137为定向收尾，不是旧API/MCP139"
+  },
+  "limits": {
+    "vmSeconds": 9000,
+    "guestVcpus": 4,
+    "guestRamMiB": 4096,
+    "guestDiskGiB": 40,
+    "outerCpuQuota": 4,
+    "outerRamMiB": 4096,
+    "outerMemorySwapTotalMiB": 4096,
+    "originalInitialIdentityClientSeconds": 90,
+    "unchangedProductBusinessSeconds": 30
+  },
+  "executionError": "执行者错误沿用组件外层4GiB上限，完整guest也配置4GiB，没有为QEMU和输入缓存等留合适余量；不归因旧139",
+  "cleanup": {
+    "containerId": "98e5552526cd2f49d36b4700ce1128293fa9969871ee9b920c9a7245faccfad5",
+    "owner": "82144bd3-b479-4d53-a910-166c27e3194f",
+    "removedAndAbsent": true,
+    "expandedInputs": {
+      "target": "I:\\tds_workspace\\workspaces\\01a138ab-2566-7f87-9d06-5b16bebd86c2\\.tmp\\ta01-resumption\\api-crash-window-a\\distribution",
+      "allFilesMatchedOwnedManifest": true,
+      "containerAbsentBeforeRemoval": true,
+      "removedAndAbsent": true,
+      "logicalBytesBefore": 1294415589,
+      "physicalFreedBytes": "not-measured",
+      "retainedOnePublicCandidateZip": true,
+      "sharedGuestImageCacheUnchanged": true,
+      "otherTreesSharedDataAndRejectedTargetsUnchanged": true
+    },
+    "sensitiveDataArchived": false,
+    "rawCoreArchived": false
+  },
+  "nextGate": {
+    "executed": false,
+    "proposal": "另批一台A，专用外层上限6GiB，guest仍4CPU4GiB/40GiB、原镜像/Node/QEMU/内核/期限；容量不足不启动，不改全局或其他项目",
+    "noAutomaticRetry": true,
+    "mcpWindowNotAuthorized": true,
+    "p1RestoredCandidate": "正式复审已闭合",
+    "p1Historic139": "保持未闭"
+  },
+  "selectedZipSha256": "6f47854f825f7473eb1279630be6012c58fff6ca5ff08abdaa8d68ce583e292b",
+  "members": {
+    "result.json": {
+      "bytes": 2479,
+      "sha256": "8fb64a06f736dcd96f30565763f91c2f753a64ba5f315c050a76a953ee34bc23"
+    },
+    "started.json": {
+      "bytes": 1811,
+      "sha256": "97977851b8404219d4dfe23991b09bfc57820dc6eb8cfd37ef90113b2abf1425"
+    },
+    "receipts.ndjson": {
+      "bytes": 322,
+      "sha256": "d7d6be05d40da4d74d29ab2594df9eabe9969dc39b594fc0af60f812d197f09c"
+    },
+    "serial.log": {
+      "bytes": 87419,
+      "sha256": "e3a3649f12ccbb902a85a88be1adf74df56203de32fc82365554d47f46ec3416"
+    },
+    "qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "resources.json": {
+      "bytes": 1776,
+      "sha256": "14c3740fbcb435a870a0bf32eaa62fef795863f8d042b86184909490c1f476df"
+    },
+    "owned-container-events.json": {
+      "bytes": 1195,
+      "sha256": "267cfaca8b7f14ed7cb8780287886401a11b3ead4d61c2be601ab2d84864ad0b"
+    },
+    "authorization.json": {
+      "bytes": 1177,
+      "sha256": "dc44d4182063984e932ff19471e7896a5b6a9c65a792bee4f90b6e40e620c19b"
+    },
+    "input-preflight.json": {
+      "bytes": 1596,
+      "sha256": "edf4aca1aef3e23a2a4eafbbefe31d25173d3083415340dd4b3160ba52e910cd"
+    },
+    "original-source-bindings.json": {
+      "bytes": 5120,
+      "sha256": "ba7663969c704652781aa29432d71b8cd0001116a9cac17f99b634b5d8b00dbf"
+    },
+    "oci-closure.json": {
+      "bytes": 29050,
+      "sha256": "2bde01ec61e804e93fbf8a8b3745c9b44554a97950fa7c869d603afeeb272f12"
+    },
+    "artifact.json": {
+      "bytes": 221,
+      "sha256": "3f2f4fa1879069cae292e0101432d76f5945b00e754978746a9b98299990f187"
+    },
+    "manifest.json": {
+      "bytes": 12627,
+      "sha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b"
+    },
+    "actual-script-reconciliation.json": {
+      "bytes": 700,
+      "sha256": "71a98deeacd56c34968925c677392878923ba834b42e52df61d699013827c380"
+    },
+    "execution-commands.json": {
+      "bytes": 2289,
+      "sha256": "3bd4a1d6f7bf18242398747b3883c532e97c9172a2112bee88c090f2f38bb796"
+    },
+    "actual-run_window.py": {
+      "bytes": 8804,
+      "sha256": "318a3d41239ad5176c84b5e54ab6e25fffefa8265aea597b1dea8bdc989d7d91"
+    },
+    "actual-diagnostic_guest.py": {
+      "bytes": 9168,
+      "sha256": "7c5d41aae7050dc075ab1fffcf00fc03a28ba35b4e7219a3df28475bb0b10c1d"
+    },
+    "actual-api_identity.py": {
+      "bytes": 1083,
+      "sha256": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+    },
+    "execute_once.py": {
+      "bytes": 3475,
+      "sha256": "5b8e550c9694c9315473a0e624d138904db2de2ac29a992c103017092bf10fe4"
+    },
+    "api_identity_test.py": {
+      "bytes": 2115,
+      "sha256": "0a84788bb7e1ddf8ea97239589dd0dced15b3a71bb8873ee3dbc273e1012508f"
+    },
+    "approved-plan-at-ef372816.md": {
+      "bytes": 9162,
+      "sha256": "09dbdf9610c481cf52f851388f83ec1a3735c4fa76ea036261041a5699a4b3a7"
+    },
+    "qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "qemu-sha.stdout": {
+      "bytes": 94,
+      "sha256": "5798d2b7f16830c2aec1526df2364d6f80d455f4f300ce9f95ac047bd3cddd5a"
+    },
+    "gdb-policy.stdout": {
+      "bytes": 293,
+      "sha256": "3c5d744028d84a94f9d41657aee984b39ccec3925b6000028dc6c22c4afc779c"
+    },
+    "process-names-before-stop.txt": {
+      "bytes": 78,
+      "sha256": "708384f409db5a1c8efd4774eb393d34dd87bfaaa8034e455d98e0ee9ea241fb"
+    },
+    "runner.stdout": {
+      "bytes": 104,
+      "sha256": "89f766f2286bab4119fa82ffa5c0a46095e1e974b7bd003f6fc6fb3a7ee147ba"
+    },
+    "runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "owned-expanded-input-cleanup.json": {
+      "bytes": 480,
+      "sha256": "0f64233a0e57d4a5c859314bc206de026c16db1c9a1b631775173c65966fa1fc"
+    },
+    "apt-update.stdout": {
+      "bytes": 1635,
+      "sha256": "16bc15f87969705d67bd7759bd7d4f7005651474b798ad32f6f985ffbda651ab"
+    },
+    "apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qemu-policy.stdout": {
+      "bytes": 823,
+      "sha256": "38419e19b79fcc88b9ffcc00a83a89b1eb35e21881ef9307233aba20e473076e"
+    },
+    "qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tool-install.stdout": {
+      "bytes": 29312,
+      "sha256": "608a6d5af4ebeb68afea299cf0a8986f7138f1a20b247c42b9ae9ddacf83484d"
+    },
+    "tool-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "original-source/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "original-source/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    "original-source/guest.py": {
+      "bytes": 75400,
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe"
+    },
+    "original-source/native_diagnostic.py": {
+      "bytes": 12173,
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94"
+    },
+    "original-source/native_diagnostic_test.py": {
+      "bytes": 61675,
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815"
+    },
+    "original-source/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    }
+  }
+}
