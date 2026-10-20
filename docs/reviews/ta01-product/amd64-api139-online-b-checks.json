@@ -1,0 +1,57 @@
+{
+  "observedUtc": "2026-10-20T15:28:39.299051+00:00",
+  "headBeforeCommit": "70a099896a1193f58b5fd2fc26af4e3943c8d4b0",
+  "scope": "已结束的唯一B安全归档和文档静态核验；不执行产品、GDB、VM、CI、成果审或合入",
+  "archiveMembers": 114,
+  "zipSha256": "e723acd7fd67971d70d30b282e75962ce878a7c080c794abcc1ad057fee7d29e",
+  "crcAndAllMemberBytes": true,
+  "sixOriginalGitBlobs": true,
+  "sevenActualRuntimeInputs": true,
+  "runtimeSeedAliases": {
+    "original_guest.py": "original-source/guest.py",
+    "native_diagnostic.py": "original-source/native_diagnostic.py",
+    "core_metadata.py": "original-source/core_metadata.py",
+    "core_pipe.py": "clock_core_pipe.py",
+    "guest.py": "diagnostic_guest.py"
+  },
+  "allPythonAst": true,
+  "privateBinaryAndKnownSecretPatternsAbsent": true,
+  "nodeVersion": "v25.4.0",
+  "nodeBoundary": "宿主仅静态文档检查，不代表锁定产品环境五根通过",
+  "commands": [
+    {
+      "command": [
+        "node",
+        "scripts/check-integration-docs.mjs"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"skillFiles\":4,\"localLinks\":104,\"restEndpoints\":35,\"mcpTools\":11,\"humanSyntax\":\"passed\",\"scope\":\"静态检查；真实请求与中文语义须另验\"}\n",
+      "stderr": "",
+      "stdoutSha256": "a228ad9794a0714b2299c0090b066a7e31a54fcd891420be02c8e27c7f08f1ab",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": "warning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/amd64-api139-next-gate.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/amd64-api139-online-b.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/amd64-crash-investigation-plan.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/current-delivery.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/current-spec-amd64.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/implementation-plan.md', CRLF will be replaced by LF the next time Git touches it\nwarning: in the working copy of 'docs/plan/ta01-self-hosted-deployment/repair-decision-gate.md', CRLF will be replaced by LF the next time Git touches it\n",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "3effc960ff603d269ccc6e7fd51363858f3bcf9026e91f92168a8f19099049b0"
+    }
+  ],
+  "zhWriting": "仓库固定ffda9353768dece8aabd26ccb3a4978025e9437c；typography/manual-structure手检；无autocorrect，不安装全局工具",
+  "notRun": [
+    "产品五根检查",
+    "无调试产品验收",
+    "CI",
+    "成果审",
+    "MCP窗口",
+    "新VM或调试",
+    "合入"
+  ],
+  "limitations": "未触发真实故障栈／信号60秒路径；API139与MCP139未闭，Required/ready等原门禁未齐"
+}

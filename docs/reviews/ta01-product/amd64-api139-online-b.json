@@ -1,0 +1,2473 @@
+{
+  "observedUtc": "2026-10-20T15:26:41.833228+00:00",
+  "source": "用户16:13批准、22:03要求继续的唯一B在线API取证；保留调试干预，不作产品通过或139闭合",
+  "branch": "tds/conv-01a1572a-7aeb-7b6d-b7e8-83e89c2b723d",
+  "baseHead": "1ccb874b8cdd8be3a75fd7518fed19d0baeed992",
+  "interruptionCheckpoint": "70a099896a1193f58b5fd2fc26af4e3943c8d4b0",
+  "productSourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+  "authorization": {
+    "observedUtc": "2026-10-20T14:11:01.400616+00:00",
+    "answer": "执行在线调试（推荐）",
+    "source": "用户2026-10-20 16:13对Chief具体问题选择在线调试，22:03要求继续；本轮完整Spec及反馈确认。未给卡ID，不编造",
+    "planHead": "1ccb874b8cdd8be3a75fd7518fed19d0baeed992",
+    "planBlob": "10bcf92f67f7ef3c7f5b56db86e7c2d2de8cdb99",
+    "oneNewVmOnly": true,
+    "previous6GiBConsumed": true,
+    "noMcpMatrixOrAdditionalWindow": true,
+    "limits": {
+      "outerCpu": 4,
+      "outerMemoryBytes": 6442450944,
+      "outerMemorySwapTotalBytes": 6442450944,
+      "guestCpu": 4,
+      "guestMemoryMiB": 4096,
+      "guestDiskGiB": 40,
+      "windowSeconds": 9000,
+      "installSeconds": 1800,
+      "healthSeconds": 180,
+      "identityHttpSeconds": 90,
+      "businessSeconds": 30,
+      "coreBytes": 536870912,
+      "handlerSeconds": 90,
+      "gdbTotalSeconds": 900,
+      "signalToExitSeconds": 60,
+      "rawGdbBytes": 65536,
+      "newRecords": 32,
+      "recordBytes": 4096
+    }
+  },
+  "sourceBindings": [
+    {
+      "path": "scripts/server-distribution/core_metadata.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "actualGitBlob": "31f9504d898577612b5c7cb1fb9ff8ffedca4c82",
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+      "runtimeHandlerArchiveMember": null
+    },
+    {
+      "path": "scripts/server-distribution/core_pipe.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "actualGitBlob": "6147207ec5174a9833bd96e68be1776de591f4f0",
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+      "runtimeHandlerArchiveMember": "clock_core_pipe.py"
+    },
+    {
+      "path": "scripts/server-distribution/guest.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "actualGitBlob": "cd32a1e34e17c61ab0cb939f41b5965a6e7b303a",
+      "bytes": 75400,
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe",
+      "runtimeHandlerArchiveMember": null
+    },
+    {
+      "path": "scripts/server-distribution/native_diagnostic.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "actualGitBlob": "eeb22419acc88d50da44f0655d6b2ddb89dbb219",
+      "bytes": 12173,
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+      "runtimeHandlerArchiveMember": null
+    },
+    {
+      "path": "scripts/server-distribution/native_diagnostic_test.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "actualGitBlob": "7aa440c5c548bdfdeb50e50ba297c965d028654a",
+      "bytes": 61675,
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815",
+      "runtimeHandlerArchiveMember": null
+    },
+    {
+      "path": "scripts/server-distribution/run.py",
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "actualGitBlob": "ef1decf02e5a988e1198c236448c1e5b490db543",
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014",
+      "runtimeHandlerArchiveMember": null
+    }
+  ],
+  "runtimeInputs": {
+    "run_window.py": "e5432aa282331270de8631fec09c3349b64ce3439131afa55c41e10190686ab4",
+    "diagnostic_guest.py": "62131be702c86799a5d47b1953ac129e223f2142d1db2f3ba874328f46fffd5a",
+    "api_identity.py": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8",
+    "clock_evidence.py": "347953662fb7685014f6e6f45be385ae38247d2154a7733f61e24e6a8b8f800b",
+    "clock_core_pipe.py": "9a4800997b5b2c32f7e63fe6babfdc614cd11ca7ab6694aad5b1cb9c8c9a73fe",
+    "online_debugger.py": "5a82d69ac7f19d1067a2ddaaabef0be5934f0104c8fd3642dd9fb2186297d305",
+    "public-node-ranges.json": "cb8141eeb04dc9204b949749f7eb9d6de529b242baa590254dd39bc746b4e3e8"
+  },
+  "runtimeSeedBindings": {
+    "original_guest.py": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe",
+    "native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+    "core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+    "core_pipe.py": "9a4800997b5b2c32f7e63fe6babfdc614cd11ca7ab6694aad5b1cb9c8c9a73fe",
+    "clock_evidence.py": "347953662fb7685014f6e6f45be385ae38247d2154a7733f61e24e6a8b8f800b",
+    "online_debugger.py": "5a82d69ac7f19d1067a2ddaaabef0be5934f0104c8fd3642dd9fb2186297d305",
+    "public-node-ranges.json": "cb8141eeb04dc9204b949749f7eb9d6de529b242baa590254dd39bc746b4e3e8",
+    "guest.py": "62131be702c86799a5d47b1953ac129e223f2142d1db2f3ba874328f46fffd5a",
+    "api_identity.py": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+  },
+  "diagnosticIntervention": true,
+  "result": {
+    "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+    "manifestSha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+    "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "qemuBinarySha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+    "guestSha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2",
+    "scripts": {
+      "original_guest.py": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe",
+      "native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+      "core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+      "core_pipe.py": "9a4800997b5b2c32f7e63fe6babfdc614cd11ca7ab6694aad5b1cb9c8c9a73fe",
+      "clock_evidence.py": "347953662fb7685014f6e6f45be385ae38247d2154a7733f61e24e6a8b8f800b",
+      "online_debugger.py": "5a82d69ac7f19d1067a2ddaaabef0be5934f0104c8fd3642dd9fb2186297d305",
+      "public-node-ranges.json": "cb8141eeb04dc9204b949749f7eb9d6de529b242baa590254dd39bc746b4e3e8",
+      "guest.py": "62131be702c86799a5d47b1953ac129e223f2142d1db2f3ba874328f46fffd5a",
+      "api_identity.py": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+    },
+    "command": [
+      "qemu-system-x86_64",
+      "-accel",
+      "tcg",
+      "-m",
+      "4096",
+      "-smp",
+      "4",
+      "-display",
+      "none",
+      "-serial",
+      "file:/opt/api-window/guest/serial.log",
+      "-qmp",
+      "unix:/opt/api-window/guest/qmp.sock,server=on,wait=off",
+      "-netdev",
+      "user,id=net0",
+      "-device",
+      "virtio-net-pci,netdev=net0",
+      "-drive",
+      "if=virtio,format=qcow2,file=/opt/api-window/guest/root.qcow2",
+      "-drive",
+      "if=virtio,format=raw,readonly=on,file=/opt/api-window/guest/seed.iso"
+    ],
+    "maximumSeconds": 9000,
+    "seedSha256": "6ccc1f7113cb853590bc9adb6e42704af505f63a1e523aa62813b14786be655a",
+    "fullProductAcceptance": false,
+    "oneVmOnly": true,
+    "requestBoundary": "原首次身份Client90；原安装器产品30保持、不执行MCP",
+    "diagnosticIntervention": true,
+    "onlineGdbMaximumSeconds": 900,
+    "signalToExitMaximumSeconds": 60,
+    "controller": {
+      "pid": 3160,
+      "startTicks": 69376751,
+      "beganHostMonotonic": 693767.6904406,
+      "deadlineHostMonotonic": 702767.6904406
+    },
+    "preparationOnly": true,
+    "preparedUtc": "2026-10-20T14:25:49.976820+00:00",
+    "outerCgroup": {
+      "memory.max": "6442450944",
+      "memory.swap.max": "0",
+      "cpu.max": "400000 100000"
+    },
+    "actualQemuStart": {
+      "qemuPid": 3173,
+      "qemuStartedUtc": "2026-10-20T14:25:49.982363+00:00",
+      "controller": {
+        "pid": 3160,
+        "startTicks": 69376751,
+        "beganHostMonotonic": 693767.6904406,
+        "deadlineHostMonotonic": 702767.6904406
+      },
+      "controllerElapsed": 3.2305091000162065,
+      "qemuBinarySha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+      "startTicks": 69377091
+    },
+    "qemuExitCode": 0,
+    "clockRecords": [
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "clock-driver-started",
+        "sequence": 1,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 1257.218696177
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-started",
+        "sequence": 2,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 2804.561823477,
+        "debuggerProcess": {
+          "pid": 7831,
+          "startTicks": 280321,
+          "executableDevice": 64769,
+          "executableInode": 31487,
+          "executableBytes": 8920528
+        },
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-attached",
+        "sequence": 3,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 2826.253781477,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-running",
+        "sequence": 4,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 2826.842976377,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "client-intent",
+        "sequence": 5,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3138.257525877,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-received",
+        "sequence": 6,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3139.166882777,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-forward-intent",
+        "sequence": 7,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3139.185296177,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-request-sent",
+        "sequence": 8,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3139.224913377,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-upstream-headers",
+        "sequence": 9,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3147.819898977,
+        "requestSequence": 1,
+        "status": 200,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-upstream-complete",
+        "sequence": 10,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3147.922806777,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-client-complete",
+        "sequence": 11,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3148.208040277,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "client-finished",
+        "sequence": 12,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3148.536995477,
+        "requestSequence": 1,
+        "status": 200,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-detaching",
+        "sequence": 13,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3150.038020277,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-exited",
+        "sequence": 14,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3151.547793177,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        }
+      }
+    ],
+    "totalSeconds": 3229.89853529993,
+    "receipts": [
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "clock-driver-started",
+        "sequence": 1,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 1257.218696177,
+        "hostUtc": 1792507616.801981,
+        "hostElapsed": 1270.0503057999304
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "stage",
+        "stage": "driver-started",
+        "guestMonotonic": 1260.627445177,
+        "sinceDriverSeconds": 3.423598700000184,
+        "kernel": "6.8.0-142-generic",
+        "gdbVersion": "GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1",
+        "runtimePackages": [
+          "docker-compose-v2=2.40.3+ds1-0ubuntu1~24.04.1",
+          "docker.io=29.1.3-0ubuntu3~24.04.2",
+          "gdb=15.1-1ubuntu1~24.04.1"
+        ],
+        "hostUtc": 1792507618.8917522,
+        "hostElapsed": 1272.1400773999048
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "stage",
+        "stage": "api-observer-registered",
+        "guestMonotonic": 2794.435538277,
+        "sinceDriverSeconds": 1537.2316641,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509154.556796,
+        "hostElapsed": 2807.805344499997
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-started",
+        "sequence": 2,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 2804.561823477,
+        "debuggerProcess": {
+          "pid": 7831,
+          "startTicks": 280321,
+          "executableDevice": 64769,
+          "executableInode": 31487,
+          "executableBytes": 8920528
+        },
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509162.9029746,
+        "hostElapsed": 2816.1515226999763
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-attached",
+        "sequence": 3,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 2826.253781477,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509184.6894355,
+        "hostElapsed": 2837.93723879999
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-running",
+        "sequence": 4,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 2826.842976377,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509185.1199894,
+        "hostElapsed": 2838.3677927999524
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "client-intent",
+        "sequence": 5,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3138.257525877,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509497.0551798,
+        "hostElapsed": 3150.3031826999504
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-received",
+        "sequence": 6,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3139.166882777,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509497.3884335,
+        "hostElapsed": 3150.6364366000053
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-forward-intent",
+        "sequence": 7,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3139.185296177,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509497.4257634,
+        "hostElapsed": 3150.6737663999666
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-request-sent",
+        "sequence": 8,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3139.224913377,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509497.469315,
+        "hostElapsed": 3150.717318199924
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-upstream-headers",
+        "sequence": 9,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3147.819898977,
+        "requestSequence": 1,
+        "status": 200,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509506.3469203,
+        "hostElapsed": 3159.595125599997
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-upstream-complete",
+        "sequence": 10,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3147.922806777,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509506.4274294,
+        "hostElapsed": 3159.6756349999923
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "proxy-client-complete",
+        "sequence": 11,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3148.208040277,
+        "requestSequence": 1,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509506.6721716,
+        "hostElapsed": 3159.9203774000052
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "client-finished",
+        "sequence": 12,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3148.536995477,
+        "requestSequence": 1,
+        "status": 200,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509506.784714,
+        "hostElapsed": 3160.032919399906
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "stage",
+        "stage": "auth-install-started",
+        "guestMonotonic": 3148.566044177,
+        "sinceDriverSeconds": 1891.3621743,
+        "attempts": 1,
+        "correlationSha256": "aa75343bc841c261391cf9321757b37fbe2fcbda50fbd96dc3283154f90a8dc7",
+        "observerRegisteredBeforeRequest": true,
+        "originalClientSeconds": 90,
+        "productBusinessSeconds": 30,
+        "hostUtc": 1792509506.8756728,
+        "hostElapsed": 3160.123878399958
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "stage",
+        "stage": "auth-install-finished",
+        "guestMonotonic": 3148.703960377,
+        "sinceDriverSeconds": 1891.5000929999999,
+        "attempts": 1,
+        "debuggerAttachedBeforeRequest": true,
+        "startedGuestMonotonic": 3138.251979977,
+        "localCorrelationSha256": "aa75343bc841c261391cf9321757b37fbe2fcbda50fbd96dc3283154f90a8dc7",
+        "observerRegisteredBeforeRequest": true,
+        "completed": true,
+        "httpStatus": 200,
+        "elapsedMilliseconds": 10248,
+        "finishedGuestMonotonic": 3148.536815277,
+        "hostUtc": 1792509506.9641037,
+        "hostElapsed": 3160.2123099999735
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-detaching",
+        "sequence": 13,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3150.038020277,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509508.297166,
+        "hostElapsed": 3161.5453717999626
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "clock",
+        "stage": "debugger-exited",
+        "sequence": 14,
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "guestMonotonic": 3151.547793177,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "target": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792509510.062739,
+        "hostElapsed": 3163.310944799916
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "stage",
+        "stage": "window-stopped",
+        "guestMonotonic": 3159.017031477,
+        "sinceDriverSeconds": 1901.8132096000002,
+        "status": "target-completed",
+        "targetAttempts": 1,
+        "hostUtc": 1792509517.2516596,
+        "hostElapsed": 3170.4998657999095
+      },
+      {
+        "nonce": "4006331865dc4e959586e344ae3e276f",
+        "kind": "final",
+        "value": {
+          "purpose": "approved-online-gdb-api-window",
+          "fullProductAcceptance": false,
+          "diagnosticIntervention": true,
+          "target": {
+            "attempts": 1,
+            "debuggerAttachedBeforeRequest": true,
+            "startedGuestMonotonic": 3138.251979977,
+            "localCorrelationSha256": "aa75343bc841c261391cf9321757b37fbe2fcbda50fbd96dc3283154f90a8dc7",
+            "observerRegisteredBeforeRequest": true,
+            "completed": true,
+            "httpStatus": 200,
+            "elapsedMilliseconds": 10248,
+            "finishedGuestMonotonic": 3148.536815277
+          },
+          "observer": {
+            "registered": true,
+            "polls": 4,
+            "eventStreamStarted": true,
+            "containerId": "f42e934f11f0feea5f42dd1b51fe4d5c0501a4a510956354b46909b8fe78aaae",
+            "imageId": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+            "apiStartTimeNano": 1792509146305383100,
+            "registeredGuestMonotonic": 2794.432785177,
+            "registeredIdentity": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            },
+            "captureId": "f6223508f534438c950b5a673736f0ee"
+          },
+          "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+          "manifestSha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+          "clientBoundary": "原首次身份Client90秒，安装器产品业务30秒保持且本窗口不执行后者；不改变原调用",
+          "status": "target-completed",
+          "onlineDebugger": {
+            "purpose": "approved-online-api-only",
+            "diagnosticIntervention": true,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "registeredTarget": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            },
+            "startedGuestMonotonic": 2794.392042177,
+            "totalMaximumSeconds": 900,
+            "signalMaximumSeconds": 60,
+            "rawCombinedLimitBytes": 65536,
+            "status": "stopped-at-original-boundary",
+            "detachedConfirmed": true,
+            "debuggerProcess": {
+              "pid": 7831,
+              "startTicks": 280321,
+              "executableDevice": 64769,
+              "executableInode": 31487,
+              "executableBytes": 8920528
+            },
+            "debuggerBinarySha256": "3832cc070ae1716e322105d3b39fb398695e5f031c9d39224cf227a8c2b889f6",
+            "attachedGuestMonotonic": 2826.251436677,
+            "continuedGuestMonotonic": 2826.842662877,
+            "untracedAfterDebuggerExit": true,
+            "debuggerExitCode": 0,
+            "output": {
+              "stdoutSha256": "8c8f34191788556d270dbf381d84a25a5e47eaa0996162432d35d28c0eaa580e",
+              "stderrSha256": "2a54f1833617702c1b501faffdb3a65a9290d48ba094d226ee44de0fab39cadc",
+              "stdoutBytes": 9452,
+              "stderrBytes": 71,
+              "categories": [
+                "namespaceMismatch"
+              ],
+              "ptraceRejected": false,
+              "eofStreams": [],
+              "byteBoundary": "仅实际捕获管道字节；缺EOF不冒称全部输出，原文未持久化"
+            },
+            "finishedGuestMonotonic": 3151.547561377,
+            "elapsedSeconds": 357.15554040000006,
+            "rawOutputPersisted": false,
+            "postCoreGdbAllowed": false
+          },
+          "nativeTrace": {
+            "coreObserved": false,
+            "captured": false,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "meaning": "到目标完成时未见处理回执，只是本样本；非排除历史崩溃"
+          },
+          "postTargetNodeSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+          "observedApiState": {
+            "Running": true,
+            "ExitCode": 0,
+            "OOMKilled": false,
+            "RestartCount": 0
+          },
+          "containerEvents": {
+            "events": [],
+            "truncated": false
+          },
+          "clockEvidence": {
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "records": [
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "clock-driver-started",
+                "sequence": 1,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 1257.218696177
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "debugger-started",
+                "sequence": 2,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 2804.561823477,
+                "debuggerProcess": {
+                  "pid": 7831,
+                  "startTicks": 280321,
+                  "executableDevice": 64769,
+                  "executableInode": 31487,
+                  "executableBytes": 8920528
+                },
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "debugger-attached",
+                "sequence": 3,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 2826.253781477,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "debugger-running",
+                "sequence": 4,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 2826.842976377,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "client-intent",
+                "sequence": 5,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3138.257525877,
+                "requestSequence": 1,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "proxy-received",
+                "sequence": 6,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3139.166882777,
+                "requestSequence": 1,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "proxy-forward-intent",
+                "sequence": 7,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3139.185296177,
+                "requestSequence": 1,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "proxy-request-sent",
+                "sequence": 8,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3139.224913377,
+                "requestSequence": 1,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "proxy-upstream-headers",
+                "sequence": 9,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3147.819898977,
+                "requestSequence": 1,
+                "status": 200,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "proxy-upstream-complete",
+                "sequence": 10,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3147.922806777,
+                "requestSequence": 1,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "proxy-client-complete",
+                "sequence": 11,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3148.208040277,
+                "requestSequence": 1,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "client-finished",
+                "sequence": 12,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3148.536995477,
+                "requestSequence": 1,
+                "status": 200,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "debugger-detaching",
+                "sequence": 13,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3150.038020277,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              },
+              {
+                "nonce": "4006331865dc4e959586e344ae3e276f",
+                "kind": "clock",
+                "stage": "debugger-exited",
+                "sequence": 14,
+                "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+                "guestMonotonic": 3151.547793177,
+                "captureId": "f6223508f534438c950b5a673736f0ee",
+                "target": {
+                  "pid": 7665,
+                  "startTicks": 278782,
+                  "executableDevice": 61,
+                  "executableInode": 525091,
+                  "executableBytes": 124181928
+                }
+              }
+            ],
+            "firstFailure": null,
+            "projectionError": null,
+            "transportError": null,
+            "recordsSent": 14,
+            "pendingTransport": 0
+          },
+          "elapsedSeconds": 1901.758806,
+          "installActions": 8,
+          "completedChecks": [
+            "offlineNoDefaultRoute",
+            "unsupportedCombinationsRejected",
+            "projectLockRejectsBeforeDeploymentMutation",
+            "candidateStagedBeforeDeployment"
+          ],
+          "samples": [
+            {
+              "phase": "idle",
+              "profile": "enterprise",
+              "monotonic": 3131.398271877,
+              "stats": [
+                {
+                  "BlockIO": "4.43MB / 0B",
+                  "CPUPerc": "0.04%",
+                  "Container": "b7ef5f1c5a10e759b5f5ef3819ac43053649d44654e37b21a86e6000bfc41c6b",
+                  "ID": "b7ef5f1c5a10",
+                  "MemPerc": "0.95%",
+                  "MemUsage": "37.24MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-mcp-1",
+                  "NetIO": "7.67kB / 4.84kB",
+                  "PIDs": "12"
+                },
+                {
+                  "BlockIO": "15.5MB / 0B",
+                  "CPUPerc": "61.29%",
+                  "Container": "913b1952f5e203b0bbd22a14a8c06c57dd4fdd37133e34c6c3e2d9f2bb327f7a",
+                  "ID": "913b1952f5e2",
+                  "MemPerc": "1.47%",
+                  "MemUsage": "57.6MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-worker-1",
+                  "NetIO": "1.1MB / 2.24MB",
+                  "PIDs": "14"
+                },
+                {
+                  "BlockIO": "16.7MB / 0B",
+                  "CPUPerc": "2.80%",
+                  "Container": "f42e934f11f0feea5f42dd1b51fe4d5c0501a4a510956354b46909b8fe78aaae",
+                  "ID": "f42e934f11f0",
+                  "MemPerc": "1.51%",
+                  "MemUsage": "59.11MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-api-1",
+                  "NetIO": "25.4kB / 27.8kB",
+                  "PIDs": "12"
+                },
+                {
+                  "BlockIO": "26.8MB / 106MB",
+                  "CPUPerc": "33.96%",
+                  "Container": "d9f925d1c173dadd4ba36b7082bbff4be770052d2be73f1cbb5c351c6534c5fd",
+                  "ID": "d9f925d1c173",
+                  "MemPerc": "1.75%",
+                  "MemUsage": "68.52MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-postgres-1",
+                  "NetIO": "2.5MB / 1.13MB",
+                  "PIDs": "9"
+                },
+                {
+                  "BlockIO": "110MB / 1.53MB",
+                  "CPUPerc": "1.70%",
+                  "Container": "f565072b24aa9c45ed7d1da7af0e642939be7d6b995929dec1c35d1841559c76",
+                  "ID": "f565072b24aa",
+                  "MemPerc": "4.79%",
+                  "MemUsage": "187.5MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-minio-1",
+                  "NetIO": "29.8kB / 11.2kB",
+                  "PIDs": "21"
+                },
+                {
+                  "BlockIO": "647kB / 8.19kB",
+                  "CPUPerc": "7.05%",
+                  "Container": "5829a3f21eaaa3dbef33cd7ce59d5ebac7426264b4d7e17fcfbb2fd696e06ad1",
+                  "ID": "5829a3f21eaa",
+                  "MemPerc": "0.10%",
+                  "MemUsage": "3.84MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-redis-1",
+                  "NetIO": "20.7kB / 13.6kB",
+                  "PIDs": "6"
+                }
+              ],
+              "state": [
+                {
+                  "id": "b7ef5f1c5a10e759b5f5ef3819ac43053649d44654e37b21a86e6000bfc41c6b",
+                  "image": "sha256:f147cb8c58fb105733b6deb00477109b85371bc00aa66810f3f234b85eb50a6a",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "913b1952f5e203b0bbd22a14a8c06c57dd4fdd37133e34c6c3e2d9f2bb327f7a",
+                  "image": "sha256:dab09471ed2cb911018d7fcf84c610f68847f3f6119e42402f627b3629cfebe8",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "f42e934f11f0feea5f42dd1b51fe4d5c0501a4a510956354b46909b8fe78aaae",
+                  "image": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "d9f925d1c173dadd4ba36b7082bbff4be770052d2be73f1cbb5c351c6534c5fd",
+                  "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "f565072b24aa9c45ed7d1da7af0e642939be7d6b995929dec1c35d1841559c76",
+                  "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "5829a3f21eaaa3dbef33cd7ce59d5ebac7426264b4d7e17fcfbb2fd696e06ad1",
+                  "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                }
+              ],
+              "disk": [
+                "  1B-blocks       Used       Avail",
+                "40483942400 6215200768 34251964416"
+              ]
+            }
+          ]
+        },
+        "hostUtc": 1792509517.3022442,
+        "hostElapsed": 3170.5504503999837
+      }
+    ],
+    "qmpEvents": [
+      {
+        "event": "NIC_RX_FILTER_CHANGED",
+        "hostElapsed": 101.56991139997263
+      },
+      {
+        "event": "SHUTDOWN",
+        "hostElapsed": 3225.586548399995
+      }
+    ],
+    "final": {
+      "purpose": "approved-online-gdb-api-window",
+      "fullProductAcceptance": false,
+      "diagnosticIntervention": true,
+      "target": {
+        "attempts": 1,
+        "debuggerAttachedBeforeRequest": true,
+        "startedGuestMonotonic": 3138.251979977,
+        "localCorrelationSha256": "aa75343bc841c261391cf9321757b37fbe2fcbda50fbd96dc3283154f90a8dc7",
+        "observerRegisteredBeforeRequest": true,
+        "completed": true,
+        "httpStatus": 200,
+        "elapsedMilliseconds": 10248,
+        "finishedGuestMonotonic": 3148.536815277
+      },
+      "observer": {
+        "registered": true,
+        "polls": 4,
+        "eventStreamStarted": true,
+        "containerId": "f42e934f11f0feea5f42dd1b51fe4d5c0501a4a510956354b46909b8fe78aaae",
+        "imageId": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+        "apiStartTimeNano": 1792509146305383100,
+        "registeredGuestMonotonic": 2794.432785177,
+        "registeredIdentity": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "captureId": "f6223508f534438c950b5a673736f0ee"
+      },
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "manifestSha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+      "clientBoundary": "原首次身份Client90秒，安装器产品业务30秒保持且本窗口不执行后者；不改变原调用",
+      "status": "target-completed",
+      "onlineDebugger": {
+        "purpose": "approved-online-api-only",
+        "diagnosticIntervention": true,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "registeredTarget": {
+          "pid": 7665,
+          "startTicks": 278782,
+          "executableDevice": 61,
+          "executableInode": 525091,
+          "executableBytes": 124181928
+        },
+        "startedGuestMonotonic": 2794.392042177,
+        "totalMaximumSeconds": 900,
+        "signalMaximumSeconds": 60,
+        "rawCombinedLimitBytes": 65536,
+        "status": "stopped-at-original-boundary",
+        "detachedConfirmed": true,
+        "debuggerProcess": {
+          "pid": 7831,
+          "startTicks": 280321,
+          "executableDevice": 64769,
+          "executableInode": 31487,
+          "executableBytes": 8920528
+        },
+        "debuggerBinarySha256": "3832cc070ae1716e322105d3b39fb398695e5f031c9d39224cf227a8c2b889f6",
+        "attachedGuestMonotonic": 2826.251436677,
+        "continuedGuestMonotonic": 2826.842662877,
+        "untracedAfterDebuggerExit": true,
+        "debuggerExitCode": 0,
+        "output": {
+          "stdoutSha256": "8c8f34191788556d270dbf381d84a25a5e47eaa0996162432d35d28c0eaa580e",
+          "stderrSha256": "2a54f1833617702c1b501faffdb3a65a9290d48ba094d226ee44de0fab39cadc",
+          "stdoutBytes": 9452,
+          "stderrBytes": 71,
+          "categories": [
+            "namespaceMismatch"
+          ],
+          "ptraceRejected": false,
+          "eofStreams": [],
+          "byteBoundary": "仅实际捕获管道字节；缺EOF不冒称全部输出，原文未持久化"
+        },
+        "finishedGuestMonotonic": 3151.547561377,
+        "elapsedSeconds": 357.15554040000006,
+        "rawOutputPersisted": false,
+        "postCoreGdbAllowed": false
+      },
+      "nativeTrace": {
+        "coreObserved": false,
+        "captured": false,
+        "captureId": "f6223508f534438c950b5a673736f0ee",
+        "meaning": "到目标完成时未见处理回执，只是本样本；非排除历史崩溃"
+      },
+      "postTargetNodeSha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+      "observedApiState": {
+        "Running": true,
+        "ExitCode": 0,
+        "OOMKilled": false,
+        "RestartCount": 0
+      },
+      "containerEvents": {
+        "events": [],
+        "truncated": false
+      },
+      "clockEvidence": {
+        "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+        "records": [
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "clock-driver-started",
+            "sequence": 1,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 1257.218696177
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "debugger-started",
+            "sequence": 2,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 2804.561823477,
+            "debuggerProcess": {
+              "pid": 7831,
+              "startTicks": 280321,
+              "executableDevice": 64769,
+              "executableInode": 31487,
+              "executableBytes": 8920528
+            },
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "debugger-attached",
+            "sequence": 3,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 2826.253781477,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "debugger-running",
+            "sequence": 4,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 2826.842976377,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "client-intent",
+            "sequence": 5,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3138.257525877,
+            "requestSequence": 1,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "proxy-received",
+            "sequence": 6,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3139.166882777,
+            "requestSequence": 1,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "proxy-forward-intent",
+            "sequence": 7,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3139.185296177,
+            "requestSequence": 1,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "proxy-request-sent",
+            "sequence": 8,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3139.224913377,
+            "requestSequence": 1,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "proxy-upstream-headers",
+            "sequence": 9,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3147.819898977,
+            "requestSequence": 1,
+            "status": 200,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "proxy-upstream-complete",
+            "sequence": 10,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3147.922806777,
+            "requestSequence": 1,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "proxy-client-complete",
+            "sequence": 11,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3148.208040277,
+            "requestSequence": 1,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "client-finished",
+            "sequence": 12,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3148.536995477,
+            "requestSequence": 1,
+            "status": 200,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "debugger-detaching",
+            "sequence": 13,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3150.038020277,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          },
+          {
+            "nonce": "4006331865dc4e959586e344ae3e276f",
+            "kind": "clock",
+            "stage": "debugger-exited",
+            "sequence": 14,
+            "bootId": "03f69d6d-155f-4547-9bb1-8fb4845059a1",
+            "guestMonotonic": 3151.547793177,
+            "captureId": "f6223508f534438c950b5a673736f0ee",
+            "target": {
+              "pid": 7665,
+              "startTicks": 278782,
+              "executableDevice": 61,
+              "executableInode": 525091,
+              "executableBytes": 124181928
+            }
+          }
+        ],
+        "firstFailure": null,
+        "projectionError": null,
+        "transportError": null,
+        "recordsSent": 14,
+        "pendingTransport": 0
+      },
+      "elapsedSeconds": 1901.758806,
+      "installActions": 8,
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation",
+        "candidateStagedBeforeDeployment"
+      ],
+      "samples": [
+        {
+          "phase": "idle",
+          "profile": "enterprise",
+          "monotonic": 3131.398271877,
+          "stats": [
+            {
+              "BlockIO": "4.43MB / 0B",
+              "CPUPerc": "0.04%",
+              "Container": "b7ef5f1c5a10e759b5f5ef3819ac43053649d44654e37b21a86e6000bfc41c6b",
+              "ID": "b7ef5f1c5a10",
+              "MemPerc": "0.95%",
+              "MemUsage": "37.24MiB / 3.823GiB",
+              "Name": "ta01-enterprise-mcp-1",
+              "NetIO": "7.67kB / 4.84kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "15.5MB / 0B",
+              "CPUPerc": "61.29%",
+              "Container": "913b1952f5e203b0bbd22a14a8c06c57dd4fdd37133e34c6c3e2d9f2bb327f7a",
+              "ID": "913b1952f5e2",
+              "MemPerc": "1.47%",
+              "MemUsage": "57.6MiB / 3.823GiB",
+              "Name": "ta01-enterprise-worker-1",
+              "NetIO": "1.1MB / 2.24MB",
+              "PIDs": "14"
+            },
+            {
+              "BlockIO": "16.7MB / 0B",
+              "CPUPerc": "2.80%",
+              "Container": "f42e934f11f0feea5f42dd1b51fe4d5c0501a4a510956354b46909b8fe78aaae",
+              "ID": "f42e934f11f0",
+              "MemPerc": "1.51%",
+              "MemUsage": "59.11MiB / 3.823GiB",
+              "Name": "ta01-enterprise-api-1",
+              "NetIO": "25.4kB / 27.8kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "26.8MB / 106MB",
+              "CPUPerc": "33.96%",
+              "Container": "d9f925d1c173dadd4ba36b7082bbff4be770052d2be73f1cbb5c351c6534c5fd",
+              "ID": "d9f925d1c173",
+              "MemPerc": "1.75%",
+              "MemUsage": "68.52MiB / 3.823GiB",
+              "Name": "ta01-enterprise-postgres-1",
+              "NetIO": "2.5MB / 1.13MB",
+              "PIDs": "9"
+            },
+            {
+              "BlockIO": "110MB / 1.53MB",
+              "CPUPerc": "1.70%",
+              "Container": "f565072b24aa9c45ed7d1da7af0e642939be7d6b995929dec1c35d1841559c76",
+              "ID": "f565072b24aa",
+              "MemPerc": "4.79%",
+              "MemUsage": "187.5MiB / 3.823GiB",
+              "Name": "ta01-enterprise-minio-1",
+              "NetIO": "29.8kB / 11.2kB",
+              "PIDs": "21"
+            },
+            {
+              "BlockIO": "647kB / 8.19kB",
+              "CPUPerc": "7.05%",
+              "Container": "5829a3f21eaaa3dbef33cd7ce59d5ebac7426264b4d7e17fcfbb2fd696e06ad1",
+              "ID": "5829a3f21eaa",
+              "MemPerc": "0.10%",
+              "MemUsage": "3.84MiB / 3.823GiB",
+              "Name": "ta01-enterprise-redis-1",
+              "NetIO": "20.7kB / 13.6kB",
+              "PIDs": "6"
+            }
+          ],
+          "state": [
+            {
+              "id": "b7ef5f1c5a10e759b5f5ef3819ac43053649d44654e37b21a86e6000bfc41c6b",
+              "image": "sha256:f147cb8c58fb105733b6deb00477109b85371bc00aa66810f3f234b85eb50a6a",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "913b1952f5e203b0bbd22a14a8c06c57dd4fdd37133e34c6c3e2d9f2bb327f7a",
+              "image": "sha256:dab09471ed2cb911018d7fcf84c610f68847f3f6119e42402f627b3629cfebe8",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f42e934f11f0feea5f42dd1b51fe4d5c0501a4a510956354b46909b8fe78aaae",
+              "image": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "d9f925d1c173dadd4ba36b7082bbff4be770052d2be73f1cbb5c351c6534c5fd",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "f565072b24aa9c45ed7d1da7af0e642939be7d6b995929dec1c35d1841559c76",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "5829a3f21eaaa3dbef33cd7ce59d5ebac7426264b4d7e17fcfbb2fd696e06ad1",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6215200768 34251964416"
+          ]
+        }
+      ]
+    },
+    "status": "sample-completed",
+    "actualTargetAttempts": 1
+  },
+  "outer": {
+    "containerId": "4ad5b0c253e65c5062b2b3ba4d2e7e082e0cfdb41bdf7cdceb0bc40ca7ee68ab",
+    "owner": "5b9a4837-fd9b-4913-9d98-e420ec9f4f85",
+    "memoryBytes": 6442450944,
+    "memorySwapTotalBytes": 6442450944,
+    "cpuQuota": 4,
+    "lifetimeMemoryPeakBytes": 6215168000,
+    "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+    "capacityBeforeLaunch": {
+      "observedAt": "2026-10-20T14:25:44.629683+00:00",
+      "hostMeminfoKiB": {
+        "MemTotal": 8185420,
+        "MemAvailable": 6478552,
+        "SwapTotal": 1048572,
+        "SwapFree": 1012084
+      },
+      "requiredHostAvailableBytes": 6442450944,
+      "admissionPassed": true
+    },
+    "beforeStop": {
+      "Running": true,
+      "ExitCode": 0,
+      "OOMKilled": false
+    },
+    "afterStop": {
+      "Running": false,
+      "ExitCode": 137,
+      "OOMKilled": false
+    },
+    "eventBoundary": "峰值含准备／复制／校准和VM；不是纯QEMU RSS，事件保留窗口不代缺失原件",
+    "hostLauncherExitCode": "unknown-after-host-checkpoint"
+  },
+  "cleanup": {
+    "observedUtc": "2026-10-20T15:21:22.728321+00:00",
+    "containerId": "4ad5b0c253e65c5062b2b3ba4d2e7e082e0cfdb41bdf7cdceb0bc40ca7ee68ab",
+    "owner": "5b9a4837-fd9b-4913-9d98-e420ec9f4f85",
+    "inspectExitCode": 1,
+    "safeError": "no such object",
+    "stderrSha256": "c5e035329813b122a1c3e37250c744a05c92de7a76283f3f055b51ba7b5d2dd7",
+    "onlyOwnedContainerRemoved": true,
+    "privateCoreDiskOrRawGdbExported": false
+  },
+  "analysis": {
+    "observedUtc": "2026-10-20T15:23:57.355201+00:00",
+    "scope": "仅同次既有安全原件一致性核验，不运行产品／GDB／VM或新窗口",
+    "window": {
+      "seconds": 3229.89853529993,
+      "maximumSeconds": 9000,
+      "qemuExitCode": 0,
+      "qmp": [
+        {
+          "event": "NIC_RX_FILTER_CHANGED",
+          "hostElapsed": 101.56991139997263
+        },
+        {
+          "event": "SHUTDOWN",
+          "hostElapsed": 3225.586548399995
+        }
+      ],
+      "targetAttempts": 1
+    },
+    "debuggerBudget": {
+      "startedGuestMonotonic": 2794.392042177,
+      "originalDeadlineGuestMonotonic": 3694.392042177,
+      "finishedGuestMonotonic": 3151.547561377,
+      "elapsedSeconds": 357.15554040000006,
+      "signalBudgetNotExercised": true,
+      "sameContinuousClock": true,
+      "noReset": true,
+      "detachConfirmed": true,
+      "untracedAfterExit": true,
+      "exitCode": 0
+    },
+    "timeline": [
+      {
+        "stage": "clock-driver-started",
+        "guestMonotonic": 1257.218696177
+      },
+      {
+        "stage": "debugger-started",
+        "guestMonotonic": 2804.561823477
+      },
+      {
+        "stage": "debugger-attached",
+        "guestMonotonic": 2826.253781477
+      },
+      {
+        "stage": "debugger-running",
+        "guestMonotonic": 2826.842976377
+      },
+      {
+        "stage": "client-intent",
+        "guestMonotonic": 3138.257525877
+      },
+      {
+        "stage": "proxy-received",
+        "guestMonotonic": 3139.166882777
+      },
+      {
+        "stage": "proxy-forward-intent",
+        "guestMonotonic": 3139.185296177
+      },
+      {
+        "stage": "proxy-request-sent",
+        "guestMonotonic": 3139.224913377
+      },
+      {
+        "stage": "proxy-upstream-headers",
+        "guestMonotonic": 3147.819898977
+      },
+      {
+        "stage": "proxy-upstream-complete",
+        "guestMonotonic": 3147.922806777
+      },
+      {
+        "stage": "proxy-client-complete",
+        "guestMonotonic": 3148.208040277
+      },
+      {
+        "stage": "client-finished",
+        "guestMonotonic": 3148.536995477
+      },
+      {
+        "stage": "debugger-detaching",
+        "guestMonotonic": 3150.038020277
+      },
+      {
+        "stage": "debugger-exited",
+        "guestMonotonic": 3151.547793177
+      }
+    ],
+    "recordCount": 14,
+    "maximumClockRecordBytes": 531,
+    "debuggerOutput": {
+      "stdoutSha256": "8c8f34191788556d270dbf381d84a25a5e47eaa0996162432d35d28c0eaa580e",
+      "stderrSha256": "2a54f1833617702c1b501faffdb3a65a9290d48ba094d226ee44de0fab39cadc",
+      "stdoutBytes": 9452,
+      "stderrBytes": 71,
+      "categories": [
+        "namespaceMismatch"
+      ],
+      "ptraceRejected": false,
+      "eofStreams": [],
+      "byteBoundary": "仅实际捕获管道字节；缺EOF不冒称全部输出，原文未持久化"
+    },
+    "outputBoundary": "输出为捕获部分摘要；eofStreams为空，原文未持久化，不能重建或冒完整日志",
+    "causalConclusion": "本次无可见SIGSEGV、首败或core；没有取得故障线程栈，不能补旧API139/MCP139因果或关闭P1-2",
+    "intervention": "真实在线附加、目标停止与继续；HTTP200及A/B耗时差不代普通产品通过或因果比较",
+    "namespaceWarning": "安全分类namespaceMismatch保留；准确身份、TracerPid检查及detach原件分别核，不据警告认定根因",
+    "hostLauncherExit": "checkpoint后原工具会话失联；原宿主runner退出码未知，不拿QEMU0填runner0",
+    "noNewRunOrPrivateExport": true
+  },
+  "privateCoreMemorySecretsRawGdbOrDiskArchived": false,
+  "noAdditionalRunMcpOrMatrix": true,
+  "p1State": {
+    "p1-1": "已正式复审闭合",
+    "api139": "未闭",
+    "mcp139": "未闭"
+  },
+  "selectedZipSha256": "e723acd7fd67971d70d30b282e75962ce878a7c080c794abcc1ad057fee7d29e",
+  "archiveBytes": 1267341,
+  "expectedUnfilteredZipGitBlob": "f05869c6f6f29dfcc04d96972c2cdde7d89c06f5",
+  "byteBoundary": "ZIP -text；提交后再核实际Git ZIP blob。JSON本地CRLF与Git LF分别核算。",
+  "members": {
+    "actual-api_identity.py": {
+      "bytes": 1083,
+      "sha256": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8",
+      "rawUnfilteredBlobId": "1e3049ce511a402dbcd4d15d001ce69185bd1544"
+    },
+    "actual-clock_core_pipe.py": {
+      "bytes": 4585,
+      "sha256": "9a4800997b5b2c32f7e63fe6babfdc614cd11ca7ab6694aad5b1cb9c8c9a73fe",
+      "rawUnfilteredBlobId": "bb2b8e2d97f1324786dd87b5357fa86b285365cf"
+    },
+    "actual-clock_evidence.py": {
+      "bytes": 14126,
+      "sha256": "347953662fb7685014f6e6f45be385ae38247d2154a7733f61e24e6a8b8f800b",
+      "rawUnfilteredBlobId": "a7adaceed63b6343663473f3711f2b23ef42a4cc"
+    },
+    "actual-diagnostic_guest.py": {
+      "bytes": 12542,
+      "sha256": "62131be702c86799a5d47b1953ac129e223f2142d1db2f3ba874328f46fffd5a",
+      "rawUnfilteredBlobId": "dd09fb4efee1dec0187d0ae2f5dfaca68a953c81"
+    },
+    "actual-online_debugger.py": {
+      "bytes": 18127,
+      "sha256": "5a82d69ac7f19d1067a2ddaaabef0be5934f0104c8fd3642dd9fb2186297d305",
+      "rawUnfilteredBlobId": "598e3c8b2d3f55e05a47fb1a6027a218051b3172"
+    },
+    "actual-public-node-ranges.json": {
+      "bytes": 1730474,
+      "sha256": "cb8141eeb04dc9204b949749f7eb9d6de529b242baa590254dd39bc746b4e3e8",
+      "rawUnfilteredBlobId": "754ad1b2742e272cc60d9a3e0b8e8e0b3b075f8d"
+    },
+    "actual-run_window.py": {
+      "bytes": 10949,
+      "sha256": "e5432aa282331270de8631fec09c3349b64ce3439131afa55c41e10190686ab4",
+      "rawUnfilteredBlobId": "df39e3c54008096d0579a835b513e8837957b9fe"
+    },
+    "analysis.json": {
+      "bytes": 3445,
+      "sha256": "fcc87061d9cdb56c74e5c12a65bcc7a39ec4474c2ca7361c04ce8cdc3ab28a31",
+      "rawUnfilteredBlobId": "7942a559d1f54310b0afe8e194e6cc6ed44182bf"
+    },
+    "analyze_result.py": {
+      "bytes": 4854,
+      "sha256": "91872041980b4eaec07222e380721fb165fdca2720401dc4dabe2f5e680b7472",
+      "rawUnfilteredBlobId": "d552b283e3e4b6f54a76e619475e1c429ebb4cae"
+    },
+    "api_identity.py": {
+      "bytes": 1083,
+      "sha256": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8",
+      "rawUnfilteredBlobId": "1e3049ce511a402dbcd4d15d001ce69185bd1544"
+    },
+    "apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "apt-update.stdout": {
+      "bytes": 1774,
+      "sha256": "ddb6f3b1999e6e23c4860de76fbcf4e6efba2eeb6aaecc4801103cfadd5b1ef2",
+      "rawUnfilteredBlobId": "dfb876dfe977f03635effba585cee9e237d4d990"
+    },
+    "archive_result.py": {
+      "bytes": 5391,
+      "sha256": "2e059976a4be8efe0931d55a99457f91a2fa4779f6168a1d5e53dbbd4c900446",
+      "rawUnfilteredBlobId": "88cda582cd8b7a7e43f47df807d29df53cc10fbd"
+    },
+    "attempt-started.json": {
+      "bytes": 130,
+      "sha256": "a19a6ccacd4b5baa2f91993bc1d57ccece5f58bf5e241490f9725d712c7f8628",
+      "rawUnfilteredBlobId": "04b12b7d91a8bdf064233bbe5b28cfde78514cd6"
+    },
+    "authorization.json": {
+      "bytes": 1015,
+      "sha256": "6ed15475f2e861ff2c884aff3c53f3283790b51152d98c8177d05bebd8bd4108",
+      "rawUnfilteredBlobId": "6fd2dfa8070477352b01581a5fde218a74379969"
+    },
+    "build_wrappers.py": {
+      "bytes": 6731,
+      "sha256": "8cebefed3fad9524cb88e141845a3030acf3be02857c0f0ad8e3927ce2bd5164",
+      "rawUnfilteredBlobId": "72abf6d2bbcd36b80d57573fdd18ea07a2e85d90"
+    },
+    "cache-recheck.json": {
+      "bytes": 717,
+      "sha256": "c7fe81df3d824c660bddb81739e5b00f9d0074fee191d095a444135ac34236c7",
+      "rawUnfilteredBlobId": "5547fc156e53c7ec318440e7e43132a9c76adf38"
+    },
+    "calibration-1-clock_evidence_test.py.stderr": {
+      "bytes": 922,
+      "sha256": "ad77af3998f3ba2c5c093005eadfbcb22152f1bb5b3205b3f08396209a32699a",
+      "rawUnfilteredBlobId": "e955ce41f999f8a8fd72c47fc826f33846dd855e"
+    },
+    "calibration-1-clock_evidence_test.py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "calibration-1-online_debugger_test.py.stderr": {
+      "bytes": 1801,
+      "sha256": "655f759ccb39b89dac8ec6a22f8ed4a7d661e776e8819c9b65a1170b6c5cf841",
+      "rawUnfilteredBlobId": "c37c17b5de54e491ca2e0c5488a9d988bbaeef6d"
+    },
+    "calibration-1-online_debugger_test.py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "calibration-2-clock_evidence_test.py.stderr": {
+      "bytes": 922,
+      "sha256": "8a7a0c34d617c4262f24f2c8063978e4351128b3a0c60b15fd6793d1e7c15d5e",
+      "rawUnfilteredBlobId": "0ab874649d1ed22dfff0eb8df80f9fd0e953eccf"
+    },
+    "calibration-2-clock_evidence_test.py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "calibration-2-online_debugger_test.py.stderr": {
+      "bytes": 1314,
+      "sha256": "786c4a4f9e0716ce93288ff839d041e04e1a6f5187fd209863f3850a446db088",
+      "rawUnfilteredBlobId": "48953023c6a755617b7bcf4a2b2fc3416adfe6d1"
+    },
+    "calibration-2-online_debugger_test.py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "calibration-3-clock_evidence_test.py.stderr": {
+      "bytes": 922,
+      "sha256": "a75d60ddd414e52b706656d0226cd656419ebfeb805b2b1e8f55e914fded0d5e",
+      "rawUnfilteredBlobId": "55e0494db17e6f9eaa9ef613749cf7c1cd43bf2b"
+    },
+    "calibration-3-clock_evidence_test.py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "calibration-3-online_debugger_test.py.stderr": {
+      "bytes": 1314,
+      "sha256": "720893bc5bfb1e5f3055f40a746ee8cb169624e9b6de45193632d5a732335827",
+      "rawUnfilteredBlobId": "99e412e2f229eff1e8673f39d37a1a1f4a20bb1e"
+    },
+    "calibration-3-online_debugger_test.py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "capacity-before-launch.json": {
+      "bytes": 268,
+      "sha256": "eae5976017fd2a5f1e06cf32467128e81d5b4e4215f96e87926695c23ad68387",
+      "rawUnfilteredBlobId": "d10a59930f08eda2f83f688078c26f8285f73f29"
+    },
+    "capacity-before-provision.json": {
+      "bytes": 215,
+      "sha256": "9fe786087710dbe0ed15ef345cf654f5ceaf670861c18e497754a1dd473bf159",
+      "rawUnfilteredBlobId": "40237e373bbeff2644a6c7bb94749a15bc1a1e64"
+    },
+    "cleanup-verification.json": {
+      "bytes": 426,
+      "sha256": "1e3a093499cf17dc9264fc8754624a847e97394f1c9b04299ba8a4e77ecf1918",
+      "rawUnfilteredBlobId": "4eb4858c7f43c5f00e6f0da0c69c6711ce41fc7b"
+    },
+    "clock_core_pipe.py": {
+      "bytes": 4585,
+      "sha256": "9a4800997b5b2c32f7e63fe6babfdc614cd11ca7ab6694aad5b1cb9c8c9a73fe",
+      "rawUnfilteredBlobId": "bb2b8e2d97f1324786dd87b5357fa86b285365cf"
+    },
+    "clock_evidence.py": {
+      "bytes": 14126,
+      "sha256": "347953662fb7685014f6e6f45be385ae38247d2154a7733f61e24e6a8b8f800b",
+      "rawUnfilteredBlobId": "a7adaceed63b6343663473f3711f2b23ef42a4cc"
+    },
+    "clock_evidence_test.py": {
+      "bytes": 11644,
+      "sha256": "40fc5bf657613cde6ac945ca2c0f36f802f042af2d91ade7653d1bbcaff6d8e0",
+      "rawUnfilteredBlobId": "5f1c9730e841412139c67834df5e99d1d9906eb6"
+    },
+    "collect_existing.py": {
+      "bytes": 5123,
+      "sha256": "89e554a59066e68507cb7c6a20466f717dc0af536059b80f21f1026ca234afcc",
+      "rawUnfilteredBlobId": "c6df09087a1daf94d9f5a99b75701d9cf13fac6c"
+    },
+    "copy-api_identity-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-api_identity-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-clock_core_pipe-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-clock_core_pipe-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-clock_evidence-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-clock_evidence-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-clock_evidence_test-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-clock_evidence_test-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-diagnostic_guest-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-diagnostic_guest-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-distribution.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-distribution.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-guest.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-guest.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-input-preflight-json.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-input-preflight-json.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-online_debugger-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-online_debugger-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-online_debugger_test-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-online_debugger_test-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-public-node-ranges-json.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-public-node-ranges-json.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-run_window-py.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-run_window-py.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-source.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy-source.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "copy_and_test.py": {
+      "bytes": 2081,
+      "sha256": "2b2bc1fbd7e8cca32d2cb47892bf23a9f5ee800faddab1e8f04c27dadfad9ce2",
+      "rawUnfilteredBlobId": "b5a0f8a525dcefe544e38aa32bb469ba73186b55"
+    },
+    "copy_candidate.py": {
+      "bytes": 1017,
+      "sha256": "ca033d510d619e30c66b6e51bf7f85a62960885d2f525e89b4208bc2c7afebeb",
+      "rawUnfilteredBlobId": "def92d9851e170e339495909086c86ea0c33c1e9"
+    },
+    "diagnostic_guest.py": {
+      "bytes": 12542,
+      "sha256": "62131be702c86799a5d47b1953ac129e223f2142d1db2f3ba874328f46fffd5a",
+      "rawUnfilteredBlobId": "dd09fb4efee1dec0187d0ae2f5dfaca68a953c81"
+    },
+    "execute_once.py": {
+      "bytes": 6581,
+      "sha256": "7e11d90b71ba97610b237df59a1275e3c555c497ee1095a85341f6ec2cb1178b",
+      "rawUnfilteredBlobId": "7fef139f8eb219794d1b194fad94a1e6b82a9a90"
+    },
+    "external-state.ndjson": {
+      "bytes": 3060,
+      "sha256": "84941711a37d967b9a1d70f1b92ef037408111cb141c5af924fc41e5f6dd1c42",
+      "rawUnfilteredBlobId": "27107cf97e4b1b81a640d9e497dfa6dc91115b34"
+    },
+    "input-preflight.json": {
+      "bytes": 1630,
+      "sha256": "f7989cb1d092084a4dc2b6ee24ae42147a323f8b4922607e4adc9b7bbc97961b",
+      "rawUnfilteredBlobId": "2a41e16cfde8d159169ac7375b373c2b6d7401c5"
+    },
+    "mkdir-input.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "mkdir-input.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "online_debugger.py": {
+      "bytes": 18127,
+      "sha256": "5a82d69ac7f19d1067a2ddaaabef0be5934f0104c8fd3642dd9fb2186297d305",
+      "rawUnfilteredBlobId": "598e3c8b2d3f55e05a47fb1a6027a218051b3172"
+    },
+    "online_debugger_test.py": {
+      "bytes": 12064,
+      "sha256": "9f5fde932aad58b93163655b513b442d19c75a66569345ff91a1a5fc6636bf8c",
+      "rawUnfilteredBlobId": "3b7a210e7e924966a2e0489027b32133f4564e44"
+    },
+    "outer-cpu.max.txt": {
+      "bytes": 14,
+      "sha256": "bd8ea316d63ccab47af9329b4b4b427cb510d04fe500195f5aa332d211d9fd3f",
+      "rawUnfilteredBlobId": "42b7e497e41b3a409de19f07ad6bc76ed5c21906"
+    },
+    "outer-events-after-stop.json": {
+      "bytes": 37257,
+      "sha256": "b8390dc32476a3a9df7ac37c78e1aec752c239ba252c5e69e7c1e3b22b458ad2",
+      "rawUnfilteredBlobId": "525a1ac16ae7c600a898d1a05da237fdddd5fb96"
+    },
+    "outer-live-samples.ndjson": {
+      "bytes": 2933,
+      "sha256": "1966e4eba16866de84f1a5c7ca71866d4d4e357971fff1ceeb06af1c8a3041a3",
+      "rawUnfilteredBlobId": "454cbcedc4277a5cc5ec36f04984821183e62f3e"
+    },
+    "outer-memory.current.txt": {
+      "bytes": 9,
+      "sha256": "c6c5499458e8c93c76929638361242bbcdad6a659ba5e8b9aad66f79a605c416",
+      "rawUnfilteredBlobId": "c399aa77f46f2cecbc8d9789f5e6cf4ee33a7504"
+    },
+    "outer-memory.events.txt": {
+      "bytes": 70,
+      "sha256": "0a2d4e7982066cc7dc914627e7b195ccba88b82a5a996201809e529142d2f380",
+      "rawUnfilteredBlobId": "b9ea7c0cc8cfc2b1f252726c5fd57809edbe253e"
+    },
+    "outer-memory.max.txt": {
+      "bytes": 11,
+      "sha256": "4ec6f2997edee06903a4e9016e3951ea175c801925fe151d5d5eea90dd9cd3d9",
+      "rawUnfilteredBlobId": "1dc43d2892b032c5d0a096e1bf71681ca5af6c0d"
+    },
+    "outer-memory.peak.txt": {
+      "bytes": 11,
+      "sha256": "febd817af5af9050ba31f198f91093d000e2a5966c9c6e1ae1ab87a6e28cd8de",
+      "rawUnfilteredBlobId": "8ee4585cc6c5656b7863adfbe837e6a4efc04c5e"
+    },
+    "outer-memory.swap.max.txt": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "rawUnfilteredBlobId": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56"
+    },
+    "preparation-inspect.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "preparation-memory.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "preparation-memory.stdout": {
+      "bytes": 1447,
+      "sha256": "acc927fd02f8c31760ac7939f0e8f79c137b25f25ea9faab76df54dd188d960d",
+      "rawUnfilteredBlobId": "cf370fdb2493c2242bc09bc318fdd1627d686716"
+    },
+    "prepare.py": {
+      "bytes": 4857,
+      "sha256": "a8183c7784917713c402429584b9ef73079dae07bc2cdee2c0bb9003c6ca36cb",
+      "rawUnfilteredBlobId": "56966ac284a8d6ca9c7b37d6088e413276e17a7b"
+    },
+    "process-names-before-stop.txt": {
+      "bytes": 242,
+      "sha256": "2cb62979d16a1b7c13f247d9932be93d23984da1202b81ecdac9fca4087570aa",
+      "rawUnfilteredBlobId": "ea5e72c6f2d7f741094cc6e9fee21663f6728a07"
+    },
+    "public-node-ranges.json": {
+      "bytes": 1730474,
+      "sha256": "cb8141eeb04dc9204b949749f7eb9d6de529b242baa590254dd39bc746b4e3e8",
+      "rawUnfilteredBlobId": "754ad1b2742e272cc60d9a3e0b8e8e0b3b075f8d"
+    },
+    "qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qemu-policy.stdout": {
+      "bytes": 1352,
+      "sha256": "a248716d7cb251e428c787959ffabf9cc2c53cf12f234c662cbaeea695e132c8",
+      "rawUnfilteredBlobId": "ba27d6d900cecfc87f80ffc42280f1b8ffec2f45"
+    },
+    "qemu-sha.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qemu-sha.stdout": {
+      "bytes": 94,
+      "sha256": "5798d2b7f16830c2aec1526df2364d6f80d455f4f300ce9f95ac047bd3cddd5a",
+      "rawUnfilteredBlobId": "78c5906900ea003ffa80b13cf350367610777331"
+    },
+    "qemu-started.json": {
+      "bytes": 391,
+      "sha256": "32396ef9229bcad2bf2a02c91cceefc3b2cab1b13c04ac10fc133c0e2de9d595",
+      "rawUnfilteredBlobId": "e1e75fab218e81d03be5f440d13f046f85e6ae7c"
+    },
+    "qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qemu-version.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "rawUnfilteredBlobId": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18",
+      "rawUnfilteredBlobId": "0f333ec672b9c2cc67a616ec4d52ef68974d6a97"
+    },
+    "read_existing.py": {
+      "bytes": 2389,
+      "sha256": "9fd6a455863a90759193377dbffe1c392c655f4e2dd2e176aadfbb5068ab5108",
+      "rawUnfilteredBlobId": "41461a05c43eaa480e33c1f4b11205c46609d3e4"
+    },
+    "receipts.ndjson": {
+      "bytes": 20925,
+      "sha256": "5a9b736e076df95b02362420d9b89d86ae1728664f9d079797d51275441a45a3",
+      "rawUnfilteredBlobId": "432ca0dd612668e7ca825afadb84a89c44f1b414"
+    },
+    "resources.json": {
+      "bytes": 4449,
+      "sha256": "12579db36539e34988373ac46413e4f4043fb6fec1efd528cb1e4ec70e346358",
+      "rawUnfilteredBlobId": "58d7818a62b07fda2c9993dd3cfab8358ab9ba9e"
+    },
+    "result.json": {
+      "bytes": 57014,
+      "sha256": "74d35afbb42cc78fca2fe1b6261e84552af4e06fffc0e9446b490d202c04ebe4",
+      "rawUnfilteredBlobId": "c213b5517efb7ae3c09e4a9ccc58e0a8aea78f2c"
+    },
+    "run_window.py": {
+      "bytes": 10949,
+      "sha256": "e5432aa282331270de8631fec09c3349b64ce3439131afa55c41e10190686ab4",
+      "rawUnfilteredBlobId": "df39e3c54008096d0579a835b513e8837957b9fe"
+    },
+    "serial.log": {
+      "bytes": 120611,
+      "sha256": "baecfc6284988a5ba5a5f8786ad8f6c7474341f1efeec64b5dab376878b9643a",
+      "rawUnfilteredBlobId": "cd43ca1d2bcc058fc17a9d93ecd5007173e566b5"
+    },
+    "snapshot.py": {
+      "bytes": 3039,
+      "sha256": "66d50e4cd1bf82c68a5cd4d5052de8998c43ea3160e7c544c13bfe340d3b1fdc",
+      "rawUnfilteredBlobId": "321d9bc81a0be70401f0774d9ff2b09a75ef8588"
+    },
+    "started.json": {
+      "bytes": 2550,
+      "sha256": "93a472cf37e89e4743b2d90602d799657722d41d2d5ee175095e72026c6aee09",
+      "rawUnfilteredBlobId": "a70fd4bb05b061b70c8b9f684917dc3961c8370d"
+    },
+    "tool-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc",
+      "rawUnfilteredBlobId": "d528e96f706cf2474bddb1d6df2691357e09bb7f"
+    },
+    "tool-install.stdout": {
+      "bytes": 27038,
+      "sha256": "040b365ea4e637d2c90d144d9c18c02eee2e51c4042764eab30b50f4c14ef0e6",
+      "rawUnfilteredBlobId": "7326ed30aba816c3c7cafb78a8ca1e0611199d71"
+    },
+    "tools_only.py": {
+      "bytes": 2537,
+      "sha256": "4eff419e64fc29eddef47d944f2222bad7fab462d1018518fe3cd879e3932051",
+      "rawUnfilteredBlobId": "264eee76c747cda142994036925459cc753d31cd"
+    },
+    "wrapper-bindings.json": {
+      "bytes": 1478,
+      "sha256": "598278df1f484abf18a5b390db909309fee4f1c7311c6807d3aca36b34a7469f",
+      "rawUnfilteredBlobId": "be358121a289accd3624d5775d565694821492ab"
+    },
+    "original-source/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+      "rawUnfilteredBlobId": "31f9504d898577612b5c7cb1fb9ff8ffedca4c82"
+    },
+    "original-source/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+      "rawUnfilteredBlobId": "6147207ec5174a9833bd96e68be1776de591f4f0"
+    },
+    "original-source/guest.py": {
+      "bytes": 75400,
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe",
+      "rawUnfilteredBlobId": "cd32a1e34e17c61ab0cb939f41b5965a6e7b303a"
+    },
+    "original-source/native_diagnostic.py": {
+      "bytes": 12173,
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+      "rawUnfilteredBlobId": "eeb22419acc88d50da44f0655d6b2ddb89dbb219"
+    },
+    "original-source/native_diagnostic_test.py": {
+      "bytes": 61675,
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815",
+      "rawUnfilteredBlobId": "7aa440c5c548bdfdeb50e50ba297c965d028654a"
+    },
+    "original-source/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014",
+      "rawUnfilteredBlobId": "ef1decf02e5a988e1198c236448c1e5b490db543"
+    },
+    "approved-plan-1ccb874b.md": {
+      "bytes": 14668,
+      "sha256": "84dd70edc95aecfbdae1b07ff571d54a6f8ae27a6ea20a0d312f33739bc913b0",
+      "rawUnfilteredBlobId": "10bcf92f67f7ef3c7f5b56db86e7c2d2de8cdb99"
+    },
+    "manifest.json": {
+      "bytes": 12627,
+      "sha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+      "rawUnfilteredBlobId": "26f7b5ae267523567a9d4ec458fcdb01762cea26"
+    }
+  }
+}
