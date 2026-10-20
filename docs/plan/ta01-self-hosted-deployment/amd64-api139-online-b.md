@@ -66,3 +66,5 @@ P1-1 保持正式复审闭合，P1-2 的 API139／MCP139 分别未闭；原三�
 文档继续按仓库固定 zh-tech-writing `ffda9353768dece8aabd26ccb3a4978025e9437c` 及 typography／manual-structure 手检，不安装全局工具。
 
 [静态核验记录](../../reviews/ta01-product/amd64-api139-online-b-checks.json)确认 ZIP CRC／114 成员逐字摘要、六份原 Git blob、七份实际运行输入和种子别名、Python AST 均匹配；`node scripts/check-integration-docs.mjs` 与 `git diff --check` 均退出0。宿主 Node v25.4.0 只用于静态文档检查，不冒锁定产品环境或五根检查通过。
+
+结果已提交并推送为 `9c292402b5d4ce6f7854017430c78b04948db5ae`。[实际 Git 原字节证明](../../reviews/ta01-product/amd64-api139-online-b-git-proof.json)从该提交重新读取 ZIP，核实际 blob `f05869c6f6f29dfcc04d96972c2cdde7d89c06f5`、ZIP SHA256 和全部114成员；普通 JSON 的 Git LF 与本地 CRLF 摘要分别保留，JSON语义匹配。[PR229回读快照](../../reviews/ta01-product/amd64-api139-online-b-pr-state.json)确认正文已同步本次终态，仍为 OPEN／draft。此快照绑定结果提交，后续证明资料提交不改原 ZIP，不冒新 head 已通过产品 CI。
