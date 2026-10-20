@@ -65,7 +65,7 @@ guest boot ID 为 `ca0bccbb-56ff-4d9c-a24f-283b49f07b08`，准确 API Node 为 P
 
 `2026-10-20T06:15:01.568435+00:00` 已核容器 no such object，未移除其他资源。容器内原件已先取回；旧树、旧各次归档、缓存和受拒目标保持。已向 Chief 发送本次真实终态及收尾状态，不等回复来推进归档。
 
-原六份助手与 CI562 的实际 Git blob 逐字核验；运行的五份诊断文件也分别与外层取回原字节匹配。95 成员 ZIP 的 CRC／成员集合／逐字摘要核验通过，保持 `-text`。普通 JSON 索引可能由本地 CRLF 入 Git 转为 LF，不能与 ZIP 内原件字节混用。提交后的实际 Git ZIP blob 另行核验，不拿工作树摘要冒作提交证明。
+原六份助手与 CI562 的实际 Git blob 逐字核验；运行的五份诊断文件也分别与外层取回原字节匹配。95 成员 ZIP 的 CRC／成员集合／逐字摘要核验通过，保持 `-text`。已从提交 `aa2453c4431e462d08c2b409ffad39ee72f49c35` 的实际 Git 对象复核，ZIP blob 为 `1e5c85090ba046a88e78e74842de3a492b019ca1`，95 成员逐字相同，见[Git 原字节核验](../../reviews/ta01-product/amd64-api139-clock-a-git-proof.json)。普通 JSON 索引已由本地 CRLF 入 Git 转为 LF；本地与 Git 摘要分别记录，不能与 ZIP 内原件字节混用。
 
 包装替身在 Linux 7 项全部通过。[本次资料核验](../../reviews/ta01-product/amd64-api139-clock-a-checks.json)核 95 成员、6 份来源 Git blob 和 5 份运行诊断原字节均通过，静态文档检查及变更空白检查通过。本机 Node v25.4.0 仅用于文档核验，不是产品运行时。没有重跑产品、五根检查、CI 或成果审，也不把替身、静态检查、HTTP200 或 sample-completed 写成三画像完整验收通过。
 
@@ -74,6 +74,8 @@ guest boot ID 为 `ca0bccbb-56ff-4d9c-a24f-283b49f07b08`，准确 API Node 为 P
 同一 boot／准确 Node／captureId 的 handler 启动若早于客户端调用意图，就能反驳该尚未发起的请求触发最早故障。handler 晚于代理边界只表明时间相容，不能证明该请求致因。迟登记、缺钟、无崩溃、超限或超时均不能关闭 P1。
 
 本次没有可见故障，因而没有取得待比较的 handler 时间，也没有新的故障栈。旧 API139 的请求因果缺口仍在，现有材料仍不足以支持安全业务补丁、Node／QEMU 替换或其他保证变化。本次授权已消耗，不自动追加窗口；B 的在线附加与新调试预算仍待独立裁定，本回合不实施。
+
+PR229 正文已更新为本次终态并[回读核对](../../reviews/ta01-product/amd64-api139-clock-a-pr-state.json)，实际为 OPEN／draft。报告和原件提交为 `aa2453c4431e462d08c2b409ffad39ee72f49c35`；后续 Git 核验附记属于资料，不冒作新产品候选或当前 Required 成功。
 
 API139、旧 MCP139 与旧外层 4 GiB OOM 继续分别记录。P1-1 保持正式复审闭合，P1-2 未闭；最终准确 head 的适用 Required、三画像实测、正式 P0／P1 成果复审及 ready 门禁保持。PR229 继续 draft。
 

@@ -1,0 +1,12 @@
+{
+  "observedState": "OPEN/draft，实际回读正文等于提交的UTF-8正文",
+  "number": 229,
+  "url": "https://github.com/xurunxin/WorkMesh/pull/229",
+  "state": "OPEN",
+  "isDraft": true,
+  "headRefOid": "aa2453c4431e462d08c2b409ffad39ee72f49c35",
+  "headRefName": "tds/conv-01a1572a-7aeb-7b6d-b7e8-83e89c2b723d",
+  "bodySha256": "3f70d23ca906d7b676ba0c1e89fba098ad1b072ee9f7ea864594cc467241282d",
+  "body": "本 PR 从 PR228 的实际 `1a2e562f1d5df8680ff5cf71362d148e447d8e58` 恢复 Linux amd64 三画像离线服务端交付，沿当前会话分支交付。旧树、远端、原件和历史失败保留；PR228 只作恢复来源。当前仍有 P1-2 阻断，本 PR 保持 draft，不审合、不发布或生产部署。\n\n用户 2026-10-20 13:03 在 `q-PiHASaTSNU-05WBsiC5me` 批准的新 A 已执行完毕，结果资料提交为 `aa2453c4431e462d08c2b409ffad39ee72f49c35`。同一 QEMU PID3099／startTicks66092994 于 `2026-10-20T05:18:29.004023+00:00` 启动，中断后只接续原控制器3086，没有新开或重计9000秒。全窗2430.22秒，目标完成后按原流程关机，QEMU0／QMP SHUTDOWN，未到期。\n\n实际一次首次身份 `auth/install`，8261 ms 返回 HTTP 200。9条同boot／准确Node／captureId的同钟记录完整，未见首败标记、core回执、API重启或die139；本次有限成功样本不关闭旧API139／MCP139，也不证明旧请求致因或产品已修复。外层累计峰值5,932,802,048字节，max／oom／oom_kill均0。准确外层817f6b89…／owner82762090…已stop／rm并核不存在；收尾PID1 exit137与产品139、QEMU0及OOM分别记录。私有core、内存、秘密、原GDB原文和guest磁盘均未导出或入库。\n\n原CI562企业候选 `9c8bbff749c1d2a52a3e6489dcec02d2d7c859af`、Node／QEMU／guest／设备、4CPU／4GiB guest和6GiB外层及全部原产品／调试期限保持。7项Linux包装替身通过，95个安全成员、6份原Git blob和5份运行诊断文件已核；静态文档／变更空白检查通过。这些不代产品、五根或Required CI。没有额外VM、B在线GDB、MCP业务窗口或矩阵。\n\n上次6GiB窗口的一次RemoteDisconnected／API139与受限core元数据仍属于 `970565f9a2dff382dc60e98391666828b7644f1c` 的原件；旧4GiB外层OOM及MCP139另列，不由本次HTTP200补写或关闭。旧core只在已关闭memfd中，GDB会话原文没有可用留存，不冒离线续解析。`02ae2085a6bbc891ab116b7a6ba4e41751a734e2` 是新A批准的方案来源。\n\n完整结果：[新A执行报告](https://github.com/xurunxin/WorkMesh/blob/aa2453c4431e462d08c2b409ffad39ee72f49c35/docs/plan/ta01-self-hosted-deployment/amd64-api139-clock-a.md)、[95成员运行索引](https://github.com/xurunxin/WorkMesh/blob/aa2453c4431e462d08c2b409ffad39ee72f49c35/docs/reviews/ta01-product/amd64-api139-clock-a.json)、[静态核验](https://github.com/xurunxin/WorkMesh/blob/aa2453c4431e462d08c2b409ffad39ee72f49c35/docs/reviews/ta01-product/amd64-api139-clock-a-checks.json)。实际Git ZIP blob为 `1e5c85090ba046a88e78e74842de3a492b019ca1`，95成员逐字匹配；JSON索引的Git LF与本地CRLF分别核算。\n\n本次授权及旧各次许可均已消耗，当前回裁定关口。P1-1保持原正式复审闭合，P1-2的API139／MCP139分别未闭。CI570成功只绑定旧产品 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`；本次资料使用[skip ci]，不冒当前准确head的Required成功。最终适用Required、三画像真实验收、正式P0／P1成果复审及ready门禁保持。ARM服务端延期，连接器既有范围、PG／Redis／S3、外置Runner、权限／事件／事务及数据政策不变。\n",
+  "noReviewCiMergeOrNewWindow": true
+}
