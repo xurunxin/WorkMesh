@@ -1,5 +1,9 @@
 # TA01 验收设计与责任
 
+## 2026-10-20 恢复后的当前关口
+
+已按用户批准保全旧树，并在当前平台会话分支接入 PR228 实际成果。本次唯一外层 6 GiB API 窗口已自然终态：2540.87 秒，外层无 OOM，目标一次断连，准确 API139 和有限 core 元数据已取得，原 GDB 超时。记录见[本次恢复](recovery-2026-10-20.md)。下文 4 GiB 失败及“待裁定”属于当时历史；本次许可已消耗，不自动补跑。P1-1 已复审闭合，旧 API139／MCP139 仍未闭；最终准确 head 的 Required 及原门禁保持，不把单样本或采集器正常退出当产品通过。
+
 ## 本次恢复候选撤回修正
 
 基于 718c034 的 P1 修正已提交为 `c7cf68aaf279f771a2022d37d69b5651cdb66ace`。旧程序启动前持久化 withdrawnAt 并使 validation 失效；恢复后直接 commit、安装器进程重启后 commit 均拒绝；显式重新 upgrade 须新 journal 和完整备份／迁移／健康／业务验证。控制流替身回归与真实部署分列。CI570／run39169353227 的三画像完整 guest 均报告 `withdrawnCandidateCommitRejected`、`restartedInstallerRejectsWithdrawnCandidate`、`explicitReupgradeRevalidates` 通过；原 4 CPU／4 GiB、9000 秒及逐命令期限不变。三组各核 23 输入、六脚本、候选 artifact12152451241 及同一 manifest，完整恢复／系统重启证明齐全。准确原件见 [CI570 索引](../../reviews/ta01-product/ci570-observed-status.json)。

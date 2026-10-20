@@ -1,0 +1,1957 @@
+{
+  "source": "本次唯一获批6GiB外层API窗口的原始安全回执、执行输入、资源及停止证明。不是完整产品验收或历史139闭合。",
+  "branch": "tds/conv-01a1572a-7aeb-7b6d-b7e8-83e89c2b723d",
+  "recoveredHead": "1a2e562f1d5df8680ff5cf71362d148e447d8e58",
+  "productSourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+  "authorization": {
+    "questionId": "q-6dUwccoh0de_5smR0B7K2",
+    "userApprovedAt": "2026-10-19 22:26 +08:00",
+    "answer": "重取 API，外层6 GiB（推荐）",
+    "source": "本轮用户完整当前规格和反馈明确批准，先核实际状态再执行；非此前42秒确认即已执行",
+    "planSourceHead": "31c13bed943e73d21933a83e8c3c95476fb1219a",
+    "planGitBlob": "316e98fa32a4e8b8912e8628a6bcd11a5776b12f",
+    "planSha256": "859c648eeb96eed5447e4466690c0013f230ea1019e79a79396be9f6811ada86",
+    "oneAdditionalApiVmOnly": true,
+    "onlyResourceChange": "专用外层4GiB→6GiB；guest仍原4CPU/4GiB/40GiB、其他运行输入及期限保持",
+    "limits": {
+      "vmSeconds": 9000,
+      "initialIdentityClientSeconds": 90,
+      "productBusinessSeconds": 30
+    },
+    "noRetryOrMcpOrMatrix": true,
+    "previous4GiBAttempt": "678.69秒外层OOM，unknown目标请求数，40成员旧原件保持，不记阴性/不倒填批准"
+  },
+  "newSessionAuthorization": "用户2026-10-20 10:34批准新会话接续，先核旧树及同次资源；不增加次数或重置已运行期限。",
+  "result": {
+    "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+    "manifestSha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+    "qemuVersion": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+    "qemuBinarySha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+    "guestSha256": "6a81c37564db9b1ee84e141922625e1d7c5b389b99bb3c572e0243607d5bb4d2",
+    "scripts": {
+      "original_guest.py": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe",
+      "native_diagnostic.py": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94",
+      "core_pipe.py": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b",
+      "core_metadata.py": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16",
+      "guest.py": "7c5d41aae7050dc075ab1fffcf00fc03a28ba35b4e7219a3df28475bb0b10c1d",
+      "api_identity.py": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+    },
+    "command": [
+      "qemu-system-x86_64",
+      "-accel",
+      "tcg",
+      "-m",
+      "4096",
+      "-smp",
+      "4",
+      "-display",
+      "none",
+      "-serial",
+      "file:/opt/api-window/guest/serial.log",
+      "-qmp",
+      "unix:/opt/api-window/guest/qmp.sock,server=on,wait=off",
+      "-netdev",
+      "user,id=net0",
+      "-device",
+      "virtio-net-pci,netdev=net0",
+      "-drive",
+      "if=virtio,format=qcow2,file=/opt/api-window/guest/root.qcow2",
+      "-drive",
+      "if=virtio,format=raw,readonly=on,file=/opt/api-window/guest/seed.iso"
+    ],
+    "maximumSeconds": 9000,
+    "seedSha256": "f073893509fcf43069e3d6087ccd1e12194cfaedc5eb12d7b5711441c89191b6",
+    "fullProductAcceptance": false,
+    "oneVmOnly": true,
+    "requestBoundary": "原首次身份Client90；原安装器产品30保持、不执行MCP",
+    "preparationOnly": true,
+    "preparedUtc": "2026-10-20T02:47:22.065359+00:00",
+    "outerCgroup": {
+      "memory.max": "6442450944",
+      "memory.swap.max": "0",
+      "cpu.max": "400000 100000"
+    },
+    "actualQemuStart": {
+      "qemuPid": 3189,
+      "qemuStartedUtc": "2026-10-20T02:47:22.066748+00:00",
+      "controllerElapsed": 32.324871900025755,
+      "qemuBinarySha256": "8a35ccba41582fc6c38b9df85fc9e35fa1d42f414d2d7d8090ee9b2f5e7c0854",
+      "startTicks": 65186300
+    },
+    "qemuExitCode": 0,
+    "totalSeconds": 2540.870690300013,
+    "receipts": [
+      {
+        "nonce": "e734300d55bc471e8d8f62c85c70bd83",
+        "kind": "stage",
+        "stage": "driver-started",
+        "guestMonotonic": 723.374012996,
+        "sinceDriverSeconds": 2.8457114000000274,
+        "kernel": "6.8.0-142-generic",
+        "gdbVersion": "GNU gdb (Ubuntu 15.1-1ubuntu1~24.04.1) 15.1",
+        "hostUtc": 1792465175.515219,
+        "hostElapsed": 765.7733564999653
+      },
+      {
+        "nonce": "e734300d55bc471e8d8f62c85c70bd83",
+        "kind": "stage",
+        "stage": "api-observer-registered",
+        "guestMonotonic": 2121.151018396,
+        "sinceDriverSeconds": 1400.6226975000002,
+        "captureId": "8d882dc312b14f6aace16e52c98497a4",
+        "target": {
+          "pid": 7459,
+          "startTicks": 211408,
+          "executableDevice": 66,
+          "executableInode": 524863,
+          "executableBytes": 124181928
+        },
+        "hostUtc": 1792466573.9880302,
+        "hostElapsed": 2164.2470274999505
+      },
+      {
+        "nonce": "e734300d55bc471e8d8f62c85c70bd83",
+        "kind": "stage",
+        "stage": "auth-install-started",
+        "guestMonotonic": 2400.717776796,
+        "sinceDriverSeconds": 1680.1894593999998,
+        "attempts": 1,
+        "correlationSha256": "75aae94cfa07ab89f4bd58d00b52d3ab07885eb9f910d179a117a51d49c68b8f",
+        "observerRegisteredBeforeRequest": true,
+        "originalClientSeconds": 90,
+        "productBusinessSeconds": 30,
+        "hostUtc": 1792466852.2988942,
+        "hostElapsed": 2442.5573878999567
+      },
+      {
+        "nonce": "e734300d55bc471e8d8f62c85c70bd83",
+        "kind": "stage",
+        "stage": "auth-install-finished",
+        "guestMonotonic": 2432.211010096,
+        "sinceDriverSeconds": 1711.6830082,
+        "attempts": 1,
+        "startedGuestMonotonic": 2400.712737596,
+        "localCorrelationSha256": "75aae94cfa07ab89f4bd58d00b52d3ab07885eb9f910d179a117a51d49c68b8f",
+        "observerRegisteredBeforeRequest": true,
+        "completed": false,
+        "errorType": "RemoteDisconnected",
+        "elapsedMilliseconds": 31296,
+        "finishedGuestMonotonic": 2432.209206596,
+        "hostUtc": 1792466883.7579496,
+        "hostElapsed": 2474.0166579999495
+      },
+      {
+        "nonce": "e734300d55bc471e8d8f62c85c70bd83",
+        "kind": "stage",
+        "stage": "window-stopped",
+        "guestMonotonic": 2439.044992296,
+        "sinceDriverSeconds": 1718.5166775,
+        "status": "target-failed",
+        "targetAttempts": 1,
+        "hostUtc": 1792466890.5343854,
+        "hostElapsed": 2480.793093999964
+      },
+      {
+        "nonce": "e734300d55bc471e8d8f62c85c70bd83",
+        "kind": "final",
+        "value": {
+          "purpose": "only-approved-api-window",
+          "fullProductAcceptance": false,
+          "target": {
+            "attempts": 1,
+            "startedGuestMonotonic": 2400.712737596,
+            "localCorrelationSha256": "75aae94cfa07ab89f4bd58d00b52d3ab07885eb9f910d179a117a51d49c68b8f",
+            "observerRegisteredBeforeRequest": true,
+            "completed": false,
+            "errorType": "RemoteDisconnected",
+            "elapsedMilliseconds": 31296,
+            "finishedGuestMonotonic": 2432.209206596
+          },
+          "observer": {
+            "registered": true,
+            "polls": 6,
+            "eventStreamStarted": true,
+            "containerId": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+            "imageId": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+            "apiStartTimeNano": 1792466565508427400,
+            "registeredGuestMonotonic": 2121.150861496,
+            "registeredIdentity": {
+              "pid": 7459,
+              "startTicks": 211408,
+              "executableDevice": 66,
+              "executableInode": 524863,
+              "executableBytes": 124181928
+            },
+            "captureId": "8d882dc312b14f6aace16e52c98497a4"
+          },
+          "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+          "manifestSha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+          "clientBoundary": "原首次身份Client90秒，安装器产品业务30秒保持且本窗口不执行后者；不改变原调用",
+          "status": "target-failed",
+          "nativeTrace": {
+            "naturalRun": true,
+            "captureId": "8d882dc312b14f6aace16e52c98497a4",
+            "captured": false,
+            "coreCaptured": true,
+            "captureStage": "debugger",
+            "handlerStartedUtcEpoch": 1792466809.0421958,
+            "targetBinarySha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+            "coreBytes": 127713280,
+            "coreSha256": "961dccc55ffc4e33ce6dfa861ea4d6ce9cff50041903203a0a2ad1dd5f2f0cf0",
+            "location": {
+              "architecture": "amd64",
+              "signal": 11,
+              "signalCode": -6,
+              "faultModule": "node",
+              "executableSegment": true,
+              "nodeFileOffset": 20361632,
+              "nodeElfAddress": 20361632,
+              "publicFrameChain": {
+                "method": "frame-pointers",
+                "frames": [
+                  {
+                    "lookupNodeElfAddress": 20411144,
+                    "returnSiteNodeElfAddress": 20411145
+                  },
+                  {
+                    "lookupNodeElfAddress": 30266485,
+                    "returnSiteNodeElfAddress": 30266486
+                  }
+                ],
+                "stopped": "caller-outside-public-node"
+              }
+            },
+            "captureErrorType": "TimeoutExpired",
+            "debuggerTimedOut": true,
+            "trace": {
+              "exitCode": null,
+              "stdoutSha256": "97c02d3b8a5efb3ccf1aa62331dff7e1e3105f87a7efec9a0808ac6bdee43b0e",
+              "stderrSha256": "2a54f1833617702c1b501faffdb3a65a9290d48ba094d226ee44de0fab39cadc",
+              "stdoutBytes": 71,
+              "stderrBytes": 71,
+              "sigsegv": false,
+              "symbols": [],
+              "debuggerStages": [
+                "before-binary",
+                "after-binary"
+              ],
+              "categories": [],
+              "ptraceRejected": false
+            },
+            "captureElapsedMilliseconds": 73148,
+            "registeredTarget": {
+              "pid": 7459,
+              "startTicks": 211408,
+              "executableDevice": 66,
+              "executableInode": 524863,
+              "executableBytes": 124181928
+            },
+            "containerInitPid": 7332,
+            "coreObserved": true
+          },
+          "postTargetNodeUnavailable": true,
+          "observedApiState": {
+            "Running": true,
+            "ExitCode": 139,
+            "OOMKilled": false,
+            "RestartCount": 1
+          },
+          "containerEvents": {
+            "events": [
+              {
+                "timeNano": 1792466888631096500,
+                "event": "die",
+                "id": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+                "service": "api",
+                "exitCode": 139
+              }
+            ],
+            "truncated": false
+          },
+          "elapsedSeconds": 1718.4930185,
+          "installActions": 8,
+          "completedChecks": [
+            "offlineNoDefaultRoute",
+            "unsupportedCombinationsRejected",
+            "projectLockRejectsBeforeDeploymentMutation",
+            "candidateStagedBeforeDeployment"
+          ],
+          "samples": [
+            {
+              "phase": "idle",
+              "profile": "enterprise",
+              "monotonic": 2395.900429296,
+              "stats": [
+                {
+                  "BlockIO": "2.86MB / 0B",
+                  "CPUPerc": "0.05%",
+                  "Container": "6fd8c377e0bcea7d13a6b7abde0ac0118aed71c48a6dabe5d995756921f022a5",
+                  "ID": "6fd8c377e0bc",
+                  "MemPerc": "0.93%",
+                  "MemUsage": "36.26MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-mcp-1",
+                  "NetIO": "5.64kB / 5.23kB",
+                  "PIDs": "12"
+                },
+                {
+                  "BlockIO": "13.9MB / 0B",
+                  "CPUPerc": "13.61%",
+                  "Container": "7ed2c67a87e4cc5645b2d80459a8b65a8ed366d2c40d34457dfcb6fe552b008d",
+                  "ID": "7ed2c67a87e4",
+                  "MemPerc": "1.44%",
+                  "MemUsage": "56.55MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-worker-1",
+                  "NetIO": "897kB / 1.83MB",
+                  "PIDs": "12"
+                },
+                {
+                  "BlockIO": "16.3MB / 0B",
+                  "CPUPerc": "0.10%",
+                  "Container": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+                  "ID": "a87bd3444ac3",
+                  "MemPerc": "1.53%",
+                  "MemUsage": "59.75MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-api-1",
+                  "NetIO": "33.4kB / 30.1kB",
+                  "PIDs": "12"
+                },
+                {
+                  "BlockIO": "19.3MB / 107MB",
+                  "CPUPerc": "37.31%",
+                  "Container": "3ba80d389ffcc2127bb0d79348ffa50ecc90a5ac76f0135929fa048b53dd533f",
+                  "ID": "3ba80d389ffc",
+                  "MemPerc": "1.48%",
+                  "MemUsage": "57.84MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-postgres-1",
+                  "NetIO": "2.12MB / 947kB",
+                  "PIDs": "8"
+                },
+                {
+                  "BlockIO": "4.51MB / 8.19kB",
+                  "CPUPerc": "6.85%",
+                  "Container": "6a5246faa6a2f4b788299735533ef24b3660bfe74e4853f5f3642a684dd51965",
+                  "ID": "6a5246faa6a2",
+                  "MemPerc": "0.19%",
+                  "MemUsage": "7.508MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-redis-1",
+                  "NetIO": "17.7kB / 11.6kB",
+                  "PIDs": "6"
+                },
+                {
+                  "BlockIO": "111MB / 193kB",
+                  "CPUPerc": "0.56%",
+                  "Container": "467167a3537ac192f982f4879b5d9d116a3967609df8c54d34ea3d35cb216dbc",
+                  "ID": "467167a3537a",
+                  "MemPerc": "4.69%",
+                  "MemUsage": "183.6MiB / 3.823GiB",
+                  "Name": "ta01-enterprise-minio-1",
+                  "NetIO": "26.1kB / 9.91kB",
+                  "PIDs": "20"
+                }
+              ],
+              "state": [
+                {
+                  "id": "6fd8c377e0bcea7d13a6b7abde0ac0118aed71c48a6dabe5d995756921f022a5",
+                  "image": "sha256:f147cb8c58fb105733b6deb00477109b85371bc00aa66810f3f234b85eb50a6a",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "7ed2c67a87e4cc5645b2d80459a8b65a8ed366d2c40d34457dfcb6fe552b008d",
+                  "image": "sha256:dab09471ed2cb911018d7fcf84c610f68847f3f6119e42402f627b3629cfebe8",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+                  "image": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "3ba80d389ffcc2127bb0d79348ffa50ecc90a5ac76f0135929fa048b53dd533f",
+                  "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "6a5246faa6a2f4b788299735533ef24b3660bfe74e4853f5f3642a684dd51965",
+                  "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                },
+                {
+                  "id": "467167a3537ac192f982f4879b5d9d116a3967609df8c54d34ea3d35cb216dbc",
+                  "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+                  "oom": false,
+                  "restarts": 0,
+                  "memoryLimit": 0,
+                  "nanoCpus": 0
+                }
+              ],
+              "disk": [
+                "  1B-blocks       Used       Avail",
+                "40483942400 6210514944 34256650240"
+              ]
+            }
+          ]
+        },
+        "hostUtc": 1792466890.581515,
+        "hostElapsed": 2480.8402238000417
+      }
+    ],
+    "qmpEvents": [
+      {
+        "event": "NIC_RX_FILTER_CHANGED",
+        "hostElapsed": 147.458584100008
+      },
+      {
+        "event": "SHUTDOWN",
+        "hostElapsed": 2538.6711121000117
+      }
+    ],
+    "final": {
+      "purpose": "only-approved-api-window",
+      "fullProductAcceptance": false,
+      "target": {
+        "attempts": 1,
+        "startedGuestMonotonic": 2400.712737596,
+        "localCorrelationSha256": "75aae94cfa07ab89f4bd58d00b52d3ab07885eb9f910d179a117a51d49c68b8f",
+        "observerRegisteredBeforeRequest": true,
+        "completed": false,
+        "errorType": "RemoteDisconnected",
+        "elapsedMilliseconds": 31296,
+        "finishedGuestMonotonic": 2432.209206596
+      },
+      "observer": {
+        "registered": true,
+        "polls": 6,
+        "eventStreamStarted": true,
+        "containerId": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+        "imageId": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+        "apiStartTimeNano": 1792466565508427400,
+        "registeredGuestMonotonic": 2121.150861496,
+        "registeredIdentity": {
+          "pid": 7459,
+          "startTicks": 211408,
+          "executableDevice": 66,
+          "executableInode": 524863,
+          "executableBytes": 124181928
+        },
+        "captureId": "8d882dc312b14f6aace16e52c98497a4"
+      },
+      "sourceHead": "9c8bbff749c1d2a52a3e6489dcec02d2d7c859af",
+      "manifestSha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b",
+      "clientBoundary": "原首次身份Client90秒，安装器产品业务30秒保持且本窗口不执行后者；不改变原调用",
+      "status": "target-failed",
+      "nativeTrace": {
+        "naturalRun": true,
+        "captureId": "8d882dc312b14f6aace16e52c98497a4",
+        "captured": false,
+        "coreCaptured": true,
+        "captureStage": "debugger",
+        "handlerStartedUtcEpoch": 1792466809.0421958,
+        "targetBinarySha256": "638c77326270093b1251a5e72b4335c94c74856a210460341c73d6f3da647328",
+        "coreBytes": 127713280,
+        "coreSha256": "961dccc55ffc4e33ce6dfa861ea4d6ce9cff50041903203a0a2ad1dd5f2f0cf0",
+        "location": {
+          "architecture": "amd64",
+          "signal": 11,
+          "signalCode": -6,
+          "faultModule": "node",
+          "executableSegment": true,
+          "nodeFileOffset": 20361632,
+          "nodeElfAddress": 20361632,
+          "publicFrameChain": {
+            "method": "frame-pointers",
+            "frames": [
+              {
+                "lookupNodeElfAddress": 20411144,
+                "returnSiteNodeElfAddress": 20411145
+              },
+              {
+                "lookupNodeElfAddress": 30266485,
+                "returnSiteNodeElfAddress": 30266486
+              }
+            ],
+            "stopped": "caller-outside-public-node"
+          }
+        },
+        "captureErrorType": "TimeoutExpired",
+        "debuggerTimedOut": true,
+        "trace": {
+          "exitCode": null,
+          "stdoutSha256": "97c02d3b8a5efb3ccf1aa62331dff7e1e3105f87a7efec9a0808ac6bdee43b0e",
+          "stderrSha256": "2a54f1833617702c1b501faffdb3a65a9290d48ba094d226ee44de0fab39cadc",
+          "stdoutBytes": 71,
+          "stderrBytes": 71,
+          "sigsegv": false,
+          "symbols": [],
+          "debuggerStages": [
+            "before-binary",
+            "after-binary"
+          ],
+          "categories": [],
+          "ptraceRejected": false
+        },
+        "captureElapsedMilliseconds": 73148,
+        "registeredTarget": {
+          "pid": 7459,
+          "startTicks": 211408,
+          "executableDevice": 66,
+          "executableInode": 524863,
+          "executableBytes": 124181928
+        },
+        "containerInitPid": 7332,
+        "coreObserved": true
+      },
+      "postTargetNodeUnavailable": true,
+      "observedApiState": {
+        "Running": true,
+        "ExitCode": 139,
+        "OOMKilled": false,
+        "RestartCount": 1
+      },
+      "containerEvents": {
+        "events": [
+          {
+            "timeNano": 1792466888631096500,
+            "event": "die",
+            "id": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+            "service": "api",
+            "exitCode": 139
+          }
+        ],
+        "truncated": false
+      },
+      "elapsedSeconds": 1718.4930185,
+      "installActions": 8,
+      "completedChecks": [
+        "offlineNoDefaultRoute",
+        "unsupportedCombinationsRejected",
+        "projectLockRejectsBeforeDeploymentMutation",
+        "candidateStagedBeforeDeployment"
+      ],
+      "samples": [
+        {
+          "phase": "idle",
+          "profile": "enterprise",
+          "monotonic": 2395.900429296,
+          "stats": [
+            {
+              "BlockIO": "2.86MB / 0B",
+              "CPUPerc": "0.05%",
+              "Container": "6fd8c377e0bcea7d13a6b7abde0ac0118aed71c48a6dabe5d995756921f022a5",
+              "ID": "6fd8c377e0bc",
+              "MemPerc": "0.93%",
+              "MemUsage": "36.26MiB / 3.823GiB",
+              "Name": "ta01-enterprise-mcp-1",
+              "NetIO": "5.64kB / 5.23kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "13.9MB / 0B",
+              "CPUPerc": "13.61%",
+              "Container": "7ed2c67a87e4cc5645b2d80459a8b65a8ed366d2c40d34457dfcb6fe552b008d",
+              "ID": "7ed2c67a87e4",
+              "MemPerc": "1.44%",
+              "MemUsage": "56.55MiB / 3.823GiB",
+              "Name": "ta01-enterprise-worker-1",
+              "NetIO": "897kB / 1.83MB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "16.3MB / 0B",
+              "CPUPerc": "0.10%",
+              "Container": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+              "ID": "a87bd3444ac3",
+              "MemPerc": "1.53%",
+              "MemUsage": "59.75MiB / 3.823GiB",
+              "Name": "ta01-enterprise-api-1",
+              "NetIO": "33.4kB / 30.1kB",
+              "PIDs": "12"
+            },
+            {
+              "BlockIO": "19.3MB / 107MB",
+              "CPUPerc": "37.31%",
+              "Container": "3ba80d389ffcc2127bb0d79348ffa50ecc90a5ac76f0135929fa048b53dd533f",
+              "ID": "3ba80d389ffc",
+              "MemPerc": "1.48%",
+              "MemUsage": "57.84MiB / 3.823GiB",
+              "Name": "ta01-enterprise-postgres-1",
+              "NetIO": "2.12MB / 947kB",
+              "PIDs": "8"
+            },
+            {
+              "BlockIO": "4.51MB / 8.19kB",
+              "CPUPerc": "6.85%",
+              "Container": "6a5246faa6a2f4b788299735533ef24b3660bfe74e4853f5f3642a684dd51965",
+              "ID": "6a5246faa6a2",
+              "MemPerc": "0.19%",
+              "MemUsage": "7.508MiB / 3.823GiB",
+              "Name": "ta01-enterprise-redis-1",
+              "NetIO": "17.7kB / 11.6kB",
+              "PIDs": "6"
+            },
+            {
+              "BlockIO": "111MB / 193kB",
+              "CPUPerc": "0.56%",
+              "Container": "467167a3537ac192f982f4879b5d9d116a3967609df8c54d34ea3d35cb216dbc",
+              "ID": "467167a3537a",
+              "MemPerc": "4.69%",
+              "MemUsage": "183.6MiB / 3.823GiB",
+              "Name": "ta01-enterprise-minio-1",
+              "NetIO": "26.1kB / 9.91kB",
+              "PIDs": "20"
+            }
+          ],
+          "state": [
+            {
+              "id": "6fd8c377e0bcea7d13a6b7abde0ac0118aed71c48a6dabe5d995756921f022a5",
+              "image": "sha256:f147cb8c58fb105733b6deb00477109b85371bc00aa66810f3f234b85eb50a6a",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "7ed2c67a87e4cc5645b2d80459a8b65a8ed366d2c40d34457dfcb6fe552b008d",
+              "image": "sha256:dab09471ed2cb911018d7fcf84c610f68847f3f6119e42402f627b3629cfebe8",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "a87bd3444ac3d5b5178a758ed2f2b9c977882e3ae24bb0d09d24f3403464c36a",
+              "image": "sha256:4b132ec16623dc8336904915a6ebdf3ab632becb6a76cad364ce38c36f2e00ee",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "3ba80d389ffcc2127bb0d79348ffa50ecc90a5ac76f0135929fa048b53dd533f",
+              "image": "sha256:8455f9448b37070b5a04d0fecf7255354249ae0924d006861d58d1f262dd8911",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "6a5246faa6a2f4b788299735533ef24b3660bfe74e4853f5f3642a684dd51965",
+              "image": "sha256:3094cf6f8eeb9447d8836faa0c801fe8fa6e7d36d8c6f01799d2cda4d66bc442",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            },
+            {
+              "id": "467167a3537ac192f982f4879b5d9d116a3967609df8c54d34ea3d35cb216dbc",
+              "image": "sha256:df972be33b984b13cdcf49f5fe132db249f779fb476be751ac6032ef3b1c55ff",
+              "oom": false,
+              "restarts": 0,
+              "memoryLimit": 0,
+              "nanoCpus": 0
+            }
+          ],
+          "disk": [
+            "  1B-blocks       Used       Avail",
+            "40483942400 6210514944 34256650240"
+          ]
+        }
+      ]
+    },
+    "status": "sample-completed",
+    "actualTargetAttempts": 1
+  },
+  "outer": {
+    "containerId": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+    "owner": "c6ee4ed6-f6bc-444f-a94d-99358603000b",
+    "memoryBytes": 6442450944,
+    "memorySwapTotalBytes": 6442450944,
+    "cpuQuota": 4,
+    "capacityBeforeLaunch": {
+      "observedAt": "2026-10-20T02:46:46.429913+00:00",
+      "hostMeminfoKiB": {
+        "MemTotal": 8185420,
+        "MemAvailable": 6388292,
+        "SwapTotal": 1048572,
+        "SwapFree": 1048384
+      },
+      "requiredHostAvailableBytes": 6442450944,
+      "admissionPassed": true
+    },
+    "lifetimeMemoryPeakBytes": 6433075200,
+    "memoryEvents": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0\n",
+    "beforeStop": {
+      "Running": true,
+      "ExitCode": 0,
+      "OOMKilled": false
+    },
+    "runnerExitCode": 0,
+    "events": [
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/stat",
+        "timeNano": 1792466652086480000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/stat",
+        "timeNano": 1792466652090612900
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466652131276600,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/status",
+        "timeNano": 1792466652311616500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/status",
+        "timeNano": 1792466652315398200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466652355431900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466730300288300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466730303880500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466730394099800,
+        "exitCode": "1"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466730564364500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466730568420200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466730620165500,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466730795571000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466730799328100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466730847068200,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466731058616500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466731062463300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466731107424300,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466731280044200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466731283758400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466731324968700,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466731497091600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466731501353500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466731544190400,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466731716778600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466731721039900
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466731771112100,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466731942185300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466731946595000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466731986959300,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466732165819000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466732170013200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466732212234900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/stat",
+        "timeNano": 1792466732381087100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/stat",
+        "timeNano": 1792466732385035700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466732424283900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/status",
+        "timeNano": 1792466732595879600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/status",
+        "timeNano": 1792466732599445300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466732639573900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466820291231000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466820296163700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466820357670300,
+        "exitCode": "1"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466820538714700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466820543222800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466820589280900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466820781686500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466820785914600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466820833760300,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466821068277600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466821072436400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466821120546500,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466821306233800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466821310523200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466821359923900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466821549518400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466821553536200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466821597717500,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466821782004800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466821786284300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466821829097500,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466822010485800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466822014772600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466822059575000,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466822248814500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466822252849500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466822296324600,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/stat",
+        "timeNano": 1792466822511385000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/stat",
+        "timeNano": 1792466822515406600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466822559716700,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/status",
+        "timeNano": 1792466822906049100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/status",
+        "timeNano": 1792466822910853300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466822954577800,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466895008529700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466895012370500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466895054576300,
+        "exitCode": "1"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466895228394800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466895232368800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466895274392200,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466895460777300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466895464534000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466895503926700,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466895723869400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466895728018100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466895782397500,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466895961021900
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466895965190500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466896005457900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466896173853100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466896177938300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466896219880300,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466896396087700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466896400868600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466896441657900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466896750353700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466896754515400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466896796642100,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466896967325000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466896971462400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466897012788400,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/stat",
+        "timeNano": 1792466897178455100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/stat",
+        "timeNano": 1792466897182299900
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466897227654600,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/status",
+        "timeNano": 1792466897395012300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/status",
+        "timeNano": 1792466897398749300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466897439539200,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466937695556500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466937699206800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466937738942900,
+        "exitCode": "1"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466937899469500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466937902922000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466937943717600,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466938117285900
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466938120867100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466938161194200,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466938377667300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466938381285900
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466938420178800,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466938694168700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466938697881000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466938738599800,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466938906511900
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466938910181600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466938949821600,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466939118218300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466939121756300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466939161040900,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466939330360400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466939334297500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466939375572700,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466939541593000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466939545648800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466939584690300,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/stat",
+        "timeNano": 1792466939755148500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/stat",
+        "timeNano": 1792466939759022000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466939800411500,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /proc/3189/status",
+        "timeNano": 1792466939977200000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /proc/3189/status",
+        "timeNano": 1792466939980966400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466940023617600,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466950836867100,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466951083499000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/result.json",
+        "timeNano": 1792466951087403400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466951133698700,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466951447975400
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/started.json",
+        "timeNano": 1792466951451500600
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466951490974200,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466951670843100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-started.json",
+        "timeNano": 1792466951674837000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466951720745000,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466951955773300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/receipts.ndjson",
+        "timeNano": 1792466951959292800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466951998096400,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466952174963200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/serial.log",
+        "timeNano": 1792466952178673100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466952218787400,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466952407456800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /opt/api-window/guest/qemu-stderr.log",
+        "timeNano": 1792466952411668500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466952451931700,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: sh -c ps -eo comm | sort | uniq -c",
+        "timeNano": 1792466952636959200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: sh -c ps -eo comm | sort | uniq -c",
+        "timeNano": 1792466952640652300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466953081255400,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466953458940000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.current",
+        "timeNano": 1792466953462587000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466953501915200,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466953712737300
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.peak",
+        "timeNano": 1792466953716056200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466953756916600,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.max",
+        "timeNano": 1792466953979416700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.max",
+        "timeNano": 1792466953983413100
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466954023926500,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.swap.max",
+        "timeNano": 1792466954248175000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.swap.max",
+        "timeNano": 1792466954251702200
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466954292765400,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466954535829000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/memory.events",
+        "timeNano": 1792466954539433000
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466954581497300,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_create: cat /sys/fs/cgroup/cpu.max",
+        "timeNano": 1792466954807245500
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_start: cat /sys/fs/cgroup/cpu.max",
+        "timeNano": 1792466954811203700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "exec_die",
+        "timeNano": 1792466954852551800,
+        "exitCode": "0"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "kill",
+        "timeNano": 1792466955858323700
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "kill",
+        "timeNano": 1792466965923722800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "stop",
+        "timeNano": 1792466966927874800
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "die",
+        "timeNano": 1792466966951308100,
+        "exitCode": "137"
+      },
+      {
+        "id": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+        "action": "destroy",
+        "timeNano": 1792466971577516600
+      }
+    ],
+    "eventHistoryBoundary": "Docker事件保留窗口；cgroup峰值从容器创建累计，含准备及本次执行，不是纯QEMU RSS。"
+  },
+  "cleanup": {
+    "at": "2026-10-20T03:30:22.328555+00:00",
+    "containerId": "4b793481315e8f92d429adc1cda2f59efae0ae7ae34700fc678e0b9e7e80888e",
+    "inspectExitCode": 1,
+    "safeError": "no such object",
+    "stderrSha256": "e74bcb7cbdf8396b5d663518078378febec618dc0b0596efde1e52d64ab7dd16",
+    "noOtherResourceRemoved": true
+  },
+  "p1State": {
+    "restoredCandidate": "正式复审已闭合",
+    "historicApi139": "未闭；只评本次样本",
+    "historicMcp139": "未闭；本次不执行MCP业务窗口，原安装健康前缀保持"
+  },
+  "noRetryOrAdditionalWindow": true,
+  "privateDataOrCoreOrDiskArchived": false,
+  "selectedZipSha256": "9bcabf1a3651c4ef67910db396d5e0be45f67ffa47d02f30d2770e4c5a2098d0",
+  "members": {
+    "actual-api_identity.py": {
+      "bytes": 1083,
+      "sha256": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+    },
+    "actual-diagnostic_guest.py": {
+      "bytes": 9168,
+      "sha256": "7c5d41aae7050dc075ab1fffcf00fc03a28ba35b4e7219a3df28475bb0b10c1d"
+    },
+    "actual-run_window.py": {
+      "bytes": 9521,
+      "sha256": "f11c337dcbd83fea4062c31f9f4e4a79d1a17d8d77942ea9fb8129fbdcb4f05d"
+    },
+    "actual-script-reconciliation.json": {
+      "bytes": 442,
+      "sha256": "745c2648498841e54ca3f534369c267cb1923ff193cfda4720683eb62246ca1a"
+    },
+    "api_identity.py": {
+      "bytes": 1083,
+      "sha256": "57b9437c09146689d4229c8cb67795aa0e0c51014a44477931dff38c605c04e8"
+    },
+    "apt-update.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "apt-update.stdout": {
+      "bytes": 1639,
+      "sha256": "17cd2b7950fa7805633abf076974c10f670190616ef3a881526ac0c7db463edf"
+    },
+    "artifact.json": {
+      "bytes": 221,
+      "sha256": "3f2f4fa1879069cae292e0101432d76f5945b00e754978746a9b98299990f187"
+    },
+    "attempt-started.json": {
+      "bytes": 119,
+      "sha256": "38431a163377b1eaad7fe44046685ee895a570666e04150c6b7b377f7c817d3d"
+    },
+    "authorization.json": {
+      "bytes": 930,
+      "sha256": "e48312310e3ae0717a348b6dc42fbe6dc3f6ea17d773f5ec49ef6c87c45255c9"
+    },
+    "cache-input-recheck.json": {
+      "bytes": 323,
+      "sha256": "0dce1e41801ca53cf2dfdc6bed30720ca8f304dddf2dade545984c345ea4308d"
+    },
+    "capacity-before-launch.json": {
+      "bytes": 268,
+      "sha256": "bd7152135faf7692a8765b88258c45bd4b33a332688f801239435f88b5e0c213"
+    },
+    "capacity-before-provision.json": {
+      "bytes": 370,
+      "sha256": "ace1dd3048da5cb28c423fe87b02d6c0aaa6af5ff6d6ee5146c194ba1c12bf28"
+    },
+    "cleanup-verification.json": {
+      "bytes": 317,
+      "sha256": "f39a8c4308c740cb2412fdbe19fc437948eb14d78fa297f22d897c919d3413ae"
+    },
+    "diagnostic_guest.py": {
+      "bytes": 9168,
+      "sha256": "7c5d41aae7050dc075ab1fffcf00fc03a28ba35b4e7219a3df28475bb0b10c1d"
+    },
+    "execute_once.py": {
+      "bytes": 5593,
+      "sha256": "a9682a66631f98c1d1ef7f829d3aab920ffc26d2bed8d6f0aaab70608829b60d"
+    },
+    "gdb-policy.stdout": {
+      "bytes": 293,
+      "sha256": "3c5d744028d84a94f9d41657aee984b39ccec3925b6000028dc6c22c4afc779c"
+    },
+    "input-preflight.json": {
+      "bytes": 1748,
+      "sha256": "1a6e7b964f4b708c211ede17b0adfd6bb6358d03e5e389cc5457bd646b8909df"
+    },
+    "instrumentation-boundary.json": {
+      "bytes": 530,
+      "sha256": "251d815278887a1e3d8b107952005706fcf09a964057dd90255a81d01ee41504"
+    },
+    "manifest.json": {
+      "bytes": 12627,
+      "sha256": "c34733df5e9d45ac6fddbc504a45540779e252071d55fe22eb9bfbee2744028b"
+    },
+    "oci-closure.json": {
+      "bytes": 29050,
+      "sha256": "2bde01ec61e804e93fbf8a8b3745c9b44554a97950fa7c869d603afeeb272f12"
+    },
+    "original-source-bindings.json": {
+      "bytes": 5120,
+      "sha256": "ba7663969c704652781aa29432d71b8cd0001116a9cac17f99b634b5d8b00dbf"
+    },
+    "outer-cgroup-preflight.json": {
+      "bytes": 90,
+      "sha256": "2b717075bbc6de8f3785c40198922e56b04378bf64e4326a78eda1d25bb941cc"
+    },
+    "outer-cpu.max.txt": {
+      "bytes": 14,
+      "sha256": "bd8ea316d63ccab47af9329b4b4b427cb510d04fe500195f5aa332d211d9fd3f"
+    },
+    "outer-events-after-stop.json": {
+      "bytes": 34000,
+      "sha256": "0ebbb440e1eb21c67766bf32b2966701c52b41713fd2d9b48938f46eebda35bc"
+    },
+    "outer-events-before-stop.json": {
+      "bytes": 35156,
+      "sha256": "9cfad60d66a4b324b689e37e71cf4a1e5a1f869a2131bc6299f91b36ccc0112a"
+    },
+    "outer-live-samples.ndjson": {
+      "bytes": 9558,
+      "sha256": "7e5aca2f8dfe7e5dd1468d7c4fa447ca7fa8522d77d05518feec70de8c62d332"
+    },
+    "outer-memory.current.txt": {
+      "bytes": 10,
+      "sha256": "5ab1c6f7b2f762e70166a32e5dc634c7175c4330061e0e51a73f6a007c09e795"
+    },
+    "outer-memory.events.txt": {
+      "bytes": 70,
+      "sha256": "0a2d4e7982066cc7dc914627e7b195ccba88b82a5a996201809e529142d2f380"
+    },
+    "outer-memory.max.txt": {
+      "bytes": 11,
+      "sha256": "4ec6f2997edee06903a4e9016e3951ea175c801925fe151d5d5eea90dd9cd3d9"
+    },
+    "outer-memory.peak.txt": {
+      "bytes": 11,
+      "sha256": "ba749bd3123b17ee6c9498d0bca66f0b5eb0dd2ce5622d30b9f65b692b298e93"
+    },
+    "outer-memory.swap.max.txt": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "plan-at-approval-31c13bed.md": {
+      "bytes": 11924,
+      "sha256": "859c648eeb96eed5447e4466690c0013f230ea1019e79a79396be9f6811ada86"
+    },
+    "process-names-before-stop.txt": {
+      "bytes": 78,
+      "sha256": "708384f409db5a1c8efd4774eb393d34dd87bfaaa8034e455d98e0ee9ea241fb"
+    },
+    "public-location-comparison.json": {
+      "bytes": 2062,
+      "sha256": "3edb9a09936f09349028ff24c77704e35d84c8f2441196e88661b19155515f32"
+    },
+    "qemu-policy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qemu-policy.stdout": {
+      "bytes": 823,
+      "sha256": "38419e19b79fcc88b9ffcc00a83a89b1eb35e21881ef9307233aba20e473076e"
+    },
+    "qemu-sha.stdout": {
+      "bytes": 94,
+      "sha256": "5798d2b7f16830c2aec1526df2364d6f80d455f4f300ce9f95ac047bd3cddd5a"
+    },
+    "qemu-started.json": {
+      "bytes": 237,
+      "sha256": "ba251b92ef41ac3d15536b669485c601746daaa72e244b5709cd75d215685ca0"
+    },
+    "qemu-stderr.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qemu-version.stdout": {
+      "bytes": 132,
+      "sha256": "8f79ffd97970d85d6833a0ccc87f5d6e7182f8f52101c741dfa2fb6374670b18"
+    },
+    "receipts.ndjson": {
+      "bytes": 8728,
+      "sha256": "504a60fb4c4f03f87ddce6be1daa818e48856ce7279971f09edf71fd7d660bdf"
+    },
+    "resources.json": {
+      "bytes": 2081,
+      "sha256": "97f0b46250af229f39168c2ea6fdecdba8021e943ce1e77221b30aeb1683297f"
+    },
+    "result.json": {
+      "bytes": 24109,
+      "sha256": "e999748197e87e1912ed51ba0e7b1938b042eaa92a7c4d212f8b12adac124ef8"
+    },
+    "resumption-audit.json": {
+      "bytes": 477,
+      "sha256": "e7e1295e1cc91d61e454bf47f928f8fd486202df1a6789a33c25aa4521fff483"
+    },
+    "run_window.py": {
+      "bytes": 9521,
+      "sha256": "f11c337dcbd83fea4062c31f9f4e4a79d1a17d8d77942ea9fb8129fbdcb4f05d"
+    },
+    "runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runner.stdout": {
+      "bytes": 93,
+      "sha256": "92610dc72e4783a23c0d78caa21297a396e648e4df28def42db418a6662bf58f"
+    },
+    "serial.log": {
+      "bytes": 124574,
+      "sha256": "741799ee6145b0d6f550438e5bd6cd0c3c6cff6901d068051a213e518972731e"
+    },
+    "started.json": {
+      "bytes": 2006,
+      "sha256": "47115a5dd5ce2a2fe7ffea77ac3cd7a91370be09c5266b88384817f46eba959b"
+    },
+    "tool-install.stderr": {
+      "bytes": 74,
+      "sha256": "f77216c41aadf6c667ac1a602069951966cea350daab793ffe11ae0de1225ddc"
+    },
+    "tool-install.stdout": {
+      "bytes": 29326,
+      "sha256": "2d7c795dad5aabfed7c4751d2dd3fb80c2a93411277515f84e4dc8505bf7b850"
+    },
+    "original-source/core_metadata.py": {
+      "bytes": 8305,
+      "sha256": "64640a3182eb27bce1ed9b26bafd66ed4e5ed773a3d079b44894793cfd7f6d16"
+    },
+    "original-source/core_pipe.py": {
+      "bytes": 5219,
+      "sha256": "4ff472e1642702d1f8f91ec2b37460a440bc01302c65068f0b225762abf4937b"
+    },
+    "original-source/guest.py": {
+      "bytes": 75400,
+      "sha256": "7662e4037849696fad346af393b86b4514b2b46f4793574a140600ee0d786fbe"
+    },
+    "original-source/native_diagnostic.py": {
+      "bytes": 12173,
+      "sha256": "c7c7771372690d79009f0e353c2eeb5b44fce425c74726781a199986f73f9c94"
+    },
+    "original-source/native_diagnostic_test.py": {
+      "bytes": 61675,
+      "sha256": "d722706049f13fe60692f0bbe66a6cf0ea2a823a115bfa00bb28828799baa815"
+    },
+    "original-source/run.py": {
+      "bytes": 13878,
+      "sha256": "1d0457dee873299c9750fa9314b3daf0766430715b9b1bcac02c81f644c60014"
+    },
+    "recovery/prelaunch-audit.json": {
+      "bytes": 5105,
+      "sha256": "1dd7441ca545ad9ecded509ad22799f1be4f33a75f02485cb9bed9bf8e509b70"
+    },
+    "recovery/ignored-evidence-inventory.json": {
+      "bytes": 35503,
+      "sha256": "195d3e301fde4e06e0ed8262bc6cf42c70155582c390bb0205a9fe5f5fc85b01"
+    },
+    "recovery/preserve_ignored.py": {
+      "bytes": 1377,
+      "sha256": "f516bc7dda3063d9b0d9f64dbd3fd75067a1b54886a81774e0ad4b344f76ca1a"
+    },
+    "recovery/snapshot.py": {
+      "bytes": 3063,
+      "sha256": "cff0e47cc420a716f929deb38f5249a6f9f2df0bc056389b51208e5ac07dcf94"
+    },
+    "recovery/archive_result.py": {
+      "bytes": 5467,
+      "sha256": "e24e4f4cf167c29afa49b18607a7a12ffb06f41b98505c3a889959e43b24bb16"
+    },
+    "recovery/compare_public_location.py": {
+      "bytes": 2967,
+      "sha256": "0f30a3a433f445cfb8141bc6a17fb6cfa6a562946721ba41c77ce32f05c860dc"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "at": "2026-10-20T03:34:03.776743+00:00",
+  "hostNode": "v25.4.0",
+  "hostYamlVersion": "2.9.0",
+  "hostDependencies": "仅复制旧树已有yaml用于静态检查；不改锁文件或guest运行时。",
+  "results": [
+    {
+      "command": [
+        "node",
+        "scripts/check-integration-docs.mjs"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "a228ad9794a0714b2299c0090b066a7e31a54fcd891420be02c8e27c7f08f1ab",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "{\"skillFiles\":4,\"localLinks\":104,\"restEndpoints\":35,\"mcpTools\":11,\"humanSyntax\":\"passed\",\"scope\":\"静态检查；真实请求与中文语义须另验\"}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "scripts/validate-ci.mjs"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "fb0fc3d994e1ad6ef76a31ccde16aa1faca3c242295a239c21d1ae07f10dd46b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "[ci:validate] OK: 12 jobs, 49 immutable action references, Node 22.19.0, pnpm@9.15.4\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "scripts/validate-release-workflows.mjs"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "9a890504a01fc2f4d95c68a145027c8270db22b559af17e5f5fea3c6fd3e4591",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "Release workflow validation passed.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "scripts/validate-lite-compose.mjs"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "e3bb130da213df48459c3f987bea0b78ffdaf1a52af520505c117672d0a583f2",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "Lite compose validation passed (7 services; 3 roles from one image; 55 documented variables; published: minio, api)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "scripts/verify-raw-evidence-archive.mjs"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exitCode": 0,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "diagnosticAst": "passed",
+  "preservationArchiveMembersVerified": 43,
+  "windowArchiveMembersVerified": 64,
+  "firstFailures": {
+    "pnpm": "PATH不可用，未称已跑五根检查",
+    "releaseAndLiteValidation": "首轮ESM缺yaml而失败；复制旧树现有yaml2.9.0后两项通过，未将失败改写成首次通过"
+  },
+  "earlierConsoleTest": {
+    "command": [
+      "node",
+      "--test",
+      "scripts/verify-raw-evidence-archive.test.mjs"
+    ],
+    "passed": 15,
+    "failed": 0,
+    "source": "本次执行工具控制台，非本文件的原始子进程日志"
+  },
+  "scope": "本机静态资料校验，不是锁定Node环境的五根检查、产品guest验收或P1闭合。",
+  "checkerSource": "from pathlib import Path\nfrom datetime import datetime, timezone\nimport ast, hashlib, json, os, subprocess, zipfile\n\nOUT=Path('.tmp/ta01-recovery/checks');OUT.mkdir(exist_ok=True)\nREPORT=Path('docs/reviews/ta01-product/recovery-checks-2026-10-20.json')\nREPORT.write_text(json.dumps({'state':'running','source':'本次真实检查，完成后写入实际结果。'},ensure_ascii=False)+'\\n',encoding='utf8')\nenv=dict(os.environ)\nenv['NODE_PATH']='C:/Users/xurx/.tds/workspaces/01a138ab-2566-7f87-9d06-5b16bebd86c2/scripts/ci-bootstrap/node_modules'\ncommands=[['node','scripts/check-integration-docs.mjs'],['node','scripts/validate-ci.mjs'],\n          ['node','scripts/validate-release-workflows.mjs'],['node','scripts/validate-lite-compose.mjs'],\n          ['node','scripts/verify-raw-evidence-archive.mjs'],['git','diff','--check']]\nresults=[]\nfor i,args in enumerate(commands):\n    result=subprocess.run(args,capture_output=True,env=env,timeout=120)\n    for suffix,data in [('stdout',result.stdout),('stderr',result.stderr)]: (OUT/f'{i}.{suffix}').write_bytes(data)\n    results.append({'command':args,'exitCode':result.returncode,'stdoutSha256':hashlib.sha256(result.stdout).hexdigest(),'stderrSha256':hashlib.sha256(result.stderr).hexdigest(),\n                    'stdout':result.stdout.decode(errors='replace'),'stderr':result.stderr.decode(errors='replace')})\nfor p in Path('.tmp/ta01-resumption/api-crash-window-a-6g-once').glob('*.py'):ast.parse(p.read_text(encoding='utf8'))\nindex=json.loads(Path('docs/reviews/ta01-product/recovery-2026-10-20.json').read_bytes())\narchive=Path('docs/reviews/ta01-product/recovery-2026-10-20.zip')\nassert hashlib.sha256(archive.read_bytes()).hexdigest()==index['selectedZipSha256']\nwith zipfile.ZipFile(archive) as z:\n    assert z.testzip() is None and set(z.namelist())==set(index['members'])\n    for name,value in index['members'].items():\n        data=z.read(name);assert len(data)==value['bytes'] and hashlib.sha256(data).hexdigest()==value['sha256']\nwindow_index=json.loads(Path('docs/reviews/ta01-product/amd64-api-crash-window-a-6g-once.json').read_bytes())\nwindow_archive=Path('docs/reviews/ta01-product/amd64-api-crash-window-a-6g-once.zip')\nassert hashlib.sha256(window_archive.read_bytes()).hexdigest()==window_index['selectedZipSha256']\nwith zipfile.ZipFile(window_archive) as z:\n    assert z.testzip() is None and set(z.namelist())==set(window_index['members'])\n    for name,entry in window_index['members'].items():\n        data=z.read(name);assert len(data)==entry['bytes'] and hashlib.sha256(data).hexdigest()==entry['sha256']\nvalue={'at':datetime.now(timezone.utc).isoformat(),'hostNode':subprocess.check_output(['node','--version']).decode().strip(),\n       'hostYamlVersion':json.loads(Path('node_modules/yaml/package.json').read_bytes())['version'],\n       'hostDependencies':'仅复制旧树已有yaml用于静态检查；不改锁文件或guest运行时。',\n       'results':results,'diagnosticAst':'passed','preservationArchiveMembersVerified':len(index['members']),\n       'windowArchiveMembersVerified':len(window_index['members']),\n       'firstFailures':{'pnpm':'PATH不可用，未称已跑五根检查','releaseAndLiteValidation':'首轮ESM缺yaml而失败；复制旧树现有yaml2.9.0后两项通过，未将失败改写成首次通过'},\n       'earlierConsoleTest':{'command':['node','--test','scripts/verify-raw-evidence-archive.test.mjs'],'passed':15,'failed':0,'source':'本次执行工具控制台，非本文件的原始子进程日志'},\n       'scope':'本机静态资料校验，不是锁定Node环境的五根检查、产品guest验收或P1闭合。'}\nvalue['checkerSource']=Path(__file__).read_text(encoding='utf8')\n(OUT/'results.json').write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\\n',encoding='utf8')\nREPORT.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\\n',encoding='utf8')\nprint(json.dumps({'checks':len(results),'failures':sum(x['exitCode']!=0 for x in results),'archiveMembers':len(index['members'])}))\nassert all(x['exitCode']==0 for x in results)\n"
+}
