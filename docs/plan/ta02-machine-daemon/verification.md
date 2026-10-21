@@ -42,6 +42,14 @@ Node 可执行字节已与仓库提交的官方 ZIP 成员核对，二者 SHA-25
 
 本轮按实际纯 Markdown 分类核适用门禁。五项根产品检查 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm test:integration`、`pnpm test:conformance` 未在本轮执行，不记通过。未运行 integration 示例、镜像、VM、后台进程、安装／升级、设备注册、模型或真实外部服务。
 
+## 提交与 CI
+
+方案候选 `85498b825ac2ac6912c956d216b31d39d8496f0c` 已推送到本会话分支，并建立草稿 [PR230](https://github.com/xurunxin/WorkMesh/pull/230)。提交后重读 16 个文件，Git 原字节与本地文件逐一相同；5 个来源归档的实际 Git blob 与登记值一致。准确基线到候选的 `git diff --check` 退出 0。
+
+候选的 [CI575](https://github.com/xurunxin/WorkMesh/actions/runs/39549341333) 已 completed/success。changes 与 Required CI 两项成功，八类产品 job 按 docs 计划 skipped。跳过不计产品通过，原始工具回执附在 [checks-raw.md](checks-raw.md)。
+
+候选之后补充 service Actor 与启动意图检查点，明确 Machine 不增加 Actor kind，以及 spawn 窗口未知不重启。专项脚本也改为核从固定基线起的完整范围，避免提交后仅检查剩余工作树。上述文档和本回执仍须最新候选 CI；CI575 不冒后续 HEAD 通过。没有取消旧 CI、重跑 job、正式产品复审或合入。
+
 根 `test:e2e` 已不存在，浏览器 CI 已按 ADR0087 退役。未来产品端到端责任映射到 API/MCP/daemon、现行 conformance、connector 平台／安装和真实后端部署，不重建浏览器命令。只有文档分类成立才按当前策略不选产品检查；未知路径、真实源码或 CI 变化必须按实际分类执行。
 
 ## 文风与同步自检

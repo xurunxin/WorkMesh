@@ -1,5 +1,28 @@
 # 原始检查回执
 
+## CI575 的实际工具回执
+
+命令：平台 `workflow_runs(runId=39549341333)`。正文保存实际终态，适用提交为 `85498b825ac2ac6912c956d216b31d39d8496f0c`。
+
+```json
+[
+  "CI #575 (run 39549341333) [pull_request] tds/conv-01a15cd3-1e81-7581-9e17-ebb6e0b679d0@85498b8 — completed/success",
+  "Started 2026-10-21T05:24:06Z, updated 2026-10-21T05:26:03Z — https://github.com/xurunxin/WorkMesh/actions/runs/39549341333",
+  "",
+  "Jobs (10):",
+  "- Classify changes and validate CI selection (id: 119054704941) — completed/success",
+  "- Required CI (id: 119054990815) — completed/success",
+  "- API integration (id: 119054991055) — completed/skipped",
+  "- Worker integration (id: 119054991067) — completed/skipped",
+  "- Connector full installation (${{ matrix.arch }}) (id: 119054991242) — completed/skipped",
+  "- Source gates (id: 119054991280) — completed/skipped",
+  "- Database integration (id: 119054991426) — completed/skipped",
+  "- Complete disaster recovery (id: 119054991730) — completed/skipped",
+  "- Agent construction and protocol smoke (id: 119054991802) — completed/skipped",
+  "- Connector native storage (${{ matrix.os }}) (id: 119054991928) — completed/skipped"
+]
+```
+
 ## 记录边界
 
 执行日期：2026-10-21。源码基线为 `c3dd64b30e1739204ce8b8f708d5ef17b4ea3de8`。以下按命令分别保存真实输出，JSON 行数组按 LF 拼接。环境和退出码见 [verification.md](verification.md)；这里没有产品测试结果。

@@ -30,6 +30,8 @@
 
 建议首期一台 Machine 只归一个 Team。同一机器可承载多个明确绑定的 Agent 安装，一个 Agent 可以在多台机器运行。调度前同时核机器策略、实例有效性、安装绑定和原领域授权；各 Agent 子进程只收到自己的秘密引用所取凭据。
 
+Machine 和 Runner instance 是资源与进程归属，不增加第四种 Actor。若选择独立机器凭据，其控制面主体采用明确的 service Actor，并绑定准确 Machine 和 Team；不得伪装成 Human 或 Agent。service 身份只允许批准的机器操作，业务执行继续使用 Agent 的准确 Session。
+
 管理员创建机器及安装绑定时，必须确认 Team 和允许的 Agent 集合。禁止 daemon 自报硬件后自动注册为可信资源，禁止复制连接配置来认领另一机器。克隆或丢失本地身份时停止并请求管理员重新确认，不静默生成替代身份。
 
 机器认证有两个具体选项，见 [D1](proposed-decisions.md)。建议复用现有 Connection 完成精确引导证明，再引入独立、仅限机器控制面的实例凭据。该凭据是未来新安全范围，须单独批准；本轮不生成。不能把现有共享 `WORKMESH_RUNNER_SERVICE_TOKEN` 当作唯一机器身份。
@@ -91,6 +93,8 @@ Agent 层沿 ADR0046：仅 execution Session 计数，全部非终态占用，�
 领取事务重核实时授权、固定目标、策略 revision、报告 freshness、版本、Agent 容量规则和空 slot；再写占用、admission、原 Attempt 绑定、domain event 与 outbox。未知或过期报告失败关闭。事务不得发网络、运行客户端或探测系统秘密。
 
 commit 后才投递。outbox 至少一次，daemon 按 dispatch ID＋instance epoch＋generation 持久去重。提交后丢响应、双 worker、投递重放和 daemon 重启都只对应一个执行事实。daemon 在本地先记录接收，再向服务端确认准确领取；成功确认和实时权限检查之前不启动子进程。服务端不通过“已投递”宣称进程启动或工作完成。
+
+本地在 spawn 前持久记录启动意图，取得子进程后记录准确进程身份。崩溃落在两者之间时，先标未知并核账，不能因缺少 started 标记就重启一次。幂等派发只保证领取和事实收敛，不宣称对任意外部副作用恰好一次。
 
 ### 固定机器与公平性
 

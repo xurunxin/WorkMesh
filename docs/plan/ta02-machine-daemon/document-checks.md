@@ -61,7 +61,7 @@ for p in out.rglob('*.md'):
     assert data.endswith(b'\n') and not data.endswith(b'\n\n'),p
     for n,line in enumerate(data.decode().splitlines(),1):
         assert line==line.rstrip(),(p,n,'trailing whitespace')
-changed=set(git('diff','--name-only').decode().splitlines())|set(git('ls-files','--others','--exclude-standard').decode().splitlines())
+changed=set(git('diff','--name-only',base).decode().splitlines())|set(git('ls-files','--others','--exclude-standard').decode().splitlines())
 for path in changed:
     assert path.startswith('docs/plan/ta02-machine-daemon/') and path.endswith('.md'),path
 print(json.dumps({'base':base,'boundFiles':bound,'archives':archives,'authoredLinks':links,'nineCategories':9,'specialResponsibilities':6,'changedFiles':len(changed),'scope':'documentation only'},ensure_ascii=False))

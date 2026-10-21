@@ -17,6 +17,8 @@ Decision 待选：
 
 不采用共享 Runner service token 作为全部机器唯一认证。当前 `/workbench/runner/*` 同时有服务令牌及安装／Session 校验；新增机器边界不能降低这些校验。跨 Team 池、硬件指纹认证和系统级服务账号均另立范围，不默认启用。
 
+Machine/Runner instance 不成为新 Actor kind。A 的独立控制面采用 scoped service Actor，B 保持准确 Agent 安装主体；二者都不能代替 Human 授权或 Agent Session。相关 route-policy、事件作者和拒绝审计须在 P0 明确冻结。
+
 Alternatives：自动认领主机名、以在线代凭据、一个 Agent 令牌授权全机均违反身份和作用域边界。
 
 Consequences：A 支持机器和 Agent 独立撤销，但新增安全面；B 增量较小，须分期标明未交付的多 Agent 责任。
